@@ -88,7 +88,45 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         return this.messageDao.checkMessageConfirmed(dbMessage.getId());        
     }
 
+
     @Override
+    public void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message) {
+        if (message.getMessageDetails() == null) {
+            throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
+        }
+        if (message.getConnectorMessageId() == null) {
+            throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
+        }
+
+        DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
+        LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
+        PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
+
+        dbMessage.setDirectionSource(direction.getSource());
+        dbMessage.setDirectionTarget(direction.getTarget());
+
+        dbMessage.setConversationId(message.getMessageDetails().getConversationId());
+        dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
+        dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
+        dbMessage.setConnectorMessageId(message.getConnectorMessageId().getConnectorMessageId());
+        dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
+        dbMessage.setGatewayName(message.getMessageDetails().getGatewayName());
+
+        try {
+            LOGGER.trace("#persistMessageIntoDatabase: Saving message [{}] into storage", dbMessage);
+            dbMessage = messageDao.save(dbMessage);
+        } catch (DuplicateKeyException cve) {
+            String error = String.format("Message already persisted! The domibusConnectorMessageId [%s] already exist.",
+                    dbMessage.getConnectorMessageId());
+            LOGGER.error(error);
+            throw new PersistenceException(error, cve);
+        }
+
+        this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
+    }
+
+    @Override
+    @Deprecated
     @Transactional
     public DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageDirection direction) throws PersistenceException {
         if (message.getMessageDetails() == null) {
@@ -243,6 +281,8 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         this.internalMessageInfoPersistenceService.mergeMessageInfo(message, messageByMessage);
         return message;
     }
+
+
 
 
     @Override

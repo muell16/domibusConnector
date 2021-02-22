@@ -2,7 +2,8 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -14,17 +15,15 @@ import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.List;
 
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
-import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 /**
  * This service is responsible for
@@ -34,35 +33,17 @@ import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
  *      evidence message
  */
 @Service
+@RequiredArgsConstructor
 public class MessageConfirmationProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger(MessageConfirmationProcessor.class);
 
-    @Autowired
-    DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
+    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
+    private final DCMessagePersistenceService messagePersistenceService;
 
-    @Autowired
-    SubmitMessageToLinkModuleService submitMessageToLinkModuleService;
-
-    @Autowired
-    DomibusConnectorMessageIdGenerator messageIdGenerator;
-
-    @Autowired
-    CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
-
-    @Autowired
-    DCMessagePersistenceService messagePersistenceService;
-
-    public void processConfirmationMessageForMessage(DomibusConnectorMessage originalMessage, List<DomibusConnectorMessageId> transportId, DomibusConnectorMessageConfirmation confirmation) {
-        if (!DomainModelHelper.isBusinessMessage(originalMessage)) {
-            throw new IllegalArgumentException("message must be a business message!");
-        }
-
-        //TODO: write all transport ids for the evidence into the persistence layer
-        evidencePersistenceService.persistEvidenceMessageToBusinessMessage(originalMessage, transportId.stream().findAny().orElse(null), confirmation);
-
-        this.confirmRejectMessage(confirmation.getEvidenceType(), originalMessage);
-    }
 
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
         if (!DomainModelHelper.isBusinessMessage(message)) {
@@ -74,7 +55,6 @@ public class MessageConfirmationProcessor {
         this.confirmRejectMessage(confirmation.getEvidenceType(), message);
 
     }
-
 
     public void processConfirmationForMessageAndSendBack(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
         if (!DomainModelHelper.isBusinessMessage(message)) {
@@ -89,6 +69,7 @@ public class MessageConfirmationProcessor {
         this.confirmRejectMessage(confirmation.getEvidenceType(), message);
     }
 
+    @Deprecated
     @StoreMessageExceptionIntoDatabase //catches DomibusConnectorMessageException and stores it into db, ex will not be thrown again
     void sendConfirmationBack(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
         DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
@@ -100,7 +81,6 @@ public class MessageConfirmationProcessor {
             CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessageWrapper =
                     confirmationMessageBuilder
                             //send evidence as evidence message into other direction back...
-//                            .revertMessageDirection()
                             .switchMessageDirection()
                             .switchFromToAttributes()
                             .build();
@@ -108,7 +88,7 @@ public class MessageConfirmationProcessor {
             DomibusConnectorMessage evidenceMessage = evidenceMessageWrapper.getEvidenceMessage();
             messagePersistenceService.persistMessageIntoDatabase(evidenceMessage);
 
-            submitMessageToLinkModuleService.submitMessage(evidenceMessage);
+            submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
             LOGGER.info("Successfully submitted evidence-message [{}] to link module", evidenceMessage);
         } catch (Exception e) {
             LOGGER.error("Exception occured while sending evidence back", e);

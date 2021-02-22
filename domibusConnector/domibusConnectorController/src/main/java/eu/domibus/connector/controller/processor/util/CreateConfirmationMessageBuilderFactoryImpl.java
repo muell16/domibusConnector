@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.process.util;
+package eu.domibus.connector.controller.processor.util;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
@@ -14,6 +14,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,40 +24,17 @@ import org.springframework.stereotype.Component;
 import javax.annotation.concurrent.NotThreadSafe;
 
 @Component
+@RequiredArgsConstructor
 public class CreateConfirmationMessageBuilderFactoryImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
 
-    private DomibusConnectorEvidencesToolkit evidencesToolkit;
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private DomibusConnectorMessageIdGenerator messageIdGenerator;
-    private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
-    private DCMessagePersistenceService messagePersistenceService;
+    private final DomibusConnectorEvidencesToolkit evidencesToolkit;
+    private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final DCMessagePersistenceService messagePersistenceService;
 
-    @Autowired
-    public void setMessagePersistenceService(DCMessagePersistenceService persistenceService) {
-        this.messagePersistenceService = persistenceService;
-    }
-
-    @Autowired
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-        this.evidencesToolkit = evidencesToolkit;
-    }
-
-    @Autowired
-    public void setConfigurationPropertyLoaderService(ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
-        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
-    }
-
-    @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
-    }
-
-    @Autowired
-    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator idGenerator) {
-        this.messageIdGenerator = idGenerator;
-    }
 
     public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessageAndConfirmation(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();

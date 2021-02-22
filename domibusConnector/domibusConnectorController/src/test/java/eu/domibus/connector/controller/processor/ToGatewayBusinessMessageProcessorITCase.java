@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
@@ -49,9 +49,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Disabled
-public class BackendToGatewayMessageProcessorITCase {
+public class ToGatewayBusinessMessageProcessorITCase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessorITCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToGatewayBusinessMessageProcessorITCase.class);
 
     @Autowired
     @Qualifier("BackendToGatewayMessageProcessor")

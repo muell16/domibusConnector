@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
 
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class GatewayToBackendMessageProcessorITCase {
+public class ToBackendBusinessMessageProcessorITCase {
 
 
     @Autowired

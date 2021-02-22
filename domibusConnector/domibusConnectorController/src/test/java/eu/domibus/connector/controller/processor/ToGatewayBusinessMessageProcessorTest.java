@@ -1,8 +1,9 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.process.CreateSubmissionRejectionAndReturnItService;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.times;
 
 
 @Disabled
-public class BackendToGatewayMessageProcessorTest {
+public class ToGatewayBusinessMessageProcessorTest {
 
     @Mock
     private DCMessagePersistenceService messagePersistenceService;
@@ -62,7 +63,7 @@ public class BackendToGatewayMessageProcessorTest {
 
 
 
-    BackendToGatewayMessageProcessor backendToGatewayMessageProcessor;
+    ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
 
     private List<DomibusConnectorMessage> toGwDeliveredMessages;
 
@@ -81,17 +82,17 @@ public class BackendToGatewayMessageProcessorTest {
 
         CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
         createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);
-        createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
+//        createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
 
         toGwDeliveredMessages = new ArrayList<>();
         toBackendDeliveredMessages = new ArrayList<>();
-        backendToGatewayMessageProcessor = new BackendToGatewayMessageProcessor();
-        backendToGatewayMessageProcessor.setCreateSubmissionRejectionAndReturnItService(createSubmissionRejectionAndReturnItService);
-        backendToGatewayMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
+//        toGatewayBusinessMessageProcessor = new ToGatewayBusinessMessageProcessor();
+//        toGatewayBusinessMessageProcessor.setCreateSubmissionRejectionAndReturnItService(createSubmissionRejectionAndReturnItService);
+//        toGatewayBusinessMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
 //        backendToGatewayMessageProcessor.setGwSubmissionService(gwSubmissionService);
-        backendToGatewayMessageProcessor.setMessagePersistenceService(messagePersistenceService);
+//        toGatewayBusinessMessageProcessor.setMessagePersistenceService(messagePersistenceService);
 //        backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
-        backendToGatewayMessageProcessor.setSecurityToolkit(securityToolkit);
+//        toGatewayBusinessMessageProcessor.setSecurityToolkit(securityToolkit);
 //        backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
         
         Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgument(0)))
@@ -124,7 +125,7 @@ public class BackendToGatewayMessageProcessorTest {
                 .thenReturn(DomainEntityCreator.createMessageSubmissionRejectionConfirmation());
 
         //test method
-        backendToGatewayMessageProcessor.processMessage(epoMessage);
+        toGatewayBusinessMessageProcessor.processMessage(epoMessage);
 
         //VERIFY
         //container should be built!
@@ -172,7 +173,7 @@ public class BackendToGatewayMessageProcessorTest {
 
         //test method
         try {
-            backendToGatewayMessageProcessor.processMessage(epoMessage);
+            toGatewayBusinessMessageProcessor.processMessage(epoMessage);
         } catch (DomibusConnectorMessageException ex) {
             assertThat(ex.getCause()).isOfAnyClassIn(DomibusConnectorSecurityException.class);
         }
@@ -221,7 +222,7 @@ public class BackendToGatewayMessageProcessorTest {
 
         //test method
         try {
-            backendToGatewayMessageProcessor.processMessage(epoMessage);
+            toGatewayBusinessMessageProcessor.processMessage(epoMessage);
         } catch (DomibusConnectorMessageException ex) {
             assertThat(ex.getCause()).isOfAnyClassIn(DomibusConnectorGatewaySubmissionException.class);
         }

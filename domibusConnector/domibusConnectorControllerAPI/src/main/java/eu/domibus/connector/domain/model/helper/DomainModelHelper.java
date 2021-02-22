@@ -3,8 +3,13 @@ package eu.domibus.connector.domain.model.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import org.springframework.lang.Nullable;
 
 /**
@@ -31,6 +36,25 @@ public class DomainModelHelper {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
     	return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() > 0;
+    }
+
+    /**
+     * Checks if the message is an evidence trigger message
+     *  <ul>
+     *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
+     *      <li>the message must contain exact one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
+     *      <li>the confirmation must have only a confirmation type - the evidence must be null: {@link DomibusConnectorMessageConfirmation#getEvidence()} == null</li>
+     *  </ul>
+     *
+     * @param message - the message to check
+     * @return true if it is a evidence trigger message
+     */
+    public static boolean isEvidenceTriggerMessage(DomibusConnectorMessage message) {
+        if (message == null) {
+            throw new IllegalArgumentException("Message is not allowed to be null!");
+        }
+        return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() == 1
+            && message.getTransportedMessageConfirmations().get(0).getEvidence() == null;
     }
 
     /**
@@ -82,6 +106,35 @@ public class DomainModelHelper {
                 && message.getTransportedMessageConfirmations().size() == 1
                 && message.getTransportedMessageConfirmations().get(0).getEvidence() == null
                 || message.getTransportedMessageConfirmations().get(0).getEvidence().length == 0;
+    }
+
+    /**
+     * This helper method switches the message direction by switching
+     * <ul>
+     *     <li>MessageDirection {@link DomibusConnectorMessageDirection}</li>
+     *     <li>FromParty with ToParty</li>
+     *     <li>OriginalSender with FinalRecipient</li>
+     * </ul>
+     *
+     *
+     * @param message
+     * @return
+     */
+    public static DomibusConnectorMessageDetails switchMessageDirection(DomibusConnectorMessageDetails messageDetails) {
+        DomibusConnectorMessageDetails details = DomibusConnectorMessageDetailsBuilder.create()
+                .copyPropertiesFrom(messageDetails)
+                .build();
+        DomibusConnectorMessageDirection originalDirection = details.getDirection();
+        String finalRecipient = details.getFinalRecipient();
+        String originalSender = details.getOriginalSender();
+        DomibusConnectorParty fromParty = details.getFromParty();
+        DomibusConnectorParty toParty = details.getToParty();
+        details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
+        details.setFinalRecipient(originalSender);
+        details.setOriginalSender(finalRecipient);
+        details.setFromParty(toParty);
+        details.setToParty(fromParty);
+        return details;
     }
 
 

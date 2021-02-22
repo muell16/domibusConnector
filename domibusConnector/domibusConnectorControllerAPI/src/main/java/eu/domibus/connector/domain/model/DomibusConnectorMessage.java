@@ -20,6 +20,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessage implements Serializable {
 
+	private DomibusConnectorMessageLane.MessageLaneId messageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
 	private DomibusConnectorMessageId connectorMessageId;
 	private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
@@ -135,6 +136,14 @@ public class DomibusConnectorMessage implements Serializable {
 
 	public List<DomibusConnectorMessageConfirmation> getRelatedMessageConfirmations() {
 		return relatedMessageConfirmations;
+	}
+
+	public DomibusConnectorMessageLane.MessageLaneId getMessageLaneId() {
+		return messageLaneId;
+	}
+
+	public void setMessageLaneId(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
+		this.messageLaneId = messageLaneId;
 	}
 
 	/**

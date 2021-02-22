@@ -8,20 +8,19 @@ import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class SubmitToConnectorImpl implements SubmitToConnector {
 
-    @Autowired
-    DomibusConnectorGatewayDeliveryService fromGatewayToConnector;
 
-    @Autowired
-    DomibusConnectorBackendSubmissionService fromBackendToConnector;
 
-    @Autowired
-    DCMessagePersistenceService messagePersistenceService;
+    private final DomibusConnectorGatewayDeliveryService fromGatewayToConnector;
+    private final DomibusConnectorBackendSubmissionService fromBackendToConnector;
+    private final DCMessagePersistenceService messagePersistenceService;
 
     @Override
     public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) {

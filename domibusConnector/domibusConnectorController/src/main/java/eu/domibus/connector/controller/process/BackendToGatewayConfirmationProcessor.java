@@ -1,7 +1,10 @@
 package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+
+import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -40,7 +43,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
     private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
     private DCMessagePersistenceService messagePersistenceService;
-    private SubmitMessageToLinkModuleService submitMessageToLinkModuleService;
+    private SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
     private MessageConfirmationProcessor messageConfirmationProcessor;
 
 //    private DomibusConnectorGatewaySubmissionService gwSubmissionService;
@@ -63,8 +66,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Autowired
-    public void setSubmitMessageToLinkModuleService(SubmitMessageToLinkModuleService submitMessageToLinkModuleService) {
-        this.submitMessageToLinkModuleService = submitMessageToLinkModuleService;
+    public void setSubmitMessageToLinkModuleService(SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep) {
+        this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
     }
 
     //    @Autowired
@@ -146,13 +149,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                 .map(DomibusConnectorMessage::getConnectorMessageId)
                 .collect(Collectors.toList());
 
-        messageConfirmationProcessor.processConfirmationMessageForMessage(originalMessage, collect, triggeredEvidenceMessage.getMessageConfirmation());
+//        messageConfirmationProcessor.processConfirmationMessageForMessage(originalMessage, collect, triggeredEvidenceMessage.getMessageConfirmation());
 
         triggeredEvidenceMessage.persistMessage();
-        submitMessageToLinkModuleService.submitMessage(triggeredEvidenceMessage.getEvidenceMessage());
+        submitMessageToLinkModuleQueueStep.submitMessage(triggeredEvidenceMessage.getEvidenceMessage());
 
         backtravelEvidenceMessage.persistMessage();
-        submitMessageToLinkModuleService.submitMessage(backtravelEvidenceMessage.getEvidenceMessage());
+        submitMessageToLinkModuleQueueStep.submitMessage(backtravelEvidenceMessage.getEvidenceMessage());
 
         //sendAsEvidenceMessageToGw(originalMessage, triggerMessage, confirmationMessageBuilder);
 //        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
@@ -194,7 +197,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
         evidenceMessageWrapper.persistMessage();
         //deliver to backend
-        submitMessageToLinkModuleService.submitMessage(evidenceMessageWrapper.getEvidenceMessage());
+        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessageWrapper.getEvidenceMessage());
     }
 
     private void sendAsEvidenceMessageToGw(DomibusConnectorMessage originalMessage, DomibusConnectorMessage triggerMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {

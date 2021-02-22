@@ -123,22 +123,30 @@ public class DomibusConnectorMessageDetailsBuilder {
     }
 
     public DomibusConnectorMessageDetailsBuilder copyPropertiesFrom(DomibusConnectorMessageDetails messageDetails) {
-        this.action = DomibusConnectorActionBuilder.createBuilder()
-                .copyPropertiesFrom(messageDetails.getAction())
-                .build();
-        this.service = DomibusConnectorServiceBuilder.createBuilder()
-                .copyPropertiesFrom(messageDetails.getService())
-                .build();
+        if (this.action != null) {
+            this.action = DomibusConnectorActionBuilder.createBuilder()
+                    .copyPropertiesFrom(messageDetails.getAction())
+                    .build();
+        }
+        if (this.service != null) {
+            this.service = DomibusConnectorServiceBuilder.createBuilder()
+                    .copyPropertiesFrom(messageDetails.getService())
+                    .build();
+        }
         this.conversationId = messageDetails.getConversationId();
         this.ebmsMessageId = messageDetails.getEbmsMessageId();
         this.finalRecipient = messageDetails.getFinalRecipient();
         this.originalSender = messageDetails.getOriginalSender();
-        this.fromParty = DomibusConnectorPartyBuilder.createBuilder()
-                .copyPropertiesFrom(messageDetails.getFromParty())
-                .build();
-        this.toParty = DomibusConnectorPartyBuilder.createBuilder()
-                .copyPropertiesFrom(messageDetails.getToParty())
-                .build();
+        if (this.fromParty != null) {
+            this.fromParty = DomibusConnectorPartyBuilder.createBuilder()
+                    .copyPropertiesFrom(messageDetails.getFromParty())
+                    .build();
+        }
+        if (this.toParty != null) {
+            this.toParty = DomibusConnectorPartyBuilder.createBuilder()
+                    .copyPropertiesFrom(messageDetails.getToParty())
+                    .build();
+        }
         this.refToMessageId = messageDetails.getRefToMessageId();
         this.refToBackendMessageId = messageDetails.getRefToBackendMessageId();
         this.messageDirection = messageDetails.getDirection();

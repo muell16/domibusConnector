@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 

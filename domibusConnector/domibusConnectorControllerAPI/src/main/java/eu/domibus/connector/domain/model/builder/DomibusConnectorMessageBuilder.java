@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  */
 public final class DomibusConnectorMessageBuilder {
 
+    private DomibusConnectorMessageLane.MessageLaneId messageLaneId;
     private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
@@ -129,6 +130,7 @@ public final class DomibusConnectorMessageBuilder {
             throw new IllegalArgumentException("Either messageContent or a messageConfirmation must be set!");
         }
         message.setConnectorMessageId(this.connectorMessageId);
+        message.setMessageLaneId(this.messageLaneId);
 
         message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
@@ -144,6 +146,7 @@ public final class DomibusConnectorMessageBuilder {
                 .copyPropertiesFrom(message.getMessageDetails())
                 .build();
         this.connectorMessageId = message.getConnectorMessageId();
+        this.messageLaneId = message.getMessageLaneId();
         if (message.getMessageContent() != null) {
             this.messageContent = DomibusConnectorMessageContentBuilder.createBuilder()
                     .copyPropertiesFrom(message.getMessageContent())
@@ -176,6 +179,12 @@ public final class DomibusConnectorMessageBuilder {
         return this;
     }
 
+    public DomibusConnectorMessageBuilder setMessageLaneId(DomibusConnectorMessageLane.MessageLaneId laneId) {
+        this.messageLaneId = laneId;
+        return this;
+    }
+
+
     public DomibusConnectorMessageBuilder addRelatedConfirmations(List<DomibusConnectorMessageConfirmation> collect) {
         this.relatedMessageConfirmations = collect;
         return this;
@@ -185,6 +194,8 @@ public final class DomibusConnectorMessageBuilder {
         this.relatedMessageConfirmations.add(c);
         return this;
     }
+
+
 
 
 }

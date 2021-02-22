@@ -2,9 +2,9 @@ package eu.domibus.connector.controller.process;
 
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;

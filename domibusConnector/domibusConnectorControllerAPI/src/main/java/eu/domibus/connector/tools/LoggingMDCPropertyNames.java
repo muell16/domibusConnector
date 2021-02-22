@@ -15,4 +15,6 @@ public class LoggingMDCPropertyNames {
     public static final String MDC_LINK_PARTNER_NAME = "linkpartnername";
     public static final String MDC_REMOTE_MSG_ID = "remote_message_id";
 
+    public static final String MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME = "backendMessageId";
+    public static final String MDC_EBMS_MESSAGE_ID_PROPERTY_NAME = "ebmsMessageId";
 }

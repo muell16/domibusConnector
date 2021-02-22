@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -66,9 +67,13 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     @Column(name = "PAYLOAD_SIZE")
     private long size = -1;
-    
-    @ManyToOne
-    @JoinColumn(name="MESSAGE_ID")
+
+    @Column(name = "CONNECTOR_MESSAGE_ID")
+    private DomibusConnectorMessageId messageId;
+
+//    @ManyToOne
+//    @JoinColumn(name="MESSAGE_ID")
+    @Transient
     private PDomibusConnectorMessage message;
 
     @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
@@ -197,6 +202,14 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setDeleted(Date deleted) {
         this.deleted = deleted;
+    }
+
+    public DomibusConnectorMessageId getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(DomibusConnectorMessageId messageId) {
+        this.messageId = messageId;
     }
 
     @Override

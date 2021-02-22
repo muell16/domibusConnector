@@ -161,4 +161,6 @@ public interface DCMessagePersistenceService {
     default void persistMessageIntoDatabase(DomibusConnectorMessage message) {
         persistMessageIntoDatabase(message, message.getMessageDetails().getDirection());
     }
+
+    void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message);
 }

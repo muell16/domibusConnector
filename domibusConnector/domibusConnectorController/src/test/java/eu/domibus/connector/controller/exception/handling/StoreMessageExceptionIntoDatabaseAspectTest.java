@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.exception.handling;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.test.util.ConnectorControllerTestDomainCreator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;

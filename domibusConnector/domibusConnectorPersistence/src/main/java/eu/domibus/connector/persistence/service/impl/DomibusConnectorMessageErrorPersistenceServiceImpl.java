@@ -18,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 @Service
 public class DomibusConnectorMessageErrorPersistenceServiceImpl implements DomibusConnectorMessageErrorPersistenceService {
 
@@ -37,7 +39,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = REQUIRES_NEW) //run in new transaction...so error gets recorded
     public void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError) {
         PDomibusConnectorMessageError dbError = new PDomibusConnectorMessageError();
 
@@ -50,6 +52,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
 
             this.messageErrorDao.save(dbError);
         }
+
     }
 
 //    @Override

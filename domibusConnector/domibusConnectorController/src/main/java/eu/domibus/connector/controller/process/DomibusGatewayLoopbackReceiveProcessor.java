@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.process;
 
+import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.spring.ConnectorControllerProperties;
 import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -7,7 +8,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Component;
 
 import static eu.domibus.connector.controller.spring.ConnectorControllerProperties.DEFAULT_MESSAGE_LANE_NAME;

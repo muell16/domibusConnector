@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.controller.process.ToBackendBusinessMessageProcessor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
  * If the connector receives a message with the configured service and action
  * the message will not be delivered to the gateway
  *
- * see {@link eu.domibus.connector.controller.process.GatewayToBackendMessageProcessor}
+ * see {@link ToBackendBusinessMessageProcessor}
  */
 @ConfigurationProperties(prefix="connector.test")
 @Component

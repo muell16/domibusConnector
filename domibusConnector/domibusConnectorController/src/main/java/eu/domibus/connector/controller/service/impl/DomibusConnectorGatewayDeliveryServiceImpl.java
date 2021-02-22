@@ -3,7 +3,6 @@ package eu.domibus.connector.controller.service.impl;
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
-import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

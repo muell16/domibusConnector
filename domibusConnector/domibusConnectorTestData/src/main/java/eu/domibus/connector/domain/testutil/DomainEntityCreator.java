@@ -138,6 +138,7 @@ public class DomainEntityCreator {
     public static DomibusConnectorMessage createSimpleTestMessage() {
         
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        messageDetails.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId("ebms1");
         

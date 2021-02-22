@@ -1,7 +1,8 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.process.BackendToGatewayConfirmationProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.test.util.MockedCreateConfirmationMessageBuilderFactoryImplProvider;

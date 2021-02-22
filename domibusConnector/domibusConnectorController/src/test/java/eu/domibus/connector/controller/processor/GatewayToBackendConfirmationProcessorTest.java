@@ -1,5 +1,6 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor;
 
+import eu.domibus.connector.controller.process.GatewayToBackendConfirmationProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;

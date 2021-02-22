@@ -1,7 +1,6 @@
 package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
-import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

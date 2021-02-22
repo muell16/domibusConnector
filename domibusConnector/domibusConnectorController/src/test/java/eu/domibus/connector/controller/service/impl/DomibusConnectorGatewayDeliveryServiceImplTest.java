@@ -3,7 +3,6 @@ package eu.domibus.connector.controller.service.impl;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
