@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @ConditionalOnBean(ContentDeletionTimeoutConfigurationProperties.class)
@@ -54,11 +55,15 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
             Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
 
 
-            List<LargeFileReference> referencesToDelete = allAvailableReferences
+            List<LargeFileReference> referencesToDelete;
+            try (Stream<LargeFileReference> stream = allAvailableReferences
                     .entrySet()
                     .stream()
                     .flatMap(e -> getDeleteableReferences(e.getKey(), e.getValue()).stream())
-                    .collect(Collectors.toList());
+                    .map(Function.identity())
+            ) {
+                referencesToDelete = stream.collect(Collectors.toList());
+            }
 
             referencesToDelete.forEach(ref -> {
                 LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
@@ -87,11 +92,11 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
         boolean failed = false;
         if (direction == DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY) {
             transportFinishedDate = msg.getMessageDetails().getDeliveredToGateway();
-        } else if (direction == DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND){
+        } else if (direction == DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND) {
             transportFinishedDate = msg.getMessageDetails().getDeliveredToBackend();
         } else {
             //should never end up here!
-            assert(true);
+            assert (true);
         }
 
         if (msg.getMessageDetails().getFailed() != null) {
