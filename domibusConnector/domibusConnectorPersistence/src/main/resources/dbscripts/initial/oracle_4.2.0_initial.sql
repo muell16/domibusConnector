@@ -464,7 +464,7 @@ create table DC_TRANSPORT_STEP
 	REMOTE_MESSAGE_ID VARCHAR2(255),
 	CREATED TIMESTAMP,
 	constraint PK_DC_TRANSPORT_STEP
-		primary key (ID),
+		primary key (ID)
 );
 
 create table DC_TRANSPORT_STEP_STATUS
