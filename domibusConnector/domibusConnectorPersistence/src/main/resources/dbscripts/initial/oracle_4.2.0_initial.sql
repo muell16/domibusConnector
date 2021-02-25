@@ -465,8 +465,6 @@ create table DC_TRANSPORT_STEP
 	CREATED TIMESTAMP,
 	constraint PK_DC_TRANSPORT_STEP
 		primary key (ID),
-	constraint FK_MESSAGESTEP_MESSAGE
-		foreign key (MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID)
 );
 
 create table DC_TRANSPORT_STEP_STATUS
