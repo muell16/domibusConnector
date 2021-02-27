@@ -38,10 +38,17 @@ public class MessageConfirmationStep {
     private static final Logger LOGGER = LogManager.getLogger(MessageConfirmationStep.class);
 
     private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
-    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
-    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
     private final DCMessagePersistenceService messagePersistenceService;
+
+
+    public void processTransportedConfirmations(DomibusConnectorMessage message) {
+        if (!DomainModelHelper.isBusinessMessage(message)) {
+            throw new IllegalArgumentException("message must be a business message!");
+        }
+        for (DomibusConnectorMessageConfirmation c : message.getTransportedMessageConfirmations()) {
+            processConfirmationForMessage(message, c);
+        }
+    }
 
 
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
@@ -49,55 +56,13 @@ public class MessageConfirmationStep {
             throw new IllegalArgumentException("message must be a business message!");
         }
 
+        LOGGER.debug("Adding confirmation of type [{}] to business message [{}]",  confirmation.getEvidenceType(), message.getConnectorMessageId());
         evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
+        message.getRelatedMessageConfirmations().add(confirmation);
 
         this.confirmRejectMessage(confirmation.getEvidenceType(), message);
 
     }
-
-//    public void processConfirmationForMessageAndSendBack(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
-//        if (!DomainModelHelper.isBusinessMessage(message)) {
-//            throw new IllegalArgumentException("message must be a business message!");
-//        }
-//
-//        evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
-//
-//        message.addTransportedMessageConfirmation(confirmation);
-//        this.sendConfirmationBack(message, confirmation);
-//
-//        this.confirmRejectMessage(confirmation.getEvidenceType(), message);
-//    }
-//
-//    @Deprecated
-//    @StoreMessageExceptionIntoDatabase //catches DomibusConnectorMessageException and stores it into db, ex will not be thrown again
-//    void sendConfirmationBack(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
-//        DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
-//        try (CloseableThreadContext.Instance ctx = CloseableThreadContext.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, domibusConnectorMessageId.getConnectorMessageId());
-//                CloseableThreadContext.Instance ctx2 = CloseableThreadContext.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, "send_confirmation_back");
-//        ) {
-//            CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder =
-//                    createConfirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessageAndConfirmation(originalMessage, confirmation);
-//            CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessageWrapper =
-//                    confirmationMessageBuilder
-//                            //send evidence as evidence message into other direction back...
-//                            .switchMessageDirection()
-//                            .switchFromToAttributes()
-//                            .build();
-//
-//            DomibusConnectorMessage evidenceMessage = evidenceMessageWrapper.getEvidenceMessage();
-//            messagePersistenceService.persistMessageIntoDatabase(evidenceMessage);
-//
-//            submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
-//            LOGGER.info("Successfully submitted evidence-message [{}] to link module", evidenceMessage);
-//        } catch (Exception e) {
-//            LOGGER.error("Exception occured while sending evidence back", e);
-//            DomibusConnectorMessageExceptionBuilder.createBuilder()
-//                    .setMessage(originalMessage)
-//                    .setCause(e)
-//                    .buildAndThrow();
-//        }
-//    }
-
 
     /**
      * Sets the correct message state within the database according to the following rules:

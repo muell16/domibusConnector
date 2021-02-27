@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.spring;
 
 import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
 @Validated
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
 @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") //suppress findbugs warning
+@Data
 public class EvidencesTimeoutConfigurationProperties {
 
     public static final String BEAN_NAME = "evidencesTimeoutConfigurationProperties";
@@ -99,67 +101,4 @@ public class EvidencesTimeoutConfigurationProperties {
     private DomibusConnectorDuration retrievalWarnTimeout;
 
 
-    public boolean isTimeoutActive() {
-        return timeoutActive;
-    }
-
-    public void setTimeoutActive(boolean timeoutActive) {
-        this.timeoutActive = timeoutActive;
-    }
-
-    public DomibusConnectorDuration getRelayREMMDTimeout() {
-        return relayREMMDTimeout;
-    }
-
-    public void setRelayREMMDTimeout(DomibusConnectorDuration relayREMMDTimeout) {
-        this.relayREMMDTimeout = relayREMMDTimeout;
-    }
-
-    public DomibusConnectorDuration getDeliveryTimeout() {
-        return deliveryTimeout;
-    }
-
-    public void setDeliveryTimeout(DomibusConnectorDuration deliveryTimeout) {
-        this.deliveryTimeout = deliveryTimeout;
-    }
-
-    public DomibusConnectorDuration getRetrievalTimeout() {
-        return retrievalTimeout;
-    }
-
-    public void setRetrievalTimeout(DomibusConnectorDuration retrievalTimeout) {
-        this.retrievalTimeout = retrievalTimeout;
-    }
-
-    public DomibusConnectorDuration getCheckTimeout() {
-        return checkTimeout;
-    }
-
-    public void setCheckTimeout(DomibusConnectorDuration checkTimeout) {
-        this.checkTimeout = checkTimeout;
-    }
-
-    public DomibusConnectorDuration getRelayREMMDWarnTimeout() {
-        return relayREMMDWarnTimeout;
-    }
-
-    public void setRelayREMMDWarnTimeout(DomibusConnectorDuration relayREMMDWarnTimeout) {
-        this.relayREMMDWarnTimeout = relayREMMDWarnTimeout;
-    }
-
-    public DomibusConnectorDuration getDeliveryWarnTimeout() {
-        return deliveryWarnTimeout;
-    }
-
-    public void setDeliveryWarnTimeout(DomibusConnectorDuration deliveryWarnTimeout) {
-        this.deliveryWarnTimeout = deliveryWarnTimeout;
-    }
-
-    public DomibusConnectorDuration getRetrievalWarnTimeout() {
-        return retrievalWarnTimeout;
-    }
-
-    public void setRetrievalWarnTimeout(DomibusConnectorDuration retrievalWarnTimeout) {
-        this.retrievalWarnTimeout = retrievalWarnTimeout;
-    }
 }

@@ -38,7 +38,7 @@ public enum DomibusConnectorMessageDirection {
     }
 
     public static DomibusConnectorMessageDirection revert(DomibusConnectorMessageDirection direction) {
-        return fromMessageTargetSource(direction.getSource(), direction.getTarget());
+        return fromMessageTargetSource(direction.getTarget(), direction.getSource());
     }
 
     public MessageTargetSource getSource() {

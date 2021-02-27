@@ -13,6 +13,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
+import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
@@ -23,6 +24,7 @@ public class SubmitToConnectorImpl implements SubmitToConnector {
     private final ToConnectorQueue toConnectorQueue;
 
     @Override
+    @Transactional
     public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) {
         if (linkType == LinkType.GATEWAY) {
             message.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);

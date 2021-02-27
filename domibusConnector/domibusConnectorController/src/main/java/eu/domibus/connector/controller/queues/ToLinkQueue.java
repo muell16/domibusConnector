@@ -8,6 +8,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.jms.Queue;
+import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.*;
 

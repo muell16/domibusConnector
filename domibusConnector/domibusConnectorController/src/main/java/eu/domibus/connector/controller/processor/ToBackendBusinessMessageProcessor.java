@@ -60,18 +60,19 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
 
-			//resolve ecodex-Container
-			resolveECodexContainerStep.executeStep(incomingMessage);
-
 			//persistMessage
 			createNewBusinessMessageInDBStep.executeStep(incomingMessage);
 
-			//process every transported confirmation
-			incomingMessage.getTransportedMessageConfirmations().stream()
-					.forEach(c -> messageConfirmationStep.processConfirmationForMessage(incomingMessage, c));
+			//process all with this business message transported confirmations
+			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
+			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence.getMessageConfirmation());
 
+			//resolve ecodex-Container
+			resolveECodexContainerStep.executeStep(incomingMessage);
+
+			//lookup correct backend name
 			lookupBackendNameStep.executeStep(incomingMessage);
 
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
@@ -80,12 +81,12 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed incomingMessage from GW to backend.");
 
 		} catch (DomibusConnectorSecurityException e) {
-			LOGGER.warn("Security Exception occured! Responding with NonDelivery ConfirmationMessage", e);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper nonDeliveryEvidence = createNonDeliveryEvidence(incomingMessage);
+			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
+//			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createNonDeliveryEvidence(incomingMessage);
+			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createRelayREMMDEvidence(incomingMessage, false);
+			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence.getMessageConfirmation());
 
-			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, nonDeliveryEvidence.getEvidenceMessage());
-
-
+			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, negativeEvidence.getEvidenceMessage());
 		}
 	}
 

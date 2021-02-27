@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class ValidateMessageConfirmationStep implements MessageProcessStep {
 
     private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
+    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "ValidateMessageConfirmationStep")
@@ -36,15 +37,25 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
     }
 
     private void validateActionService(DomibusConnectorMessage domibusConnectorMessage) {
+        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
+                configurationPropertyLoaderService.loadConfiguration(DomibusConnectorMessageLane.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+        boolean enforcing = evidenceActionServiceConfigurationProperties.isEnforceServiceActionNames();
+
         DomibusConnectorMessageConfirmation confirmation = domibusConnectorMessage.getTransportedMessageConfirmations().get(0);
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
         DomibusConnectorAction requiredEvidenceAction = createConfirmationMessageBuilderFactory.createEvidenceAction(evidenceType);
 
         DomibusConnectorAction action = domibusConnectorMessage.getMessageDetails().getAction();
         if (!requiredEvidenceAction.equals(action)) {
-            String error = String.format("The AS4 action [%s] is illegal for this type [%s] of evidence", action, evidenceType);
-            throwError(domibusConnectorMessage, error);
+            String error = String.format("Enforcing the AS4 action is [%s] and the action [%s] is illegal for this type [%s] of evidence", enforcing, action, evidenceType);
+            if (enforcing) {
+                throwError(domibusConnectorMessage, error);
+            } else {
+                log.warn(error);
+            }
         }
+
+
 
     }
 

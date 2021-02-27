@@ -28,6 +28,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -43,7 +44,7 @@ import java.util.concurrent.BlockingQueue;
 },
     excludeName = {"org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration"}
 )
-@EnableAspectJAutoProxy
+@EnableTransactionManagement
 @Import(MDCSetterAspectConfiguration.class)
 @Profile("ITCaseTestContext")
 public class ITCaseTestContext {

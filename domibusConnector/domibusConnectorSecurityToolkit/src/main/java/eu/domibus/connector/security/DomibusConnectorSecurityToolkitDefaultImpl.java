@@ -29,14 +29,12 @@ public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnec
     }
 
     @Override
-    @Transactional
     public DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
         message = securityContainer.createContainer(message);
     	return message;
     }
 
     @Override
-    @Transactional
     public DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
         securityContainer.recieveContainerContents(message);
         return message;

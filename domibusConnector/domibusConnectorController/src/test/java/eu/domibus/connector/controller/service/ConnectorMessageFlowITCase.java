@@ -34,6 +34,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -680,9 +681,9 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_CertificateFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "e25";
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String MSG_FOLDER = "msg3";
+        final String EBMS_ID = "e25";
+        final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        final String MSG_FOLDER = "msg3";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
@@ -1267,7 +1268,8 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-    private void submitFromBackendToController(DomibusConnectorMessage message) {
+    @Transactional
+    public void submitFromBackendToController(DomibusConnectorMessage message) {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
@@ -1279,7 +1281,8 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-    private void submitFromGatewayToController(DomibusConnectorMessage message) {
+    @Transactional
+    public void submitFromGatewayToController(DomibusConnectorMessage message) {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }

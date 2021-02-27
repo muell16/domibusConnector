@@ -14,6 +14,7 @@ import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 
@@ -39,6 +40,13 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
 
         DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(message.getMessageDetails().getDirection());
         DomibusConnectorMessage businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(message, revertedDirection);
+
+        if (StringUtils.isEmpty(message.getMessageDetails().getRefToBackendMessageId())) {
+            message.getMessageDetails().setRefToBackendMessageId(businessMsg.getMessageDetails().getBackendMessageId());
+        }
+        if (StringUtils.isEmpty(message.getMessageDetails().getRefToMessageId())) {
+            message.getMessageDetails().setRefToMessageId(businessMsg.getMessageDetails().getEbmsMessageId());
+        }
 
         validateMessageConfirmationStep.executeStep(message);
 

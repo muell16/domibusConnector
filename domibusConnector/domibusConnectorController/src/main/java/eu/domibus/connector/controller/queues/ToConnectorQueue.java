@@ -7,6 +7,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.jms.Queue;
+import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_ERROR_QUEUE_BEAN;
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
@@ -27,11 +28,13 @@ public class ToConnectorQueue implements PutOnQueue {
     }
 
     @Override
+    @Transactional
     public void putOnQueue(DomibusConnectorMessage message) {
         jmsTemplate.convertAndSend(destination, message);
     }
 
     @Override
+    @Transactional
     public void putOnErrorQueue(DomibusConnectorMessage message) {
         jmsTemplate.convertAndSend(errorDestination, message);
     }

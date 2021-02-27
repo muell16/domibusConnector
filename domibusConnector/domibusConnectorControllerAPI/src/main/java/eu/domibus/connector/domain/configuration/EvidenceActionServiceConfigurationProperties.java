@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.configuration;
 
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -15,7 +16,10 @@ import javax.validation.constraints.NotBlank;
  * MessageLane specific properties are taken into account
  */
 @ConfigurationProperties(prefix = "connector.confirmation-messages")
+@Data
 public class EvidenceActionServiceConfigurationProperties {
+
+    private boolean enforceServiceActionNames = false;
 
     @NestedConfigurationProperty
     private EvidenceServiceAction relayREEMDAcceptance = new EvidenceServiceAction(new AS4Action("RelayREMMDAcceptanceRejection"), null);
@@ -35,78 +39,6 @@ public class EvidenceActionServiceConfigurationProperties {
     private EvidenceServiceAction submissionAcceptance = new EvidenceServiceAction(new AS4Action("SubmissionAcceptanceRejection"), null);
     @NestedConfigurationProperty
     private EvidenceServiceAction submissionRejection = new EvidenceServiceAction(new AS4Action("SubmissionAcceptanceRejection"), null);
-
-    public EvidenceServiceAction getSubmissionAcceptance() {
-        return submissionAcceptance;
-    }
-
-    public void setSubmissionAcceptance(EvidenceServiceAction submissionAcceptance) {
-        this.submissionAcceptance = submissionAcceptance;
-    }
-
-    public EvidenceServiceAction getSubmissionRejection() {
-        return submissionRejection;
-    }
-
-    public void setSubmissionRejection(EvidenceServiceAction submissionRejection) {
-        this.submissionRejection = submissionRejection;
-    }
-
-    public EvidenceServiceAction getRelayREEMDAcceptance() {
-        return relayREEMDAcceptance;
-    }
-
-    public void setRelayREEMDAcceptance(EvidenceServiceAction relayREEMDAcceptance) {
-        this.relayREEMDAcceptance = relayREEMDAcceptance;
-    }
-
-    public EvidenceServiceAction getRelayREEMDRejection() {
-        return relayREEMDRejection;
-    }
-
-    public void setRelayREEMDRejection(EvidenceServiceAction relayREEMDRejection) {
-        this.relayREEMDRejection = relayREEMDRejection;
-    }
-
-    public EvidenceServiceAction getRelayREMMDFailure() {
-        return relayREMMDFailure;
-    }
-
-    public void setRelayREMMDFailure(EvidenceServiceAction relayREMMDFailure) {
-        this.relayREMMDFailure = relayREMMDFailure;
-    }
-
-    public EvidenceServiceAction getDelivery() {
-        return delivery;
-    }
-
-    public void setDelivery(EvidenceServiceAction delivery) {
-        this.delivery = delivery;
-    }
-
-    public EvidenceServiceAction getNonDelivery() {
-        return nonDelivery;
-    }
-
-    public void setNonDelivery(EvidenceServiceAction nonDelivery) {
-        this.nonDelivery = nonDelivery;
-    }
-
-    public EvidenceServiceAction getNonRetrieval() {
-        return nonRetrieval;
-    }
-
-    public void setNonRetrieval(EvidenceServiceAction nonRetrieval) {
-        this.nonRetrieval = nonRetrieval;
-    }
-
-    public EvidenceServiceAction getRetrieval() {
-        return retrieval;
-    }
-
-    public void setRetrieval(EvidenceServiceAction retrieval) {
-        this.retrieval = retrieval;
-    }
 
     public static class EvidenceServiceAction {
         @Valid
