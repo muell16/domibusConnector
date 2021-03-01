@@ -134,7 +134,7 @@ public final class DomibusConnectorMessageBuilder {
 
         message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
-        message.getMessageErrors().addAll(this.messageErrors);
+        message.getMessageProcessErrors().addAll(this.messageErrors);
         message.getRelatedMessageConfirmations().addAll(this.relatedMessageConfirmations);
 
         this.connectorMessageId = null;

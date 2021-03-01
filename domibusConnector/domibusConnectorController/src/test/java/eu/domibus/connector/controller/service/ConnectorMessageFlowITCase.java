@@ -691,7 +691,10 @@ public class ConnectorMessageFlowITCase {
             LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
             //wait for evidence messages delivered to gw
-            List<DomibusConnectorMessage> toGwDeliveredMessages = Stream.of(this.toGwDeliveredMessages.take(), this.toGwDeliveredMessages.take()).collect(Collectors.toList());
+            DomibusConnectorMessage gwmsg1 = this.toGwDeliveredMessages.poll(TEST_TIMEOUT.getSeconds() / 3, TimeUnit.SECONDS);
+            DomibusConnectorMessage gwmsg2 = this.toGwDeliveredMessages.poll(TEST_TIMEOUT.getSeconds() / 3, TimeUnit.SECONDS);
+
+            List<DomibusConnectorMessage> toGwDeliveredMessages = Stream.of(gwmsg1, gwmsg2).collect(Collectors.toList());
 
             assertThat(toGwDeliveredMessages)
                     .extracting(m -> m.getTransportedMessageConfirmations().get(0).getEvidenceType())
@@ -730,6 +733,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled ("not decided yet if user interaction is needed!")
     public void testReceiveMessageFromGw_backendDeliveryFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         String EBMS_ID = "e24";
@@ -844,7 +848,7 @@ public class ConnectorMessageFlowITCase {
 
 
     /**
-     * Send message from Backend to GW
+     * Send message from Backend to GW with no BusinessContent (only business XML is provided!)
      *
      *   -) Backend must have received SUBMISSION_ACCEPTANCE
      *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml

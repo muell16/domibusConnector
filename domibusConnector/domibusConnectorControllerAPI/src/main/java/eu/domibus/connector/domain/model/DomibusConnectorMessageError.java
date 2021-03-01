@@ -1,7 +1,13 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -11,38 +17,21 @@ import org.springframework.core.style.ToStringCreator;
  * @author riederb
  * @version 1.0
  */
-public class DomibusConnectorMessageError implements Serializable {
+@Data
+@RequiredArgsConstructor
+public class DomibusConnectorMessageError {
 
-	private String text;
-	private String details;
-	private String source;
+	@NotNull
+	private final String text;
+	@NotNull
+	private final String details;
+	@NotNull
+	private final String source;
+	@NotNull
+	private final String step;
+	@NotNull
+	private final String processor;
 
-	public DomibusConnectorMessageError() {}
-
-	/**
-	 * 
-	 * @param text text
-	 * @param details details
-	 * @param source  source The source of the error, usually the class name where the error occurred as string
-	 */
-	public DomibusConnectorMessageError(final String text, final String details, final String source){
-	   this.text = text;
-	   this.details = details;
-	   this.source = source;
-	}
-
-	public String getText(){
-		return this.text;
-	}
-
-	public String getDetails(){
-		return this.details;
-	}
-
-	public String getSource(){
-		return this.source;
-	}
-    
     @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);

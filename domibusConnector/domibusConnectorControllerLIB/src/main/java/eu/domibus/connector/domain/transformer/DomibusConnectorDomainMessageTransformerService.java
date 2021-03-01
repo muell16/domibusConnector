@@ -108,8 +108,8 @@ public class DomibusConnectorDomainMessageTransformerService {
                     .add(transformMessageAttachmentDomainToTransition(msgAttach));
         }
         //map message errors
-        LOGGER.trace("#transformDomainToTransition: transform messageErrors [{}] to transition", domainMessage.getMessageErrors());
-        for (DomibusConnectorMessageError msgError : domainMessage.getMessageErrors()) {
+        LOGGER.trace("#transformDomainToTransition: transform messageErrors [{}] to transition", domainMessage.getMessageProcessErrors());
+        for (DomibusConnectorMessageError msgError : domainMessage.getMessageProcessErrors()) {
             TOMessageType.getMessageErrors()
                     .add(transformMessageErrorDomainToTransition(msgError));
         }

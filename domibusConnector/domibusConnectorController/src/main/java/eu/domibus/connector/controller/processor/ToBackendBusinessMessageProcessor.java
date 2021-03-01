@@ -66,8 +66,13 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			//process all with this business message transported confirmations
 			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
+			//Create relayREMMD
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
+			//process created relayREMMD (save it to db and attach it to transported message)
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence.getMessageConfirmation());
+
+			//send confirmation msg back
+			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, relayREMMDEvidence.getEvidenceMessage());
 
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
@@ -76,34 +81,34 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			lookupBackendNameStep.executeStep(incomingMessage);
 
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
-			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, relayREMMDEvidence.getEvidenceMessage());
+
 
 			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed incomingMessage from GW to backend.");
 
 		} catch (DomibusConnectorSecurityException e) {
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
-//			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createNonDeliveryEvidence(incomingMessage);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createRelayREMMDEvidence(incomingMessage, false);
+			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createNonDeliveryEvidence(incomingMessage);
+//			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createRelayREMMDEvidence(incomingMessage, false);
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence.getMessageConfirmation());
 
 			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, negativeEvidence.getEvidenceMessage());
 		}
 	}
 
-	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createDeliveryEvidence(DomibusConnectorMessage originalMessage)
-			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-
-		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-				.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
-				.switchFromToAttributes()
-				.withDirection(MessageTargetSource.GATEWAY)
-				.build();
-
-		messageConfirmationStep.processConfirmationForMessage(originalMessage, wrappedDeliveryEvidenceMsg.getMessageConfirmation());
-
-		return wrappedDeliveryEvidenceMsg;
-
-	}
+//	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createDeliveryEvidence(DomibusConnectorMessage originalMessage)
+//			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
+//
+//		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
+//				.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
+//				.switchFromToAttributes()
+//				.withDirection(MessageTargetSource.GATEWAY)
+//				.build();
+//
+//		messageConfirmationStep.processConfirmationForMessage(originalMessage, wrappedDeliveryEvidenceMsg.getMessageConfirmation());
+//
+//		return wrappedDeliveryEvidenceMsg;
+//
+//	}
 	
 	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createNonDeliveryEvidence(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {

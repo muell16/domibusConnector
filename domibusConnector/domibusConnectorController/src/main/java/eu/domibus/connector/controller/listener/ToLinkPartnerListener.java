@@ -5,6 +5,8 @@ import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkExc
 import eu.domibus.connector.controller.queues.ToLinkQueue;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,12 @@ public class ToLinkPartnerListener {
             submitToLink.submitToLink(message);
         } catch (DomibusConnectorSubmitToLinkException exc) {
             log.error("Cannot submit to link, putting message on error queue", exc);
+            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
+                    .setText("Cannot submit to link, putting message on error queue")
+                    .setDetails(exc)
+                    .setSource(ToLinkPartnerListener.class)
+                    .build();
+            message.getMessageProcessErrors().add(build);
             toLinkQueue.putOnErrorQueue(message);
         }
     }

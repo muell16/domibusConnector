@@ -102,8 +102,8 @@ public class DomibusSecurityContainer {
                     : messageContent.getDocument().getDocumentName();            
             dssDocument = createLargeFileBasedDssDocument(document.getDocument(), pdfName, MimeType.PDF);
         
-        // message action does not require a document, make xml to main document
-        } else if (!message.getMessageDetails().getAction().isDocumentRequired() && message.getMessageContent().getXmlContent() != null) {
+        // no business document - make xml to main document
+        } else if (message.getMessageContent().getXmlContent() != null) {
             byte[] content = message.getMessageContent().getXmlContent();
             dssDocument = new InMemoryDocument(content, MAIN_DOCUMENT_NAME + ".xml", MimeType.XML);
         } else {            

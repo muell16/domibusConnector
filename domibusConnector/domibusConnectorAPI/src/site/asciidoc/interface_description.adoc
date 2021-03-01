@@ -50,8 +50,7 @@ link:https://ws.apache.org/wss4j/attachments.html
 TODO: add visualization of xsd and add some description....
 Describe Message Type
 
-The connector offers on both sides almost the same interface. This interface is very powerful,
-with the drawback, that
+The connector offers on both sides almost the same interface.
 
 == Flows
 
@@ -67,9 +66,10 @@ To send/submit a business message the following fields have to be filled:
 
 | messageContent/xmlContent | required | Business XML
 
-| messageContent/document/document | required | The Business Document, usually a human readable representation of the BusinessXML
+| messageContent/document/document | should be provided | The Business Document, usually a human readable representation of the BusinessXML
 It should be a PDF-A document, to always make it possible for a e-Codex receiver to have at least one document which
-can be read by a human.
+can be read by a human. But this depends on the UseCase. For the e-Codex container every Format which is supported by the DSS-Tools
+is possible (PADES, XADES, ASIC-S).
 
 | messageContent/document/detachedSignature | optional | If the document is not signed inline, then the detached signature takes
 place here. If the document as an example origins from an asic-s container, the detached signature should be put here.
@@ -137,7 +137,9 @@ The connector will try to look it up within the configuration.
 For the party this means every empty string is ignored by looking up the party within the connector configuration.
 If only ONE matching party is found all other attributes are filled out by the found party. If more than one party
 was found an error will occur!
-For the sending application this means it is usually sufficient to only use the party name like (AT, DE, ...)
+For the sending application this means it is usually sufficient to only use the party name like (AT, DE, ...) because
+usually in e-Codex the PartyId matches the 2-letter country code. Note that, for some use-cases countries this might
+not be true.
 
 
 ==== Signed Document
@@ -230,3 +232,10 @@ set with the backendMessageId
 
 This means if the backend always returns a backendMessageId for a received message, the EBMS ID will be
 completly transparent for the backend. The backendMessageId is mapped by the connector to the EBMS ID.
+
+==== Ordering of the confirmation messages
+
+* Ordering of the confirmation messages depends on the used transporting System. The connector itself,
+will always send/provide the confirmation messages in the correct order. Also the connector relies on
+the ordering of the confirmation messages because the confirmation messages are chained together
+and as an example a RELAY_REMMD_ACCEPTANCE can only be created if there is already a SUBMISSION_ACCEPTANCE.

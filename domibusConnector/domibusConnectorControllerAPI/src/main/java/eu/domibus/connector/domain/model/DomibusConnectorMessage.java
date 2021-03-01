@@ -24,12 +24,13 @@ public class DomibusConnectorMessage implements Serializable {
 	private DomibusConnectorMessageId connectorMessageId;
 	private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
-	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
+	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	//holds all message confirmations which are transported with this message
-	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
+	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<>();
 	//holds all message confirmations which are related to this business message
-	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
-	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
+	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
+	//holds all errors which occured during message processing...
+	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
 
 	/**
@@ -186,8 +187,8 @@ public class DomibusConnectorMessage implements Serializable {
 	   	return this.transportedMessageConfirmations.add(confirmation);
 	}
 
-	public List<DomibusConnectorMessageError> getMessageErrors(){
-		return this.messageErrors;
+	public List<DomibusConnectorMessageError> getMessageProcessErrors(){
+		return this.messageProcessErrors;
 	}
 	/**
 	 * Method to add a new {@link DomibusConnectorMessageError} to the collection.
@@ -198,7 +199,7 @@ public class DomibusConnectorMessage implements Serializable {
 	 * @param error    error
 	 */
 	public void addError(final DomibusConnectorMessageError error){
-	   	this.messageErrors.add(error);
+	   	this.messageProcessErrors.add(error);
 	}
 
 	@Deprecated

@@ -3,6 +3,8 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.stream.Stream;
@@ -12,9 +14,11 @@ import java.util.stream.Stream;
  */
 public final class DomibusConnectorMessageErrorBuilder {
 
-    private String text;
-    private String details;
-    private String source;
+    private String text = "";
+    private String details = "";
+    private String source = "";
+    private String step = "";
+    private String processor = "";
 
     private DomibusConnectorMessageErrorBuilder() {
     }
@@ -27,7 +31,7 @@ public final class DomibusConnectorMessageErrorBuilder {
      * @param text short, main error text
      * @return the builder
      */
-    public DomibusConnectorMessageErrorBuilder setText(String text) {
+    public DomibusConnectorMessageErrorBuilder setText(@NotNull @NotBlank String text) {
         this.text = text;
         return this;
     }
@@ -36,7 +40,7 @@ public final class DomibusConnectorMessageErrorBuilder {
      * @param details error details, eg the exception stack trace
      * @return the builder
      */
-    public DomibusConnectorMessageErrorBuilder setDetails(String details) {
+    public DomibusConnectorMessageErrorBuilder setDetails(@NotNull String details) {
         this.details = details;
         return this;
     }
@@ -54,8 +58,18 @@ public final class DomibusConnectorMessageErrorBuilder {
      * @param source Name of the component where the error occured
      * @return the builder
      */
-    public DomibusConnectorMessageErrorBuilder setSource(String source) {
+    public DomibusConnectorMessageErrorBuilder setSource(@NotNull String source) {
         this.source = source;
+        return this;
+    }
+
+    public DomibusConnectorMessageErrorBuilder setStep(@NotNull String step) {
+        this.step = step;
+        return this;
+    }
+
+    public DomibusConnectorMessageErrorBuilder setProcessor(@NotNull String processor) {
+        this.processor = processor;
         return this;
     }
 
@@ -63,7 +77,7 @@ public final class DomibusConnectorMessageErrorBuilder {
         if (text == null) {
             throw new RuntimeException("Text cannot be null!");
         }
-        DomibusConnectorMessageError msgError = new DomibusConnectorMessageError(text, details, source);
+        DomibusConnectorMessageError msgError = new DomibusConnectorMessageError(text, details, source, step, processor);
         return msgError;
     }
 
