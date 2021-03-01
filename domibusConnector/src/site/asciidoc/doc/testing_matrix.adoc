@@ -4,7 +4,7 @@
 The Connector has been tested on
 
 |===
-| Connector Version | OS | Java | Application Server | Database Connector | Database
+| Connector Version | OS | Java | Application Server | Database Connector | Database | DB-schema-creation | Fresh-Installation/Upgrade
 
 | 4.2.x
 | AIX
@@ -12,6 +12,8 @@ The Connector has been tested on
 | Tomcat 8.5.x
 | Ojdbc7
 | Oracle 18c
+| liquibase
+| fresh
 
 | 4.2.x
 | Windows 10
@@ -19,6 +21,8 @@ The Connector has been tested on
 | Tomcat 8.5.x
 | H2 4.200 / Ojdbc8
 | H2 Database 4.200 / Oracle Express 11g
+| liquibase
+| fresh
 
 | 4.2.x
 | Ubuntu 18.0.4 LTS
@@ -26,6 +30,8 @@ The Connector has been tested on
 | Tomcat 8.5.x
 | Mysql Connector 8.0.x
 | Mysql 5.7.x
+| liquibase
+| fresh
 
 | 4.2.x
 | Ubuntu 20.04 LTS
@@ -33,3 +39,5 @@ The Connector has been tested on
 | Tomcat 9
 | Mysql Connector 8.0.x
 | Mysql 8.0.x
+| liquibase
+| fresh
