@@ -1,11 +1,11 @@
-Database
-========
-
-
 :description: Database
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Database
 
 == Notes on Database
 

@@ -1,4 +1,7 @@
-== STARTUP ERRORS
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= STARTUP ERRORS
 
 
 The connector is build with the spring boot framework. During startup

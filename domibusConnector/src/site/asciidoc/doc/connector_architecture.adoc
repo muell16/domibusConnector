@@ -1,18 +1,17 @@
-Connector Architecture Module Responsibilities
-==============================================
-
 :description: The connector architecture overview
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
 
+= Connector Architecture Module Responsibilities
 
 The connector is split up into multiple maven modules with different
 responsibilities.
 
-image::project-modules-diagram.png[Project Modules]
+//image::project-modules-diagram.png[Project Modules]
 
-
+== Modules
 
 === domibusConnectorLinkCommon
 

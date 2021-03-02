@@ -1,11 +1,10 @@
-Monitoring
-==========
-
-
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
 :description: Monitoring manual
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+
+= Monitoring
 
 == Monitoring Manual
 

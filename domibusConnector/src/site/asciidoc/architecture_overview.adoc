@@ -1,12 +1,10 @@
-Architectural Overview
-======================
-
-
 :description: The architecture overview
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: images/
+:imgdir: ../resources/images/
+:imagesdir: {imgdir}
 
+= Architectural Overview
 
 == Overall ECodex Architecture
 

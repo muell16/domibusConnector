@@ -1,0 +1,62 @@
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Connector Internal Message Flow
+
+== Qeues Processor Overview
+
+WARNING: NOT COMPLETE!
+
+[plantuml, queues, png]
+----
+@startuml
+skinparam monochrome true
+
+interface gw_link
+interface backend_link
+
+queue link_to_con
+queue link_to_con_error
+
+queue con_to_link
+queue con_to_link_error
+
+queue cleanup_queue
+
+component to_connector_message_listener {
+  component MessageConfirmationProcessor
+  component BackendToGatewayMessageProcessor
+  component GatewayToBackendMessageProcessor
+}
+
+gw_link --> link_to_con
+
+link_to_con --> to_connector_message_listener
+link_to_con --> MessageConfirmationProcessor
+link_to_con --> BackendToGatewayMessageProcessor
+link_to_con --> GatewayToBackendMessageProcessor
+
+'
+'actor actor
+'agent agent
+'artifact artifact
+'boundary boundary
+'card card
+'cloud cloud
+'component component
+'control control
+'database database
+'entity entity
+'file file
+'folder folder
+'frame frame
+'interface  interface
+'node node
+'package package
+'queue queue
+'stack stack
+'rectangle rectangle
+'storage storage
+'usecase usecase
+@enduml
+----
