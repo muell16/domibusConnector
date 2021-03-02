@@ -1,8 +1,10 @@
 == Centos 7 deployment
 
+:imagesdir: ../../resources/images/
+
 This contains a example deployment on an centos 7 system.
 
-==== System preparation
+=== System preparation
 
 Install java, tomcat and mysql:
 

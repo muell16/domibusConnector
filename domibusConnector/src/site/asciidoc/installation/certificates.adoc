@@ -1,5 +1,7 @@
 = Certificate Configurations
 
+:imagesdir: ../../resources/images/
+
 The connector uses multiple certificates for different purposes.
 
 * Signing and Encrypting SOAP messages between BackendClient and Connector
