@@ -5,7 +5,7 @@ HA Support
 :description: HA Support
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+:imagesdir: ../../resources/images/
 
 == HA Manual
 

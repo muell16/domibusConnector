@@ -1,5 +1,7 @@
 = Backend message routing
 
+:imagesdir: ../../resources/images/
+
 How are the messages distributed to the different connectorClients?
 
 The message routing is done at the class

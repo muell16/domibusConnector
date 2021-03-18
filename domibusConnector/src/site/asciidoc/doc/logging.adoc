@@ -5,7 +5,7 @@ LOGGING
 :description: Monitoring manual
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+:imagesdir: ../../resources/images/
 
 == Logging Manual
 

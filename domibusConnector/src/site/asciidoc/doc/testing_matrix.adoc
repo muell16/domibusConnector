@@ -1,5 +1,6 @@
 = Testing Matrix
 
+:imagesdir: ../../resources/images/
 
 The Connector has been tested on
 

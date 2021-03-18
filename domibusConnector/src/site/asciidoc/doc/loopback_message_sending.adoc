@@ -1,5 +1,7 @@
 = Loopback message sending
 
+:imagesdir: ../../resources/images/
+
 With connector version 4.2 the connector supports loopback sending of messages.
 This means that a connector can handle a message going from backend to gateway
 and back from gateway to backend with the same EBMS-Message id.

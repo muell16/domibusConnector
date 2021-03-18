@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -84,19 +86,21 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 
 		grid.addComponentColumn(webMessage -> getDetailsLink(webMessage.getConnectorMessageId())).setHeader("Details").setWidth("30px");
-		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px");
-		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px");
+		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
+		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
+		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
+		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px").setKey("service").setSortable(true);
 		grid.addColumn(WebMessage::getAction)
-				.setHeader("Action").setWidth("70px");
-		grid.addColumn(WebMessage::getCreated).setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setHeader("Delivered Backend");
-		grid.addColumn(WebMessage::getDeliveredToGateway).setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendClient).setHeader("Backend Client").setWidth("100px");
+				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
+		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
+		grid.addColumn(WebMessage::getDeliveredToBackend).setKey("deliveredToBackend").setHeader("Delivered Backend").setSortable(true);
+		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway").setSortable(true);
+		grid.addColumn(WebMessage::getBackendClient).setKey("backendClient").setHeader("Backend Client").setWidth("100px").setSortable(true);
 		grid.setWidth("1800px");
 		grid.setHeight("700px");
+
 		grid.setMultiSort(true);
+		grid.addSortListener(this::handleSortEvent);
 
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
@@ -129,13 +133,23 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 		grid.setDataProvider(callbackDataProvider);
 
-		try {
-			//any error here would prevent UI from being created!
-			callbackDataProvider.refreshAll();
-		} catch (Exception e) {
-			LOGGER.error("Exception while load messages from DB in MessagesView", e);
-		}
 
+//		try {
+//			//any error here would prevent UI from being created!
+//			callbackDataProvider.refreshAll();
+//		} catch (Exception e) {
+//			LOGGER.error("Exception while load messages from DB in MessagesView", e);
+//		}
+
+	}
+
+	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
+		gridGridSortOrderSortEvent.getSortOrder().stream()
+				.map(webMessageGridSortOrder -> {
+					SortDirection direction = webMessageGridSortOrder.getDirection();
+					return direction;
+
+				});
 	}
 
 	private void pageSizeChanged(AbstractField.ComponentValueChangeEvent<IntegerField, Integer> integerFieldIntegerComponentValueChangeEvent) {
@@ -154,10 +168,18 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		int offset = webMessageWebMessageQuery.getOffset();
 		int limit = webMessageWebMessageQuery.getLimit();
 
+
 		//creating sort orders
-		List<Sort.Order> collect = webMessageWebMessageQuery.getSortOrders()
-				.stream().map(querySortOrder ->
-						querySortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(querySortOrder.getSorted()) : Sort.Order.desc(querySortOrder.getSorted()))
+//		List<Sort.Order> collect = webMessageWebMessageQuery
+//				.getSortOrders()
+//				.stream().map(querySortOrder ->
+//						querySortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(querySortOrder.getSorted()) : Sort.Order.desc(querySortOrder.getSorted()))
+//				.collect(Collectors.toList());
+		List<Sort.Order> collect = grid.getSortOrder()
+				.stream()
+				.filter(sortOrder -> sortOrder.getSorted().getKey() != null)
+				.map(sortOrder ->
+						sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
 				.collect(Collectors.toList());
 		Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
 
@@ -323,7 +345,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		reloadList();
+
 	}
 
 

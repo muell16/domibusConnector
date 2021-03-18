@@ -1,6 +1,8 @@
-== DEPLOY ON TOMCAT
+= DEPLOY ON TOMCAT
 
-=== Quick Start
+:imagesdir: ../../resources/images/
+
+== Quick Start
 
  1. Copy the properties file (connector.properties) and the logging configuration (log4j2.xml)
     from (documentation/config/) into
