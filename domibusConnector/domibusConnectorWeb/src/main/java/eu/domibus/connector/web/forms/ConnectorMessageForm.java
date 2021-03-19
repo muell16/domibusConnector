@@ -76,4 +76,8 @@ public class ConnectorMessageForm extends FormLayout {
 		return this.connectorMessageId.getValue();
 	}
 
+	public Binder<WebMessageDetail> getBinder() {
+		return binder;
+	}
+
 }

@@ -38,7 +38,7 @@ public class WebMessageService {
 	}
 
 	public Optional<WebMessageDetail>  getMessageByEbmsId(String ebmsId) {
-		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 	}
 
 	public Optional<WebMessageDetail>  getMessageByBackendMessageId(String backendMessageId) {

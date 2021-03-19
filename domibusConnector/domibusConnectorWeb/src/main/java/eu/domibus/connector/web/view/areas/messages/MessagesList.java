@@ -85,7 +85,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		this.dcMessagePersistenceService = messagePersistenceService;
 
 
-		grid.addComponentColumn(webMessage -> getDetailsLink(webMessage.getConnectorMessageId())).setHeader("Details").setWidth("30px");
+		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
 		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
 		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
 		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
@@ -142,6 +142,10 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //		}
 
 	}
+	
+//	private Button geMessageDetailsLink(WebMessage connectorMessage) {
+//		return messagesView.geMessageDetailsLink(connectorMessage);
+//	}
 
 	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
 		gridGridSortOrderSortEvent.getSortOrder().stream()
@@ -326,16 +330,6 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 			txt = field.getValue();
 		}
 		return txt;
-	}
-
-	private Button getDetailsLink(String connectorMessageId) {
-		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
-		getDetails.addClickListener(e -> showConnectorMessage(connectorMessageId));
-		return getDetails;
-	}
-	
-	private void showConnectorMessage(String connectorMessageId) {
-		messagesView.showMessageDetails(connectorMessageId);
 	}
 
 	public void reloadList() {

@@ -1,36 +1,40 @@
 package eu.domibus.connector.web.view.areas.messages;
 
-import com.vaadin.flow.component.notification.Notification;
-import org.apache.commons.lang.StringUtils;
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.component.LumoLabel;
+import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.ConnectorMessageForm;
 import eu.domibus.connector.web.service.WebMessageService;
-
-import java.util.Optional;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class MessageDetails extends VerticalLayout {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private final static Logger LOGGER = LogManager.getLogger(MessageDetails.class);
 
@@ -45,7 +49,7 @@ public class MessageDetails extends VerticalLayout {
 		Button refreshBtn = new Button(new Icon(VaadinIcon.REFRESH));
 		refreshBtn.setText("Refresh");
 		refreshBtn.addClickListener(e -> {
-			if(!StringUtils.isEmpty(messageForm.getConnectorMessageId()))loadMessageDetails(messageForm.getConnectorMessageId());
+			if(messageForm.getBinder()!=null)loadMessageDetails(messageForm.getBinder().getBean());
 			});
 		
 		HorizontalLayout buttons = new HorizontalLayout(
@@ -71,14 +75,28 @@ public class MessageDetails extends VerticalLayout {
 	}
 
 
-	public void loadMessageDetails(String connectorMessageId) {
-		Optional<WebMessageDetail> optionalMessage = messageService.getMessageByConnectorId(connectorMessageId);
+	public void loadMessageDetails(WebMessage connectorMessage) {
+		
+		Optional<WebMessageDetail> optionalMessage = messageService.getMessageByConnectorId(connectorMessage.getConnectorMessageId());
+		
+		if (!optionalMessage.isPresent()) {
+			optionalMessage = messageService.getMessageByBackendMessageId(connectorMessage.getBackendMessageId());
+		}
+		
+		if (!optionalMessage.isPresent()) {
+			optionalMessage = messageService.getMessageByEbmsId(connectorMessage.getEbmsMessageId());
+		}
+		
+		if (!optionalMessage.isPresent()) {
+			String errorMessage = String.format("No message found within database with connectorMessageId [%s], ebmsMessageId [%s] or backendMessageId [%s] !", connectorMessage.getConnectorMessageId(), connectorMessage.getEbmsMessageId(), connectorMessage.getBackendMessageId());
+			LOGGER.warn(errorMessage);
+			Notification.show(errorMessage);
+		}
 
-		if (optionalMessage.isPresent()) {
-			WebMessageDetail messageByConnectorId = optionalMessage.get();
-			messageForm.setConnectorMessage(messageByConnectorId);
+			WebMessageDetail webMessageDetail = optionalMessage.get();
+			messageForm.setConnectorMessage(webMessageDetail);
 
-			if (!messageByConnectorId.getEvidences().isEmpty()) {
+			if (!webMessageDetail.getEvidences().isEmpty()) {
 				messageEvidencesArea.removeAll();
 
 				Div evidences = new Div();
@@ -95,7 +113,7 @@ public class MessageDetails extends VerticalLayout {
 
 				Grid<WebMessageEvidence> grid = new Grid<>();
 
-				grid.setItems(messageByConnectorId.getEvidences());
+				grid.setItems(webMessageDetail.getEvidences());
 
 				grid.addColumn(WebMessageEvidence::getEvidenceType).setHeader("Evidence Type").setWidth("300px");
 				grid.addColumn(WebMessageEvidence::getDeliveredToGatewayString).setHeader("Delivered to Gateway").setWidth("300px");
@@ -119,11 +137,7 @@ public class MessageDetails extends VerticalLayout {
 				//			add(messageEvidencesArea);
 				messageEvidencesArea.setVisible(true);
 			}
-		} else {
-			String errorMessage = String.format("No message found within database with id [%s]", connectorMessageId);
-			LOGGER.warn(errorMessage);
-			Notification.show(errorMessage);
-		}
+	
 	}
 
 }
