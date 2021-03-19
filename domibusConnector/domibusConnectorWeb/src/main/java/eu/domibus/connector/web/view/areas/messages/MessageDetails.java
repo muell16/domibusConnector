@@ -80,18 +80,22 @@ public class MessageDetails extends VerticalLayout {
 		
 		Optional<WebMessageDetail> optionalMessage = null;
 				
-				if(!StringUtils.isEmpty(connectorMessage.getConnectorMessageId()))
-				optionalMessage = messageService.getMessageByConnectorId(connectorMessage.getConnectorMessageId());
+		if(!StringUtils.isEmpty(connectorMessage.getConnectorMessageId())) {
+			LOGGER.debug("MessageDetails loaded with connectorMessageId [{}]", connectorMessage.getConnectorMessageId());
+			optionalMessage = messageService.getMessageByConnectorId(connectorMessage.getConnectorMessageId());
+		}
 		
-		if (optionalMessage != null && !optionalMessage.isPresent() && !StringUtils.isEmpty(connectorMessage.getBackendMessageId())) {
+		if ((optionalMessage == null || !optionalMessage.isPresent()) && !StringUtils.isEmpty(connectorMessage.getBackendMessageId())) {
+			LOGGER.debug("MessageDetails loaded with backendMessageId [{}]", connectorMessage.getBackendMessageId());
 			optionalMessage = messageService.getMessageByBackendMessageId(connectorMessage.getBackendMessageId());
 		}
 		
-		if (optionalMessage != null && !optionalMessage.isPresent() && !StringUtils.isEmpty(connectorMessage.getEbmsMessageId())) {
+		if ((optionalMessage == null || !optionalMessage.isPresent()) && !StringUtils.isEmpty(connectorMessage.getEbmsMessageId())) {
+			LOGGER.debug("MessageDetails loaded with ebmsMessageId [{}]", connectorMessage.getEbmsMessageId());
 			optionalMessage = messageService.getMessageByEbmsId(connectorMessage.getEbmsMessageId());
 		}
 		
-		if (!optionalMessage.isPresent()) {
+		if (optionalMessage == null || !optionalMessage.isPresent()) {
 			String errorMessage = String.format("No message found within database with connectorMessageId [%s], ebmsMessageId [%s] or backendMessageId [%s] !", connectorMessage.getConnectorMessageId(), connectorMessage.getEbmsMessageId(), connectorMessage.getBackendMessageId());
 			LOGGER.warn(errorMessage);
 			Notification.show(errorMessage);
