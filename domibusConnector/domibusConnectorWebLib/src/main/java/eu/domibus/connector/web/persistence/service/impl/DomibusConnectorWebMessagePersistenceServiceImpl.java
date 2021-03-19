@@ -3,6 +3,7 @@ package eu.domibus.connector.web.persistence.service.impl;
 import java.util.*;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.slf4j.Logger;
@@ -57,6 +58,18 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	public Optional<WebMessageDetail> getMessageByConnectorId(String connectorMessageId) {
 		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 		return mapDbMessageToWebMessageDetail(dbMessage);
+	}
+	
+	@Override
+	public Optional<WebMessageDetail> getOutgoingMessageByBackendMessageId(String backendMessageId){
+		PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(backendMessageId, MessageTargetSource.GATEWAY).get();
+        return mapDbMessageToWebMessageDetail(dbMessage);
+	}
+	
+	@Override
+	public Optional<WebMessageDetail> getIncomingMessageByEbmsMessageId(String ebmsMessageId){
+		PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, MessageTargetSource.BACKEND).get();
+        return mapDbMessageToWebMessageDetail(dbMessage);
 	}
 	
 	@Override
@@ -141,17 +154,23 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			WebMessage message = new WebMessage();
 
 			message.setConnectorMessageId(pMessage.getConnectorMessageId());
+			message.setEbmsMessageId(pMessage.getEbmsMessageId());
+			message.setBackendMessageId(pMessage.getBackendMessageId());
 			message.setBackendClient(pMessage.getBackendName());
 			message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
 			message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
 			message.setCreated(pMessage.getCreated());
 
 			PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
-			message.setAction(pMessageInfo.getAction().getAction());
-			message.setService(pMessageInfo.getService().getService());
-			message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
-			message.setToPartyId(pMessageInfo.getTo().getPartyId());
-
+			if(pMessageInfo!=null) {
+				
+			message.setAction(pMessageInfo.getAction()!=null?pMessageInfo.getAction().getAction():"n.a.");
+			message.setService(pMessageInfo.getService()!=null?pMessageInfo.getService().getService():"n.a.");
+			message.setFromPartyId(pMessageInfo.getFrom()!=null?pMessageInfo.getFrom().getPartyId():"n.a.");
+			message.setFromPartyIdType(pMessageInfo.getFrom()!=null?pMessageInfo.getFrom().getPartyIdType():"n.a.");
+			message.setToPartyId(pMessageInfo.getTo()!=null?pMessageInfo.getTo().getPartyId():"n.a.");
+			message.setToPartyIdType(pMessageInfo.getTo()!=null?pMessageInfo.getTo().getPartyIdType():"n.a.");
+			}
 			return message;
 		}
 	}

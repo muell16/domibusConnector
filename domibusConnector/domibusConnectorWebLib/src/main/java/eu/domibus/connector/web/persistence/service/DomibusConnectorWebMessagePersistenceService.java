@@ -22,5 +22,7 @@ public interface DomibusConnectorWebMessagePersistenceService {
 	Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable);
 //	long count(Example<WebMessage> example, Pageable pageable);
 	long count(Example<WebMessage> example);
+	Optional<WebMessageDetail> getOutgoingMessageByBackendMessageId(String backendMessageId);
+	Optional<WebMessageDetail> getIncomingMessageByEbmsMessageId(String ebmsMessageId);
 
 }
