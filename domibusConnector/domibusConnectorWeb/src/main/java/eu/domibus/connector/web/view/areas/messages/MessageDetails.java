@@ -24,6 +24,7 @@ import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.ConnectorMessageForm;
 import eu.domibus.connector.web.service.WebMessageService;
+import io.micrometer.core.instrument.util.StringUtils;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
@@ -77,13 +78,16 @@ public class MessageDetails extends VerticalLayout {
 
 	public void loadMessageDetails(WebMessage connectorMessage) {
 		
-		Optional<WebMessageDetail> optionalMessage = messageService.getMessageByConnectorId(connectorMessage.getConnectorMessageId());
+		Optional<WebMessageDetail> optionalMessage = null;
+				
+				if(!StringUtils.isEmpty(connectorMessage.getConnectorMessageId()))
+				optionalMessage = messageService.getMessageByConnectorId(connectorMessage.getConnectorMessageId());
 		
-		if (!optionalMessage.isPresent()) {
+		if (optionalMessage != null && !optionalMessage.isPresent() && !StringUtils.isEmpty(connectorMessage.getBackendMessageId())) {
 			optionalMessage = messageService.getMessageByBackendMessageId(connectorMessage.getBackendMessageId());
 		}
 		
-		if (!optionalMessage.isPresent()) {
+		if (optionalMessage != null && !optionalMessage.isPresent() && !StringUtils.isEmpty(connectorMessage.getEbmsMessageId())) {
 			optionalMessage = messageService.getMessageByEbmsId(connectorMessage.getEbmsMessageId());
 		}
 		
