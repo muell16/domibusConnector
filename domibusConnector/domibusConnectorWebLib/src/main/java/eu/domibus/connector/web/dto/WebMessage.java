@@ -5,10 +5,16 @@ import java.util.Date;
 public class WebMessage {
 
 	private String connectorMessageId;
+	private String ebmsMessageId;
+	private String backendMessageId;
 	private String service;
 	private String action;
 	private String fromPartyId;
+	private String fromPartyIdType;
 	private String toPartyId;
+	private String toPartyIdType;
+	private String originalSender;
+	private String finalRecipient;
 	private String backendClient;
 	private Date deliveredToBackend;
 	private Date deliveredToGateway;
@@ -24,6 +30,26 @@ public class WebMessage {
 		this.connectorMessageId = connectorMessageId;
 	}
 
+
+
+	public String getEbmsMessageId() {
+		return ebmsMessageId;
+	}
+
+
+	public void setEbmsMessageId(String ebmsMessageId) {
+		this.ebmsMessageId = ebmsMessageId;
+	}
+
+
+	public String getBackendMessageId() {
+		return backendMessageId;
+	}
+
+
+	public void setBackendMessageId(String backendMessageId) {
+		this.backendMessageId = backendMessageId;
+	}
 
 
 	public String getService() {
@@ -56,6 +82,16 @@ public class WebMessage {
 	}
 
 
+	public String getFromPartyIdType() {
+		return fromPartyIdType;
+	}
+
+
+	public void setFromPartyIdType(String fromPartyIdType) {
+		this.fromPartyIdType = fromPartyIdType;
+	}
+
+
 	public String getToPartyId() {
 		return toPartyId;
 	}
@@ -63,6 +99,36 @@ public class WebMessage {
 
 	public void setToPartyId(String toPartyId) {
 		this.toPartyId = toPartyId;
+	}
+
+
+	public String getToPartyIdType() {
+		return toPartyIdType;
+	}
+
+
+	public void setToPartyIdType(String toPartyIdType) {
+		this.toPartyIdType = toPartyIdType;
+	}
+
+
+	public String getOriginalSender() {
+		return originalSender;
+	}
+
+
+	public void setOriginalSender(String originalSender) {
+		this.originalSender = originalSender;
+	}
+
+
+	public String getFinalRecipient() {
+		return finalRecipient;
+	}
+
+
+	public void setFinalRecipient(String finalRecipient) {
+		this.finalRecipient = finalRecipient;
 	}
 
 
