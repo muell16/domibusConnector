@@ -93,8 +93,8 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		grid.addColumn(WebMessage::getAction)
 				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
 		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setKey("deliveredToBackend").setHeader("Delivered Backend").setSortable(true);
-		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway").setSortable(true);
+		grid.addColumn(WebMessage::getDeliveredToBackend).setKey("deliveredToBackend").setHeader("Delivered Backend");
+		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
 		grid.addColumn(WebMessage::getBackendClient).setKey("backendClient").setHeader("Backend Client").setWidth("100px").setSortable(true);
 		grid.setWidth("1800px");
 		grid.setHeight("700px");
