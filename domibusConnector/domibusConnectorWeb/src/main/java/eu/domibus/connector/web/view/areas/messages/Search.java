@@ -145,9 +145,9 @@ public class Search extends VerticalLayout {
 		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px");
 		grid.addColumn(WebMessage::getAction).setHeader("Action").setWidth("70px");
 		grid.addColumn(WebMessage::getCreated).setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setHeader("Delivered Backend");
+		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setHeader("Delivered Backend");
 		grid.addColumn(WebMessage::getDeliveredToGateway).setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendClient).setHeader("Backend Client").setWidth("100px");
+		grid.addColumn(WebMessage::getBackendName).setHeader("Backend Client").setWidth("100px");
 		grid.setWidth("1800px");
 		grid.setHeight("400px");
 		grid.setMultiSort(true);

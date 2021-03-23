@@ -115,13 +115,13 @@ public class WebMessageService {
 			entryCell5.setCellValue(message.getCreatedString());
 			entryCell5.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell6 = entryRow.createCell(6);
-			entryCell6.setCellValue(message.getDeliveredToBackendString());
+			entryCell6.setCellValue(message.getDeliveredToNationalSystemString());
 			entryCell6.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell7 = entryRow.createCell(7);
 			entryCell7.setCellValue(message.getDeliveredToGatewayString());
 			entryCell7.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell8 = entryRow.createCell(8);
-			entryCell8.setCellValue(message.getBackendClient());
+			entryCell8.setCellValue(message.getBackendName());
 			entryCell8.setCellStyle(styles.get("cell_b"));
 
 			rowIndex++;

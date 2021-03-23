@@ -114,8 +114,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
 		PDomibusConnectorMessageInfo dbMsgInfo = new PDomibusConnectorMessageInfo();
 
-		dbMsg.setBackendName(probe.getBackendClient());
-		dbMsg.setDeliveredToNationalSystem(probe.getDeliveredToBackend());
+//		dbMsg.setBackendName(probe.getBackendClient());
+//		dbMsg.setDeliveredToNationalSystem(probe.getDeliveredToBackend());
 		
 		if(!StringUtils.isEmpty(probe.getFinalRecipient())) {
 			dbMsgInfo.setFinalRecipient(probe.getFinalRecipient());
@@ -167,8 +167,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			message.setConnectorMessageId(pMessage.getConnectorMessageId());
 			message.setEbmsMessageId(pMessage.getEbmsMessageId());
 			message.setBackendMessageId(pMessage.getBackendMessageId());
-			message.setBackendClient(pMessage.getBackendName());
-			message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
+			message.setBackendName(pMessage.getBackendName());
+			message.setDeliveredToNationalSystem(pMessage.getDeliveredToNationalSystem());
 			message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
 			message.setCreated(pMessage.getCreated());
 
@@ -216,8 +216,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		message.setBackendMessageId(pMessage.getBackendMessageId());
 		message.setEbmsMessageId(pMessage.getEbmsMessageId());
 		message.setConversationId(pMessage.getConversationId());
-		message.setBackendClient(pMessage.getBackendName());
-		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
+		message.setBackendName(pMessage.getBackendName());
+		message.setDeliveredToNationalSystem(pMessage.getDeliveredToNationalSystem());
 		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
 		DomibusConnectorMessageDirection domibusConnectorMessageDirection = DomibusConnectorMessageDirection.fromMessageTargetSource(pMessage.getDirectionSource(), pMessage.getDirectionTarget());
 		message.setDirection(domibusConnectorMessageDirection.toString());

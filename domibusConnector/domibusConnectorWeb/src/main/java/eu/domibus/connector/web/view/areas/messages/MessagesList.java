@@ -93,9 +93,9 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		grid.addColumn(WebMessage::getAction)
 				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
 		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setKey("deliveredToBackend").setHeader("Delivered Backend");
+		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setKey("deliveredToNationalSystem").setHeader("Delivered Backend");
 		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendClient).setKey("backendClient").setHeader("Backend Client").setWidth("100px").setSortable(true);
+		grid.addColumn(WebMessage::getBackendName).setKey("backendName").setHeader("Backend Client").setWidth("100px").setSortable(true);
 		grid.setWidth("1800px");
 		grid.setHeight("700px");
 
@@ -317,7 +317,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		exampleWebMessage.setFromPartyId(getTxt(fromPartyIdFilterText));
 		exampleWebMessage.setToPartyId(getTxt(toPartyIdFilterText));
 		exampleWebMessage.setService(getTxt(serviceFilterText));
-		exampleWebMessage.setBackendClient(getTxt(backendClientFilterText));
+		exampleWebMessage.setBackendName(getTxt(backendClientFilterText));
 
 		callbackDataProvider.refreshAll();
 
