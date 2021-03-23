@@ -115,6 +115,17 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		PDomibusConnectorMessageInfo dbMsgInfo = new PDomibusConnectorMessageInfo();
 
 		dbMsg.setBackendName(probe.getBackendClient());
+		dbMsg.setDeliveredToNationalSystem(probe.getDeliveredToBackend());
+		
+		if(!StringUtils.isEmpty(probe.getFinalRecipient())) {
+			dbMsgInfo.setFinalRecipient(probe.getFinalRecipient());
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
+		
+		if(!StringUtils.isEmpty(probe.getOriginalSender())) {
+			dbMsgInfo.setOriginalSender(probe.getOriginalSender());
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
 
 		if (!StringUtils.isEmpty(probe.getAction())) {
 			PDomibusConnectorAction dbAction = new PDomibusConnectorAction();
