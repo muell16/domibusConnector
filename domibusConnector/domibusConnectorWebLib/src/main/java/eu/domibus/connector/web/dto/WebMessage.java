@@ -15,8 +15,8 @@ public class WebMessage {
 	private String toPartyIdType;
 	private String originalSender;
 	private String finalRecipient;
-	private String backendClient;
-	private Date deliveredToBackend;
+	private String backendName;
+	private Date deliveredToNationalSystem;
 	private Date deliveredToGateway;
 	private Date created;
 	
@@ -132,31 +132,31 @@ public class WebMessage {
 	}
 
 
-	public String getBackendClient() {
-		return backendClient;
+	public String getBackendName() {
+		return backendName;
 	}
 
 
-	public void setBackendClient(String backendClient) {
-		this.backendClient = backendClient;
+	public void setBackendName(String backendClient) {
+		this.backendName = backendClient;
 	}
 
 
 
-	public Date getDeliveredToBackend() {
-		return deliveredToBackend;
-	}
-	
-	public String getDeliveredToBackendString() {
-		return deliveredToBackend!=null?deliveredToBackend.toString():null;
-	}
-
-
-	public void setDeliveredToBackend(Date deliveredToBackend) {
-		this.deliveredToBackend = deliveredToBackend;
+	public Date getDeliveredToNationalSystem() {
+		return deliveredToNationalSystem;
 	}
 	
-	public void setDeliveredToBackendString(String deliveredToBackend) {
+	public String getDeliveredToNationalSystemString() {
+		return deliveredToNationalSystem!=null?deliveredToNationalSystem.toString():null;
+	}
+
+
+	public void setDeliveredToNationalSystem(Date deliveredToBackend) {
+		this.deliveredToNationalSystem = deliveredToBackend;
+	}
+	
+	public void setDeliveredToNationalSystemString(String deliveredToBackend) {
 	}
 
 
