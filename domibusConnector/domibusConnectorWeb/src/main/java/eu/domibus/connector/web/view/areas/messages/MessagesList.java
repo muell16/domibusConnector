@@ -42,7 +42,12 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.dto.WebMessageDetail.Action;
+import eu.domibus.connector.web.dto.WebMessageDetail.Party;
+import eu.domibus.connector.web.dto.WebMessageDetail.Service;
 import eu.domibus.connector.web.service.WebMessageService;
+
+import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 @Component
@@ -57,7 +62,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	private final WebMessageService messageService;
 	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 
-	private PaginatedGrid<WebMessage> grid = new PaginatedGrid<>();
+	private WebMessagesGrid grid = new WebMessagesGrid();
 	private LinkedList<WebMessage> fullList = null;
 	private Messages messagesView;
 
@@ -85,17 +90,17 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		this.dcMessagePersistenceService = messagePersistenceService;
 
 
-		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
-		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
-		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
-		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
-		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px").setKey("service").setSortable(true);
-		grid.addColumn(WebMessage::getAction)
-				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
-		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setKey("deliveredToNationalSystem").setHeader("Delivered Backend");
-		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendName).setKey("backendName").setHeader("Backend Client").setWidth("100px").setSortable(true);
+//		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
+//		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
+//		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
+//		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
+//		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px").setKey("service").setSortable(true);
+//		grid.addColumn(WebMessage::getAction)
+//				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
+//		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
+//		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setKey("deliveredToNationalSystem").setHeader("Delivered Backend");
+//		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
+//		grid.addColumn(WebMessage::getBackendName).setKey("backendName").setHeader("Backend Client").setWidth("100px").setSortable(true);
 		grid.setWidth("1800px");
 		grid.setHeight("700px");
 
@@ -106,7 +111,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		grid.setPaginatorSize(5);
 		
 		for(Column<WebMessage> col : grid.getColumns()) {
-			col.setSortable(true);
+//			col.setSortable(true);
 			col.setResizable(true);
 		}
 		
@@ -120,7 +125,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
 		pageSizeField.addValueChangeListener(this::pageSizeChanged);
 
-		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, grid, downloadLayout);
+		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, buildColumnHideSelection(), grid, downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("700px");
 		add(main);
@@ -146,6 +151,24 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //	private Button geMessageDetailsLink(WebMessage connectorMessage) {
 //		return messagesView.geMessageDetailsLink(connectorMessage);
 //	}
+	
+	/**
+     *  workaround for hideable columns. 
+     * All columns are initially shown. Any column that is selected in this multi select combobox will be hidden.
+     * MultiselectComboBox is an add-on: https://vaadin.com/directory/component/multiselect-combo-box
+     */
+    private MultiselectComboBox buildColumnHideSelection(){
+        // all selected columns will be hidden, the rest will be shown.
+        MultiselectComboBox<Grid.Column> columnHider = new MultiselectComboBox<>();
+        columnHider.setLabel(getTranslation("HideColumns"));
+        columnHider.setItems(grid.getHideableColumns());
+        columnHider.setItemLabelGenerator(Grid.Column::getKey); 
+        columnHider.addValueChangeListener(event -> {
+            grid.hideColumns(event.getValue());
+        });
+       // columnHider.select(grid.getHideableColumns()); un-comment this line to initially hide all hideable columns ("opt-out")
+       return columnHider;
+    }
 
 	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
 		gridGridSortOrderSortEvent.getSortOrder().stream()
@@ -313,10 +336,10 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	
 	private void filter() {
 
-		exampleWebMessage.setAction(getTxt(actionFilterText));
-		exampleWebMessage.setFromPartyId(getTxt(fromPartyIdFilterText));
-		exampleWebMessage.setToPartyId(getTxt(toPartyIdFilterText));
-		exampleWebMessage.setService(getTxt(serviceFilterText));
+		exampleWebMessage.getMessageInfo().setAction(exampleWebMessage.getMessageInfo().new Action(getTxt(actionFilterText)));
+		exampleWebMessage.getMessageInfo().setFrom(exampleWebMessage.getMessageInfo().new Party(getTxt(fromPartyIdFilterText)));
+		exampleWebMessage.getMessageInfo().setTo(exampleWebMessage.getMessageInfo().new Party(getTxt(toPartyIdFilterText)));
+		exampleWebMessage.getMessageInfo().setService(exampleWebMessage.getMessageInfo().new Service(getTxt(serviceFilterText)));
 		exampleWebMessage.setBackendName(getTxt(backendClientFilterText));
 
 		callbackDataProvider.refreshAll();

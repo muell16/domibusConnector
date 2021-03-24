@@ -13,16 +13,16 @@ import org.springframework.data.domain.Pageable;
 
 public interface DomibusConnectorWebMessagePersistenceService {
 	LinkedList<WebMessage> getAllMessages();
-	Optional<WebMessageDetail> getMessageByConnectorId(String connectorMessageId);
+	Optional<WebMessage> getMessageByConnectorId(String connectorMessageId);
 	LinkedList<WebMessage> getMessagesWithinPeriod(Date from, Date to);
-	Optional<WebMessageDetail>  findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction);
-	Optional<WebMessageDetail>  findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction);
+	Optional<WebMessage>  findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction);
+	Optional<WebMessage>  findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction);
 	LinkedList<WebMessage> findMessagesByConversationId(String conversationId);
 
 	Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable);
 //	long count(Example<WebMessage> example, Pageable pageable);
 	long count(Example<WebMessage> example);
-	Optional<WebMessageDetail> getOutgoingMessageByBackendMessageId(String backendMessageId);
-	Optional<WebMessageDetail> getIncomingMessageByEbmsMessageId(String ebmsMessageId);
+	Optional<WebMessage> getOutgoingMessageByBackendMessageId(String backendMessageId);
+	Optional<WebMessage> getIncomingMessageByEbmsMessageId(String ebmsMessageId);
 
 }

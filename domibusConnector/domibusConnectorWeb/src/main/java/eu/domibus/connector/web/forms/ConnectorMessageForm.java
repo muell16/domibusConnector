@@ -37,7 +37,7 @@ public class ConnectorMessageForm extends FormLayout {
 	private TextField rejectedString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField createdString = FormsUtil.getFormattedTextFieldReadOnly();
 	
-	private Binder<WebMessageDetail> binder = new Binder<>(WebMessageDetail.class);
+	private Binder<WebMessage> binder = new Binder<>(WebMessage.class);
 	
 	public ConnectorMessageForm() {
 		fillForm();
@@ -66,7 +66,7 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(createdString, "Message created at"); 
 	}
 
-	public void setConnectorMessage(WebMessageDetail message) {
+	public void setConnectorMessage(WebMessage message) {
 		this.removeAll();
 		fillForm();
 		binder.setBean(message);
@@ -76,7 +76,7 @@ public class ConnectorMessageForm extends FormLayout {
 		return this.connectorMessageId.getValue();
 	}
 
-	public Binder<WebMessageDetail> getBinder() {
+	public Binder<WebMessage> getBinder() {
 		return binder;
 	}
 
