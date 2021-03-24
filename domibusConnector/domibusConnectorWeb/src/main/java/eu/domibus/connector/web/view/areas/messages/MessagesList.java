@@ -106,10 +106,10 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setKey("deliveredToNationalSystem").setHeader("Delivered Backend");
 //		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
 //		grid.addColumn(WebMessage::getBackendName).setKey("backendName").setHeader("Backend Client").setWidth("100px").setSortable(true);
-		grid.setWidth("1800px");
-		grid.setHeight("700px");
+//		grid.setWidth("1800px");
+//		grid.setHeight("700px");
 
-		grid.setMultiSort(true);
+		grid.setMultiSort(false);
 		grid.addSortListener(this::handleSortEvent);
 
 		grid.setPageSize(pageSize);
@@ -347,6 +347,9 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 				});
 				hideableColsDialog.add(hideableCol);
 			}
+			
+			Button closeBtn = new Button("close");
+			closeBtn.addClickListener(e2 -> hideableColsDialog.close());
 			
 			hideableColsDialog.open();
 			

@@ -3,6 +3,8 @@ package eu.domibus.connector.web.dto;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 
+import liquibase.util.StringUtils;
+
 public class WebMessage {
 
 	private String connectorMessageId;
@@ -193,5 +195,10 @@ public class WebMessage {
 		return evidences;
 	}
 
+	public String getDirection() {
+		if(!StringUtils.isEmpty(getDirectionSource()) && !StringUtils.isEmpty(getDirectionTarget()))
+			return getDirectionSource() + " TO " +getDirectionTarget();
+		return "";
+	}
 
 }
