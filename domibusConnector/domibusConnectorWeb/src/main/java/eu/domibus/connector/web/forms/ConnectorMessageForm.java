@@ -64,6 +64,7 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(confirmedString, "Confirmed at"); 
 		addFormItem(rejectedString, "Rejected at"); 
 		addFormItem(createdString, "Message created at"); 
+		
 	}
 
 	public void setConnectorMessage(WebMessage message) {

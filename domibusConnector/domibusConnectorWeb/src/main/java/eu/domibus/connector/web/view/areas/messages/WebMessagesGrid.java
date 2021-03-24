@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -20,8 +22,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	
 	private Messages messagesView;
 
-	public WebMessagesGrid() {
+	public WebMessagesGrid(Messages messagesView) {
 		super(WebMessage.class);
+		this.messagesView = messagesView;
 		addAllColumns();
 		
 		for(Column<WebMessage> col : getColumns()) {
