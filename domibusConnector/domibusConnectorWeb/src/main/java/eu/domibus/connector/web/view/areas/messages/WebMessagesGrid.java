@@ -35,10 +35,10 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		addColumn(webMessage -> webMessage.getMessageInfo().getFrom().getPartyId()).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
 		addColumn(webMessage -> webMessage.getMessageInfo().getTo().getPartyId()).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
 
-		addHideableColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
-		addHideableColumn(WebMessage::getEbmsMessageId).setHeader("ebMS Message ID").setWidth("450px").setKey("ebmsMessageId").setSortable(false);
-		addHideableColumn(WebMessage::getBackendMessageId).setHeader("Backend Message ID").setWidth("450px").setKey("backendMessageId").setSortable(false);
-		addHideableColumn(WebMessage::getConversationId).setHeader("Conversation ID").setWidth("450px").setKey("conversationId").setSortable(false);
+		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false);
+		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false);
+		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false);
+		addHideableColumn(WebMessage::getConversationId, "Conversation ID", "450px", "conversationId", false);
 		
 	}
 
@@ -50,8 +50,8 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		return column;
 	}
 	
-	private Column<WebMessage> addHideableColumn(ValueProvider<WebMessage, ?> valueProvider){
-		Column<WebMessage> column = addColumn(valueProvider);
+	private Column<WebMessage> addHideableColumn(ValueProvider<WebMessage, ?> valueProvider, String header, String width, String key, boolean sortable){
+		Column<WebMessage> column = addColumn(valueProvider).setHeader(header).setWidth(width).setKey(key).setSortable(sortable);
 		hideableColumns.add(column);
 		return column;
 	}
