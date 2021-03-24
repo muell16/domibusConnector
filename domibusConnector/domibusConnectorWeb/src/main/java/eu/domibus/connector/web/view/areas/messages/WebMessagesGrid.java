@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.vaadin.klaudeta.PaginatedGrid;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -33,7 +36,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	}
 
 	private void addAllColumns(){
-		addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
+		addComponentColumn(webMessage -> geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
 		
 		addColumn(webMessage -> webMessage.getMessageInfo().getFrom().getPartyId()).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
 		addColumn(webMessage -> webMessage.getMessageInfo().getTo().getPartyId()).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
@@ -80,7 +83,13 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		}
 	}
 	
-	public void setMessagesView(Messages messagesView) {
-		this.messagesView = messagesView;
+	public Button geMessageDetailsLink(WebMessage connectorMessage) {
+		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
+		getDetails.addClickListener(e -> messagesView.showMessageDetails(connectorMessage));
+		return getDetails;
 	}
+	
+//	public void setMessagesView(Messages messagesView) {
+//		this.messagesView = messagesView;
+//	}
 }
