@@ -25,12 +25,14 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -41,6 +43,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail.Action;
 import eu.domibus.connector.web.dto.WebMessageDetail.Party;
@@ -127,7 +130,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
 		pageSizeField.addValueChangeListener(this::pageSizeChanged);
 
-		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, buildColumnHideSelection(), grid, downloadLayout);
+		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, grid, downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("700px");
 		add(main);
@@ -154,23 +157,23 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //		return messagesView.geMessageDetailsLink(connectorMessage);
 //	}
 	
-	/**
-     *  workaround for hideable columns. 
-     * All columns are initially shown. Any column that is selected in this multi select combobox will be hidden.
-     * MultiselectComboBox is an add-on: https://vaadin.com/directory/component/multiselect-combo-box
-     */
-    private MultiselectComboBox buildColumnHideSelection(){
-        // all selected columns will be hidden, the rest will be shown.
-        MultiselectComboBox<Grid.Column> columnHider = new MultiselectComboBox<>();
-        columnHider.setLabel(getTranslation("HideColumns"));
-        columnHider.setItems(grid.getHideableColumns());
-        columnHider.setItemLabelGenerator(Grid.Column::getKey); 
-        columnHider.addValueChangeListener(event -> {
-            grid.hideColumns(event.getValue());
-        });
-       // columnHider.select(grid.getHideableColumns()); un-comment this line to initially hide all hideable columns ("opt-out")
-       return columnHider;
-    }
+//	/**
+//     *  workaround for hideable columns. 
+//     * All columns are initially shown. Any column that is selected in this multi select combobox will be hidden.
+//     * MultiselectComboBox is an add-on: https://vaadin.com/directory/component/multiselect-combo-box
+//     */
+//    private MultiselectComboBox buildColumnHideSelection(){
+//        // all selected columns will be hidden, the rest will be shown.
+//        MultiselectComboBox<Grid.Column> columnHider = new MultiselectComboBox<>();
+//        columnHider.setLabel("Show/Hide Columns");
+//        columnHider.setItems(grid.getHideableColumns());
+////        columnHider.setItemLabelGenerator(grid.getHeaderNames().get(Grid.Column::getKey)); 
+//        columnHider.addValueChangeListener(event -> {
+//            grid.hideColumns(event.getValue());
+//        });
+//       // columnHider.select(grid.getHideableColumns()); un-comment this line to initially hide all hideable columns ("opt-out")
+//       return columnHider;
+//    }
 
 	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
 		gridGridSortOrderSortEvent.getSortOrder().stream()
@@ -322,6 +325,31 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		refreshListBtn.setText("RefreshList");
 		refreshListBtn.addClickListener(e -> {filter();});
 		
+		Button hideColsBtn = new Button();
+		hideColsBtn.setText("Show/Hide Columns");
+		hideColsBtn.addClickListener(e -> {
+			Dialog hideableColsDialog = new Dialog();
+			
+			Div headerContent = new Div();
+			Label header = new Label("Select columns you want to see in the list");
+			header.getStyle().set("font-weight", "bold");
+			header.getStyle().set("font-style", "italic");
+			headerContent.getStyle().set("text-align", "center");
+			headerContent.getStyle().set("padding", "10px");
+			headerContent.add(header);
+			hideableColsDialog.add(headerContent);
+			
+			for(String colName: grid.getHideableColumnNames()) {
+				LumoCheckbox hideableCol = new LumoCheckbox(colName);
+				hideableCol.setValue(grid.getHideableColumns().get(colName).isVisible());
+				hideableCol.addValueChangeListener(e1 -> {
+					grid.getHideableColumns().get(colName).setVisible(e1.getValue());
+				});
+				hideableColsDialog.add(hideableCol);
+			}
+			
+		});
+
 		HorizontalLayout filtering = new HorizontalLayout(
 				fromPartyIdFilterText,
 				toPartyIdFilterText,
@@ -329,9 +357,11 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //				actionFilterText, //TODO: currently not working!
 				backendClientFilterText,
 				clearAllFilterTextBtn,
-				refreshListBtn
+				refreshListBtn,
+				hideColsBtn
 			    );
 		filtering.setWidth("100vw");
+		
 		
 		return filtering;
 	}

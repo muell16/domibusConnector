@@ -1,7 +1,9 @@
 package eu.domibus.connector.web.view.areas.messages;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import eu.domibus.connector.web.dto.WebMessage;
 public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 	// collect all hideable columns, to be iterated over later.
-	private Collection<Column> hideableColumns = new HashSet<>();
+	private Map<String,Column> hideableColumns = new HashMap<>();
 	
 	private Messages messagesView;
 
@@ -62,47 +64,44 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 	// everything below this line is part of the workaround for hideable columns
 
-	private Column<WebMessage> addHideableColumn(String propertyName){
-		Column<WebMessage> column = addColumn(propertyName);
-		hideableColumns.add(column);
-		return column;
-	}
+//	private Column<WebMessage> addHideableColumn(String propertyName){
+//		Column<WebMessage> column = addColumn(propertyName);
+//		hideableColumns.put(propertyName,column);
+//		return column;
+//	}
 	
 	private Column<WebMessage> addHideableColumn(ValueProvider<WebMessage, ?> valueProvider, String header, String width, String key, boolean sortable, boolean visible){
-//		Column<WebMessage> column = addColumn(valueProvider).setHeader(header).setWidth(width).setSortable(sortable);
-		Column<WebMessage> column = addColumn(valueProvider).setHeader(header).setWidth(width).setKey(key).setSortable(sortable);
+		Column<WebMessage> column = addColumn(valueProvider).setHeader(header).setWidth(width).setSortable(sortable);
+//		Column<WebMessage> column = addColumn(valueProvider).setHeader(header).setWidth(width).setKey(key).setSortable(sortable);
 		column.setVisible(visible);
-		hideableColumns.add(column);
+		hideableColumns.put(header, column);
 		return column;
 	}
 
-	private Column<WebMessage> addHideableColumn(Renderer<WebMessage> renderer){
-		Column<WebMessage> column = addColumn(renderer);
-		hideableColumns.add(column);
-		return column;
-	}
 
-	public Collection<Column> getHideableColumns() {
+
+//	/**
+//	 * Hides all given columns, and shows all others
+//	 * @param columns
+//	 */
+//	public void hideColumns(Set<Column> columns) {
+//		for (Column hideableColumn : getHideableColumns()) {
+//			hideableColumn.setVisible(!columns.contains(hideableColumn));
+//		}
+//	}
+	
+	public Map<String, Column> getHideableColumns() {
 		return hideableColumns;
 	}
-
-	/**
-	 * Hides all given columns, and shows all others
-	 * @param columns
-	 */
-	public void hideColumns(Set<Column> columns) {
-		for (Column hideableColumn : getHideableColumns()) {
-			hideableColumn.setVisible(!columns.contains(hideableColumn));
-		}
-	}
 	
+	public Set<String> getHideableColumnNames() {
+		return hideableColumns.keySet();
+	}
+
 	public Button geMessageDetailsLink(WebMessage connectorMessage) {
 		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
 		getDetails.addClickListener(e -> messagesView.showMessageDetails(connectorMessage));
 		return getDetails;
 	}
-	
-//	public void setMessagesView(Messages messagesView) {
-//		this.messagesView = messagesView;
-//	}
+
 }
