@@ -89,7 +89,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		this.messageService = messageService;
 		this.dcMessagePersistenceService = messagePersistenceService;
 
-
+		grid.setMessagesView(messagesView);
 //		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
 //		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
 //		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
