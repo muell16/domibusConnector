@@ -28,7 +28,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	private Messages messagesView;
 
 	public WebMessagesGrid(Messages messagesView) {
-		super(WebMessage.class);
+		super();
 		this.messagesView = messagesView;
 		addAllColumns();
 		

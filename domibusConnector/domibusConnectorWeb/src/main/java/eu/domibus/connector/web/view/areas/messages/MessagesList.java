@@ -348,6 +348,8 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 				hideableColsDialog.add(hideableCol);
 			}
 			
+			hideableColsDialog.open();
+			
 		});
 
 		HorizontalLayout filtering = new HorizontalLayout(
