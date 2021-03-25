@@ -161,7 +161,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 //			dbMsg.setMessageInfo(dbMsgInfo);
 //		}
 
-		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher());
+		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
 		return exampleDbMsg;
 	}
 
