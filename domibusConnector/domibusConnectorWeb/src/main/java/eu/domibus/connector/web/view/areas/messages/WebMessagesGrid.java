@@ -48,17 +48,29 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	private void addAllColumns(){
 		addComponentColumn(webMessage -> geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
 		
-		addColumn(webMessage -> webMessage.getMessageInfo().getFrom().getPartyId()).setHeader("From Party ID").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
-		addColumn(webMessage -> webMessage.getMessageInfo().getTo().getPartyId()).setHeader("To Party ID").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
+		addColumn(
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyId():"")
+				.setHeader("From Party ID").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
+		addColumn(
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyId():"")
+				.setHeader("To Party ID").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
 
 		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, false);
 		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false, true);
 		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false, true);
 		addHideableColumn(WebMessage::getConversationId, "Conversation ID", "450px", "conversationId", false, false);
-		addHideableColumn(webMessage -> webMessage.getMessageInfo().getOriginalSender(), "Original sender", "300px", "messageInfo.originalSender", true, false);
-		addHideableColumn(webMessage -> webMessage.getMessageInfo().getFinalRecipient(), "Final recipient", "300px", "messageInfo.finalRecipient", true, false);
-		addHideableColumn(webMessage -> webMessage.getMessageInfo().getService().getService(), "Service", "150px", "messageInfo.service.service", true, true);
-		addHideableColumn(webMessage -> webMessage.getMessageInfo().getAction().getAction(), "Action", "150px", "messageInfo.action.action", true, true);
+		addHideableColumn(
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getOriginalSender():""
+				, "Original sender", "300px", "messageInfo.originalSender", true, false);
+		addHideableColumn(
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getFinalRecipient():""
+				, "Final recipient", "300px", "messageInfo.finalRecipient", true, false);
+		addHideableColumn(
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getService():""
+				, "Service", "150px", "messageInfo.service.service", true, true);
+		addHideableColumn(
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getAction()!=null?webMessage.getMessageInfo().getAction().getAction():""
+				, "Action", "150px", "messageInfo.action.action", true, true);
 		addHideableColumn(WebMessage::getBackendName, "backend name", "150px", "backendName", true, false);
 		addHideableColumn(WebMessage::getDirection, "direction", "150px", "direction", false, false);
 		addHideableColumn(WebMessage::getDeliveredToNationalSystem, "delivered backend", "300px", "deiliveredToNationalSystem", true, false);
