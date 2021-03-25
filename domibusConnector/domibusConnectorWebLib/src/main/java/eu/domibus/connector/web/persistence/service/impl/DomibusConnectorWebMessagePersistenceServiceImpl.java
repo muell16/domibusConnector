@@ -102,7 +102,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	@Override
 	public Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable) {
 		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
-
+		LOGGER.debug("Example: {}",exampleDbMsg.getProbe().toString());
 
 		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
 		
@@ -117,6 +117,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
     	if (example == null) {
     		throw new IllegalArgumentException("Example cannot be null!");
 		}
+    	LOGGER.debug("Probe: {}", example.getProbe());
 //		WebMessage probe = example.getProbe();
 
 		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
