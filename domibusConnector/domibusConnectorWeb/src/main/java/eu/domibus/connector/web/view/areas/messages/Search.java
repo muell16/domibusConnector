@@ -135,28 +135,10 @@ public class Search extends VerticalLayout {
 	private void addGridWithData(LinkedList<WebMessage> messages) {
 		main.removeAll();
 		
-//		Grid<WebMessage> grid = new Grid<>();
 		WebMessagesGrid grid = new WebMessagesGrid(messagesView);
 		
 		grid.setItems(messages);
-//		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
-//		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px");
-//		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px");
-//		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px");
-//		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px");
-//		grid.addColumn(WebMessage::getAction).setHeader("Action").setWidth("70px");
-//		grid.addColumn(WebMessage::getCreated).setHeader("Created");
-//		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setHeader("Delivered Backend");
-//		grid.addColumn(WebMessage::getDeliveredToGateway).setHeader("Delivered Gateway");
-//		grid.addColumn(WebMessage::getBackendName).setHeader("Backend Client").setWidth("100px");
-//		grid.setWidth("1800px");
-//		grid.setHeight("400px");
-		grid.setMultiSort(false);
 		
-//		for(Column<WebMessage> col : grid.getColumns()) {
-//			col.setSortable(true);
-//			col.setResizable(true);
-//		}
 		grid.setVisible(true);
 		
 		

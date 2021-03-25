@@ -93,32 +93,9 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		this.dcMessagePersistenceService = messagePersistenceService;
 		
 		grid = new WebMessagesGrid(messagesView);
-
-//		grid.setMessagesView(messagesView);
-//		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
-//		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
-//		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
-//		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
-//		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px").setKey("service").setSortable(true);
-//		grid.addColumn(WebMessage::getAction)
-//				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
-//		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
-//		grid.addColumn(WebMessage::getDeliveredToNationalSystem).setKey("deliveredToNationalSystem").setHeader("Delivered Backend");
-//		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway");
-//		grid.addColumn(WebMessage::getBackendName).setKey("backendName").setHeader("Backend Client").setWidth("100px").setSortable(true);
-//		grid.setWidth("1800px");
-//		grid.setHeight("700px");
-
-		grid.setMultiSort(false);
-		grid.addSortListener(this::handleSortEvent);
-
+		
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
-		
-		for(Column<WebMessage> col : grid.getColumns()) {
-//			col.setSortable(true);
-			col.setResizable(true);
-		}
 		
 		HorizontalLayout filtering = createFilterLayout();
 
@@ -154,14 +131,6 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	}
 
 
-	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
-		gridGridSortOrderSortEvent.getSortOrder().stream()
-				.map(webMessageGridSortOrder -> {
-					SortDirection direction = webMessageGridSortOrder.getDirection();
-					return direction;
-
-				});
-	}
 
 	private void pageSizeChanged(AbstractField.ComponentValueChangeEvent<IntegerField, Integer> integerFieldIntegerComponentValueChangeEvent) {
 		this.pageSize = integerFieldIntegerComponentValueChangeEvent.getValue();
