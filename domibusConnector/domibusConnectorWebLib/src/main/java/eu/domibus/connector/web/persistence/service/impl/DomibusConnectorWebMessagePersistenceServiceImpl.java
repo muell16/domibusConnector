@@ -105,6 +105,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 
 
 		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
+		
+		LOGGER.debug("Returned {} results.", all.getSize());
 
 		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
 
@@ -158,8 +160,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 //			dbMsg.setMessageInfo(dbMsgInfo);
 //		}
 
-//		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher());
-		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, ExampleMatcher.matching().withIgnoreNullValues());
+		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher());
 		return exampleDbMsg;
 	}
 
@@ -187,7 +188,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
 			if(pMessageInfo!=null) {
 
-				message.setMessageInfo(mapDbMessageToWebMessageDetail(pMessageInfo));
+				message.setMessageInfo(mapDbMessageInfoToWebMessageDetail(pMessageInfo));
 				
 			}
 			
@@ -203,7 +204,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			return message;
 		}
 		
-		private WebMessageDetail mapDbMessageToWebMessageDetail(PDomibusConnectorMessageInfo pMessageInfo) {
+		private WebMessageDetail mapDbMessageInfoToWebMessageDetail(PDomibusConnectorMessageInfo pMessageInfo) {
 	    	WebMessageDetail messageDetail = new WebMessageDetail();
 			
 			messageDetail.setOriginalSender(pMessageInfo.getOriginalSender());
