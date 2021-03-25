@@ -102,11 +102,11 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	@Override
 	public Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable) {
 		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
-		LOGGER.debug("Example: {}",exampleDbMsg.getProbe().toString());
+//		LOGGER.debug("Example: {}",exampleDbMsg.getProbe().toString());
 
 		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
 		
-		LOGGER.debug("Returned {} results.", all.getSize());
+//		LOGGER.debug("Returned {} results.", all.getSize());
 
 		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
 
@@ -117,49 +117,9 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
     	if (example == null) {
     		throw new IllegalArgumentException("Example cannot be null!");
 		}
-    	LOGGER.debug("Probe: {}", example.getProbe());
-//		WebMessage probe = example.getProbe();
+//    	LOGGER.debug("Probe: {}", example.getProbe());
 
 		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
-//		PDomibusConnectorMessageInfo dbMsgInfo = new PDomibusConnectorMessageInfo();
-
-//		dbMsg.setBackendName(probe.getBackendClient());
-//		dbMsg.setDeliveredToNationalSystem(probe.getDeliveredToBackend());
-		
-//		if(!StringUtils.isEmpty(probe.getFinalRecipient())) {
-//			dbMsgInfo.setFinalRecipient(probe.getFinalRecipient());
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
-//		
-//		if(!StringUtils.isEmpty(probe.getOriginalSender())) {
-//			dbMsgInfo.setOriginalSender(probe.getOriginalSender());
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
-//
-//		if (!StringUtils.isEmpty(probe.getAction())) {
-//			PDomibusConnectorAction dbAction = new PDomibusConnectorAction();
-//			dbAction.setAction(probe.getAction());
-//			dbMsgInfo.setAction(dbAction);
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
-//		if (!StringUtils.isEmpty(probe.getService())) {
-//			PDomibusConnectorService dbService = new PDomibusConnectorService();
-//			dbService.setService(probe.getService());
-//			dbMsgInfo.setService(dbService);
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
-//		if (!StringUtils.isEmpty(probe.getToPartyId())) {
-//			PDomibusConnectorParty dbParty = new PDomibusConnectorParty();
-//			dbParty.setPartyId(probe.getToPartyId());
-//			dbMsgInfo.setTo(dbParty);
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
-//		if (!StringUtils.isEmpty(probe.getFromPartyId())) {
-//			PDomibusConnectorParty dbParty = new PDomibusConnectorParty();
-//			dbParty.setPartyId(probe.getFromPartyId());
-//			dbMsgInfo.setFrom(dbParty);
-//			dbMsg.setMessageInfo(dbMsgInfo);
-//		}
 
 		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
 		return exampleDbMsg;
@@ -263,45 +223,5 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		return Optional.of(message);
 	}
 	
-//	private Optional<WebMessageDetail> mapDbMessageToWebMessageDetail(PDomibusConnectorMessageInfo pMessageInfo) {
-//    	if (pMessageInfo == null) {
-//    		return Optional.empty();
-//		}
-//		WebMessageDetail messageDetail = new WebMessageDetail();
-//		
-//		messageDetail.setConnectorMessageId(pMessage.getConnectorMessageId());
-//		messageDetail.setBackendMessageId(pMessage.getBackendMessageId());
-//		messageDetail.setEbmsMessageId(pMessage.getEbmsMessageId());
-//		messageDetail.setConversationId(pMessage.getConversationId());
-//		messageDetail.setBackendName(pMessage.getBackendName());
-//		messageDetail.setDeliveredToNationalSystem(pMessage.getDeliveredToNationalSystem());
-//		messageDetail.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-//		DomibusConnectorMessageDirection domibusConnectorMessageDirection = DomibusConnectorMessageDirection.fromMessageTargetSource(pMessage.getDirectionSource(), pMessage.getDirectionTarget());
-//		messageDetail.setDirection(domibusConnectorMessageDirection.toString());
-//		messageDetail.setConfirmed(pMessage.getConfirmed());
-//		messageDetail.setRejected(pMessage.getRejected());
-//		messageDetail.setCreated(pMessage.getCreated());
-//		
-//		PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
-//		messageDetail.setAction(pMessageInfo.getAction().getAction());
-//		messageDetail.setService(pMessageInfo.getService().getService());
-//		messageDetail.setOriginalSender(pMessageInfo.getOriginalSender());
-//		messageDetail.setFinalRecipient(pMessageInfo.getFinalRecipient());
-//		messageDetail.setFromPartyId(pMessageInfo.getFrom().getPartyId());
-//		messageDetail.setToPartyId(pMessageInfo.getTo().getPartyId());
-//		
-//		if(!CollectionUtils.isEmpty(pMessage.getEvidences())) {
-//			for(PDomibusConnectorEvidence dbEvidence:pMessage.getEvidences()) {
-//				WebMessageEvidence evidence = new WebMessageEvidence();
-//				evidence.setEvidenceType(dbEvidence.getType().name());
-//				evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());
-//				evidence.setDeliveredToBackend(dbEvidence.getDeliveredToNationalSystem());
-//				messageDetail.getEvidences().add(evidence);
-//			}
-//		}
-//		
-//		return Optional.of(messageDetail);
-//	}
-
 
 }

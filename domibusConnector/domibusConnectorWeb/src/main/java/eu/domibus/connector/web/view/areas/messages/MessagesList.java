@@ -172,12 +172,12 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		PageRequest pageRequest = PageRequest.of(offset / grid.getPageSize(), grid.getPageSize(), sort);
 		Page<WebMessage> all = dcMessagePersistenceService.findAll(createExample(), pageRequest);
 
-		List<WebMessage> messages = all.getContent();
-		if(!CollectionUtils.isEmpty(messages)) {
-			for(WebMessage m:messages) {
-				LOGGER.debug(m.toString());
-			}
-		}
+//		List<WebMessage> messages = all.getContent();
+//		if(!CollectionUtils.isEmpty(messages)) {
+//			for(WebMessage m:messages) {
+//				LOGGER.debug(m.toString());
+//			}
+//		}
 		
 		this.currentPage = all;
 
