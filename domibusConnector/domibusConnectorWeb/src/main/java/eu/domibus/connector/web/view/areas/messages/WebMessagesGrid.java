@@ -49,11 +49,11 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		addComponentColumn(webMessage -> geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
 		
 		addColumn(
-				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyId():"")
-				.setHeader("From Party ID").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyString():"")
+				.setHeader("From Party").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
 		addColumn(
-				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyId():"")
-				.setHeader("To Party ID").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyString():"")
+				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
 
 		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, false);
 		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false, true);
@@ -66,7 +66,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getFinalRecipient():""
 				, "Final recipient", "300px", "messageInfo.finalRecipient", true, false);
 		addHideableColumn(
-				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getService():""
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getServiceString():""
 				, "Service", "150px", "messageInfo.service.service", true, true);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getAction()!=null?webMessage.getMessageInfo().getAction().getAction():""

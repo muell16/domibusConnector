@@ -39,6 +39,9 @@ public class WebMessageDetail {
 		public void setPartyIdType(String partyIdType) {
 			this.partyIdType = partyIdType;
 		}
+		public String getPartyString() {
+			return partyId+"("+partyIdType+")";
+		}
 	}
 	
 	public class Service{
@@ -76,6 +79,10 @@ public class WebMessageDetail {
 		public void setServiceType(String serviceType) {
 			this.serviceType = serviceType;
 		}
+		public String getServiceString() {
+			return service+"("+serviceType+")";
+		}
+		
 	}
 	
 	public class Action{
@@ -100,6 +107,9 @@ public class WebMessageDetail {
 
 		public void setAction(String action) {
 			this.action = action;
+		}
+		public void setActionString(String action) {
+			
 		}
 	}
 
@@ -196,5 +206,18 @@ public class WebMessageDetail {
 		return errors;
 	}
 
+	
+	public void setServiceString(String service) {
+		
+	}
 
+	public void setActionString(String action) {
+		
+	}
+	public void setFromString(String from) {
+		
+	}
+	public void setToString(String to) {
+		
+	}
 }
