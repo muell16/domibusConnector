@@ -23,6 +23,10 @@ public class WebMessageDetail {
 			super();
 			this.partyId = partyId;
 		}
+		@Override
+		public String toString() {
+			return "Party [partyId=" + partyId + ", partyIdType=" + partyIdType + "]";
+		}
 		public String getPartyId() {
 			return partyId;
 		}
@@ -56,6 +60,10 @@ public class WebMessageDetail {
 			super();
 			this.service = service;
 		}
+		@Override
+		public String toString() {
+			return "Service [service=" + service + ", serviceType=" + serviceType + "]";
+		}
 		public String getService() {
 			return service;
 		}
@@ -81,6 +89,11 @@ public class WebMessageDetail {
 			this.action = action;
 		}
 
+		@Override
+		public String toString() {
+			return "Action [action=" + action + "]";
+		}
+
 		public String getAction() {
 			return action;
 		}
@@ -102,6 +115,13 @@ public class WebMessageDetail {
 	
 
 	
+
+
+	@Override
+	public String toString() {
+		return "WebMessageDetail [service=" + service + ", action=" + action + ", from=" + from + ", to=" + to
+				+ ", originalSender=" + originalSender + ", finalRecipient=" + finalRecipient + "]";
+	}
 
 
 	public String getOriginalSender() {

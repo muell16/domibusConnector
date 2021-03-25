@@ -17,6 +17,8 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.*;
@@ -167,6 +169,13 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		PageRequest pageRequest = PageRequest.of(offset / grid.getPageSize(), grid.getPageSize(), sort);
 		Page<WebMessage> all = dcMessagePersistenceService.findAll(createExample(), pageRequest);
 
+		List<WebMessage> messages = all.getContent();
+		if(!CollectionUtils.isEmpty(messages)) {
+			for(WebMessage m:messages) {
+				LOGGER.debug(m.toString());
+			}
+		}
+		
 		this.currentPage = all;
 
 		return all.stream();

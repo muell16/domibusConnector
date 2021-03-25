@@ -7,6 +7,13 @@ import liquibase.util.StringUtils;
 
 public class WebMessage {
 
+	@Override
+	public String toString() {
+		return "WebMessage [connectorMessageId=" + connectorMessageId + ", ebmsMessageId=" + ebmsMessageId
+				+ ", backendMessageId=" + backendMessageId + ", created=" + created + ", messageInfo=" + messageInfo
+				+ "]";
+	}
+
 	private String connectorMessageId;
 	private String ebmsMessageId;
 	private String backendMessageId;
