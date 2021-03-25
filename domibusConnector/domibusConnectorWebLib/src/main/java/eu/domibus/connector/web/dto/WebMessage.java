@@ -108,11 +108,16 @@ public class WebMessage {
 		return confirmed;
 	}
 
+	public String getConfirmedString() {
+		return confirmed!=null?confirmed.toString():null;
+	}
 
 	public void setConfirmed(ZonedDateTime confirmed) {
 		this.confirmed = confirmed;
 	}
 
+	public void setConfirmedString(String confirmed) {
+	}
 
 	public WebMessageDetail getMessageInfo() {
 		return messageInfo;
@@ -184,8 +189,7 @@ public class WebMessage {
 		this.rejected = rejected;
 	}
 	
-	public void setConfirmedString(String confirmed) {
-	}
+
 
 
 	
