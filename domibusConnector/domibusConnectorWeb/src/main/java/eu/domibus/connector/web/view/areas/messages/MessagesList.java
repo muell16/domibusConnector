@@ -87,6 +87,9 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 	public void setMessagesView(Messages messagesView) {
 		this.messagesView = messagesView;
+		if(this.grid!=null) {
+			grid.setMessagesView(messagesView);
+		}
 	}
 
 	public MessagesList(WebMessageService messageService,
