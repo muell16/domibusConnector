@@ -58,7 +58,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		addHideableColumn(webMessage -> webMessage.getMessageInfo().getOriginalSender(), "Original sender", "300px", "originalSender", true, false);
 		addHideableColumn(webMessage -> webMessage.getMessageInfo().getFinalRecipient(), "Final recipient", "300px", "finalRecipient", true, false);
 		addHideableColumn(webMessage -> webMessage.getMessageInfo().getService().getService(), "Service", "150px", "service", true, true);
-		addHideableColumn(webMessage -> webMessage.getMessageInfo().getAction().getAction(), "Action", "150px", "action", true, true);
+		addHideableColumn(webMessage -> webMessage.getMessageInfo().getAction().getAction(), "Action", "150px", "messageInfo.action.action", true, true);
 		addHideableColumn(WebMessage::getBackendName, "backend name", "150px", "backendName", true, false);
 		addHideableColumn(WebMessage::getDirection, "direction", "150px", "direction", false, false);
 		addHideableColumn(WebMessage::getDeliveredToNationalSystem, "delivered backend", "300px", "deiliveredToNationalSystem", true, false);
