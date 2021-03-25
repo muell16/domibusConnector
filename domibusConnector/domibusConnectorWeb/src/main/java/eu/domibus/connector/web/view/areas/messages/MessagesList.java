@@ -152,28 +152,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //		}
 
 	}
-	
-//	private Button geMessageDetailsLink(WebMessage connectorMessage) {
-//		return messagesView.geMessageDetailsLink(connectorMessage);
-//	}
-	
-//	/**
-//     *  workaround for hideable columns. 
-//     * All columns are initially shown. Any column that is selected in this multi select combobox will be hidden.
-//     * MultiselectComboBox is an add-on: https://vaadin.com/directory/component/multiselect-combo-box
-//     */
-//    private MultiselectComboBox buildColumnHideSelection(){
-//        // all selected columns will be hidden, the rest will be shown.
-//        MultiselectComboBox<Grid.Column> columnHider = new MultiselectComboBox<>();
-//        columnHider.setLabel("Show/Hide Columns");
-//        columnHider.setItems(grid.getHideableColumns());
-////        columnHider.setItemLabelGenerator(grid.getHeaderNames().get(Grid.Column::getKey)); 
-//        columnHider.addValueChangeListener(event -> {
-//            grid.hideColumns(event.getValue());
-//        });
-//       // columnHider.select(grid.getHideableColumns()); un-comment this line to initially hide all hideable columns ("opt-out")
-//       return columnHider;
-//    }
+
 
 	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
 		gridGridSortOrderSortEvent.getSortOrder().stream()
