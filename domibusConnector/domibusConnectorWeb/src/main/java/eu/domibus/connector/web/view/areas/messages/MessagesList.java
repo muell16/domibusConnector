@@ -46,6 +46,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.component.LumoCheckbox;
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail.Action;
 import eu.domibus.connector.web.dto.WebMessageDetail.Party;
@@ -102,17 +103,19 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
 		
-		HorizontalLayout filtering = createFilterLayout();
-
+//		HorizontalLayout filtering = createFilterLayout();
+//
+//		
+//		HorizontalLayout downloadLayout = createDownloadLayout();
 		
-		HorizontalLayout downloadLayout = createDownloadLayout();
+		VerticalLayout gridControl = createGridControlLayout();
+		
 
-		pageSizeField.setTitle("Display Messages");
-		pageSizeField.setValue(pageSize);
-		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
-		pageSizeField.addValueChangeListener(this::pageSizeChanged);
-
-		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, grid, downloadLayout);
+		VerticalLayout main = new VerticalLayout(gridControl, 
+//				filtering, 
+				grid 
+//				downloadLayout
+				);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("700px");
 		add(main);
@@ -133,6 +136,54 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //			LOGGER.error("Exception while load messages from DB in MessagesView", e);
 //		}
 
+	}
+
+	private VerticalLayout createGridControlLayout() {
+		VerticalLayout gridControl = new VerticalLayout();
+		
+		LumoLabel pageSizeLabel = new LumoLabel("Messages displayed per page:");
+		gridControl.add(pageSizeLabel);
+		pageSizeField.setTitle("Display Messages");
+		pageSizeField.setValue(pageSize);
+		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
+		pageSizeField.addValueChangeListener(this::pageSizeChanged);
+		gridControl.add(pageSizeField);
+		
+		Button hideColsBtn = new Button();
+		hideColsBtn.setText("Show/Hide Columns");
+		hideColsBtn.addClickListener(e -> {
+			Dialog hideableColsDialog = new Dialog();
+			
+			Div headerContent = new Div();
+			Label header = new Label("Select columns you want to see in the list");
+			header.getStyle().set("font-weight", "bold");
+			header.getStyle().set("font-style", "italic");
+			headerContent.getStyle().set("text-align", "center");
+			headerContent.getStyle().set("padding", "10px");
+			headerContent.add(header);
+			hideableColsDialog.add(headerContent);
+			
+			for(String colName: grid.getHideableColumnNames()) {
+				LumoCheckbox hideableCol = new LumoCheckbox(colName);
+				hideableCol.setValue(grid.getHideableColumns().get(colName).isVisible());
+				hideableCol.addValueChangeListener(e1 -> {
+					grid.getHideableColumns().get(colName).setVisible(e1.getValue());
+				});
+				hideableColsDialog.add(hideableCol);
+			}
+			
+			Button closeBtn = new Button("close");
+			closeBtn.addClickListener(e2 -> hideableColsDialog.close());
+			
+			hideableColsDialog.add(closeBtn);
+			
+			hideableColsDialog.open();
+			
+		});
+		
+		gridControl.add(hideColsBtn);
+		
+		return gridControl;
 	}
 
 
@@ -285,35 +336,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		refreshListBtn.setText("RefreshList");
 		refreshListBtn.addClickListener(e -> {filter();});
 		
-		Button hideColsBtn = new Button();
-		hideColsBtn.setText("Show/Hide Columns");
-		hideColsBtn.addClickListener(e -> {
-			Dialog hideableColsDialog = new Dialog();
-			
-			Div headerContent = new Div();
-			Label header = new Label("Select columns you want to see in the list");
-			header.getStyle().set("font-weight", "bold");
-			header.getStyle().set("font-style", "italic");
-			headerContent.getStyle().set("text-align", "center");
-			headerContent.getStyle().set("padding", "10px");
-			headerContent.add(header);
-			hideableColsDialog.add(headerContent);
-			
-			for(String colName: grid.getHideableColumnNames()) {
-				LumoCheckbox hideableCol = new LumoCheckbox(colName);
-				hideableCol.setValue(grid.getHideableColumns().get(colName).isVisible());
-				hideableCol.addValueChangeListener(e1 -> {
-					grid.getHideableColumns().get(colName).setVisible(e1.getValue());
-				});
-				hideableColsDialog.add(hideableCol);
-			}
-			
-			Button closeBtn = new Button("close");
-			closeBtn.addClickListener(e2 -> hideableColsDialog.close());
-			
-			hideableColsDialog.open();
-			
-		});
+		
 
 		HorizontalLayout filtering = new HorizontalLayout(
 				fromPartyIdFilterText,
@@ -322,8 +345,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //				actionFilterText, //TODO: currently not working!
 				backendClientFilterText,
 				clearAllFilterTextBtn,
-				refreshListBtn,
-				hideColsBtn
+				refreshListBtn
 			    );
 		filtering.setWidth("100vw");
 		

@@ -144,11 +144,12 @@ public class Search extends VerticalLayout {
 		
 		main.add(grid);
 		
-		HorizontalLayout downloadLayout = createDownloadLayout(messages);
-		
-		main.add(downloadLayout);
+//		HorizontalLayout downloadLayout = createDownloadLayout(messages);
+//		
+//		main.add(downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
-		main.setHeight("400px");
+//		main.setHeight("400px");
+		main.setWidth("100vw");
 //		main.setSizeFull();
 //		main.setVisible(false);
 		
