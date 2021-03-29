@@ -78,7 +78,7 @@ public class MessageDetails extends VerticalLayout {
 
 	public void loadMessageDetails(WebMessage connectorMessage) {
 		
-		Optional<WebMessageDetail> optionalMessage = null;
+		Optional<WebMessage> optionalMessage = null;
 				
 		if(!StringUtils.isEmpty(connectorMessage.getConnectorMessageId())) {
 			LOGGER.debug("MessageDetails loaded with connectorMessageId [{}]", connectorMessage.getConnectorMessageId());
@@ -101,7 +101,7 @@ public class MessageDetails extends VerticalLayout {
 			Notification.show(errorMessage);
 		}
 
-			WebMessageDetail webMessageDetail = optionalMessage.get();
+			WebMessage webMessageDetail = optionalMessage.get();
 			messageForm.setConnectorMessage(webMessageDetail);
 
 			if (!webMessageDetail.getEvidences().isEmpty()) {

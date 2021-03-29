@@ -27,17 +27,17 @@ public class ConnectorMessageForm extends FormLayout {
 	private TextField finalRecipient = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField service = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField action = FormsUtil.getFormattedTextFieldReadOnly();
-	private TextField fromPartyId = FormsUtil.getFormattedTextFieldReadOnly();
-	private TextField toPartyId = FormsUtil.getFormattedTextFieldReadOnly();
-	private TextField backendClient = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField fromParty = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField toParty = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField backendName = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField direction = FormsUtil.getFormattedTextFieldReadOnly();
-	private TextField deliveredToBackendString = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField deliveredToNationalSystemString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField deliveredToGatewayString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField confirmedString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField rejectedString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField createdString = FormsUtil.getFormattedTextFieldReadOnly();
 	
-	private Binder<WebMessageDetail> binder = new Binder<>(WebMessageDetail.class);
+	private Binder<WebMessage> binder = new Binder<>(WebMessage.class);
 	
 	public ConnectorMessageForm() {
 		fillForm();
@@ -55,18 +55,49 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(finalRecipient, "Final Recipient"); 
 		addFormItem(service, "Service"); 
 		addFormItem(action, "Action"); 
-		addFormItem(fromPartyId, "From Party ID"); 
-		addFormItem(toPartyId, "To Party ID"); 
-		addFormItem(backendClient, "Backend Client Name"); 
+		addFormItem(fromParty, "From Party ID"); 
+		addFormItem(toParty, "To Party ID"); 
+		addFormItem(backendName, "Backend Client Name"); 
 		addFormItem(direction, "Direction"); 
-		addFormItem(deliveredToBackendString, "Delivered to Backend at"); 
+		addFormItem(deliveredToNationalSystemString, "Delivered to Backend at"); 
 		addFormItem(deliveredToGatewayString, "Delivered to Gateway at"); 
 		addFormItem(confirmedString, "Confirmed at"); 
 		addFormItem(rejectedString, "Rejected at"); 
 		addFormItem(createdString, "Message created at"); 
+		
+		binder.bind(originalSender,
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getOriginalSender():"", 
+					(webMessage,originalSender) -> {
+						webMessage.getMessageInfo().setOriginalSender(originalSender);
+					});
+		binder.bind(finalRecipient,
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getFinalRecipient():"", 
+					(webMessage,finalRecipient) -> {
+						webMessage.getMessageInfo().setFinalRecipient(finalRecipient);
+					});
+		binder.bind(service,
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getServiceString():"", 
+					(webMessage,service) -> {
+						webMessage.getMessageInfo().setServiceString(service);
+					});
+		binder.bind(action,
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getAction()!=null?webMessage.getMessageInfo().getAction().getAction():"",
+					(webMessage,service) -> {
+						webMessage.getMessageInfo().setServiceString(service);
+					});
+		binder.bind(fromParty,
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyString():"",
+					(webMessage,fromParty) -> {
+						webMessage.getMessageInfo().setServiceString(fromParty);
+					});
+		binder.bind(toParty,
+				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyString():"",
+					(webMessage,toParty) -> {
+						webMessage.getMessageInfo().setServiceString(toParty);
+					});
 	}
 
-	public void setConnectorMessage(WebMessageDetail message) {
+	public void setConnectorMessage(WebMessage message) {
 		this.removeAll();
 		fillForm();
 		binder.setBean(message);
@@ -76,7 +107,7 @@ public class ConnectorMessageForm extends FormLayout {
 		return this.connectorMessageId.getValue();
 	}
 
-	public Binder<WebMessageDetail> getBinder() {
+	public Binder<WebMessage> getBinder() {
 		return binder;
 	}
 

@@ -135,37 +135,21 @@ public class Search extends VerticalLayout {
 	private void addGridWithData(LinkedList<WebMessage> messages) {
 		main.removeAll();
 		
-		Grid<WebMessage> grid = new Grid<>();
+		WebMessagesGrid grid = new WebMessagesGrid(messagesView);
 		
 		grid.setItems(messages);
-		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
-		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px");
-		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px");
-		grid.addColumn(WebMessage::getAction).setHeader("Action").setWidth("70px");
-		grid.addColumn(WebMessage::getCreated).setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setHeader("Delivered Backend");
-		grid.addColumn(WebMessage::getDeliveredToGateway).setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendClient).setHeader("Backend Client").setWidth("100px");
-		grid.setWidth("1800px");
-		grid.setHeight("400px");
-		grid.setMultiSort(true);
 		
-		for(Column<WebMessage> col : grid.getColumns()) {
-			col.setSortable(true);
-			col.setResizable(true);
-		}
 		grid.setVisible(true);
 		
 		
 		main.add(grid);
 		
-		HorizontalLayout downloadLayout = createDownloadLayout(messages);
-		
-		main.add(downloadLayout);
+//		HorizontalLayout downloadLayout = createDownloadLayout(messages);
+//		
+//		main.add(downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
-		main.setHeight("400px");
+//		main.setHeight("400px");
+		main.setWidth("100vw");
 //		main.setSizeFull();
 //		main.setVisible(false);
 		
@@ -218,13 +202,13 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByBackendMessageId(String backendMessageId) {
-		Optional<WebMessageDetail> messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
+		Optional<WebMessage> messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
 		searchBackendMessageIdText.setValue("");
 		messageByBackendMessageId.ifPresent(m -> messagesView.showMessageDetails(m));
 	}
 
 	private void searchByEbmsId(String ebmsId) {
-		Optional<WebMessageDetail>  messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
+		Optional<WebMessage>  messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
 		searchEbmsIdText.setValue("");
 		messageByEbmsId.ifPresent((m) -> messagesView.showMessageDetails(m));
 
@@ -242,7 +226,7 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByConnectorMessageId(String connectorMessageId) {
-		Optional<WebMessageDetail> messageByConnectorId = messageService.getMessageByConnectorId(connectorMessageId);
+		Optional<WebMessage> messageByConnectorId = messageService.getMessageByConnectorId(connectorMessageId);
 		searchMessageIdText.setValue("");
 		messageByConnectorId.ifPresent((m) -> messagesView.showMessageDetails(m));
 	}

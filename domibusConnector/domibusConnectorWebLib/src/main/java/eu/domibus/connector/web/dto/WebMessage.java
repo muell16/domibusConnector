@@ -1,26 +1,35 @@
 package eu.domibus.connector.web.dto;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.util.LinkedList;
+
+import liquibase.util.StringUtils;
 
 public class WebMessage {
+
+	@Override
+	public String toString() {
+		return "WebMessage [connectorMessageId=" + connectorMessageId + ", ebmsMessageId=" + ebmsMessageId
+				+ ", backendMessageId=" + backendMessageId + ", created=" + created + ", messageInfo=" + messageInfo
+				+ "]";
+	}
 
 	private String connectorMessageId;
 	private String ebmsMessageId;
 	private String backendMessageId;
-	private String service;
-	private String action;
-	private String fromPartyId;
-	private String fromPartyIdType;
-	private String toPartyId;
-	private String toPartyIdType;
-	private String originalSender;
-	private String finalRecipient;
-	private String backendClient;
-	private Date deliveredToBackend;
-	private Date deliveredToGateway;
-	private Date created;
+	private String conversationId;
+	private String backendName;
+	private String directionSource;
+	private String directionTarget;
+	private ZonedDateTime deliveredToNationalSystem;
+	private ZonedDateTime deliveredToGateway;
+	private ZonedDateTime created;
+	private ZonedDateTime confirmed;
+	private ZonedDateTime rejected;
+	private WebMessageDetail messageInfo = new WebMessageDetail();
+	private LinkedList<WebMessageEvidence> evidences = new LinkedList<WebMessageEvidence>();
 	
-	
+		
 	public String getConnectorMessageId() {
 		return connectorMessageId;
 	}
@@ -52,115 +61,92 @@ public class WebMessage {
 	}
 
 
-	public String getService() {
-		return service;
+	
+
+	public String getBackendName() {
+		return backendName;
 	}
 
 
-	public void setService(String service) {
-		this.service = service;
-	}
-
-
-	public String getAction() {
-		return action;
-	}
-
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-
-	public String getFromPartyId() {
-		return fromPartyId;
-	}
-
-
-	public void setFromPartyId(String fromPartyId) {
-		this.fromPartyId = fromPartyId;
-	}
-
-
-	public String getFromPartyIdType() {
-		return fromPartyIdType;
-	}
-
-
-	public void setFromPartyIdType(String fromPartyIdType) {
-		this.fromPartyIdType = fromPartyIdType;
-	}
-
-
-	public String getToPartyId() {
-		return toPartyId;
-	}
-
-
-	public void setToPartyId(String toPartyId) {
-		this.toPartyId = toPartyId;
-	}
-
-
-	public String getToPartyIdType() {
-		return toPartyIdType;
-	}
-
-
-	public void setToPartyIdType(String toPartyIdType) {
-		this.toPartyIdType = toPartyIdType;
-	}
-
-
-	public String getOriginalSender() {
-		return originalSender;
-	}
-
-
-	public void setOriginalSender(String originalSender) {
-		this.originalSender = originalSender;
-	}
-
-
-	public String getFinalRecipient() {
-		return finalRecipient;
-	}
-
-
-	public void setFinalRecipient(String finalRecipient) {
-		this.finalRecipient = finalRecipient;
-	}
-
-
-	public String getBackendClient() {
-		return backendClient;
-	}
-
-
-	public void setBackendClient(String backendClient) {
-		this.backendClient = backendClient;
+	public void setBackendName(String backendClient) {
+		this.backendName = backendClient;
 	}
 
 
 
-	public Date getDeliveredToBackend() {
-		return deliveredToBackend;
+	public String getConversationId() {
+		return conversationId;
+	}
+
+
+	public void setConversationId(String conversationId) {
+		this.conversationId = conversationId;
+	}
+
+
+	public String getDirectionSource() {
+		return directionSource;
+	}
+
+
+	public void setDirectionSource(String directionSource) {
+		this.directionSource = directionSource;
+	}
+
+
+	public String getDirectionTarget() {
+		return directionTarget;
+	}
+
+
+	public void setDirectionTarget(String directionTarget) {
+		this.directionTarget = directionTarget;
+	}
+
+
+	public ZonedDateTime getConfirmed() {
+		return confirmed;
+	}
+
+	public String getConfirmedString() {
+		return confirmed!=null?confirmed.toString():null;
+	}
+
+	public void setConfirmed(ZonedDateTime confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	public void setConfirmedString(String confirmed) {
+	}
+
+	public WebMessageDetail getMessageInfo() {
+		return messageInfo;
+	}
+
+
+	public void setMessageInfo(WebMessageDetail messageInfo) {
+		this.messageInfo = messageInfo;
+	}
+
+
+	public ZonedDateTime getDeliveredToNationalSystem() {
+		return deliveredToNationalSystem;
 	}
 	
-	public String getDeliveredToBackendString() {
-		return deliveredToBackend!=null?deliveredToBackend.toString():null;
+	public String getDeliveredToNationalSystemString() {
+		return deliveredToNationalSystem!=null?deliveredToNationalSystem.toString():null;
 	}
 
 
-	public void setDeliveredToBackend(Date deliveredToBackend) {
-		this.deliveredToBackend = deliveredToBackend;
+	public void setDeliveredToNationalSystem(ZonedDateTime deliveredToBackend) {
+		this.deliveredToNationalSystem = deliveredToBackend;
 	}
 	
-	public void setDeliveredToBackendString(String deliveredToBackend) {
+	public void setDeliveredToNationalSystemString(String deliveredToBackend) {
 	}
 
 
-	public Date getDeliveredToGateway() {
+	public ZonedDateTime getDeliveredToGateway() {
 		return deliveredToGateway;
 	}
 	
@@ -169,7 +155,7 @@ public class WebMessage {
 	}
 
 
-	public void setDeliveredToGateway(Date deliveredToGateway) {
+	public void setDeliveredToGateway(ZonedDateTime deliveredToGateway) {
 		this.deliveredToGateway = deliveredToGateway;
 	}
 
@@ -177,7 +163,7 @@ public class WebMessage {
 	}
 
 
-	public Date getCreated() {
+	public ZonedDateTime getCreated() {
 		return created;
 	}
 	
@@ -186,11 +172,44 @@ public class WebMessage {
 	}
 
 
-	public void setCreated(Date created) {
+	public void setCreated(ZonedDateTime created) {
 		this.created = created;
 	}
 
 	public void setCreatedString(String created) {
+	}
+
+
+	public ZonedDateTime getRejected() {
+		return rejected;
+	}
+
+
+	public void setRejected(ZonedDateTime rejected) {
+		this.rejected = rejected;
+	}
+	
+
+
+
+	
+	
+	public String getRejectedString() {
+		return rejected!=null?rejected.toString():null;
+	}
+
+	
+	public void setRejectedString(String rejected) {
+	}
+
+	public LinkedList<WebMessageEvidence> getEvidences() {
+		return evidences;
+	}
+
+	public String getDirection() {
+		if(!StringUtils.isEmpty(getDirectionSource()) && !StringUtils.isEmpty(getDirectionTarget()))
+			return getDirectionSource() + " TO " +getDirectionTarget();
+		return "";
 	}
 
 }

@@ -17,6 +17,8 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.*;
@@ -25,12 +27,14 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -41,8 +45,15 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.dto.WebMessageDetail.Action;
+import eu.domibus.connector.web.dto.WebMessageDetail.Party;
+import eu.domibus.connector.web.dto.WebMessageDetail.Service;
 import eu.domibus.connector.web.service.WebMessageService;
+
+import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 @Component
@@ -57,7 +68,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	private final WebMessageService messageService;
 	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 
-	private PaginatedGrid<WebMessage> grid = new PaginatedGrid<>();
+	private WebMessagesGrid grid;
 	private LinkedList<WebMessage> fullList = null;
 	private Messages messagesView;
 
@@ -77,50 +88,34 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 	public void setMessagesView(Messages messagesView) {
 		this.messagesView = messagesView;
+		if(this.grid!=null) {
+			grid.setMessagesView(messagesView);
+		}
 	}
 
 	public MessagesList(WebMessageService messageService,
 						DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messageService = messageService;
 		this.dcMessagePersistenceService = messagePersistenceService;
-
-
-		grid.addComponentColumn(webMessage -> messagesView.geMessageDetailsLink(webMessage)).setHeader("Details").setWidth("30px");
-		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px").setKey("connectorMessageId").setSortable(false);
-		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px").setKey("fromPartyId").setSortable(true);
-		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px").setKey("toPartyId").setSortable(true);
-		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px").setKey("service").setSortable(true);
-		grid.addColumn(WebMessage::getAction)
-				.setHeader("Action").setWidth("70px").setKey("action").setSortable(true);
-		grid.addColumn(WebMessage::getCreated).setKey("created").setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setKey("deliveredToBackend").setHeader("Delivered Backend").setSortable(true);
-		grid.addColumn(WebMessage::getDeliveredToGateway).setKey("deliveredToGateway").setHeader("Delivered Gateway").setSortable(true);
-		grid.addColumn(WebMessage::getBackendClient).setKey("backendClient").setHeader("Backend Client").setWidth("100px").setSortable(true);
-		grid.setWidth("1800px");
-		grid.setHeight("700px");
-
-		grid.setMultiSort(true);
-		grid.addSortListener(this::handleSortEvent);
-
+		
+		grid = new WebMessagesGrid(messagesView);
+		
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
 		
-		for(Column<WebMessage> col : grid.getColumns()) {
-			col.setSortable(true);
-			col.setResizable(true);
-		}
+//		HorizontalLayout filtering = createFilterLayout();
+//
+//		
+//		HorizontalLayout downloadLayout = createDownloadLayout();
 		
-		HorizontalLayout filtering = createFilterLayout();
-
+		VerticalLayout gridControl = createGridControlLayout();
 		
-		HorizontalLayout downloadLayout = createDownloadLayout();
 
-		pageSizeField.setTitle("Display Messages");
-		pageSizeField.setValue(pageSize);
-		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
-		pageSizeField.addValueChangeListener(this::pageSizeChanged);
-
-		VerticalLayout main = new VerticalLayout(pageSizeField, filtering, grid, downloadLayout);
+		VerticalLayout main = new VerticalLayout(gridControl, 
+//				filtering, 
+				grid 
+//				downloadLayout
+				);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("700px");
 		add(main);
@@ -142,19 +137,56 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 //		}
 
 	}
-	
-//	private Button geMessageDetailsLink(WebMessage connectorMessage) {
-//		return messagesView.geMessageDetailsLink(connectorMessage);
-//	}
 
-	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
-		gridGridSortOrderSortEvent.getSortOrder().stream()
-				.map(webMessageGridSortOrder -> {
-					SortDirection direction = webMessageGridSortOrder.getDirection();
-					return direction;
-
+	private VerticalLayout createGridControlLayout() {
+		VerticalLayout gridControl = new VerticalLayout();
+		
+		LumoLabel pageSizeLabel = new LumoLabel("Messages displayed per page:");
+		gridControl.add(pageSizeLabel);
+		pageSizeField.setTitle("Display Messages");
+		pageSizeField.setValue(pageSize);
+		pageSizeField.setValueChangeMode(ValueChangeMode.LAZY);
+		pageSizeField.addValueChangeListener(this::pageSizeChanged);
+		gridControl.add(pageSizeField);
+		
+		Button hideColsBtn = new Button();
+		hideColsBtn.setText("Show/Hide Columns");
+		hideColsBtn.addClickListener(e -> {
+			Dialog hideableColsDialog = new Dialog();
+			
+			Div headerContent = new Div();
+			Label header = new Label("Select columns you want to see in the list");
+			header.getStyle().set("font-weight", "bold");
+			header.getStyle().set("font-style", "italic");
+			headerContent.getStyle().set("text-align", "center");
+			headerContent.getStyle().set("padding", "10px");
+			headerContent.add(header);
+			hideableColsDialog.add(headerContent);
+			
+			for(String colName: grid.getHideableColumnNames()) {
+				LumoCheckbox hideableCol = new LumoCheckbox(colName);
+				hideableCol.setValue(grid.getHideableColumns().get(colName).isVisible());
+				hideableCol.addValueChangeListener(e1 -> {
+					grid.getHideableColumns().get(colName).setVisible(e1.getValue());
 				});
+				hideableColsDialog.add(hideableCol);
+			}
+			
+			Button closeBtn = new Button("close");
+			closeBtn.addClickListener(e2 -> hideableColsDialog.close());
+			
+			hideableColsDialog.add(closeBtn);
+			
+			hideableColsDialog.open();
+			
+		});
+		
+		gridControl.add(hideColsBtn);
+		
+		return gridControl;
 	}
+
+
 
 	private void pageSizeChanged(AbstractField.ComponentValueChangeEvent<IntegerField, Integer> integerFieldIntegerComponentValueChangeEvent) {
 		this.pageSize = integerFieldIntegerComponentValueChangeEvent.getValue();
@@ -191,6 +223,13 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		PageRequest pageRequest = PageRequest.of(offset / grid.getPageSize(), grid.getPageSize(), sort);
 		Page<WebMessage> all = dcMessagePersistenceService.findAll(createExample(), pageRequest);
 
+//		List<WebMessage> messages = all.getContent();
+//		if(!CollectionUtils.isEmpty(messages)) {
+//			for(WebMessage m:messages) {
+//				LOGGER.debug(m.toString());
+//			}
+//		}
+		
 		this.currentPage = all;
 
 		return all.stream();
@@ -297,6 +336,8 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		refreshListBtn.setText("RefreshList");
 		refreshListBtn.addClickListener(e -> {filter();});
 		
+		
+
 		HorizontalLayout filtering = new HorizontalLayout(
 				fromPartyIdFilterText,
 				toPartyIdFilterText,
@@ -308,16 +349,17 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 			    );
 		filtering.setWidth("100vw");
 		
+		
 		return filtering;
 	}
 	
 	private void filter() {
 
-		exampleWebMessage.setAction(getTxt(actionFilterText));
-		exampleWebMessage.setFromPartyId(getTxt(fromPartyIdFilterText));
-		exampleWebMessage.setToPartyId(getTxt(toPartyIdFilterText));
-		exampleWebMessage.setService(getTxt(serviceFilterText));
-		exampleWebMessage.setBackendClient(getTxt(backendClientFilterText));
+		exampleWebMessage.getMessageInfo().setAction(exampleWebMessage.getMessageInfo().new Action(getTxt(actionFilterText)));
+		exampleWebMessage.getMessageInfo().setFrom(exampleWebMessage.getMessageInfo().new Party(getTxt(fromPartyIdFilterText)));
+		exampleWebMessage.getMessageInfo().setTo(exampleWebMessage.getMessageInfo().new Party(getTxt(toPartyIdFilterText)));
+		exampleWebMessage.getMessageInfo().setService(exampleWebMessage.getMessageInfo().new Service(getTxt(serviceFilterText)));
+		exampleWebMessage.setBackendName(getTxt(backendClientFilterText));
 
 		callbackDataProvider.refreshAll();
 
