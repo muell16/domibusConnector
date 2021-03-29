@@ -17,6 +17,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
@@ -93,6 +94,9 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         }
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
+        evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+        		new DomibusConnectorMessage.DomibusConnectorMessageId(confirmationMessage.getConnectorMessageId()), 
+        		evidenceType);
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());

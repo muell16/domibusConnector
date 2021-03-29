@@ -115,6 +115,14 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			} catch (Exception e) {
 				createNonDeliveryEvidenceAndSendIt(message);
 			}
+			
+			// set message evidences' deliveredToNationalSystem timestamp
+			for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
+				CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
+						.createConfirmationMessageBuilder(message, confirmation.getEvidenceType())
+						.build();
+				wrappedDeliveryEvidenceMsg.setEvidenceDeliveredToBackend();
+			}
 		}
 
 		LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());

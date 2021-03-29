@@ -100,19 +100,20 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .buildAndThrow();
 		}
 
-		DomibusConnectorMessage submissionAcceptanceConfirmationMessage = null;
+//		DomibusConnectorMessage submissionAcceptanceConfirmationMessage = null;
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = null;
 		try {
 
 
 			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
+			confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
 //					.useNationalIdAsRefToMessageId()
 					.switchFromToParty()
 					.withDirection(MessageTargetSource.BACKEND)
 					.build();
 			confirmationMessage.persistEvidenceToMessage();
 
-			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
+//			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
 		    LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, ete.getMessage());
@@ -128,6 +129,10 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		try {
 //			message = bigDataPersistenceService.setAllLargeFilesReadable(message);
 			gwSubmissionService.submitToGateway(message);
+			
+			//set the evidences' delivered to gateway timestamp
+			confirmationMessage.setEvidenceDeliveredToGateway();
+			
 		} catch (DomibusConnectorGatewaySubmissionException e) {
 		    LOGGER.warn("Cannot submit message to gateway", e);
 			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, e.getMessage());
@@ -141,11 +146,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 
-        //also send evidence back to backend client:
 
-		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
+//		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
 //        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
-		backendDeliveryService.deliverMessageToBackend(submissionAcceptanceConfirmationMessage);
+
+		//also send evidence back to backend client:
+		backendDeliveryService.deliverMessageToBackend(confirmationMessage.getEvidenceMessage());
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
 

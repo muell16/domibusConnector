@@ -179,6 +179,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
 
         submitToGateway(evidenceMessage, originalMessage);
+        
+        wrappedConfirmation.setEvidenceDeliveredToGateway();
 
         LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
     }

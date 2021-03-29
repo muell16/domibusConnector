@@ -44,6 +44,10 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
     public int setDeliveredToGateway(String connectorMessageId);
 
 
+    @Modifying
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.message = ?1 AND e.type = ?2")
+    public int setDeliveredToGateway(PDomibusConnectorMessage message, EvidenceType type);
+   
     /**
      * sets the evidence with the connectorMessageId (transportId) as delivered to national system/backend
      * @param connectorMessageId - the connector message id
@@ -52,6 +56,10 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
     @Modifying
     @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.connectorMessageId = ?1")
     public int setDeliveredToBackend(String connectorMessageId);
+    
+    @Modifying
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.id = ?1")
+    public int setDeliveredToBackend(Long evidenceId);
 
     /**
      *

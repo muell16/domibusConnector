@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.springframework.lang.NonNull;
@@ -37,19 +38,26 @@ public interface DomibusConnectorEvidencePersistenceService {
 
 
 
-    /**
-     * Sets the evidence as delivered to GW
-     * @param transport - the connector message id, which has transported the message
-     */
-    void setEvidenceDeliveredToGateway(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
-
-
-    /**
-     * Sets the evidence as delivered to national system
-     * @param transport - the connector message id, of the message which has transported the evidence
-     */
-    void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
+//    /**
+//     * Sets the evidence as delivered to GW
+//     * @param transport - the connector message id, which has transported the message
+//     */
+//    void setEvidenceDeliveredToGateway(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
+//
+//
+//    /**
+//     * Sets the evidence as delivered to national system
+//     * @param transport - the connector message id, of the message which has transported the evidence
+//     */
+//    void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
 
     DomibusConnectorMessage persistAsEvidenceTo(DomibusConnectorMessage message, DomibusConnectorMessage relatedMessage);
+
+
+	void setEvidenceDeliveredToGateway(DomibusConnectorMessageId transport, DomibusConnectorEvidenceType evidenceType);
+
+
+	void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessageId transport,
+			DomibusConnectorEvidenceType evidenceType);
 }

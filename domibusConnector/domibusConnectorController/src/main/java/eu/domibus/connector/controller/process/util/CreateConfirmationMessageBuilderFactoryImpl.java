@@ -136,7 +136,19 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
                     messageConfirmation,
                     new DomibusConnectorMessage.DomibusConnectorMessageId(evidenceMessage.getConnectorMessageId()));
         }
+        
+        public void setEvidenceDeliveredToGateway() {
+        	evidencePersistenceService.setEvidenceDeliveredToGateway(
+        			new DomibusConnectorMessage.DomibusConnectorMessageId(originalMesssage.getConnectorMessageId()), 
+        			this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType());
+        }
 
+        public void setEvidenceDeliveredToBackend() {
+        	evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+        			new DomibusConnectorMessage.DomibusConnectorMessageId(originalMesssage.getConnectorMessageId()), 
+        			this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType());
+        }
+        
         public DomibusConnectorEvidenceType getEvidenceType() {
             return this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType();
         }
