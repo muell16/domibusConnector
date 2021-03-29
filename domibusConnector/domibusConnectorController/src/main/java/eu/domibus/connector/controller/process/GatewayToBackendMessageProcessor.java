@@ -46,6 +46,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
+	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 
 	@Autowired
 	public void setConnectorTestConfigurationProperties(ConnectorTestConfigurationProperties connectorTestConfigurationProperties) {
@@ -83,7 +84,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         this.messageErrorPersistenceService = messageErrorPersistenceService;
     }
 
-    @Override
+	@Autowired
+	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+		this.evidencePersistenceService = evidencePersistenceService;
+	}
+
+	@Override
 	@StoreMessageExceptionIntoDatabase
 	@MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(DomibusConnectorMessage message) {
@@ -118,10 +124,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			
 			// set message evidences' deliveredToNationalSystem timestamp
 			for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
-				CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-						.createConfirmationMessageBuilder(message, confirmation.getEvidenceType())
-						.build();
-				wrappedDeliveryEvidenceMsg.setEvidenceDeliveredToBackend();
+				evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+						new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()), 
+						confirmation.getEvidenceType());
 			}
 		}
 
