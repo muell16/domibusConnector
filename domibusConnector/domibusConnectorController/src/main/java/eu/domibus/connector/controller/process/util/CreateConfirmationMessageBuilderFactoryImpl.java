@@ -138,12 +138,14 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
         }
         
         public void setEvidenceDeliveredToGateway() {
+        	LOGGER.trace("#setEvidenceDeliveredToGateway: evidence [{}] to message [{}]", this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType(), evidenceMessage.getConnectorMessageId());
         	evidencePersistenceService.setEvidenceDeliveredToGateway(
         			new DomibusConnectorMessage.DomibusConnectorMessageId(originalMesssage.getConnectorMessageId()), 
         			this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType());
         }
 
         public void setEvidenceDeliveredToBackend() {
+        	LOGGER.trace("#setEvidenceDeliveredToBackend: evidence [{}] to message [{}]", this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType(), evidenceMessage.getConnectorMessageId());
         	evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
         			new DomibusConnectorMessage.DomibusConnectorMessageId(originalMesssage.getConnectorMessageId()), 
         			this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType());

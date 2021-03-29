@@ -63,7 +63,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     public void setEvidenceDeliveredToGateway(DomibusConnectorMessage.DomibusConnectorMessageId transport, @Nonnull DomibusConnectorEvidenceType evidenceType) {
     	PDomibusConnectorEvidence dbEvidence = findEvidence(transport, evidenceType);
         
-        LOGGER.trace("#setEvidenceDeliveredToGateway: setting evidence [{}] for messages [{}] as delivered to gateway", evidenceType, transport.getConnectorMessageId());
+        LOGGER.debug("#setEvidenceDeliveredToGateway: setting evidence [{}] for messages [{}] as delivered to gateway", evidenceType, transport.getConnectorMessageId());
         
         if (dbEvidence != null) {
           evidenceDao.setDeliveredToGateway(dbEvidence.getId());
@@ -75,7 +75,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     public void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage.DomibusConnectorMessageId transport, @Nonnull DomibusConnectorEvidenceType evidenceType) {
     	PDomibusConnectorEvidence dbEvidence = findEvidence(transport, evidenceType);
         
-        LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] for messages [{}] as delivered to NationalSystem", evidenceType, transport.getConnectorMessageId());
+        LOGGER.debug("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] for messages [{}] as delivered to NationalSystem", evidenceType, transport.getConnectorMessageId());
         
         if (dbEvidence != null) {
           evidenceDao.setDeliveredToBackend(dbEvidence.getId());

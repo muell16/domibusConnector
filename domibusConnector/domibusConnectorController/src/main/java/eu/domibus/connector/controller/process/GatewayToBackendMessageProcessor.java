@@ -123,6 +123,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			}
 			
 			// set message evidences' deliveredToNationalSystem timestamp
+			LOGGER.debug("#processMessage: set the messages' evidences delivered to ");
 			for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
 				evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
 						new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()), 
