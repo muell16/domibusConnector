@@ -162,6 +162,19 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
         public DomibusConnectorMessage getOriginalMessage() {
             return this.originalMesssage;
         }
+        
+        public void switchMessageTarget() {
+        	LOGGER.debug("[{}]: switching originalSender with finalRecipient in messageDetails", this);
+        	MessageTargetSource messageTarget = this.evidenceMessage.getMessageDetails().getDirection().getTarget();
+        	if (messageTarget == MessageTargetSource.BACKEND) {
+        		this.evidenceMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
+            } else if (messageTarget == MessageTargetSource.GATEWAY) {
+            	this.evidenceMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+            } else {
+                throw new RuntimeException("The evidence message target MUST be set!, call withDirection of the builder!");
+            }
+           
+        }
     }
 
     /**

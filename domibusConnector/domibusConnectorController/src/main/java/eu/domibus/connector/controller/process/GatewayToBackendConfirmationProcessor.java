@@ -95,7 +95,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
         evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
-        		new DomibusConnectorMessage.DomibusConnectorMessageId(confirmationMessage.getConnectorMessageId()), 
+        		new DomibusConnectorMessage.DomibusConnectorMessageId(originalMessage.getConnectorMessageId()), 
         		evidenceType);
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),

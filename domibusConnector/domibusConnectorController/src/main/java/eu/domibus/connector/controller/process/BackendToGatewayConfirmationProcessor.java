@@ -123,13 +123,24 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
                 = confirmationMessageService.createConfirmationMessageBuilder(originalMessage, evidenceType);
 
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
+                .switchFromToParty()
+                .swithOriginalSenderFinalRecipient()
+                .withDirection(MessageTargetSource.GATEWAY)
+                .build();
 
-        sendAsEvidenceMessageToGw(evidenceType, originalMessage, confirmationMessageBuilder);
+        wrappedConfirmation.persistEvidenceToMessage();
+        DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
+        originalMessage.addConfirmation(confirmation);
+
+    
+        sendAsEvidenceMessageToGw(originalMessage, wrappedConfirmation);
 
         CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
         commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
-        sendAsEvidenceMessageBackToBackend(confirmationMessageBuilder);
+       
+        sendAsEvidenceMessageBackToBackend(wrappedConfirmation);
 
     }
 
@@ -157,32 +168,28 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         }
     }
 
-    private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        DomibusConnectorMessage evidenceMessage = confirmationMessageBuilder
-                .switchFromToParty()
-                .withDirection(MessageTargetSource.BACKEND)
-                .build()
-                .getEvidenceMessage();
-        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+    private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation) {
+    	
+    	wrappedConfirmation.switchMessageTarget();
+    	
+    	DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
+        
+    	backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+        
+    	wrappedConfirmation.setEvidenceDeliveredToBackend();
+        
+    	LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to backend.", wrappedConfirmation.getEvidenceType(), wrappedConfirmation.getCausedByConnectorMessageId());
     }
 
-    private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
-                .switchFromToParty()
-                .withDirection(MessageTargetSource.GATEWAY)
-                .build();
+    private void sendAsEvidenceMessageToGw(
+    		DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation
+    		) {
 
-        wrappedConfirmation.persistEvidenceToMessage();
-        DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
-        originalMessage.addConfirmation(confirmation);
-
-        DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
-
-        submitToGateway(evidenceMessage, originalMessage);
+        submitToGateway(wrappedConfirmation.getEvidenceMessage(), originalMessage);
         
         wrappedConfirmation.setEvidenceDeliveredToGateway();
 
-        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
+        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", wrappedConfirmation.getEvidenceType(), originalMessage);
     }
 
     private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {
