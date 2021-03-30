@@ -108,10 +108,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 			confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
 //					.useNationalIdAsRefToMessageId()
-					.switchFromToParty()
 					.withDirection(MessageTargetSource.BACKEND)
 					.build();
-			confirmationMessage.persistEvidenceToMessage();
 
 //			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
@@ -130,6 +128,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 //			message = bigDataPersistenceService.setAllLargeFilesReadable(message);
 			gwSubmissionService.submitToGateway(message);
 			
+			confirmationMessage.persistEvidenceToMessage();
+		
 			//set the evidences' delivered to gateway timestamp
 			confirmationMessage.setEvidenceDeliveredToGateway();
 			

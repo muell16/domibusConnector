@@ -149,6 +149,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
 				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
 				.switchFromToParty()
+				.swithOriginalSenderFinalRecipient()
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
@@ -192,6 +193,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
 				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
 				.switchFromToParty()
+				.swithOriginalSenderFinalRecipient()
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
@@ -253,6 +255,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedEvidenceMessage = wrappedMessageConfirmationBuilder
 					.switchFromToParty()
+					.swithOriginalSenderFinalRecipient()
 					.withDirection(MessageTargetSource.GATEWAY)
 					.build();
 			LOGGER.trace("generated confirmation is [{}]", wrappedEvidenceMessage.getMessageConfirmation());
