@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -45,6 +46,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     //setter
     @Autowired
@@ -65,6 +67,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     @Autowired
     public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
         this.backendDeliveryService = backendDeliveryService;
+    }
+    
+    @Autowired
+    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator idGenerator) {
+        this.messageIdGenerator = idGenerator;
     }
 
     @Override
@@ -171,6 +178,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation) {
     	
     	wrappedConfirmation.switchMessageTarget();
+    	wrappedConfirmation.getEvidenceMessage().getMessageDetails().setConversationId(messageIdGenerator.generateDomibusConnectorMessageId());
     	
     	DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
         
