@@ -205,10 +205,10 @@ public class ConnectorMessageFlowITCase {
                     .as("Message is currently neither confirmed nor rejected")
                     .isFalse();
 
-            List<PDomibusConnectorEvidence> findByConnectorMessageId = evidenceDao.findByConnectorMessageId(CONNECTOR_MESSAGE_ID);
-            for(PDomibusConnectorEvidence e:findByConnectorMessageId) {
-            	assertThat(e.getDeliveredToNationalSystem()).isNotNull();
-            }
+//            List<PDomibusConnectorEvidence> findByConnectorMessageId = evidenceDao.findByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+//            for(PDomibusConnectorEvidence e:findByConnectorMessageId) {
+//            	assertThat(e.getDeliveredToNationalSystem()).isNotNull();
+//            }
             
         });
     }
