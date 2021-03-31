@@ -178,9 +178,10 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation) {
     	
     	wrappedConfirmation.switchMessageTarget();
-    	wrappedConfirmation.getEvidenceMessage().getMessageDetails().setConversationId(messageIdGenerator.generateDomibusConnectorMessageId());
+
     	
     	DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
+        evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         
     	backendDeliveryService.deliverMessageToBackend(evidenceMessage);
         
