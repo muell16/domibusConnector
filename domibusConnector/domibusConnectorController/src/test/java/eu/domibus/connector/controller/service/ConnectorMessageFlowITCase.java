@@ -829,13 +829,14 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
-            assertThat(toBackendEvidenceMsgDetails.getFromParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
-            assertThat(toBackendEvidenceMsgDetails.getToParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+            //riederb - commented since in this case the evidence must not have switched parties
+//            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+//
+//            assertThat(toBackendEvidenceMsgDetails.getToParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
 
 
 
@@ -921,13 +922,15 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
-            assertThat(toBackendEvidenceMsgDetails.getFromParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
-            assertThat(toBackendEvidenceMsgDetails.getToParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+            
+          //riederb - commented since in this case the evidence must not have switched parties
+//            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+//
+//            assertThat(toBackendEvidenceMsgDetails.getToParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
 
 
 
