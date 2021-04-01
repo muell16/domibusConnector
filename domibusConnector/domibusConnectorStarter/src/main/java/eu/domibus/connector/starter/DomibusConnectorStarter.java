@@ -30,6 +30,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
 
+    public static final String CATALINA_HOME_PROPERTY_NAME= "catalina.home";
     public static final String SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME = "spring.cloud.bootstrap.name";
     public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME = "spring.cloud.bootstrap.location";
     public static final String SPRING_CONFIG_LOCATION_PROPERTY_NAME = "spring.config.location";
@@ -124,7 +125,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME, bootStrapConfigName);
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
             springApplicationProperties.setProperty(SPRING_CONFIG_NAME_PROPERTY_NAME, springConfigName);
-            LOGGER.warn("SystemProperty \"{}\" not given or not resolvable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
+            LOGGER.info("SystemProperty \"{}\" not given or not resolvable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
         }
         application.properties(springApplicationProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...
         return application.sources(DomibusConnectorStarter.class);
@@ -146,16 +147,23 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         this.servletContext = servletContext;
-        if (servletContext != null) {
+        String contextPath = servletContext.getContextPath();
+        if (contextPath != null) {
+            String catalinaHome = System.getProperty(CATALINA_HOME_PROPERTY_NAME);
+            if (contextPath.startsWith("/")) {
+                contextPath = contextPath.substring(1);
+            }
 
             bootstrapConfigLocation = bootstrapConfigLocation +
-                    ",file:./config/" + servletContext + "/" +
-                    ",file:./conf/" + servletContext + "/";
+                    ",file:./config/" + contextPath + "/" +
+                    ",file:./conf/" + contextPath + "/" +
+                    ",file:" + catalinaHome + "/config/" + contextPath + "/";
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
 
             springConfigLocation = springConfigLocation +
-                    ",file:./config/" + servletContext + "/" +
-                    ",file:./conf/" + servletContext + "/";
+                    ",file:./config/" + contextPath + "/" +
+                    ",file:./conf/" + contextPath + "/" +
+                    ",file:" + catalinaHome + "/config/" + contextPath + "/";
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
 
         }
