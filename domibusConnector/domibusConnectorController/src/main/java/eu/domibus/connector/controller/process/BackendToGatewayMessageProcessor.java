@@ -151,6 +151,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 //        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 
 		//also send evidence back to backend client:
+		confirmationMessage.getEvidenceMessage().getMessageDetails().setCausedBy(message.getConnectorMessageId());
 		backendDeliveryService.deliverMessageToBackend(confirmationMessage.getEvidenceMessage());
 //		confirmationMessage.setEvidenceDeliveredToBackend();
 

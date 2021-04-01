@@ -182,12 +182,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     	
     	DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
         evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        evidenceMessage.getMessageDetails().setCausedBy(wrappedConfirmation.getOriginalMessage().getConnectorMessageId());
         
     	backendDeliveryService.deliverMessageToBackend(evidenceMessage);
         
 //    	wrappedConfirmation.setEvidenceDeliveredToBackend();
         
-    	LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to backend.", wrappedConfirmation.getEvidenceType(), wrappedConfirmation.getCausedByConnectorMessageId());
+    	LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to backend.", wrappedConfirmation.getEvidenceType(), wrappedConfirmation.getOriginalMessage().getConnectorMessageId());
     }
 
     private void sendAsEvidenceMessageToGw(
