@@ -50,4 +50,4 @@ order by
   myear,
   mmonth,
   party,
-  service;
+  service
