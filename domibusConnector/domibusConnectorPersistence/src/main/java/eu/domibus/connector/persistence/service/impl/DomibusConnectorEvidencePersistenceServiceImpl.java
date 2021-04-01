@@ -56,51 +56,33 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         this.persistEvidenceForMessageIntoDatabase(dbMessage, evidence, evidenceType, message.getConnectorMessageId());
     }
 
-//    /**
-//     * {@inheritDoc }
-//     */
-////    @Override
-//    @Transactional
-//    public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message is not allowed to be null!");
-//        }
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-//        Long dbMessageId = dbMessage.getId();
-//        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessageId);
-//        PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
-//        if (dbEvidence != null) {
-//            evidenceDao.setDeliveredToGateway(dbEvidence.getId());
-//        }
-//    }
+
 
     @Override
-    public void setEvidenceDeliveredToGateway(DomibusConnectorMessage.DomibusConnectorMessageId transport) {
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByConnectorMessageId(transport.getConnectorMessageId());
+    @Transactional
+    public void setEvidenceDeliveredToGateway(DomibusConnectorMessage.DomibusConnectorMessageId transport, @Nonnull DomibusConnectorEvidenceType evidenceType) {
+    	PDomibusConnectorEvidence dbEvidence = findEvidence(transport, evidenceType);
+        
+        LOGGER.debug("#setEvidenceDeliveredToGateway: setting evidence [{}] for messages [{}] as delivered to gateway", evidenceType, transport.getConnectorMessageId());
+        
+        if (dbEvidence != null) {
+          evidenceDao.setDeliveredToGateway(dbEvidence.getId());
+      }
     }
 
     @Override
-    public void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage.DomibusConnectorMessageId transport) {
-        evidenceDao.setDeliveredToBackend(transport.getConnectorMessageId());
+    @Transactional
+    public void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage.DomibusConnectorMessageId transport, @Nonnull DomibusConnectorEvidenceType evidenceType) {
+    	PDomibusConnectorEvidence dbEvidence = findEvidence(transport, evidenceType);
+        
+        LOGGER.debug("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] for messages [{}] as delivered to NationalSystem", evidenceType, transport.getConnectorMessageId());
+        
+        if (dbEvidence != null) {
+          evidenceDao.setDeliveredToBackend(dbEvidence.getId());
+      }
     }
 
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    @Transactional
-//    public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message is not allowed to be null!");
-//        }
-//        LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
-//        PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-//        if (dbMessage != null) {
-//            this.evidenceDao.setDeliveredToBackend(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType));
-//        } else {
-//            LOGGER.error("Message [{}] does not exist in database, cannot set evidence as delivered!");
-//        }
-//    }
+
 
     @Override
     @Transactional
@@ -184,16 +166,20 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         evidenceDao.save(dbEvidence);
     }
 
-//    @Nullable
-//    private PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
-//        for (PDomibusConnectorEvidence evidence : evidences) {
-//            if (evidence.getType().name().equals(evidenceType.name())) {
-//                return evidence;
-//            }
-//        }
-//        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
-//        return null;
-//    }
+    @Nullable
+    private PDomibusConnectorEvidence findEvidence(DomibusConnectorMessage.DomibusConnectorMessageId transport, @Nonnull DomibusConnectorEvidenceType evidenceType) {
+    	if (transport == null) {
+            throw new IllegalArgumentException("message is not allowed to be null!");
+        }
+    	List<PDomibusConnectorEvidence> evidences = evidenceDao.findByConnectorMessageId(transport.getConnectorMessageId());
+        for (PDomibusConnectorEvidence evidence : evidences) {
+            if (evidence.getType().name().equals(evidenceType.name())) {
+                return evidence;
+            }
+        }
+        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
+        return null;
+    }
 
 //    /**
 //     * {@inheritDoc }

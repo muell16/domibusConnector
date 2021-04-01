@@ -8,11 +8,14 @@ import eu.domibus.connector.controller.service.DomibusConnectorDeliveryRejection
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
@@ -48,6 +51,8 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     private CommonBackendLinkConfigurationProperties commonBackendLinkConfigurationProperties;
 
     private DomibusConnectorDeliveryRejectionService deliveryRejectionService;
+    
+    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 
     //setter
     @Autowired
@@ -85,7 +90,12 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         this.deliveryRejectionService = deliveryRejectionService;
     }
 
-    @Override
+    @Autowired
+	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+		this.evidencePersistenceService = evidencePersistenceService;
+	}
+
+	@Override
     public void submitToController(DomibusConnectorBackendMessage backendMessage) {
 
 
@@ -149,8 +159,28 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     @Override
     public DomibusConnectorMessage processMessageAfterDeliveredToBackend(DomibusConnectorMessage message) {
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+        
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+        	LOGGER.debug("#processMessageAfterDeliveredToBackend: set the evidence delivered to national system.");
+        	String originalConnectorMessageId = message.getMessageDetails().getCausedBy();
+        	DomibusConnectorEvidenceType evidenceType = message.getMessageConfirmations().get(0).getEvidenceType();
+        	LOGGER.trace("#processMessageAfterDeliveredToBackend: Calling evidencePersistenceService to set deliveredToNationalSystem for evidence [{}] at connectorMessageId [{}]",evidenceType, originalConnectorMessageId );
+        	evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+            		new DomibusConnectorMessage.DomibusConnectorMessageId(originalConnectorMessageId), 
+            		evidenceType);
+        }
+        
         if (!DomainModelHelper.isEvidenceMessage(message)) {
-            bigDataPersistence.cleanForMessage(message);
+        	// set message evidences' deliveredToNationalSystem timestamp
+        	LOGGER.debug("#processMessageAfterDeliveredToBackend: set the messages' evidences delivered to national system.");
+        	for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
+        		LOGGER.trace("#processMessageAfterDeliveredToBackend: Calling evidencePersistenceService to set deliveredToNationalSystem for evidence [{}] at connectorMessageId [{}]",confirmation.getEvidenceType(), message.getConnectorMessageId() );
+        		evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+        				new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()), 
+        				confirmation.getEvidenceType());
+        	}
+        
+        	bigDataPersistence.cleanForMessage(message);
         }
         return message;
     }

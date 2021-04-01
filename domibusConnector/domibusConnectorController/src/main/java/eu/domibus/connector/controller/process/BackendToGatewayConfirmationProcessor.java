@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -45,6 +46,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     //setter
     @Autowired
@@ -65,6 +67,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     @Autowired
     public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
         this.backendDeliveryService = backendDeliveryService;
+    }
+    
+    @Autowired
+    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator idGenerator) {
+        this.messageIdGenerator = idGenerator;
     }
 
     @Override
@@ -123,13 +130,24 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
                 = confirmationMessageService.createConfirmationMessageBuilder(originalMessage, evidenceType);
 
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
+                .switchFromToParty()
+                .swithOriginalSenderFinalRecipient()
+                .withDirection(MessageTargetSource.GATEWAY)
+                .build();
 
-        sendAsEvidenceMessageToGw(evidenceType, originalMessage, confirmationMessageBuilder);
+        wrappedConfirmation.persistEvidenceToMessage();
+        DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
+        originalMessage.addConfirmation(confirmation);
+
+    
+        sendAsEvidenceMessageToGw(originalMessage, wrappedConfirmation);
 
         CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
         commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
-        sendAsEvidenceMessageBackToBackend(confirmationMessageBuilder);
+       
+        sendAsEvidenceMessageBackToBackend(wrappedConfirmation);
 
     }
 
@@ -157,30 +175,31 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         }
     }
 
-    private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        DomibusConnectorMessage evidenceMessage = confirmationMessageBuilder
-                .switchFromToParty()
-                .withDirection(MessageTargetSource.BACKEND)
-                .build()
-                .getEvidenceMessage();
-        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+    private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation) {
+    	
+    	wrappedConfirmation.switchMessageTarget();
+
+    	
+    	DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
+        evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        evidenceMessage.getMessageDetails().setCausedBy(wrappedConfirmation.getOriginalMessage().getConnectorMessageId());
+        
+    	backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+        
+//    	wrappedConfirmation.setEvidenceDeliveredToBackend();
+        
+    	LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to backend.", wrappedConfirmation.getEvidenceType(), wrappedConfirmation.getOriginalMessage().getConnectorMessageId());
     }
 
-    private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
-                .switchFromToParty()
-                .withDirection(MessageTargetSource.GATEWAY)
-                .build();
+    private void sendAsEvidenceMessageToGw(
+    		DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation
+    		) {
 
-        wrappedConfirmation.persistEvidenceToMessage();
-        DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
-        originalMessage.addConfirmation(confirmation);
+        submitToGateway(wrappedConfirmation.getEvidenceMessage(), originalMessage);
+        
+        wrappedConfirmation.setEvidenceDeliveredToGateway();
 
-        DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
-
-        submitToGateway(evidenceMessage, originalMessage);
-
-        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
+        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", wrappedConfirmation.getEvidenceType(), originalMessage);
     }
 
     private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {

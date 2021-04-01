@@ -15,6 +15,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirma
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -102,6 +105,12 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     DomibusConnectorMessagePersistenceService messagePersistenceService;
+    
+    @Autowired
+    DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    
+    @Autowired
+    DomibusConnectorEvidenceDao evidenceDao;
 
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorGatewaySubmissionService fromConnectorToGwSubmissionService;
@@ -187,6 +196,7 @@ public class ConnectorMessageFlowITCase {
             assertThat(relayRemmdEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
                     .isEqualTo(testMessage.getMessageDetails().getFromParty());
+            
 
 
             //message status confirmed
@@ -195,7 +205,11 @@ public class ConnectorMessageFlowITCase {
                     .as("Message is currently neither confirmed nor rejected")
                     .isFalse();
 
-
+//            List<PDomibusConnectorEvidence> findByConnectorMessageId = evidenceDao.findByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+//            for(PDomibusConnectorEvidence e:findByConnectorMessageId) {
+//            	assertThat(e.getDeliveredToNationalSystem()).isNotNull();
+//            }
+            
         });
     }
 
@@ -815,13 +829,14 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
-            assertThat(toBackendEvidenceMsgDetails.getFromParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
-            assertThat(toBackendEvidenceMsgDetails.getToParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+            //riederb - commented since in this case the evidence must not have switched parties
+//            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+//
+//            assertThat(toBackendEvidenceMsgDetails.getToParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
 
 
 
@@ -907,13 +922,15 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
-            assertThat(toBackendEvidenceMsgDetails.getFromParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
-            assertThat(toBackendEvidenceMsgDetails.getToParty())
-                    .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+            
+          //riederb - commented since in this case the evidence must not have switched parties
+//            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+//
+//            assertThat(toBackendEvidenceMsgDetails.getToParty())
+//                    .as("Parties must be switched")
+//                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
 
 
 

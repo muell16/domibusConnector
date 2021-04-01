@@ -127,7 +127,7 @@ public class BackendToGatewayConfirmationProcessorTest {
         backendToGatewayConfirmationProcessor.processMessage(confirmationMessage);
 
         assertThat(toGwSubmittedMessages).hasSize(1);
-
+        
 //        Mockito.verify(evidencesToolkit, times(1))
 //                .createEvidence(eq(DomibusConnectorEvidenceType.DELIVERY),
 //                        eq(epoMessage),
