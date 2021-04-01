@@ -4,7 +4,8 @@ select
   party,
   service, 
   received+rec_e as received, 
-  sent+sent_e as sent
+  sent+sent_e 
+  as sent
 from 
   (select
     serviceTable.SERVICE as service,
@@ -22,15 +23,18 @@ from
        join DOMIBUS_CONNECTOR_PARTY toParty on i.FK_TO_PARTY_ID = toParty.ID
        join DOMIBUS_CONNECTOR_PARTY fromParty on i.FK_FROM_PARTY_ID = fromParty.ID
        join (select 
-               count(DELIVERED_NAT) as RECEIVED, 
-               count(DELIVERED_GW) as SENT ,
-               MESSAGE_ID 
+                case when y.direction_target is not null and y.direction_target='GATEWAY' 
+				then count(x.DELIVERED_NAT) else 0 end as RECEIVED,
+                case when y.direction_target is not null and y.direction_target='BACKEND' 
+				then count(x.DELIVERED_GW) else 0 end as SENT,
+               x.MESSAGE_ID 
              from 
-               DOMIBUS_CONNECTOR_EVIDENCE
+               DOMIBUS_CONNECTOR_EVIDENCE x
+               join DOMIBUS_CONNECTOR_MESSAGE y on y.id=x.message_id
              where 
-               TYPE not in ('SUBMISSION_ACCEPTANCE', 'SUBMISSION_REJECTION', 'RELAY_REMMD_FAILURE')
+               x.TYPE not in ('SUBMISSION_ACCEPTANCE', 'SUBMISSION_REJECTION', 'RELAY_REMMD_FAILURE')
              group by 
-               MESSAGE_ID) e 
+               x.MESSAGE_ID, y.direction_target) e 
        on e.MESSAGE_ID=m.ID 
    where
      m.DELIVERED_BACKEND between ? and ?
@@ -46,4 +50,4 @@ order by
   myear,
   mmonth,
   party,
-  service
+  service;

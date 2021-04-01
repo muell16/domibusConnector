@@ -24,7 +24,7 @@ from
      or
      m.DELIVERED_GW between ? and ?
   group by
-
+	serviceTable.SERVICE,
     (extract(YEAR FROM case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
     (extract(MONTH from  case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
     (case when m.DELIVERED_BACKEND is null then toParty.PARTY_ID else fromParty.PARTY_ID end)
