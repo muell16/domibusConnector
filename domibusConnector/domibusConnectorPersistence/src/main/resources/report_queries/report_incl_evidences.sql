@@ -4,44 +4,50 @@ select
   party,
   service, 
   received+rec_e as received, 
-  sent+sent_e as sent
+  sent+sent_e 
+  as sent
 from 
-  (select 
-     i.service as service,
-     count(m.delivered_backend) as received, 
-     count(m.delivered_gw) as sent, 
+  (select
+    serviceTable.SERVICE as service,
+     count(m.DELIVERED_BACKEND) as received, 
+     count(m.DELIVERED_GW) as sent, 
      sum(e.received) as rec_e, 
      sum(e.sent) as sent_e, 
-     extract(YEAR FROM case when m.delivered_backend is null then m.delivered_gw else delivered_backend end) as myear, 
-     extract(MONTH from  case when m.delivered_backend is null then m.delivered_gw else delivered_backend end) as mmonth,
-     case when m.delivered_backend is null then i.to_party_id else i.from_party_id end as party
+     extract(YEAR FROM case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end) as myear, 
+     extract(MONTH from  case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end) as mmonth,
+     case when m.DELIVERED_BACKEND is null then toParty.PARTY_ID else fromParty.PARTY_ID end   as party
    from 
-     domibus_connector_message m
-       join domibus_connector_message_info i 
-       on i.message_id=m.id 
+     DOMIBUS_CONNECTOR_MESSAGE m
+       join DOMIBUS_CONNECTOR_MESSAGE_info i on i.MESSAGE_ID=m.ID
+       join DOMIBUS_CONNECTOR_SERVICE serviceTable on i.FK_SERVICE = serviceTable.ID
+       join DOMIBUS_CONNECTOR_PARTY toParty on i.FK_TO_PARTY_ID = toParty.ID
+       join DOMIBUS_CONNECTOR_PARTY fromParty on i.FK_FROM_PARTY_ID = fromParty.ID
        join (select 
-               count(delivered_nat) as RECEIVED, 
-               count(delivered_gw) as SENT ,
-               message_id 
+                case when y.direction_target is not null and y.direction_target='GATEWAY' 
+				then count(x.DELIVERED_NAT) else 0 end as RECEIVED,
+                case when y.direction_target is not null and y.direction_target='BACKEND' 
+				then count(x.DELIVERED_GW) else 0 end as SENT,
+               x.MESSAGE_ID 
              from 
-               domibus_connector_evidence
+               DOMIBUS_CONNECTOR_EVIDENCE x
+               join DOMIBUS_CONNECTOR_MESSAGE y on y.id=x.message_id
              where 
-               type not in ('SUBMISSION_ACCEPTANCE', 'SUBMISSION_REJECTION', 'RELAY_REMMD_FAILURE') 
+               x.TYPE not in ('SUBMISSION_ACCEPTANCE', 'SUBMISSION_REJECTION', 'RELAY_REMMD_FAILURE')
              group by 
-               message_id) e 
-       on e.message_id=m.id 
+               x.MESSAGE_ID, y.direction_target) e 
+       on e.MESSAGE_ID=m.ID 
    where
-     m.delivered_backend between ? and ?
+     m.DELIVERED_BACKEND between ? and ?
      or
-     m.delivered_gw between ? and ?
-   group by 
-     i.service,
-     (extract(YEAR FROM case when m.delivered_backend is null then m.delivered_gw else delivered_backend end)),
-     (extract(MONTH from  case when m.delivered_backend is null then m.delivered_gw else delivered_backend end)),
-     (case when m.delivered_backend is null then i.to_party_id else i.from_party_id end)
+     m.DELIVERED_GW between ? and ?
+   group by
+       serviceTable.SERVICE,
+     (extract(YEAR FROM case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
+     (extract(MONTH from  case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
+     (case when m.DELIVERED_BACKEND is null then toParty.PARTY_ID else fromParty.PARTY_ID end)
    ) x
 order by 
   myear,
   mmonth,
   party,
-  service
+  service;
