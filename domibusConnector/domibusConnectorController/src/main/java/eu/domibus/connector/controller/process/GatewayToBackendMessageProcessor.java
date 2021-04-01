@@ -122,14 +122,14 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 				createNonDeliveryEvidenceAndSendIt(message);
 			}
 			
-			// set message evidences' deliveredToNationalSystem timestamp
-			LOGGER.debug("#processMessage: set the messages' evidences delivered to national system.");
-			for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
-				LOGGER.trace("#processMessage: Calling evidencePersistenceService to set deliveredToNationalSystem for evidence [{}] at connectorMessageId [{}]",confirmation.getEvidenceType(), message.getConnectorMessageId() );
-				evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
-						new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()), 
-						confirmation.getEvidenceType());
-			}
+//			// set message evidences' deliveredToNationalSystem timestamp
+//			LOGGER.debug("#processMessage: set the messages' evidences delivered to national system.");
+//			for(DomibusConnectorMessageConfirmation confirmation:message.getMessageConfirmations()) {
+//				LOGGER.trace("#processMessage: Calling evidencePersistenceService to set deliveredToNationalSystem for evidence [{}] at connectorMessageId [{}]",confirmation.getEvidenceType(), message.getConnectorMessageId() );
+//				evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+//						new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()), 
+//						confirmation.getEvidenceType());
+//			}
 		}
 
 		LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());

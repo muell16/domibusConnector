@@ -92,11 +92,14 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
             confirmationMessage.getMessageDetails().setRefToBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
         }
+        
+        confirmationMessage.getMessageDetails().setCausedBy(originalMessage.getConnectorMessageId());
+        
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
-        evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
-        		new DomibusConnectorMessage.DomibusConnectorMessageId(originalMessage.getConnectorMessageId()), 
-        		evidenceType);
+//        evidencePersistenceService.setEvidenceDeliveredToNationalSystem(
+//        		new DomibusConnectorMessage.DomibusConnectorMessageId(originalMessage.getConnectorMessageId()), 
+//        		evidenceType);
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());

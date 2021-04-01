@@ -152,7 +152,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		//also send evidence back to backend client:
 		backendDeliveryService.deliverMessageToBackend(confirmationMessage.getEvidenceMessage());
-		confirmationMessage.setEvidenceDeliveredToBackend();
+//		confirmationMessage.setEvidenceDeliveredToBackend();
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
 

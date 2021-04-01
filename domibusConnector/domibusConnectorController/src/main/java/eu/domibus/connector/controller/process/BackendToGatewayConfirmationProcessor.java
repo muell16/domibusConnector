@@ -185,7 +185,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         
     	backendDeliveryService.deliverMessageToBackend(evidenceMessage);
         
-    	wrappedConfirmation.setEvidenceDeliveredToBackend();
+//    	wrappedConfirmation.setEvidenceDeliveredToBackend();
         
     	LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to backend.", wrappedConfirmation.getEvidenceType(), wrappedConfirmation.getCausedByConnectorMessageId());
     }
