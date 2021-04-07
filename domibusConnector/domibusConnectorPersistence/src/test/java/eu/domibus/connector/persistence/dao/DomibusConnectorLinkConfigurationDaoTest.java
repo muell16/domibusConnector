@@ -11,8 +11,8 @@ import java.util.Optional;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 
-@CommonPersistenceTest
-@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkConfiguration.xml", strategy = CLEAN_INSERT)
+//@CommonPersistenceTest
+//@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkConfiguration.xml", strategy = CLEAN_INSERT)
 @Disabled
 class DomibusConnectorLinkConfigurationDaoTest {
 

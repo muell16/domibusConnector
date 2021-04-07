@@ -15,8 +15,8 @@ import java.util.Optional;
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@CommonPersistenceTest
-@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkPartner.xml", strategy = CLEAN_INSERT)
+//@CommonPersistenceTest
+//@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkPartner.xml", strategy = CLEAN_INSERT)
 @Disabled("Tests is failing on win10 maven build")
 class DomibusConnectorLinkPartnerDaoTest {
 

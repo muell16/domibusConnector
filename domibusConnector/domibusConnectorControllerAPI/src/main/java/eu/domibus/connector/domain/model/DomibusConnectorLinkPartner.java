@@ -6,12 +6,10 @@ import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 
 public class DomibusConnectorLinkPartner {
 
@@ -22,7 +20,11 @@ public class DomibusConnectorLinkPartner {
 
     private boolean enabled;
 
-    private LinkMode linkMode;
+    //allowed LinkMode.PASSIVE or LinkMode.PULL
+    private LinkMode rcvLinkMode = LinkMode.PASSIVE;
+
+    //allowed LinkMode.PASSIVE or LinkMode.PUSH
+    private LinkMode sendLinkMode = LinkMode.PASSIVE;
 
     private LinkType linkType;
 
@@ -78,12 +80,20 @@ public class DomibusConnectorLinkPartner {
         this.configurationSource = configurationSource;
     }
 
-    public LinkMode getLinkMode() {
-        return linkMode;
+    public LinkMode getRcvLinkMode() {
+        return rcvLinkMode;
     }
 
-    public void setLinkMode(LinkMode linkMode) {
-        this.linkMode = linkMode;
+    public void setRcvLinkMode(LinkMode rcvLinkMode) {
+        this.rcvLinkMode = rcvLinkMode;
+    }
+
+    public LinkMode getSendLinkMode() {
+        return sendLinkMode;
+    }
+
+    public void setSendLinkMode(LinkMode sendLinkMode) {
+        this.sendLinkMode = sendLinkMode;
     }
 
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {

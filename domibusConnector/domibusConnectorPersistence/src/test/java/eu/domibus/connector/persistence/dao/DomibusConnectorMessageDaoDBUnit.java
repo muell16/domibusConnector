@@ -38,21 +38,6 @@ public class DomibusConnectorMessageDaoDBUnit {
     @Autowired
     private DatabaseDataSourceConnection ddsc;
 
-//    @BeforeEach
-//    @Override
-//    public void setUp() throws Exception {
-////        super.setUp();
-////        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-//
-////        //Load testdata
-//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
-//
-//        DatabaseDataSourceConnection conn = ddsc;
-//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-//        conn.close();
-//
-//    }
-
 
     @Test
     public void testFindById() {

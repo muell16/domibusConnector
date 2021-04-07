@@ -17,8 +17,8 @@ public enum LinkMode {
         return dbName;
     }
 
-    public static LinkType ofDbName(String dbName) {
-        return Stream.of(LinkType.values())
+    public static LinkMode ofDbName(String dbName) {
+        return Stream.of(LinkMode.values())
                 .filter(l -> l.dbName.equalsIgnoreCase(dbName))
                 .findFirst().get();
     }

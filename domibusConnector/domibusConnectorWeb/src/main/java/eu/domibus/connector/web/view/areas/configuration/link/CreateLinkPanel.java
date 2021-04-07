@@ -17,7 +17,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
-import eu.domibus.connector.link.service.DCLinkPersistenceService;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.web.component.WizardComponent;
 import eu.domibus.connector.web.component.WizardStep;

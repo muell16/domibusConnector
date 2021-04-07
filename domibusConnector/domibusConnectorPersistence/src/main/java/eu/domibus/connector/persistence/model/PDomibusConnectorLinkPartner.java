@@ -32,8 +32,11 @@ public class PDomibusConnectorLinkPartner {
     @Column(name = "LINK_TYPE")
     private LinkType linkType;
 
-    @Column(name = "LINK_MODE")
-    private LinkMode linkMode;
+    @Column(name = "SEND_LINK_MODE")
+    private LinkMode sendLinkMode;
+
+    @Column(name = "RCV_LINK_MODE")
+    private LinkMode rcvLinkMode;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
@@ -102,11 +105,19 @@ public class PDomibusConnectorLinkPartner {
         this.properties = properties;
     }
 
-    public LinkMode getLinkMode() {
-        return linkMode;
+    public LinkMode getSendLinkMode() {
+        return sendLinkMode;
     }
 
-    public void setLinkMode(LinkMode linkMode) {
-        this.linkMode = linkMode;
+    public void setSendLinkMode(LinkMode sendLinkMode) {
+        this.sendLinkMode = sendLinkMode;
+    }
+
+    public LinkMode getRcvLinkMode() {
+        return rcvLinkMode;
+    }
+
+    public void setRcvLinkMode(LinkMode rcvLinkMode) {
+        this.rcvLinkMode = rcvLinkMode;
     }
 }

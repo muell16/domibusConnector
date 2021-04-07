@@ -147,6 +147,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.database-rider</groupId>
+            <artifactId>rider-spring</artifactId>
+        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>uk.org.webcompere</groupId>-->
         <!--            <artifactId>system-stubs-jupiter</artifactId>-->

@@ -39,7 +39,7 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
         Optional<ActiveLinkPartner> activeLinkPartnerByName = linkManagerService.getActiveLinkPartnerByName(linkPartnerName);
         if (activeLinkPartnerByName.isPresent()) {
             WsBackendPluginActiveLinkPartner activeLinkPartner = (WsBackendPluginActiveLinkPartner) activeLinkPartnerByName.get();
-            if (activeLinkPartner.getLinkPartner().getLinkMode() == LinkMode.PUSH) {
+            if (activeLinkPartner.getLinkPartner().getSendLinkMode() == LinkMode.PUSH) {
                 pushMessage(message, activeLinkPartner);
             } else {
                 makeMessageReadyForPull(message, activeLinkPartner);

@@ -3,21 +3,19 @@ package test.eu.domibus.connector.link.impl.wsplugin;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.link.service.DCLinkPersistenceService;
+
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
-import org.apache.cxf.spring.boot.autoconfigure.CxfAutoConfiguration;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import test.eu.domibus.connector.link.LinkTestContext;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -103,7 +101,9 @@ public class DCWsGatewayPluginTestContext {
 
         linkPartner1.setLinkName(linkName1);
         linkPartner1.setLinkType(LinkType.GATEWAY);
-        linkPartner1.setLinkMode(LinkMode.PUSH);
+        linkPartner1.setSendLinkMode(LinkMode.PUSH);
+        linkPartner1.setRcvLinkMode(LinkMode.PUSH);
+
         linkPartner1.setLinkConfiguration(getWsGatewayLinkConfig());
         linkPartner1.setEnabled(true);
 

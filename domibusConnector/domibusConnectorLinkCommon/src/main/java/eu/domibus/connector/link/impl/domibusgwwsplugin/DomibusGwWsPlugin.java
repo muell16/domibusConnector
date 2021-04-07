@@ -89,7 +89,7 @@ public class DomibusGwWsPlugin implements LinkPlugin {
     public List<PluginFeature> getFeatures() {
         return Stream.<PluginFeature>of(
                 PluginFeature.SUPPORTS_MULTIPLE_PARTNERS,
-                PluginFeature.PULL_MODE
+                PluginFeature.RCV_PULL_MODE
         ).collect(Collectors.toList());
     }
 

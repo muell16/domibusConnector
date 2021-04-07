@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@CommonPersistenceTest
+//@CommonPersistenceTest
 @Disabled("repair tests...")
 public class DomibusConnectorEvidenceDaoDBUnit {
 

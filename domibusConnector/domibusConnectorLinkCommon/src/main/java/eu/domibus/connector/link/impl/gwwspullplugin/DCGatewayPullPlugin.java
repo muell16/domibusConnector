@@ -11,11 +11,10 @@ import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPlugi
 import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,7 +106,7 @@ public class DCGatewayPullPlugin implements LinkPlugin {
 
     @Override
     public List<PluginFeature> getFeatures() {
-        return Stream.of(PluginFeature.PULL_MODE,
+        return Stream.of(PluginFeature.RCV_PULL_MODE,
                 PluginFeature.SUPPORTS_LINK_PARTNER_SHUTDOWN,
                 PluginFeature.SUPPORTS_LINK_SHUTDOWN)
                 .collect(Collectors.toList());
@@ -120,7 +119,7 @@ public class DCGatewayPullPlugin implements LinkPlugin {
 
     @Override
     public List<Class> getPartnerConfigurationProperties() {
-        return Stream.of(DCGatewayPullPluginConfigurationProperties.class).collect(Collectors.toList());
+        return Collections.emptyList();
     }
 
 

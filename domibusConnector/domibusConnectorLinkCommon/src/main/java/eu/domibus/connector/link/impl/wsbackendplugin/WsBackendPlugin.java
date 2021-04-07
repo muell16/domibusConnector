@@ -25,7 +25,6 @@ import org.springframework.validation.Validator;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -124,7 +123,7 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
     @Override
     public List<PluginFeature> getFeatures() {
         return Stream
-                .of(PluginFeature.PUSH_MODE, PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
+                .of(PluginFeature.RCV_PASSIVE_MODE, PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
                 .collect(Collectors.toList());
     }
 

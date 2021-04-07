@@ -19,7 +19,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkFacade;
-import eu.domibus.connector.link.service.DCLinkPersistenceService;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;

@@ -1,5 +1,6 @@
-package eu.domibus.connector.link.service;
+package eu.domibus.connector.persistence.service;
 
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -9,29 +10,37 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import javax.swing.text.html.Option;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@ConditionalOnBean(DCLinkPluginConfiguration.class)
+//@ConditionalOnBean(DCLinkPluginConfiguration.class)
 public class DCLinkPersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCLinkPersistenceService.class);
 
-    @Autowired
-    DomibusConnectorLinkPartnerDao linkPartnerDao;
+    private static final String CONFIG_PROPERTY_PREFIX = "prop.";
+    private static final String PULL_INTERVAL_PROPERTY = "pull-interval";
+    private static final String SEND_LINK_MODE_PROPERTY = "send-link-mode";
+    private static final String RCV_LINK_MODE_PROPERTY = "rcv-link-mode";
 
-    @Autowired
-    DomibusConnectorLinkConfigurationDao linkConfigurationDao;
+    private final DomibusConnectorLinkPartnerDao linkPartnerDao;
+    private final DomibusConnectorLinkConfigurationDao linkConfigurationDao;
+
+    public DCLinkPersistenceService(DomibusConnectorLinkPartnerDao linkPartnerDao,
+                                    DomibusConnectorLinkConfigurationDao linkConfigurationDao) {
+        this.linkPartnerDao = linkPartnerDao;
+        this.linkConfigurationDao = linkConfigurationDao;
+    }
+
 
     public List<DomibusConnectorLinkPartner> getAllEnabledLinks() {
         return linkPartnerDao
@@ -56,8 +65,23 @@ public class DCLinkPersistenceService {
 
         linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(dbLinkInfo.getLinkName()));
         linkPartner.setLinkConfiguration(mapToLinkConfiguration(linkConfiguration));
+
+        Map<String, String> dbProperties = dbLinkInfo.getProperties();
+        String pullInterval = dbProperties.get(PULL_INTERVAL_PROPERTY);
+        if (!StringUtils.isEmpty(pullInterval)) {
+            linkPartner.setPullInterval(Duration.parse(pullInterval));
+        }
+        linkPartner.setSendLinkMode(mapOrDefault(dbProperties.get(SEND_LINK_MODE_PROPERTY)));
+        linkPartner.setRcvLinkMode(mapOrDefault(dbProperties.get(RCV_LINK_MODE_PROPERTY)));
+        linkPartner.setProperties(mapToLinkPartnerProperties(dbProperties));
+
         return linkPartner;
     }
+
+    private LinkMode mapOrDefault(String s) {
+        return LinkMode.ofDbName(s);
+    }
+
 
     private DomibusConnectorLinkConfiguration mapToLinkConfiguration(PDomibusConnectorLinkConfiguration dbLinkConfig) {
         if (dbLinkConfig == null) {
@@ -65,9 +89,9 @@ public class DCLinkPersistenceService {
         }
         DomibusConnectorLinkConfiguration configuration = new DomibusConnectorLinkConfiguration();
 
-        Properties p = new Properties();
+        HashMap<String, String> p = new HashMap<>();
         p.putAll(dbLinkConfig.getProperties());
-//        configuration.setProperties(p);
+        configuration.setProperties(p);
         configuration.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(dbLinkConfig.getConfigName()));
         configuration.setLinkImpl(dbLinkConfig.getLinkImpl());
         return configuration;
@@ -85,7 +109,7 @@ public class DCLinkPersistenceService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+//    @Transactional
     public void addLinkPartner(DomibusConnectorLinkPartner linkPartner) {
         if (linkPartner.getLinkConfiguration() == null) {
             throw new IllegalArgumentException("Cannot add a LinkPartner without an LinkConfiguration!");
@@ -131,7 +155,12 @@ public class DCLinkPersistenceService {
         dbLinkPartner.setLinkName(linkName);
         dbLinkPartner.setEnabled(linkPartner.isEnabled());
         dbLinkPartner.setLinkConfiguration(this.mapToDbLinkConfiguration(linkPartner.getLinkConfiguration()));
-        dbLinkPartner.setProperties(this.mapProperties(linkPartner.getProperties()));
+
+        Map<String, String> dbProperties = mapToDbProperties(linkPartner.getProperties());
+        dbProperties.put(PULL_INTERVAL_PROPERTY, linkPartner.getPullInterval().toString());
+        dbProperties.put(SEND_LINK_MODE_PROPERTY, linkPartner.getSendLinkMode().getDbName());
+        dbProperties.put(RCV_LINK_MODE_PROPERTY, linkPartner.getRcvLinkMode().getDbName());
+        dbLinkPartner.setProperties(dbProperties);
 
         return dbLinkPartner;
     }
@@ -151,8 +180,16 @@ public class DCLinkPersistenceService {
         return dbLinkConfig;
     }
 
-    private Map<String, String> mapProperties(Map<String, String> properties) {
-        Map<String, String> map = properties.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+    private Map<String, String> mapToDbProperties(Map<String, String> properties) {
+        Map<String, String> map = properties.entrySet().stream()
+                .collect(Collectors.toMap(e -> CONFIG_PROPERTY_PREFIX + e.getKey(), Map.Entry::getValue));
+        return map;
+    }
+
+    private Map<String, String> mapToLinkPartnerProperties(Map<String, String> properties) {
+        Map<String, String> map = properties.entrySet().stream()
+                .filter(e -> e.getKey().startsWith(CONFIG_PROPERTY_PREFIX))
+                .collect(Collectors.toMap(e -> e.getKey().substring(CONFIG_PROPERTY_PREFIX.length()), Map.Entry::getValue));
         return map;
     }
 

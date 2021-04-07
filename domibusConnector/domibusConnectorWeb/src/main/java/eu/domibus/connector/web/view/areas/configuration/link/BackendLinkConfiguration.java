@@ -5,7 +5,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkFacade;
-import eu.domibus.connector.link.service.DCLinkPersistenceService;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.web.utils.RoleRequired;
 
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;

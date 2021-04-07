@@ -2,11 +2,14 @@ package eu.domibus.connector.link.api;
 
 import eu.domibus.connector.link.service.PullFromLinkPartner;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Must be implemented by a link plugin

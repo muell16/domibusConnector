@@ -4,7 +4,6 @@ import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.*;
-import eu.domibus.connector.link.api.exception.FeatureNotSupportedException;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
@@ -14,7 +13,6 @@ import org.quartz.*;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -135,7 +133,7 @@ public class DCActiveLinkManagerService {
 
 
     private void unconfigurePull(DomibusConnectorLinkPartner linkInfo, ActiveLinkPartner activeLinkPartner) {
-        if (linkInfo.getLinkMode() != LinkMode.PULL) {
+        if (linkInfo.getRcvLinkMode() != LinkMode.PULL) {
             return;
         }
         Optional<PullFromLink> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
@@ -170,7 +168,7 @@ public class DCActiveLinkManagerService {
      * @param activeLinkPartner
      */
     private void configurePull(DomibusConnectorLinkPartner linkInfo, ActiveLinkPartner activeLinkPartner) {
-        if (linkInfo.getLinkMode() != LinkMode.PULL) {
+        if (linkInfo.getRcvLinkMode() != LinkMode.PULL) {
             return;
         }
         Optional<PullFromLinkPartner> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
