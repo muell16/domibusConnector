@@ -56,15 +56,33 @@ public abstract class LinkConfiguration extends VerticalLayout {
         linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
             @Override
             public Component apply(DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+                Button b = new Button(new Icon(VaadinIcon.SEARCH));
+                b.addClickListener(event -> viewClicked(event, domibusConnectorLinkPartner));
+                return b;
+            }
+        }).setHeader("View");
+
+        linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
+            @Override
+            public Component apply(DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
                 Button b = new Button(new Icon(VaadinIcon.EDIT));
                 b.addClickListener(event -> editClicked(event, domibusConnectorLinkPartner));
                 return b;
             }
         }).setHeader("Edit");
 
+        linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
+            @Override
+            public Component apply(DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+                Button b = new Button(new Icon(VaadinIcon.DEL));
+                b.addClickListener(event -> deleteClicked(event, domibusConnectorLinkPartner));
+                return b;
+            }
+        }).setHeader("Remove");
+
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
         linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("run on startup");
-        linkGrid.addColumn(DomibusConnectorLinkPartner::getConfigSource).setHeader("Configured via");
+        linkGrid.addColumn(DomibusConnectorLinkPartner::getConfigurationSource).setHeader("Configured via");
         linkGrid.addColumn((ValueProvider) o -> {
             DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
             return d.getLinkConfiguration().getConfigName();
@@ -103,6 +121,16 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     }
 
+    private void deleteClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
+        try {
+            //TODO: if not deleteable....
+            dcLinkFacade.deleteLinkPartner(linkPartner);
+            Notification.show("Link " + linkPartner.getLinkPartnerName() +" removed from config");
+        } finally {
+            refreshList();
+        }
+    }
+
     private void stopLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
         try {
             dcLinkFacade.shutdownLinkPartner(linkPartner);
@@ -126,6 +154,10 @@ public abstract class LinkConfiguration extends VerticalLayout {
         //TODO: show edit for LinkPartner
     }
 
+    private void viewClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+        //TODO: show edit for LinkPartner
+    }
+
     private void addLinkButtonClicked(ClickEvent<Button> buttonClickEvent) {
         final Dialog dialog = new Dialog();
         CreateLinkPanel createLinkWizard = applicationContext.getBean(CreateLinkPanel.class);
@@ -137,12 +169,13 @@ public abstract class LinkConfiguration extends VerticalLayout {
         });
 
         //TODO: workaround for https://github.com/vaadin/vaadin-dialog-flow/issues/35#issuecomment-381064459
-        //dialog.setWidth("80%");
-        dialog.setWidth("1000px");
 
+        dialog.setWidth("100%");
+        dialog.addDialogCloseActionListener((e) -> refreshList());
         dialog.add(createLinkWizard);
         dialog.setCloseOnEsc(true);
         dialog.open();
+
     }
 
     protected void onAttach(AttachEvent attachEvent) {

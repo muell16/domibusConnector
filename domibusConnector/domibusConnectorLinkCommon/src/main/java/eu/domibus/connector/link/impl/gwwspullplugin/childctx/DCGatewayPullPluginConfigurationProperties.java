@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties(prefix = "")
@@ -20,7 +21,9 @@ import javax.validation.constraints.NotNull;
 public class DCGatewayPullPluginConfigurationProperties {
 
     @NotNull
-    @ConfigurationDescription("The URL of the domibus connector pull gateway plugin webservice eg. <domibus url>/services/pull-gw")
+    @NotBlank
+    @ConfigurationLabel("Pull Gateway Service URL")
+    @ConfigurationDescription("The URL of the domibus connector pull gateway plugin webservice.\nEg.: <domibus url>/services/pull-gw")
     private String gwAddress;
 
     /**
@@ -43,10 +46,12 @@ public class DCGatewayPullPluginConfigurationProperties {
     @NestedConfigurationProperty
     @NotNull
     @ConfigurationLabel("WS Policy for GW <-> Connector Link")
-    @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")
+    @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway. \nDefault: /wsdl/backend.policy.xml")
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
 
+    @ConfigurationLabel("WS Policy for GW <-> Connector Link")
+    @ConfigurationDescription("This Property is used to activate CXF logging interceptor, which will log the CXF requests. \nDefault: false")
     private boolean cxfLoggingEnabled = false;
 
 

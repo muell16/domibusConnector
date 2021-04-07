@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+//@Service
 public class DCGatewayPullPlugin implements LinkPlugin {
 
     private final static Logger LOGGER = LogManager.getLogger(DCGatewayPullPlugin.class);

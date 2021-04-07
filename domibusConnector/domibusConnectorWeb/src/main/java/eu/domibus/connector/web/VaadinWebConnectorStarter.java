@@ -1,5 +1,6 @@
 package eu.domibus.connector.web;
 
+import com.vaadin.flow.spring.annotation.EnableVaadin;
 import eu.domibus.connector.starter.DomibusConnectorStarter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

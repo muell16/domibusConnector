@@ -85,7 +85,7 @@
         <spring.cloud.version>2.2.6.RELEASE</spring.cloud.version>
         <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
         <org.junit.jupiter.version>5.6.3</org.junit.jupiter.version>
-        <ecodex.dependencies.version>0.0.19-RELEASE</ecodex.dependencies.version>
+        <ecodex.dependencies.version>0.0.21-SNAPSHOT</ecodex.dependencies.version>
         <vaadin.version>14.3.9</vaadin.version>
         <dss.tools.version>5.4</dss.tools.version>
         <org.bouncycastl.version>1.64</org.bouncycastl.version>

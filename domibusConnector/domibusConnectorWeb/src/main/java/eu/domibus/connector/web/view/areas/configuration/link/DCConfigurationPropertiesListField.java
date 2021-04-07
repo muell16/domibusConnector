@@ -14,10 +14,8 @@ import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyChecker;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormsFactory;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
@@ -25,50 +23,41 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import org.springframework.context.annotation.Scope;
 import org.springframework.validation.FieldError;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DCConfigurationPropertiesListField extends VerticalLayout
-        implements HasValue<HasValue.ValueChangeEvent<Properties>, Properties> {
-
+        implements HasValue<HasValue.ValueChangeEvent<Map<String, String>>, Map<String, String>> {
 
     private static final Logger LOGGER = LogManager.getLogger(eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent.class);
 
-    Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
+    private final ConfigurationPropertyCollector configurationPropertyCollector;
+    private final ConfigurationPropertyChecker configurationPropertyChecker;
+    private final ConfigurationFormsFactory configurationFormFactory;
 
-    @Autowired
-    ConfigurationPropertyCollector configurationPropertyCollector;
-
-    @Autowired
-    ConfigurationPropertyChecker configurationPropertyChecker;
-
-    @Autowired
-    ConfigurationFormsFactory configurationFormFactory;
-
-    Properties properties = new Properties();
-
-    Label statusLabel = new Label();
-
-    Binder<Properties> binder = new Binder();
+    private Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
+    private Map<String, String> properties = new HashMap<>();
+    private Label statusLabel = new Label();
+    private Binder<Map<String, String>> propertiesBinder = new Binder();
 
     private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
     private Collection<AbstractField> propertyFields = new ArrayList<>();
     private boolean readOnly = false;
 
-    public DCConfigurationPropertiesListField() {
+    public DCConfigurationPropertiesListField(ConfigurationPropertyCollector configurationPropertyCollector, ConfigurationPropertyChecker configurationPropertyChecker, ConfigurationFormsFactory configurationFormFactory) {
+        this.configurationPropertyCollector = configurationPropertyCollector;
+        this.configurationPropertyChecker = configurationPropertyChecker;
+        this.configurationFormFactory = configurationFormFactory;
+
+        initUI();
     }
 
-    @PostConstruct
-    public void init() {
+    public void initUI() {
 
-        binder.setBean(properties);
+        propertiesBinder.setBean(properties);
 
         grid.addColumn("propertyName").setHeader("Property Path");
         grid.addColumn("label").setHeader("Label");
@@ -76,7 +65,7 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
         grid.addComponentColumn(new ValueProvider<ConfigurationProperty, Component>() {
             @Override
             public Component apply(ConfigurationProperty configurationProperty) {
-                AbstractField field = configurationFormFactory.createField(configurationProperty, binder);
+                AbstractField field = configurationFormFactory.createField(configurationProperty, propertiesBinder);
                 propertyFields.add(field);
                 return field;
             }
@@ -99,14 +88,6 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
         this.add(this.statusLabel);
     }
 
-    public Binder<Properties> getBinder() {
-        return binder;
-    }
-
-    public void setBinder(Binder<Properties> binder) {
-        this.binder = binder;
-    }
-
     public Collection<ConfigurationProperty> getConfigurationProperties() {
         return configurationProperties;
     }
@@ -121,9 +102,9 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
                 .distinct()
                 .collect(Collectors.toList());
 
-        binder.withValidator(new Validator<Properties>() {
+        propertiesBinder.withValidator(new Validator<Map<String, String>>() {
             @Override
-            public ValidationResult apply(Properties value, ValueContext context) {
+            public ValidationResult apply(Map<String, String> value, ValueContext context) {
                 ConfigurationPropertySource configSource = new MapConfigurationPropertySource(value);
                 List<ValidationErrors> validationErrors = configurationPropertyChecker.validateConfiguration(configSource, configClasses);
                 if (validationErrors.isEmpty()) {
@@ -149,41 +130,46 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
 
     public List<ValidationResult> validate() {
 
-        BinderValidationStatus<Properties> validate = this.binder.validate();
-        List<ValidationResult> beanValidationErrors = validate.getBeanValidationErrors();
+        BinderValidationStatus<Map<String, String>> validate = this.propertiesBinder.validate();
+        List<ValidationResult> beanValidationErrors = validate.getValidationErrors();
         LOGGER.trace("BeanValidationErrors: [{}]", beanValidationErrors);
-        String collect = beanValidationErrors.stream()
-                .map(error -> error.getErrorMessage())
-                .collect(Collectors.joining("\n\n"));
-        this.statusLabel.setText(collect);
+//        String collect = beanValidationErrors.stream()
+//                .map(error -> error.getErrorMessage())
+//                .collect(Collectors.joining("\n\n"));
+//        this.statusLabel.setText(collect);
         return beanValidationErrors;
     }
 
     @Override
-    public void setValue(Properties value) {
-        this.binder.setBean(value);
+    public void setValue(Map<String, String> value) {
+        //this.binder.setBean(value);
         this.properties = value;
+        this.propertiesBinder.readBean(value);
+    }
+
+//    public void writeBean() throws ValidationException {
+//        this.propertiesBinder.writeBean(this.properties);
+//    }
+
+    @Override
+    public Map<String, String> getValue() {
+        return propertiesBinder.getBean();
     }
 
     @Override
-    public Properties getValue() {
-        return this.properties;
-    }
-
-    @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Properties>> listener) {
-        Registration registration = this.binder.addValueChangeListener(new ValueChangeListener<ValueChangeEvent<?>>() {
-            @Override
-            public void valueChanged(ValueChangeEvent event) {
-                listener.valueChanged((ValueChangeEvent<Properties>) event);
-            }
-        });
+    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Map<String, String>>> listener) {
+        Registration registration = this.propertiesBinder
+                .addValueChangeListener( event -> listener.valueChanged((ValueChangeEvent<Map<String, String>>) event));
         return registration;
     }
 
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        updateUI(readOnly);
+    }
+
+    private void updateUI(boolean readOnly) {
         propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
     }
 

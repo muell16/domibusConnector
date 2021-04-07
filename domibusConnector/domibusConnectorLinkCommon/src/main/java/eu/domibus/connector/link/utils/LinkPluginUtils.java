@@ -12,6 +12,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class LinkPluginUtils {
@@ -27,7 +28,9 @@ public class LinkPluginUtils {
         private ChildContextBuilder(ConfigurableApplicationContext parent) {
 //            props.put("org.springframework.boot.logging.LoggingSystem", "none");
             //make sure child context loads same logging config
-            props.put("logging.config", parent.getEnvironment().getProperty("logging.config"));
+            if (parent.getEnvironment().getProperty("logging.config") != null) {
+                props.put("logging.config", parent.getEnvironment().getProperty("logging.config"));
+            }
 
             builder.parent(parent);
             builder.bannerMode(Banner.Mode.OFF);
@@ -56,8 +59,15 @@ public class LinkPluginUtils {
         }
 
         public ChildContextBuilder withDomibusConnectorLinkPartner(DomibusConnectorLinkPartner linkPartner) {
-            builder.properties(linkPartner.getProperties());
+            builder.properties(mapProps(linkPartner.getProperties()));
             return this.addSingelton("linkPartner", linkPartner);
+        }
+
+        private Map<String, Object> mapProps(Map<String, String> properties) {
+            return properties
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
         public ChildContextBuilder withProfiles(String... profiles) {

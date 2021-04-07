@@ -49,7 +49,7 @@ public class DCLinkFacade {
 
     public List<DomibusConnectorLinkPartner> getAllLinksOfType(LinkType linkType) {
         List<DomibusConnectorLinkPartner> allLinksOfType = dcLinkPersistenceService.getAllLinksOfType(linkType);
-        allLinksOfType.forEach(l -> l.setConfigSource("DB"));
+        allLinksOfType.forEach(l -> l.setConfigurationSource("DB"));
 
         Stream<DomibusConnectorLinkPartner> domibusConnectorLinkPartners;
         if (linkType == LinkType.BACKEND) {
@@ -72,7 +72,7 @@ public class DCLinkFacade {
         return b.getLinkPartners().stream().map(p -> {
             DomibusConnectorLinkPartner p1 = new DomibusConnectorLinkPartner();
             BeanUtils.copyProperties(p, p1);
-            p1.setConfigSource(CONFIG_SOURCE_ENV);
+            p1.setConfigurationSource(CONFIG_SOURCE_ENV);
             p1.setLinkConfiguration(linkConfig);
             p1.setLinkType(linkType);
             return p1;
@@ -85,4 +85,17 @@ public class DCLinkFacade {
             throw new LinkPluginException("Start failed!");
         }
     }
+
+    public void deleteLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+        try {
+            linkManager.shutdownLinkPartner(linkPartner.getLinkPartnerName());
+        } catch (LinkPluginException exception) {
+            //handle
+        }
+        if (CONFIG_SOURCE_DB.equals(linkPartner.getConfigurationSource())) {
+            dcLinkPersistenceService.deleteLinkPartner(linkPartner);
+        }
+
+    }
+
 }

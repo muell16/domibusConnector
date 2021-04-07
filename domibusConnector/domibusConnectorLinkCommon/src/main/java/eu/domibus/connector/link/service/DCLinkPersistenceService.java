@@ -151,7 +151,7 @@ public class DCLinkPersistenceService {
         return dbLinkConfig;
     }
 
-    private Map<String, String> mapProperties(Properties properties) {
+    private Map<String, String> mapProperties(Map<String, String> properties) {
         Map<String, String> map = properties.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
         return map;
     }
@@ -165,5 +165,11 @@ public class DCLinkPersistenceService {
     public Optional<DomibusConnectorLinkPartner> getLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         Optional<PDomibusConnectorLinkPartner> linkPartner = linkPartnerDao.findOneByLinkName(linkPartnerName.getLinkName());
         return Optional.ofNullable(this.mapToLinkPartner(linkPartner.orElse(null)));
+    }
+
+    public void deleteLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = linkPartner.getLinkPartnerName();
+        Optional<PDomibusConnectorLinkPartner> dbEntity = linkPartnerDao.findOneByLinkName(linkPartnerName.getLinkName());
+        dbEntity.ifPresent(pDomibusConnectorLinkPartner -> linkPartnerDao.delete(pDomibusConnectorLinkPartner));
     }
 }

@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import org.apache.logging.log4j.LogManager;
@@ -17,10 +18,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.*;
 
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -36,6 +35,10 @@ public class LinkTestContext {
     public MerlinPropertiesFactory merlinPropertiesFactory() {
         return new MerlinPropertiesFactory();
     }
+
+    @MockBean
+    DomibusConnectorLinkPartnerDao dao;
+
 
     @Configuration
     @ComponentScan(basePackageClasses = DCLinkPluginConfiguration.class)

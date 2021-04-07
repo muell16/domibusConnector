@@ -2,6 +2,7 @@ package eu.domibus.connector.web.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -14,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WizardComponent extends VerticalLayout {
 
@@ -25,9 +28,10 @@ public class WizardComponent extends VerticalLayout {
     private Button cancelButton = new Button("Cancel");
     private Button finishButton = new Button("Finish");
     private Label stepTitle = new Label("");
-    private Text header = new Text ("Create Link");
+    private Text header = new Text("Create Link");
     private Div content = new Div();
 
+    private ExecutorService executorService = Executors.newCachedThreadPool();
     private LinkedList<WizardStep> steps = new LinkedList<>();
     private WizardStep activeStep;
     private List<WizardFinishedListener> finishListener;
@@ -44,7 +48,8 @@ public class WizardComponent extends VerticalLayout {
         private List<WizardFinishedListener> finishedListeners = new ArrayList<>();
         private List<WizardCanceldListener> cancelListeners = new ArrayList<>();
 
-        private WizardBuilder() {}
+        private WizardBuilder() {
+        }
 
         public WizardBuilder addStep(WizardStep step) {
             wizardSteps.addLast(step);
@@ -78,7 +83,6 @@ public class WizardComponent extends VerticalLayout {
     public interface WizardCanceldListener {
         void wizardCanceld(WizardComponent wizardComponent, WizardStep wizardStep);
     }
-
 
 
     private WizardComponent() {
@@ -117,9 +121,10 @@ public class WizardComponent extends VerticalLayout {
             LOGGER.error("Finish Button clicked and it was not the last step in wizard! Nothing will be done!");
             return;
         }
-        if (this.activeStep.onForward()) {
-            this.finishListener.stream().forEach(lst -> lst.wizardFinished(this, this.activeStep));
-        }
+
+        this.activeStep.onForward(() -> {
+            finishListener.stream().forEach(lst -> lst.wizardFinished(this, this.activeStep));
+        });
     }
 
     private void cancelButtonClicked(ClickEvent<Button> buttonClickEvent) {
@@ -128,25 +133,27 @@ public class WizardComponent extends VerticalLayout {
     }
 
     private void forwardButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        boolean forward = this.activeStep.onForward();
-        if (forward) {
+        this.activeStep.onForward(() -> {
             int i = steps.indexOf(activeStep);
             if ((i + 1) < steps.size()) {
                 WizardStep wizardStep = steps.get(i + 1);
                 this.setActiveStep(wizardStep);
             }
-        }
+        });
     }
 
     private void backButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        boolean back = this.activeStep.onBack();
-        if (back) {
+        final UI ui = UI.getCurrent();
+        this.activeStep.onBack(() -> {
             int i = steps.indexOf(activeStep);
             if (i - 1 >= 1) {
-                WizardStep wizardStep = steps.get(i-1);
-                this.setActiveStep(wizardStep);
+                WizardStep wizardStep = steps.get(i - 1);
+                ui.access(() -> {
+                    this.setActiveStep(wizardStep);
+                });
             }
-        }
+        });
+
     }
 
     private void setActiveStep(WizardStep wizardStep) {
@@ -163,7 +170,7 @@ public class WizardComponent extends VerticalLayout {
         finishButton.setEnabled(i + 1 == steps.size());
 
         backButton.setEnabled(
-                (i>0) && activeStep.isBackSupported()
+                (i > 0) && activeStep.isBackSupported()
         );
     }
 

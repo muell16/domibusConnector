@@ -1,13 +1,14 @@
 package eu.domibus.connector.web.component;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.server.Command;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface WizardStep {
     Component getComponent();
-    boolean onForward();
-    default boolean onBack() {
-        return false;
-    }
+    void onForward(Command onForwardExecute);
+    default void onBack(Command onBackExecute) {}
 
     default boolean isBackSupported() {
         return false;

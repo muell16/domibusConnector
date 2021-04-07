@@ -4,6 +4,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 @UIScope
 @org.springframework.stereotype.Component
+@Push
 public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private Map<Tab, String> tabsToRouteMap = new HashMap<>();

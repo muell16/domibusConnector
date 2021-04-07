@@ -24,6 +24,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.validation.Validator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -79,7 +80,7 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
     @Override
     public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink) {
         LOGGER.debug("Enabling LinkPartner [{}]", linkPartner);
-        Properties properties = linkPartner.getProperties();
+        Map<String, String> properties = linkPartner.getProperties();
 
         LOGGER.debug("Binding properties [{}] to linkPartnerConfig [{}]", properties, WsBackendPluginLinkPartnerConfigurationProperties.class);
 

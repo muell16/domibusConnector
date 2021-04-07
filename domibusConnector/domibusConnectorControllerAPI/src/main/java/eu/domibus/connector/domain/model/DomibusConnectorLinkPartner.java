@@ -4,17 +4,18 @@ import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
 public class DomibusConnectorLinkPartner {
 
-    private String configSource;
-
-    @NotBlank
+    @Valid
     private LinkPartnerName linkPartnerName;
 
     private String description;
@@ -27,7 +28,7 @@ public class DomibusConnectorLinkPartner {
 
     private Duration pullInterval = Duration.ofMinutes(5l);
 
-    private Properties properties = new Properties();
+    private Map<String,String> properties = new HashMap<>();
 
     private DomibusConnectorLinkConfiguration linkConfiguration;
 
@@ -89,23 +90,16 @@ public class DomibusConnectorLinkPartner {
         this.linkConfiguration = linkConfiguration;
     }
 
-    public String getConfigSource() {
-        return configSource;
-    }
-
-    public void setConfigSource(String configSource) {
-        this.configSource = configSource;
-    }
-
-    public Properties getProperties() {
+    public Map<String,String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(Map<String,String> properties) {
         this.properties = properties;
     }
 
     public static class LinkPartnerName {
+        @NotBlank
         private String linkName;
 
         public LinkPartnerName(String linkName) {
