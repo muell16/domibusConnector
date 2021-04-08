@@ -22,7 +22,7 @@
 
 alter table DC_TRANSPORT_STEP rename column CONNECTOR_MESSAGE_ID to bkp_cmid;
 alter table DC_TRANSPORT_STEP add CONNECTOR_MESSAGE_ID VARCHAR2(255);
-update DC_TRANSPORT_STEP set CONNECTOR_MESSAGE_ID=to_char(bkp.cmid);
+update DC_TRANSPORT_STEP set CONNECTOR_MESSAGE_ID=to_char(bkp_cmid);
 alter table DC_TRANSPORT_STEP drop column bkp_cmid;
 alter table DC_TRANSPORT_STEP modify ("CONNECTOR_MESSAGE_ID" not null);
 alter table DC_TRANSPORT_STEP drop constraint FK_MESSAGESTEP_MESSAGE;
