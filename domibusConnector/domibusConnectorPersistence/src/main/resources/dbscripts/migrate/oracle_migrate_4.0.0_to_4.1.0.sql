@@ -3,6 +3,36 @@
 -- *********************************************************************
 -- updates the connector database from an 4.0 connector version to 4.1
 
+-- create default values for party, action and service if they do not already exist
+INSERT INTO DOMIBUS_CONNECTOR_SERVICE
+    SELECT 'n.a.', 'n.a.'
+    FROM dual -- because oracle
+    WHERE NOT EXISTS (SELECT NULL -- whatever not used by exists
+                      FROM DOMIBUS_CONNECTOR_SERVICE
+                      WHERE SERVICE = 'n.a.'
+        );
+
+-- see above
+INSERT INTO DOMIBUS_CONNECTOR_ACTION
+SELECT 'n.a.', 0
+FROM dual -- because oracle
+WHERE NOT EXISTS (SELECT NULL -- whatever not used by exists
+                  FROM DOMIBUS_CONNECTOR_ACTION
+                  WHERE ACTION = 'n.a.'
+    );
+
+
+-- see above
+INSERT INTO DOMIBUS_CONNECTOR_PARTY
+SELECT 'n.a.', 'n.a.', 'n.a.'
+FROM dual -- because oracle
+WHERE NOT EXISTS (SELECT NULL -- whatever not used by exists
+                  FROM DOMIBUS_CONNECTOR_PARTY
+                  WHERE PARTY_ID = 'n.a.'
+    );
+
+update DOMIBUS_CONNECTOR_MESSAGE_INFO set FROM_PARTY_ID='n.a.', FROM_PARTY_ROLE='n.a.' where FROM_PARTY_ID is null;
+UPDATE domibus_connector_message SET connector_message_id='_migrate_' || SYS_GUID() where CONNECTOR_MESSAGE_ID is null;
 
 CREATE TABLE "DOMIBUS_CONNECTOR_PROPERTY"
 (
