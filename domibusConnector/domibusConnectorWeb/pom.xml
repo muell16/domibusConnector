@@ -69,7 +69,7 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
-        <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar 
+        <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar
 			is not in public maven repo -->
         <!-- activate dependency with profile oracle 'mvn -Poracle install' instead -->
         <!-- <dependency> -->
