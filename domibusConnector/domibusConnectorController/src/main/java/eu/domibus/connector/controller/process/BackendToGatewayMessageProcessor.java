@@ -15,6 +15,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.spring.ConnectorControllerExternalProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
@@ -40,6 +41,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	private DomibusConnectorMessageContentManager bigDataPersistenceService;
+	
+	private ConnectorControllerExternalProperties externalProperties;
 
 	@Autowired
 	private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
@@ -80,7 +83,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         this.backendDeliveryService = backendDeliveryService;
     }
 
-    @Override
+    @Autowired
+	public void setExternalProperties(ConnectorControllerExternalProperties externalProperties) {
+		this.externalProperties = externalProperties;
+	}
+
+	@Override
     @Transactional(propagation=Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
     @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
@@ -151,9 +159,11 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 //        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 
 		//also send evidence back to backend client:
-		confirmationMessage.getEvidenceMessage().getMessageDetails().setCausedBy(message.getConnectorMessageId());
-		backendDeliveryService.deliverMessageToBackend(confirmationMessage.getEvidenceMessage());
-//		confirmationMessage.setEvidenceDeliveredToBackend();
+		if(externalProperties.isSendGeneratedEvidencesToBackend()) {
+			confirmationMessage.getEvidenceMessage().getMessageDetails().setCausedBy(message.getConnectorMessageId());
+			backendDeliveryService.deliverMessageToBackend(confirmationMessage.getEvidenceMessage());
+			//		confirmationMessage.setEvidenceDeliveredToBackend();
+		}
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
 

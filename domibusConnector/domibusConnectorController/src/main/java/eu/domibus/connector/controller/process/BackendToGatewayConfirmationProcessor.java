@@ -20,6 +20,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.spring.ConnectorControllerExternalProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -47,6 +48,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
+    
+    private ConnectorControllerExternalProperties externalProperties;
 
     //setter
     @Autowired
@@ -73,6 +76,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator idGenerator) {
         this.messageIdGenerator = idGenerator;
     }
+    
+    @Autowired
+	public void setExternalProperties(ConnectorControllerExternalProperties externalProperties) {
+		this.externalProperties = externalProperties;
+	}
 
     @Override
     @Transactional(propagation = Propagation.NEVER)
@@ -146,8 +154,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
         commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
-       
-        sendAsEvidenceMessageBackToBackend(wrappedConfirmation);
+        if(externalProperties.isSendGeneratedEvidencesToBackend())
+        	sendAsEvidenceMessageBackToBackend(wrappedConfirmation);
 
     }
 
