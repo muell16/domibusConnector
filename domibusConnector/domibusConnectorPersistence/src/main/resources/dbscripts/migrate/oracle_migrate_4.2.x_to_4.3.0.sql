@@ -5,27 +5,29 @@
 --
 
 -- 1/X) delete foreign key constraint
--- rename DC_TRANSPORT_STEP to bkp_dc_transtep;
--- create table DC_TRANSPORT_STEP
--- (
---     ID DECIMAL(10,0) not null,
---     CONNECTOR_MESSAGE_ID VARCHAR2(255) not null,
---     LINK_PARTNER_NAME VARCHAR2(255) not null,
---     ATTEMPT INT not null,
---     TRANSPORT_ID VARCHAR2(255),
---     TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR2(255),
---     REMOTE_MESSAGE_ID VARCHAR2(255),
---     CREATED TIMESTAMP,
---     constraint PK_DC_TRANSPORT_STEP
---         primary key (ID)
--- );
 
 alter table DC_TRANSPORT_STEP rename column CONNECTOR_MESSAGE_ID to bkp_cmid;
-alter table DC_TRANSPORT_STEP add CONNECTOR_MESSAGE_ID VARCHAR2(255);
-update DC_TRANSPORT_STEP set CONNECTOR_MESSAGE_ID=to_char(bkp_cmid);
-alter table DC_TRANSPORT_STEP drop column bkp_cmid;
-alter table DC_TRANSPORT_STEP modify ("CONNECTOR_MESSAGE_ID" not null);
-alter table DC_TRANSPORT_STEP drop constraint FK_MESSAGESTEP_MESSAGE;
+alter table DC_TRANSPORT_STEP add           CONNECTOR_MESSAGE_ID VARCHAR2(255);
+update      DC_TRANSPORT_STEP set           CONNECTOR_MESSAGE_ID=to_char(bkp_cmid);
+alter table DC_TRANSPORT_STEP drop column   bkp_cmid;
+alter table DC_TRANSPORT_STEP modify       ("CONNECTOR_MESSAGE_ID" not null);
+
+-- FK_MESSAGESTEP_MESSAGE is very likely already deleted, because the connector does not work, if it still exists.
+-- To prevent errors I wrapped the deletion in a psql try catch
+DECLARE
+    DC_TRANSPORT_STEP       VARCHAR2(250):= 'DC_TRANSPORT_STEP';
+    FK_MESSAGESTEP_MESSAGE           VARCHAR2(250):= 'FK_MESSAGESTEP_MESSAGE';
+BEGIN
+    EXECUTE IMMEDIATE 'alter table ' || DC_TRANSPORT_STEP || ' drop constraint ' || FK_MESSAGESTEP_MESSAGE;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- "ORA-02443: Cannot drop constraint  - nonexistent constraint"
+        -- exceptions are ignored, anything else is raised
+        IF SQLCODE != -2443 THEN
+            RAISE;
+        END IF;
+END;
+/
 
 -- 2/X) update name of jpa sequence
 update DOMIBUS_CONNECTOR_SEQ_STORE
