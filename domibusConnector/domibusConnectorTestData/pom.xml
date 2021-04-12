@@ -4,11 +4,11 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-<<<<<<< HEAD
+
         <version>4.2.9</version>
-=======
-        <version>4.2.9-RC2</version>
->>>>>>> 5246ad0f06978e3460d2ceadc2051e533d07c4bf
+
+
+
     </parent>
     <artifactId>domibusConnectorTestData</artifactId>
     <name>${project.artifactId}</name>
