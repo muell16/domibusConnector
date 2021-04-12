@@ -552,9 +552,6 @@ from bkp_dc_bigdata;
 
 drop table bkp_dc_bigdata;
 
--- TODO this should work now!!!!
-drop table BKP_DC_MESSAGE;
-
 insert into DOMIBUS_CONNECTOR_MESSAGE_INFO
 select B.ID,
        B.MESSAGE_ID,
@@ -593,7 +590,6 @@ select B.ID,
        CREATED,
        UPDATED
 from BKP_DC_MESSAGE_INFO B;
--- needs to happen here
 drop table BKP_DC_MESSAGE_INFO;
 
 -- DC_MESSAGE_LANE
@@ -619,7 +615,6 @@ delete
 from BKP_DC_PARTY
 where PARTY_ID = 'n.a.';
 
--- todo delete cont from here
 insert into DOMIBUS_CONNECTOR_PARTY
 values (1, 1, null, 'n.a.', 'n.a.', 'n.a.');
 
@@ -690,12 +685,6 @@ INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE
 VALUES ('DOMIBUS_CONNECTOR_SERVICE.ID', DC_SERVICE_SEQ.nextval);
 
 DROP SEQUENCE DC_SERVICE_SEQ;
--- todo delete
--- select distinct FK_FROM_PARTY_ID, mi.ID, mi.MESSAGE_ID
--- from DOMIBUS_CONNECTOR_MESSAGE_INFO mi
--- where FK_FROM_PARTY_ID not in
---       (select id from DOMIBUS_CONNECTOR_PARTY where FK_FROM_PARTY_ID = DOMIBUS_CONNECTOR_PARTY.ID);
--- DOMIBUS_CONNECTOR_PROPERTY
 
 CREATE SEQUENCE DC_PROPERTY_SEQ INCREMENT BY 1 START WITH 1000;
 
@@ -714,3 +703,5 @@ drop sequence DC_PROPERTY_SEQ;
 --- Update version
 INSERT INTO DC_DB_VERSION (TAG)
 VALUES ('V4.2.8');
+
+drop table BKP_DC_MESSAGE cascade constraints;
