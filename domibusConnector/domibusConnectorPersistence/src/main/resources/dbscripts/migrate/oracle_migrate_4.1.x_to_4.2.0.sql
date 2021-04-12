@@ -603,7 +603,7 @@ VALUES (1, 'default_message_lane', 'default message lane');
 
 INSERT INTO DC_PMODE_SET (ID, FK_MESSAGE_LANE, CREATED, DESCRIPTION, ACTIVE)
 VALUES (1,
-        null,
+        1,
         sysdate,
         'initial set created by migration script',
         1);
