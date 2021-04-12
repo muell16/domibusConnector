@@ -544,18 +544,18 @@ create table DC_LINK_PARTNER_PROPERTY
 
 create table DC_TRANSPORT_STEP
 (
-	ID DECIMAL(10,0) not null,
-	MESSAGE_ID DECIMAL(10,0) not null,
-	LINK_PARTNER_NAME VARCHAR2(255) not null,
-	ATTEMPT INT not null,
-	TRANSPORT_ID VARCHAR2(255),
-	TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR2(255),
-	REMOTE_MESSAGE_ID VARCHAR2(255),
-	CREATED TIMESTAMP,
-	constraint PK_DC_TRANSPORT_STEP
-		primary key (ID),
-	constraint FK_MESSAGESTEP_MESSAGE
-		foreign key (MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID)
+    ID                          DECIMAL(10, 0) not null,
+    CONNECTOR_MESSAGE_ID        DECIMAL(10, 0) not null,
+    LINK_PARTNER_NAME           VARCHAR2(255)  not null,
+    ATTEMPT                     INT            not null,
+    TRANSPORT_ID                VARCHAR2(255),
+    TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR2(255),
+    REMOTE_MESSAGE_ID           VARCHAR2(255),
+    CREATED                     TIMESTAMP,
+    constraint PK_DC_TRANSPORT_STEP
+        primary key (ID),
+    constraint FK_MESSAGESTEP_MESSAGE
+        foreign key (CONNECTOR_MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID)
 );
 
 create table DC_TRANSPORT_STEP_STATUS
