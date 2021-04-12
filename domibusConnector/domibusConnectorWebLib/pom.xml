@@ -4,7 +4,11 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.9-RC2</version>
+
+        <version>4.2.9</version>
+
+
+
     </parent>
     <artifactId>domibusConnectorWebLib</artifactId>
     <properties>

@@ -4,7 +4,11 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.9-RC2</version>
+
+        <version>4.2.9</version>
+
+
+
     </parent>
     <artifactId>domibusConnectorLinkCommon</artifactId>
     <dependencies>
@@ -90,7 +94,11 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
-            <version>4.2.9-RC2</version>
+
+            <version>4.2.9</version>
+
+    
+
             <scope>compile</scope>
         </dependency>
         <dependency>
