@@ -52,3 +52,28 @@ ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT PK_DOMIBUS_CONNECTOR_SERVIC
 ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT FK_SERVICE_PMODE_SET_ID FOREIGN KEY (FK_PMODE_SET) REFERENCES DC_PMODE_SET(ID);
 
 insert into DOMIBUS_CONNECTOR_SERVICE select * from BKP_DC_SERVICE;
+
+
+update (select e.type, e.delivered_gw, e.updated, m.direction_source, m.direction_target, m.confirmed
+        from DOMIBUS_CONNECTOR_EVIDENCE e
+                 join DOMIBUS_CONNECTOR_MESSAGE m on m.id = e.MESSAGE_ID) x
+set x.DELIVERED_GW=x.updated
+where x.DELIVERED_GW is null
+  and x.TYPE in ('DELIVERY', 'RETRIVAL', 'RELAY_REMMD_ACCEPTANCE')
+  and x.updated > to_date('01.06.2020', 'dd.mm.yyyy')
+  and x.DIRECTION_SOURCE = 'GATEWAY'
+  and x.DIRECTION_TARGET = 'BACKEND'
+  and x.confirmed is not null
+;
+
+update (select e.type, e.delivered_nat, e.updated, m.direction_source, m.direction_target, m.confirmed
+        from DOMIBUS_CONNECTOR_EVIDENCE e
+                 join DOMIBUS_CONNECTOR_MESSAGE m on m.id = e.MESSAGE_ID) x
+set x.DELIVERED_NAT=x.updated
+where x.DELIVERED_NAT is null
+  and x.TYPE in ('DELIVERY', 'RETRIVAL', 'RELAY_REMMD_ACCEPTANCE')
+  and x.updated > to_date('01.06.2020', 'dd.mm.yyyy')
+  and x.DIRECTION_SOURCE = 'BACKEND'
+  and x.DIRECTION_TARGET = 'GATEWAY'
+  and x.confirmed is not null
+;
