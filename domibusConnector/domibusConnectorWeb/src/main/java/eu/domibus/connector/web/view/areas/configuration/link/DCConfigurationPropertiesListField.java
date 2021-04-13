@@ -3,6 +3,7 @@ package eu.domibus.connector.web.view.areas.configuration.link;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,8 +30,9 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DCConfigurationPropertiesListField extends VerticalLayout
-        implements HasValue<HasValue.ValueChangeEvent<Map<String, String>>, Map<String, String>> {
+public class DCConfigurationPropertiesListField extends CustomField<Map<String, String>>
+        // implements HasValue<HasValue.ValueChangeEvent<Map<String, String>>, Map<String, String>>, HasValidator<Map<String, String>>
+{
 
     private static final Logger LOGGER = LogManager.getLogger(eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent.class);
 
@@ -38,10 +40,11 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
     private final ConfigurationPropertyChecker configurationPropertyChecker;
     private final ConfigurationFormsFactory configurationFormFactory;
 
-    private Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
+    private final Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
+    private final Label statusLabel = new Label();
+
+    private Binder<Map<String, String>> propertiesBinder = new Binder<>();
     private Map<String, String> properties = new HashMap<>();
-    private Label statusLabel = new Label();
-    private Binder<Map<String, String>> propertiesBinder = new Binder();
 
     private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
     private Collection<AbstractField> propertyFields = new ArrayList<>();
@@ -78,14 +81,22 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
             return vl;
         }));
 
-
         grid.setItems(configurationProperties);
 
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.add(grid, statusLabel);
+        add(verticalLayout);
 
-        //TODO: add validation error field before ListView
+        updateUI();
+    }
 
-        this.add(this.grid);
-        this.add(this.statusLabel);
+    public Map<String, String> getEmptyValue() {
+        return new HashMap<>();
+    }
+
+    @Override
+    public Registration addValueChangeListener(ValueChangeListener<? super ComponentValueChangeEvent<CustomField<Map<String, String>>, Map<String, String>>> listener) {
+        return super.addValueChangeListener(listener);
     }
 
     public Collection<ConfigurationProperty> getConfigurationProperties() {
@@ -93,6 +104,9 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
     }
 
     public void setConfigurationProperties(Collection<ConfigurationProperty> configurationProperties) {
+        propertiesBinder = new Binder<>();
+        propertiesBinder.setBean(properties);
+
         this.configurationProperties = configurationProperties;
         this.grid.setItems(configurationProperties);
 
@@ -124,9 +138,14 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
                 return ValidationResult.error(errString);
             }
         });
-//        binder.setStatusLabel(this.statusLabel);
+
+
 
     }
+
+//    public Validator<Map<String, String>> getDefaultValidator() {
+//
+//    }
 
     public List<ValidationResult> validate() {
 
@@ -140,53 +159,64 @@ public class DCConfigurationPropertiesListField extends VerticalLayout
         return beanValidationErrors;
     }
 
-    @Override
-    public void setValue(Map<String, String> value) {
-        //this.binder.setBean(value);
-        this.properties = value;
-        this.propertiesBinder.readBean(value);
-    }
+//    @Override
+//    public void setValue(Map<String, String> value) {
+//        //this.binder.setBean(value);
+////        this.properties = value;
+//        this.propertiesBinder.setBean(value);
+//    }
 
 //    public void writeBean() throws ValidationException {
 //        this.propertiesBinder.writeBean(this.properties);
 //    }
 
-    @Override
-    public Map<String, String> getValue() {
-        return propertiesBinder.getBean();
+//    @Override
+//    public Map<String, String> getValue() {
+//        propertiesBinder.writeBeanAsDraft(properties);
+//        return properties;
+//    }
+
+//    @Override
+//    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Map<String, String>>> listener) {
+//        Registration registration = this.propertiesBinder
+//                .addValueChangeListener(event -> listener.valueChanged((ValueChangeEvent<Map<String, String>>) event));
+//        return registration;
+//    }
+
+
+//    public void setReadOnly(boolean readOnly) {
+//        this.readOnly = readOnly;
+//        propertiesBinder.setReadOnly(readOnly);
+//        updateUI(readOnly);
+//    }
+
+    private void updateUI() {
+//        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
     }
+
+//    @Override
+//    public boolean isReadOnly() {
+//        return this.readOnly;
+//    }
 
     @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Map<String, String>>> listener) {
-        Registration registration = this.propertiesBinder
-                .addValueChangeListener( event -> listener.valueChanged((ValueChangeEvent<Map<String, String>>) event));
-        return registration;
-    }
-
-
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-        updateUI(readOnly);
-    }
-
-    private void updateUI(boolean readOnly) {
-        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
+    protected Map<String, String> generateModelValue() {
+        propertiesBinder.writeBeanAsDraft(properties, true);
+        return properties;
     }
 
     @Override
-    public boolean isReadOnly() {
-        return this.readOnly;
+    protected void setPresentationValue(Map<String, String> stringStringMap) {
+        propertiesBinder.setBean(stringStringMap);
     }
 
-    @Override
-    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
-        //no support yet...
-    }
-
-    @Override
-    public boolean isRequiredIndicatorVisible() {
-        return false;
-    }
+//    public void setValue(Map<String, String> value) {
+//        this.properties = value;
+//    }
+//
+//    public Map<String, String> getValue() {
+//        return this.properties;
+//    }
 
 }
 

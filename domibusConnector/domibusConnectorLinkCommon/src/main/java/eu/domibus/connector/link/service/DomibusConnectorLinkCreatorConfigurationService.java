@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,11 +32,10 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkCreatorConfigurationService.class);
 
     @Autowired(required = false)
-    eu.domibus.connector.link.service.DCLinkPersistenceService dcLinkPersistenceService;
+    DCLinkPersistenceService dcLinkPersistenceService;
 
     @Autowired
     DCActiveLinkManagerService linkManager;
-
 
     @Autowired
     DCLinkPluginConfigurationProperties config;
@@ -138,6 +138,10 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     }
 
     private void activateLink(DomibusConnectorLinkPartner linkInfo) {
+        if (!linkInfo.isEnabled()) {
+            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Enabled flag of link [{}] is false - LinkPartner will not be started!", linkInfo);
+            return;
+        }
         try {
             linkManager.activateLinkPartner(linkInfo);
         } catch (LinkPluginException e) {

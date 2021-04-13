@@ -171,7 +171,6 @@ public class CreateLinkPanel extends VerticalLayout {
         private static final String NEW_LINK_CONFIG = "Create new Link Configuration";
 
         private ComboBox<DomibusConnectorLinkConfiguration> linkConfigurationChooser = new ComboBox<>();
-        private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
 
         private DCLinkConfigPanel linkConfigPanel;
 

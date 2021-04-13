@@ -63,7 +63,7 @@
         </preConditions>
         <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
                                  baseColumnNames="DETACHED_SIGNATURE_ID"
-                                 constraintName="FK_detsig_msgcont"
+                                 constraintName="FK_DETSIG_MSGCONT"
                                  referencedTableName="DC_MSGCNT_DETSIG"
                                  referencedColumnNames="ID"/>
     </changeSet>

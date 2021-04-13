@@ -10,12 +10,15 @@ public class LinkModeConverter implements AttributeConverter<LinkMode, String> {
 
     @Override
     public String convertToDatabaseColumn(LinkMode attribute) {
+        if (attribute == null) {
+            return "";
+        }
         return attribute.getDbName();
     }
 
     @Override
     public LinkMode convertToEntityAttribute(String dbData) {
-        return LinkMode.ofDbName(dbData);
+        return LinkMode.ofDbName(dbData).orElse(null);
 
     }
 }

@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;

@@ -55,7 +55,7 @@ public class DCLinkConfigPanel extends VerticalLayout
 
     private void initUI() {
 
-        this.configPropsList = applicationContext.getBean(DCConfigurationPropertiesListField.class);
+
 
         linkConfigName = new TextField("Link Configuration Name");
 
@@ -64,7 +64,7 @@ public class DCLinkConfigPanel extends VerticalLayout
         implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
         implChooser.addValueChangeListener(this::choosenLinkImplChanged);
         implChooser.setMinWidth("10em");
-        update();
+
 
         linkConfigurationBinder
                 .forField(linkConfigName)
@@ -100,36 +100,34 @@ public class DCLinkConfigPanel extends VerticalLayout
                         (Setter<DomibusConnectorLinkConfiguration, LinkPlugin>) (linkConfiguration, linkPlugin) -> linkConfiguration.setLinkImpl(linkPlugin == null ? null : linkPlugin.getPluginName())
                 );
 
+        configPropsList = applicationContext.getBean(DCConfigurationPropertiesListField.class);
+        configPropsList.setLabel("Link Configuration Properties");
+        configPropsList.setSizeFull();
         linkConfigurationBinder
             .forField(configPropsList)
-            .withValidator((Validator<? super Map<String, String>>) (value, context) -> {
-                List<ValidationResult> validate = configPropsList.validate();
-                if (validate.isEmpty()) {
-                    return ValidationResult.ok();
-                } else {
-                    return ValidationResult.error("Invalid Properties!");
-                }
-            })
-            .bind(
-                (ValueProvider<DomibusConnectorLinkConfiguration, Map<String, String>>) linkConfiguration -> linkConfiguration.getProperties(),
-                (Setter<DomibusConnectorLinkConfiguration, Map<String, String>>) (linkConfiguration, linkProps) -> linkConfiguration.setProperties(linkProps)
-            );
+//            .withValidator((Validator<? super Map<String, String>>) (value, context) -> {
+//                List<ValidationResult> validate = configPropsList.validate();
+//                if (validate.isEmpty()) {
+//                    return ValidationResult.ok();
+//                } else {
+//                    return ValidationResult.error("Invalid Properties!");
+//                }
+//            })
+            .bind(DomibusConnectorLinkConfiguration::getProperties, DomibusConnectorLinkConfiguration::setProperties);
 
+        add(linkConfigName, implChooser, configPropsList);
 
-        add(linkConfigName);
-        add(implChooser);
-        add(configPropsList);
-
+        updateUI();
 
     }
 
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfig) {
         linkConfiguration = linkConfig;
         linkConfigurationBinder.readBean(linkConfig);
-        update();
+        updateUI();
     }
 
-    private void update() {
+    private void updateUI() {
         implChooser.setReadOnly(readOnly);
         linkConfigName.setReadOnly(readOnly);
         configPropsList.setReadOnly(readOnly);
@@ -147,6 +145,7 @@ public class DCLinkConfigPanel extends VerticalLayout
                 .flatMap(Function.identity()).collect(Collectors.toList());
 
         configPropsList.setConfigurationProperties(configurationProperties);
+        updateUI();
 
     }
 
@@ -177,7 +176,7 @@ public class DCLinkConfigPanel extends VerticalLayout
     public void setReadOnly(boolean readOnly) {
         linkConfigurationBinder.setReadOnly(readOnly);
         this.readOnly = readOnly;
-        update();
+        updateUI();
     }
 
     @Override

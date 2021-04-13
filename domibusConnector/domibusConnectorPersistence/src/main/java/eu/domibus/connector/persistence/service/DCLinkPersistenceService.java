@@ -11,18 +11,18 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-//@ConditionalOnBean(DCLinkPluginConfiguration.class)
 public class DCLinkPersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCLinkPersistenceService.class);
@@ -79,7 +79,7 @@ public class DCLinkPersistenceService {
     }
 
     private LinkMode mapOrDefault(String s) {
-        return LinkMode.ofDbName(s);
+        return LinkMode.ofDbName(s).orElse(null);
     }
 
 
@@ -181,6 +181,9 @@ public class DCLinkPersistenceService {
     }
 
     private Map<String, String> mapToDbProperties(Map<String, String> properties) {
+        if (properties == null) {
+            return new HashMap<>();
+        }
         Map<String, String> map = properties.entrySet().stream()
                 .collect(Collectors.toMap(e -> CONFIG_PROPERTY_PREFIX + e.getKey(), Map.Entry::getValue));
         return map;

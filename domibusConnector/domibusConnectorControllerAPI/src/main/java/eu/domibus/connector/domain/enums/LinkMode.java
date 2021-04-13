@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.enums;
 
+import javax.annotation.CheckForNull;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public enum LinkMode {
@@ -17,9 +19,9 @@ public enum LinkMode {
         return dbName;
     }
 
-    public static LinkMode ofDbName(String dbName) {
+    public static Optional<LinkMode> ofDbName(String dbName) {
         return Stream.of(LinkMode.values())
                 .filter(l -> l.dbName.equalsIgnoreCase(dbName))
-                .findFirst().get();
+                .findFirst();
     }
 }
