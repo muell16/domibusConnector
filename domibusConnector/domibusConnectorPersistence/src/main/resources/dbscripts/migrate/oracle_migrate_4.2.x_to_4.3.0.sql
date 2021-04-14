@@ -1,10 +1,23 @@
 -- *********************************************************************
--- Update Database Script - from domibusConnector 4.1 to 4.2
+-- Update Database Script - from domibusConnector 4.2 to 4.3
 -- *********************************************************************
--- adds quartz tables
+-- change message timestamps in DOMIBUS_CONNECTOR_EVIDENCE and DOMIBUS_CONNECTOR_MESSAGE
+-- remove not null constraint on service_type in DOMIBUS_CONNECTOR_SERVICE
 --
 
--- 1/X) delete foreign key constraint
+-- #################### 1/6 RENAME tables that need to be recreated ####################
+
+rename DOMIBUS_CONNECTOR_SERVICE to BKP_DC_SERVICE;
+
+-- #################### 2/6 CREATE tables, structural changes ####################
+
+CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
+(
+    ID           DECIMAL(10, 0) NOT NULL,
+    FK_PMODE_SET DECIMAL(10, 0) NOT NULL,
+    SERVICE      VARCHAR2(255)  NOT NULL,
+    SERVICE_TYPE VARCHAR2(255)
+);
 
 alter table DC_TRANSPORT_STEP rename column CONNECTOR_MESSAGE_ID to bkp_cmid;
 alter table DC_TRANSPORT_STEP add           CONNECTOR_MESSAGE_ID VARCHAR2(255);
@@ -27,9 +40,9 @@ EXCEPTION
             RAISE;
         END IF;
 END;
-/
 
--- 2/X) update name of jpa sequence
+-- #################### 3/6 TRANSFER & UPDATE data ####################
+
 update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
 where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
@@ -38,21 +51,9 @@ update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_EVIDENCE.ID'
 where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
 
--- 3/X) remove not null constraint on service type
-rename DOMIBUS_CONNECTOR_SERVICE to BKP_DC_SERVICE;
-
-CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
-(
-    ID           DECIMAL(10, 0) NOT NULL,
-    FK_PMODE_SET DECIMAL(10, 0) NOT NULL,
-    SERVICE      VARCHAR2(255)  NOT NULL,
-    SERVICE_TYPE VARCHAR2(255)
-);
-ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT PK_DOMIBUS_CONNECTOR_SERVICE PRIMARY KEY (ID);
-ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT FK_SERVICE_PMODE_SET_ID FOREIGN KEY (FK_PMODE_SET) REFERENCES DC_PMODE_SET(ID);
-
 insert into DOMIBUS_CONNECTOR_SERVICE select * from BKP_DC_SERVICE;
 
+-- update timestamps
 
 update (select e.type, e.delivered_gw, e.updated, m.direction_source, m.direction_target, m.confirmed
         from DOMIBUS_CONNECTOR_EVIDENCE e
@@ -63,8 +64,8 @@ where x.DELIVERED_GW is null
   and x.updated > to_date('01.06.2020', 'dd.mm.yyyy')
   and x.DIRECTION_SOURCE = 'GATEWAY'
   and x.DIRECTION_TARGET = 'BACKEND'
-  and x.confirmed is not null
-;
+  and x.confirmed is not null;
+
 
 update (select e.type, e.delivered_nat, e.updated, m.direction_source, m.direction_target, m.confirmed
         from DOMIBUS_CONNECTOR_EVIDENCE e
@@ -75,5 +76,16 @@ where x.DELIVERED_NAT is null
   and x.updated > to_date('01.06.2020', 'dd.mm.yyyy')
   and x.DIRECTION_SOURCE = 'BACKEND'
   and x.DIRECTION_TARGET = 'GATEWAY'
-  and x.confirmed is not null
-;
+  and x.confirmed is not null;
+
+-- #################### 4/6 DELETE temporary tables, frees fk names ####################
+
+drop table BKP_DC_SERVICE;
+
+-- #################### 5/6 ADD the constraints ####################
+
+ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT PK_DC_SERVICE PRIMARY KEY (ID);
+ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT FK_SERVICE_PMODE_SET_ID FOREIGN KEY (FK_PMODE_SET) REFERENCES DC_PMODE_SET(ID);
+
+-- #################### 6/6 UPDATE Version ####################
+
