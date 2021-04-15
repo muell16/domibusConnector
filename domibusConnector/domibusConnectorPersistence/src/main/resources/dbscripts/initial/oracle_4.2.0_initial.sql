@@ -471,7 +471,7 @@ create table DC_LINK_CONFIGURATION
 (
     ID          DECIMAL(10, 0) not null,
     CONFIG_NAME VARCHAR2(255)  not null
-        constraint UNQ_DC_LINK_CONFIG_NMAE
+        constraint UN_DC_LINK_CONF_NAME_01
             unique,
     LINK_IMPL   VARCHAR2(255),
     constraint PK_DC_LINK_CONFIGURATION
