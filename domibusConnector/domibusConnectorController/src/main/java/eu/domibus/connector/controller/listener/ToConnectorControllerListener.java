@@ -1,7 +1,6 @@
 package eu.domibus.connector.controller.listener;
 
 import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
-import eu.domibus.connector.controller.processor.steps.EvidenceTriggerStep;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.controller.queues.ToConnectorQueue;
@@ -12,29 +11,35 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.jms.Destination;
 import javax.transaction.Transactional;
 
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_ERROR_QUEUE_BEAN;
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class ToConnectorControllerListener {
+
+    private static final Logger LOGGER = LogManager.getLogger(ToConnectorControllerListener.class);
 
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
     private final EvidenceMessageProcessor evidenceMessageProcessor;
     private final ToConnectorQueue toConnectorQueue;
+
+    public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
+                                         ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor,
+                                         EvidenceMessageProcessor evidenceMessageProcessor,
+                                         ToConnectorQueue toConnectorQueue) {
+        this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
+        this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
+        this.evidenceMessageProcessor = evidenceMessageProcessor;
+        this.toConnectorQueue = toConnectorQueue;
+    }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
     @Transactional
@@ -57,7 +62,11 @@ public class ToConnectorControllerListener {
             }
         } catch (PersistenceException persistenceException) {
             //cannot recover here: put into DLQ!
-            log.error(LoggingMarker.BUSINESS_LOG, "Failed to process message! Check Dead Letter Queue and technical logs for details!");
+            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Persistence Error! Check Dead Letter Queue and technical logs for details!", persistenceException);
+            toConnectorQueue.putOnErrorQueue(message);
+        } catch (Exception anyOtherException) {
+            //cannot recover here: put into DLQ!
+            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Check Dead Letter Queue and technical logs for details!", anyOtherException);
             toConnectorQueue.putOnErrorQueue(message);
         }
     }

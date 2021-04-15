@@ -41,7 +41,7 @@ public class CreateSubmissionRejectionAndReturnItService {
                     .withDirection(MessageTargetSource.BACKEND)
                     .build();
 
-            rejectionMessage.persistMessage();
+//            rejectionMessage.persistMessage();
 
 //            backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
             LOGGER.info("Setting originalMessage status to rejected");

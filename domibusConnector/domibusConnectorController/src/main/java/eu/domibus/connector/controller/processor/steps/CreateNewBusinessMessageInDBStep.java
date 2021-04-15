@@ -13,12 +13,15 @@ import org.springframework.stereotype.Component;
 import java.util.logging.LogManager;
 
 @Component
-@RequiredArgsConstructor
 public class CreateNewBusinessMessageInDBStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateNewBusinessMessageInDBStep.class);
 
     private final DCMessagePersistenceService messagePersistenceService;
+
+    public CreateNewBusinessMessageInDBStep(DCMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "CreateNewBusinessMessageInDBStep")

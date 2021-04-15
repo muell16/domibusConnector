@@ -1,9 +1,6 @@
 package eu.domibus.connector.web.persistence.service.impl;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
@@ -53,8 +50,12 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	
 	@Override
 	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
-		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
-		return mapDbMessageToWebMessageDetail(dbMessage);
+		Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+		if (dbMessage.isPresent()) {
+			return mapDbMessageToWebMessageDetail(dbMessage.get());
+		} else {
+			return null;
+		}
 	}
 	
 	@Override

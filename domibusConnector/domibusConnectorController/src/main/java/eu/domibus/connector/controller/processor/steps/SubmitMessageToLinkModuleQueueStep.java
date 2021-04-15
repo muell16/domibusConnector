@@ -4,6 +4,8 @@ import eu.domibus.connector.controller.queues.ToLinkQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.lib.logging.MDC;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,14 +18,18 @@ import javax.jms.Queue;
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_LINK_QUEUE_BEAN;
 
 @Service
-@RequiredArgsConstructor
 public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitMessageToLinkModuleQueueStep.class);
 
     private final ToLinkQueue toLinkQueue;
 
+    public SubmitMessageToLinkModuleQueueStep(ToLinkQueue toLinkQueue) {
+        this.toLinkQueue = toLinkQueue;
+    }
+
     @Override
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitMessageToLinkModuleQueueStep")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         submitMessage(domibusConnectorMessage);
         return true;

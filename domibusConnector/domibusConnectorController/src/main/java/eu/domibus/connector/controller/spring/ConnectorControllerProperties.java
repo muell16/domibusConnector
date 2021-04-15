@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
@@ -9,10 +10,8 @@ import java.util.UUID;
 @ConfigurationProperties(prefix = "connector")
 public class ConnectorControllerProperties {
 
-    public static final String DEFAULT_MESSAGE_LANE_NAME = "default";
-
     public ConnectorControllerProperties() {
-        this.messageLane.put(DEFAULT_MESSAGE_LANE_NAME, new ConnectorMessageLaneProperties());
+        this.messageLane.put(DomibusConnectorMessageLane.DEFAULT_LANE_NAME, new ConnectorMessageLaneProperties());
     }
 
     /**
@@ -39,6 +38,6 @@ public class ConnectorControllerProperties {
     }
 
     public ConnectorMessageLaneProperties getMessageLane(String key) {
-        return messageLane.get(DEFAULT_MESSAGE_LANE_NAME);
+        return messageLane.get(DomibusConnectorMessageLane.DEFAULT_LANE_NAME);
     }
 }

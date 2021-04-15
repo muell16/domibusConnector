@@ -13,6 +13,8 @@ import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
+
 import java.io.ByteArrayInputStream;
 
 /**
@@ -128,9 +130,9 @@ public class ConnectorControllerTestDomainCreator {
         
         return messageDetails;
     }
-    
-    
-     /**
+
+
+    /**
      * creates a error message with
      * #createSimpleDomibusConnectorMessage as message
      * "error detail message" as details
@@ -139,8 +141,12 @@ public class ConnectorControllerTestDomainCreator {
      * @return the MessageError
      */
     public static DomibusConnectorMessageError createMessageError() {
-        DomibusConnectorMessageError error = new DomibusConnectorMessageError("error message", "error detail message", "error source");     
-        return error;
+        return DomibusConnectorMessageErrorBuilder.createBuilder()
+                .setDetails("error detail message")
+                .setText("error message")
+                .setSource("error source")
+                .build();
     }
-    
+
+
 }

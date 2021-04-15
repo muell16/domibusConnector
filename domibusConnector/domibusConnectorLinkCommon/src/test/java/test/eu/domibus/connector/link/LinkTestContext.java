@@ -1,10 +1,7 @@
 package test.eu.domibus.connector.link;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -16,12 +13,14 @@ import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceSer
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -89,11 +88,11 @@ public class LinkTestContext {
 //        return dao;
 //    }
 
-    @Bean
-    @Primary
-    public SubmitToConnector submitToConnector() {
-        return new SubmitToConnectorQueuImpl();
-    }
+//    @Bean
+//    @Primary
+//    public SubmitToConnector submitToConnector() {
+//        return new SubmitToConnectorQueuImpl();
+//    }
 
 
     public static final String SUBMIT_TO_CONNECTOR_QUEUE = "submitToConnector";
@@ -104,23 +103,23 @@ public class LinkTestContext {
         return new LinkedBlockingDeque<>(90);
     }
 
-    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
-
-        @Autowired
-        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
-
-        @Override
-        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
-
-            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
-            try {
-                toConnectorSubmittedMessages.put(message);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+//    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
+//
+//        @Autowired
+//        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+//        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+//
+//        @Override
+//        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
+//
+//            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
+//            try {
+//                toConnectorSubmittedMessages.put(message);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
 
 
 

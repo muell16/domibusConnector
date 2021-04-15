@@ -14,17 +14,14 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
 @Component
-@RequiredArgsConstructor
 public class CreateConfirmationMessageBuilderFactoryImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
@@ -35,6 +32,17 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
     private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
     private final DCMessagePersistenceService messagePersistenceService;
 
+    public CreateConfirmationMessageBuilderFactoryImpl(DomibusConnectorEvidencesToolkit evidencesToolkit,
+                                                       DomibusConnectorEvidencePersistenceService evidencePersistenceService,
+                                                       DomibusConnectorMessageIdGenerator messageIdGenerator,
+                                                       ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                                       DCMessagePersistenceService messagePersistenceService) {
+        this.evidencesToolkit = evidencesToolkit;
+        this.evidencePersistenceService = evidencePersistenceService;
+        this.messageIdGenerator = messageIdGenerator;
+        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
+        this.messagePersistenceService = messagePersistenceService;
+    }
 
     public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessageAndConfirmation(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
@@ -107,8 +115,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
 
         DomibusConnectorMessageConfirmation messageConfirmation;
         DomibusConnectorMessage originalMesssage;
-        DomibusConnectorMessage evidenceMessage;
+//        DomibusConnectorMessage evidenceMessage;
         DomibusConnectorMessageId causedBy;
+        private DomibusConnectorAction action;
 
         private DomibusConnectorMessageConfirmationWrapper(){}
 
@@ -116,63 +125,24 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
             this.messageConfirmation = messageConfirmation;
         }
 
-        private void setOriginalMesssage(DomibusConnectorMessage originalMesssage) {
-            this.originalMesssage = originalMesssage;
+        private void setBusinessMessage(DomibusConnectorMessage businessMessage) {
+            this.originalMesssage = businessMessage;
         }
 
-        private void setEvidenceMessage(DomibusConnectorMessage evidenceMessage) {
-            this.evidenceMessage = evidenceMessage;
+        private void setAction(DomibusConnectorAction action) {
+            this.action = action;
         }
 
         private void setCausedBy(DomibusConnectorMessageId causedBy) {
             this.causedBy = causedBy;
         }
 
-        public DomibusConnectorMessage getEvidenceMessage() {
-            return this.evidenceMessage;
-        }
-
         public DomibusConnectorMessageConfirmation getMessageConfirmation() {
             return this.messageConfirmation;
         }
 
-//        /**
-//         * Message must already be persisted!
-//         * Call persistMessage first
-//         *
-//         */
-//        public void persistEvidenceToBusinessMessage() {
-//            LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to businessMessage [{}]", messageConfirmation, originalMesssage);
-//            evidencePersistenceService.persistEvidenceMessageForBusinessMessage(evidenceMessage, originalMesssage);
-//        }
-
-        public void persistMessage() {
-            LOGGER.trace("#persistMessage: persisting message");
-            if (this.evidenceMessage.getMessageDetails() == null || this.evidenceMessage.getMessageDetails().getDirection() == null) {
-                throw new IllegalArgumentException("Message Details or MessageDirection of message are not allowed to be null!");
-            }
-            messagePersistenceService.persistMessageIntoDatabase(this.evidenceMessage, this.evidenceMessage.getMessageDetails().getDirection());
-        }
-
-//        /**
-//         * Persists the current evidence message into the DB
-//         * and persists the evidence to the related business message
-//         */
-//        public void persistEvidenceMessageAndPersistEvidenceToBusinessMessage() {
-//            this.persistMessage();
-//            this.persistEvidenceToBusinessMessage();
-//        }
-
-        public DomibusConnectorEvidenceType getEvidenceType() {
-            return this.evidenceMessage.getTransportedMessageConfirmations().get(0).getEvidenceType();
-        }
-
-        public DomibusConnectorMessageId getCausedByConnectorMessageId() {
-            return this.causedBy;
-        }
-
-        public DomibusConnectorMessage getOriginalMessage() {
-            return this.originalMesssage;
+        public DomibusConnectorAction getAction() {
+            return this.action;
         }
     }
 
@@ -181,19 +151,20 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
      */
     @NotThreadSafe
     public class ConfirmationMessageBuilder {
-        DomibusConnectorMessage originalMessage;
+        DomibusConnectorMessage businessMessage;
         DomibusConnectorEvidenceType evidenceType;
         DomibusConnectorRejectionReason rejectionReason = null; //DomibusConnectorRejectionReason.OTHER;
         String rejectionDetails;
         DomibusConnectorMessageDetails details;
         private DomibusConnectorAction action;
+        private DomibusConnectorService service;
         private MessageTargetSource messageTarget = null;
         private DomibusConnectorMessageConfirmation messageConfirmation = null;
 
         private ConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
-            this.originalMessage = message;
+            this.businessMessage = message;
             this.evidenceType = evidenceType;
-            DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
+            DomibusConnectorMessageDetails originalDetails = businessMessage.getMessageDetails();
             this.details = DomibusConnectorMessageDetailsBuilder.create()
                     .copyPropertiesFrom(originalDetails)
                     .build();
@@ -237,6 +208,11 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
 
         public ConfirmationMessageBuilder setAction(DomibusConnectorAction action) {
             this.action = action;
+            return this;
+        }
+
+        public ConfirmationMessageBuilder setService(DomibusConnectorService service) {
+            this.service = service;
             return this;
         }
 
@@ -292,7 +268,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
                         throw new IllegalStateException("No rejectionReason has been set!");
                     }
                     LOGGER.debug("Evidence has not been created yet");
-                    this.messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, rejectionDetails);
+                    this.messageConfirmation = evidencesToolkit.createEvidence(evidenceType, businessMessage, rejectionReason, rejectionDetails);
                 } else {
                     LOGGER.debug("Evidence has already been created, reusing the created evidence!");
                 }
@@ -300,7 +276,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
 //                originalMessage.addConfirmation(messageConfirmation);
 
                 details.setAction(action);
-                details.setCausedBy(originalMessage.getConnectorMessageId());
+                details.setCausedBy(businessMessage.getConnectorMessageId());
                 if (messageTarget == MessageTargetSource.BACKEND) {
                     details.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
                 } else if (messageTarget == MessageTargetSource.GATEWAY) {
@@ -318,9 +294,10 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
                 evidenceMessage.setConnectorMessageId(messageConnectorId);
 
                 DomibusConnectorMessageConfirmationWrapper wrapper = new DomibusConnectorMessageConfirmationWrapper();
-                wrapper.setEvidenceMessage(evidenceMessage);
-                wrapper.setOriginalMesssage(originalMessage);
+//                wrapper.setEvidenceMessage(evidenceMessage);
+                wrapper.setBusinessMessage(businessMessage);
                 wrapper.setMessageConfirmation(messageConfirmation);
+                wrapper.setAction(action);
                 return wrapper;
             } catch (DomibusConnectorEvidencesToolkitException e) {
                 String message = String.format("A Exception occured while generating evidence of type [%s]", evidenceType);
@@ -348,14 +325,14 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
         public DomibusConnectorMessageConfirmationWrapper build() {
 
             DomibusConnectorMessageConfirmationWrapper wrapper = prepareBuild();
-            wrapper.setCausedBy(originalMessage.getConnectorMessageId());
+            wrapper.setCausedBy(businessMessage.getConnectorMessageId());
             return wrapper;
 
         }
 
         public String toString() {
             ToStringCreator toStringCreator = new ToStringCreator(this);
-            toStringCreator.append("originalMessage", this.originalMessage);
+            toStringCreator.append("originalMessage", this.businessMessage);
             toStringCreator.append("evidenceType", this.evidenceType);
             return toStringCreator.toString();
         }

@@ -1,11 +1,6 @@
 package eu.domibus.connector.domain.model;
 
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,22 +12,25 @@ import javax.validation.constraints.NotNull;
  * @author riederb
  * @version 1.0
  */
-@Data
-@RequiredArgsConstructor
 public class DomibusConnectorMessageError {
 
 	@NotNull
 	private final String text;
 	@NotNull
 	private final String details;
-	@NotNull
 	private final String source;
-	@NotNull
 	private final String step;
-	@NotNull
 	private final String processor;
 
-    @Override
+	public DomibusConnectorMessageError(String text, String details, String source, String step, String processor) {
+		this.text = text;
+		this.details = details;
+		this.source = source;
+		this.step = step;
+		this.processor = processor;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("errorText", this.text);
@@ -41,4 +39,23 @@ public class DomibusConnectorMessageError {
         return builder.toString();        
     }
 
+	public String getText() {
+		return text;
+	}
+
+	public String getDetails() {
+		return details;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public String getStep() {
+		return step;
+	}
+
+	public String getProcessor() {
+		return processor;
+	}
 }

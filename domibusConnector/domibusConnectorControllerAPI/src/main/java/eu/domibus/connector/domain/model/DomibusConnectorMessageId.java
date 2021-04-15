@@ -1,6 +1,12 @@
 package eu.domibus.connector.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.NotBlank;
+
 public class DomibusConnectorMessageId {
+
+    @NotBlank
     String connectorMessageId;
 
     public DomibusConnectorMessageId() {
@@ -10,10 +16,12 @@ public class DomibusConnectorMessageId {
         this.connectorMessageId = connectorMessageId;
     }
 
+    @JsonProperty(required = true)
     public String getConnectorMessageId() {
         return connectorMessageId;
     }
 
+    @JsonProperty(required = true)
     public void setConnectorMessageId(String connectorMessageId) {
         this.connectorMessageId = connectorMessageId;
     }

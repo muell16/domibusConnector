@@ -44,6 +44,15 @@ public class DomainModelHelperTest {
     }
 
     @Test
+    public void testIsEvidenceTriggerMessageEmptyByteArray_shouldBeTrue() {
+        DomibusConnectorMessage createSimpleTestMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+        createSimpleTestMessage.getTransportedMessageConfirmations()
+                .get(0).setEvidence(new byte[0]);
+        boolean isEvidenceMessage = DomainModelHelper.isEvidenceTriggerMessage(createSimpleTestMessage);
+        assertThat(isEvidenceMessage).isTrue();
+    }
+
+    @Test
     public void testIsEvidenceTriggerMessage_businessMsg_shouldBeFalse() {
         DomibusConnectorMessage createSimpleTestMessage = DomainEntityCreator.createSimpleTestMessage();
         boolean isEvidenceMessage = DomainModelHelper.isEvidenceTriggerMessage(createSimpleTestMessage);

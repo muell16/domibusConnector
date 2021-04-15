@@ -13,15 +13,29 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+/**
+ * Does some validation
+ * if the Action of this evidence message
+ * is correct in respect of the transported
+ * evidence type
+ */
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class ValidateMessageConfirmationStep implements MessageProcessStep {
+
+    private static final Logger LOGGER = LogManager.getLogger(ValidateMessageConfirmationStep.class);
 
     private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
     private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+
+    public ValidateMessageConfirmationStep(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory,
+                                           ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+        this.createConfirmationMessageBuilderFactory = createConfirmationMessageBuilderFactory;
+        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
+    }
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "ValidateMessageConfirmationStep")
@@ -38,7 +52,7 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
 
     private void validateActionService(DomibusConnectorMessage domibusConnectorMessage) {
         EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
-                configurationPropertyLoaderService.loadConfiguration(DomibusConnectorMessageLane.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+                configurationPropertyLoaderService.loadConfiguration(domibusConnectorMessage.getMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
         boolean enforcing = evidenceActionServiceConfigurationProperties.isEnforceServiceActionNames();
 
         DomibusConnectorMessageConfirmation confirmation = domibusConnectorMessage.getTransportedMessageConfirmations().get(0);
@@ -51,12 +65,9 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
             if (enforcing) {
                 throwError(domibusConnectorMessage, error);
             } else {
-                log.warn(error);
+                LOGGER.warn(error);
             }
         }
-
-
-
     }
 
     private void validateConfirmation(DomibusConnectorMessage msg, DomibusConnectorMessageConfirmation confirmation) {

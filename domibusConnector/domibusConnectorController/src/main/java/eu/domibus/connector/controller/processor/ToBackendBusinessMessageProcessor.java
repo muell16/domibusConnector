@@ -3,11 +3,7 @@ package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 
-import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
-import eu.domibus.connector.controller.processor.steps.CreateNewBusinessMessageInDBStep;
-import eu.domibus.connector.controller.processor.steps.LookupBackendNameStep;
-import eu.domibus.connector.controller.processor.steps.ResolveECodexContainerStep;
-import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
+import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -33,29 +29,41 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
 import javax.transaction.Transactional;
 
 @Component(ToBackendBusinessMessageProcessor.GW_TO_BACKEND_MESSAGE_PROCESSOR)
-@RequiredArgsConstructor
 public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToBackendBusinessMessageProcessor.class);
 
 	public static final String GW_TO_BACKEND_MESSAGE_PROCESSOR = "GatewayToBackendMessageProcessor";
 
-	private final ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
-	private final DCMessagePersistenceService messagePersistenceService;
 	private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
-	private final DomibusConnectorSecurityToolkit securityToolkit;
 	private final DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 	private final MessageConfirmationStep messageConfirmationStep;
-
-
 	private final ResolveECodexContainerStep resolveECodexContainerStep;
 	private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
 	private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
 	private final LookupBackendNameStep lookupBackendNameStep;
+	private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
 
-    @Override
-//	@StoreMessageExceptionIntoDatabase
-//	@Transactional(Transactional.TxType.REQUIRES_NEW) //start new nested transaction...
+	public ToBackendBusinessMessageProcessor(
+				CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory,
+			 	DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService,
+			 	MessageConfirmationStep messageConfirmationStep,
+			 	ResolveECodexContainerStep resolveECodexContainerStep,
+			 	CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
+			 	SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
+				SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
+			 	LookupBackendNameStep lookupBackendNameStep) {
+		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
+		this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
+		this.messageErrorPersistenceService = messageErrorPersistenceService;
+		this.messageConfirmationStep = messageConfirmationStep;
+		this.resolveECodexContainerStep = resolveECodexContainerStep;
+		this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
+		this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
+		this.lookupBackendNameStep = lookupBackendNameStep;
+	}
+
+	@Override
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
@@ -72,7 +80,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence.getMessageConfirmation());
 
 			//send confirmation msg back
-			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, relayREMMDEvidence.getEvidenceMessage());
+			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, relayREMMDEvidence.getMessageConfirmation());
 
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
@@ -91,24 +99,11 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 //			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createRelayREMMDEvidence(incomingMessage, false);
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence.getMessageConfirmation());
 
-			submitMessageToLinkModuleQueueStep.submitMessageOpposite(incomingMessage, negativeEvidence.getEvidenceMessage());
+			//respond with negative evidence...
+			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence.getMessageConfirmation());
 		}
 	}
 
-//	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createDeliveryEvidence(DomibusConnectorMessage originalMessage)
-//			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-//
-//		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-//				.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
-//				.switchFromToAttributes()
-//				.withDirection(MessageTargetSource.GATEWAY)
-//				.build();
-//
-//		messageConfirmationStep.processConfirmationForMessage(originalMessage, wrappedDeliveryEvidenceMsg.getMessageConfirmation());
-//
-//		return wrappedDeliveryEvidenceMsg;
-//
-//	}
 	
 	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createNonDeliveryEvidence(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {

@@ -7,16 +7,22 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class FindBusinessMessageByMsgId {
 
+    private static final Logger LOGGER = LogManager.getLogger(FindBusinessMessageByMsgId.class);
+
     private final DCMessagePersistenceService msgPersistenceService;
+
+    public FindBusinessMessageByMsgId(DCMessagePersistenceService msgPersistenceService) {
+        this.msgPersistenceService = msgPersistenceService;
+    }
 
     public DomibusConnectorMessage findBusinessMessageByIdAndDirection(DomibusConnectorMessage refMessage, DomibusConnectorMessageDirection direction) {
 
@@ -25,14 +31,14 @@ public class FindBusinessMessageByMsgId {
 
         Optional<DomibusConnectorMessage> messageByEbmsIdOrBackendIdAndDirection = msgPersistenceService.findMessageByEbmsIdOrBackendIdAndDirection(refToEbmsId, direction);
         if (messageByEbmsIdOrBackendIdAndDirection.isPresent()) {
-            log.debug("Successfully used refToMessageId [{}] to find business msg", refToEbmsId);
+            LOGGER.debug("Successfully used refToMessageId [{}] to find business msg", refToEbmsId);
             return messageByEbmsIdOrBackendIdAndDirection.get();
         }
 
         String refToBackendId = messageDetails.getRefToBackendMessageId();
         messageByEbmsIdOrBackendIdAndDirection = msgPersistenceService.findMessageByEbmsIdOrBackendIdAndDirection(refToBackendId, direction);
         if (messageByEbmsIdOrBackendIdAndDirection.isPresent()) {
-            log.debug("Successfully used refToBackendMessageId [{}] to find business msg", refToBackendId);
+            LOGGER.debug("Successfully used refToBackendMessageId [{}] to find business msg", refToBackendId);
             return messageByEbmsIdOrBackendIdAndDirection.get();
         }
 

@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 
 /**
@@ -156,8 +157,11 @@ public class DomainEntityCreatorForPersistenceTests {
      * @return the MessageError
      */
     public static DomibusConnectorMessageError createMessageError() {
-        DomibusConnectorMessageError error = new DomibusConnectorMessageError("error message", "error detail message", "error source");     
-        return error;
+        return DomibusConnectorMessageErrorBuilder.createBuilder()
+                .setDetails("error detail message")
+                .setText("error message")
+                .setSource("error source")
+                .build();
     }
     
 }

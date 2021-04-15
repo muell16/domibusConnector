@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
@@ -56,39 +57,6 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
 
     }
 
-//    @Override
-//    @Transactional
-//    public void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source) {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message is not allowed to be null!");
-//        }
-//        if (ex == null) {
-//            throw new IllegalArgumentException("Message Error cannot be stored as there is no exception given!");
-//        }
-//        if (source == null) {
-//            throw new IllegalArgumentException(
-//                    "Message Error cannot be stored as the Class object given as source is null!");
-//        }
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-//        if (message == null) {
-//            LOGGER.error("persistMessageErrorFromException: failed because ");
-//            throw new RuntimeException(
-//                    "Message Error cannot be stored as the message object, or its database reference is null!");
-//        }
-//        if (dbMessage == null) {
-//            throw new RuntimeException(
-//                    String.format("No entry for message [%s] has been found in database! Persist message first!", message));
-//        }
-//
-//        PDomibusConnectorMessageError error = new PDomibusConnectorMessageError();
-//        error.setErrorMessage(ex.getMessage());
-//        error.setDetailedText(ExceptionUtils.getStackTrace(ex));
-//        error.setErrorSource(source.getName());
-//        error.setMessage(dbMessage);
-//
-//        this.messageErrorDao.save(error);
-//    }
-
     @Override
     public List<DomibusConnectorMessageError> getMessageErrors(DomibusConnectorMessage message) throws PersistenceException {
         Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
@@ -99,14 +67,12 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
         List<PDomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.findByMessage(dbMessage.get().getId());
         if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
             List<DomibusConnectorMessageError> messageErrors = new ArrayList<>(dbErrorsForMessage.size());
-
             for (PDomibusConnectorMessageError dbMsgError : dbErrorsForMessage) {
-                DomibusConnectorMessageError msgError
-                        = new DomibusConnectorMessageError(
-                        dbMsgError.getErrorMessage(),
-                        dbMsgError.getDetailedText(),
-                        dbMsgError.getErrorSource()
-                );
+                DomibusConnectorMessageError msgError = DomibusConnectorMessageErrorBuilder.createBuilder()
+                        .setSource(dbMsgError.getErrorSource())
+                        .setText(dbMsgError.getErrorMessage())
+                        .setDetails(dbMsgError.getDetailedText())
+                        .build();
                 messageErrors.add(msgError);
             }
 

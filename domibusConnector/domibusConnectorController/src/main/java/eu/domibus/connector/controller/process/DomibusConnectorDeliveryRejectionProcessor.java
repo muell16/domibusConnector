@@ -67,7 +67,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
             LOGGER.warn("An error occured while saving NON_DELIVERY to business message");
 
             //send evidence to GW
-            evidenceMessage.persistMessage();
+//            evidenceMessage.persistMessage();
 //            gwSubmissionService.submitToGateway(evidenceMessage.getEvidenceMessage());
 //        } catch (DomibusConnectorGatewaySubmissionException e) {
 //            //TODO: only log...no further processing...

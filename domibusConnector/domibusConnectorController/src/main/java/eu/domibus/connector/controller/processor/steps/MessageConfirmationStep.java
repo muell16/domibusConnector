@@ -1,21 +1,17 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.exception.DCEvidenceNotRelevantException;
+import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -32,7 +28,6 @@ import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
  *      evidence message
  */
 @Service
-@RequiredArgsConstructor
 public class MessageConfirmationStep {
 
     private static final Logger LOGGER = LogManager.getLogger(MessageConfirmationStep.class);
@@ -40,6 +35,11 @@ public class MessageConfirmationStep {
     private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     private final DCMessagePersistenceService messagePersistenceService;
 
+    public MessageConfirmationStep(DomibusConnectorEvidencePersistenceService evidencePersistenceService,
+                                   DCMessagePersistenceService messagePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
+        this.messagePersistenceService = messagePersistenceService;
+    }
 
     public void processTransportedConfirmations(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isBusinessMessage(message)) {
@@ -50,7 +50,7 @@ public class MessageConfirmationStep {
         }
     }
 
-
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
         if (!DomainModelHelper.isBusinessMessage(message)) {
             throw new IllegalArgumentException("message must be a business message!");
@@ -81,8 +81,9 @@ public class MessageConfirmationStep {
                 .orElse(0);
 
         if (evidenceType.getPriority() < highestEvidencePriority) {
-            LOGGER.info("Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences", evidenceType, originalMessage);
-            return;
+            LOGGER.info("[{}]: Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences",
+                    ErrorCode.EVIDENCE_IGNORED_DUE_HIGHER_PRIORITY.getErrorCode(), evidenceType, originalMessage);
+            throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_HIGHER_PRIORITY);
         }
 
         if (SUBMISSION_REJECTION == evidenceType || NON_DELIVERY == evidenceType || NON_RETRIEVAL == evidenceType || RELAY_REMMD_REJECTION == evidenceType || RELAY_REMMD_FAILURE == evidenceType) {
@@ -91,13 +92,13 @@ public class MessageConfirmationStep {
         }
         if (DELIVERY == evidenceType || RETRIEVAL == evidenceType) { //TODO: make a configuration switch to configure which evidence is sufficient to set mesg. into confirmed state!
             if (messagePersistenceService.checkMessageRejected(originalMessage)) {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has already been rejected by an negative evidence!\nThe positive evidence of type [{}] will be ignored!", originalMessage, evidenceType);
+                LOGGER.debug( "Message [{}] has already been rejected by an negative evidence!\nThe positive evidence of type [{}] will be ignored!", originalMessage, evidenceType);
+                throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_MESSAGE_ALREADY_REJECTED);
             } else {
                 messagePersistenceService.confirmMessage(originalMessage);
-                LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has been confirmed by evidence [{}]", originalMessage, evidenceType);
+                LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] is confirmed by evidence [{}]", originalMessage, evidenceType);
             }
         }
     }
-
 
 }

@@ -3,16 +3,14 @@ package eu.domibus.connector.controller.service;
 
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
+import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
@@ -21,6 +19,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import liquibase.util.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -69,10 +68,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootTest(classes = {ITCaseTestContext.class},
-        properties = { "connector.controller.evidence.timeoutActive=false",
-                "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED"
+        properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
+                "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
+                "logging.level.eu.domibus=TRACE"
 
-} //deactivate the evidence timeout checking timer job during this test
+}
 )
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -85,6 +85,9 @@ public class ConnectorMessageFlowITCase {
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private File testResultsFolder;
     private String testDateAsString;
+
+    @Autowired
+    ConnectorTestConfigurationProperties testConfigurationProperties;
 
     @Autowired
     DataSource ds;
@@ -164,7 +167,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "e23";
+        String EBMS_ID = "e23_2";
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
         String MSG_FOLDER = "msg2";
 
@@ -647,7 +650,12 @@ public class ConnectorMessageFlowITCase {
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
                     .isEqualTo(DomainEntityCreator.createPartyAT());
-
+            assertThat(deliveryEvidenceMessageDetails.getOriginalSender())
+                    .as("original sender must have switched")
+                    .isEqualTo(FINAL_RECIPIENT);
+            assertThat(deliveryEvidenceMessageDetails.getFinalRecipient())
+                    .as("final recipient must have switched")
+                    .isEqualTo(ORIGINAL_SENDER);
 
             //check message state
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
@@ -766,14 +774,23 @@ public class ConnectorMessageFlowITCase {
 
 
     private DomibusConnectorMessage deliverMessageFromGw(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) throws IOException {
+        DomibusConnectorMessage testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
+        submitFromGatewayToController(testMessage);
+        return testMessage;
+    }
+
+    public static final String FINAL_RECIPIENT = "final_recipient";
+    public static final String ORIGINAL_SENDER = "original_sender";
+
+    private DomibusConnectorMessage createTestMessage(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) throws IOException {
         DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/"+ msgFolder +"/"));
         assertThat(testMessage).isNotNull();
-        testMessage.getMessageDetails().setFinalRecipient("final recipient");
-        testMessage.getMessageDetails().setOriginalSender("original sender");
+        testMessage.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+        testMessage.getMessageDetails().setFinalRecipient(FINAL_RECIPIENT);
+        testMessage.getMessageDetails().setOriginalSender(ORIGINAL_SENDER);
         testMessage.getMessageDetails().setEbmsMessageId(EBMS_ID);
         testMessage.getMessageDetails().setBackendMessageId(null);
         testMessage.setConnectorMessageId(new DomibusConnectorMessageId(CONNECTOR_MESSAGE_ID));
-        submitFromGatewayToController(testMessage);
         return testMessage;
     }
 
@@ -1252,6 +1269,7 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
         DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
                 .setConnectorMessageId(connectorMessageId)
+                .setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId())
                 .setMessageDetails(DomibusConnectorMessageDetailsBuilder
                         .create()
                         .withEbmsMessageId(ebmsId)
@@ -1277,6 +1295,9 @@ public class ConnectorMessageFlowITCase {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
+        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
+            message.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+        }
         dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
@@ -1289,6 +1310,9 @@ public class ConnectorMessageFlowITCase {
     public void submitFromGatewayToController(DomibusConnectorMessage message) {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        }
+        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
+            message.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
         }
         dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();

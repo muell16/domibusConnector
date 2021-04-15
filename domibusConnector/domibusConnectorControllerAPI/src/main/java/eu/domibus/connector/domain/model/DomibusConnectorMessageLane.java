@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Properties;
 
 public class DomibusConnectorMessageLane {
@@ -68,6 +69,7 @@ public class DomibusConnectorMessageLane {
             this.messageLaneId = id;
         }
 
+        @NotBlank
         private String messageLaneId;
 
         public String getMessageLaneId() {

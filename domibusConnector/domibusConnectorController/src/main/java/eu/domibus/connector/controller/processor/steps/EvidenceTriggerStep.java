@@ -11,6 +11,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -18,21 +19,34 @@ import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
+/**
+ * Processes an evidence trigger message
+ *  the evidence trigger only contains a refToMessageId
+ *  all other AS4 attributes must be read from the business message
+ *
+ */
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class EvidenceTriggerStep implements MessageProcessStep {
+
+    private static final Logger LOGGER = LogManager.getLogger(EvidenceTriggerStep.class);
 
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
     private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
 
+    public EvidenceTriggerStep(FindBusinessMessageByMsgId findBusinessMessageByMsgId,
+                               CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService) {
+        this.findBusinessMessageByMsgId = findBusinessMessageByMsgId;
+        this.confirmationMessageService = confirmationMessageService;
+    }
+
     @Override
-    @StoreMessageExceptionIntoDatabase
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "EvidenceTriggerStep")
     public boolean executeStep(DomibusConnectorMessage evidenceTriggerMsg) {
 
         //is evidence triggering allowed
@@ -40,13 +54,33 @@ public class EvidenceTriggerStep implements MessageProcessStep {
 
         //only incoming evidence messages are looked up
         DomibusConnectorMessage businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(evidenceTriggerMsg, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+        DomibusConnectorMessageDetails businessMsgDetails = businessMsg.getMessageDetails();
 
         DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
         //create evidence
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
                 = confirmationMessageService.createConfirmationMessageBuilderFromBusinessMessage(businessMsg, evidenceType);
-        log.info(LoggingMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
+        LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
+
+        //set generated evidence into the trigger message
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceWrapper = confirmationMessageBuilder.build();
+        evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
+                .setEvidence(evidenceWrapper.getMessageConfirmation().getEvidence());
+
+        DomibusConnectorMessageDetails evidenceTriggerMsgDetails = evidenceTriggerMsg.getMessageDetails();
+
+        //set correct action for evidence message
+        evidenceTriggerMsgDetails.setAction(evidenceWrapper.getAction());
+        //set correct service derived from business msg
+        evidenceTriggerMsgDetails.setService(businessMsgDetails.getService());
+
+        //set correct original sender / final recipient
+        evidenceTriggerMsgDetails.setOriginalSender(businessMsgDetails.getFinalRecipient());
+        evidenceTriggerMsgDetails.setFinalRecipient(businessMsgDetails.getOriginalSender());
+        //set correct from/to party
+        evidenceTriggerMsgDetails.setFromParty(businessMsgDetails.getToParty());
+        evidenceTriggerMsgDetails.setToParty(businessMsgDetails.getFromParty());
 
         return true;
     }
@@ -56,8 +90,8 @@ public class EvidenceTriggerStep implements MessageProcessStep {
             throwException(evidenceTriggerMsg, "The message is not an evidence trigger message!");
         }
         MessageTargetSource source = evidenceTriggerMsg.getMessageDetails().getDirection().getSource();
-        if (source != MessageTargetSource.BACKEND && source != MessageTargetSource.CONNECTOR) {
-            throwException(evidenceTriggerMsg, "Only connector OR backend can generate trigger messages");
+        if (source != MessageTargetSource.BACKEND) {
+            throwException(evidenceTriggerMsg, "Only backend can generate trigger messages");
         }
     }
 

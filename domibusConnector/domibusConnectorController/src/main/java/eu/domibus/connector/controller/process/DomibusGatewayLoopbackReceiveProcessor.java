@@ -5,12 +5,12 @@ import eu.domibus.connector.controller.spring.ConnectorControllerProperties;
 import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static eu.domibus.connector.controller.spring.ConnectorControllerProperties.DEFAULT_MESSAGE_LANE_NAME;
 
 /**
  * This processor adds a quick fix to
@@ -42,7 +42,7 @@ public class DomibusGatewayLoopbackReceiveProcessor implements DomibusConnectorM
 
     @Override
     public void processMessage(DomibusConnectorMessage message) {
-        ConnectorMessageLaneProperties messageLane = connectorControllerProperties.getMessageLane(DEFAULT_MESSAGE_LANE_NAME);
+        ConnectorMessageLaneProperties messageLane = connectorControllerProperties.getMessageLane(DomibusConnectorMessageLane.DEFAULT_LANE_NAME);
         if (messageLane.isLoopbackEnabled()) {
             DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
             String ebmsMessageId = messageDetails.getEbmsMessageId();

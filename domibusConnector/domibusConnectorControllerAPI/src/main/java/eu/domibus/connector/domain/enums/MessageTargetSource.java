@@ -5,9 +5,7 @@ import java.util.stream.Stream;
 public enum MessageTargetSource {
 
     GATEWAY("GATEWAY"),
-    CONNECTOR("CONNECTOR"),
     BACKEND("BACKEND");
-
 
     public static MessageTargetSource ofOfDbName(String dbData) {
         if (dbData == null) {

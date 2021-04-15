@@ -146,17 +146,17 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                     .switchFromToAttributes()
                     .buildFromEvidenceTriggerMessage(triggerMessage);
 
-        List<DomibusConnectorMessageId> collect = Stream.of(triggerMessage, triggeredEvidenceMessage.getEvidenceMessage(), backtravelEvidenceMessage.getEvidenceMessage())
-                .map(DomibusConnectorMessage::getConnectorMessageId)
-                .collect(Collectors.toList());
+//        List<DomibusConnectorMessageId> collect = Stream.of(triggerMessage, triggeredEvidenceMessage.getEvidenceMessage(), backtravelEvidenceMessage.getEvidenceMessage())
+//                .map(DomibusConnectorMessage::getConnectorMessageId)
+//                .collect(Collectors.toList());
 
 //        messageConfirmationProcessor.processConfirmationMessageForMessage(originalMessage, collect, triggeredEvidenceMessage.getMessageConfirmation());
 
-        triggeredEvidenceMessage.persistMessage();
-        submitMessageToLinkModuleQueueStep.submitMessage(triggeredEvidenceMessage.getEvidenceMessage());
-
-        backtravelEvidenceMessage.persistMessage();
-        submitMessageToLinkModuleQueueStep.submitMessage(backtravelEvidenceMessage.getEvidenceMessage());
+//        triggeredEvidenceMessage.persistMessage();
+//        submitMessageToLinkModuleQueueStep.submitMessage(triggeredEvidenceMessage.getEvidenceMessage());
+//
+//        backtravelEvidenceMessage.persistMessage();
+//        submitMessageToLinkModuleQueueStep.submitMessage(backtravelEvidenceMessage.getEvidenceMessage());
 
         //sendAsEvidenceMessageToGw(originalMessage, triggerMessage, confirmationMessageBuilder);
 //        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
@@ -196,9 +196,9 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                 .withDirection(MessageTargetSource.BACKEND)
                 .build();
 
-        evidenceMessageWrapper.persistMessage();
+//        evidenceMessageWrapper.persistMessage();
         //deliver to backend
-        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessageWrapper.getEvidenceMessage());
+//        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessageWrapper.getEvidenceMessage());
     }
 
     private void sendAsEvidenceMessageToGw(DomibusConnectorMessage originalMessage, DomibusConnectorMessage triggerMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
@@ -208,7 +208,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                 .buildFromEvidenceTriggerMessage(triggerMessage);
 
         submitToGateway(wrappedConfirmation);
-        LOGGER.info(BUSINESS_LOG, "Successfully submitted evidence of type [{}] for originalMessage [{}] to gateway transport.", wrappedConfirmation.getEvidenceType(), originalMessage);
+//        LOGGER.info(BUSINESS_LOG, "Successfully submitted evidence of type [{}] for originalMessage [{}] to gateway transport.", wrappedConfirmation.getEvidenceType(), originalMessage);
     }
 
     private void submitToGateway(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessage) {

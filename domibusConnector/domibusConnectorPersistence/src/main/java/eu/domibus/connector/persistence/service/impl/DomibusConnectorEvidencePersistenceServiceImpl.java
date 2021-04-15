@@ -12,6 +12,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.DuplicateEvidencePersistenceException;
 import eu.domibus.connector.persistence.service.exceptions.EvidencePersistenceException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
@@ -274,7 +275,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
             if (byMessageAndEvidenceType.size() >= confirmation.getEvidenceType().getMaxOccurence() &&
                     byMessageAndEvidenceType != null) {
                 String error = String.format("There is already a evidence persisted of type [{}] for message [{}]", dbEvidenceType, oneByConnectorMessageId);
-                throw new EvidencePersistenceException(error);
+                throw new DuplicateEvidencePersistenceException(error);
             }
         }
 

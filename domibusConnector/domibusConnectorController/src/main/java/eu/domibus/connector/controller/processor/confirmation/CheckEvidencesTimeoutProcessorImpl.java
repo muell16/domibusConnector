@@ -173,9 +173,10 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
 
+        //TODO: update..
 //        wrappedConfirmationMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-        DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
-        persistenceService.rejectMessage(originalMessage);
+//        DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
+//        persistenceService.rejectMessage(originalMessage);
 //        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
     }
 

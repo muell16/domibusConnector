@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
@@ -412,13 +413,11 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     @NotNull
     DomibusConnectorMessageError transformMessageErrorTransitionToDomain(final @NotNull DomibusConnectorMessageErrorType errorTypeTO) {
-        //(final String text, final String details, final String source){
-        DomibusConnectorMessageError error = new DomibusConnectorMessageError(
-                errorTypeTO.getErrorMessage(),
-                errorTypeTO.getErrorDetails(),
-                errorTypeTO.getErrorSource()
-        );
-        return error;
+        return DomibusConnectorMessageErrorBuilder.createBuilder()
+                .setText(errorTypeTO.getErrorMessage())
+                .setDetails(errorTypeTO.getErrorDetails())
+                .setSource(errorTypeTO.getErrorSource())
+                .build();
     }
 
     DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @NotNull DomibusConnectorMessageConfirmationType messageConfirmationTO) {

@@ -1,16 +1,12 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
-import eu.domibus.connector.controller.processor.steps.BuildECodexContainerStep;
-import eu.domibus.connector.controller.processor.steps.CreateNewBusinessMessageInDBStep;
-import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
+import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,7 +22,6 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
  * originalMessage to the gw
  */
 @Component //(ToGatewayBusinessMessageProcessor.BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
-@RequiredArgsConstructor
 public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
 
     public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "ToGatewayBusinessMessageProcessor";
@@ -36,9 +31,23 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
     private final BuildECodexContainerStep buildECodexContainerStep;
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep;
-
     private final MessageConfirmationStep messageConfirmationStep;
     private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+    private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
+
+    public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
+                                             BuildECodexContainerStep buildECodexContainerStep,
+                                             SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep,
+                                             MessageConfirmationStep messageConfirmationStep,
+                                             CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl,
+                                             SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink) {
+        this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
+        this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
+        this.buildECodexContainerStep = buildECodexContainerStep;
+        this.submitMessageToLinkStep = submitMessageToLinkStep;
+        this.messageConfirmationStep = messageConfirmationStep;
+        this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
+    }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DomibusConnectorMessage message) {
@@ -60,7 +69,8 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             //submit message to GW
             submitMessageToLinkStep.submitMessage(message);
             //submit evidence message to BACKEND
-            submitMessageToLinkStep.submitMessageOpposite(message, confirmationMessageWrapper.getEvidenceMessage());
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, confirmationMessageWrapper.getMessageConfirmation());
+
 
             LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed message with backendId [{}] to Link", message.getMessageDetails().getBackendMessageId());
 
@@ -68,7 +78,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
             CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper errorMessage = createSubmissionRejection(message);
-            submitMessageToLinkStep.submitMessageOpposite(message, errorMessage.getEvidenceMessage());
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, errorMessage.getMessageConfirmation());
 
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)

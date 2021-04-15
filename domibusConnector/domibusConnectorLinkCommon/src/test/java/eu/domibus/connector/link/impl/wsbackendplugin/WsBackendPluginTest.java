@@ -1,7 +1,6 @@
 package eu.domibus.connector.link.impl.wsbackendplugin;
 
 
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -56,8 +55,8 @@ public class WsBackendPluginTest {
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
     public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
 
-    @Autowired
-    DomibusConnectorBackendDeliveryService backendDeliveryService;
+//    @Autowired
+//    DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     @Autowired
     DCMessagePersistenceService messagePersistenceServiceMock;

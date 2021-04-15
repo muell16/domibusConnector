@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -379,8 +380,13 @@ public class DomainEntityCreator {
      * @return the MessageError
      */
     public static DomibusConnectorMessageError createMessageError() {
-        DomibusConnectorMessageError error = new DomibusConnectorMessageError("error message", "error detail message", "error source");     
-        return error;
+        //DomibusConnectorMessageError error = new DomibusConnectorMessageError("error message", "error detail message", "error source");
+        //return error;
+        return DomibusConnectorMessageErrorBuilder.createBuilder()
+                .setSource(Object.class)
+                .setDetails("error detail message")
+                .setText("error message")
+                .build();
     }
 
     public static DomibusConnectorMessageAttachment createMessageAttachment() {

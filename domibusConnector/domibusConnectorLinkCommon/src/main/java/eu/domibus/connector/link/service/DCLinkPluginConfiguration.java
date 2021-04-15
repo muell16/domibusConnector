@@ -21,15 +21,15 @@ public class DCLinkPluginConfiguration {
 
     public static final String LINK_PLUGIN_PROFILE_NAME = "linkplugins";
 
-    @Bean
-    public DCPluginBasedGatewaySubmissionService dcPluginBasedGatewaySubmissionService() {
-        return new DCPluginBasedGatewaySubmissionService();
-    }
-
-    @Bean
-    public DCPluginBasedBackendDeliveryService dcPluginBasedBackendDeliveryService() {
-        return new DCPluginBasedBackendDeliveryService();
-    }
+//    @Bean
+//    public DCPluginBasedGatewaySubmissionService dcPluginBasedGatewaySubmissionService() {
+//        return new DCPluginBasedGatewaySubmissionService();
+//    }
+//
+//    @Bean
+//    public DCPluginBasedBackendDeliveryService dcPluginBasedBackendDeliveryService() {
+//        return new DCPluginBasedBackendDeliveryService();
+//    }
 
     @Bean
     public DCActiveLinkManagerService dcActiveLinkManagerService() {

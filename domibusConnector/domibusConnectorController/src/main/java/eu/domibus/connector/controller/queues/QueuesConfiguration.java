@@ -19,10 +19,12 @@ import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.messaging.converter.SmartMessageConverter;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.Queue;
+import javax.validation.Validator;
 
 @EnableJms
 @Configuration
@@ -36,12 +38,11 @@ public class QueuesConfiguration {
 
     @Bean // Serialize message content to json using TextMessage
     public MessageConverter jacksonJmsMessageConverter(
-            @DomainModelJsonObjectMapper ObjectMapper objectMapper
+            @DomainModelJsonObjectMapper ObjectMapper objectMapper,
+            final Validator validator
             ) {
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setTargetType(MessageType.TEXT);
-        converter.setTypeIdPropertyName("_type");
-        converter.setObjectMapper(objectMapper);
+        //using a message converter which calls bean validation before serialisation object
+        MessageConverter converter = new ValidationMappingJackson2MessageConverter(objectMapper, validator);
         return converter;
     }
 

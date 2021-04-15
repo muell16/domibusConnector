@@ -63,7 +63,7 @@ public class InternalMessageInfoPersistenceServiceImpl {
 //    }
 
 
-    @Transactional
+//    @Transactional
     public void persistMessageInfo(DomibusConnectorMessage message, PDomibusConnectorMessage dbMessage) throws PersistenceException {
         try {
             PDomibusConnectorMessageInfo dbMessageInfo = new PDomibusConnectorMessageInfo();

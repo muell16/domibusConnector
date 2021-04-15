@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix="connector.controller.evidence")
 @Validated
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
-@SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") //suppress findbugs warning
 @Data
 public class EvidencesTimeoutConfigurationProperties {
 

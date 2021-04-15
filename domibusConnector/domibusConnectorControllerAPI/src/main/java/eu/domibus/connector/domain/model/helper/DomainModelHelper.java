@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
 
 /**
@@ -54,7 +55,7 @@ public class DomainModelHelper {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
         return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() == 1
-            && message.getTransportedMessageConfirmations().get(0).getEvidence() == null;
+            && ArrayUtils.isEmpty(message.getTransportedMessageConfirmations().get(0).getEvidence());
     }
 
     /**

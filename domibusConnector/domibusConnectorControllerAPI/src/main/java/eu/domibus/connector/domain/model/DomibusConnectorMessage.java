@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * This domain object contains all data of a message. At least the {@link
@@ -20,9 +24,16 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessage implements Serializable {
 
+	@NotNull
+	@Valid
 	private DomibusConnectorMessageLane.MessageLaneId messageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+	@NotNull
+	@Valid
 	private DomibusConnectorMessageId connectorMessageId;
+	@NotNull
+	@Valid
 	private DomibusConnectorMessageDetails messageDetails;
+
 	private DomibusConnectorMessageContent messageContent;
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	//holds all message confirmations which are transported with this message
@@ -105,10 +116,12 @@ public class DomibusConnectorMessage implements Serializable {
         addTransportedMessageConfirmation(messageConfirmation);
     }
 
+
     @JsonProperty
 	public DomibusConnectorMessageId getConnectorMessageId() {
 		return connectorMessageId;
 	}
+
 
 	@JsonProperty
 	public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
