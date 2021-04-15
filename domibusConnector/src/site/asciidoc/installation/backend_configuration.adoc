@@ -1,11 +1,12 @@
-Backend Configuration
-=====================
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
 
+= Backend Configuration
 
 :description: The connector backend configuration manual
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+
 
 
 == Backend Configuration or how to configure a connector client?
@@ -118,8 +119,8 @@ description leads through the necessary steps:
 . Go to Image Screenshot Backend Configuration
 . Open the new Backend Client configuration window by clicking on 'Add new Backend Client Info'
 
-.Image Screenshot Backend Configuration
-image:screenshot_connector_backend_configuration_marked_add_new_backend_client.png[Screenshot Backend Configuration]
+//.Image Screenshot Backend Configuration
+//image:screenshot_connector_backend_configuration_marked_add_new_backend_client.png[Screenshot Backend Configuration]
 
 ==== Adding new Backend Client Field description
 
@@ -137,8 +138,8 @@ CN=backend_alice,DC=EXAmple,DC=com are equivalent. For further information consu
 link:../../development/backend_message_routing/[Backend Message Routing] page.
 '
 
-.Image Screenshot Create new Backend
-image:screenshot_connector_backend_configuration_create_new.png[Screenshot Create new Backend]
+//.Image Screenshot Create new Backend
+//image:screenshot_connector_backend_configuration_create_new.png[Screenshot Create new Backend]
 
 
 === Configuring the backend at the database **DEPRECATED**

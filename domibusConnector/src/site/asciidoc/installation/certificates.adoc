@@ -1,3 +1,7 @@
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+
 = Certificate Configurations
 
 The connector uses multiple certificates for different purposes.
@@ -14,7 +18,7 @@ The connector uses multiple certificates for different purposes.
 For each of this use cases you have to use at least one private-public key pair. As an example at
 the backend connection you have to generate for each client a private-public key pair.
 
-image:../images/KeyTrustStores.gif[alt text]
+image:KeyTrustStores.gif[alt text]
 
 == Connector Backend Key Store
 

@@ -2,8 +2,9 @@
 
 Dear all,
 
-we are happy to inform you about a new major release of the
-domibus connector. The upgrade is not mandatory.
+we are happy to inform you about a new minor release of the
+domibus connector. The upgrade is not mandatory but heavily recommended since the minor release may contain security related
+bugfixes. For details see the changelog.html.
 
 == Version
 

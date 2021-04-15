@@ -1,11 +1,11 @@
-Standalone Deployment
-=====================
-
-
 :description: The connector backend configuration manual
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Standalone Deployment
 
 
 == Standalone Deployment Manual

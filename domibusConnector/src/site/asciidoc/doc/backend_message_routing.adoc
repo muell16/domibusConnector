@@ -1,3 +1,6 @@
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
 = Backend message routing
 
 How are the messages distributed to the different connectorClients?

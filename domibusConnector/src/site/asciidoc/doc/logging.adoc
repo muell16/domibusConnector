@@ -1,11 +1,11 @@
-LOGGING
-=======
-
-
 :description: Monitoring manual
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= LOGGING
+
 
 == Logging Manual
 
