@@ -25,6 +25,14 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
         "spring.liquibase.change-log=/db/changelog/test/testdata.xml",
         "spring.datasource.url=jdbc:h2:mem:t2",
         "spring.active.profiles=connector,db-storage"
+//        "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
+//        "spring.liquibase.change-log=/db/changelog/test/testdata.xml",
+//        "spring.datasource.url=jdbc:mysql://localhost:3309/database_name?createDatabaseIfNotExist=true",
+//        "spring.datasource.username=root",
+//        "spring.datasource.password=secret",
+//        "spring.jpa.show-sql=true",
+//        "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
+//        "spring.active.profiles=connector,db-storage"
 })
 @TestExecutionListeners(
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS,

@@ -252,8 +252,9 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         for (DomibusConnectorMessageConfirmation c : message.getMessageConfirmations()) {
             toStoreList.add(mapConfirmation(dbMessage, c));
         }
-        this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
+        List<PDomibusConnectorMsgCont> byMessage = this.msgContDao.findByMessage(dbMessage);
         this.msgContDao.saveAll(toStoreList); //save new contents
+        this.msgContDao.deleteAll(byMessage);
     }
 
     PDomibusConnectorMsgCont mapXmlContentToDB(String connectorMessageId, PDomibusConnectorMessage message, byte[] xmlDocument) {
