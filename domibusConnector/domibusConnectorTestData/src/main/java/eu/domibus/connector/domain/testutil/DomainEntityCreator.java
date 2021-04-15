@@ -406,11 +406,9 @@ public class DomainEntityCreator {
         }
     }
 
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
-
     public static Date parseDateTime(String date) {
         try {
-            return dateFormat.parse(date);
+            return new SimpleDateFormat("YYYY-MM-DD HH:mm:ss").parse(date);
         } catch (ParseException e) {
             throw new RuntimeException("date parse error!", e);
         }

@@ -75,8 +75,6 @@ public class InternalMessageInfoPersistenceServiceImpl {
             this.validatePartyServiceActionOfMessageInfo(dbMessageInfo);
 
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
-            dbMessageInfo = messageInfoDao.findById(dbMessageInfo.getId()).get();
-            this.validatePartyServiceActionOfMessageInfo(dbMessageInfo);
             dbMessage.setMessageInfo(dbMessageInfo);
 
             mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
