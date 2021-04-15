@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import org.springframework.core.style.ToStringCreator;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,6 +11,9 @@ import java.util.Properties;
 
 public class DomibusConnectorLinkConfiguration {
 
+    private String configSource;
+
+    @NotBlank
     private LinkConfigName configName;
 
     private String linkImpl;
@@ -41,14 +46,13 @@ public class DomibusConnectorLinkConfiguration {
         this.linkImpl = linkImpl;
     }
 
-//    public Properties getProperties() {
-//        return properties;
-//    }
-//
-//    public void setProperties(Properties properties) {
-//        this.properties = properties;
-//    }
+    public String getConfigSource() {
+        return configSource;
+    }
 
+    public void setConfigSource(String configSource) {
+        this.configSource = configSource;
+    }
 
     public Map<String, String> getProperties() {
         return properties;

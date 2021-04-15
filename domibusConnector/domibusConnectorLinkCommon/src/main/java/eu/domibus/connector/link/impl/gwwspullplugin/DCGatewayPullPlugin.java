@@ -76,45 +76,23 @@ public class DCGatewayPullPlugin implements LinkPlugin {
 
     @Override
     public void shutdownConfiguration(ActiveLink activeLink) {
-//        ConfigurableApplicationContext childContext = activeLink.getChildContext();
-//        if (childContext != null) {
-//            childContext.close();
-//        }
-        throw new RuntimeException("Not supported yet!");
+        ConfigurableApplicationContext childContext = activeLink.getChildContext();
+        if (childContext != null) {
+            childContext.close();
+        }
     }
 
     @Override
     public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink) {
-
-        DomibusConnectorLinkConfiguration linkConfiguration = activeLink.getLinkConfiguration();
-
-        //set link partner for the pull job, so pull jobs knows where to pull the messages from, or more important
-        //it can pass this information back to the connector core, so the connector knows the source of the messages
-        //see SubmitToConnector interface
-//            ConfigurableApplicationContext childContext = activeLink.getChildContext();
-//            DCGatewayPullMessagesJob job = childContext.getBean(DCGatewayPullMessagesJob.class);
-//            job.setLinkPartner(linkPartner);
-
-//            DCGatewayPullPluginConfiguration ctxConfig = childContext.getBean(DCGatewayPullPluginConfiguration.class);
-
-        //register job class in parent context so quartz which is running
-        // in parent context can create and call it
-//            applicationContext.getBeanFactory().registerSingleton("dcGatewayPullMessagesJob", job);
-//            scheduler.scheduleJob(ctxConfig.pullMessagesJobDetail().getObject(), ctxConfig.pullMessagesJobTrigger().getObject());
-
-
         ActiveLinkPartner activeLinkPartner = new ActiveLinkPartner();
         activeLinkPartner.setParentLink(activeLink);
         activeLinkPartner.setLinkPartner(linkPartner);
-
         return activeLinkPartner;
-
     }
 
     @Override
     public void shutdownActiveLinkPartner(ActiveLinkPartner linkPartner) {
-        //this.shutdownConfiguration(linkPartner.getParentLink());
-        throw new RuntimeException("Not supported yet!");
+        this.shutdownConfiguration(linkPartner.getParentLink());
     }
 
     @Override
@@ -129,7 +107,10 @@ public class DCGatewayPullPlugin implements LinkPlugin {
 
     @Override
     public List<PluginFeature> getFeatures() {
-        return Stream.of(PluginFeature.PULL_MODE).collect(Collectors.toList());
+        return Stream.of(PluginFeature.PULL_MODE,
+                PluginFeature.SUPPORTS_LINK_PARTNER_SHUTDOWN,
+                PluginFeature.SUPPORTS_LINK_SHUTDOWN)
+                .collect(Collectors.toList());
     }
 
     @Override

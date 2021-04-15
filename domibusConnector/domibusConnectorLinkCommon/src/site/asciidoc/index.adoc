@@ -2,7 +2,9 @@ Connector Link Plugins Manual
 =============================
 
 
-ifndef::imagesdir[:imagesdir: ../../../target/site/images]
+
+:imgdir: ../resources/images/
+:imagesdir: {imgdir}
 
 Since 4.3.0 the connector comes with different link plugins
 
@@ -11,11 +13,6 @@ Since 4.3.0 the connector comes with different link plugins
 * WS Gateway Push Plugins
 * WS Gateway Pull Plugin
 * WS Backend Plugin
-
-
-// == The architecture
-
-// Bild: image:target/plantuml/src/plantuml/link_architecture.png[Ein Bild]
 
 
 === Configuration
@@ -30,7 +27,57 @@ DomibusConnectorLinkPartner classes. Afterwards when the LinkPartner and Link is
 activated during startup the ActiveLinkConfiguration and ActiveLInkPartner
 is created.
 
-image::plantuml/link_architecture.png[ClassDiagram]
+//image::plantuml/link_architecture.png[ClassDiagram]
+[plantuml, queues, png]
+----
+@startuml
+
+
+package "Config" {
+  class DomibusConnectorLinkConfiguration {
+    Properties properties
+    String linkImpl
+    LinkConfigName configName
+  }
+
+
+  class DomibusConnectorLinkPartner {
+    LinkPartnerName linkPartnerName
+    LinkMode linkMode
+    LinkType linkType
+    Properties properties
+  }
+}
+
+package Active {
+
+  class ActiveLink {
+    LinkPlugin linkPlugin
+    ConfigurableApplicationContext childContext
+    SubmitToLink submitToLink
+  }
+
+  class ActiveLinkPartner {
+    LinkPlugin linkPlugin
+    ConfigurableApplicationContext childContext
+    SubmitToLink submitToLink
+  }
+
+}
+
+
+DomibusConnectorLinkConfiguration "*" <-- "1" DomibusConnectorLinkPartner
+
+ActiveLink "1" --> "*" ActiveLinkPartner
+
+ActiveLink "1" --> "*" DomibusConnectorLinkConfiguration
+ActiveLinkPartner "1" --> "*" DomibusConnectorLinkPartner
+
+
+
+@enduml
+----
+
 
 
 ==== Setting up example for Gateway Pull Link:

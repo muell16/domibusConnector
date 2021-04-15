@@ -16,34 +16,34 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-
 public abstract class LinkConfiguration extends VerticalLayout {
 
-    @Autowired
-    DCActiveLinkManagerService linkManager;
 
-    @Autowired
-    DCLinkPersistenceService dcLinkPersistenceService;
-
-    @Autowired
-    ApplicationContext applicationContext;
+    private final DCLinkFacade dcLinkFacade;
+    private final ApplicationContext applicationContext;
+    private final LinkType linkType;
 
     private Grid<DomibusConnectorLinkPartner> linkGrid = new Grid<>();
-
     private Button addLinkButton = new Button("Add Link");
 
-    public LinkConfiguration() {
+    protected LinkConfiguration(DCLinkFacade dcLinkFacade, ApplicationContext applicationContext, LinkType linkType) {
+        this.dcLinkFacade = dcLinkFacade;
+        this.applicationContext = applicationContext;
+        this.linkType = linkType;
     }
 
-    protected abstract LinkType getLinkType();
+    protected LinkType getLinkType() {
+        return linkType;
+    }
 
     @PostConstruct
     private void initUI() {
@@ -51,7 +51,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
         addAndExpand(addLinkButton);
         addLinkButton.addClickListener(this::addLinkButtonClicked);
-        addLinkButton.setEnabled(false);
+//        addLinkButton.setEnabled(false);
 
         linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
             @Override
@@ -64,14 +64,15 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
         linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("run on startup");
-//        linkGrid.addColumn((ValueProvider) o -> {
-//            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
-//            return d.getLinkConfiguration().getConfigName();
-//        }).setHeader("Config Name");
-//        linkGrid.addColumn((ValueProvider) o -> {
-//            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
-//            return linkManager.getActiveLinkPartner(d.getLinkPartnerName()).isPresent() ? "running" : "stopped";
-//        }).setHeader("Current Link State");
+        linkGrid.addColumn(DomibusConnectorLinkPartner::getConfigSource).setHeader("Configured via");
+        linkGrid.addColumn((ValueProvider) o -> {
+            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
+            return d.getLinkConfiguration().getConfigName();
+        }).setHeader("Config Name");
+        linkGrid.addColumn((ValueProvider) o -> {
+            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
+            return dcLinkFacade.isActive(d) ? "running" : "stopped";
+        }).setHeader("Current Link State");
 
         linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
             @Override
@@ -104,7 +105,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     private void stopLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
         try {
-            linkManager.shutdownLinkPartner(linkPartner.getLinkPartnerName());
+            dcLinkFacade.shutdownLinkPartner(linkPartner);
             Notification.show("Link " + linkPartner.getLinkPartnerName() +" stopped");
         } finally {
             refreshList();
@@ -112,12 +113,12 @@ public abstract class LinkConfiguration extends VerticalLayout {
     }
 
     private void startLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
-//        Optional<Optional<ActiveLinkPartnerManager>> activeLinkPartner = this.linkManager.activateLinkPartner(linkPartner);
-//        if (activeLinkPartner.isPresent()) {
-//            Notification.show("Link " + linkPartner.getLinkPartnerName() + " started");
-//        } else {
-//            Notification.show("Link " + linkPartner.getLinkPartnerName() + " start failed!");
-//        }
+        try {
+            dcLinkFacade.startLinkPartner(linkPartner);
+            Notification.show("Link " + linkPartner.getLinkPartnerName() + " started");
+        } catch (LinkPluginException e) {
+            Notification.show("Link " + linkPartner.getLinkPartnerName() + " start failed!\n" + e.getMessage());
+        }
         refreshList();
     }
 
@@ -149,7 +150,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
     }
 
     private void refreshList() {
-        List<DomibusConnectorLinkPartner> gwLinks = dcLinkPersistenceService.getAllLinksOfType(getLinkType());
+        List<DomibusConnectorLinkPartner> gwLinks = dcLinkFacade.getAllLinksOfType(getLinkType());
         ListDataProvider<DomibusConnectorLinkPartner> linkPartners = new ListDataProvider<DomibusConnectorLinkPartner>(gwLinks);
         linkGrid.setDataProvider(linkPartners);
         linkPartners.refreshAll();

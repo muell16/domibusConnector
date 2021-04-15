@@ -9,6 +9,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +36,18 @@ public class DCLinkPluginConfigurationProperties {
      * If set the gateway link configuration is loaded from here
      */
     @NestedConfigurationProperty
+    @Valid
     private DCLnkPropertyConfig gateway = null;
 
     @NestedConfigurationProperty
-    private List<DCLnkPropertyConfig> backend = new ArrayList<>();
+    private List<@Valid DCLnkPropertyConfig> backend = new ArrayList<>();
 
     @Data
     public static class DCLnkPropertyConfig {
+        @Valid
         @NestedConfigurationProperty
         private DomibusConnectorLinkConfiguration linkConfig;
+        @Valid
         @NestedConfigurationProperty
         private List<DomibusConnectorLinkPartner> linkPartners = new ArrayList<>();
     }

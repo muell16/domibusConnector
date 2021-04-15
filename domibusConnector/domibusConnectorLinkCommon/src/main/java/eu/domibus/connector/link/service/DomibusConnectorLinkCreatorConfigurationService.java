@@ -3,6 +3,7 @@ package eu.domibus.connector.link.service;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -139,10 +140,14 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     private void activateLink(DomibusConnectorLinkPartner linkInfo) {
         try {
             linkManager.activateLinkPartner(linkInfo);
-        } catch (Exception e) {
-            LOGGER.error("Exception while activating Link " + linkInfo, e);
+        } catch (LinkPluginException e) {
+            String error = String.format("Exception while activating Link [%s]", linkInfo);
             if (config.isFailOnLinkPluginError()) {
-                throw new RuntimeException(e);
+                String msg = String.format("Failing startup because property [%s.fail-on-link-plugin-error=true]: %s",
+                        DCLinkPluginConfigurationProperties.PREFIX, error);
+                throw new RuntimeException(msg, e);
+            } else {
+                LOGGER.warn(error, e);
             }
         }
     }

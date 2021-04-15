@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,8 @@ import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//@Service
+@Service
+@ConditionalOnBean(DCLinkPluginConfiguration.class)
 public class DCLinkPersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCLinkPersistenceService.class);

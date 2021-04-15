@@ -8,7 +8,6 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -16,17 +15,13 @@ public class DCLinkPullJob implements Job {
 
     private static final Logger LOGGER = LogManager.getLogger(DCLinkPullJob.class);
 
-//    public static final String PULL_FROM_LINK_PROPERTY_NAME = "pullFromLink";
     public static final String LINK_PARTNER_NAME_PROPERTY_NAME = "linkPartnerName";
 
-//    @Autowired
-//    PullFromLink pullFromLink;
-//
-//    @Autowired
-//    DomibusConnectorLinkPartner linkPartner;
+    private final DCActiveLinkManagerService dcActiveLinkManagerService;
 
-    @Autowired
-    DCActiveLinkManagerService dcActiveLinkManagerService;
+    public DCLinkPullJob(DCActiveLinkManagerService dcActiveLinkManagerService) {
+        this.dcActiveLinkManagerService = dcActiveLinkManagerService;
+    }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {

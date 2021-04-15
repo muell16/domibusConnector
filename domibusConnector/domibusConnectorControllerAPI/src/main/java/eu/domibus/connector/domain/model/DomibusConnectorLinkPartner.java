@@ -4,12 +4,17 @@ import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Properties;
 
 public class DomibusConnectorLinkPartner {
 
+    private String configSource;
+
+    @NotBlank
     private LinkPartnerName linkPartnerName;
 
     private String description;
@@ -82,6 +87,14 @@ public class DomibusConnectorLinkPartner {
 
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         this.linkConfiguration = linkConfiguration;
+    }
+
+    public String getConfigSource() {
+        return configSource;
+    }
+
+    public void setConfigSource(String configSource) {
+        this.configSource = configSource;
     }
 
     public Properties getProperties() {

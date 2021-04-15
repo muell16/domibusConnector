@@ -32,11 +32,6 @@ public class DCLinkPluginConfiguration {
 //    }
 
     @Bean
-    public DCActiveLinkManagerService dcActiveLinkManagerService() {
-        return new DCActiveLinkManagerService();
-    }
-
-    @Bean
     @Profile("plugin-" + DCGatewayPullPlugin.IMPL_NAME)
     public DCGatewayPullPlugin dcGatewayPullPlugin() {
         return new DCGatewayPullPlugin();
