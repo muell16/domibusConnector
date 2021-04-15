@@ -26,6 +26,9 @@ ALTER TABLE BKP_DC_MESSAGE_INFO DROP CONSTRAINT FK_DC_MSG_INFO_02;
 ALTER TABLE BKP_DC_MESSAGE_INFO DROP CONSTRAINT FK_DC_MSG_INFO_03;
 ALTER TABLE BKP_DC_MESSAGE_INFO DROP CONSTRAINT FK_DC_MSG_INFO_04;
 
+ALTER TABLE DOMIBUS_CONNECTOR_BACK_2_S
+    DROP CONSTRAINT FK_DC_BACK2S_02;
+
 CREATE TABLE qrtz_job_details
 (
     SCHED_NAME        VARCHAR2(120) NOT NULL,
@@ -313,7 +316,7 @@ create table DC_LINK_CONFIGURATION
 (
     ID          DECIMAL(10, 0) not null,
     CONFIG_NAME VARCHAR2(255)  not null
-        constraint UNQ_DC_LINK_CONFIG_NMAE unique,
+        constraint UN_DC_LINK_CONF_NAME_01 unique,
     LINK_IMPL   VARCHAR2(255),
     constraint PK_DC_LINK_CONFIGURATION primary key (ID)
 );
@@ -360,7 +363,7 @@ create table DC_LINK_PARTNER_PROPERTY
 create table DC_TRANSPORT_STEP
 (
     ID                          DECIMAL(10, 0) not null,
-    MESSAGE_ID                  DECIMAL(10, 0) not null,
+    CONNECTOR_MESSAGE_ID        DECIMAL(10, 0) not null,
     LINK_PARTNER_NAME           VARCHAR2(255)  not null,
     ATTEMPT                     INT            not null,
     TRANSPORT_ID                VARCHAR2(255),
@@ -587,7 +590,7 @@ drop table bkp_dc_bigdata;
 drop table BKP_DC_MESSAGE_INFO;
 drop table BKP_DC_PARTY;
 drop table BKP_DC_ACTION;
-drop table BKP_DC_SERVICE cascade constraints;
+drop table BKP_DC_SERVICE;
 drop table BKP_DC_PROPERTY;
 drop table BKP_DC_MESSAGE cascade constraints;
 
@@ -658,9 +661,6 @@ ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO
     ADD CONSTRAINT FK_DC_MSG_INFO_I FOREIGN KEY (MESSAGE_ID) REFERENCES DOMIBUS_CONNECTOR_MESSAGE (ID);
 
-ALTER TABLE DOMIBUS_CONNECTOR_BACK_2_S
-    DROP CONSTRAINT FK_DC_BACK2S_02;
-
 alter table DC_LINK_CONFIG_PROPERTY
     add constraint PK_DC_LINK_CONF_PROP
         primary key (DC_LINK_CONFIGURATION_ID, PROPERTY_NAME);
@@ -701,7 +701,7 @@ alter table DC_TRANSPORT_STEP
         primary key (ID);
 alter table DC_TRANSPORT_STEP
     add constraint FK_MESSAGESTEP_MESSAGE
-        foreign key (MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID);
+        foreign key (CONNECTOR_MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID);
 
 alter table DC_TRANSPORT_STEP_STATUS
     add constraint PK_DC_TRANS_STEP_STATUS primary key (TRANSPORT_STEP_ID, STATE);
