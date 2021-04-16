@@ -178,7 +178,6 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         DomibusConnectorMessageId connectorMessageId = message.getConnectorMessageId();
         List<PDomibusConnectorMsgCont> toStoreList = new ArrayList<>();
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
-//        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
         if (messageContent != null && messageContent.getDocument() != null) {
             toStoreList.add(mapDocumentToDb(connectorMessageId, messageContent.getDocument()));
         }
@@ -193,8 +192,11 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         for (DomibusConnectorMessageConfirmation c : message.getTransportedMessageConfirmations()) {
             toStoreList.add(mapConfirmation(connectorMessageId, c));
         }
-        this.msgContDao.deleteByMessage(connectorMessageId.getConnectorMessageId());   //delete old contents
+        //load old content
+        List<PDomibusConnectorMsgCont> oldContent =
+                this.msgContDao.findByMessage(connectorMessageId.getConnectorMessageId());
         this.msgContDao.saveAll(toStoreList); //save new contents
+        this.msgContDao.deleteAll(oldContent); //delete old contents
     }
 
     PDomibusConnectorMsgCont mapXmlContentToDB(String connectorMessageId, DomibusConnectorMessageId messageId, byte[] xmlDocument) {
