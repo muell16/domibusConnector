@@ -14,13 +14,14 @@ public class PDomibusConnectorDetachedSignature {
 
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreDetachedSig",
-            table = SEQ_STORE_TABLE_NAME,
-            pkColumnName = SEQ_NAME_COLUMN_NAME,
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
             pkColumnValue = TABLE_NAME + ".ID",
-            valueColumnName = SEQ_VALUE_COLUMN_NAME,
-            initialValue = 1000, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreDetachedSig")
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE_BULK)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
 //    @OneToOne(optional = false, orphanRemoval = true, fetch = FetchType.EAGER)

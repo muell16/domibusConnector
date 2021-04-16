@@ -17,13 +17,21 @@ import eu.domibus.connector.persistence.model.converter.ZonedDateTimeToTimestamp
 import org.springframework.core.style.ToStringCreator;
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
+@Table(name = PDomibusConnectorMessage.TABLE_NAME)
 public class PDomibusConnectorMessage implements Serializable {
+
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MESSAGE";
 
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreMessage", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessage")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE_BULK)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
     @Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)

@@ -18,7 +18,7 @@ public class PDomibusConnectorService {
             pkColumnValue = TABLE_NAME + ".ID",
             valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
             initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
-            allocationSize = 1)
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 

@@ -24,13 +24,21 @@ import javax.persistence.PreUpdate;
 
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_EVIDENCE")
+@Table(name = PDomibusConnectorEvidence.TABLE_NAME)
 public class PDomibusConnectorEvidence {
 
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_EVIDENCE";
+
     @Id
-    @TableGenerator(name = "evidencesSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "evidencesSeqStore")
-    @Column(name = "ID")
+    @Column(name="ID")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE_BULK)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
     @Column(name = "CONNECTOR_MESSAGE_ID")
