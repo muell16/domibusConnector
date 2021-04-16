@@ -136,7 +136,7 @@ public class DCActiveLinkManagerService {
         if (linkInfo.getRcvLinkMode() != LinkMode.PULL) {
             return;
         }
-        Optional<PullFromLink> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
+        Optional<PullFromLinkPartner> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
         if (!pullFromBean.isPresent()) {
             LOGGER.warn("PULL MODE activated but NO pull bean found!");
             return;

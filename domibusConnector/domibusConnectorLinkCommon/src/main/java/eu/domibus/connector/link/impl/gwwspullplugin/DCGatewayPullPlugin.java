@@ -11,6 +11,7 @@ import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPlugi
 import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 

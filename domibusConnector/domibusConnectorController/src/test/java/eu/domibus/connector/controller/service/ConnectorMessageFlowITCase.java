@@ -310,7 +310,6 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-
     /**
      * RCV message from GW
      *
@@ -773,10 +772,14 @@ public class ConnectorMessageFlowITCase {
 
 
 
-    private DomibusConnectorMessage deliverMessageFromGw(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) throws IOException {
-        DomibusConnectorMessage testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
-        submitFromGatewayToController(testMessage);
-        return testMessage;
+    private DomibusConnectorMessage deliverMessageFromGw(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) {
+        try {
+            DomibusConnectorMessage testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
+            submitFromGatewayToController(testMessage);
+            return testMessage;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     public static final String FINAL_RECIPIENT = "final_recipient";
@@ -903,20 +906,32 @@ public class ConnectorMessageFlowITCase {
             submitFromBackendToController(msg);
 
 
-            DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage toGwSubmittedBusinessMessage = toGwDeliveredMessages.take(); //wait until a message is put into queue
 
-            assertThat(take).as("Gw must RCV message").isNotNull();
+            assertThat(toGwSubmittedBusinessMessage).as("Gw must RCV message").isNotNull();
 
-            assertThat(take.getTransportedMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
-            assertThat(take.getTransportedMessageConfirmations().get(0).getEvidenceType())
+            assertThat(toGwSubmittedBusinessMessage.getTransportedMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
+            assertThat(toGwSubmittedBusinessMessage.getTransportedMessageConfirmations().get(0).getEvidenceType())
                     .as("evidence must be of type submission acceptance")
                     .isEqualTo(SUBMISSION_ACCEPTANCE);
 
             //ASIC-S + token XML
-            assertThat(take.getMessageAttachments()).hasSize(2);
-            assertThat(take.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
-            assertThat(take.getMessageContent().getXmlContent()).isNotNull(); //business XML
+            assertThat(toGwSubmittedBusinessMessage.getMessageAttachments()).hasSize(2);
+            assertThat(toGwSubmittedBusinessMessage.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
+            assertThat(toGwSubmittedBusinessMessage.getMessageContent().getXmlContent()).isNotNull(); //business XML
 
+            assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getToParty())
+                    .as("Parties must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+            assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getFromParty())
+                    .as("Parties must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+            assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getOriginalSender())
+                    .as("Original sender must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getOriginalSender());
+            assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getFinalRecipient())
+                    .as("Final Recipient must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getFinalRecipient());
 
             //check sent message in DB
             DomibusConnectorMessage loadedMsg = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
@@ -938,10 +953,10 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
+
             assertThat(toBackendEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
                     .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
             assertThat(toBackendEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
                     .isEqualTo(submittedMessage.getMessageDetails().getFromParty());

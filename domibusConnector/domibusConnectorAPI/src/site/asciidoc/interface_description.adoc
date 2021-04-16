@@ -208,7 +208,7 @@ with an message id to a new delivered message
 
 | messageDetails/finalRecipient | empty | filled out by the connector, it will be taken from the original message (originalSender)
 
-| messageDetails/service | empty | filled out by the connector, it will be taken from the original message
+| messageDetails/service | empty | filled out by the connector, it will be taken from the original business message
 
 | messageDetails/action/action | empty | filled out by the connector, it will be taken from configuration
 
@@ -218,11 +218,13 @@ with an message id to a new delivered message
 
 |===
 
+ NOTE: The "address attributes": FromParty, ToParty, OriginalSender, FinalRecipient are taken from the business message and are reverted for the to the outgoing (to the Gateway) evidence message.
+
 After the evidence was triggered the generated evidence message will not only submitted to the other party
-it will also be delivered to the backend system as an confirmation, that the trigger was successfully.
+it will also be delivered to the backend system as a confirmation, that the trigger was successfully.
 
 
-=== Receiving an confirmation message
+=== Receiving a confirmation message
 
 When the backend receives a confirmation message, the refToMessageId field is filled in the following order:
 
@@ -239,3 +241,8 @@ completly transparent for the backend. The backendMessageId is mapped by the con
 will always send/provide the confirmation messages in the correct order. Also the connector relies on
 the ordering of the confirmation messages because the confirmation messages are chained together
 and as an example a RELAY_REMMD_ACCEPTANCE can only be created if there is already a SUBMISSION_ACCEPTANCE.
+
+
+
+
+
