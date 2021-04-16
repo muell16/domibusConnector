@@ -1,23 +1,8 @@
 package eu.domibus.connector.web.view.areas.messages;
 
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -26,21 +11,32 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.dto.WebMessage;
-import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.service.WebMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 @Component
 @UIScope
 public class Search extends VerticalLayout {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private Messages messagesView;
 	private WebMessageService messageService;
@@ -134,37 +130,21 @@ public class Search extends VerticalLayout {
 	private void addGridWithData(LinkedList<WebMessage> messages) {
 		main.removeAll();
 		
-		Grid<WebMessage> grid = new Grid<>();
+		WebMessagesGrid grid = new WebMessagesGrid(messagesView);
 		
 		grid.setItems(messages);
-		grid.addComponentColumn(webMessage -> getDetailsLink(webMessage.getConnectorMessageId())).setHeader("Details").setWidth("30px");
-		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px");
-		grid.addColumn(WebMessage::getFromPartyId).setHeader("From Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getToPartyId).setHeader("To Party ID").setWidth("70px");
-		grid.addColumn(WebMessage::getService).setHeader("Service").setWidth("70px");
-		grid.addColumn(WebMessage::getAction).setHeader("Action").setWidth("70px");
-		grid.addColumn(WebMessage::getCreated).setHeader("Created");
-		grid.addColumn(WebMessage::getDeliveredToBackend).setHeader("Delivered Backend");
-		grid.addColumn(WebMessage::getDeliveredToGateway).setHeader("Delivered Gateway");
-		grid.addColumn(WebMessage::getBackendClient).setHeader("Backend Client").setWidth("100px");
-		grid.setWidth("1800px");
-		grid.setHeight("400px");
-		grid.setMultiSort(true);
 		
-		for(Column<WebMessage> col : grid.getColumns()) {
-			col.setSortable(true);
-			col.setResizable(true);
-		}
 		grid.setVisible(true);
 		
 		
 		main.add(grid);
 		
-		HorizontalLayout downloadLayout = createDownloadLayout(messages);
-		
-		main.add(downloadLayout);
+//		HorizontalLayout downloadLayout = createDownloadLayout(messages);
+//		
+//		main.add(downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
-		main.setHeight("400px");
+//		main.setHeight("400px");
+		main.setWidth("100vw");
 //		main.setSizeFull();
 //		main.setVisible(false);
 		
@@ -217,15 +197,16 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByBackendMessageId(String backendMessageId) {
-		WebMessageDetail messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
+		Optional<WebMessage> messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
 		searchBackendMessageIdText.setValue("");
-		showConnectorMessage(messageByBackendMessageId.getConnectorMessageId());
+		messageByBackendMessageId.ifPresent(m -> messagesView.showMessageDetails(m));
 	}
 
 	private void searchByEbmsId(String ebmsId) {
-		WebMessageDetail messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
+		Optional<WebMessage>  messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
 		searchEbmsIdText.setValue("");
-		showConnectorMessage(messageByEbmsId.getConnectorMessageId());
+		messageByEbmsId.ifPresent((m) -> messagesView.showMessageDetails(m));
+
 	}
 
 	private void searchByPeriod(Date fromDate, Date toDate) {
@@ -240,18 +221,9 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByConnectorMessageId(String connectorMessageId) {
+		Optional<WebMessage> messageByConnectorId = messageService.getMessageByConnectorId(connectorMessageId);
 		searchMessageIdText.setValue("");
-		showConnectorMessage(connectorMessageId);
-	}
-	
-	private Button getDetailsLink(String connectorMessageId) {
-		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
-		getDetails.addClickListener(e -> showConnectorMessage(connectorMessageId));
-		return getDetails;
-	}
-	
-	private void showConnectorMessage(String connectorMessageId) {
-		messagesView.showMessageDetails(connectorMessageId);
+		messageByConnectorId.ifPresent((m) -> messagesView.showMessageDetails(m));
 	}
 	
 	public static Date asDate(LocalDate localDate) {

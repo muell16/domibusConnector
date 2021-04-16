@@ -1,30 +1,34 @@
 package eu.domibus.connector.web.persistence.service.impl;
 
-import java.util.*;
-
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
-import eu.domibus.connector.persistence.service.impl.DCMessagePersistenceServiceImpl;
-
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-@Service("webMessagePersistenceService")
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+
+@org.springframework.stereotype.Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DCMessagePersistenceServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWebMessagePersistenceServiceImpl.class);
 
     private DomibusConnectorMessageDao messageDao;
     
@@ -49,27 +53,35 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	}
 	
 	@Override
-	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
+	public Optional<WebMessage> getMessageByConnectorId(String connectorMessageId) {
 		Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
-		if (dbMessage.isPresent()) {
-			return mapDbMessageToWebMessageDetail(dbMessage.get());
-		} else {
-			return null;
-		}
+		return mapDbMessageToWebMessage(dbMessage);
+	}
+	
+	@Override
+	public Optional<WebMessage> getOutgoingMessageByBackendMessageId(String backendMessageId){
+		Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(backendMessageId, MessageTargetSource.GATEWAY);
+        return mapDbMessageToWebMessage(dbMessage);
+	}
+	
+	@Override
+	public Optional<WebMessage> getIncomingMessageByEbmsMessageId(String ebmsMessageId){
+		Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, MessageTargetSource.BACKEND);
+        return mapDbMessageToWebMessage(dbMessage);
 	}
 	
 	@Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(nationalMessageId, direction.getTarget()).get();
-        return mapDbMessageToWebMessageDetail(dbMessage);
+    public Optional<WebMessage>  findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction) {
+        Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(nationalMessageId, direction.getTarget());
+        return mapDbMessageToWebMessage(dbMessage);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, direction.getTarget()).get();
-        return mapDbMessageToWebMessageDetail(dbMessage);
+    public Optional<WebMessage>  findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction) {
+        Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, direction.getTarget());
+        return mapDbMessageToWebMessage(dbMessage);
     }
 
     @Override
@@ -78,77 +90,121 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
         List<PDomibusConnectorMessage> dbMessages = messageDao.findByConversationId(conversationId);
         return mapDbMessagesToWebMessages(dbMessages);
     }
-	
+
+	@Override
+	public Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable) {
+		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
+//		LOGGER.debug("Example: {}",exampleDbMsg.getProbe().toString());
+
+		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
+		
+//		LOGGER.debug("Returned {} results.", all.getSize());
+
+		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
+
+	}
+
+
+	private Example<PDomibusConnectorMessage> getpDomibusConnectorMessageExample(Example<WebMessage> example) {
+    	if (example == null) {
+    		throw new IllegalArgumentException("Example cannot be null!");
+		}
+//    	LOGGER.debug("Probe: {}", example.getProbe());
+
+		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
+
+		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
+		return exampleDbMsg;
+	}
+
+
+	private static class DBMessageToWebMessageConverter implements Converter<PDomibusConnectorMessage, WebMessage> {
+
+		@Nullable
+		@Override
+		public WebMessage convert(PDomibusConnectorMessage pMessage) {
+			WebMessage message = new WebMessage();
+
+			message.setConnectorMessageId(pMessage.getConnectorMessageId());
+			message.setEbmsMessageId(pMessage.getEbmsMessageId());
+			message.setBackendMessageId(pMessage.getBackendMessageId());
+			message.setConversationId(pMessage.getConversationId());
+			message.setBackendName(pMessage.getBackendName());
+			message.setDirectionSource(pMessage.getDirectionSource()!=null?pMessage.getDirectionSource().getDbName():null);
+			message.setDirectionTarget(pMessage.getDirectionTarget()!=null?pMessage.getDirectionTarget().getDbName():null);
+			message.setDeliveredToNationalSystem(pMessage.getDeliveredToNationalSystem()!=null?ZonedDateTime.ofInstant(pMessage.getDeliveredToNationalSystem().toInstant(), ZoneId.systemDefault()):null);
+			message.setDeliveredToGateway(pMessage.getDeliveredToGateway()!=null?ZonedDateTime.ofInstant(pMessage.getDeliveredToGateway().toInstant(), ZoneId.systemDefault()):null);
+			message.setCreated(pMessage.getCreated()!=null?ZonedDateTime.ofInstant(pMessage.getCreated().toInstant(), ZoneId.systemDefault()):null);
+			message.setConfirmed(pMessage.getConfirmed()!=null?ZonedDateTime.ofInstant(pMessage.getConfirmed().toInstant(), ZoneId.systemDefault()):null);
+			message.setRejected(pMessage.getRejected()!=null?ZonedDateTime.ofInstant(pMessage.getRejected().toInstant(), ZoneId.systemDefault()):null);
+
+			PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
+			if(pMessageInfo!=null) {
+
+				message.setMessageInfo(mapDbMessageInfoToWebMessageDetail(pMessageInfo));
+				
+			}
+			
+			if(!CollectionUtils.isEmpty(pMessage.getRelatedEvidences())) {
+				for(PDomibusConnectorEvidence dbEvidence:pMessage.getRelatedEvidences()) {
+					WebMessageEvidence evidence = new WebMessageEvidence();
+					evidence.setEvidenceType(dbEvidence.getType().name());
+					evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());
+					evidence.setDeliveredToBackend(dbEvidence.getDeliveredToNationalSystem());
+					message.getEvidences().add(evidence);
+				}
+			}
+			return message;
+		}
+		
+		private WebMessageDetail mapDbMessageInfoToWebMessageDetail(PDomibusConnectorMessageInfo pMessageInfo) {
+	    	WebMessageDetail messageDetail = new WebMessageDetail();
+			
+			messageDetail.setOriginalSender(pMessageInfo.getOriginalSender());
+			messageDetail.setFinalRecipient(pMessageInfo.getFinalRecipient());
+			
+			if (pMessageInfo.getAction()!=null) {
+				messageDetail.setAction(new WebMessageDetail.Action(pMessageInfo.getAction().getAction()));
+			}
+			
+			if(pMessageInfo.getService()!=null) {
+				messageDetail.setService(new WebMessageDetail.Service(pMessageInfo.getService().getService(), pMessageInfo.getService().getServiceType()));
+			}
+			
+			if(pMessageInfo.getFrom()!=null) {
+				messageDetail.setFrom(new WebMessageDetail.Party(pMessageInfo.getFrom().getPartyId(),pMessageInfo.getFrom().getPartyIdType()));
+			}
+			
+			if(pMessageInfo.getTo()!=null) {
+				messageDetail.setTo(new WebMessageDetail.Party(pMessageInfo.getTo().getPartyId(),pMessageInfo.getTo().getPartyIdType()));
+			}
+
+			return messageDetail;
+		}
+	}
+
+	@Override
+	public long count(Example<WebMessage> example) {
+		Example<PDomibusConnectorMessage> pDomibusConnectorMessageExample = getpDomibusConnectorMessageExample(example);
+		return messageDao.count(pDomibusConnectorMessageExample);
+	}
+
 	private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<PDomibusConnectorMessage> messages){
 		LinkedList<WebMessage> webMessages = new LinkedList<WebMessage>();
 		Iterator<PDomibusConnectorMessage> msgIt = messages.iterator();
 		while(msgIt.hasNext()) {
 			PDomibusConnectorMessage pMessage = msgIt.next();
-			
-			WebMessage message = mapDbMessageToWebMessage(pMessage);
-			
+
+			WebMessage message = new DBMessageToWebMessageConverter().convert(pMessage);
 			webMessages.addLast(message);
 		}
 		
 		return webMessages;
 	}
 
-	private WebMessage mapDbMessageToWebMessage(PDomibusConnectorMessage pMessage) {
-		WebMessage message = new WebMessage();
-		
-		message.setConnectorMessageId(pMessage.getConnectorMessageId());
-		message.setBackendClient(pMessage.getBackendName());
-		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
-		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-		message.setCreated(pMessage.getCreated());
-		
-		PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
-		message.setAction(pMessageInfo.getAction().getAction());
-		message.setService(pMessageInfo.getService().getService());
-		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
-		message.setToPartyId(pMessageInfo.getTo().getPartyId());
-		
-		
-		return message;
+	private Optional<WebMessage> mapDbMessageToWebMessage (Optional<PDomibusConnectorMessage> pMessage){
+		return pMessage.map(m -> new DBMessageToWebMessageConverter().convert(m));
 	}
 	
-	private WebMessageDetail mapDbMessageToWebMessageDetail(PDomibusConnectorMessage pMessage) {
-		WebMessageDetail message = new WebMessageDetail();
-		
-		message.setConnectorMessageId(pMessage.getConnectorMessageId());
-		message.setBackendMessageId(pMessage.getBackendMessageId());
-		message.setEbmsMessageId(pMessage.getEbmsMessageId());
-		message.setConversationId(pMessage.getConversationId());
-		message.setBackendClient(pMessage.getBackendName());
-		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
-		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-		DomibusConnectorMessageDirection domibusConnectorMessageDirection = DomibusConnectorMessageDirection.fromMessageTargetSource(pMessage.getDirectionSource(), pMessage.getDirectionTarget());
-		message.setDirection(domibusConnectorMessageDirection.toString());
-		message.setConfirmed(pMessage.getConfirmed());
-		message.setRejected(pMessage.getRejected());
-		message.setCreated(pMessage.getCreated());
-		
-		PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
-		message.setAction(pMessageInfo.getAction().getAction());
-		message.setService(pMessageInfo.getService().getService());
-		message.setOriginalSender(pMessageInfo.getOriginalSender());
-		message.setFinalRecipient(pMessageInfo.getFinalRecipient());
-		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
-		message.setToPartyId(pMessageInfo.getTo().getPartyId());
-		
-		if(!CollectionUtils.isEmpty(pMessage.getRelatedEvidences())) {
-			for(PDomibusConnectorEvidence dbEvidence:pMessage.getRelatedEvidences()) {
-				WebMessageEvidence evidence = new WebMessageEvidence();
-				evidence.setEvidenceType(dbEvidence.getType().name());
-				evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());
-				evidence.setDeliveredToBackend(dbEvidence.getDeliveredToNationalSystem());
-				message.getEvidences().add(evidence);
-			}
-		}
-		
-		return message;
-	}
-
-
 
 }

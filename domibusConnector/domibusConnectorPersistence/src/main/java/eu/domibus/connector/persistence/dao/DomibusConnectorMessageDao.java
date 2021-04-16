@@ -2,9 +2,10 @@ package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ import java.util.Optional;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Repository
-public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConnectorMessage, Long> {
+public interface DomibusConnectorMessageDao extends JpaRepository<PDomibusConnectorMessage, Long> {
 	
 	public List<PDomibusConnectorMessage> findAllByOrderByCreatedDesc();
 

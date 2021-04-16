@@ -1,8 +1,8 @@
 package eu.domibus.connector.web.dto;
 
-import java.util.Date;
-
 import eu.domibus.connector.web.enums.UserRole;
+
+import java.util.Date;
 
 public class WebUser {
 	

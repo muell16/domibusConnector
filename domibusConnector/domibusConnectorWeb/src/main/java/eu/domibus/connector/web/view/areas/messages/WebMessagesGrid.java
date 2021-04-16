@@ -1,28 +1,20 @@
 package eu.domibus.connector.web.view.areas.messages;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.vaadin.klaudeta.PaginatedGrid;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.function.ValueProvider;
-
 import eu.domibus.connector.web.dto.WebMessage;
+import org.vaadin.klaudeta.PaginatedGrid;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 

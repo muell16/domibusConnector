@@ -1,26 +1,25 @@
 package eu.domibus.connector.web.view.areas.messages;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.view.MainLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.vaadin.flow.router.Route;
-import eu.domibus.connector.web.view.MainLayout;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.spring.annotation.UIScope;
-
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
 @Route(value = Messages.ROUTE, layout = MainLayout.class)
@@ -92,8 +91,14 @@ public class Messages extends VerticalLayout {
 		add(messagesMenu,pages);
 	}
 	
-	public void showMessageDetails(String connectorMessageId) {
-		messageDetails.loadMessageDetails(connectorMessageId);
+	public Button geMessageDetailsLink(WebMessage connectorMessage) {
+		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
+		getDetails.addClickListener(e -> showMessageDetails(connectorMessage));
+		return getDetails;
+	}
+	
+	public void showMessageDetails(WebMessage connectorMessage) {
+		messageDetails.loadMessageDetails(connectorMessage);
 		messageDetails.setAlignItems(Alignment.START);
 		messagesMenu.setSelectedTab(messageDetailsTab);
 	}

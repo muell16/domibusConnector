@@ -22,39 +22,39 @@ import eu.domibus.connector.web.dto.WebReportEntry;
 @Service("webReportsService")
 public class WebReportsService {
 
-	private DomibusConnectorWebReportPersistenceService reportPersistenceService;
-	
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    private DomibusConnectorWebReportPersistenceService reportPersistenceService;
 
-	@Autowired
-	public void setReportPersistenceService(DomibusConnectorWebReportPersistenceService reportPersistenceService) {
-		this.reportPersistenceService = reportPersistenceService;
-	}
-	
-	public WebReportsService() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public List<WebReportEntry> generateReport(Date fromDate, Date toDate, boolean includeEvidences){
-		List<WebReportEntry> report = null;
-		if(includeEvidences) {
-			report = reportPersistenceService.loadReportWithEvidences(fromDate, toDate);
-		}else {
-			report = reportPersistenceService.loadReport(fromDate, toDate);
-		}
-		return report;
-	}
-	
-	public InputStream generateExcel(Date fromDate, Date toDate, List<WebReport> report) {
-		
-		String sheetName = sdf.format(fromDate) + " - " + sdf.format(toDate);
-		HSSFWorkbook wb = WebServiceUtil.createNewExcel(sheetName);
-        
-		Map<String, CellStyle> styles = WebServiceUtil.createStyles(wb);
-        
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+
+    @Autowired
+    public void setReportPersistenceService(DomibusConnectorWebReportPersistenceService reportPersistenceService) {
+        this.reportPersistenceService = reportPersistenceService;
+    }
+
+    public WebReportsService() {
+        // TODO Auto-generated constructor stub
+    }
+
+    public List<WebReportEntry> generateReport(Date fromDate, Date toDate, boolean includeEvidences){
+        List<WebReportEntry> report = null;
+        if(includeEvidences) {
+            report = reportPersistenceService.loadReportWithEvidences(fromDate, toDate);
+        }else {
+            report = reportPersistenceService.loadReport(fromDate, toDate);
+        }
+        return report;
+    }
+
+    public InputStream generateExcel(Date fromDate, Date toDate, List<WebReport> report) {
+
+        String sheetName = sdf.format(fromDate) + " - " + sdf.format(toDate);
+        HSSFWorkbook wb = WebServiceUtil.createNewExcel(sheetName);
+
+        Map<String, CellStyle> styles = WebServiceUtil.createStyles(wb);
+
         HSSFSheet sheet = wb.getSheet(sheetName);
 
-       
+
 
         HSSFRow headerRow = sheet.createRow(0);
         HSSFCell cell0 = headerRow.createCell(0);
@@ -148,10 +148,10 @@ public class WebReportsService {
         sheet.setColumnWidth(1, 256 * 15);
         sheet.setColumnWidth(2, 256 * 30);
         sheet.setColumnWidth(3, 256 * 30);
-   
-        
+
+
         return WebServiceUtil.getInputStreamWithWorkbook(wb);
-	}
-	
-	
+    }
+
+
 }
