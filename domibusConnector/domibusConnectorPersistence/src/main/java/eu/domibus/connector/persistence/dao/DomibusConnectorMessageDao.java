@@ -18,7 +18,6 @@ import java.util.Optional;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Repository
-@Transactional
 public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConnectorMessage, Long> {
 	
 	public List<PDomibusConnectorMessage> findAllByOrderByCreatedDesc();

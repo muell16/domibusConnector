@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Repository
-@Transactional
 public interface DomibusConnectorMsgContDao extends CrudRepository<PDomibusConnectorMsgCont, Long> {
 
     @Modifying

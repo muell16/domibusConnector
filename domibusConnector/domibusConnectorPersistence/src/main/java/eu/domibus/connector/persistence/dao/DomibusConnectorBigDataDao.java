@@ -11,9 +11,5 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Transactional
 public interface DomibusConnectorBigDataDao extends CrudRepository<PDomibusConnectorBigData, Long> {
-
-//    public List<PDomibusConnectorBigData> findAllByConnectorMessageId(String connectorMessageId);
-
 }
