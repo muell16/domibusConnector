@@ -1,11 +1,9 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.spring.ConnectorControllerProperties;
 import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
-import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -36,16 +34,16 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
     private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
-    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
+    private final ConfirmationCreatorService confirmationCreator;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     public SubmitConfirmationAsEvidenceMessageStep(SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
                                                    ConfigurationPropertyLoaderService configurationPropertyLoaderService,
-                                                   CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory,
+                                                   ConfirmationCreatorService confirmationCreator,
                                                    DomibusConnectorMessageIdGenerator messageIdGenerator) {
         this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;
-        this.createConfirmationMessageBuilderFactory = createConfirmationMessageBuilderFactory;
+        this.confirmationCreator = confirmationCreator;
         this.messageIdGenerator = messageIdGenerator;
     }
 
@@ -110,7 +108,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
                      CloseableThreadContext.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId.getConnectorMessageId())) {
 
             DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-            DomibusConnectorAction evidenceAction = createConfirmationMessageBuilderFactory.createEvidenceAction(evidenceType);
+            DomibusConnectorAction evidenceAction = confirmationCreator.createEvidenceAction(evidenceType);
 
             DomibusConnectorMessageDetails messageDetails = DomibusConnectorMessageDetailsBuilder.create()
                     .copyPropertiesFrom(businessMessage.getMessageDetails())

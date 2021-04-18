@@ -2,20 +2,23 @@ package eu.domibus.connector.controller.processor.confirmation;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
+import eu.domibus.connector.controller.processor.steps.SubmitConfirmationAsEvidenceMessageStep;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 //import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,18 +30,27 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
-//    static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
     private static Logger LOGGER = LogManager.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
     private final EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
     private final DCMessagePersistenceService persistenceService;
-//    private final DomibusConnectorBackendDeliveryService backendDeliveryService;
-    private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
+    private final ConfirmationCreatorService confirmationCreatorService;
+    private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
+    private final MessageConfirmationStep messageConfirmationStep;
 
-
+    public CheckEvidencesTimeoutProcessorImpl(EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties,
+                                              DCMessagePersistenceService persistenceService,
+                                              ConfirmationCreatorService confirmationCreatorService,
+                                              MessageConfirmationStep messageConfirmationStep,
+                                              SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep) {
+        this.evidencesTimeoutConfigurationProperties = evidencesTimeoutConfigurationProperties;
+        this.persistenceService = persistenceService;
+        this.confirmationCreatorService = confirmationCreatorService;
+        this.submitConfirmationAsEvidenceMessageStep = submitConfirmationAsEvidenceMessageStep;
+        this.messageConfirmationStep = messageConfirmationStep;
+    }
 
     @Override
     @Scheduled(fixedDelayString = "#{evidencesTimeoutConfigurationProperties.checkTimeout.milliseconds}")
@@ -72,26 +84,28 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     void checkNotRejectedNorConfirmedWithoutRelayREMMD(DomibusConnectorMessage message) {
-        Duration relayREMMDTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDTimeout().getDuration();
-        Duration relayREMMDWarnTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDWarnTimeout().getDuration();
+        String messageId = message.getConnectorMessageId().toString();
+        try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            Duration relayREMMDTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDTimeout().getDuration();
+            Duration relayREMMDWarnTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDWarnTimeout().getDuration();
 
-        //if it is later then the evaluated timeout given
-        if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(relayREMMDTimeout) > 0) {
-            try {
-                createRelayRemmdFailureAndSendIt(message);
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached relayREMMD timeout. A RelayREMMDFailure evidence has been generated and sent.", message.getConnectorMessageIdAsString());
-            } catch (DomibusConnectorMessageException e) {
-                //throw new DomibusConnectorControllerException(e);
-                LOGGER.error("Exception occured while checking relayREMMDTimeout", e);
+            //if it is later then the evaluated timeout given
+            if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(relayREMMDTimeout) > 0) {
+                try {
+                    createRelayRemmdFailureAndSendIt(message);
+                    LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached relayREMMD timeout. A RelayREMMDFailure evidence has been generated and sent.", message.getConnectorMessageIdAsString());
+                } catch (DomibusConnectorMessageException e) {
+                    //throw new DomibusConnectorControllerException(e);
+                    LOGGER.error("Exception occured while checking relayREMMDTimeout", e);
+                }
+                return;
             }
-            return;
-        }
-        if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(relayREMMDWarnTimeout) > 0) {
-            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for relayREMMD confirmation timeout. No RelayREMMD evidence for this message has been received yet!",
-                    message.getConnectorMessageId());
+            if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(relayREMMDWarnTimeout) > 0) {
+                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for relayREMMD confirmation timeout. No RelayREMMD evidence for this message has been received yet!",
+                        message.getConnectorMessageId());
+            }
         }
     }
-
 
     void checkNotRejectedWithoutDelivery() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected yet and without a DELIVERY/NON_DELIVERY evidence
@@ -101,24 +115,26 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     void checkNotRejectedWithoutDelivery(DomibusConnectorMessage message) {
-        LOGGER.trace("checkNotRejectedWithoutDelivery# checking message: [{}]");
-        Duration deliveryTimeout = evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getDuration();
-        Duration deliveryWarnTimeout = evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getDuration();
+        String messageId = message.getConnectorMessageId().toString();
+        try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            LOGGER.trace("checkNotRejectedWithoutDelivery# checking message: [{}]");
+            Duration deliveryTimeout = evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getDuration();
+            Duration deliveryWarnTimeout = evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getDuration();
 
-
-        //if it is later then the evaluated timeout given
-        if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(deliveryTimeout) > 0) {
-            try {
-                createNonDeliveryAndSendIt(message);
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached Delivery confirmation timeout. A NonDelivery evidence has been generated and sent.", message.getConnectorMessageIdAsString());
-            } catch (DomibusConnectorMessageException e) {
-                throw new DomibusConnectorControllerException(e);
+            //if it is later then the evaluated timeout given
+            if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(deliveryTimeout) > 0) {
+                try {
+                    createNonDeliveryAndSendIt(message);
+                    LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached Delivery confirmation timeout. A NonDelivery evidence has been generated and sent.", message.getConnectorMessageIdAsString());
+                } catch (DomibusConnectorMessageException e) {
+                    throw new DomibusConnectorControllerException(e);
+                }
+                return;
             }
-            return;
-        }
-        if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(deliveryWarnTimeout) > 0) {
-            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for delivery confirmation timeout. No Delivery evidence for this message has been received yet!",
-                    message.getConnectorMessageId());
+            if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(deliveryWarnTimeout) > 0) {
+                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for delivery confirmation timeout. No Delivery evidence for this message has been received yet!",
+                        message.getConnectorMessageId());
+            }
         }
     }
 
@@ -140,45 +156,35 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void createRelayRemmdFailureAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "CreateRelayRemmdFailureAndSendIt")
+    public void createRelayRemmdFailureAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-        LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The RelayREMMDAcceptance/Rejection evidence for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
+        LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The RelayREMMDAcceptance/Rejection evidence timeout for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
 
-
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder =
-                confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE);
-        createPersistAndSendConfirmation(originalMessage, confirmationMessageBuilder);
-
+        DomibusConnectorMessageConfirmation nonDelivery = confirmationCreatorService.createRelayRemmdFailure(originalMessage, DomibusConnectorRejectionReason.RELAY_REMMD_TIMEOUT);
+        processConfirmationForMessage(originalMessage, nonDelivery);
     }
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "CreateNonDeliveryAndSendIt")
+    public void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-        LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
+        LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The Delivery/NonDelivery evidence timeout for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
             .getMessageDetails().getEbmsMessageId());
 
-
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
-        createPersistAndSendConfirmation(originalMessage, confirmationMessageBuilder);
-
+        DomibusConnectorMessageConfirmation nonDelivery = confirmationCreatorService.createNonDelivery(originalMessage, DomibusConnectorRejectionReason.DELIVERY_EVIDENCE_TIMEOUT);
+        processConfirmationForMessage(originalMessage, nonDelivery);
     }
 
-    private void createPersistAndSendConfirmation(DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
-        confirmationMessageBuilder.withDirection(MessageTargetSource.BACKEND);
-
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
-
-        //TODO: update..
-//        wrappedConfirmationMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-//        DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
-//        persistenceService.rejectMessage(originalMessage);
-//        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+    private void processConfirmationForMessage(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
+        //process confirmation for business message (store confirmation, reject business message)
+        messageConfirmationStep.processConfirmationForMessage(originalMessage, confirmation);
+        //send confirmation to backend
+        submitConfirmationAsEvidenceMessageStep.submitOppositeDirection(null, originalMessage, confirmation);
     }
-
 
 }

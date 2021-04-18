@@ -70,7 +70,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {ITCaseTestContext.class},
         properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
                 "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
-                "logging.level.eu.domibus=TRACE"
+//                "logging.level.eu.domibus=TRACE"
 
 }
 )

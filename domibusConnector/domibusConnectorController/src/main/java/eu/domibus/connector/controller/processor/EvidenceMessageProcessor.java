@@ -31,7 +31,6 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
     private final MessageConfirmationStep messageConfirmationStep;
     private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
-    private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
     private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
 
     public EvidenceMessageProcessor(EvidenceTriggerStep evidenceTriggerStep,
@@ -44,7 +43,6 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
         this.findBusinessMessageByMsgId = findBusinessMessageByMsgId;
         this.messageConfirmationStep = messageConfirmationStep;
         this.validateMessageConfirmationStep = validateMessageConfirmationStep;
-        this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
         this.submitConfirmationAsEvidenceMessageStep = submitConfirmationAsEvidenceMessageStep;
     }
 

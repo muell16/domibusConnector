@@ -1,29 +1,23 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
-import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.processor.util.FindBusinessMessageByMsgId;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
-
-import javax.transaction.Transactional;
 
 /**
  * Processes an evidence trigger message
@@ -37,12 +31,13 @@ public class EvidenceTriggerStep implements MessageProcessStep {
     private static final Logger LOGGER = LogManager.getLogger(EvidenceTriggerStep.class);
 
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
-    private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
+    private final ConfirmationCreatorService confirmationCreatorService;
 
     public EvidenceTriggerStep(FindBusinessMessageByMsgId findBusinessMessageByMsgId,
-                               CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService) {
+                               DomibusConnectorEvidencesToolkit evidencesToolkit,
+                               ConfirmationCreatorService confirmationCreatorService) {
         this.findBusinessMessageByMsgId = findBusinessMessageByMsgId;
-        this.confirmationMessageService = confirmationMessageService;
+        this.confirmationCreatorService = confirmationCreatorService;
     }
 
     @Override
@@ -59,19 +54,18 @@ public class EvidenceTriggerStep implements MessageProcessStep {
         DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
         //create evidence
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
-                = confirmationMessageService.createConfirmationMessageBuilderFromBusinessMessage(businessMsg, evidenceType);
+        DomibusConnectorMessageConfirmation confirmation = confirmationCreatorService.createConfirmation(evidenceType, businessMsg, DomibusConnectorRejectionReason.OTHER, "");
         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
 
         //set generated evidence into the trigger message
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceWrapper = confirmationMessageBuilder.build();
+//        ConfirmationCreatorService.DomibusConnectorMessageConfirmationWrapper evidenceWrapper = confirmation.build();
         evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
-                .setEvidence(evidenceWrapper.getMessageConfirmation().getEvidence());
+                .setEvidence(confirmation.getEvidence());
 
         DomibusConnectorMessageDetails evidenceTriggerMsgDetails = evidenceTriggerMsg.getMessageDetails();
 
         //set correct action for evidence message
-        evidenceTriggerMsgDetails.setAction(evidenceWrapper.getAction());
+        evidenceTriggerMsgDetails.setAction(confirmationCreatorService.createEvidenceAction(confirmation.getEvidenceType()));
         //set correct service derived from business msg
         evidenceTriggerMsgDetails.setService(businessMsgDetails.getService());
 

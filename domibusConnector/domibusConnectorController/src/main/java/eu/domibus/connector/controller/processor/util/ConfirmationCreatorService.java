@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.concurrent.NotThreadSafe;
 
 @Component
-public class CreateConfirmationMessageBuilderFactoryImpl {
+public class ConfirmationCreatorService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmationCreatorService.class);
 
     private final DomibusConnectorEvidencesToolkit evidencesToolkit;
     private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
@@ -32,11 +32,11 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
     private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
     private final DCMessagePersistenceService messagePersistenceService;
 
-    public CreateConfirmationMessageBuilderFactoryImpl(DomibusConnectorEvidencesToolkit evidencesToolkit,
-                                                       DomibusConnectorEvidencePersistenceService evidencePersistenceService,
-                                                       DomibusConnectorMessageIdGenerator messageIdGenerator,
-                                                       ConfigurationPropertyLoaderService configurationPropertyLoaderService,
-                                                       DCMessagePersistenceService messagePersistenceService) {
+    public ConfirmationCreatorService(DomibusConnectorEvidencesToolkit evidencesToolkit,
+                                      DomibusConnectorEvidencePersistenceService evidencePersistenceService,
+                                      DomibusConnectorMessageIdGenerator messageIdGenerator,
+                                      ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                      DCMessagePersistenceService messagePersistenceService) {
         this.evidencesToolkit = evidencesToolkit;
         this.evidencePersistenceService = evidencePersistenceService;
         this.messageIdGenerator = messageIdGenerator;
@@ -44,28 +44,28 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
         this.messagePersistenceService = messagePersistenceService;
     }
 
-    public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessageAndConfirmation(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
-        DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(originalMessage, evidenceType);
+//    public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessageAndConfirmation(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
+//        DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
+//        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(originalMessage, evidenceType);
+//
+//        DomibusConnectorAction messageAction = createEvidenceAction(evidenceType);
+//        confirmationMessageBuilder.setAction(messageAction);
+//        confirmationMessageBuilder.setConfirmation(confirmation);
+//        confirmationMessageBuilder.messageTarget = originalMessage.getMessageDetails().getDirection().getTarget();
+//
+//        return confirmationMessageBuilder;
+//    }
 
-        DomibusConnectorAction messageAction = createEvidenceAction(evidenceType);
-        confirmationMessageBuilder.setAction(messageAction);
-        confirmationMessageBuilder.setConfirmation(confirmation);
-        confirmationMessageBuilder.messageTarget = originalMessage.getMessageDetails().getDirection().getTarget();
 
-        return confirmationMessageBuilder;
-    }
-
-
-    public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessage(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
-        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
-
-        DomibusConnectorAction messageAction = createEvidenceAction(evidenceType);
-        confirmationMessageBuilder.setAction(messageAction);
-        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
-
-        return confirmationMessageBuilder;
-    }
+//    public ConfirmationMessageBuilder createConfirmationMessageBuilderFromBusinessMessage(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
+//        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
+//
+//        DomibusConnectorAction messageAction = createEvidenceAction(evidenceType);
+//        confirmationMessageBuilder.setAction(messageAction);
+//        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
+//
+//        return confirmationMessageBuilder;
+//    }
 
     public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
 
@@ -103,6 +103,22 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
             default:
                 throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }
+    }
+
+    public DomibusConnectorMessageConfirmation createConfirmation(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage businessMsg, DomibusConnectorRejectionReason reason, String details) {
+        return evidencesToolkit.createEvidence(evidenceType, businessMsg, reason, details);
+    }
+
+    public DomibusConnectorMessageConfirmation createNonDelivery(DomibusConnectorMessage originalMessage, DomibusConnectorRejectionReason deliveryEvidenceTimeout) {
+        return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage, deliveryEvidenceTimeout, deliveryEvidenceTimeout.getReasonText());
+    }
+
+    public DomibusConnectorMessageConfirmation createNonRetrieval(DomibusConnectorMessage originalMessage, DomibusConnectorRejectionReason deliveryEvidenceTimeout) {
+        return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_RETRIEVAL, originalMessage, deliveryEvidenceTimeout, deliveryEvidenceTimeout.getReasonText());
+    }
+
+    public DomibusConnectorMessageConfirmation createRelayRemmdFailure(DomibusConnectorMessage originalMessage, DomibusConnectorRejectionReason deliveryEvidenceTimeout) {
+        return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, originalMessage, deliveryEvidenceTimeout, deliveryEvidenceTimeout.getReasonText());
     }
 
 

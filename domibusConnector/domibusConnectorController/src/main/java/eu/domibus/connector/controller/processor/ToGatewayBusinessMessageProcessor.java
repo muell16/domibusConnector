@@ -1,9 +1,10 @@
 package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.controller.processor.steps.*;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
@@ -21,7 +22,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
  * and also wraps it into an asic container and delivers the
  * originalMessage to the gw
  */
-@Component //(ToGatewayBusinessMessageProcessor.BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
+@Component
 public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
 
     public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "ToGatewayBusinessMessageProcessor";
@@ -32,21 +33,21 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final BuildECodexContainerStep buildECodexContainerStep;
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep;
     private final MessageConfirmationStep messageConfirmationStep;
-    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+    private final ConfirmationCreatorService confirmationCreatorService;
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
 
     public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
                                              BuildECodexContainerStep buildECodexContainerStep,
                                              SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep,
                                              MessageConfirmationStep messageConfirmationStep,
-                                             CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl,
+                                             ConfirmationCreatorService confirmationCreatorService,
                                              SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink) {
         this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
         this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
         this.buildECodexContainerStep = buildECodexContainerStep;
         this.submitMessageToLinkStep = submitMessageToLinkStep;
         this.messageConfirmationStep = messageConfirmationStep;
-        this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
+        this.confirmationCreatorService = confirmationCreatorService;
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
@@ -60,16 +61,16 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             createNewBusinessMessageInDBStep.executeStep(message);
 
             //create confirmation
-            CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = createSubmissionAcceptanceEvidence(message);
+            DomibusConnectorMessageConfirmation submissionAcceptanceConfirmation = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
             //process created confirmation for message
-            messageConfirmationStep.processConfirmationForMessage(message, confirmationMessageWrapper.getMessageConfirmation());
+            messageConfirmationStep.processConfirmationForMessage(message, submissionAcceptanceConfirmation);
             //append confirmation to message
-            message.getTransportedMessageConfirmations().add(confirmationMessageWrapper.getMessageConfirmation());
+            message.getTransportedMessageConfirmations().add(submissionAcceptanceConfirmation);
 
             //submit message to GW
             submitMessageToLinkStep.submitMessage(message);
             //submit evidence message to BACKEND
-            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, confirmationMessageWrapper.getMessageConfirmation());
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
 
             LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed message with backendId [{}] to Link", message.getMessageDetails().getBackendMessageId());
@@ -77,8 +78,8 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
         } catch (DomibusConnectorEvidencesToolkitException ete) {
             LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
-            CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper errorMessage = createSubmissionRejection(message);
-            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, errorMessage.getMessageConfirmation());
+            DomibusConnectorMessageConfirmation submissionRejction = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER, "");
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionRejction);
 
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -87,25 +88,6 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
                     .setCause(ete)
                     .buildAndThrow();
         }
-    }
-
-    private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createSubmissionRejection(DomibusConnectorMessage message) {
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(message, DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper errorMessage = submissionAcceptanceConfirmationMessageBuilder
-                .switchFromToAttributes()
-                .withDirection(MessageTargetSource.BACKEND)
-                .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
-                .build();
-        return errorMessage;
-    }
-
-    private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createSubmissionAcceptanceEvidence(DomibusConnectorMessage message) {
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = submissionAcceptanceConfirmationMessageBuilder
-                .switchFromToAttributes()
-                .withDirection(MessageTargetSource.BACKEND)
-                .build();
-        return confirmationMessageWrapper;
     }
 
 }
