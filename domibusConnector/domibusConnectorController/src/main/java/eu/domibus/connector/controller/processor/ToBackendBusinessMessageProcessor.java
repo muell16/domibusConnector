@@ -116,7 +116,6 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 
 	private DomibusConnectorMessageConfirmation createRelayREMMDEvidence(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-		ConfirmationCreatorService.ConfirmationMessageBuilder wrappedMessageConfirmationBuilder = null;
 
 		try {
 			if(isAcceptance) {

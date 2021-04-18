@@ -4,7 +4,9 @@ public class ErrorCode {
 
     public static ErrorCode EVIDENCE_IGNORED_DUE_HIGHER_PRIORITY = new ErrorCode("E103", "The processed evidence is not relevant due another evidence with higher priority");
     public static ErrorCode EVIDENCE_IGNORED_MESSAGE_ALREADY_REJECTED = new ErrorCode("E101", "The processed evidence is ignored, because the business message is already in rejected state");
-    public static ErrorCode EVIDENCE_IGNORED_MESSAGE_ALREADY_CONFIRMED = new ErrorCode("E102", "The processed evidence is ignored, because the business message is already in confirmed state");
+
+    public static ErrorCode LINK_PARTNER_NOT_FOUND = new ErrorCode("L104", "The requested LinkPartner is not configured");
+    public static ErrorCode LINK_PARTNER_NOT_ACTIVE = new ErrorCode("L101", "The requested LinkPartner is not active");
 
     private final String errorCode;
     private final String description;
