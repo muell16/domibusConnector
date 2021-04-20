@@ -93,4 +93,7 @@ public class ConfirmationCreatorService {
         return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, originalMessage, deliveryEvidenceTimeout, deliveryEvidenceTimeout.getReasonText());
     }
 
+    public DomibusConnectorMessageConfirmation createDelivery(DomibusConnectorMessage originalMessage) {
+        return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY, originalMessage, null, null);
+    }
 }

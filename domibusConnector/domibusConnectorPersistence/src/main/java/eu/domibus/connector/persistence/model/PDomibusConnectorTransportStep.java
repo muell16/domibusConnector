@@ -43,6 +43,10 @@ public class PDomibusConnectorTransportStep {
     @Column(name = "TRANSPORT_ID")
     private TransportStateService.TransportId transportId;
 
+    @Column(name = "TRANSPORTED_MESSAGE")
+    @Lob
+    private String transportedMessage;
+
     /**
      * The message id of the system used to transport the message
      * eg. jms-message-id, webRequestNumber,...
@@ -151,5 +155,13 @@ public class PDomibusConnectorTransportStep {
 
     public void setStatusUpdates(List<PDomibusConnectorTransportStepStatusUpdate> statusUpdates) {
         this.statusUpdates = statusUpdates;
+    }
+
+    public String getTransportedMessage() {
+        return transportedMessage;
+    }
+
+    public void setTransportedMessage(String transportedMessage) {
+        this.transportedMessage = transportedMessage;
     }
 }

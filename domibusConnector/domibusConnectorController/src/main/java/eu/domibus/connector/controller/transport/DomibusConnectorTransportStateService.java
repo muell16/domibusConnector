@@ -1,18 +1,17 @@
 package eu.domibus.connector.controller.transport;
 
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
-import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.exceptions.EvidencePersistenceException;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
+import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
-import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isEvidenceMessage;
 
 @Service
 @Transactional
@@ -102,8 +100,8 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         transportStepPersistenceService.update(transportStep);
 
 
-        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportStep.getMessageId().getConnectorMessageId());
-        DomibusConnectorMessageId connectorMessageId = transportStep.getMessageId();
+        DomibusConnectorMessage message = transportStep.getTransportedMessage();
+
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have
             // a relation to connector message id yet...so cannot set transport state for them!
@@ -135,11 +133,12 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
         transportStep.setLinkPartnerName(linkPartnerName);
         transportStep.setCreated(LocalDateTime.now());
-        transportStep.setMessageId(new DomibusConnectorMessageId(message.getConnectorMessageIdAsString()));
+        transportStep.setTransportedMessage(message);
 
         transportStep = transportStepPersistenceService.createNewTransportStep(transportStep);
         LOGGER.debug("#createTransportFor:: created new transport step within database with id [{}]", transportStep.getTransportId());
         return transportStep.getTransportId();
+
     }
 
     @Override

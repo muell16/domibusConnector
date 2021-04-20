@@ -53,7 +53,7 @@ public class MessageConfirmationStep {
     /**
      * Handles the confirmation for a business message
      * See class level javadoc for details
-     * @param message - the bussiness message
+     * @param message - the business message
      * @param confirmation - the confirmation
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")

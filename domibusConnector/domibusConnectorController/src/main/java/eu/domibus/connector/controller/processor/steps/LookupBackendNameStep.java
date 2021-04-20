@@ -5,11 +5,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -31,12 +30,19 @@ public class LookupBackendNameStep implements MessageProcessStep {
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
+        if (!StringUtils.isEmpty(domibusConnectorMessage.getMessageDetails().getConnectorBackendClientName())) {
+            //return when already set
+            return true;
+        }
+
+        //TODO: lookup related messages...by conversation id....
+
         String defaultBackendName = dcMessageRoutingConfigurationProperties.getDefaultBackendName();
         if (dcMessageRoutingConfigurationProperties.isEnabled()) {
             LOGGER.debug("Backend routing is enabled");
-            Optional<String> first = dcMessageRoutingConfigurationProperties.getRules().stream()
+            Optional<String> first = dcMessageRoutingConfigurationProperties.getBackendRules().stream()
                     .filter(r -> r.getMatchClause().matches(domibusConnectorMessage))
-                    .map(DCMessageRoutingConfigurationProperties.RoutingRule::getBackendName)
+                    .map(DCMessageRoutingConfigurationProperties.RoutingRule::getLinkName)
                     .findFirst();
             if (first.isPresent()) {
                 String backendName = first.get();

@@ -177,13 +177,19 @@ public class ConnectorMessageFlowITCase {
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
-            DomibusConnectorMessage testMessage = deliverMessageFromGw(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
+            DomibusConnectorMessage testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
+            testMessage.getMessageDetails().getService().setService("service2");
+            submitFromGatewayToController(testMessage);
+
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
-            DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage toBackendDelivered = toBackendDeliveredMessages.take(); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-            assertThat(take).isNotNull();
+            assertThat(toBackendDelivered).isNotNull();
+            assertThat(toBackendDelivered.getMessageDetails().getConnectorBackendClientName())
+                    .as("service2 should delivered to backend2")
+                    .isEqualTo("backend2");
 
             DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.take();
             assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmations().get(0).getEvidenceType())
@@ -575,9 +581,11 @@ public class ConnectorMessageFlowITCase {
 
 //            LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
 
-            DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage rcvMsg = toBackendDeliveredMessages.take(); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-            assertThat(take).isNotNull();
+            assertThat(rcvMsg).isNotNull();
+            assertThat(rcvMsg.getMessageDetails().getConnectorBackendClientName()).isEqualTo("default_backend");
+            assertThat(rcvMsg.getMessageDetails().getGatewayName()).isEqualTo("test_gw");
 
             DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.take();
 
@@ -777,28 +785,28 @@ public class ConnectorMessageFlowITCase {
 
 
     private DomibusConnectorMessage deliverMessageFromGw(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) {
-        try {
-            DomibusConnectorMessage testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
-            submitFromGatewayToController(testMessage);
-            return testMessage;
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        DomibusConnectorMessage testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
+        submitFromGatewayToController(testMessage);
+        return testMessage;
     }
 
     public static final String FINAL_RECIPIENT = "final_recipient";
     public static final String ORIGINAL_SENDER = "original_sender";
 
-    private DomibusConnectorMessage createTestMessage(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) throws IOException {
-        DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/"+ msgFolder +"/"));
-        assertThat(testMessage).isNotNull();
-        testMessage.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
-        testMessage.getMessageDetails().setFinalRecipient(FINAL_RECIPIENT);
-        testMessage.getMessageDetails().setOriginalSender(ORIGINAL_SENDER);
-        testMessage.getMessageDetails().setEbmsMessageId(EBMS_ID);
-        testMessage.getMessageDetails().setBackendMessageId(null);
-        testMessage.setConnectorMessageId(new DomibusConnectorMessageId(CONNECTOR_MESSAGE_ID));
-        return testMessage;
+    private DomibusConnectorMessage createTestMessage(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID)  {
+        try {
+            DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
+            assertThat(testMessage).isNotNull();
+            testMessage.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+            testMessage.getMessageDetails().setFinalRecipient(FINAL_RECIPIENT);
+            testMessage.getMessageDetails().setOriginalSender(ORIGINAL_SENDER);
+            testMessage.getMessageDetails().setEbmsMessageId(EBMS_ID);
+            testMessage.getMessageDetails().setBackendMessageId(null);
+            testMessage.setConnectorMessageId(new DomibusConnectorMessageId(CONNECTOR_MESSAGE_ID));
+            return testMessage;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
 
