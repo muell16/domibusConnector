@@ -42,16 +42,13 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceJpaImpl.class);
 
     public static final String PROVIDER_NAME = "JPA";
-    
-    @Autowired
-    private DomibusConnectorMessageDao messageDao;
 
     @Autowired
     private DomibusConnectorBigDataDao bigDataDao;
 
+    //Entity manager is required to access LobCreator
     @PersistenceContext
     EntityManager entityManager;
-
 
     @Override
     public String getProviderName() {
