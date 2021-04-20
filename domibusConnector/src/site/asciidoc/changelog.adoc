@@ -220,5 +220,14 @@ because its loading ALL messages from DB
 * Deactivated config change/save/reload support due unclear semantics/preconditions
 * Fix typo within migration script at table: DC_TRANSPORT_STEP CONNECTOR_MESSSAGE_ID => should be CONNECTOR_MESSAGE_ID
 
+=== 4.2.9
 
+==== Changes
 
+* Multiple UI improvements, fixes
+
+=== 4.2.10
+
+==== Changes
+
+* Fix for Locking Problem which might occur on Mysql DBs under load

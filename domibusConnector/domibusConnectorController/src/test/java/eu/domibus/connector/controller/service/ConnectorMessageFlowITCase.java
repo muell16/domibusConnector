@@ -887,19 +887,27 @@ public class ConnectorMessageFlowITCase {
             fromBackendToConnectorSubmissionService.submitToController(msg);
 
 
-            DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage toGwDeliveredBusinessMessage = toGwDeliveredMessages.take(); //wait until a message is put into queue
 
-            assertThat(take).as("Gw must RCV message").isNotNull();
+            assertThat(toGwDeliveredBusinessMessage).as("Gw must RCV message").isNotNull();
 
-            assertThat(take.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
-            assertThat(take.getMessageConfirmations().get(0).getEvidenceType())
+            assertThat(toGwDeliveredBusinessMessage.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
+            assertThat(toGwDeliveredBusinessMessage.getMessageConfirmations().get(0).getEvidenceType())
                     .as("evidence must be of type submission acceptance")
                     .isEqualTo(SUBMISSION_ACCEPTANCE);
 
             //ASIC-S + token XML
-            assertThat(take.getMessageAttachments()).hasSize(2);
-            assertThat(take.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
-            assertThat(take.getMessageContent().getXmlContent()).isNotNull(); //business XML
+            assertThat(toGwDeliveredBusinessMessage.getMessageAttachments()).hasSize(2);
+            assertThat(toGwDeliveredBusinessMessage.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
+            assertThat(toGwDeliveredBusinessMessage.getMessageContent().getXmlContent()).isNotNull(); //business XML
+
+            assertThat(toGwDeliveredBusinessMessage.getMessageDetails().getToParty())
+                    .as("Parties must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+
+            assertThat(toGwDeliveredBusinessMessage.getMessageDetails().getFromParty())
+                    .as("Parties must be same")
+                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
 
 
             //check sent message in DB
