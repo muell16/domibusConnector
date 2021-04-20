@@ -47,215 +47,27 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         this.messageDao = messageDao;
     }
 
+    @Override
+    public void setConfirmationAsTransportedToGateway(DomibusConnectorMessageConfirmation confirmation) {
+        if (confirmation == null) {
+            throw new IllegalArgumentException("The confirmation is not allowed to be null!");
+        }
+        if (confirmation.getEvidenceDbId() == null) {
+            throw new IllegalArgumentException("The confirmation must already be persisted into DB and also the evidenceDbId must not be null!");
+        }
+        evidenceDao.setEvidenceDeliveredToGateway(confirmation.getEvidenceDbId());
+    }
 
-
-//    @Override
-//    @Transactional
-//    public void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessageId transport) {
-//        PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-//        if (dbMessage == null) {
-//            throw new IllegalStateException(String.format("The provided message [%s] does not exist in storage!", message));
-//        }
-//        this.persistEvidenceForMessageIntoDatabase(dbMessage, evidence, evidenceType, message.getConnectorMessageIdAsString());
-//    }
-
-//    /**
-//     * {@inheritDoc }
-//     */
-////    @Override
-//    @Transactional
-//    public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message is not allowed to be null!");
-//        }
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-//        Long dbMessageId = dbMessage.getId();
-//        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessageId);
-//        PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
-//        if (dbEvidence != null) {
-//            evidenceDao.setDeliveredToGateway(dbEvidence.getId());
-//        }
-//    }
-
-//    @Override
-//    public void setEvidenceDeliveredToGateway(DomibusConnectorMessage.DomibusConnectorMessageId transport) {
-//        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByConnectorMessageId(transport.getConnectorMessageId());
-//    }
-//
-//    @Override
-//    public void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage.DomibusConnectorMessageId transport) {
-//        evidenceDao.setDeliveredToBackend(transport.getConnectorMessageId());
-//    }
-
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    @Transactional
-//    public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message is not allowed to be null!");
-//        }
-//        LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
-//        PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-//        if (dbMessage != null) {
-//            this.evidenceDao.setDeliveredToBackend(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType));
-//        } else {
-//            LOGGER.error("Message [{}] does not exist in database, cannot set evidence as delivered!");
-//        }
-//    }
-
-//    @Override
-//    @Transactional
-//    public DomibusConnectorMessage persistEvidenceMessageForBusinessMessage(DomibusConnectorMessage message, DomibusConnectorMessage relatedMessage) {
-//        if (!DomainModelHelper.isEvidenceMessage(message)) {
-//            throw new IllegalArgumentException("The provided message is NOT an evidence message!");
-//        }
-//        if (message.getConnectorMessageIdAsString() == null) {
-//            throw new IllegalArgumentException("DomibusConnectorMessageId of EvidenceMessage is not allowed to be null!");
-//        }
-//        PDomibusConnectorMessage tranportDbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
-//        if (tranportDbMessage == null) {
-//            String error = String.format("The Transport message with id [{}] does not exist in DB!", message.getConnectorMessageIdAsString());
-//            throw new IllegalStateException(error);
-//        }
-//
-//        DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-//
-//        String relatedMessageEbmsOrBackendId = Stream.of(relatedMessage.getMessageDetails().getEbmsMessageId(), relatedMessage.getMessageDetails().getBackendMessageId())
-//                .filter(p -> p != null)
-//                .findFirst().get();
-//        DomibusConnectorMessageDirection relatedMessageDirection = relatedMessage.getMessageDetails().getDirection();
-//
-//        PDomibusConnectorMessage referencedMessage = messageDao.
-//                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(relatedMessageEbmsOrBackendId, relatedMessageDirection.getTarget())
-//                .orElse(null);
-//        if (referencedMessage == null) {
-//            String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
-//                    "Cannot persist confirmation [%s]", relatedMessageEbmsOrBackendId, relatedMessageDirection.getTarget(), confirmation);
-//            throw new EvidencePersistenceException(error);
-//
-//        }
-//        this.persistToTransportMessage(tranportDbMessage, referencedMessage, confirmation);
-//
-//        return message;
-//    }
-
-//    @Override
-//    public DomibusConnectorMessage persistEvidenceMessageForBusinessMessage(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessageId businessMessage) {
-//        if (!DomainModelHelper.isEvidenceMessage(evidenceMessage)) {
-//            throw new IllegalArgumentException("The provided message is NOT an evidence message!");
-//        }
-//
-//        return evidenceMessage;
-//    }
-
-//    @Transactional
-//    public DomibusConnectorMessage persistAsEvidence(DomibusConnectorMessage message) {
-//        if (!DomainModelHelper.isEvidenceMessage(message)) {
-//            throw new IllegalArgumentException("The provided message is NOT an evidence message!");
-//        }
-//        DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-//
-//        PDomibusConnectorMessage referencedMessage = null;
-//        String connectorId = message.getMessageDetails().getCausedBy();
-//        if (connectorId != null) {
-//            referencedMessage = messageDao.findOneByConnectorMessageId(connectorId);
-//            if (referencedMessage == null) {
-//                String error = String.format("No message with connectorId [%s] found" +
-//                        "Cannot persist confirmation [%s]", connectorId, confirmation);
-//                throw new EvidencePersistenceException(error);
-//            }
-//        } else if (referencedMessage == null) {
-//            String refToMessageId = message.getMessageDetails().getRefToMessageId();
-//            DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
-//            //as an evidence is always an answer to a previous message, the source and target are
-//            //switched for the message search
-//            MessageTargetSource referencedMessageTarget = direction.getSource();
-//            LOGGER.trace("Searching for message with ebmsId or backendId with [{}] and target [{}] in database, to assign evidence message to it", refToMessageId, referencedMessageTarget);
-//            referencedMessage = messageDao.
-//                    findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, referencedMessageTarget)
-//                    .orElse(null);
-//
-//            if (referencedMessage == null) {
-//                String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
-//                        "Cannot persist confirmation [%s]", refToMessageId, referencedMessageTarget, confirmation);
-//                throw new EvidencePersistenceException(error);
-//            }
-//        }
-//        this.persistEvidenceForMessageIntoDatabase(referencedMessage, confirmation.getEvidence(), confirmation.getEvidenceType(), message.getConnectorMessageId());
-//        return message;
-//    }
-
-
-//    @Transactional
-//    public void persistToTransportMessage(PDomibusConnectorMessage transportMessage, PDomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation c) {
-//        PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
-//
-////        EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
-////        dbEvidence = evidenceDao.findByMessageAndEvidenceType(dbMessage, dbEvidenceType);
-//
-//        dbEvidence.setBusinessMessage(businessMessage);
-////        dbEvidence.setTransportMessage(transportMessage);
-//        dbEvidence.setEvidence(MapperHelper.convertByteArrayToString(c.getEvidence()));
-//        dbEvidence.setType(EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(c.getEvidenceType()));
-//
-//        evidenceDao.save(dbEvidence);
-//    }
-
-//    @Nullable
-//    private PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
-//        for (PDomibusConnectorEvidence evidence : evidences) {
-//            if (evidence.getType().name().equals(evidenceType.name())) {
-//                return evidence;
-//            }
-//        }
-//        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
-//        return null;
-//    }
-
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    @Transactional
-//    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
-
-//    }
-
-//    @Transactional
-//    void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType, String transport) {
-//        PDomibusConnectorEvidence dbEvidence;
-//
-//        EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
-//        dbEvidence = evidenceDao.findByMessageAndEvidenceType(dbMessage, dbEvidenceType);
-//        if (dbEvidence == null) {
-//            LOGGER.trace("No evidence of type [{}] found in database for message [{}] - creating a new evidence of type [{}] in database!", evidenceType, dbMessage.getConnectorMessageId(), evidenceType);
-//            dbEvidence = new PDomibusConnectorEvidence();
-//        } else {
-//            LOGGER.trace("updating evidence [{}] in database", dbEvidence);
-//        }
-//
-//        dbEvidence.setBusinessMessage(dbMessage);
-//        if (evidence != null) {
-//            dbEvidence.setEvidence(MapperHelper.convertByteArrayToString(evidence));
-//        }
-//        dbEvidence.setType(dbEvidenceType);
-//
-//
-//        evidenceDao.save(dbEvidence);
-//    }
-
-//    private PDomibusConnectorMessage findMessageByMessage(DomibusConnectorMessage message) {
-//        if (message == null) {
-//            throw new IllegalArgumentException("message cannot be null!");
-//        }
-//        if (message.getConnectorMessageIdAsString() == null) {
-//            throw new IllegalArgumentException("the connectorId of the message must be not null!");
-//        }
-//        return messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
-//    }
-
+    @Override
+    public void setConfirmationAsTransportedToBackend(DomibusConnectorMessageConfirmation confirmation) {
+        if (confirmation == null) {
+            throw new IllegalArgumentException("The confirmation is not allowed to be null!");
+        }
+        if (confirmation.getEvidenceDbId() == null) {
+            throw new IllegalArgumentException("The confirmation must already be persisted into DB and also the evidenceDbId must not be null!");
+        }
+        evidenceDao.setEvidenceDeliveredToBackend(confirmation.getEvidenceDbId());
+    }
 
     @Override
     public void persistEvidenceMessageToBusinessMessage(DomibusConnectorMessage businessMessage, DomibusConnectorMessageId transportId, DomibusConnectorMessageConfirmation confirmation) {
@@ -284,7 +96,6 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         oneByConnectorMessageId.getRelatedEvidences().add(dbEvidence);
         dbEvidence.setBusinessMessage(oneByConnectorMessageId);
 
-        dbEvidence.setTransportMessageId(transportId.getConnectorMessageId());
         String evidenceXml = MapperHelper.convertByteArrayToString(confirmation.getEvidence());
         if (StringUtils.isEmpty(evidenceXml)) {
             throw new EvidencePersistenceException("Evidence string is not allowed to be null!");
@@ -294,6 +105,9 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 
         evidenceDao.save(dbEvidence);
 
+        //set DB id
+        confirmation.setEvidenceDbId(dbEvidence.getId());
+        //set confirmation as related
         businessMessage.addRelatedMessageConfirmation(confirmation);
     }
 }

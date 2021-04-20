@@ -150,7 +150,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 					WebMessageEvidence evidence = new WebMessageEvidence();
 					evidence.setEvidenceType(dbEvidence.getType().name());
 					evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());
-					evidence.setDeliveredToBackend(dbEvidence.getDeliveredToNationalSystem());
+					evidence.setDeliveredToBackend(dbEvidence.getDeliveredToBackend());
 					message.getEvidences().add(evidence);
 				}
 			}

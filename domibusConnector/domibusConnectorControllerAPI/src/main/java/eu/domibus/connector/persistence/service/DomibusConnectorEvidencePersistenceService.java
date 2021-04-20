@@ -14,11 +14,27 @@ import javax.validation.constraints.NotNull;
 public interface DomibusConnectorEvidencePersistenceService {
 
     /**
+     * Sets the confirmation as transported to gateway
+     *  the confirmation must have already been persisted to the database
+     * @param confirmation the confirmation, the dbEvidenceId must not be null!
+     */
+    void setConfirmationAsTransportedToGateway(DomibusConnectorMessageConfirmation confirmation);
+
+
+    /**
+     * Sets the confirmation as transported to backend
+     *  the confirmation must have already been persisted to the database
+     * @param confirmation the confirmation, the dbEvidenceId must not be null!
+     */
+    void setConfirmationAsTransportedToBackend(DomibusConnectorMessageConfirmation confirmation);
+
+    /**
      * Persist the confirmation to the business message
      * @param businessMessage - the business Message the confirmation should be associated with
      * @param transportId - the transportId used to transport the confirmation
-     * @param confirmation - the confirmation
-     * @return
+     * @param confirmation - the confirmation, within the confirmation the databaseId property will be updated
+     *                     with the value from DB
+     *
      */
     void persistEvidenceMessageToBusinessMessage(DomibusConnectorMessage businessMessage, DomibusConnectorMessageId transportId, DomibusConnectorMessageConfirmation confirmation);
 }

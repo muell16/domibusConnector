@@ -132,8 +132,6 @@ public interface DCMessagePersistenceService {
      */
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
-
-    //TODO: improve Exceptions
     /**
      * marks the message as rejected
      * @throws IllegalArgumentException is thrown, if the message is null,
@@ -156,12 +154,7 @@ public interface DCMessagePersistenceService {
      */
     void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
 
-
     DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message);
-
-    default void persistMessageIntoDatabase(DomibusConnectorMessage message) {
-        persistMessageIntoDatabase(message, message.getMessageDetails().getDirection());
-    }
 
     void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message);
 }
