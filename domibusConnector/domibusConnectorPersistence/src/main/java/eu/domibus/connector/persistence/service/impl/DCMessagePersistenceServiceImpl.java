@@ -279,13 +279,10 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
     @Override
     @Transactional
-    public DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message) {
+    public void updateMessageDetails(DomibusConnectorMessage message) {
         PDomibusConnectorMessage messageByMessage = this.findMessageByMessage(message);
         this.internalMessageInfoPersistenceService.mergeMessageInfo(message, messageByMessage);
-        return message;
     }
-
-
 
 
     @Override
