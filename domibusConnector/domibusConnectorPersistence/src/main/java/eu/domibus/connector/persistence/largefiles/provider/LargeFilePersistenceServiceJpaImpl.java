@@ -236,27 +236,20 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
             String messageId = bigData.getConnectorMessageId();
-            Optional<PDomibusConnectorMessage> byId = messageDao.findOneByConnectorMessageId(messageId);
-            //TODO: update this...
-            if (byId.isPresent()) {
-                DomibusConnectorMessageId connectorMessageId =
-                        new DomibusConnectorMessageId(byId.get().getConnectorMessageId());
+            DomibusConnectorMessageId connectorMessageId = new DomibusConnectorMessageId(messageId);
 
-                if (!map.containsKey(connectorMessageId)) {
-                    map.put(connectorMessageId, new ArrayList<>());
-                }
-
-                List<LargeFileReference> dataRefList = map.get(connectorMessageId);
-                JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
-                reference.setStorageProviderName(this.getProviderName());
-                reference.setReadable(false);
-                reference.setWriteable(false);
-                reference.setStorageIdReference(Long.toString(bigData.getId()));
-                dataRefList.add(reference);
-
-            } else {
-                LOGGER.error(String.format("Found data reference [%s] which is not linked to a message with dbId [%s]! Possibly corrupted data!", bigData, messageId));
+            if (!map.containsKey(connectorMessageId)) {
+                map.put(connectorMessageId, new ArrayList<>());
             }
+
+            List<LargeFileReference> dataRefList = map.get(connectorMessageId);
+            JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
+            reference.setStorageProviderName(this.getProviderName());
+            reference.setReadable(false);
+            reference.setWriteable(false);
+            reference.setStorageIdReference(Long.toString(bigData.getId()));
+            dataRefList.add(reference);
+
         });
         return map;
     }
@@ -280,9 +273,12 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     private long convertStorageIdReferenceToDbId(String storageRef) {
-        //TODO: error handling!!!
-        long l = Long.parseLong(storageRef);
-        return l;
+        try {
+            return Long.parseLong(storageRef);
+        } catch (NumberFormatException nfe) {
+            String error = String.format("The provided storage reference [%s] cannot be converted to a big data database reference", storageRef);
+            throw new IllegalStateException(error, nfe);
+        }
     }
 
     private class DbBackedOutputStream extends ByteArrayOutputStream {

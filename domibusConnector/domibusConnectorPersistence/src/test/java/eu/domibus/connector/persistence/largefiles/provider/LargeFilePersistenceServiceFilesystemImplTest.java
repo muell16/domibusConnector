@@ -34,21 +34,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
 
     private static final byte[] input1 = "Hallo Welt, ich bin ein Testtext".getBytes();
 
-//    private static File testStorageLocation;
-
     private File testStorageLocation;
-
-//    @BeforeClass
-//    public static void initTests() throws IOException {
-//        testStorageLocation = new File("./target/tests/" + DomibusConnectorBigDataPersistenceServiceFilesystemImplTest.class.getSimpleName() +  "/fsstorage/");
-//        FileSystemUtils.deleteRecursively(testStorageLocation);
-//        testStorageLocation.mkdirs();
-//
-//        File src = new File("./target/test-classes/testdata/fsstorage/");
-//
-//        //copy testdata to testfolder
-//        FileSystemUtils.copyRecursively(src, testStorageLocation);
-//    }
 
     @BeforeEach
     public void setUp(TestInfo testInfo) throws IOException {

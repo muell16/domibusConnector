@@ -154,7 +154,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
             dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
             dbEvidence.setDeliveredToGateway(null);
             dbEvidence.setDeliveredToBackend(null);
-            dbEvidence.setTransportMessageId("testid");
+//            dbEvidence.setTransportMessageId("testid");
 
             evidenceDao.save(dbEvidence);
         });
