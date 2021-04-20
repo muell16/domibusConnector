@@ -121,7 +121,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     @Transactional
     public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
         JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
         reference.setStorageProviderName(this.getProviderName());
@@ -137,11 +136,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         bigData.setLastAccess(new Date());
 
         DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
-//        try {
-//            StreamUtils.copy(in, outputStream);
-//        } catch (IOException e1) {
-//            LOGGER.error("Exception copy streams for big data to database!", e1);
-//        }
         byte[] toByteArray = outputStream.toByteArray();
 
         Session hibernateSession = entityManager.unwrap(Session.class);
@@ -168,7 +162,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-//            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
             JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
             reference.setReadable(false);
@@ -200,8 +193,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             }catch (Exception e) {
             	LOGGER.error("Exception saving big data to database!", e);
             }
-
-//            reference.setOutputStream(outputStream);
 
             reference.setStorageIdReference(Long.toString(bigData.getId()));
             return reference;
