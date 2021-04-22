@@ -315,10 +315,8 @@ CREATE TABLE DOMIBUS_CONNECTOR_PROPERTY
 create table DC_LINK_CONFIGURATION
 (
     ID          DECIMAL(10, 0) not null,
-    CONFIG_NAME VARCHAR2(255)  not null
-        constraint UN_DC_LINK_CONF_NAME_01 unique,
-    LINK_IMPL   VARCHAR2(255),
-    constraint PK_DC_LINK_CONFIGURATION primary key (ID)
+    CONFIG_NAME VARCHAR2(255)  not null,
+    LINK_IMPL   VARCHAR2(255)
 );
 
 create table DC_LINK_CONFIG_PROPERTY
@@ -597,6 +595,9 @@ drop table BKP_DC_MESSAGE cascade constraints;
 commit;
 
 -- #################### 5/6 ADD the constraints ####################
+
+alter table DC_LINK_CONFIGURATION add constraint PK_DC_LINK_CONFIGURATION primary key (ID);
+alter table DC_LINK_CONFIGURATION add constraint UN_DC_LINK_CONF_NAME_01 unique (CONFIG_NAME);
 
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
     ADD CONSTRAINT PK_DC_MESSAGE PRIMARY KEY (ID);
