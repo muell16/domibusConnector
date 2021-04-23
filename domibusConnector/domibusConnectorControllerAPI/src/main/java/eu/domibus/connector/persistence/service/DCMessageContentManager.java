@@ -11,10 +11,7 @@ import javax.annotation.Nonnull;
 /**
  * Takes a message and persists all big data of this message into
  * storage
- * OR
- * Takes a message and activates all references {@link LargeFileReference}
- * for streaming from storage
- * 
+ *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  * 
  */

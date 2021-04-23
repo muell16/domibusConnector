@@ -117,21 +117,14 @@ public final class DomibusConnectorMessageBuilder {
      * @return the created DomibusConnectorMessage
      */
     public DomibusConnectorMessage build() {
-        DomibusConnectorMessage message;
+        DomibusConnectorMessage message = new DomibusConnectorMessage();
         if (this.messageDetails == null) {
             throw new IllegalArgumentException("Setting message details is required!");
         }        
-        if (this.messageContent != null) {
-            message = new DomibusConnectorMessage("", this.messageDetails, this.messageContent);
-        } else if (this.transportedConfirmations.size() > 0) {
-            DomibusConnectorMessageConfirmation confirmation = this.transportedConfirmations.remove(0);
-            message = new DomibusConnectorMessage("", this.messageDetails, confirmation);
-        } else {
-            throw new IllegalArgumentException("Either messageContent or a messageConfirmation must be set!");
-        }
+        message.setMessageDetails(this.messageDetails);
         message.setConnectorMessageId(this.connectorMessageId);
         message.setMessageLaneId(this.messageLaneId);
-
+        message.setMessageContent(this.messageContent);
         message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
         message.getMessageProcessErrors().addAll(this.messageErrors);
@@ -194,8 +187,5 @@ public final class DomibusConnectorMessageBuilder {
         this.relatedMessageConfirmations.add(c);
         return this;
     }
-
-
-
 
 }

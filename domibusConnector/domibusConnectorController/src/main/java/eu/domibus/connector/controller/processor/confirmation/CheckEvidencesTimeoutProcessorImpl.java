@@ -124,6 +124,9 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
     private Instant getDeliveryTime(DomibusConnectorMessage message) {
         DomibusConnectorMessageDetails details = message.getMessageDetails();
+        if (details.getDirection() == null) {
+            throw new IllegalArgumentException("Message direction is not set!");
+        }
         Date deliveryDate;
         switch (details.getDirection()) {
             case GATEWAY_TO_BACKEND:

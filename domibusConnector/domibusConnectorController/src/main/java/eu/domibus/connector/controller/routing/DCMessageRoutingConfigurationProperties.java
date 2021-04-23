@@ -10,8 +10,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
-@ConditionalOnProperty(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX,
-        name = "enabled", havingValue = "true", matchIfMissing = true)
 @Component
 @ConfigurationProperties(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX)
 public class DCMessageRoutingConfigurationProperties {

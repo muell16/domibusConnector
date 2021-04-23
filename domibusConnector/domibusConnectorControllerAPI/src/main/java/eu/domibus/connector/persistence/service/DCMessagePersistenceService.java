@@ -160,5 +160,13 @@ public interface DCMessagePersistenceService {
 
     void updateMessageDetails(DomibusConnectorMessage message);
 
+    /**
+     * stores a business messsage into database
+     *  -) the message details
+     *  -) the message content
+     *  -) the message attachments
+     *
+     * @param message - the connector message
+     */
     void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message);
 }

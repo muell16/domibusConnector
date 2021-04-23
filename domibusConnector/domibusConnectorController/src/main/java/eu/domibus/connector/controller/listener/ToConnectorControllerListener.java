@@ -63,11 +63,11 @@ public class ToConnectorControllerListener {
         } catch (PersistenceException persistenceException) {
             //cannot recover here: put into DLQ!
             LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Persistence Error! Check Dead Letter Queue and technical logs for details!", persistenceException);
-            toConnectorQueue.putOnErrorQueue(message);
+            throw persistenceException;
         } catch (Exception anyOtherException) {
             //cannot recover here: put into DLQ!
             LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Check Dead Letter Queue and technical logs for details!", anyOtherException);
-            toConnectorQueue.putOnErrorQueue(message);
+            throw anyOtherException;
         }
     }
 

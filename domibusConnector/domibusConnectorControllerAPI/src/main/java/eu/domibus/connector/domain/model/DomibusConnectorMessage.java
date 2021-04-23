@@ -239,4 +239,7 @@ public class DomibusConnectorMessage implements Serializable {
         return builder.toString();
 	}
 
+	public void setMessageContent(DomibusConnectorMessageContent messageContent) {
+		this.messageContent = messageContent;
+	}
 }
