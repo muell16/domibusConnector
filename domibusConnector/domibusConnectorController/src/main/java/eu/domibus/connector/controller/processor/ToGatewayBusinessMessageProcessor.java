@@ -3,7 +3,6 @@ package eu.domibus.connector.controller.processor;
 import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -35,19 +34,22 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final MessageConfirmationStep messageConfirmationStep;
     private final ConfirmationCreatorService confirmationCreatorService;
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
+    private final LookupGatewayNameStep lookupGatewayNameStep;
 
     public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
                                              BuildECodexContainerStep buildECodexContainerStep,
                                              SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep,
                                              MessageConfirmationStep messageConfirmationStep,
                                              ConfirmationCreatorService confirmationCreatorService,
-                                             SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink) {
+                                             SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
+                                             LookupGatewayNameStep lookupGatewayNameStep) {
         this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
         this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
         this.buildECodexContainerStep = buildECodexContainerStep;
         this.submitMessageToLinkStep = submitMessageToLinkStep;
         this.messageConfirmationStep = messageConfirmationStep;
         this.confirmationCreatorService = confirmationCreatorService;
+        this.lookupGatewayNameStep = lookupGatewayNameStep;
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
@@ -56,6 +58,9 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
             //buildEcodexContainerStep
             buildECodexContainerStep.executeStep(message);
+
+            //set gateway name
+            lookupGatewayNameStep.executeStep(message);
 
             //persistence step
             createNewBusinessMessageInDBStep.executeStep(message);

@@ -61,15 +61,15 @@ public class DCGatewayPullPlugin implements LinkPlugin {
                 .run();
 
 
+        this.submitToLink = childCtx.getBean(SubmitToLinkPartner.class);
+
         ActiveLink activeLink = new ActiveLink();
         activeLink.setLinkConfiguration(linkConfiguration);
         activeLink.setChildContext(childCtx);
+        activeLink.setSubmitToLink(submitToLink);
+        activeLink.setLinkPlugin(this);
 
-        SubmitToLinkPartner bean = childCtx.getBean(SubmitToLinkPartner.class);
-        this.submitToLink = bean;
-
-        PullFromLinkPartner pullFromLink = childCtx.getBean(PullFromLinkPartner.class);
-        this.pullFromLink = pullFromLink;
+        this.pullFromLink = childCtx.getBean(PullFromLinkPartner.class);
 
         return activeLink;
     }

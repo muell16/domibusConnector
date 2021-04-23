@@ -162,23 +162,24 @@ public class ITCaseTestContext {
         public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
             interceptor.deliveryToBackend(message);
 
-            LOGGER.info("Delivered Message [{}] to Backend");
+            LOGGER.info("Delivered Message [{}] to Backend", message);
 
 
-            TransportStateService.TransportId dummyBackend = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+            TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
             TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-            state.setConnectorTransportId(dummyBackend);
+            state.setConnectorTransportId(transportId);
             state.setStatus(TransportState.ACCEPTED);
 
-            java.lang.String backendId = "BACKEND_" + UUID.randomUUID().toString();
-            state.setRemoteMessageId(backendId); //assigned backend message id
+
+            java.lang.String backendMsgId = "BACKEND_" + UUID.randomUUID().toString();
+            state.setRemoteMessageId(backendMsgId); //assigned backend message id
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStateService.updateTransportToBackendClientStatus(dummyBackend, state);
+            transportStateService.updateTransportToBackendClientStatus(transportId, state);
 
             DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)
                     .build();
-            msg.getMessageDetails().setBackendMessageId(backendId);
+            msg.getMessageDetails().setBackendMessageId(backendMsgId);
 
             toBackendDeliveredMessages.add(msg);
 

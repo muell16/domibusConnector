@@ -82,7 +82,8 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
                 submitConfirmationAsEvidenceMessageStep.submitSameDirection(null, businessMsg, transportedConfirmation);
             }
         } catch (DCEvidenceNotRelevantException dcEvidenceNotRelevantException) {
-            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The processed evidence will be ignored due", dcEvidenceNotRelevantException);
+            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, dcEvidenceNotRelevantException.getMessage());
+            LOGGER.debug(dcEvidenceNotRelevantException.getMessage(), dcEvidenceNotRelevantException);
         }
 
     }

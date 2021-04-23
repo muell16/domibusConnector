@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.service;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -131,7 +132,7 @@ public class DomibusConnectorLinkCreatorConfigurationService {
 
         lp.setLinkType(LinkType.GATEWAY);
         lp.setLinkConfiguration(gateway.getLinkConfig());
-        lp.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(DCActiveLinkManagerService.DEFAULT_GW_LINK_NAME));
+        lp.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(DomibusConnectorDefaults.DEFAULT_GATEWAY_NAME));
         LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Activating gateway link configuration [{}]", lp);
         this.activateLink(lp);
 

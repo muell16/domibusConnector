@@ -95,15 +95,19 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
         WsBackendPluginLinkPartnerConfigurationProperties linkPartnerConfig = bindingResult.get();
 
-
+        ConfigurableApplicationContext childContext = activeLink.getChildContext();
+        if (childContext == null) {
+            throw new LinkPluginException("Cannot start LinkPartner, because context of Link is null");
+        }
         WsBackendPluginActiveLinkPartner activeLinkPartner = new WsBackendPluginActiveLinkPartner();
         activeLinkPartner.setLinkPartner(linkPartner);
-        activeLinkPartner.setChildContext(activeLink.getChildContext());
+        activeLinkPartner.setChildContext(childContext);
         activeLinkPartner.setParentLink(activeLink);
         activeLinkPartner.setConfig(linkPartnerConfig);
+        activeLinkPartner.setSubmitToLink(childContext.getBean(SubmitToLinkPartner.class));
 
         //register certificate DN for authentication
-        WsActiveLinkPartnerManager bean = activeLink.getChildContext().getBean(WsActiveLinkPartnerManager.class);
+        WsActiveLinkPartnerManager bean = childContext.getBean(WsActiveLinkPartnerManager.class);
         bean.registerDn(activeLinkPartner);
 
         LOGGER.info(CONFIG, "Successfully enabled LinkPartner [{}]", linkPartner);
@@ -117,7 +121,7 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
     @Override
     public SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner) {
-        return linkPartner.getChildContext().getBean(SubmitToLinkPartner.class);
+        return linkPartner.getChildContext().map( ctx -> ctx.getBean(SubmitToLinkPartner.class)).orElse(null);
     }
 
     @Override

@@ -1050,7 +1050,7 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
 
             String newEbmsId = take.getMessageDetails().getEbmsMessageId();
-            LOGGER.info("Message reached toGwDeliveredMessages Queue with id [{}]",take.getConnectorMessageIdAsString());
+            LOGGER.info("Message reached toGwDeliveredMessages Queue with id [{}], ebmsid [{}]",take.getConnectorMessageId(), newEbmsId);
 
             DomibusConnectorMessage toBackendEvidence = toBackendDeliveredMessages.take();
             assertThat(toBackendEvidence).isNotNull();
@@ -1059,7 +1059,7 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
-            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
+            submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             //ASSERT
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();

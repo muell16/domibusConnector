@@ -31,8 +31,6 @@ public class DCActiveLinkManagerService {
 
     private final static Logger LOGGER = LogManager.getLogger(DCActiveLinkManagerService.class);
 
-    public static final String DEFAULT_GW_LINK_NAME = "default_GW";
-
     private final Scheduler scheduler;
     private final List<LinkPlugin> linkPluginFactories;
 
@@ -49,14 +47,14 @@ public class DCActiveLinkManagerService {
 
     }
 
-    SubmitToLinkPartner getSubmitToLinkPartner(String linkName) {
+    Optional<SubmitToLinkPartner> getSubmitToLinkPartner(String linkName) {
         if (StringUtils.isEmpty(linkName)) {
             throw new IllegalArgumentException("Provided link name is empty!");
         }
         return getSubmitToLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
     }
 
-    SubmitToLinkPartner getSubmitToLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+    Optional<SubmitToLinkPartner> getSubmitToLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
         if (activeLinkPartner == null) {
             String error = String.format("No linkPartner with name %s available", linkPartnerName);
@@ -64,7 +62,7 @@ public class DCActiveLinkManagerService {
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
         SubmitToLinkPartner submitToLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getSubmitToLink(activeLinkPartner);
-        return submitToLinkBean;
+        return Optional.of(submitToLinkBean);
     }
 
     public Optional<PullFromLinkPartner> getPullFromLinkPartner(String linkName) {

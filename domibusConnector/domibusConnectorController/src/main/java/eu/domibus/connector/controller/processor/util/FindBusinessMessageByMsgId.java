@@ -42,7 +42,8 @@ public class FindBusinessMessageByMsgId {
             return messageByEbmsIdOrBackendIdAndDirection.get();
         }
 
-        throw new DomibusConnectorMessageException(refMessage, FindBusinessMessageByMsgId.class, "Was not able to find related message!");
+        String error = String.format("Was not able to find related message for refToEbmsId [%s] or refToBackendId [%s] and direction [%s]!", refToEbmsId, refToBackendId, direction);
+        throw new DomibusConnectorMessageException(refMessage, FindBusinessMessageByMsgId.class, error);
 
     }
 

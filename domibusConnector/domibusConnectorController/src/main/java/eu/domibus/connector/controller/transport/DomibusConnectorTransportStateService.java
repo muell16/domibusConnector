@@ -67,6 +67,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
                 messagePersistenceService.setMessageDeliveredToNationalSystem(m);
             }
             m.getTransportedMessageConfirmations().forEach(evidencePeristenceService::setConfirmationAsTransportedToBackend);
+            LOGGER.debug("Successfully updated message [{}]", m);
         });
     }
 
@@ -75,8 +76,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
 
-    @Transactional
-    public void updateTransportStatus(TransportId transportId, DomibusConnectorTransportState transportState, SuccessHandler successHandler) {
+    private void updateTransportStatus(TransportId transportId, DomibusConnectorTransportState transportState, SuccessHandler successHandler) {
         if (transportId == null) {
             throw new IllegalArgumentException("TransportId is not allowed to be null!");
         }
@@ -121,13 +121,11 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
 
 
     @Override
-    @Transactional
     public void updateTransportStatus(DomibusConnectorTransportState transportState) {
         this.updateTransportStatus(transportState.getConnectorTransportId(), transportState, (m) -> {});
     }
 
     @Override
-    @Transactional
     public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
 
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
@@ -141,12 +139,6 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
 
     }
 
-    @Override
-    @Transactional
-    public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        //TODO: check for active transport...
-        return createTransportFor(message, linkPartnerName);
-    }
 
     @Override
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {

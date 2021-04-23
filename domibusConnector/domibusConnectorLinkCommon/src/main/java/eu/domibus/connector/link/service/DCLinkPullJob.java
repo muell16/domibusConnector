@@ -34,6 +34,9 @@ public class DCLinkPullJob implements Job {
             pullFromLinkPartner.ifPresent((p) -> p.pullMessagesFrom(new DomibusConnectorLinkPartner.LinkPartnerName(linkPartnerName)));
 
         }
+        //TODO: handle the case:
+        //-) pull job still exists in db, but Link was removed from configuration offline
+        //job tries to pull from nonexistant linkpartner
     }
 
 }

@@ -87,7 +87,7 @@ public class PDomibusConnectorMessage implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @OneToOne(mappedBy = "message", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private PDomibusConnectorMessageInfo messageInfo;
 
     /**

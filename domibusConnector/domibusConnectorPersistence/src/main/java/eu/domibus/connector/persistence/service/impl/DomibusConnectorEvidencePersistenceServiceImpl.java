@@ -86,7 +86,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
             List<PDomibusConnectorEvidence> byMessageAndEvidenceType = evidenceDao.findByMessageAndEvidenceType(oneByConnectorMessageId, dbEvidenceType);
             if (byMessageAndEvidenceType.size() >= confirmation.getEvidenceType().getMaxOccurence() &&
                     byMessageAndEvidenceType != null) {
-                String error = String.format("There is already a evidence persisted of type [{}] for message [{}]", dbEvidenceType, oneByConnectorMessageId);
+                String error = String.format("There is already a evidence persisted of type [%s] for message [%s]", dbEvidenceType, oneByConnectorMessageId);
                 throw new DuplicateEvidencePersistenceException(error);
             }
         }

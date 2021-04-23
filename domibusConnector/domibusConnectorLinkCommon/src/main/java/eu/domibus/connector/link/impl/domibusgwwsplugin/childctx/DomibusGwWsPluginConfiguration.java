@@ -13,8 +13,6 @@ public class DomibusGwWsPluginConfiguration {
 
     public static final String DOMIBUS_GATEWAY_WS_PLUGIN_PROFILE = "link.domibusgatewaywsplugin";
 
-    @Autowired
-    DomibusGwWsPluginConfigurationProperties config;
 
     @Bean
     DomibusGwWsPluginBackendInterfaceFactory domibusGwWsPluginBackendInterfaceFactory() {

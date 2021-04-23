@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import lombok.Data;
@@ -24,10 +25,10 @@ public class DCMessageRoutingConfigurationProperties {
     private List<RoutingRule> gatewayRules = new ArrayList<>();
 
     @NotBlank
-    private String defaultBackendName;
+    private String defaultBackendName = DomibusConnectorDefaults.DEFAULT_BACKEND_NAME;
 
     @NotBlank
-    private String defaultGatewayName;
+    private String defaultGatewayName = DomibusConnectorDefaults.DEFAULT_GATEWAY_NAME;
 
     /**
      * Backend name of the connector itself,

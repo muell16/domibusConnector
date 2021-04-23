@@ -46,17 +46,14 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
             }
 
         } else {
-            throw new RuntimeException(java.lang.String.format("No LinkPartner found with name [%s]", linkPartnerName));
+            throw new DomibusConnectorSubmitToLinkException(message, java.lang.String.format("No LinkPartner found with name [%s]", linkPartnerName));
         }
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     void makeMessageReadyForPull(DomibusConnectorMessage message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
-        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
+//        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
-        TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
-
-        //TODO: save message for pull...in own db? or queue?
+        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
 
         TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
         state.setStatus(TransportState.PENDING);
@@ -65,11 +62,10 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
 
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     void pushMessage(DomibusConnectorMessage message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
-        TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
+        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
 
         TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
         DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);

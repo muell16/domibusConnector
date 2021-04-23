@@ -60,6 +60,9 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
 
+			//lookup correct backend name
+			lookupBackendNameStep.executeStep(incomingMessage);
+
 			//persistMessage
 			createNewBusinessMessageInDBStep.executeStep(incomingMessage);
 
@@ -76,9 +79,6 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
-
-			//lookup correct backend name
-			lookupBackendNameStep.executeStep(incomingMessage);
 
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
 

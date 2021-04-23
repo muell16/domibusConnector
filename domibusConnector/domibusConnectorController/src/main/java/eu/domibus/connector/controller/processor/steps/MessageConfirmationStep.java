@@ -10,6 +10,7 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.DuplicateEvidencePersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
@@ -58,15 +59,19 @@ public class MessageConfirmationStep {
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
-        if (!DomainModelHelper.isBusinessMessage(message)) {
-            throw new IllegalArgumentException("message must be a business message!");
+        try {
+            if (!DomainModelHelper.isBusinessMessage(message)) {
+                throw new IllegalArgumentException("message must be a business message!");
+            }
+
+            LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), message.getConnectorMessageId());
+            evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
+            message.getRelatedMessageConfirmations().add(confirmation);
+
+            this.confirmRejectMessage(confirmation.getEvidenceType(), message);
+        } catch (DuplicateEvidencePersistenceException e) {
+            throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_DUPLICATE, e);
         }
-
-        LOGGER.debug("Adding confirmation of type [{}] to business message [{}]",  confirmation.getEvidenceType(), message.getConnectorMessageId());
-        evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
-        message.getRelatedMessageConfirmations().add(confirmation);
-
-        this.confirmRejectMessage(confirmation.getEvidenceType(), message);
 
     }
 

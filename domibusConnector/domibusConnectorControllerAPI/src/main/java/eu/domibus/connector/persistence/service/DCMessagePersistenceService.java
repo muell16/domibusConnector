@@ -22,7 +22,16 @@ public interface DCMessagePersistenceService {
 
     boolean checkMessageRejected(DomibusConnectorMessage message);
 
-    //TODO: improve Exceptions
+    /**
+     * marks the message as rejected
+     * @throws IllegalArgumentException is thrown, if the message is null,
+     *  or the message does not contain a connector id
+     * @throws RuntimeException - if the message is not successfully marked as
+     * rejected
+     * @param message - the message
+     */
+    void rejectMessage(DomibusConnectorMessage message);
+
     /**
      * marks the message as confirmed
      * @throws IllegalArgumentException  is thrown, if the message is null,
@@ -120,6 +129,7 @@ public interface DCMessagePersistenceService {
      * @return the message with eventually updated fields
      * @throws PersistenceException in case of an error
      */
+    @Deprecated
     DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
     /**
@@ -134,15 +144,7 @@ public interface DCMessagePersistenceService {
     @Deprecated
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
-    /**
-     * marks the message as rejected
-     * @throws IllegalArgumentException is thrown, if the message is null,
-     *  or the message does not contain a connector id
-     * @throws RuntimeException - if the message is not successfully marked as
-     * rejected
-     * @param message - the message
-     */
-    void rejectMessage(DomibusConnectorMessage message);
+
 
     /**
      * Marks the message as delivered to the gateway
