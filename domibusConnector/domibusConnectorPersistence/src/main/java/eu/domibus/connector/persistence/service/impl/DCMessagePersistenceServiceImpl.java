@@ -119,6 +119,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         }
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
+        this.msgContentService.saveMessagePayloads(message);
     }
 
 

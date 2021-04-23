@@ -25,8 +25,7 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
     @Mock
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    @Mock
-    private DomibusConnectorActionPersistenceService actionPersistenceService;
+
     @Mock
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
@@ -38,9 +37,6 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
         return evidencePersistenceService;
     }
 
-    public DomibusConnectorActionPersistenceService getMockedActionPersistenceService() {
-        return actionPersistenceService;
-    }
 
     public DomibusConnectorMessageIdGenerator getMockedMessageIdGenerator() {
         return messageIdGenerator;
@@ -50,7 +46,7 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
 
         MockitoAnnotations.initMocks(this);
 
-        this.actionPersistenceService = new DomibusConnectorActionPersistenceServiceImpl();
+
 
         DomibusConnectorActionDao actionDao = Mockito.mock(DomibusConnectorActionDao.class);
 //        Mockito.when(actionDao.findById(any(String.class))).thenAnswer(
@@ -61,8 +57,6 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
 //                    return Optional.of(a);
 //                }
 //        );
-        ((DomibusConnectorActionPersistenceServiceImpl) this.actionPersistenceService).setActionDao(actionDao);
-
 
         Mockito.when(evidencesToolkit.createEvidence(any(), any(), any(), any())).thenReturn(DomainEntityCreator.createMessageDeliveryConfirmation());
 
