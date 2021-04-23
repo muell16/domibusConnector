@@ -19,11 +19,11 @@ import eu.domibus.connector.web.forms.FormsUtil;
 
 
 //@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!
-@Component
-@UIScope
-@Route(value = GatewayConfiguration.ROUTE, layout = ConfigurationLayout.class)
-@ConfigurationTab(title = "Gateway Configuration")
-@RoleRequired(role = "ADMIN")
+//@Component
+//@UIScope
+//@Route(value = GatewayConfiguration.ROUTE, layout = ConfigurationLayout.class)
+//@ConfigurationTab(title = "Gateway Configuration")
+//@RoleRequired(role = "ADMIN")
 public class GatewayConfiguration extends VerticalLayout {
 
 	public static final String ROUTE = "gwlinkws";
