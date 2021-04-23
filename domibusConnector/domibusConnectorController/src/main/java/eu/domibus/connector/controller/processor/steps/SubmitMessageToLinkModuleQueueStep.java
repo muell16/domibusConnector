@@ -6,16 +6,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
-
-import javax.jms.Queue;
-
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_LINK_QUEUE_BEAN;
 
 @Service
 public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {

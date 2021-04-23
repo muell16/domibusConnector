@@ -23,6 +23,8 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
+import javax.transaction.Transactional;
+
 @Component(ToBackendBusinessMessageProcessor.GW_TO_BACKEND_MESSAGE_PROCESSOR)
 public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
 

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerEndpoint;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
@@ -20,16 +21,19 @@ import org.springframework.jms.support.converter.MappingJackson2MessageConverter
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 import org.springframework.messaging.converter.SmartMessageConverter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.validation.Validator;
 
 @EnableJms
 @Configuration
+@EnableTransactionManagement
 @EnableConfigurationProperties(QueuesConfigurationProperties.class)
-public class QueuesConfiguration {
+public class JmsConfiguration {
 
     public static final String TO_CONNECTOR_QUEUE_BEAN = "toConnectorQueueBean";
     public static final String TO_CONNECTOR_ERROR_QUEUE_BEAN = "toConnectorErrorQueueBean";

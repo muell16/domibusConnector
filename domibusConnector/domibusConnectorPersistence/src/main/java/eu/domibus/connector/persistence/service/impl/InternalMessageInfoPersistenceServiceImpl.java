@@ -24,46 +24,16 @@ public class InternalMessageInfoPersistenceServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalMessageInfoPersistenceServiceImpl.class);
 
-    private DomibusConnectorMessageInfoDao messageInfoDao;
-    private DomibusConnectorPModePersistenceService pModeService;
-//    private DomibusConnectorPartyDao partyDao;
-//    private DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService;
-//    private DomibusConnectorPModeService pModeService;
-//    private DomibusConnectorServiceDao serviceDao;
-//    private DomibusConnectorActionDao actionDao;
+    private final DomibusConnectorMessageInfoDao messageInfoDao;
+    private final DomibusConnectorPModePersistenceService pModeService;
 
-    @Autowired
-    public void setMessageInfoDao(DomibusConnectorMessageInfoDao messageInfoDao) {
+
+    public InternalMessageInfoPersistenceServiceImpl(DomibusConnectorMessageInfoDao messageInfoDao,
+                                                     DomibusConnectorPModePersistenceService pModeService) {
         this.messageInfoDao = messageInfoDao;
-    }
-
-    @Autowired
-    public void setDomibusConnectorPModePersistenceService(DomibusConnectorPModePersistenceService pModeService) {
         this.pModeService = pModeService;
     }
 
-//    @Autowired
-//    public void setpModeService(DomibusConnectorPModeService pModeService) {
-//        this.pModeService = pModeService;
-//    }
-
-    //    @Autowired
-//    public void setDomibusConnectorPartyPersistenceServiceImpl(DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService) {
-//        this.partyPersistenceService = partyPersistenceService;
-//    }
-
-//    @Autowired
-//    public void setServiceDao(DomibusConnectorServiceDao serviceDao) {
-//        this.serviceDao = serviceDao;
-//    }
-//
-//    @Autowired
-//    public void setActionDao(DomibusConnectorActionDao actionDao) {
-//        this.actionDao = actionDao;
-//    }
-
-
-//    @Transactional
     public void persistMessageInfo(DomibusConnectorMessage message, PDomibusConnectorMessage dbMessage) throws PersistenceException {
         try {
             PDomibusConnectorMessageInfo dbMessageInfo = new PDomibusConnectorMessageInfo();
@@ -82,7 +52,6 @@ public class InternalMessageInfoPersistenceServiceImpl {
             mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
 
         } catch (Exception e) {
-            LOGGER.error("Exception occured", e);
             throw new PersistenceException("Could not persist message info into database. ", e);
         }
     }

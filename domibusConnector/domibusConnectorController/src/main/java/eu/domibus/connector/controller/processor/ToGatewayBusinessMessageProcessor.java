@@ -16,6 +16,8 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 
+import javax.transaction.Transactional;
+
 /**
  * Takes a originalMessage from backend and creates evidences for it
  * and also wraps it into an asic container and delivers the

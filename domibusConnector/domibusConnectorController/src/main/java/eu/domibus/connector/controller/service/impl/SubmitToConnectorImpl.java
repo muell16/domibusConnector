@@ -6,16 +6,10 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.jms.Destination;
 import javax.transaction.Transactional;
-
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Service
 @RequiredArgsConstructor
