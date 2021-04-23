@@ -66,9 +66,9 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
         transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
         transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
         if (domibsConnectorAcknowledgementType.isResult()) {
-            transportState.setStatus(TransportState.FAILED);
-        } else {
             transportState.setStatus(TransportState.ACCEPTED);
+        } else {
+            transportState.setStatus(TransportState.FAILED);
         }
         transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
