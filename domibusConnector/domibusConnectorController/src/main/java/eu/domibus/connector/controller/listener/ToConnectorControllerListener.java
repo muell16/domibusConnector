@@ -17,8 +17,8 @@ import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
@@ -43,7 +43,7 @@ public class ToConnectorControllerListener {
     }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         if (message == null || message.getMessageDetails() == null) {

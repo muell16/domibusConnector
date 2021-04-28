@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class WsGatewayPlugin implements LinkPlugin {
 
-    public static final String IMPL_NAME = "wsgatewayplugin";
+    public static final String IMPL_NAME = "gwwspushplugin";
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
@@ -32,6 +32,11 @@ public class WsGatewayPlugin implements LinkPlugin {
         activeLink.setLinkConfiguration(linkConfiguration);
         activeLink.setLinkPlugin(this);
         return activeLink;
+    }
+
+    @Override
+    public String getPluginName() {
+        return IMPL_NAME;
     }
 
     @Override

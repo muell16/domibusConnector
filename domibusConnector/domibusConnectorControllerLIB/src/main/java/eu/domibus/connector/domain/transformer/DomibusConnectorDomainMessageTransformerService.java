@@ -440,8 +440,8 @@ public class DomibusConnectorDomainMessageTransformerService {
         byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
         messageContent.setXmlContent(result);
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("Business content XML after transformed from stream: {}", new String(result));
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("Business content XML after transformed from stream: {}", new String(result));
         }
 
         //maps Document of messageContent

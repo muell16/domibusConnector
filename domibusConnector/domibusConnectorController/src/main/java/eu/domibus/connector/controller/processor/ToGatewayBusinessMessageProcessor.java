@@ -16,8 +16,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 
-import javax.transaction.Transactional;
-
 /**
  * Takes a originalMessage from backend and creates evidences for it
  * and also wraps it into an asic container and delivers the
@@ -37,6 +35,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final ConfirmationCreatorService confirmationCreatorService;
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
     private final LookupGatewayNameStep lookupGatewayNameStep;
+    private final GenerateEbmsIdStep generateEbmsIdStep;
 
     public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
                                              BuildECodexContainerStep buildECodexContainerStep,
@@ -44,7 +43,8 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
                                              MessageConfirmationStep messageConfirmationStep,
                                              ConfirmationCreatorService confirmationCreatorService,
                                              SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
-                                             LookupGatewayNameStep lookupGatewayNameStep) {
+                                             LookupGatewayNameStep lookupGatewayNameStep,
+                                             GenerateEbmsIdStep generateEbmsIdStep) {
         this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
         this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
         this.buildECodexContainerStep = buildECodexContainerStep;
@@ -52,6 +52,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
         this.messageConfirmationStep = messageConfirmationStep;
         this.confirmationCreatorService = confirmationCreatorService;
         this.lookupGatewayNameStep = lookupGatewayNameStep;
+        this.generateEbmsIdStep = generateEbmsIdStep;
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
@@ -63,6 +64,11 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
             //set gateway name
             lookupGatewayNameStep.executeStep(message);
+
+            //set ebms id, the EBMS id is set here, because it might be possible, that a RELAY_REEMD_EVIDENCE
+            //comes back from the remote connector before this connector has already received the by the
+            //sending GW created EBMSID
+            generateEbmsIdStep.executeStep(message);
 
             //persistence step
             createNewBusinessMessageInDBStep.executeStep(message);

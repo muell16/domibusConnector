@@ -129,8 +129,8 @@ public class ConnectorMessageFlowITCase {
 
     @AfterEach
     public void clearAfterTest(TestInfo testInfo) {
-        fromConnectorToBackendDeliveryService.clearQueue();
-        fromConnectorToGwSubmissionService.clearQueue();
+//        fromConnectorToBackendDeliveryService.clearQueue();
+//        fromConnectorToGwSubmissionService.clearQueue();
     }
 
     @BeforeEach
@@ -149,11 +149,11 @@ public class ConnectorMessageFlowITCase {
         //clear backend interceptor mock
         Mockito.reset(backendInterceptor);
 
-        //clear delivery lists
+        //clear to backend lists
         fromConnectorToBackendDeliveryService.clearQueue();
         this.toBackendDeliveredMessages = fromConnectorToBackendDeliveryService.getQueue();
 
-
+        //clear to gw list
         fromConnectorToGwSubmissionService.clearQueue();
         this.toGwDeliveredMessages = fromConnectorToGwSubmissionService.getQueue();
 
@@ -336,6 +336,8 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+//    @Disabled("test is unstable...)
+    @DirtiesContext
     public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();

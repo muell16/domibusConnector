@@ -40,7 +40,7 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
 
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+//    @Transactional //(Transactional.TxType.REQUIRES_NEW)
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setStatus(TransportState.PENDING);
@@ -54,9 +54,9 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
         transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
         transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
         if (domibsConnectorAcknowledgementType.isResult()) {
-            transportState.setStatus(TransportState.FAILED);
-        } else {
             transportState.setStatus(TransportState.ACCEPTED);
+        } else {
+            transportState.setStatus(TransportState.FAILED);
         }
         transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 

@@ -56,6 +56,6 @@ public class WsGatewayPluginConfigurationProperties {
     @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
-
+    private boolean cxfLoggingEnabled = false;
 
 }

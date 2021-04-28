@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_LINK_QUEUE_BEAN;
 
@@ -32,15 +32,14 @@ public class ToLinkPartnerListener {
     }
 
     @JmsListener(destination = TO_LINK_QUEUE_BEAN)
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToLinkPartnerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             submitToLink.submitToLink(message);
-        } catch (DomibusConnectorSubmitToLinkException exc) {
-            LOGGER.error("Cannot submit to link, putting message on error queue", exc);
-            throw exc;
+        } catch (Exception exc) { //DomibusConnectorSubmitToLinkException
+//            LOGGER.error("Cannot submit to link, putting message on error queue", exc);
 //            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
 //                    .setText("Cannot submit to link, putting message on error queue")
 //                    .setDetails(exc)
@@ -48,6 +47,8 @@ public class ToLinkPartnerListener {
 //                    .build();
 //            message.getMessageProcessErrors().add(build);
 //            toLinkQueue.putOnErrorQueue(message);
+            LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);
+            throw exc;
         }
     }
 }
