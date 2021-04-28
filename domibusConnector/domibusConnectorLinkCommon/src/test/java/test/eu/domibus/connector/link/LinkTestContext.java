@@ -1,7 +1,11 @@
 package test.eu.domibus.connector.link;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.LinkType;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -9,14 +13,17 @@ import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
+import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.*;
@@ -44,6 +51,13 @@ public class LinkTestContext {
     @ComponentScan(basePackageClasses = DCLinkPluginConfiguration.class)
     public static class LinkServiceContext {
 
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    DCLinkPersistenceService dcLinkPersistenceService(DomibusConnectorLinkPartnerDao linkPartnerDao,
+                                                      DomibusConnectorLinkConfigurationDao linkConfigurationDao) {
+        return new DCLinkPersistenceService(linkPartnerDao, linkConfigurationDao);
     }
 
     @Bean
@@ -84,18 +98,11 @@ public class LinkTestContext {
         return Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
     }
 
-//    @Bean
-//    @ConditionalOnMissingBean(value = DomibusConnectorLinkConfigurationDao.class, search = SearchStrategy.ALL)
-//    public DomibusConnectorLinkConfigurationDao domibusConnectorLinkConfigurationDao() {
-//        DomibusConnectorLinkConfigurationDao dao = Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
-//        return dao;
-//    }
-
-//    @Bean
-//    @Primary
-//    public SubmitToConnector submitToConnector() {
-//        return new SubmitToConnectorQueuImpl();
-//    }
+    @Bean
+    @Primary
+    public SubmitToConnector submitToConnector() {
+        return new SubmitToConnectorQueuImpl();
+    }
 
 
     public static final String SUBMIT_TO_CONNECTOR_QUEUE = "submitToConnector";
@@ -106,23 +113,23 @@ public class LinkTestContext {
         return new LinkedBlockingDeque<>(90);
     }
 
-//    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
-//
-//        @Autowired
-//        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-//        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
-//
-//        @Override
-//        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
-//
-//            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
-//            try {
-//                toConnectorSubmittedMessages.put(message);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
+    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
+
+        @Autowired
+        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+
+        @Override
+        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) throws DomibusConnectorSubmitToLinkException {
+
+            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
+            try {
+                toConnectorSubmittedMessages.put(message);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
 
 

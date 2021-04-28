@@ -21,4 +21,8 @@ public class DomibusConnectorSubmitToLinkException extends DomibusConnectorMessa
         super(message, reason, reasonMessage, cause);
     }
 
+    public DomibusConnectorSubmitToLinkException(DomibusConnectorMessage message, String errorMessage) {
+        super(message, errorMessage);
+    }
+
 }

@@ -196,16 +196,53 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 * Fix an issue within the initial mysql script: The column 'CONTENT_TYPE' within table 'DOMIBUS_CONNECTOR_MSG_CONT' should be of type VARCHAR(255) instead of BIGINT!
 
-== 4.x.JTA_EXPERIMENTAL
+=== 4.2.6
 
-=== 4.x.JTA_EXPERIMENTAL initial
+==== Changes
 
-==== Features
+* Fix Unicode Issues
 
-* High Availability Support, with JTA and JMS Queues
-** Shared FS required
-** HA JMS required (jms driver with XA support)
-** HA DB required (jdbc driver with XA support)
+=== 4.2.7
+
+==== Changes
+
+* Add stream closing interceptors to CXF Sending Proxies
+* Fix an issue with missing UPPERCASE id column definition (@Column(name = "ID") is missing)
+
+=== 4.2.8
+
+==== Changes
+
+* Added Fix which resolves a problem with an empty Business-Document wich lead to a NPE within DocumentBuilder.copyFromProperties
+* Added Fix for database reporting scripts - now they are UPPER_CASE
+* Add Pagination Support for MessagesList in UI to prevent Connector UI from starvation
+because its loading ALL messages from DB
+* Deactivated config change/save/reload support due unclear semantics/preconditions
+* Fix typo within migration script at table: DC_TRANSPORT_STEP CONNECTOR_MESSSAGE_ID => should be CONNECTOR_MESSAGE_ID
+
+=== 4.2.9
+
+==== Changes
+
+* Multiple UI improvements, fixes
+
+=== 4.2.10
+
+==== Changes
+
+* Fix for Locking Problem which might occur on Mysql DBs under load
+
+== 4.3.0
+
+=== 4.3.0
+
+==== Changes
+
+* Multiple improvements on the message flow to prevent dead locks, improve performance
+* JTA integrated
+* Pull-GW-Plugin: With the new Gateway plugin, the connector now can pull messages from GW (instead of push only)
+* UI improvements:
+** P-Mode Upload UI
 
 
 

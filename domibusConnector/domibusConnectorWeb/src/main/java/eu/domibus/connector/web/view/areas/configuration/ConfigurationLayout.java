@@ -78,7 +78,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         pageContent = new Div();
         pageContent.setSizeFull();
 
-        add(createConfigurationButtonBar());
+//        add(createConfigurationButtonBar()); //deactivated, because does not work
         add(tabViewRouterManager.getTabs(), pageContent);
 
         this.expand(pageContent);
@@ -226,11 +226,10 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
     public void beforeEnter(BeforeEnterEvent event) {
         tabViewRouterManager.beforeEnter(event);
 
-        boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
-
-        saveConfiguration.setEnabled(enabled);
-        reloadConfiguration.setEnabled(enabled);
-        resetConfiguration.setEnabled(enabled);
+//        boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
+//        saveConfiguration.setEnabled(enabled);
+//        reloadConfiguration.setEnabled(enabled);
+//        resetConfiguration.setEnabled(enabled);
 
     }
 

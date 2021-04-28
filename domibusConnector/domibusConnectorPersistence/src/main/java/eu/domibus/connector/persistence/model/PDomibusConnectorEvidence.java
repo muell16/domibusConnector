@@ -24,17 +24,22 @@ import javax.persistence.PreUpdate;
 
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_EVIDENCE")
+@Table(name = PDomibusConnectorEvidence.TABLE_NAME)
 public class PDomibusConnectorEvidence {
 
-    @Id
-    @TableGenerator(name = "evidencesSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "evidencesSeqStore")
-    @Column(name = "ID")
-    private Long id;
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_EVIDENCE";
 
-    @Column(name = "CONNECTOR_MESSAGE_ID")
-    private String transportMessageId;
+    @Id
+    @Column(name="ID")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE_BULK)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
+    private Long id;
 
     /**
      * the message this evidence is referencing
@@ -43,12 +48,6 @@ public class PDomibusConnectorEvidence {
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
     private PDomibusConnectorMessage businessMessage;
 
-    /**
-     * the message this evidence is transported within
-     */
-//    @ManyToOne
-//    @JoinColumn(name = "FK_TRANSPORT_MESSAGE_ID", nullable = false)
-//    private PDomibusConnectorMessage transportMessage;
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
@@ -57,12 +56,10 @@ public class PDomibusConnectorEvidence {
     @Column(name = "EVIDENCE")
     private String evidence;
 
-    @Deprecated //delivered to Backend is realised by referencing transportMessage
     @Column(name = "DELIVERED_NAT")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date deliveredToNationalSystem;
+    private Date deliveredToBackend;
 
-    @Deprecated //delivered to GW is realised by referencing transportMessage
     @Column(name = "DELIVERED_GW")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToGateway;
@@ -112,30 +109,18 @@ public class PDomibusConnectorEvidence {
         this.evidence = evidence;
     }
 
-    @Deprecated
-    public Date getDeliveredToNationalSystem() {
-        return deliveredToNationalSystem;
+    public Date getDeliveredToBackend() {
+        return deliveredToBackend;
     }
 
-    @Deprecated
-    public void setDeliveredToNationalSystem(Date deliveredToNationalSystem) {
-        this.deliveredToNationalSystem = deliveredToNationalSystem;
+    public void setDeliveredToBackend(Date deliveredToNationalSystem) {
+        this.deliveredToBackend = deliveredToNationalSystem;
     }
 
-//    public PDomibusConnectorMessage getTransportMessage() {
-//        return transportMessage;
-//    }
-//
-//    public void setTransportMessage(PDomibusConnectorMessage transportMessage) {
-//        this.transportMessage = transportMessage;
-//    }
-
-    @Deprecated
     public Date getDeliveredToGateway() {
         return deliveredToGateway;
     }
 
-    @Deprecated
     public void setDeliveredToGateway(Date deliveredToGateway) {
         this.deliveredToGateway = deliveredToGateway;
     }
@@ -148,14 +133,6 @@ public class PDomibusConnectorEvidence {
         this.updated = updated;
     }
 
-    public String getTransportMessageId() {
-        return transportMessageId;
-    }
-
-    public void setTransportMessageId(String connectorMessageId) {
-        this.transportMessageId = connectorMessageId;
-    }
-
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
@@ -163,7 +140,6 @@ public class PDomibusConnectorEvidence {
         toString.append("evidenceType", this.type);
         toString.append("evidence", this.evidence);
         toString.append("businessMessage", this.businessMessage.getConnectorMessageId());
-        toString.append("transportId", this.transportMessageId);
         return toString.build();
     }
 }

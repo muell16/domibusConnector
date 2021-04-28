@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -17,6 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
 class TransportStepPersistenceServiceImplITCase {
@@ -33,46 +38,46 @@ class TransportStepPersistenceServiceImplITCase {
     @Autowired
     DomibusConnectorMessageDao msgDao;
 
-    @Before
-    public void beforeAllTests() {
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId("msg2");
-
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-
-//        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
-//        msg.setConnectorMessageId("msg2");
-//        msgDao.save(msg);
-
-    }
-
-
     @Test
     void createNewTransportStep() {
-//        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
-//        msg.setConnectorMessageId("msg2");
-//        msg.setDirectionSource(MessageTargetSource.GATEWAY);
-//        msg.setDirectionTarget(MessageTargetSource.BACKEND);
-//        msgDao.save(msg);
-
+        DomibusConnectorMessage m = DomainEntityCreator.createMessage();
+        m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
+        DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName("link2");
 
-        step.setMessageId(new DomibusConnectorMessageId("msg2"));
+        step.setTransportedMessage(m);
         step.setTransportId(new TransportStateService.TransportId("msg2_link2_1"));
         step.setAttempt(1);
-        step.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("link2"));
+        step.setLinkPartnerName(lp);
 
         transportStepPersistenceService.createNewTransportStep(step);
     }
 
     @Test
-    @Disabled("not implemented yet!")
-    void getTransportStepByTransportId() {
+    void createNewTransportStepSetPending() {
+        DomibusConnectorMessage m = DomainEntityCreator.createMessage();
+        m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
+
+        DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
+        DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName("link4");
+
+        DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate statusUpdate = new DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate();
+        statusUpdate.setTransportState(TransportState.PENDING);
+        statusUpdate.setCreated(LocalDateTime.now());
+
+        step.setTransportedMessage(m);
+        step.setTransportId(new TransportStateService.TransportId("msg3_link2_1"));
+        step.setAttempt(1);
+        step.setLinkPartnerName(lp);
+        step.getStatusUpdates().add(statusUpdate);
+
+        transportStepPersistenceService.createNewTransportStep(step);
+
+        List<DomibusConnectorTransportStep> pendingStepBy = transportStepPersistenceService.findPendingStepBy(lp);
+        assertThat(pendingStepBy).hasSize(1);
+
     }
 
-    @Test
-    @Disabled("not implemented yet!")
-    void update() {
-    }
+
 }

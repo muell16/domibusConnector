@@ -18,6 +18,12 @@ import org.springframework.lang.Nullable;
  */
 public class DomibusConnectorMessageConfirmation implements Serializable {
 
+	/**
+	 * Is null by default, will be set if the confirmation has been
+	 * stored to database.
+	 * Is used to identify the evidence for updating the transport state of the evidence
+	 */
+	private @Nullable Long evidenceDbId = null;
 	private DomibusConnectorEvidenceType evidenceType;
 	private @Nullable byte evidence[];
 
@@ -67,7 +73,16 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 		this.evidence = evidence;
 	}
 
-    @Override
+	@Nullable
+	public Long getEvidenceDbId() {
+		return evidenceDbId;
+	}
+
+	public void setEvidenceDbId(@Nullable Long evidenceDbId) {
+		this.evidenceDbId = evidenceDbId;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("evidenceType", this.evidenceType);

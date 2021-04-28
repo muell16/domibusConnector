@@ -9,6 +9,11 @@ public class DCEvidenceProcessingException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public DCEvidenceProcessingException(ErrorCode errorCode, Throwable e) {
+        super(errorCode.toString(), e);
+        this.errorCode = errorCode;
+    }
+
     public ErrorCode getErrorCode() {
         return errorCode;
     }

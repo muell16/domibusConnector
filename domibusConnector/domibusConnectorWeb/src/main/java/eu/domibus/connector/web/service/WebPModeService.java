@@ -37,14 +37,14 @@ public class WebPModeService {
 
 	protected final static Logger LOGGER = LoggerFactory.getLogger(WebPModeService.class);
 
-	
+
 	@Autowired
 	private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 
 	@Autowired
 	private DomibusConnectorPModeService pModeService;
-	
-	
+
+
 	// SETTER //
 	public void setPModeService(DomibusConnectorPModeService pModeService) {
 		this.pModeService = pModeService;
@@ -245,7 +245,7 @@ public class WebPModeService {
 	public List<DomibusConnectorAction> getActionList() {
 		return getCurrentPModeSetOrNewSet().getActions();
 	}
-	
+
 	public List<String> getActionListString(){
 		return this.getActionList()
 				.stream()
@@ -256,7 +256,7 @@ public class WebPModeService {
 	public List<DomibusConnectorService> getServiceList() {
 		return getCurrentPModeSetOrNewSet().getServices();
 	}
-	
+
 	public List<String> getServiceListString() {
 		return this.getServiceList()
 				.stream()

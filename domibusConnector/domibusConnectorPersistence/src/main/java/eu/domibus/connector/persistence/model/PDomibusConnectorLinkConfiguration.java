@@ -8,14 +8,22 @@ import java.util.Map;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME;
 
-@Table(name = "DC_LINK_CONFIGURATION")
+@Table(name = PDomibusConnectorLinkConfiguration.TABLE_NAME)
 @Entity
 public class PDomibusConnectorLinkConfiguration {
 
+    public static final String TABLE_NAME = "DC_LINK_CONFIGURATION";
+
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreLinkConfig", table = SEQ_STORE_TABLE_NAME, pkColumnName = "SEQ_NAME", pkColumnValue = "DC_LINK_CONFIGURATION.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreLinkConfig")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
     @Column(name = "LINK_IMPL")

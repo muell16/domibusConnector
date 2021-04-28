@@ -1,22 +1,23 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
-import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,28 +27,26 @@ import java.util.stream.Collectors;
 @Transactional
 public class TransportStepPersistenceServiceImpl implements TransportStepPersistenceService {
 
-    @Autowired
-    DomibusConnectorTransportStepDao transportStepDao;
+    private final DomibusConnectorTransportStepDao transportStepDao;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    DomibusConnectorLinkPartnerDao linkPartnerDao;
+    public TransportStepPersistenceServiceImpl(DomibusConnectorTransportStepDao transportStepDao,
+                                               @DomainModelJsonObjectMapper ObjectMapper objectMapper) {
+        this.transportStepDao = transportStepDao;
+        this.objectMapper = objectMapper;
+    }
 
-    @Autowired
-    DomibusConnectorMessageDao messageDao;
-
-    @Autowired
-    DomibusConnectorEvidenceDao evidenceDao;
 
     @Override
     public DomibusConnectorTransportStep createNewTransportStep(DomibusConnectorTransportStep transportStep) {
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getMessageId() == null || StringUtils.isEmpty(transportStep.getMessageId().toString())) {
-            throw new IllegalArgumentException("ConnectorMessageId must be set!");
+        if (transportStep.getTransportedMessage() == null && transportStep.getTransportedMessage().getConnectorMessageId() != null) {
+            throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
         }
 
-        java.lang.String msgId = transportStep.getMessageId().toString();
+        java.lang.String msgId = transportStep.getTransportedMessage().getConnectorMessageId().toString();
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = transportStep.getLinkPartnerName();
 
         Optional<Integer> nAttempt = transportStepDao.getHighestAttemptBy(msgId, linkPartnerName);
@@ -91,31 +90,36 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
-//        BeanUtils.copyProperties(dbTransportStep, step);
-        step.setMessageId(new DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
-        step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
-        step.setTransportId(dbTransportStep.getTransportId());
-        step.setAttempt(dbTransportStep.getAttempt());
-        step.setCreated(dbTransportStep.getCreated());
-        step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
-        step.setFinalStateReached(dbTransportStep.getFinalStateReached());
-        step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
 
-        List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
-                .getStatusUpdates()
-                .stream()
-                .map(this::mapTransportStepState)
-                .collect(Collectors.toList());
+        try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())){
+            DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
+            step.setTransportedMessage(domibusConnectorMessage);
+            step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
+            step.setTransportId(dbTransportStep.getTransportId());
+            step.setAttempt(dbTransportStep.getAttempt());
+            step.setCreated(dbTransportStep.getCreated());
+            step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
+            step.setFinalStateReached(dbTransportStep.getFinalStateReached());
+            step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
 
-        step.setStatusUpdates(statusUpdates);
+            List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
+                    .getStatusUpdates()
+                    .stream()
+                    .map(this::mapTransportStepState)
+                    .collect(Collectors.toList());
 
-        return step;
+            step.setStatusUpdates(statusUpdates);
+
+            return step;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate mapTransportStepState(PDomibusConnectorTransportStepStatusUpdate dbTransportUpdate) {
         DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate update =
                 new DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate();
-//        BeanUtils.copyProperties(dbTransportUpdate, update);
         update.setCreated(dbTransportUpdate.getCreated());
         update.setText(dbTransportUpdate.getText());
         update.setTransportState(dbTransportUpdate.getTransportState());
@@ -124,7 +128,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     private PDomibusConnectorTransportStep mapTransportStepToDb(DomibusConnectorTransportStep transportStep) {
 
-        java.lang.String msgId = transportStep.getMessageId().getConnectorMessageId();
+        java.lang.String msgId = transportStep.getTransportedMessage().getConnectorMessageId().toString();
         DomibusConnectorLinkPartner.LinkPartnerName partnerName= transportStep.getLinkPartnerName();
 
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());
@@ -135,6 +139,12 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
             s.setTransportId(transportStep.getTransportId());
             return s;
         });
+
+        try {
+            dbStep.setTransportedMessage(objectMapper.writeValueAsString(transportStep.getTransportedMessage()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         dbStep.setFinalStateReached(transportStep.getFinalStateReached());
         dbStep.setAttempt(transportStep.getAttempt());

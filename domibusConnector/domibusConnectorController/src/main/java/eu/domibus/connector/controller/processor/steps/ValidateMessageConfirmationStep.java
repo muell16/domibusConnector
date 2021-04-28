@@ -2,17 +2,14 @@ package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -28,12 +25,12 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(ValidateMessageConfirmationStep.class);
 
-    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
+    private final ConfirmationCreatorService confirmationCreatorService;
     private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
 
-    public ValidateMessageConfirmationStep(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory,
+    public ValidateMessageConfirmationStep(ConfirmationCreatorService confirmationCreatorService,
                                            ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
-        this.createConfirmationMessageBuilderFactory = createConfirmationMessageBuilderFactory;
+        this.confirmationCreatorService = confirmationCreatorService;
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;
     }
 
@@ -57,7 +54,7 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
 
         DomibusConnectorMessageConfirmation confirmation = domibusConnectorMessage.getTransportedMessageConfirmations().get(0);
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-        DomibusConnectorAction requiredEvidenceAction = createConfirmationMessageBuilderFactory.createEvidenceAction(evidenceType);
+        DomibusConnectorAction requiredEvidenceAction = confirmationCreatorService.createEvidenceAction(evidenceType);
 
         DomibusConnectorAction action = domibusConnectorMessage.getMessageDetails().getAction();
         if (!requiredEvidenceAction.equals(action)) {

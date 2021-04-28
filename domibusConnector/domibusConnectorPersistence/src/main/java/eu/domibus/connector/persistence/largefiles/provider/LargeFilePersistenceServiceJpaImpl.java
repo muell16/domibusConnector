@@ -42,16 +42,13 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceJpaImpl.class);
 
     public static final String PROVIDER_NAME = "JPA";
-    
-    @Autowired
-    private DomibusConnectorMessageDao messageDao;
 
     @Autowired
     private DomibusConnectorBigDataDao bigDataDao;
 
+    //Entity manager is required to access LobCreator
     @PersistenceContext
     EntityManager entityManager;
-
 
     @Override
     public String getProviderName() {
@@ -121,7 +118,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     @Transactional
     public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
         JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
         reference.setStorageProviderName(this.getProviderName());
@@ -137,11 +133,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         bigData.setLastAccess(new Date());
 
         DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
-//        try {
-//            StreamUtils.copy(in, outputStream);
-//        } catch (IOException e1) {
-//            LOGGER.error("Exception copy streams for big data to database!", e1);
-//        }
         byte[] toByteArray = outputStream.toByteArray();
 
         Session hibernateSession = entityManager.unwrap(Session.class);
@@ -168,7 +159,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-//            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
             JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
             reference.setReadable(false);
@@ -200,8 +190,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             }catch (Exception e) {
             	LOGGER.error("Exception saving big data to database!", e);
             }
-
-//            reference.setOutputStream(outputStream);
 
             reference.setStorageIdReference(Long.toString(bigData.getId()));
             return reference;
@@ -236,27 +224,20 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
             String messageId = bigData.getConnectorMessageId();
-            Optional<PDomibusConnectorMessage> byId = messageDao.findOneByConnectorMessageId(messageId);
-            //TODO: update this...
-            if (byId.isPresent()) {
-                DomibusConnectorMessageId connectorMessageId =
-                        new DomibusConnectorMessageId(byId.get().getConnectorMessageId());
+            DomibusConnectorMessageId connectorMessageId = new DomibusConnectorMessageId(messageId);
 
-                if (!map.containsKey(connectorMessageId)) {
-                    map.put(connectorMessageId, new ArrayList<>());
-                }
-
-                List<LargeFileReference> dataRefList = map.get(connectorMessageId);
-                JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
-                reference.setStorageProviderName(this.getProviderName());
-                reference.setReadable(false);
-                reference.setWriteable(false);
-                reference.setStorageIdReference(Long.toString(bigData.getId()));
-                dataRefList.add(reference);
-
-            } else {
-                LOGGER.error(String.format("Found data reference [%s] which is not linked to a message with dbId [%s]! Possibly corrupted data!", bigData, messageId));
+            if (!map.containsKey(connectorMessageId)) {
+                map.put(connectorMessageId, new ArrayList<>());
             }
+
+            List<LargeFileReference> dataRefList = map.get(connectorMessageId);
+            JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
+            reference.setStorageProviderName(this.getProviderName());
+            reference.setReadable(false);
+            reference.setWriteable(false);
+            reference.setStorageIdReference(Long.toString(bigData.getId()));
+            dataRefList.add(reference);
+
         });
         return map;
     }
@@ -280,9 +261,12 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     private long convertStorageIdReferenceToDbId(String storageRef) {
-        //TODO: error handling!!!
-        long l = Long.parseLong(storageRef);
-        return l;
+        try {
+            return Long.parseLong(storageRef);
+        } catch (NumberFormatException nfe) {
+            String error = String.format("The provided storage reference [%s] cannot be converted to a big data database reference", storageRef);
+            throw new IllegalStateException(error, nfe);
+        }
     }
 
     private class DbBackedOutputStream extends ByteArrayOutputStream {

@@ -1,19 +1,17 @@
 package eu.domibus.connector.controller.processor;
 
 
-import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-
 import eu.domibus.connector.controller.processor.steps.*;
-import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,7 +21,6 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
 import javax.transaction.Transactional;
@@ -35,8 +32,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 
 	public static final String GW_TO_BACKEND_MESSAGE_PROCESSOR = "GatewayToBackendMessageProcessor";
 
-	private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
-	private final DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
+	private final DomibusConnectorEvidencesToolkit evidencesToolkit;
 	private final MessageConfirmationStep messageConfirmationStep;
 	private final ResolveECodexContainerStep resolveECodexContainerStep;
 	private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
@@ -45,17 +41,15 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
 
 	public ToBackendBusinessMessageProcessor(
-				CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory,
-			 	DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService,
-			 	MessageConfirmationStep messageConfirmationStep,
-			 	ResolveECodexContainerStep resolveECodexContainerStep,
-			 	CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
-			 	SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
-				SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
-			 	LookupBackendNameStep lookupBackendNameStep) {
-		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
+			DomibusConnectorEvidencesToolkit evidencesToolkit,
+			MessageConfirmationStep messageConfirmationStep,
+			ResolveECodexContainerStep resolveECodexContainerStep,
+			CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
+			SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
+			SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
+			LookupBackendNameStep lookupBackendNameStep) {
+		this.evidencesToolkit = evidencesToolkit;
 		this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
-		this.messageErrorPersistenceService = messageErrorPersistenceService;
 		this.messageConfirmationStep = messageConfirmationStep;
 		this.resolveECodexContainerStep = resolveECodexContainerStep;
 		this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
@@ -68,6 +62,9 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
 
+			//lookup correct backend name
+			lookupBackendNameStep.executeStep(incomingMessage);
+
 			//persistMessage
 			createNewBusinessMessageInDBStep.executeStep(incomingMessage);
 
@@ -75,18 +72,15 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
 			//Create relayREMMD
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
+			DomibusConnectorMessageConfirmation relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
 			//process created relayREMMD (save it to db and attach it to transported message)
-			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence.getMessageConfirmation());
+			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence);
 
 			//send confirmation msg back
-			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, relayREMMDEvidence.getMessageConfirmation());
+			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, relayREMMDEvidence);
 
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
-
-			//lookup correct backend name
-			lookupBackendNameStep.executeStep(incomingMessage);
 
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
 
@@ -95,25 +89,21 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 
 		} catch (DomibusConnectorSecurityException e) {
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createNonDeliveryEvidence(incomingMessage);
-//			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper negativeEvidence = createRelayREMMDEvidence(incomingMessage, false);
-			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence.getMessageConfirmation());
-
+			DomibusConnectorMessageConfirmation negativeEvidence = createNonDeliveryEvidence(incomingMessage);
+			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
-			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence.getMessageConfirmation());
+			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
 		}
 	}
 
 	
-	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createNonDeliveryEvidence(DomibusConnectorMessage originalMessage)
+	private DomibusConnectorMessageConfirmation createNonDeliveryEvidence(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 		try {
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-					.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
-					.switchFromToAttributes()
-					.withDirection(MessageTargetSource.GATEWAY)
-					.build();
-			return wrappedDeliveryEvidenceMsg;
+			return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY,
+					originalMessage,
+					DomibusConnectorRejectionReason.OTHER, "");
+
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
 					.setMessage(originalMessage)
@@ -122,37 +112,25 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 					.setCause(e)
 					.build();
 			LOGGER.error("Failed to create Evidence", evidenceBuildFailed);
-			DomibusConnectorMessageError messageError =
-					DomibusConnectorMessageErrorBuilder.createBuilder()
-							.setSource(this.getClass().getName())
-							.setDetails(e)
-							.setText("Error creating NonDelivery evidence for originalMessage!")
-							.build();
-			messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
 			throw evidenceBuildFailed;
 		}
 	}
 
-	private CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper createRelayREMMDEvidence(DomibusConnectorMessage originalMessage, boolean isAcceptance)
+	private DomibusConnectorMessageConfirmation createRelayREMMDEvidence(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-		CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder wrappedMessageConfirmationBuilder = null;
-
 
 		try {
 			if(isAcceptance) {
 			    LOGGER.trace("relay is acceptance, generating RELAY_REMMD_ACCEPTANCE");
-                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
+				return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE,
+						originalMessage,
+						DomibusConnectorRejectionReason.OTHER, "");
             } else {
                 LOGGER.trace("relay is denied, generating RELAY_REMMD_REJECTION");
-                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION);
+                return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION,
+						originalMessage,
+						DomibusConnectorRejectionReason.OTHER, "");
             }
-
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedEvidenceMessage = wrappedMessageConfirmationBuilder
-					.switchFromToAttributes()
-					.withDirection(MessageTargetSource.GATEWAY)
-					.build();
-			LOGGER.trace("generated confirmation is [{}]", wrappedEvidenceMessage.getMessageConfirmation());
-			return wrappedEvidenceMessage;
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -162,13 +140,6 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 					.setCause(e)
 					.build();
             LOGGER.error("Failed to create Evidence", evidenceBuildFailed);
-            DomibusConnectorMessageError messageError =
-                    DomibusConnectorMessageErrorBuilder.createBuilder()
-                            .setSource(this.getClass().getName())
-                            .setDetails(e)
-                            .setText("Error creating RelayREMMD evidence for originalMessage!")
-                        .build();
-            messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
             throw evidenceBuildFailed;
 		}
 

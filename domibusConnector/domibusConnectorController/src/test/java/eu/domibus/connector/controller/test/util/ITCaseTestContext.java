@@ -52,8 +52,8 @@ public class ITCaseTestContext {
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);
 
 
-    public static final java.lang.String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
-    public static final java.lang.String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
+//    public static final java.lang.String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
+//    public static final java.lang.String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
     /**
      * Use this interface to tamper with the test...
@@ -81,17 +81,17 @@ public class ITCaseTestContext {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
-        return new ArrayBlockingQueue<>(100);
-    }
-
-    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-        return new ArrayBlockingQueue<>(100);
-    }
+//    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+//    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+//    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
+//        return new ArrayBlockingQueue<>(100);
+//    }
+//
+//    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+//    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+//    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
+//        return new ArrayBlockingQueue<>(100);
+//    }
 
     @Bean
     public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
@@ -155,37 +155,38 @@ public class ITCaseTestContext {
         @Autowired
         DomibusConnectorBackendDeliveryServiceInterceptor interceptor;
 
-        @Autowired
-        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages; // = new ArrayBlockingQueue<>(100);;
+//        @Autowired
+//        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
 
-        public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+        public synchronized void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
             interceptor.deliveryToBackend(message);
 
-            LOGGER.info("Delivered Message [{}] to Backend");
+            LOGGER.info("Delivered Message [{}] to Backend", message);
 
 
-            TransportStateService.TransportId dummyBackend = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+            TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
             TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-            state.setConnectorTransportId(dummyBackend);
+            state.setConnectorTransportId(transportId);
             state.setStatus(TransportState.ACCEPTED);
 
-            java.lang.String backendId = "BACKEND_" + UUID.randomUUID().toString();
-            state.setRemoteMessageId(backendId); //assigned backend message id
+
+            java.lang.String backendMsgId = "BACKEND_" + UUID.randomUUID().toString();
+            state.setRemoteMessageId(backendMsgId); //assigned backend message id
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStateService.updateTransportToBackendClientStatus(dummyBackend, state);
+            transportStateService.updateTransportToBackendClientStatus(transportId, state);
 
             DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)
                     .build();
-            msg.getMessageDetails().setBackendMessageId(backendId);
+            msg.getMessageDetails().setBackendMessageId(backendMsgId);
 
             toBackendDeliveredMessages.add(msg);
 
         }
 
         synchronized public void clearQueue() {
-            toBackendDeliveredMessages.clear();
+            toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);
         }
 
         public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {
@@ -201,11 +202,11 @@ public class ITCaseTestContext {
         @Autowired
         DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
 
-        @Autowired
-        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages; // = new ArrayBlockingQueue<>(100);
+//        @Autowired
+//        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
 
-        synchronized public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+        public synchronized void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
             interceptor.submitToGateway(message);
             LOGGER.info("Delivered Message [{}] to Gateway", message);
 
@@ -228,7 +229,7 @@ public class ITCaseTestContext {
         }
 
         synchronized public void clearQueue() {
-            toGatewayDeliveredMessages.clear();
+            toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
         }
 
         public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {

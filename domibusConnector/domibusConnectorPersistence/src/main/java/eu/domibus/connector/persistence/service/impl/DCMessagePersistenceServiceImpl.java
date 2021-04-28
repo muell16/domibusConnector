@@ -119,6 +119,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         }
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
+        this.msgContentService.saveMessagePayloads(message);
     }
 
 
@@ -224,12 +225,9 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         }
 
         this.msgContentService.saveMessagePayloads(message);
-
-        mapRelatedConfirmations(dbMessage, message);        
+        mapRelatedConfirmations(dbMessage, message);
         
         this.messageDao.save(dbMessage);
-
-
 
         return message;
     }
@@ -279,13 +277,19 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
     @Override
     @Transactional
-    public DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage messageByMessage = this.findMessageByMessage(message);
-        this.internalMessageInfoPersistenceService.mergeMessageInfo(message, messageByMessage);
-        return message;
+    public void updateMessageDetails(DomibusConnectorMessage message) {
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+
+        dbMessage.setConversationId(message.getMessageDetails().getConversationId());
+        dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
+        dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
+
+        dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
+        dbMessage.setGatewayName(message.getMessageDetails().getGatewayName());
+
+        this.internalMessageInfoPersistenceService.mergeMessageInfo(message, dbMessage);
+        messageDao.save(dbMessage);
     }
-
-
 
 
     @Override

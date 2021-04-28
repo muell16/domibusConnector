@@ -24,15 +24,14 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 @TestPropertySource(properties = {
         "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
         "spring.liquibase.change-log=/db/changelog/test/testdata.xml",
-        "spring.datasource.url=jdbc:h2:mem:t2",
-        "spring.active.profiles=connector,db-storage"
+        "spring.datasource.url=jdbc:h2:mem:t2"
 })
 @TestExecutionListeners(
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS,
         listeners = {RecreateDbByLiquibaseTestExecutionListener.class, //drop and create db by liquibase after each TestClass
                 DBRiderTestExecutionListener.class, //activate @DBRider
         })
-@ActiveProfiles({"test", "db_h2", STORAGE_DB_PROFILE_NAME})
+@ActiveProfiles({"test", "db_h2", "connector", STORAGE_DB_PROFILE_NAME})
 @DBUnit(allowEmptyFields = true)
 @Inherited
 @ExtendWith({SpringExtension.class, SetMdcContextExtension.class})

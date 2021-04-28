@@ -1,25 +1,24 @@
 package eu.domibus.connector.controller.transport;
 
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DCMessageContentManager;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
 
 @Service
 @Transactional
@@ -27,53 +26,48 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStateService.class);
 
-    private DCMessagePersistenceService messagePersistenceService;
-    private DCMessageContentManager contentStorageService;
-    private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
-    private TransportStepPersistenceService transportStepPersistenceService;
+    private final DCMessagePersistenceService messagePersistenceService;
+    private final DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
+    private final TransportStepPersistenceService transportStepPersistenceService;
+    private final DomibusConnectorEvidencePersistenceService evidencePeristenceService;
 
-    @Autowired
-    public void setTransportStepPersistenceService(TransportStepPersistenceService transportStepPersistenceService) {
-        this.transportStepPersistenceService = transportStepPersistenceService;
-    }
-
-    @Autowired
-    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
+    public DomibusConnectorTransportStateService(DCMessagePersistenceService messagePersistenceService,
+                                                 DomibusConnectorMessageErrorPersistenceService errorPersistenceService,
+                                                 TransportStepPersistenceService transportStepPersistenceService,
+                                                 DomibusConnectorEvidencePersistenceService evidencePeristenceService) {
         this.messagePersistenceService = messagePersistenceService;
-    }
-
-    @Autowired
-    public void setContentStorageService(DCMessageContentManager contentStorageService) {
-        this.contentStorageService = contentStorageService;
-    }
-
-    @Autowired
-    public void setErrorPersistenceService(DomibusConnectorMessageErrorPersistenceService errorPersistenceService) {
         this.errorPersistenceService = errorPersistenceService;
+        this.transportStepPersistenceService = transportStepPersistenceService;
+        this.evidencePeristenceService = evidencePeristenceService;
     }
-
 
     @Override
     @Transactional
     public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
 
         this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
-            m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
-            messagePersistenceService.mergeMessageWithDatabase(m);
-            messagePersistenceService.setDeliveredToGateway(m);
+            if (isBusinessMessage(m)) {
+                m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
+                messagePersistenceService.updateMessageDetails(m);
+                messagePersistenceService.setDeliveredToGateway(m);
+            }
+            m.getTransportedMessageConfirmations().forEach(evidencePeristenceService::setConfirmationAsTransportedToGateway);
         });
 
     }
-
 
 
     @Override
     @Transactional
     public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
         this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
+            if (isBusinessMessage(m)) {
                 m.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
+                messagePersistenceService.updateMessageDetails(m);
                 messagePersistenceService.setMessageDeliveredToNationalSystem(m);
-                messagePersistenceService.mergeMessageWithDatabase(m);
+            }
+            m.getTransportedMessageConfirmations().forEach(evidencePeristenceService::setConfirmationAsTransportedToBackend);
+            LOGGER.debug("Successfully updated message [{}]", m);
         });
     }
 
@@ -82,8 +76,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
 
-    @Transactional
-    public void updateTransportStatus(TransportId transportId, DomibusConnectorTransportState transportState, SuccessHandler successHandler) {
+    private void updateTransportStatus(TransportId transportId, DomibusConnectorTransportState transportState, SuccessHandler successHandler) {
         if (transportId == null) {
             throw new IllegalArgumentException("TransportId is not allowed to be null!");
         }
@@ -107,29 +100,14 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         transportStepPersistenceService.update(transportStep);
 
 
-        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportStep.getMessageId().getConnectorMessageId());
-        DomibusConnectorMessageId connectorMessageId = transportStep.getMessageId(); //.getConnectorMessageId();
+        DomibusConnectorMessage message = transportStep.getTransportedMessage();
+
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have
             // a relation to connector message id yet...so cannot set transport state for them!
             LOGGER.debug("#updateTransportToBackendStatus:: No message with transport id [{}] was found within database!", transportState.getConnectorTransportId());
             return;
         }
-
-//        if (!StringUtils.isEmpty(transportState.getRemoteMessageId()) &&
-//        transportState.getLinkPartner() != null && transportState.getLinkPartner().getLinkType() == LinkType.GATEWAY
-//                && StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())
-//        ) {
-//            message.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
-//            messagePersistenceService.mergeMessageWithDatabase(message);
-//        }
-//        if (!StringUtils.isEmpty(transportState.getRemoteMessageId()) &&
-//                transportState.getLinkPartner() != null && transportState.getLinkPartner().getLinkType() == LinkType.BACKEND
-//                && StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId())
-//        ) {
-//            message.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
-//            messagePersistenceService.mergeMessageWithDatabase(message);
-//        }
 
         if (transportState.getStatus() == TransportState.ACCEPTED) {
             successHandler.success(message);
@@ -139,49 +117,28 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
             );
         }
 
-//        try {
-//            if (!isEvidenceMessage(message)) {
-//                try {
-//                    contentStorageService.cleanForMessage(message);
-//                    LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
-//                } catch (Exception e) {
-//                    LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
-//                }
-//            } else {
-//                LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
-//            }
-//        } catch (Exception e) {
-//            LOGGER.error(String.format("Exception occured while cleaning up after message successfully handed over with transport id [%s]", transportId), e);
-//        }
     }
 
 
     @Override
-    @Transactional
     public void updateTransportStatus(DomibusConnectorTransportState transportState) {
         this.updateTransportStatus(transportState.getConnectorTransportId(), transportState, (m) -> {});
     }
 
     @Override
-    @Transactional
     public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
 
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
         transportStep.setLinkPartnerName(linkPartnerName);
         transportStep.setCreated(LocalDateTime.now());
-        transportStep.setMessageId(new DomibusConnectorMessageId(message.getConnectorMessageIdAsString()));
+        transportStep.setTransportedMessage(message);
 
         transportStep = transportStepPersistenceService.createNewTransportStep(transportStep);
         LOGGER.debug("#createTransportFor:: created new transport step within database with id [{}]", transportStep.getTransportId());
         return transportStep.getTransportId();
+
     }
 
-    @Override
-    @Transactional
-    public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        //TODO: check for active transport...
-        return createTransportFor(message, linkPartnerName);
-    }
 
     @Override
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {

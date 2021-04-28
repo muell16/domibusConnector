@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
+import com.vaadin.flow.data.provider.DataProvider;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -20,11 +22,10 @@ import eu.domibus.connector.web.dto.WebMessageDetail;
 
 @Service("webMessageService")
 public class WebMessageService {
-	
-	private DomibusConnectorWebMessagePersistenceService messagePersistenceService;
 
-	@Autowired
-	public void setMessagePersistenceService(DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
+	private final DomibusConnectorWebMessagePersistenceService messagePersistenceService;
+
+	public WebMessageService(DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
 	}
 
@@ -32,15 +33,15 @@ public class WebMessageService {
 		return messagePersistenceService.getAllMessages();
 	}
 
-	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
+	public Optional<WebMessage> getMessageByConnectorId(String connectorMessageId) {
 		return messagePersistenceService.getMessageByConnectorId(connectorMessageId);
 	}
 
-	public WebMessageDetail getMessageByEbmsId(String ebmsId) {
-		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+	public Optional<WebMessage>  getMessageByEbmsId(String ebmsId) {
+		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 	}
 
-	public WebMessageDetail getMessageByBackendMessageId(String backendMessageId) {
+	public Optional<WebMessage>  getMessageByBackendMessageId(String backendMessageId) {
 		return messagePersistenceService.findMessageByNationalId(backendMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 	}
 
@@ -91,7 +92,7 @@ public class WebMessageService {
 		cell8.setCellStyle(styles.get("header"));
 
 		int rowIndex = 1;
-		
+
 		for (WebMessage message : messages) {
 
 			HSSFRow entryRow = sheet.createRow(rowIndex);
@@ -99,28 +100,28 @@ public class WebMessageService {
 			entryCell0.setCellValue(message.getConnectorMessageId());
 			entryCell0.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell1 = entryRow.createCell(1);
-			entryCell1.setCellValue(message.getFromPartyId());
+			entryCell1.setCellValue(message.getMessageInfo().getFrom().getPartyId());
 			entryCell1.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell2 = entryRow.createCell(2);
-			entryCell2.setCellValue(message.getToPartyId());
+			entryCell2.setCellValue(message.getMessageInfo().getTo().getPartyId());
 			entryCell2.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell3 = entryRow.createCell(3);
-			entryCell3.setCellValue(message.getService());
+			entryCell3.setCellValue(message.getMessageInfo().getService().getService());
 			entryCell3.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell4 = entryRow.createCell(4);
-			entryCell4.setCellValue(message.getAction());
+			entryCell4.setCellValue(message.getMessageInfo().getAction().getAction());
 			entryCell4.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell5 = entryRow.createCell(5);
 			entryCell5.setCellValue(message.getCreatedString());
 			entryCell5.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell6 = entryRow.createCell(6);
-			entryCell6.setCellValue(message.getDeliveredToBackendString());
+			entryCell6.setCellValue(message.getDeliveredToNationalSystemString());
 			entryCell6.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell7 = entryRow.createCell(7);
 			entryCell7.setCellValue(message.getDeliveredToGatewayString());
 			entryCell7.setCellStyle(styles.get("cell_b"));
 			HSSFCell entryCell8 = entryRow.createCell(8);
-			entryCell8.setCellValue(message.getBackendClient());
+			entryCell8.setCellValue(message.getBackendName());
 			entryCell8.setCellStyle(styles.get("cell_b"));
 
 			rowIndex++;

@@ -6,13 +6,21 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_PROPERTY")
+@Table(name = PDomibusConnectorProperties.TABLE_NAME)
 public class PDomibusConnectorProperties implements Serializable {
+
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_PROPERTY";
 
     @Id
     @Column(name = "ID")
-    @TableGenerator(name = "propSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_PROPERTY.ID", valueColumnName = "SEQ_VALUE", initialValue = 1000, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "propSeqStore")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private int id;
 
     @Column(name = "PROPERTY_NAME")

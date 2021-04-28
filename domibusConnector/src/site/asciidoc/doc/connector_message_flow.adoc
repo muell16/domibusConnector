@@ -7,13 +7,17 @@
 
 WARNING: NOT COMPLETE!
 
-[plantuml, queues, png]
+[plantuml,queues,png]
 ----
 @startuml
-skinparam monochrome true
 
-interface gw_link
-interface backend_link
+top to bottom direction
+
+skinparam monochrome true
+skinparam linetype ortho
+
+interface gw_link_partner
+interface backend_link_partner
 
 queue link_to_con
 queue link_to_con_error
@@ -23,40 +27,36 @@ queue con_to_link_error
 
 queue cleanup_queue
 
-component to_connector_message_listener {
-  component MessageConfirmationProcessor
-  component BackendToGatewayMessageProcessor
-  component GatewayToBackendMessageProcessor
+package JTATransaction_Connector {
+    component to_connector_message_listener
+
+    component MessageConfirmationProcessor
+    component BackendToGatewayMessageProcessor
+    component GatewayToBackendMessageProcessor
 }
 
-gw_link --> link_to_con
+package JTATransaction_LinkModule {
+  component LinkModule
+}
+
+
+
+gw_link_partner --> link_to_con
+backend_link_partner --> link_to_con
 
 link_to_con --> to_connector_message_listener
-link_to_con --> MessageConfirmationProcessor
-link_to_con --> BackendToGatewayMessageProcessor
-link_to_con --> GatewayToBackendMessageProcessor
+to_connector_message_listener --> MessageConfirmationProcessor
+to_connector_message_listener --> BackendToGatewayMessageProcessor
+to_connector_message_listener --> GatewayToBackendMessageProcessor
 
-'
-'actor actor
-'agent agent
-'artifact artifact
-'boundary boundary
-'card card
-'cloud cloud
-'component component
-'control control
-'database database
-'entity entity
-'file file
-'folder folder
-'frame frame
-'interface  interface
-'node node
-'package package
-'queue queue
-'stack stack
-'rectangle rectangle
-'storage storage
-'usecase usecase
+JTATransaction_Connector -d-> con_to_link : messages, evidences
+JTATransaction_Connector -d-> link_to_con_error : in case of any processing errors
+
+con_to_link -d-> JTATransaction_LinkModule
+
+JTATransaction_LinkModule -d-> con_to_link_error: in case of any error
+JTATransaction_LinkModule -d-> cleanup_queue : when processing finished
+
+
 @enduml
 ----

@@ -10,7 +10,6 @@ public interface TransportStepPersistenceService {
 
     DomibusConnectorTransportStep createNewTransportStep(DomibusConnectorTransportStep transportStep);
 
-
     DomibusConnectorTransportStep getTransportStepByTransportId(TransportStateService.TransportId connectorTransportId);
 
     DomibusConnectorTransportStep update(DomibusConnectorTransportStep transportStep);

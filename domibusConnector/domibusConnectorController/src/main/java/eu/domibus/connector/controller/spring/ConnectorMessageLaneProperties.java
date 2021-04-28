@@ -1,24 +1,11 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "properties")
 public class ConnectorMessageLaneProperties {
 
-    /**
-     * is the loopback processing enabled
-     * if enabled the suffix _1 will be removed from any
-     * incoming EBMS message id
-     */
-    private boolean loopbackEnabled = true;
-
-    public boolean isLoopbackEnabled() {
-        return loopbackEnabled;
-    }
-
-    public void setLoopbackEnabled(boolean loopbackEnabled) {
-        this.loopbackEnabled = loopbackEnabled;
-    }
 
     /**
      * should the by the connector created evidences
@@ -32,7 +19,16 @@ public class ConnectorMessageLaneProperties {
      *
      *  The default is true
      */
+    @ConfigurationLabel("Transport generated evidence back")
     private boolean sendGeneratedEvidencesToBackend = true;
+
+    /**
+     * Should the connector create the EBMS id
+     */
+    @ConfigurationLabel("EBMS generation enabled")
+    private boolean ebmsIdGeneratorEnabled = true;
+
+    private String ebmsIdSuffix = "ecodex.eu";
 
     public boolean isSendGeneratedEvidencesToBackend() {
         return sendGeneratedEvidencesToBackend;
@@ -40,5 +36,21 @@ public class ConnectorMessageLaneProperties {
 
     public void setSendGeneratedEvidencesToBackend(boolean sendGeneratedEvidencesToBackend) {
         this.sendGeneratedEvidencesToBackend = sendGeneratedEvidencesToBackend;
+    }
+
+    public boolean isEbmsIdGeneratorEnabled() {
+        return ebmsIdGeneratorEnabled;
+    }
+
+    public void setEbmsIdGeneratorEnabled(boolean ebmsIdGeneratorEnabled) {
+        this.ebmsIdGeneratorEnabled = ebmsIdGeneratorEnabled;
+    }
+
+    public String getEbmsIdSuffix() {
+        return ebmsIdSuffix;
+    }
+
+    public void setEbmsIdSuffix(String ebmsIdSuffix) {
+        this.ebmsIdSuffix = ebmsIdSuffix;
     }
 }

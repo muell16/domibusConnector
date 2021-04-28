@@ -41,13 +41,6 @@ public interface TransportStateService {
      */
     public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
-    /**
-     * gets the last not finished (PENDING state) transport for this
-     * message
-     * @param message
-     */
-    public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
-
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public static class TransportId {

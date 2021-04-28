@@ -1,51 +1,136 @@
 package eu.domibus.connector.web.dto;
 
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 
-public class WebMessageDetail extends WebMessage {
+public class WebMessageDetail {
+	
+	public static class Party{
+	    private String partyId;
+	    private String partyIdType;
+		/**
+		 * @param partyId
+		 * @param partyIdType
+		 */
+		public Party(String partyId, String partyIdType) {
+			super();
+			this.partyId = partyId;
+			this.partyIdType = partyIdType;
+		}
+		/**
+		 * @param partyId
+		 */
+		public Party(String partyId) {
+			super();
+			this.partyId = partyId;
+		}
+		@Override
+		public String toString() {
+			return "Party [partyId=" + partyId + ", partyIdType=" + partyIdType + "]";
+		}
+		public String getPartyId() {
+			return partyId;
+		}
+		public void setPartyId(String partyId) {
+			this.partyId = partyId;
+		}
+		public String getPartyIdType() {
+			return partyIdType;
+		}
+		public void setPartyIdType(String partyIdType) {
+			this.partyIdType = partyIdType;
+		}
+		public String getPartyString() {
+			return partyId+"("+partyIdType+")";
+		}
+	}
+	
+	public static class Service{
+		private String service;
+	    private String serviceType;
+		/**
+		 * @param service
+		 * @param serviceType
+		 */
+		public Service(String service, String serviceType) {
+			super();
+			this.service = service;
+			this.serviceType = serviceType;
+		}
+		/**
+		 * @param service
+		 */
+		public Service(String service) {
+			super();
+			this.service = service;
+		}
+		@Override
+		public String toString() {
+			return "Service [service=" + service + ", serviceType=" + serviceType + "]";
+		}
+		public String getService() {
+			return service;
+		}
+		public void setService(String service) {
+			this.service = service;
+		}
+		public String getServiceType() {
+			return serviceType;
+		}
+		public void setServiceType(String serviceType) {
+			this.serviceType = serviceType;
+		}
+		public String getServiceString() {
+			return service+"("+serviceType+")";
+		}
+		
+	}
+	
+	public static class Action{
+		private String action;
 
-	private String backendMessageId;
-	private String ebmsMessageId;
-	private String conversationId;
+		/**
+		 * @param action
+		 */
+		public Action(String action) {
+			super();
+			this.action = action;
+		}
+
+		@Override
+		public String toString() {
+			return "Action [action=" + action + "]";
+		}
+
+		public String getAction() {
+			return action;
+		}
+
+		public void setAction(String action) {
+			this.action = action;
+		}
+		public void setActionString(String action) {
+			
+		}
+	}
+
+	private Service service;
+	private Action action;
+	private Party from;
+	private Party to;
 	private String originalSender;
 	private String finalRecipient;
-	private String direction;
-	private ZonedDateTime confirmed;
-	private ZonedDateTime rejected;
 	
-	private LinkedList<WebMessageEvidence> evidences = new LinkedList<WebMessageEvidence>();
+	
 	private LinkedList<WebMessageError> errors = new LinkedList<WebMessageError>();
 	
 
-	public String getBackendMessageId() {
-		return backendMessageId;
-	}
+	
 
 
-	public void setBackendMessageId(String backendMessageId) {
-		this.backendMessageId = backendMessageId;
-	}
-
-
-	public String getEbmsMessageId() {
-		return ebmsMessageId;
-	}
-
-
-	public void setEbmsMessageId(String ebmsMessageId) {
-		this.ebmsMessageId = ebmsMessageId;
-	}
-
-
-	public String getConversationId() {
-		return conversationId;
-	}
-
-
-	public void setConversationId(String conversationId) {
-		this.conversationId = conversationId;
+	@Override
+	public String toString() {
+		return "WebMessageDetail [service=" + service + ", action=" + action + ", from=" + from + ", to=" + to
+				+ ", originalSender=" + originalSender + ", finalRecipient=" + finalRecipient + "]";
 	}
 
 
@@ -69,58 +154,70 @@ public class WebMessageDetail extends WebMessage {
 	}
 
 
-	public String getDirection() {
-		return direction;
-	}
-
-
-	public void setDirection(String direction) {
-		this.direction = direction;
-	}
-
-
-	public ZonedDateTime getConfirmed() {
-		return confirmed;
-	}
 	
-	public String getConfirmedString() {
-		return confirmed!=null?confirmed.toString():null;
-	}
-
-
-	public void setConfirmed(ZonedDateTime confirmed) {
-		this.confirmed = confirmed;
-	}
 	
-	public void setConfirmedString(String confirmed) {
+
+
+
+	public Service getService() {
+		return service;
 	}
 
 
-	public ZonedDateTime getRejected() {
-		return rejected;
-	}
-	
-	public String getRejectedString() {
-		return rejected!=null?rejected.toString():null;
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 
-	public void setRejected(ZonedDateTime rejected) {
-		this.rejected = rejected;
-	}
-	
-	public void setRejectedString(String rejected) {
+	public Action getAction() {
+		return action;
 	}
 
 
-	public LinkedList<WebMessageEvidence> getEvidences() {
-		return evidences;
+	public void setAction(Action action) {
+		this.action = action;
 	}
+
+
+	public Party getFrom() {
+		return from;
+	}
+
+
+	public void setFrom(Party from) {
+		this.from = from;
+	}
+
+
+	public Party getTo() {
+		return to;
+	}
+
+
+	public void setTo(Party to) {
+		this.to = to;
+	}
+
+
+
 
 
 	public LinkedList<WebMessageError> getErrors() {
 		return errors;
 	}
 
+	
+	public void setServiceString(String service) {
+		
+	}
 
+	public void setActionString(String action) {
+		
+	}
+	public void setFromString(String from) {
+		
+	}
+	public void setToString(String to) {
+		
+	}
 }

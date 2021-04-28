@@ -17,22 +17,22 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class WebServiceUtil {
 
-	
-	public static InputStream getInputStreamWithWorkbook(HSSFWorkbook wb) {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		
-		try {
-			wb.write(outputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-            
+
+    public static InputStream getInputStreamWithWorkbook(HSSFWorkbook wb) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            wb.write(outputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return new ByteArrayInputStream(outputStream.toByteArray());
-	}
-	
-	public static HSSFWorkbook createNewExcel(String initialSheetName) {
-		HSSFWorkbook wb = new HSSFWorkbook();
-        
+    }
+
+    public static HSSFWorkbook createNewExcel(String initialSheetName) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
 //        wb.setSheetName(0, sdf.format(fromDate) + " - " + sdf.format(toDate));
         HSSFSheet sheet = wb.createSheet(initialSheetName);
 
@@ -47,10 +47,10 @@ public class WebServiceUtil {
         sheet.setAutobreaks(true);
         printSetup.setFitHeight((short) 1);
         printSetup.setFitWidth((short) 1);
-        
+
         return wb;
-	}
-	/**
+    }
+    /**
      * create a library of cell styles
      */
     public static Map<String, CellStyle> createStyles(Workbook wb) {

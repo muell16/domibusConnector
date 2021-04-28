@@ -55,8 +55,6 @@ public class WsBackendPluginTest {
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
     public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
 
-//    @Autowired
-//    DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     @Autowired
     DCMessagePersistenceService messagePersistenceServiceMock;
@@ -120,26 +118,18 @@ public class WsBackendPluginTest {
 
         DomibusConnectorMessage epoMessage1 = DomainEntityCreator.createEpoMessage();
         epoMessage1.getMessageDetails().setConnectorBackendClientName("backend_bob");
-        epoMessage1.setConnectorMessageId("con1");
+        epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con1"));
         epoMessage1.getMessageDetails().setEbmsMessageId("ebms1");
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
-        step1.setMessageId(new DomibusConnectorMessageId(epoMessage1.getConnectorMessageIdAsString()));
-
-        //return message 1 when plugin asks for it
-        Mockito.when(messagePersistenceServiceMock.findMessageByConnectorMessageId(Mockito.eq("con1")))
-                .thenReturn(epoMessage1);
+        step1.setTransportedMessage(epoMessage1);
 
 
         DomibusConnectorMessage epoMessage2 = DomainEntityCreator.createEpoMessage();
         epoMessage2.getMessageDetails().setConnectorBackendClientName("backend_bob");
-        epoMessage2.setConnectorMessageId("con2");
+        epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con2"));
         epoMessage2.getMessageDetails().setEbmsMessageId("ebms2");
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();
-        step2.setMessageId(new DomibusConnectorMessageId(epoMessage2.getConnectorMessageIdAsString()));
-
-        //return message 2 when plugin asks for it
-        Mockito.when(messagePersistenceServiceMock.findMessageByConnectorMessageId(Mockito.eq("con2")))
-                .thenReturn(epoMessage2);
+        step2.setTransportedMessage(epoMessage2);
 
         //return the 2 message steps, when plugin asks for it
         Mockito.when(transportStateServiceMock.getPendingTransportsForLinkPartner(Mockito.eq(backendName)))

@@ -22,7 +22,16 @@ public interface DCMessagePersistenceService {
 
     boolean checkMessageRejected(DomibusConnectorMessage message);
 
-    //TODO: improve Exceptions
+    /**
+     * marks the message as rejected
+     * @throws IllegalArgumentException is thrown, if the message is null,
+     *  or the message does not contain a connector id
+     * @throws RuntimeException - if the message is not successfully marked as
+     * rejected
+     * @param message - the message
+     */
+    void rejectMessage(DomibusConnectorMessage message);
+
     /**
      * marks the message as confirmed
      * @throws IllegalArgumentException  is thrown, if the message is null,
@@ -120,29 +129,22 @@ public interface DCMessagePersistenceService {
      * @return the message with eventually updated fields
      * @throws PersistenceException in case of an error
      */
+    @Deprecated
     DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
     /**
      * stores a new message into storage
+     * @Deprecated the method persistBusinessMessageIntoDatabase should be used instead
      * @param message - the message
      * @param direction - direction of the message
      * @return the message with eventually updated fields
      * @throws PersistenceException - in case of failures with persistence
      *
      */
+    @Deprecated
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
 
-    //TODO: improve Exceptions
-    /**
-     * marks the message as rejected
-     * @throws IllegalArgumentException is thrown, if the message is null,
-     *  or the message does not contain a connector id
-     * @throws RuntimeException - if the message is not successfully marked as
-     * rejected
-     * @param message - the message
-     */
-    void rejectMessage(DomibusConnectorMessage message);
 
     /**
      * Marks the message as delivered to the gateway
@@ -156,12 +158,15 @@ public interface DCMessagePersistenceService {
      */
     void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
 
+    void updateMessageDetails(DomibusConnectorMessage message);
 
-    DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message);
-
-    default void persistMessageIntoDatabase(DomibusConnectorMessage message) {
-        persistMessageIntoDatabase(message, message.getMessageDetails().getDirection());
-    }
-
+    /**
+     * stores a business messsage into database
+     *  -) the message details
+     *  -) the message content
+     *  -) the message attachments
+     *
+     * @param message - the connector message
+     */
     void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message);
 }

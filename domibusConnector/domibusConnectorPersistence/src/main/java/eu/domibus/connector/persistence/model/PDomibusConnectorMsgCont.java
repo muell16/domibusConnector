@@ -26,10 +26,18 @@ import javax.persistence.*;
 @Table(name="DOMIBUS_CONNECTOR_MSG_CONT")
 public class PDomibusConnectorMsgCont {
 
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MSG_CONT";
+
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreMsgContent", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_CONT.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgContent")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE_BULK)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
     @Column(name = "STORAGE_PROVIDER_NAME")

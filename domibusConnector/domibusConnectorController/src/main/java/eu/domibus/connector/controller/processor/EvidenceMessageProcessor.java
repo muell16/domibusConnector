@@ -31,7 +31,6 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
     private final MessageConfirmationStep messageConfirmationStep;
     private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
-    private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
     private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
 
     public EvidenceMessageProcessor(EvidenceTriggerStep evidenceTriggerStep,
@@ -44,7 +43,6 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
         this.findBusinessMessageByMsgId = findBusinessMessageByMsgId;
         this.messageConfirmationStep = messageConfirmationStep;
         this.validateMessageConfirmationStep = validateMessageConfirmationStep;
-        this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
         this.submitConfirmationAsEvidenceMessageStep = submitConfirmationAsEvidenceMessageStep;
     }
 
@@ -84,7 +82,8 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
                 submitConfirmationAsEvidenceMessageStep.submitSameDirection(null, businessMsg, transportedConfirmation);
             }
         } catch (DCEvidenceNotRelevantException dcEvidenceNotRelevantException) {
-            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The processed evidence will be ignored due", dcEvidenceNotRelevantException);
+            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, dcEvidenceNotRelevantException.getMessage());
+            LOGGER.debug(dcEvidenceNotRelevantException.getMessage(), dcEvidenceNotRelevantException);
         }
 
     }

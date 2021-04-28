@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.jms.Queue;
 import javax.transaction.Transactional;
 
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_ERROR_QUEUE_BEAN;
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
+import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_ERROR_QUEUE_BEAN;
+import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Component
 public class ToConnectorQueue implements PutOnQueue {

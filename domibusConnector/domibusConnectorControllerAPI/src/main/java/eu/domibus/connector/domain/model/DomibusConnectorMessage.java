@@ -200,6 +200,7 @@ public class DomibusConnectorMessage implements Serializable {
 	   	return this.transportedMessageConfirmations.add(confirmation);
 	}
 
+	@JsonIgnore
 	public List<DomibusConnectorMessageError> getMessageProcessErrors(){
 		return this.messageProcessErrors;
 	}
@@ -238,4 +239,7 @@ public class DomibusConnectorMessage implements Serializable {
         return builder.toString();
 	}
 
+	public void setMessageContent(DomibusConnectorMessageContent messageContent) {
+		this.messageContent = messageContent;
+	}
 }

@@ -7,8 +7,9 @@ import eu.domibus.connector.controller.queues.ToConnectorQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
@@ -16,10 +17,10 @@ import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
+import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Component
 public class ToConnectorControllerListener {
@@ -42,7 +43,7 @@ public class ToConnectorControllerListener {
     }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         if (message == null || message.getMessageDetails() == null) {
@@ -60,14 +61,19 @@ public class ToConnectorControllerListener {
             } else {
                 throw new IllegalStateException("Illegal Message format received!");
             }
-        } catch (PersistenceException persistenceException) {
+        } catch (Exception exc) {
             //cannot recover here: put into DLQ!
-            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Persistence Error! Check Dead Letter Queue and technical logs for details!", persistenceException);
-            toConnectorQueue.putOnErrorQueue(message);
-        } catch (Exception anyOtherException) {
-            //cannot recover here: put into DLQ!
-            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message! Check Dead Letter Queue and technical logs for details!", anyOtherException);
-            toConnectorQueue.putOnErrorQueue(message);
+            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Check Dead Letter Queue and technical logs for details!", exc.getMessage());
+            String error = "Failed to process messsage due: " + exc.getMessage();
+            LOGGER.error(error, exc);
+            throw exc;
+//            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
+//                    .setText(error)
+//                    .setDetails(exc)
+//                    .setSource(ToConnectorControllerListener.class)
+//                    .build();
+//            message.getMessageProcessErrors().add(build);
+//            toConnectorQueue.putOnErrorQueue(message);
         }
     }
 

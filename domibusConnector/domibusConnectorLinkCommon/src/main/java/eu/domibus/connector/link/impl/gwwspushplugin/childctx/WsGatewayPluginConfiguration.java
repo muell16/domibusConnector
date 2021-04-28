@@ -8,6 +8,7 @@ import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatew
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWSService;
 import org.apache.cxf.bus.spring.SpringBus;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
@@ -27,7 +28,7 @@ import java.util.Properties;
 
 /**
  * Configuration for the spring childContext for
- * the pullGatewayPlugin
+ * the pushGatewayPlugin
  */
 @Configuration
 @Profile(WsGatewayPluginConfiguration.WS_GATEWAY_PLUGIN)
@@ -75,6 +76,12 @@ public class WsGatewayPluginConfiguration {
             props = new HashMap<>();
         }
 
+        if (configurationProperties.isCxfLoggingEnabled()) {
+            LoggingFeature loggingFeature = new LoggingFeature();
+            loggingFeature.setPrettyLogging(true);
+            jaxWsProxyFactoryBean.getFeatures().add(loggingFeature);
+        }
+
         Properties properties = merlinPropertiesFactory.mapCertAndStoreConfigPropertiesToMerlinProperties(configurationProperties.getSoap(), ".");
 
         props.put("mtom-enabled", true);
@@ -101,6 +108,13 @@ public class WsGatewayPluginConfiguration {
 
         WSPolicyFeature wsPolicyFeature = new WsPolicyLoader(config.getWsPolicy()).loadPolicyFeature();
         endpoint.getFeatures().add(wsPolicyFeature);
+
+        if (config.isCxfLoggingEnabled()) {
+            LoggingFeature loggingFeature = new LoggingFeature();
+            loggingFeature.setPrettyLogging(true);
+            endpoint.getFeatures().add(loggingFeature);
+        }
+
 
         endpoint.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
         endpoint.getProperties().put("security.store.bytes.in.attachment", true);

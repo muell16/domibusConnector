@@ -24,8 +24,8 @@ public class PDomibusConnectorMessageLane {
             pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
             pkColumnValue = TABLE_NAME + ".ID",
             valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
-            initialValue = 100,
-            allocationSize = 1)
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 

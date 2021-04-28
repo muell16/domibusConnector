@@ -2,15 +2,13 @@ package eu.domibus.connector.controller.queues;
 
 import eu.domibus.connector.controller.service.PutOnQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.jms.Queue;
-import javax.transaction.Transactional;
 
-import static eu.domibus.connector.controller.queues.QueuesConfiguration.*;
+import static eu.domibus.connector.controller.queues.JmsConfiguration.*;
 
 @Component
 public class ToLinkQueue implements PutOnQueue {

@@ -80,14 +80,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
             if (backendClientInfoByName.isPresent()) {
                 List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner = transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
                 List<DomibusConnectorMessageType> collect = pendingTransportsForLinkPartner.stream()
-                        .map(step -> step.getMessageId())
-                        .map(msgId -> {
-                            DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(msgId.getConnectorMessageId());
-                            if (messageByConnectorMessageId == null) {
-                                LOGGER.warn("Cannot give Message to Client - No message found for Message id: [{}]", msgId);
-                            }
-                            return messageByConnectorMessageId;
-                        })
+                        .map(DomibusConnectorTransportStep::getTransportedMessage)
                         .filter(Objects::nonNull)
                         .map(msg -> transformerService.transformDomainToTransition(msg))
                         .collect(Collectors.toList());
@@ -201,8 +194,6 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                 transportState.setStatus(TransportState.ACCEPTED);
                 transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
             });
-
-//            backendSubmissionService.processMessageAfterDeliveredToBackend(connectorMessage);
         }
     }
 

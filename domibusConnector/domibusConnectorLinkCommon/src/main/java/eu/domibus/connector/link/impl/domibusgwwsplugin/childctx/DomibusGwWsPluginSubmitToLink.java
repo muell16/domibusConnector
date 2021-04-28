@@ -43,7 +43,7 @@ public class DomibusGwWsPluginSubmitToLink implements SubmitToLinkPartner {
         DomibusGwWsPluginActiveLinkPartner activeLinkPartner = (DomibusGwWsPluginActiveLinkPartner) activeLinkPartnerByName.get();
         BackendInterface backendInterface = backendInterfaceFactory.getWebserviceProxyClient(activeLinkPartner);
 
-        TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, linkPartnerName);
+        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
 
         SubmitRequest submitRequest = new SubmitRequest();
 //        LargePayloadType largePayloadType = new LargePayloadType();

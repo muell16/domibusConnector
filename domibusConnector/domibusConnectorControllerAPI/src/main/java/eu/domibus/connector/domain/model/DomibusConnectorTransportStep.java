@@ -11,7 +11,7 @@ import java.util.List;
 public class DomibusConnectorTransportStep {
 
     private TransportStateService.TransportId transportId;
-    private DomibusConnectorMessageId messageId;
+    private DomibusConnectorMessage transportedMessage;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
     private java.lang.String transportSystemMessageId;
@@ -20,20 +20,20 @@ public class DomibusConnectorTransportStep {
     private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
     private LocalDateTime finalStateReached;
 
+    public DomibusConnectorMessage getTransportedMessage() {
+        return transportedMessage;
+    }
+
+    public void setTransportedMessage(DomibusConnectorMessage transportedMessage) {
+        this.transportedMessage = transportedMessage;
+    }
+
     public TransportStateService.TransportId getTransportId() {
         return transportId;
     }
 
     public void setTransportId(TransportStateService.TransportId transportId) {
         this.transportId = transportId;
-    }
-
-    public DomibusConnectorMessageId getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(DomibusConnectorMessageId messageId) {
-        this.messageId = messageId;
     }
 
     public DomibusConnectorLinkPartner.LinkPartnerName getLinkPartnerName() {

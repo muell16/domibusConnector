@@ -1,8 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
@@ -63,7 +61,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                     public PDomibusConnectorEvidence answer(InvocationOnMock invocation) throws Throwable {
                         PDomibusConnectorEvidence evidence = invocation.getArgument(0);
                         assertThat(evidence.getDeliveredToGateway()).isNull();
-                        assertThat(evidence.getDeliveredToNationalSystem()).isNull();
+                        assertThat(evidence.getDeliveredToBackend()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
                         assertThat(evidence.getBusinessMessage()).isNotNull();
                         assertThat(evidence.getEvidence()).isNull();
@@ -94,7 +92,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                     public PDomibusConnectorEvidence answer(InvocationOnMock invocation) throws Throwable {
                         PDomibusConnectorEvidence evidence = invocation.getArgument(0);
                         assertThat(evidence.getDeliveredToGateway()).isNull();
-                        assertThat(evidence.getDeliveredToNationalSystem()).isNull();
+                        assertThat(evidence.getDeliveredToBackend()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
                         assertThat(evidence.getBusinessMessage()).isNotNull();
                         assertThat(evidence.getEvidence()).isEqualTo("EVIDENCE1");

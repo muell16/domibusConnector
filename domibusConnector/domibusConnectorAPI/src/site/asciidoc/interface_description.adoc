@@ -47,14 +47,121 @@ link:https://ws.apache.org/wss4j/attachments.html
 
 == XML Types / Message Type
 
-TODO: add visualization of xsd and add some description....
-Describe Message Type
+=== DomibusConnectorMessageType
 
-The connector offers on both sides almost the same interface.
+|===
+| field | type | description
+
+| messageContent | <<DomibusConnectorMessageContentType>> | Holds the message content, should only be used if the message is a business message
+
+| messageDetails | <<DomibusConnectorMessageDetailsType>> | Contains the message details. Especially the addressing attributes of AS4
+
+| messageConfirmations | DomibusConnectorMessageConfirmationType | Holds a list of confirmations (evidences). A business message can contain multiple evidences. If the messageContent is empty there must be exactly one messageConfirmation. In this case the message is a evidence message.
+
+| messageAttachments | DomibusConnectorMessageAttachmentType | Contains a list of attachments. Currently only business messages contain attachments
+
+| messageErrors | DomibusConnectorMessageErrorType | Currently not used
+
+|===
+
+=== DomibusConnectorMessageContentType
+|===
+| field | type | description
+
+| xmlContent | xs:base64Binary | The business XML document
+
+| document | <<DomibusConnectorMessageDocumentType>> | The business (PDF) document
+
+|===
+
+=== DomibusConnectorMessageDocumentType
+
+|===
+| field | type | description
+
+| document | xs:base64Binary | The document content as binary
+
+| documentName | xs:String | The name of the document
+
+| detachedSignature | <<DomibusConnectorDetachedSignatureType>> | If the document signature is not embedded but a detached signature is used it should be placed here.
+
+
+
+|===
+
+=== DomibusConnectorDetachedSignatureType
+|===
+| field | type | description
+
+| detachedSignature | xs:base64Binary | The detached signature in an eIDAS conforming format.
+
+| detachedSignatureName | xs:string | Name
+
+| mimeType | DomibusConnectorDetachedSignatureMimeType | List of valid signature types: BINARY, XML, PKCS7
+
+|===
+
+
+=== DomibusConnectorMessageDetailsType
+|===
+| field | type | description
+
+| backendMessageId | xs:string | The id of the message within the backend system/national message id
+| ebmsMessageId | xs:string | The EBMS id of the message
+| refToMessageId | xs:string | If the message is an evidence message, this attribute references the EBMSID or backendMessageId of the business message this evidence is meant for
+| conversationId | xs:string | Within AS4 multiple messages can be grouped together
+| originalSender | xs:string | The original sender is the national part of the ecodex sender address
+| finalRecipient | xs:string | The final recipient is the national part of the ecodex receiver address
+| service | DomibusConnectorServiceType | The AS4 service type
+| action | DomibusConnectorActionType | The AS4 action
+| fromParty | DomibusConnectorPartyType | The AS4 party type: sending party
+| toParty  | DomibusConnectorPartyType | The AS4 party type: recipient party
+
+|===
+
+
+=== DomibsConnectorAcknowledgementType
+
+If any component receives a message, this type is meant for responding. In future versions it will be replaced by <<DomibusConnectorMessageResponseType>>
+
+|===
+| field | type | description
+
+| messageId | xs:string | The by the receiving component assigned message id, in case of the Backend this would be the nationalMessageId or backendMessageId, in case of the Gateway this would be the EBMSID
+
+| result | xs:boolean | True if message has been accepted, False if message has been declined
+
+| resultMessage | xs:string | Freely choosen additional information. Should be used when result is false to return a meaningful error message.
+
+|===
+
+
+=== DomibusConnectorMessageResponseType
+
+|===
+| field | type | description
+
+| responseForMessageId | xs:string | This response should hold the by the sending component initially used message id in the following order: If provided the EBMS id, otherwhise the backendMessageId.
+
+| result | xs:boolean | True if message has been accepted, False if message has been declined
+
+| resultMessage | xs:string | Freely choosen additional information. Should be used when result is false to return a meaningful error message.
+
+| assignedMessageId | xs:string | The by the receiving component assigned message id, in case of the Backend this would be the nationalMessageId or backendMessageId, in case of the Gateway this would be the EBMSID
+
+| messageErrors | <<DomibusConnectorMessageErrorType>> | a list of occured message errros
+
+|===
+
+=== DomibusConnectorMessageErrorType
+
+Not implemented/Used yet
 
 == Flows
 
-TODO: describe some basic flows...
+
+
+
 
 === Sending a Business Message
 
@@ -208,7 +315,7 @@ with an message id to a new delivered message
 
 | messageDetails/finalRecipient | empty | filled out by the connector, it will be taken from the original message (originalSender)
 
-| messageDetails/service | empty | filled out by the connector, it will be taken from the original message
+| messageDetails/service | empty | filled out by the connector, it will be taken from the original business message
 
 | messageDetails/action/action | empty | filled out by the connector, it will be taken from configuration
 
@@ -218,11 +325,13 @@ with an message id to a new delivered message
 
 |===
 
+ NOTE: The "address attributes": FromParty, ToParty, OriginalSender, FinalRecipient are taken from the business message and are reverted for the to the outgoing (to the Gateway) evidence message.
+
 After the evidence was triggered the generated evidence message will not only submitted to the other party
-it will also be delivered to the backend system as an confirmation, that the trigger was successfully.
+it will also be delivered to the backend system as a confirmation, that the trigger was successfully.
 
 
-=== Receiving an confirmation message
+=== Receiving a confirmation message
 
 When the backend receives a confirmation message, the refToMessageId field is filled in the following order:
 
@@ -239,3 +348,8 @@ completly transparent for the backend. The backendMessageId is mapped by the con
 will always send/provide the confirmation messages in the correct order. Also the connector relies on
 the ordering of the confirmation messages because the confirmation messages are chained together
 and as an example a RELAY_REMMD_ACCEPTANCE can only be created if there is already a SUBMISSION_ACCEPTANCE.
+
+
+
+
+

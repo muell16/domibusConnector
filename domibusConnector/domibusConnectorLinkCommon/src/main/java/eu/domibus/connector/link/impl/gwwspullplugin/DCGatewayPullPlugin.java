@@ -11,6 +11,7 @@ import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPlugi
 import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -60,15 +61,15 @@ public class DCGatewayPullPlugin implements LinkPlugin {
                 .run();
 
 
+        this.submitToLink = childCtx.getBean(SubmitToLinkPartner.class);
+
         ActiveLink activeLink = new ActiveLink();
         activeLink.setLinkConfiguration(linkConfiguration);
         activeLink.setChildContext(childCtx);
+        activeLink.setSubmitToLink(submitToLink);
+        activeLink.setLinkPlugin(this);
 
-        SubmitToLinkPartner bean = childCtx.getBean(SubmitToLinkPartner.class);
-        this.submitToLink = bean;
-
-        PullFromLinkPartner pullFromLink = childCtx.getBean(PullFromLinkPartner.class);
-        this.pullFromLink = pullFromLink;
+        this.pullFromLink = childCtx.getBean(PullFromLinkPartner.class);
 
         return activeLink;
     }
