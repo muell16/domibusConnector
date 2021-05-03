@@ -23,6 +23,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
 
 alter table DC_TRANSPORT_STEP rename column CONNECTOR_MESSAGE_ID to bkp_cmid;
 alter table DC_TRANSPORT_STEP add           CONNECTOR_MESSAGE_ID VARCHAR2(255);
+alter table DC_TRANSPORT_STEP add           TRANSPORTED_MESSAGE CLOB;
 update      DC_TRANSPORT_STEP set           CONNECTOR_MESSAGE_ID=to_char(bkp_cmid);
 alter table DC_TRANSPORT_STEP drop column   bkp_cmid;
 alter table DC_TRANSPORT_STEP modify       ("CONNECTOR_MESSAGE_ID" not null);
