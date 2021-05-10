@@ -1,9 +1,13 @@
-SET FOREIGN_KEY_CHECKS=0;
-
-
 -- *********************************************************************
 -- Update Database Script - from domibusConnector 4.2 to 4.3
 -- *********************************************************************
+
+SET FOREIGN_KEY_CHECKS=0;
+-- requires MySQL >= 5.6.6, default since MySQL 8.0.2
+SET EXPLICIT_DEFAULTS_FOR_TIMESTAMP = ON;
+-- fixes UUID bug: https://bugs.mysql.com/bug.php?id=101820es UUID bug
+-- also see: https://stackoverflow.com/questions/36296558/mysql-generating-duplicate-uuid
+SET names utf8;
 
 -- #################### 1/6 RENAME tables that need to be recreated ####################
 
@@ -21,7 +25,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
     SERVICE_TYPE VARCHAR(255)
 );
 
-alter table DC_TRANSPORT_STEP rename column CONNECTOR_MESSAGE_ID to bkp_cmid;
+alter table DC_TRANSPORT_STEP change CONNECTOR_MESSAGE_ID bkp_cmid BIGINT NOT NULL;
 alter table DC_TRANSPORT_STEP add           CONNECTOR_MESSAGE_ID VARCHAR(255);
 alter table DC_TRANSPORT_STEP add           TRANSPORTED_MESSAGE LONGTEXT;
 update      DC_TRANSPORT_STEP set           CONNECTOR_MESSAGE_ID=CONVERT(bkp_cmid, char);
@@ -103,3 +107,4 @@ ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT FK_SERVICE_PMODE_SET_ID FOR
 
 -- #################### 6/6 UPDATE Version ####################
 
+SET FOREIGN_KEY_CHECKS = 1;
