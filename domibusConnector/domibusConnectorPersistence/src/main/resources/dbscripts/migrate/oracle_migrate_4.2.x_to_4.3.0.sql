@@ -83,7 +83,7 @@ where x.DELIVERED_NAT is null
 
 -- #################### 4/6 DELETE temporary tables, frees fk names ####################
 
-drop table BKP_DC_SERVICE;
+drop table BKP_DC_SERVICE cascade constraints;
 
 -- #################### 5/6 ADD the constraints ####################
 
