@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import javax.persistence.EntityManager;
@@ -236,6 +238,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             reference.setReadable(false);
             reference.setWriteable(false);
             reference.setStorageIdReference(Long.toString(bigData.getId()));
+            reference.setCreationDate(ZonedDateTime.ofInstant(bigData.getCreated().toInstant(), ZoneId.systemDefault()));
             dataRefList.add(reference);
 
         });
