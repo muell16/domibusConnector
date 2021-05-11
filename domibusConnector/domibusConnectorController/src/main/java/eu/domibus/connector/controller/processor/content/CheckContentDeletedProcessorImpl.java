@@ -11,7 +11,6 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionExce
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,22 +18,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * This service is triggered by an timer job
+ * and is responsible for deleting
+ * large file storage references if the reference is
+ * older than a day and has no associated business message
+ * within the database or the associated business message
+ * has already been confirmed or rejected
+ */
 @Service
 public class CheckContentDeletedProcessorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessorImpl.class);
 
-    LargeFilePersistenceService largeFilePersistenceService;
-    DCMessagePersistenceService messagePersistenceService;
-    ContentDeletionTimeoutConfigurationProperties contentDeletionTimeoutConfigurationProperties;
+    private final LargeFilePersistenceService largeFilePersistenceService;
+    private final DCMessagePersistenceService messagePersistenceService;
 
-    @Autowired
-    public void setLargeFilePersistenceService(LargeFilePersistenceService largeFilePersistenceService) {
+    private ContentDeletionTimeoutConfigurationProperties contentDeletionTimeoutConfigurationProperties;
+
+    public CheckContentDeletedProcessorImpl(LargeFilePersistenceService largeFilePersistenceService, DCMessagePersistenceService messagePersistenceService) {
         this.largeFilePersistenceService = largeFilePersistenceService;
-    }
-
-    @Autowired
-    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -63,7 +66,7 @@ public class CheckContentDeletedProcessorImpl {
     List<LargeFileReference> getDeleteableReferences(DomibusConnectorMessageId id, List<LargeFileReference> references) {
         DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
         if (msg == null) {
-            LOGGER.warn("No message with connector message id [{}] found in database. This content will NOT be deleted. Please check and remove manual!", id.getConnectorMessageId());
+            LOGGER.debug("No message with connector message id [{}] found in database", id);
             return references;
         }
 

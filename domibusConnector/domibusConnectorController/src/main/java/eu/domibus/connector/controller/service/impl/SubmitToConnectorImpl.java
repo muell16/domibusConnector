@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.service.impl;
 
-import eu.domibus.connector.controller.queues.ToConnectorQueue;
+import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class SubmitToConnectorImpl implements SubmitToConnector {
 
     private final ToConnectorQueue toConnectorQueue;
+
+    public SubmitToConnectorImpl(ToConnectorQueue toConnectorQueue) {
+        this.toConnectorQueue = toConnectorQueue;
+    }
 
     @Override
     @Transactional

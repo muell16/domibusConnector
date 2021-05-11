@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.controller.queues.ToLinkQueue;
+import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;

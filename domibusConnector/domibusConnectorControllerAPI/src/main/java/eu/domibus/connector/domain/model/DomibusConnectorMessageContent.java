@@ -14,6 +14,11 @@ import javax.validation.constraints.Null;
  * The DomibusConnectorMessageContent holds the main content of a message. This is
  * the XML data of the main Form of the message and the printable document that
  * most of the {@link DomibusConnectorAction} require.
+ *
+ * A message is a business message only if a messageContent is
+ * present
+ *
+ *
  * @author riederb
  * @version 1.0
  * updated 29-Dez-2017 10:12:49
