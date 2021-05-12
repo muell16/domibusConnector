@@ -11,10 +11,13 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 
 @Component
-@RequiredArgsConstructor
 public class JmsDestinationResolver implements DestinationResolver {
 
     private final ApplicationContext ctx;
+
+    public JmsDestinationResolver(ApplicationContext ctx) {
+        this.ctx = ctx;
+    }
 
     @Override
     public Destination resolveDestinationName(@Nullable Session session, String destinationName, boolean pubSubDomain) throws JMSException {

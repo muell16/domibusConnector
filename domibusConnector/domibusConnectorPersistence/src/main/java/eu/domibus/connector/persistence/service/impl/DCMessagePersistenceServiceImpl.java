@@ -421,16 +421,15 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
         this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
 
-        loadRelatedMessages(messageBuilder, dbMessage);
+        loadRelatedEvidences(messageBuilder, dbMessage);
 
         DomibusConnectorMessage message =  messageBuilder.build();
-
 
         return message;
     }
 
 
-    private void loadRelatedMessages(DomibusConnectorMessageBuilder messageBuilder, PDomibusConnectorMessage dbMessage) {
+    private void loadRelatedEvidences(DomibusConnectorMessageBuilder messageBuilder, PDomibusConnectorMessage dbMessage) {
         List<DomibusConnectorMessageConfirmation> collect = dbMessage.getRelatedEvidences().stream()
                 .map(MessageConfirmationMapper::mapFromDbToDomain)
                 .collect(Collectors.toList());

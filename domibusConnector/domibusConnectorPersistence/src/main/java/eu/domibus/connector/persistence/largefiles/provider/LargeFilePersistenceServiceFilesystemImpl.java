@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.largefiles.provider;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import liquibase.util.StringUtils;
@@ -21,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.*;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -229,6 +231,12 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     private LargeFileReference mapMessageFolderAndFileNameToReference(String messageFolderName, String fileName) {
         String storageIdRef = createReferenceName(messageFolderName, fileName);
         FileBasedLargeFileReference ref = new FileBasedLargeFileReference(this);
+        Path filePath = getStoragePath().resolve(storageIdRef);
+        try {
+            ref.setCreationDate(Files.getLastModifiedTime(filePath).toInstant().atZone(ZoneId.systemDefault()));
+        } catch (IOException e) {
+            throw new LargeFileException(String.format("Unable to read file reference [%s]", storageIdRef), e);
+        }
         ref.setStorageIdReference(storageIdRef);
         return ref;
     }

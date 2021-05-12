@@ -113,6 +113,10 @@ public class PDomibusConnectorBigData {
         this.connectorMessageId = connectorMessageId;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);

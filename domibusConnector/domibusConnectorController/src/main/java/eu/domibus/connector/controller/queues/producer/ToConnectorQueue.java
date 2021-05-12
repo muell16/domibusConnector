@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.queues;
+package eu.domibus.connector.controller.queues.producer;
 
 import eu.domibus.connector.controller.service.PutOnQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;

@@ -37,3 +37,11 @@ The Connector has been tested on
 | Mysql Connector 8.0.x
 | Mysql 8.0.x
 | Liquibase
+
+| 4.3.x
+| Windows 10
+| Adopt Open JDK 1.8.x
+| Standalone
+| H2 4.200
+| H2 4.200
+| Liquibase

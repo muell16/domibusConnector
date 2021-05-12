@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.*;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import javax.activation.DataSource;
@@ -27,6 +28,8 @@ public class LargeFileReference implements DataSource, Serializable {
 
     private String text = "";
 
+    private ZonedDateTime creationDate;
+
     public LargeFileReference() {}
 
     public LargeFileReference(@NotNull String storageIdReference) {
@@ -43,6 +46,7 @@ public class LargeFileReference implements DataSource, Serializable {
         this.mimetype = ref.mimetype;
         this.size = ref.size;
         this.text = ref.text;
+        this.creationDate = ref.creationDate;
     }
 
     public @Nullable
@@ -116,6 +120,14 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public ZonedDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(ZonedDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

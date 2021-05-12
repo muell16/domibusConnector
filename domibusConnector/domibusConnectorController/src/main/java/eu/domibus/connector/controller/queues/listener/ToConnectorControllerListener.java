@@ -1,14 +1,12 @@
-package eu.domibus.connector.controller.listener;
+package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
-import eu.domibus.connector.controller.queues.ToConnectorQueue;
+import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
