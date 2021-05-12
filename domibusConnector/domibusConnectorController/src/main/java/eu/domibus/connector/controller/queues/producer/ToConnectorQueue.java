@@ -16,14 +16,11 @@ import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECT
 public class ToConnectorQueue implements PutOnQueue {
 
     private final Queue destination;
-    private final Queue errorDestination;
     private final JmsTemplate jmsTemplate;
 
     public ToConnectorQueue(@Qualifier(TO_CONNECTOR_QUEUE_BEAN) Queue destination,
-                            @Qualifier(TO_CONNECTOR_ERROR_QUEUE_BEAN) Queue errorDestination,
                             JmsTemplate jmsTemplate) {
         this.destination = destination;
-        this.errorDestination = errorDestination;
         this.jmsTemplate = jmsTemplate;
     }
 
@@ -34,19 +31,8 @@ public class ToConnectorQueue implements PutOnQueue {
     }
 
     @Override
-    @Transactional
-    public void putOnErrorQueue(DomibusConnectorMessage message) {
-        jmsTemplate.convertAndSend(errorDestination, message);
-    }
-
-    @Override
     public Queue getQueue() {
         return destination;
-    }
-
-
-    public Queue getErrorQueue() {
-        return errorDestination;
     }
 
 }

@@ -15,24 +15,16 @@ public class ToLinkQueue implements PutOnQueue {
 
     private final Queue destination;
     private final JmsTemplate jmsTemplate;
-    private final Queue errorDestination;
 
     public ToLinkQueue(@Qualifier(TO_LINK_QUEUE_BEAN) Queue destination,
-                            @Qualifier(TO_LINK_ERROR_QUEUE_BEAN) Queue errorDestination,
                             JmsTemplate jmsTemplate) {
         this.destination = destination;
-        this.errorDestination = errorDestination;
         this.jmsTemplate = jmsTemplate;
     }
 
     @Override
     public void putOnQueue(DomibusConnectorMessage message) {
         jmsTemplate.convertAndSend(destination, message);
-    }
-
-    @Override
-    public void putOnErrorQueue(DomibusConnectorMessage message) {
-        jmsTemplate.convertAndSend(errorDestination, message);
     }
 
     @Override

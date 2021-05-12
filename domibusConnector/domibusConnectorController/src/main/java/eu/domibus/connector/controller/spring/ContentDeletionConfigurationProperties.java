@@ -8,10 +8,12 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
 
-@Component
+@Component(ContentDeletionConfigurationProperties.BEAN_NAME)
 @ConfigurationProperties(prefix = ContentDeletionConfigurationProperties.PREFIX)
 @Validated
 public class ContentDeletionConfigurationProperties {
+
+    public static final String BEAN_NAME = "ContentDeletionConfigurationProperties";
 
     public static final String PREFIX = "connector.controller.content";
 

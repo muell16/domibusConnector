@@ -45,7 +45,7 @@ public class CheckContentDeletedProcessorImpl {
         this.toCleanupQueue = toCleanupQueue;
     }
 
-    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
+    @Scheduled(fixedDelayString = "#{" + ContentDeletionConfigurationProperties.BEAN_NAME + ".checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
         allAvailableReferences.forEach(this::checkDelete);
