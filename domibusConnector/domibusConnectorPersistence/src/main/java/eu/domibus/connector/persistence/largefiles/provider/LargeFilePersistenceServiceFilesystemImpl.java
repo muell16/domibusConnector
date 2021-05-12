@@ -186,7 +186,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         } finally {
             storageFile = null;
         }
-        deleteFolderIfEmpty(reference);
+        deleteFolderIfEmpty(reference); //check if this runs on nfs share!
     }
 
     private void deleteFolderIfEmpty(FileBasedLargeFileReference reference) {
@@ -207,6 +207,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         Path storagePath = getStoragePath();
         try {
             return Files.list(storagePath)
+                    .filter(p -> !p.startsWith(".")) //exclude hidden files on Unix
                     .collect(Collectors.toMap(
                             path -> new DomibusConnectorMessageId(path.getFileName().toString()),
                             this::listReferences
@@ -220,6 +221,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         String messageFolderName = messageFolder.getFileName().toString();
         try {
             return Files.list(messageFolder)
+                    .filter( p -> !p.startsWith(".")) //filter hidden unix files
                     .map(p -> p.getFileName().toString())
                     .map(s -> mapMessageFolderAndFileNameToReference(messageFolderName, s))
                     .collect(Collectors.toList());

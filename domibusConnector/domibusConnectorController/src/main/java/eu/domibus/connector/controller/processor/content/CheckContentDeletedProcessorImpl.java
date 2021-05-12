@@ -5,10 +5,14 @@ import eu.domibus.connector.controller.spring.ContentDeletionConfigurationProper
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.domibus.connector.tools.logging.MDCHelper;
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This service is triggered by an timer job
@@ -35,34 +40,40 @@ public class CheckContentDeletedProcessorImpl {
 
     private final LargeFilePersistenceService largeFilePersistenceService;
     private final DCMessagePersistenceService messagePersistenceService;
-    private final ToCleanupQueue toCleanupQueue;
 
     public CheckContentDeletedProcessorImpl(LargeFilePersistenceService largeFilePersistenceService,
-                                            DCMessagePersistenceService messagePersistenceService,
-                                            ToCleanupQueue toCleanupQueue) {
+                                            DCMessagePersistenceService messagePersistenceService) {
         this.largeFilePersistenceService = largeFilePersistenceService;
         this.messagePersistenceService = messagePersistenceService;
-        this.toCleanupQueue = toCleanupQueue;
     }
 
     @Scheduled(fixedDelayString = "#{" + ContentDeletionConfigurationProperties.BEAN_NAME + ".checkTimeout.milliseconds}")
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "checkContentDeletedProcessor")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
+        LOGGER.debug("Checking the following references [{}] for deletion", allAvailableReferences);
         allAvailableReferences.forEach(this::checkDelete);
     }
 
     private void checkDelete(DomibusConnectorMessageId id, List<LargeFileReference> references) {
         DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
-        if (msg == null) {
-            LOGGER.debug("No message with connector message id [{}] found in database", id);
-            ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
-            //return only refs which are older than one day
-            references.stream()
-                    .filter(r -> r.getCreationDate() != null && r.getCreationDate().isAfter(tomorrow))
-                    .forEach(this::deleteReference);
-        } else if (msg.getMessageDetails().getConfirmed() != null || msg.getMessageDetails().getRejected() != null) {
-            //put on delete queue if message exists...
-            toCleanupQueue.putOnQueue(msg);
+        String messageIdString = msg == null ? "" : msg.getConnectorMessageId().getConnectorMessageId();
+        try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageIdString)) {
+            if (msg == null) {
+                LOGGER.debug("No message with connector message id [{}] found in database deleting references only when older as 1 day", id);
+                ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
+                //delete only refs which are older than one day
+                List<LargeFileReference> collect = references.stream()
+                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isAfter(tomorrow))
+                        .collect(Collectors.toList());
+                LOGGER.debug("Deleting references [{}] with no associated business message", collect);
+                collect.forEach(this::deleteReference);
+            } else if (msg.getMessageDetails().getConfirmed() != null || msg.getMessageDetails().getRejected() != null) {
+                //delete refs when business msg already rejected or confirmed
+                LOGGER.debug("Message with id [{}] already confirmed/rejected - deleting content [{}]", id, references);
+                references.stream()
+                        .forEach(this::deleteReference);
+            }
         }
     }
 
