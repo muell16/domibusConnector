@@ -28,7 +28,7 @@ import java.util.Map;
  * has already been confirmed or rejected
  */
 @Service
-@ConditionalOnProperty(prefix = ContentDeletionConfigurationProperties.PREFIX, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = ContentDeletionConfigurationProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CheckContentDeletedProcessorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessorImpl.class);

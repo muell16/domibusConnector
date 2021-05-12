@@ -70,7 +70,13 @@ public class JmsConfiguration {
         return activeMQQueue;
     }
 
-
+    @Bean(TO_CLEANUP_QUEUE_BEAN)
+    public Queue toCleanupQueue(
+            QueuesConfigurationProperties config
+    ) {
+        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getCleanupQueue());
+        return activeMQQueue;
+    }
 
 
 }
