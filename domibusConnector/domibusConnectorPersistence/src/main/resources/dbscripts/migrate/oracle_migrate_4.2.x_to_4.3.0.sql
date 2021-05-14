@@ -11,7 +11,8 @@ rename DOMIBUS_CONNECTOR_SERVICE to BKP_DC_SERVICE;
 
 -- #################### 2/6 CREATE tables, structural changes ####################
 
-alter table DOMIBUS_CONNECTOR_ACTION drop column PDF_REQUIRED;
+-- delayed to 4.4
+-- alter table DOMIBUS_CONNECTOR_ACTION drop column PDF_REQUIRED;
 
 CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
 (
