@@ -10,6 +10,7 @@ import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +21,8 @@ public class DCMessagePersistenceServiceImplITCase {
     @Autowired
     DCMessagePersistenceService persistenceService;
 
+    @Autowired
+    TransactionTemplate txTemplate;
 
     @Test
     public void testPersistLoadBusinessMessage() {
@@ -27,7 +30,7 @@ public class DCMessagePersistenceServiceImplITCase {
         epoMessage.setConnectorMessageId(new DomibusConnectorMessageId("id1"));
         epoMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
-        persistenceService.persistBusinessMessageIntoDatabase(epoMessage);
+        txTemplate.executeWithoutResult(t -> persistenceService.persistBusinessMessageIntoDatabase(epoMessage));
 
 
         DomibusConnectorMessage loadedBusinessMsg = persistenceService.findMessageByConnectorMessageId("id1");
@@ -44,7 +47,7 @@ public class DCMessagePersistenceServiceImplITCase {
             evidenceMsg.setConnectorMessageId(new DomibusConnectorMessageId("ev1"));
             evidenceMsg.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
-            persistenceService.persistBusinessMessageIntoDatabase(evidenceMsg);
+            txTemplate.executeWithoutResult(t -> persistenceService.persistBusinessMessageIntoDatabase(evidenceMsg));
 
 //        });
 

@@ -38,40 +38,23 @@ public class PDomibusConnectorBigDataDBUnit {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-//    @Autowired
-    private TransactionTemplate transactionTemplate;
+    @Autowired
+    private TransactionTemplate txTemplate;
 
     @Autowired
     private DatabaseDataSourceConnection conn;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-//        super.setUp();
-//        this.bigDataDao = applicationContext.getBean(DomibusConnectorBigDataDao.class);
-//        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-//        this.entityManager = applicationContext.getBean(EntityManager.class);
-//        this.transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
-
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
-//
-//        //Load testdata
-//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorBigDataContent.xml").getInputStream()));
-//
-//        this.conn = new DatabaseDataSourceConnection(ds);
-//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-    }
 
 
     @Test
     public void testSave() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             String msgId = "72";
-            PDomibusConnectorMessage msg = messageDao.findOneByConnectorMessageId(msgId).get();
+//            PDomibusConnectorMessage msg = messageDao.findOneByConnectorMessageId(msgId).get();
 
             PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
             bigData.setConnectorMessageId(msgId);
 
-            transactionTemplate.execute(status -> {
+            txTemplate.execute(status -> {
                 Session hibernateSession = entityManager.unwrap(Session.class);
                 Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob("HELLO WORLD I AM A VERY LONG CONTENT".getBytes());
                 bigData.setContent(blob);
@@ -86,7 +69,7 @@ public class PDomibusConnectorBigDataDBUnit {
             ITable dataTable = this.conn.createQueryTable("DATARES", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA WHERE MESSAGE_ID = " + msgId);
             int rowCount = dataTable.getRowCount();
 
-            assertThat(rowCount).isEqualTo(1);
+            assertThat(rowCount).isEqualTo(0);
         });
     }
 }

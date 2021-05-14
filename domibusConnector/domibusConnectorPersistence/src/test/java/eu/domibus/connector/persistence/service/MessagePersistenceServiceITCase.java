@@ -18,6 +18,7 @@ import org.dbunit.dataset.ITable;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -43,37 +44,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @CommonPersistenceTest
 public class MessagePersistenceServiceITCase {
 
-//    static ConfigurableApplicationContext APPLICATION_CONTEXT;
-
     @Autowired
     private DataSource ds;
 
     @Autowired
     private DCMessagePersistenceService messagePersistenceService;
 
-
-//    @BeforeAll
-//    public static void InitClass() {
-//        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
-//        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
-//        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
-//        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
-//    }
-
-//    @AfterAll
-//    public static void afterClass() {
-//        APPLICATION_CONTEXT.close();
-//    }
-//
-//    @BeforeEach
-//    public void setUp() throws InterruptedException {
-//
-//        //lookup type
-//        this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
-//        //lookup name
-//        this.messagePersistenceService = APPLICATION_CONTEXT.getBean(DomibusConnectorMessagePersistenceService.class);
-//    }
-
+    @Autowired
+    private TransactionTemplate txTemplate;
 
     @Test
     public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
@@ -143,7 +121,7 @@ public class MessagePersistenceServiceITCase {
         epoMessage.getMessageDetails().setConversationId("conversation4000");
         epoMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 
-        messagePersistenceService.persistBusinessMessageIntoDatabase(epoMessage);
+        txTemplate.executeWithoutResult(t -> messagePersistenceService.persistBusinessMessageIntoDatabase(epoMessage));
 
         assertThat(epoMessage).isNotNull();
 

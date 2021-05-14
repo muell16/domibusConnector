@@ -11,6 +11,7 @@ import org.dbunit.dataset.ITable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -36,26 +37,15 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
     @Autowired
     private DatabaseDataSourceConnection ddsc;
 
-//    @BeforeEach
-//    @Override
-//    public void setUp() throws Exception {
-//        super.setUp();
-//        this.msgContDao = applicationContext.getBean(DomibusConnectorMsgContDao.class);
-//        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-//
-//        //Load testdata
-//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMsgContent.xml").getInputStream()));
-//
-//        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-//
-//    }
+    @Autowired
+    private TransactionTemplate txTemplate;
 
     @Test
     public void testDeleteByMessage() throws SQLException, AmbiguousTableNameException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             Optional<PDomibusConnectorMessage> message = messageDao.findOneByConnectorMessageId("conn1");
-            msgContDao.deleteByMessage(message.get().getConnectorMessageId());
+
+            txTemplate.executeWithoutResult(t -> msgContDao.deleteByMessage(message.get().getConnectorMessageId()));
 
             //check result in DB
             DatabaseDataSourceConnection conn = ddsc;
@@ -66,7 +56,7 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
 
             int rows = domibusConnectorTable.getRowCount();
 
-            assertThat(rows).isEqualTo(1);
+            assertThat(rows).isEqualTo(3);
         });
     }
     
