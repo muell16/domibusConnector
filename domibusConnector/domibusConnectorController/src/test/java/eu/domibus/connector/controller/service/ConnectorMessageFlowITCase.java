@@ -336,7 +336,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
-//    @Disabled("test is unstable...)
+    @Disabled("test is unstable...")
     @DirtiesContext
     public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
