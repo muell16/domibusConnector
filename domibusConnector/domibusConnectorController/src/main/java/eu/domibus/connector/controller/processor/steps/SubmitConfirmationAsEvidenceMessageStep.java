@@ -79,7 +79,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      *
      * @param businessMessage the business message
      * @param confirmation the confirmation
-     * 
+     *
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
     public void submitOppositeDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {

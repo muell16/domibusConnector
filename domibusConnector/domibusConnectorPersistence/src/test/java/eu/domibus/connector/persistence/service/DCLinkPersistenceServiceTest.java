@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -23,6 +24,9 @@ public class DCLinkPersistenceServiceTest {
 
     @Autowired
     DCLinkPersistenceService dcLinkPersistenceService;
+
+    @Autowired
+    TransactionTemplate txTemplate;
 
     @Test
     public void testCreateLinkPartner() {
@@ -43,7 +47,8 @@ public class DCLinkPersistenceServiceTest {
         linkPartner.getProperties().put("p2", "a1123");
 
         //persist
-        dcLinkPersistenceService.addLinkPartner(linkPartner);
+        txTemplate.executeWithoutResult(t -> dcLinkPersistenceService.addLinkPartner(linkPartner));
+
 
         //load partner from db and check
         Optional<DomibusConnectorLinkPartner> partner1 = dcLinkPersistenceService.getLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName("partner1"));
