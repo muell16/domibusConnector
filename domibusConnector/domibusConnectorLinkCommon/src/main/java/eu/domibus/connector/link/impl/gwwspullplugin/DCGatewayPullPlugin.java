@@ -108,6 +108,7 @@ public class DCGatewayPullPlugin implements LinkPlugin {
     @Override
     public List<PluginFeature> getFeatures() {
         return Stream.of(PluginFeature.RCV_PULL_MODE,
+                PluginFeature.SEND_PUSH_MODE,
                 PluginFeature.SUPPORTS_LINK_PARTNER_SHUTDOWN,
                 PluginFeature.SUPPORTS_LINK_SHUTDOWN)
                 .collect(Collectors.toList());

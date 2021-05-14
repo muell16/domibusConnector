@@ -127,7 +127,10 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
     @Override
     public List<PluginFeature> getFeatures() {
         return Stream
-                .of(PluginFeature.RCV_PASSIVE_MODE, PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
+                .of(PluginFeature.RCV_PASSIVE_MODE,
+                        PluginFeature.SEND_PUSH_MODE,
+                        PluginFeature.SEND_PASSIVE_MODE,
+                        PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
                 .collect(Collectors.toList());
     }
 

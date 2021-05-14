@@ -121,6 +121,7 @@ public class CreateLinkPanel extends VerticalLayout {
 
         public CreateLinkPartnerStep() {
             dcLinkPartnerPanel = applicationContext.getBean(DCLinkPartnerPanel.class);
+            dcLinkPartnerPanel.setValue(linkPartner);
             add(dcLinkPartnerPanel);
         }
 

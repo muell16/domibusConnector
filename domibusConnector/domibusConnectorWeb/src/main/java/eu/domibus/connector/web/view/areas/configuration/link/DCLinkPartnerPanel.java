@@ -106,7 +106,6 @@ public class DCLinkPartnerPanel extends VerticalLayout
 
     private void updateUI() {
         updatePropertyTable();
-        updateAvailableLinkModes();
     }
 
     private void updateAvailableLinkModes() {
@@ -168,6 +167,7 @@ public class DCLinkPartnerPanel extends VerticalLayout
     @Override
     public void setValue(DomibusConnectorLinkPartner value) {
         this.linkPartner = value;
+        updateAvailableLinkModes();
         binder.setBean(value);
         updateUI();
     }
