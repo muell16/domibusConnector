@@ -76,7 +76,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 }
 )
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
@@ -235,6 +235,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @DirtiesContext
     public void testReceiveMessageFromGw_respondWithDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
@@ -475,6 +476,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @DirtiesContext
     public void testReceiveMessageFromGw_respondWithNonDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -572,6 +574,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @DirtiesContext
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -1171,6 +1174,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @DirtiesContext
     public void sendMessageFromBackend_rcvEvidenceRelayNonDeliveryRetrieval(TestInfo testInfo) {
         String EBMS_ID = null;
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -1302,6 +1306,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @DirtiesContext
     public void sendMessageFromBackend_timeoutRelayRemmd(TestInfo testInfo) {
         String EBMS_ID = null;
         final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
