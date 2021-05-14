@@ -442,46 +442,6 @@ insert into DOMIBUS_CONNECTOR_BIGDATA
 select *
 from bkp_dc_bigdata;
 
-
-insert into DOMIBUS_CONNECTOR_MESSAGE_INFO
-select B.ID,
-       B.MESSAGE_ID,
-       CASE
-           when FROM_PARTY_ID is not null and FROM_PARTY_ROLE is not null
-               then (select id
-                     from DOMIBUS_CONNECTOR_PARTY FP
-                     where FP.PARTY_ID = FROM_PARTY_ID
-                       and FP.ROLE = FROM_PARTY_ROLE)
-           else 1
-           end
-           as FK_FROM_PARTY_ID,
-       CASE
-           when TO_PARTY_ID is not null and TO_PARTY_ROLE is not null
-               then (select id
-                     from DOMIBUS_CONNECTOR_PARTY FP
-                     where FP.PARTY_ID = TO_PARTY_ID
-                       and FP.ROLE = TO_PARTY_ROLE)
-           else 1
-           end
-           as FK_TO_PARTY_ID,
-       ORIGINAL_SENDER,
-       FINAL_RECIPIENT,
-       CASE
-           when B.SERVICE is not null
-               then (select id from DOMIBUS_CONNECTOR_SERVICE S where S.SERVICE = B.SERVICE)
-           else 1
-           end
-           as FK_SERVICE,
-       CASE
-           when B.ACTION is not null
-               then (select id from DOMIBUS_CONNECTOR_ACTION A where A.ACTION = B.ACTION)
-           else 1
-           end
-           as FK_ACTION,
-       CREATED,
-       UPDATED
-from BKP_DC_MESSAGE_INFO B;
-
 -- DC_MESSAGE_LANE
 
 INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION)
@@ -575,6 +535,46 @@ UPDATE DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_VALUE=DC_PROPERTY_SEQ.nextval
 where SEQ_NAME = 'DOMIBUS_CONNECTOR_PROPERTY.ID';
 
+
+insert into DOMIBUS_CONNECTOR_MESSAGE_INFO
+select B.ID,
+       B.MESSAGE_ID,
+       CASE
+           when FROM_PARTY_ID is not null and FROM_PARTY_ROLE is not null
+               then (select id
+                     from DOMIBUS_CONNECTOR_PARTY FP
+                     where FP.PARTY_ID = FROM_PARTY_ID
+                       and FP.ROLE = FROM_PARTY_ROLE)
+           else 1
+           end
+           as FK_FROM_PARTY_ID,
+       CASE
+           when TO_PARTY_ID is not null and TO_PARTY_ROLE is not null
+               then (select id
+                     from DOMIBUS_CONNECTOR_PARTY FP
+                     where FP.PARTY_ID = TO_PARTY_ID
+                       and FP.ROLE = TO_PARTY_ROLE)
+           else 1
+           end
+           as FK_TO_PARTY_ID,
+       ORIGINAL_SENDER,
+       FINAL_RECIPIENT,
+       CASE
+           when B.SERVICE is not null
+               then (select id from DOMIBUS_CONNECTOR_SERVICE S where S.SERVICE = B.SERVICE)
+           else 1
+           end
+           as FK_SERVICE,
+       CASE
+           when B.ACTION is not null
+               then (select id from DOMIBUS_CONNECTOR_ACTION A where A.ACTION = B.ACTION)
+           else 1
+           end
+           as FK_ACTION,
+       CREATED,
+       UPDATED
+from BKP_DC_MESSAGE_INFO B;
+
 -- #################### 4/6 DELETE temporary tables, frees fk names ####################
 
 DROP SEQUENCE DC_PARTY_SEQ;
@@ -591,8 +591,6 @@ drop table BKP_DC_ACTION;
 drop table BKP_DC_SERVICE;
 drop table BKP_DC_PROPERTY;
 drop table BKP_DC_MESSAGE cascade constraints;
-
-commit;
 
 -- #################### 5/6 ADD the constraints ####################
 
