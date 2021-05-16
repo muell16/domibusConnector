@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
+import eu.domibus.connector.controller.routing.DCRoutingConfigurationManager;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -23,11 +24,11 @@ public class LookupBackendNameStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(LookupBackendNameStep.class);
 
-    private final DCMessageRoutingConfigurationProperties dcMessageRoutingConfigurationProperties;
+    private final DCRoutingConfigurationManager dcRoutingConfigManager;
     private final DCMessagePersistenceService dcMessagePersistenceService;
 
-    public LookupBackendNameStep(DCMessageRoutingConfigurationProperties dcMessageRoutingConfigurationProperties, DCMessagePersistenceService dcMessagePersistenceService) {
-        this.dcMessageRoutingConfigurationProperties = dcMessageRoutingConfigurationProperties;
+    public LookupBackendNameStep(DCRoutingConfigurationManager dcMessageRoutingConfigurationProperties, DCMessagePersistenceService dcMessagePersistenceService) {
+        this.dcRoutingConfigManager = dcMessageRoutingConfigurationProperties;
         this.dcMessagePersistenceService = dcMessagePersistenceService;
     }
 
@@ -56,10 +57,10 @@ public class LookupBackendNameStep implements MessageProcessStep {
         }
 
         //lookup backend by rules and default backend
-        String defaultBackendName = dcMessageRoutingConfigurationProperties.getDefaultBackendName();
-        if (dcMessageRoutingConfigurationProperties.isEnabled()) {
+        String defaultBackendName = dcRoutingConfigManager.getDefaultBackendName();
+        if (dcRoutingConfigManager.isBackendRoutingEnabled()) {
             LOGGER.debug("Backend routing is enabled");
-            Optional<String> first = dcMessageRoutingConfigurationProperties.getBackendRules().stream()
+            Optional<String> first = dcRoutingConfigManager.getBackendRoutingRules().stream()
                     .filter(r -> r.getMatchClause().matches(domibusConnectorMessage))
                     .map(DCMessageRoutingConfigurationProperties.RoutingRule::getLinkName)
                     .findFirst();
@@ -73,7 +74,7 @@ public class LookupBackendNameStep implements MessageProcessStep {
                 domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(defaultBackendName);
             }
         } else {
-            LOGGER.debug("Backend routing is disabled, applying default backend name [{}]!", dcMessageRoutingConfigurationProperties.getDefaultBackendName());
+            LOGGER.debug("Backend routing is disabled, applying default backend name [{}]!", dcRoutingConfigManager.getDefaultBackendName());
             domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(defaultBackendName);
         }
         return true;

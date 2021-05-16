@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import lombok.Data;
@@ -107,6 +108,8 @@ public class DCMessageRoutingConfigurationProperties {
 
     public static class RoutingRule {
 
+        private ConfigurationSource configurationSource = ConfigurationSource.ENV;
+
         @NotBlank
         private String linkName;
 
@@ -127,6 +130,14 @@ public class DCMessageRoutingConfigurationProperties {
 
         public void setMatchClause(RoutingRulePattern matchClause) {
             this.matchClause = matchClause;
+        }
+
+        public ConfigurationSource getConfigurationSource() {
+            return configurationSource;
+        }
+
+        public void setConfigurationSource(ConfigurationSource configurationSource) {
+            this.configurationSource = configurationSource;
         }
     }
 

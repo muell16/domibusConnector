@@ -6,13 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
@@ -33,6 +29,8 @@ import java.util.stream.Stream;
 public class RoutingRulePattern {
 
     private static final Logger LOGGER = LogManager.getLogger(RoutingRulePattern.class);
+
+    private final String matchRule;
 
     private Expression expression;
 
@@ -71,11 +69,15 @@ public class RoutingRulePattern {
     }
 
 
-    private String pattern;
+
 
     public RoutingRulePattern(String pattern) {
+        this.matchRule = pattern;
         createMatcher(pattern);
     }
+
+
+    private String pattern;
 
     private void createMatcher(final String pattern) {
         if (StringUtils.isEmpty(pattern)) {
@@ -211,6 +213,10 @@ public class RoutingRulePattern {
                 throw new RuntimeException(String.format("Unsupported OPERAND %s", operand));
             }
         }
+
+        public String toString() {
+            return String.format("(%s %s %s)", exp1, operand == Token.OR ? "OR" : "AND", exp2);
+        }
     }
 
     private static class EqualsExpression extends Expression {
@@ -234,6 +240,21 @@ public class RoutingRulePattern {
                 throw new RuntimeException("Unsupported AS4 Attribute to match!");
             }
         }
+
+        public String toString() {
+            return String.format( "%s == '%s'", as4Attribute, valueString);
+        }
     }
 
+    public String toString() {
+        return this.expression.toString();
+    }
+
+    public String getMatchRule() {
+        return matchRule;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
 }
