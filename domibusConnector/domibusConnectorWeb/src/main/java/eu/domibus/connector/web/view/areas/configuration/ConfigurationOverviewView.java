@@ -20,9 +20,15 @@ public class ConfigurationOverviewView extends VerticalLayout implements BeforeE
 
     public static final String ROUTE = "";
 
+
+    public ConfigurationOverviewView() {
+        Label l = new Label("Configuration");
+        this.add(l);
+    }
+
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        event.getUI().navigate(EnvironmentConfiguration.ROUTE);
+//        event.getUI().navigate(EnvironmentConfiguration.ROUTE);
     }
 
 //    public ConfigurationOverviewView() {

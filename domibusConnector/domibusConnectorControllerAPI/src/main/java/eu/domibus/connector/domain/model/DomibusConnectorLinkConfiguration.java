@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model;
 
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
@@ -11,7 +12,6 @@ import java.util.Properties;
 
 public class DomibusConnectorLinkConfiguration {
 
-    private String configSource;
 
     @NotBlank
     private LinkConfigName configName;
@@ -20,17 +20,17 @@ public class DomibusConnectorLinkConfiguration {
 
     private Map<String,String> properties = new HashMap<>();
 
-    private String configurationSource;
+    private ConfigurationSource configurationSource;
 
     public LinkConfigName getConfigName() {
         return configName;
     }
 
-    public String getConfigurationSource() {
+    public ConfigurationSource getConfigurationSource() {
         return configurationSource;
     }
 
-    public void setConfigurationSource(String configurationSource) {
+    public void setConfigurationSource(ConfigurationSource configurationSource) {
         this.configurationSource = configurationSource;
     }
 
@@ -44,14 +44,6 @@ public class DomibusConnectorLinkConfiguration {
 
     public void setLinkImpl(String linkImpl) {
         this.linkImpl = linkImpl;
-    }
-
-    public String getConfigSource() {
-        return configSource;
-    }
-
-    public void setConfigSource(String configSource) {
-        this.configSource = configSource;
     }
 
     public Map<String, String> getProperties() {

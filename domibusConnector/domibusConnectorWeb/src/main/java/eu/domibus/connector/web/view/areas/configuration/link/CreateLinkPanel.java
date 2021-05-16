@@ -51,6 +51,7 @@ public class CreateLinkPanel extends VerticalLayout {
     private final DCLinkPersistenceService dcLinkPersistenceService;
     private final ConfigurationPropertyCollector configurationPropertyCollector;
     private final ApplicationContext applicationContext;
+    private LinkType linkType;
 
     public CreateLinkPanel(ApplicationContext applicationContext,
                            ConfigurationPropertyCollector configurationPropertyCollector,
@@ -75,12 +76,13 @@ public class CreateLinkPanel extends VerticalLayout {
         linkPartner = new DomibusConnectorLinkPartner();
         linkPartner.setLinkType(getLinkType());
         linkPartner.setEnabled(true);
+        linkPartner.setLinkConfiguration(linkConfiguration);
 
         initUI();
     }
 
-    private LinkType getLinkType() {
-        return LinkType.GATEWAY;
+    public LinkType getLinkType() {
+        return this.linkType;
     }
 
     private void initUI() {
@@ -114,19 +116,24 @@ public class CreateLinkPanel extends VerticalLayout {
         return this.wizard;
     }
 
+    public void setLinkType(LinkType linkType) {
+        this.linkType = linkType;
+    }
+
 
     public class CreateLinkPartnerStep extends VerticalLayout implements WizardStep {
 
         private DCLinkPartnerPanel dcLinkPartnerPanel;
 
         public CreateLinkPartnerStep() {
-            dcLinkPartnerPanel = applicationContext.getBean(DCLinkPartnerPanel.class);
-            dcLinkPartnerPanel.setValue(linkPartner);
-            add(dcLinkPartnerPanel);
+
         }
 
         @Override
         public Component getComponent() {
+            dcLinkPartnerPanel = applicationContext.getBean(DCLinkPartnerPanel.class);
+            dcLinkPartnerPanel.setValue(linkPartner);
+            add(dcLinkPartnerPanel);
             return this;
         }
 
@@ -220,6 +227,7 @@ public class CreateLinkPanel extends VerticalLayout {
                 linkConfigPanel.setReadOnly(false);
                 linkConfigurationChooser.setReadOnly(true);
                 DomibusConnectorLinkConfiguration newLinkConfig = new DomibusConnectorLinkConfiguration();
+                linkPartner.setLinkConfiguration(newLinkConfig);
                 newLinkConfig.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName("changeme"));
                 linkConfiguration = newLinkConfig;
                 linkConfigPanel.setValue(linkConfiguration);

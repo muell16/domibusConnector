@@ -1,6 +1,7 @@
 package eu.domibus.connector.link.service;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -80,7 +81,7 @@ public class DomibusConnectorLinkCreatorConfigurationService {
                 LOGGER.warn("Backend configuration is incomplete!\nCheck config under [{}[{}].*]!", configPrefix, i);
                 continue;
             }
-            linkConfig.setConfigurationSource("spring environment");
+            linkConfig.setConfigurationSource(ConfigurationSource.ENV);
 
             int linkPartnerIndex = 0;
             String linkPartnerConfigPrefix = String.format("%s.link-partner[%d]", configPrefix, linkPartnerIndex);
@@ -119,7 +120,7 @@ public class DomibusConnectorLinkCreatorConfigurationService {
         }
         //set config name to default for default gw
         linkConfig.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName("gateway-config"));
-        linkConfig.setConfigurationSource("spring environment");
+        linkConfig.setConfigurationSource(ConfigurationSource.ENV);
 
         int gwLinkCount = gateway.getLinkPartners().size();
         if (gwLinkCount != 1) {

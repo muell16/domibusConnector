@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model;
 
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import org.springframework.core.style.ToStringCreator;
@@ -34,7 +35,7 @@ public class DomibusConnectorLinkPartner {
 
     private DomibusConnectorLinkConfiguration linkConfiguration;
 
-    private String configurationSource;
+    private ConfigurationSource configurationSource;
 
     public LinkPartnerName getLinkPartnerName() {
         return linkPartnerName;
@@ -72,11 +73,11 @@ public class DomibusConnectorLinkPartner {
         return linkConfiguration;
     }
 
-    public String getConfigurationSource() {
+    public ConfigurationSource getConfigurationSource() {
         return configurationSource;
     }
 
-    public void setConfigurationSource(String configurationSource) {
+    public void setConfigurationSource(ConfigurationSource configurationSource) {
         this.configurationSource = configurationSource;
     }
 

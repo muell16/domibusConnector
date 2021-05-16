@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.impl.wsbackendplugin;
 
+import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -136,14 +137,12 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
     @Override
     public List<Class> getPluginConfigurationProperties() {
-        //TODO: implement
-        throw new RuntimeException("Not supported yet!");
+        return Stream.of(WsBackendPluginConfigurationProperties.class).collect(Collectors.toList());
     }
 
     @Override
     public List<Class> getPartnerConfigurationProperties() {
-        //TODO: implement
-        throw new RuntimeException("Not supported yet!");
+        return Stream.of(WsBackendPluginLinkPartnerConfigurationProperties.class).collect(Collectors.toList());
     }
 
 

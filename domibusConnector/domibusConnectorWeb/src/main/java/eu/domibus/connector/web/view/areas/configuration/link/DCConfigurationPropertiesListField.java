@@ -191,7 +191,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
 //    }
 
     private void updateUI() {
-//        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
+        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
     }
 
 //    @Override
@@ -206,12 +206,14 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
     }
 
     @Override
-    protected void setPresentationValue(Map<String, String> stringStringMap) {
-        propertiesBinder.setBean(stringStringMap);
+    protected void setPresentationValue(Map<String, String> value) {
+        this.properties = value;
+        propertiesBinder.setBean(value);
     }
 
+//    @Override
 //    public void setValue(Map<String, String> value) {
-//        this.properties = value;
+//
 //    }
 //
 //    public Map<String, String> getValue() {

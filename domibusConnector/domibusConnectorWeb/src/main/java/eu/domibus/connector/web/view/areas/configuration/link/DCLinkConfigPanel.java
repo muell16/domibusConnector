@@ -45,6 +45,7 @@ public class DCLinkConfigPanel extends VerticalLayout
     private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
     private DomibusConnectorLinkConfiguration linkConfiguration = new DomibusConnectorLinkConfiguration();
     private boolean readOnly = false;
+    private boolean implChangeAble = true;
 
     public DCLinkConfigPanel(ApplicationContext applicationContext, DCActiveLinkManagerService linkManagerService, ConfigurationPropertyCollector configurationPropertyCollector) {
         this.applicationContext = applicationContext;
@@ -123,18 +124,31 @@ public class DCLinkConfigPanel extends VerticalLayout
 
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfig) {
         linkConfiguration = linkConfig;
-        linkConfigurationBinder.readBean(linkConfig);
+//        linkConfigurationBinder.readBean(linkConfig);
+        linkManagerService.getLinkPluginByName(linkConfig.getLinkImpl()).ifPresent(this::updateConfigurationProperties);
+        linkConfigurationBinder.setBean(linkConfig);
         updateUI();
     }
 
     private void updateUI() {
-        implChooser.setReadOnly(readOnly);
+        implChooser.setReadOnly(readOnly && !implChangeAble);
         linkConfigName.setReadOnly(readOnly);
         configPropsList.setReadOnly(readOnly);
     }
 
+    public void setImplChangeAble(boolean changeAble) {
+        this.implChangeAble = changeAble;
+        implChooser.setReadOnly(readOnly && !implChangeAble);
+    }
+
     private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
         LinkPlugin value = valueChangeEvent.getValue();
+        updateConfigurationProperties(value);
+        updateUI();
+
+    }
+
+    private void updateConfigurationProperties(LinkPlugin value) {
         List<Class> configurationClasses = new ArrayList<>();
         if (value != null) {
             configurationClasses = value.getPluginConfigurationProperties();
@@ -145,8 +159,6 @@ public class DCLinkConfigPanel extends VerticalLayout
                 .flatMap(Function.identity()).collect(Collectors.toList());
 
         configPropsList.setConfigurationProperties(configurationProperties);
-        updateUI();
-
     }
 
     public void writeBean(DomibusConnectorLinkConfiguration lnkConfig) throws ValidationException {

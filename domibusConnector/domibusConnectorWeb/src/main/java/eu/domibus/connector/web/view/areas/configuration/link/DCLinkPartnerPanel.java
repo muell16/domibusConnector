@@ -84,14 +84,18 @@ public class DCLinkPartnerPanel extends VerticalLayout
 
 
         sendLinkModeComboBox = new ComboBox<>("Sender Mode");
+        sendLinkModeComboBox.setItems(LinkMode.values());
         binder.forField(sendLinkModeComboBox)
                 .asRequired()
+                .withValidator(this::validateSendLinkMode)
                 .bind(DomibusConnectorLinkPartner::getSendLinkMode, DomibusConnectorLinkPartner::setSendLinkMode);
         add(sendLinkModeComboBox);
 
         rcvLinkModeComboBox = new ComboBox<>("Receiver Mode");
+        rcvLinkModeComboBox.setItems(LinkMode.values());
         binder.forField(rcvLinkModeComboBox)
                 .asRequired()
+                .withValidator(this::validateRcvLinkMode)
                 .bind(DomibusConnectorLinkPartner::getRcvLinkMode, DomibusConnectorLinkPartner::setRcvLinkMode);
         add(rcvLinkModeComboBox);
 
@@ -99,48 +103,59 @@ public class DCLinkPartnerPanel extends VerticalLayout
         binder.forField(configPropsList)
                 .bind(DomibusConnectorLinkPartner::getProperties, DomibusConnectorLinkPartner::setProperties);
         add(configPropsList);
+        configPropsList.setSizeFull();
 
         updateUI();
     }
 
+    private ValidationResult validateSendLinkMode(LinkMode linkMode, ValueContext valueContext) {
+        Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
+        if (linkPluginByName.isPresent()) {
+            List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
+                    .stream()
+                    .map(feature -> {
+                        if (PluginFeature.RCV_PULL_MODE == feature) {
+                            return LinkMode.PULL;
+                        } else if (PluginFeature.RCV_PASSIVE_MODE == feature) {
+                            return LinkMode.PASSIVE;
+                        } else {
+                            return null;
+                        }
+                    }).filter(Objects::nonNull).collect(Collectors.toList());
+            if (rcvItems.contains(linkMode)) {
+                return ValidationResult.ok();
+            } else {
+                return ValidationResult.error(String.format("Only [%s] LinkModes  are supported", rcvItems.stream().map(LinkMode::toString).collect(Collectors.joining(","))));
+            }
+        };
+        return ValidationResult.ok();
+    }
+
+    private ValidationResult validateRcvLinkMode(LinkMode linkMode, ValueContext valueContext) {
+        Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
+        if (linkPluginByName.isPresent()) {
+            List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
+                    .stream()
+                    .map(feature -> {
+                        if (PluginFeature.SEND_PUSH_MODE == feature) {
+                            return LinkMode.PUSH;
+                        } else if (PluginFeature.SEND_PASSIVE_MODE == feature) {
+                            return LinkMode.PASSIVE;
+                        } else {
+                            return null;
+                        }
+                    }).filter(Objects::nonNull).collect(Collectors.toList());
+            if (rcvItems.contains(linkMode)) {
+                return ValidationResult.ok();
+            } else {
+                return ValidationResult.error(String.format("Only [%s] LinkModes  are supported", rcvItems.stream().map(LinkMode::toString).collect(Collectors.joining(","))));
+            }
+        };
+        return ValidationResult.ok();
+    }
 
     private void updateUI() {
         updatePropertyTable();
-    }
-
-    private void updateAvailableLinkModes() {
-        if (linkPartner != null && linkPartner.getLinkConfiguration() != null &&
-            linkPartner.getLinkConfiguration().getLinkImpl() != null)
-        {
-            Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
-            linkPluginByName.ifPresent((linkPlugin -> {
-                List<LinkMode> rcvItems = linkPlugin.getFeatures()
-                        .stream()
-                        .map(f -> {
-                            if (PluginFeature.RCV_PULL_MODE == f) {
-                                return LinkMode.PULL;
-                            } else if (PluginFeature.RCV_PASSIVE_MODE == f) {
-                                return LinkMode.PASSIVE;
-                            } else {
-                                return null;
-                            }
-                        }).filter(Objects::nonNull).collect(Collectors.toList());
-                rcvLinkModeComboBox.setItems(rcvItems);
-
-                List<LinkMode> sendItems = linkPlugin.getFeatures()
-                        .stream()
-                        .map(f -> {
-                            if (PluginFeature.SEND_PUSH_MODE == f) {
-                                return LinkMode.PULL;
-                            } else if (PluginFeature.SEND_PASSIVE_MODE == f) {
-                                return LinkMode.PASSIVE;
-                            } else {
-                                return null;
-                            }
-                        }).filter(Objects::nonNull).collect(Collectors.toList());
-                sendLinkModeComboBox.setItems(sendItems);
-            }));
-        }
     }
 
     private void updatePropertyTable() {
@@ -167,9 +182,8 @@ public class DCLinkPartnerPanel extends VerticalLayout
     @Override
     public void setValue(DomibusConnectorLinkPartner value) {
         this.linkPartner = value;
-        updateAvailableLinkModes();
-        binder.setBean(value);
         updateUI();
+        binder.setBean(value);
     }
 
     @Override
