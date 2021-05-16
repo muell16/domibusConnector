@@ -100,6 +100,7 @@ public class CreateLinkPanel extends VerticalLayout {
 
     private void wizardFinished(WizardComponent wizardComponent, WizardStep wizardStep) {
         linkPartner.setLinkConfiguration(linkConfiguration);
+        linkPartner.setLinkType(getLinkType());
         try {
             dcLinkPersistenceService.addLinkPartner(linkPartner);
         } catch (RuntimeException e) {
