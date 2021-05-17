@@ -281,12 +281,18 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.rnorth.visible-assertions</groupId>
+                        <artifactId>visible-assertions</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
