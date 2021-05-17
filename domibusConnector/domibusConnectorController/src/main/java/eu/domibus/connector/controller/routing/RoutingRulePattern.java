@@ -20,13 +20,16 @@ import java.util.stream.Stream;
  * The routing rule grammar:
  * {@literal
 ##BNF RoutingRulePattern
+tag::BNF[]
 <ROUTING_RULE_PATTERN> ::= <BOOLEAN_EXPRESSION> | <COMPARE_EXPRESSION>
 <BOOLEAN_EXPRESSION> ::= <OPERAND>(<ROUTING_RULE_PATTERN>, <ROUTING_RULE_PATTERN>)
 <COMPARE_EXPRESSION> ::= equals(<AS4_TYPE>, '<VALUE>')
 <OPERAND> ::= "&" | "|"
 <AS4_TYPE> ::= ServiceType | ServiceName
 <VALUE> ::= <VALUE><LETTER> | <LETTER>
-<LETTER> can be every letter except ' (single quote) and \ (backslash)
+<LETTER> can be every letter [a-z][A-Z][0-9] other characters might work, but the are not tested! ['\|&)( will definitiv not work!]
+
+end::BNF[]
 ##BNF}
  *
  */
