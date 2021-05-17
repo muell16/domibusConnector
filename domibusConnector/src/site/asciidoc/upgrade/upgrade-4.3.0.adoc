@@ -1,7 +1,7 @@
 
 :description: Upgrade manual to connector 4.3.0
 :library: Asciidoctor
-:stylesheet: asciidoc.css
+
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}
@@ -13,7 +13,7 @@
 === Configuration Properties
 
 The connections connector-gateway and connector-backend are configured differently. For details see the
-link:../doc/link_handling.html[Connector Link Manual]
+link:../doc/link_doc.html[Connector Link Manual]
 The following properties are with 4.3.x not in use anymore.
 
 ==== connector.gatewaylink.ws.*
@@ -35,3 +35,9 @@ The following properties are with 4.3.x not in use anymore.
 * connector.backend.ws.key.private-key.password=
 * connector.backend.ws.trust.trust-store.path=
 * connector.backend.ws.trust.trust-store.password=
+
+=== Backend Routing
+
+The backend routing is configured within the properties. Database configuration
+will be supported again with future releases.
+For details see: link:../doc/backend_message_routing.adoc[Backend Message Routing]

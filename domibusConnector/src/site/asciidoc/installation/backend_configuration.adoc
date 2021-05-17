@@ -5,9 +5,8 @@
 
 :description: The connector backend configuration manual
 :library: Asciidoctor
-:stylesheet: asciidoc.css
 
-
+WARNING: With connector 4.3.0 this document is not valid anymore. See link:../doc/link_doc.adoc[Link Configuration]
 
 == Backend Configuration or how to configure a connector client?
 

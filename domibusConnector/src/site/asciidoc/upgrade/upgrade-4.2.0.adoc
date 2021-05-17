@@ -1,7 +1,7 @@
 
 :description: Upgrade manual to connector 4.2.0
 :library: Asciidoctor
-:stylesheet: asciidoc.css
+
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}
