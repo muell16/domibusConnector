@@ -72,11 +72,11 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                 .withIcon(new Icon(VaadinIcon.USERS))
                 .addForComponent(Users.class);
 
-        tabViewRouterHelper
-                .createTab()
-                .withLabel("Connector Tests")
-                .withIcon(VaadinIcon.CONNECT_O)
-                .addForComponent(ConnectorTests.class);
+//        tabViewRouterHelper
+//                .createTab()
+//                .withLabel("Connector Tests")
+//                .withIcon(VaadinIcon.CONNECT_O)
+//                .addForComponent(ConnectorTests.class);
 
         tabViewRouterHelper
                 .createTab()

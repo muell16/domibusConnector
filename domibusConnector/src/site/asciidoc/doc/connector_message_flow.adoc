@@ -5,8 +5,6 @@
 
 == Qeues Processor Overview
 
-WARNING: NOT COMPLETE!
-
 [plantuml,queues,png]
 ----
 @startuml
@@ -20,10 +18,10 @@ interface gw_link_partner
 interface backend_link_partner
 
 queue link_to_con
-queue link_to_con_error
+'queue link_to_con_error
 
 queue con_to_link
-queue con_to_link_error
+'queue con_to_link_error
 
 queue cleanup_queue
 
@@ -39,22 +37,20 @@ package JTATransaction_LinkModule {
   component LinkModule
 }
 
-
-
 gw_link_partner --> link_to_con
 backend_link_partner --> link_to_con
 
 link_to_con --> to_connector_message_listener
-to_connector_message_listener --> MessageConfirmationProcessor
-to_connector_message_listener --> BackendToGatewayMessageProcessor
-to_connector_message_listener --> GatewayToBackendMessageProcessor
+to_connector_message_listener --> MessageConfirmationProcessor : For any evidence message
+to_connector_message_listener --> BackendToGatewayMessageProcessor : For a business message from backend to gateway
+to_connector_message_listener --> GatewayToBackendMessageProcessor : For a business message from gateway to backend
 
 JTATransaction_Connector -d-> con_to_link : messages, evidences
-JTATransaction_Connector -d-> link_to_con_error : in case of any processing errors
+JTATransaction_Connector -d-> dlq.link_to_con : in case of any processing errors (Dead Letter Queue)
 
 con_to_link -d-> JTATransaction_LinkModule
 
-JTATransaction_LinkModule -d-> con_to_link_error: in case of any error
+JTATransaction_LinkModule -d-> dlq.con_to_link: in case of any error (Dead Letter Queue)
 JTATransaction_LinkModule -d-> cleanup_queue : when processing finished
 
 
