@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.enums;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public enum MessageTargetSource {
@@ -7,14 +8,20 @@ public enum MessageTargetSource {
     GATEWAY("GATEWAY"),
     BACKEND("BACKEND");
 
-    public static MessageTargetSource ofOfDbName(String dbData) {
+    /**
+     *
+     * @param dbData - the dbString
+     * @return the converterd value from the String value,
+     * null if the input is null
+     */
+    public static @Nullable MessageTargetSource ofOfDbName(String dbData) {
         if (dbData == null) {
             return null;
         }
         return Stream.of(MessageTargetSource.values())
                 .filter(t -> t.getDbName().equals(dbData))
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 
     MessageTargetSource(String dbName) {
