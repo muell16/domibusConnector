@@ -4,10 +4,7 @@ import eu.domibus.connector.persistence.testutil.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -22,6 +19,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+@Disabled
 public class HandWrittenDatabaseScriptsITCase {
 
     private static final Logger LOGGER = LogManager.getLogger(HandWrittenDatabaseScriptsITCase.class);

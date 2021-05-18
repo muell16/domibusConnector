@@ -160,7 +160,7 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
-                <dbms type="mysql"/>
+                <dbms type="mysql,postgresql,mariadb"/>
             </not>
         </preConditions>
         <comment>Create and fill ID_GEN column with values from temporary sequence</comment>
