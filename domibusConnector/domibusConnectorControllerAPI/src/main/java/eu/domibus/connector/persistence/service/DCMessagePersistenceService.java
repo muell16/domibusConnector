@@ -134,7 +134,8 @@ public interface DCMessagePersistenceService {
 
     /**
      * stores a new message into storage
-     * @Deprecated the method persistBusinessMessageIntoDatabase should be used instead
+     *
+     * @deprecated  the method persistBusinessMessageIntoDatabase should be used instead
      * @param message - the message
      * @param direction - direction of the message
      * @return the message with eventually updated fields
@@ -143,8 +144,6 @@ public interface DCMessagePersistenceService {
      */
     @Deprecated
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
-
-
 
     /**
      * Marks the message as delivered to the gateway
