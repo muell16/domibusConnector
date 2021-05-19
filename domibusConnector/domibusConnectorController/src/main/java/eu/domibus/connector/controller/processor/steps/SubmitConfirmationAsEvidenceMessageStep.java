@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SubmitConfirmationAsEvidenceMessageStep {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(SubmitConfirmationAsEvidenceMessageStep.class);
 
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
