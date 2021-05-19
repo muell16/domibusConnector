@@ -25,6 +25,7 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.SqlStatement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.*;
 
+@Disabled("defect")
 @ExtendWith({LiquibaseTemplateInvocationContextProvider.class, SetMdcContextExtension.class})
 public class LiquibaseUpgradeInitITCase {
 
