@@ -43,9 +43,9 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
     @Test
     public void testDeleteByMessage() throws SQLException, AmbiguousTableNameException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
-            Optional<PDomibusConnectorMessage> message = messageDao.findOneByConnectorMessageId("conn1");
+//            Optional<PDomibusConnectorMessage> message = messageDao.findOneByConnectorMessageId("conn1");
 
-            txTemplate.executeWithoutResult(t -> msgContDao.deleteByMessage(message.get().getConnectorMessageId()));
+            txTemplate.executeWithoutResult(t -> msgContDao.deleteByMessage("conn1"));
 
             //check result in DB
             DatabaseDataSourceConnection conn = ddsc;
