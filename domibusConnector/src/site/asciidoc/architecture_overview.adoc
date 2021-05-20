@@ -1,6 +1,5 @@
 :description: The architecture overview
-:library: Asciidoctor
-:stylesheet: asciidoc.css
+
 :imgdir: ../resources/images/
 :imagesdir: {imgdir}
 

@@ -1,5 +1,5 @@
 --  *********************************************************************
---  Create MYSQL Database Script for DomibusConnector 4.3.x
+--  Create MariaDB Database Script for DomibusConnector 4.3.x
 --  *********************************************************************
 
 

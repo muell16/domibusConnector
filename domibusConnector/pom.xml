@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.3.0-alpha3</version>
+    <version>4.3.0</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -281,12 +281,18 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.2</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>visible-assertions</artifactId>
+                        <groupId>org.rnorth.visible-assertions</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

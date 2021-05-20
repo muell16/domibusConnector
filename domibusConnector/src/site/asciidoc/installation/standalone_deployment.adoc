@@ -1,6 +1,5 @@
 :description: The connector backend configuration manual
 :library: Asciidoctor
-:stylesheet: asciidoc.css
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}

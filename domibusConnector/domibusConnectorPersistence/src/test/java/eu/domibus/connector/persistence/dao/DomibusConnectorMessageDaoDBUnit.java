@@ -39,7 +39,8 @@ public class DomibusConnectorMessageDaoDBUnit {
     private DatabaseDataSourceConnection ddsc;
 
     @Autowired
-    TransactionTemplate txTemplate;
+    private TransactionTemplate txTemplate;
+
 
     @Test
     public void testFindById() {
@@ -160,8 +161,7 @@ public class DomibusConnectorMessageDaoDBUnit {
 
     public void testConfirmMessage() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
-
-            int upd = txTemplate.execute((t) -> messageDao.confirmMessage(74L));
+            int upd = txTemplate.execute(t -> messageDao.confirmMessage(74L));
 
             //check result in DB
             DatabaseDataSourceConnection conn = ddsc;
@@ -180,9 +180,9 @@ public class DomibusConnectorMessageDaoDBUnit {
     @Test
     public void testRejectMessage() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
-            int upd = txTemplate.execute((t) -> {
-                   return messageDao.rejectMessage(73L);
-            });
+            int upd = txTemplate.execute(t -> messageDao.rejectMessage(73L));
+
+            //check result in DB
             DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
 
@@ -201,7 +201,7 @@ public class DomibusConnectorMessageDaoDBUnit {
     @Test
     public void testRejectedMessage_notExisting() {
         Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
-            int upd = txTemplate.execute((t) -> messageDao.rejectMessage(21321315123123L));
+            int upd = txTemplate.execute(t -> messageDao.rejectMessage(21321315123123L));
 
             assertThat(upd).as("there should be no updates!").isEqualTo(0);
         });
@@ -214,7 +214,7 @@ public class DomibusConnectorMessageDaoDBUnit {
 
             PDomibusConnectorMessage message = new PDomibusConnectorMessage();
             message.setId(73L);
-            int upd = txTemplate.execute((t) -> messageDao.setMessageDeliveredToGateway(message));
+            int upd = txTemplate.execute(t -> messageDao.setMessageDeliveredToGateway(message));
 
             assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
 
@@ -238,9 +238,7 @@ public class DomibusConnectorMessageDaoDBUnit {
         Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
             PDomibusConnectorMessage message = new PDomibusConnectorMessage();
             message.setId(74L);
-            int upd = txTemplate.execute((t) -> {
-                return messageDao.setMessageDeliveredToBackend(message);
-            });
+            int upd = txTemplate.execute(t -> messageDao.setMessageDeliveredToBackend(message));
 
             assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
 

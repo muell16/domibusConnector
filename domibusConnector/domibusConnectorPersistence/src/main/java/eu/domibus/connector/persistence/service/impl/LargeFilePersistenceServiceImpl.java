@@ -78,8 +78,12 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
 
     @Override
     public void deleteDomibusConnectorBigDataReference(LargeFileReference bigDataReference) throws LargeFileDeletionException {
-        getProviderByLargeFileReference(bigDataReference)
-                .deleteDomibusConnectorBigDataReference(bigDataReference);
+        try {
+            getProviderByLargeFileReference(bigDataReference)
+                    .deleteDomibusConnectorBigDataReference(bigDataReference);
+        } catch (Exception e) {
+            throw new LargeFileDeletionException("Error during delete", e);
+        }
     }
 
     @Override

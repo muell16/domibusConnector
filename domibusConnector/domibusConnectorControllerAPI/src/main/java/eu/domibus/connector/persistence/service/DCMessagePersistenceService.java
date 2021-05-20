@@ -145,8 +145,6 @@ public interface DCMessagePersistenceService {
     @Deprecated
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
-
-
     /**
      * Marks the message as delivered to the gateway
      * @param message - the message, which should be marked
