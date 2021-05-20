@@ -41,3 +41,31 @@ The following properties are with 4.3.x not in use anymore.
 The backend routing is configured within the properties. Database configuration
 will be supported again with future releases.
 For details see: link:../doc/backend_message_routing.adoc[Backend Message Routing]
+
+
+=== JTA
+
+If you are not planning to use JTA please disable it, by setting:
+
+* spring.jta.enabled=false
+
+If you are planning to use JTA, which is recommended please add the following properties:
+
+* spring.jta.atomikos.connectionfactory.max-pool-size=10
+* spring.jta.atomikos.datasource.max-pool-size=10
+* spring.activemq.broker-url=vm://broker1?brokerConfig=xbean:config/activemq.xml
+
+If you are using oracle, please use a JDBC driver which is XA complient, this means
+for oracle a driver change to:
+
+* spring.datasource.driver-class-name=oracle.jdbc.xa.client.OracleXADataSource
+
+
+=== Connector Test Service:
+
+The connector test properties are changed to the following:
+
+* connector.test.enabled=true
+* connector.test.service.name=Connector-TEST
+* connector.test.service.serviceType=urn:e-codex:services:
+* connector.test.action=Connector-TEST
