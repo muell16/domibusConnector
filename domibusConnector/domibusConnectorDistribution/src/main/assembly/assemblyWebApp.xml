@@ -14,28 +14,19 @@
                 <include>*/**</include>
             </includes>
         </fileSet>
-<!--        <fileSet>-->
-<!--            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>-->
-<!--            <outputDirectory>documentation/pdfs/</outputDirectory>-->
-<!--            <includes>-->
-<!--                <include>domibusConnector_AdministrationGuide.pdf</include>-->
-<!--                <include>domibusConnector_InstallationGuide.pdf</include>-->
-<!--                <include>e-Codex_key_trust_stores.pdf</include>-->
-<!--            </includes>-->
-<!--        </fileSet>-->
-<!--        <fileSet>-->
-<!--            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>-->
-<!--            <outputDirectory>documentation/</outputDirectory>-->
-<!--            <includes>-->
-<!--                <include>architecture.zip</include>-->
-<!--            </includes>-->
-<!--        </fileSet>-->
         <fileSet>
             <includes>
                 <include>**/*</include>
             </includes>
             <directory>${project.basedir}/../target/staging</directory>
             <outputDirectory>documentation-site/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config</directory>
+            <outputDirectory>example-config</outputDirectory>
         </fileSet>
     </fileSets>
     <files>
@@ -44,18 +35,18 @@
             <outputDirectory>/webapp</outputDirectory>
             <destName>domibusConnector.war</destName>
         </file>
-        <file>
-            <source>
-                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties
-            </source>
-            <outputDirectory>/documentation/config</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml
-            </source>
-            <outputDirectory>/documentation/config</outputDirectory>
-        </file>
+<!--        <file>-->
+<!--            <source>-->
+<!--                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties-->
+<!--            </source>-->
+<!--            <outputDirectory>/documentation/config</outputDirectory>-->
+<!--        </file>-->
+<!--        <file>-->
+<!--            <source>-->
+<!--                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml-->
+<!--            </source>-->
+<!--            <outputDirectory>/documentation/config</outputDirectory>-->
+<!--        </file>-->
     </files>
     <dependencySets>
         <dependencySet>
