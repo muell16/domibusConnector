@@ -101,8 +101,7 @@ public class DCWsGatewayPluginTestContext {
 
         linkPartner1.setLinkName(linkName1);
         linkPartner1.setLinkType(LinkType.GATEWAY);
-        linkPartner1.setSendLinkMode(LinkMode.PUSH);
-        linkPartner1.setRcvLinkMode(LinkMode.PUSH);
+
 
         linkPartner1.setLinkConfiguration(getWsGatewayLinkConfig());
         linkPartner1.setEnabled(true);
