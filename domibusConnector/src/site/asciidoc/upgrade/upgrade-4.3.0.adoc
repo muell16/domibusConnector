@@ -40,7 +40,7 @@ The following properties are with 4.3.x not in use anymore.
 
 The backend routing is configured within the properties. Database configuration
 will be supported again with future releases.
-For details see: link:../doc/backend_message_routing.adoc[Backend Message Routing]
+For details see: link:../doc/backend_message_routing.html[Backend Message Routing]
 
 
 === JTA
