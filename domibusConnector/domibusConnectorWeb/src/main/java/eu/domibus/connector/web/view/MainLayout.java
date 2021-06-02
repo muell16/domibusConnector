@@ -10,13 +10,13 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.web.login.LogoutView;
+import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
 import eu.domibus.connector.web.view.areas.info.Info;
 import eu.domibus.connector.web.view.areas.messages.Messages;
+import eu.domibus.connector.web.view.areas.pmodes.PmodeOverview;
 import eu.domibus.connector.web.view.areas.users.UserOverview;
-import eu.domibus.connector.web.login.LogoutView;
-import eu.domibus.connector.web.utils.TabKraken;
-import eu.domibus.connector.web.view.areas.pmodes.PModes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
@@ -48,7 +48,7 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .createTab()
                 .withLabel("PModes")
                 .withIcon(new Icon(VaadinIcon.FILE_CODE))
-                .addForComponent(PModes.class);
+                .addForComponent(PmodeOverview.class);
 
         tabManager
                 .createTab()
