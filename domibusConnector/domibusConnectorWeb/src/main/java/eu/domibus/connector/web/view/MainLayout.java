@@ -5,7 +5,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -19,10 +18,6 @@ import eu.domibus.connector.web.login.LogoutView;
 import eu.domibus.connector.web.utils.TabViewRouterHelper;
 import eu.domibus.connector.web.view.areas.pmodes.PModes;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @UIScope
 @org.springframework.stereotype.Component
@@ -70,13 +65,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                 .createTab()
                 .withLabel("Users")
                 .withIcon(new Icon(VaadinIcon.USERS))
-                .addForComponent(Users.class);
-
-//        tabViewRouterHelper
-//                .createTab()
-//                .withLabel("Connector Tests")
-//                .withIcon(VaadinIcon.CONNECT_O)
-//                .addForComponent(ConnectorTests.class);
+                .addForComponent(UserOverview.class);
 
         tabViewRouterHelper
                 .createTab()
@@ -93,7 +82,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         menuTabs = tabViewRouterHelper.getTabs();
         menuTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 
-        topBar.add(menuTabs);
+        topBar.add(tabs);
 
 //        addToDrawer(menuTabs);
 
