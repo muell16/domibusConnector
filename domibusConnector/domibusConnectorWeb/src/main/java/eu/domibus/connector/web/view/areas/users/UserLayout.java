@@ -1,16 +1,13 @@
 package eu.domibus.connector.web.view.areas.users;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.MainLayout;
-import eu.domibus.connector.web.view.areas.configuration.PmodeTab;
 import eu.domibus.connector.web.view.areas.configuration.UserTab;
-import eu.domibus.connector.web.view.areas.pmodes.PmodeLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +24,6 @@ public class UserLayout extends VerticalLayout implements BeforeEnterObserver, R
 
     public static final String ROUTE_PREFIX = "user";
 
-    private Div pageContent;
     private TabKraken tabKraken = new TabKraken();
 
     DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
@@ -54,13 +50,7 @@ public class UserLayout extends VerticalLayout implements BeforeEnterObserver, R
                             .addForComponent(component.getClass());
                 });
 
-        pageContent = new Div();
-        pageContent.setSizeFull();
-
-        add(tabKraken.getTabs(), pageContent);
-
-        this.expand(pageContent);
-        this.setHeight("80vh");
+        add(tabKraken.getTabs());
     }
 
     @Override
