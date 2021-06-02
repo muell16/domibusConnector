@@ -13,9 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.web.configuration.SecurityUtils;
-import eu.domibus.connector.web.enums.UserRole;
-import eu.domibus.connector.web.utils.TabViewRouterHelper;
+import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.MainLayout;
 
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
@@ -39,12 +37,11 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
     protected final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationLayout.class);
     private Div pageContent;
 
-
     Button saveConfiguration;
     Button resetConfiguration;
     Button reloadConfiguration;
 
-    private TabViewRouterHelper tabViewRouterManager = new TabViewRouterHelper();
+    private TabKraken tabKraken = new TabKraken();
 
     @Autowired
     DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
@@ -70,7 +67,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
                     Component component = (Component) entry.getValue();
                     ConfigurationTab annotation = component.getClass().getAnnotation(ConfigurationTab.class);
                     LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
-                    tabViewRouterManager.createTab()
+                    tabKraken.createTab()
                             .withLabel(annotation.title())
                             .addForComponent(component.getClass());
                 });
@@ -79,7 +76,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         pageContent.setSizeFull();
 
 //        add(createConfigurationButtonBar()); //deactivated, because does not work
-        add(tabViewRouterManager.getTabs(), pageContent);
+        add(tabKraken.getTabs(), pageContent);
 
         this.expand(pageContent);
         this.setHeight("80vh");
@@ -224,7 +221,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        tabViewRouterManager.beforeEnter(event);
+        tabKraken.beforeEnter(event);
 
 //        boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
 //        saveConfiguration.setEnabled(enabled);

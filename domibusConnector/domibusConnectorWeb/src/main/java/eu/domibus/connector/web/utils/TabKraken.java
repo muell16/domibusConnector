@@ -11,7 +11,6 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.server.VaadinSession;
 import eu.domibus.connector.web.configuration.SecurityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +24,9 @@ import java.util.Map;
  * and also only show tabs which the corresponding view
  * can be accessed as enabled
  */
-public class TabViewRouterHelper implements BeforeEnterObserver {
+public class TabKraken implements BeforeEnterObserver {
 
-    private static final Logger LOGGER = LogManager.getLogger(TabViewRouterHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(TabKraken.class);
 
     Tabs tabMenu = new Tabs();
     Map<Tab, Class> tabsToPages = new HashMap<>();
@@ -35,7 +34,7 @@ public class TabViewRouterHelper implements BeforeEnterObserver {
 
     private String tabFontSize = "normal";
 
-    public TabViewRouterHelper() {
+    public TabKraken() {
         tabMenu.addSelectedChangeListener(this::tabSelectionChanged);
     }
 
