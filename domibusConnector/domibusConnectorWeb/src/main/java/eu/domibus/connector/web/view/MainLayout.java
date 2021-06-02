@@ -8,6 +8,7 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
 import eu.domibus.connector.web.view.areas.info.Info;
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 @org.springframework.stereotype.Component
 @Push
-public class MainLayout extends AppLayout implements BeforeEnterObserver {
+public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterObserver {
 
     private Map<Tab, String> tabsToRouteMap = new HashMap<>();
     private Map<String, Tab> routeToTabMap = new HashMap<>();

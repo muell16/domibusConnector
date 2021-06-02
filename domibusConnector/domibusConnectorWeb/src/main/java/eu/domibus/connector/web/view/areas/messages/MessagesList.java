@@ -18,6 +18,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
@@ -43,7 +44,10 @@ import java.util.stream.Stream;
 
 @Component
 @UIScope
+@Route(value = MessagesList.ROUTE, layout = Messages.class)
 public class MessagesList extends VerticalLayout implements AfterNavigationObserver {
+
+	public static final String ROUTE = "messagesList";
 
 	private static final Logger LOGGER = LogManager.getLogger(MessagesList.class);
 
@@ -78,11 +82,14 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		}
 	}
 
-	public MessagesList(WebMessageService messageService,
+	public MessagesList(Messages messagesView, WebMessageService messageService,
 						DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messageService = messageService;
 		this.dcMessagePersistenceService = messagePersistenceService;
-		
+
+		this.messagesView = messagesView;
+		this.messagesView.setMessagesListView(this);
+
 		grid = new WebMessagesGrid(messagesView);
 		
 		grid.setPageSize(pageSize);

@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.dto.WebMessage;
@@ -31,11 +32,11 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @UIScope
+@Route(value = Search.ROUTE, layout= Messages.class)
 public class Search extends VerticalLayout {
-	
-	/**
-	 * 
-	 */
+
+	public static final String ROUTE = "search";
+
 	private static final long serialVersionUID = 1L;
 	
 	private Messages messagesView;
