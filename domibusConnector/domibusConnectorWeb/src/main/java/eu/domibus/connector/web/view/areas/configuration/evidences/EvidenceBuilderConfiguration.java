@@ -1,22 +1,19 @@
 package eu.domibus.connector.web.view.areas.configuration.evidences;
 
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.web.component.LumoCheckbox;
+import eu.domibus.connector.web.forms.FormsUtil;
+import eu.domibus.connector.web.service.WebKeystoreService;
 import eu.domibus.connector.web.utils.RoleRequired;
-
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.spring.annotation.UIScope;
-
-import eu.domibus.connector.web.component.LumoCheckbox;
-import eu.domibus.connector.web.forms.FormsUtil;
-import eu.domibus.connector.web.service.WebKeystoreService;
 
 
 /**
@@ -49,7 +46,7 @@ import eu.domibus.connector.web.service.WebKeystoreService;
 @UIScope
 @Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@ConfigurationTab(title = "Evidence Builder Configuration")
+@TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 public class EvidenceBuilderConfiguration  extends VerticalLayout {
 
 	public static final String ROUTE = "evidencebuilder";

@@ -4,21 +4,20 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingConfigurationManager;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @UIScope
-@ConfigurationTab(title = "Backend Message Routing")
+@TabMetadata(title = "Backend Message Routing", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = BackendMessageRoutingView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 public class BackendMessageRoutingView extends VerticalLayout {

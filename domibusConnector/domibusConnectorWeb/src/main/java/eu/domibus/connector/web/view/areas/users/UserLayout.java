@@ -1,13 +1,10 @@
 package eu.domibus.connector.web.view.areas.users;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.MainLayout;
-import eu.domibus.connector.web.view.areas.configuration.UserTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -24,31 +21,20 @@ public class UserLayout extends VerticalLayout implements BeforeEnterObserver, R
 
     public static final String ROUTE_PREFIX = "user";
 
+    public static final String TAB_GROUP_NAME = "User";
+
     private TabKraken tabKraken = new TabKraken();
 
-    DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
     ApplicationContext applicationContext;
 
-    public UserLayout(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService,
-                      ApplicationContext applicationContext )
+    public UserLayout(ApplicationContext applicationContext )
     {
-        this.propertiesPersistenceService = propertiesPersistenceService;
         this.applicationContext = applicationContext;
-
-
     }
 
     @PostConstruct
     void init() {
-        applicationContext.getBeansWithAnnotation(UserTab.class)
-                .forEach((key, value) -> {
-                    Component component = (Component) value;
-                    UserTab annotation = component.getClass().getAnnotation(UserTab.class);
-                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
-                    tabKraken.createTab()
-                            .withLabel(annotation.title())
-                            .addForComponent(component.getClass());
-                });
+        tabKraken.createTabs(applicationContext, TAB_GROUP_NAME);
 
         add(tabKraken.getTabs());
     }

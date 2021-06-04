@@ -1,6 +1,5 @@
 package eu.domibus.connector.web.view.areas.configuration;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -15,7 +14,6 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.MainLayout;
-
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +31,7 @@ import java.util.Objects;
 public class ConfigurationLayout extends VerticalLayout implements BeforeEnterObserver, RouterLayout {
 
     public static final String ROUTE = "configuration";
+    public static final String TAB_GROUP_NAME = "Configuration";
 
     protected final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationLayout.class);
     private Div pageContent;
@@ -59,18 +58,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.util = util;
 
-
-        applicationContext.getBeansWithAnnotation(ConfigurationTab.class)
-                .entrySet()
-                .stream()
-                .forEach(entry -> {
-                    Component component = (Component) entry.getValue();
-                    ConfigurationTab annotation = component.getClass().getAnnotation(ConfigurationTab.class);
-                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
-                    tabKraken.createTab()
-                            .withLabel(annotation.title())
-                            .addForComponent(component.getClass());
-                });
+        tabKraken.createTabs(applicationContext, TAB_GROUP_NAME);
 
         pageContent = new Div();
         pageContent.setSizeFull();

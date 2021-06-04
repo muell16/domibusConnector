@@ -19,7 +19,6 @@ import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

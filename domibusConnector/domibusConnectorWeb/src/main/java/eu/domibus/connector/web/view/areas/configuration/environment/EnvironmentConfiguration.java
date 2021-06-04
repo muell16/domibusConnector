@@ -1,27 +1,24 @@
 package eu.domibus.connector.web.view.areas.configuration.environment;
 
-import java.util.Collection;
-import java.util.List;
-
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.web.component.LumoCheckbox;
+import eu.domibus.connector.web.forms.FormsUtil;
+import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.utils.RoleRequired;
-
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.spring.annotation.UIScope;
-
-import eu.domibus.connector.web.component.LumoCheckbox;
-import eu.domibus.connector.web.forms.FormsUtil;
-import eu.domibus.connector.web.service.WebPModeService;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -56,7 +53,7 @@ import eu.domibus.connector.web.service.WebPModeService;
 @Component
 @UIScope
 @Route(value = EnvironmentConfiguration.ROUTE, layout = ConfigurationLayout.class)
-@ConfigurationTab(title = "Environment Configuration")
+@TabMetadata(title = "Environment Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @RoleRequired(role = "ADMIN")
 public class EnvironmentConfiguration extends VerticalLayout{
 

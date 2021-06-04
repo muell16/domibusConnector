@@ -15,7 +15,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
-import eu.domibus.connector.web.view.areas.configuration.PmodeTab;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ import java.util.List;
 @Component
 @UIScope
 @Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
-@PmodeTab(title = "Data Tables")
+@TabMetadata(title = "Data Tables", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class DataTables extends VerticalLayout {
 
 	public static final String ROUTE = "datatables";

@@ -1,15 +1,5 @@
 package eu.domibus.connector.web.view.areas.users;
 
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
-
-import com.vaadin.flow.router.Route;
-import eu.domibus.connector.web.view.areas.configuration.PmodeTab;
-import eu.domibus.connector.web.view.areas.configuration.UserTab;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -20,19 +10,26 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.service.WebUserService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 @Route(value = UserList.ROUTE, layout = UserLayout.class)
-@UserTab(title = "All Users")
+@TabMetadata(title = "All Users", tabGroup = UserLayout.TAB_GROUP_NAME)
 public class UserList extends VerticalLayout {
 
 	public static final String ROUTE = "userlist";

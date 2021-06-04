@@ -12,8 +12,10 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import eu.domibus.connector.web.configuration.SecurityUtils;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,6 +153,18 @@ public class TabKraken implements BeforeEnterObserver {
 
     }
 
-
-
+    public void createTabs(ApplicationContext applicationContext, String group)
+    {
+        applicationContext.getBeansWithAnnotation(TabMetadata.class)
+                .entrySet().stream()
+                .filter(e -> ((Component) e.getValue()).getClass().getAnnotation(TabMetadata.class).tabGroup().equals(group))
+                .forEach(e -> {
+                    Component component = (Component) e.getValue();
+                    TabMetadata annotation = component.getClass().getAnnotation(TabMetadata.class);
+                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
+                    this.createTab()
+                            .withLabel(annotation.title())
+                            .addForComponent(component.getClass());
+                });
+    }
 }

@@ -1,15 +1,6 @@
 package eu.domibus.connector.web.view.areas.users;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.Route;
-import eu.domibus.connector.web.view.areas.configuration.PmodeTab;
-import eu.domibus.connector.web.view.areas.configuration.UserTab;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
@@ -17,19 +8,25 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.forms.WebUserForm;
 import eu.domibus.connector.web.service.WebUserService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 @Route(value = UserDetails.ROUTE, layout = UserLayout.class)
-@UserTab(title = "User Details")
+@TabMetadata(title = "User Details", tabGroup = UserLayout.TAB_GROUP_NAME)
 public class UserDetails extends VerticalLayout implements HasUrlParameter<String> {
 
 	public static final String ROUTE = "details";

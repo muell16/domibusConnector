@@ -9,7 +9,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
-import eu.domibus.connector.web.view.areas.configuration.PmodeTab;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 @Component
 @UIScope
 @Route(value = Import.ROUTE, layout = PmodeLayout.class)
-@PmodeTab(title = "Import PModes")
+@TabMetadata(title = "Import PModes", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class Import extends VerticalLayout {
 
 	public static final String ROUTE = "import";
