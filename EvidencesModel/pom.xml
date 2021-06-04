@@ -5,7 +5,7 @@
     <groupId>eu.ecodex.evidences</groupId>
     <artifactId>EvidenceBuilder</artifactId>
     <name>EvidencesModel</name>
-    <version>1.0.5.11_RC1</version>
+    <version>1.0.6-RELEASE</version>
     <packaging>jar</packaging>
     <description>EvidenceBuilder helps creating Evidences in the e-CODEX
         context.
@@ -14,6 +14,10 @@
 
     <properties>
         <siteURL>${project.build.directory}/site</siteURL>
+
+        <dss.tools.version>5.4</dss.tools.version>
+        <org.bouncycastle.version>1.61</org.bouncycastle.version>
+
     </properties>
 
     <profiles>
@@ -34,23 +38,28 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <encoding>ISO-8859-1</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.22.1</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.1</version>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.1.0</version>
+
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -63,7 +72,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>2.7</version>
                 <configuration>
                     <instrumentation>
                         <ignores>
@@ -126,11 +135,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.0.0</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.15</version>
+                <version>2.22.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -142,11 +153,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.0.0</version>
                 <configuration>
                     <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                    <dependencyLocationsEnabled>false
-                    </dependencyLocationsEnabled>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
             </plugin>
 
@@ -160,11 +170,18 @@
     </reporting>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.1.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -210,37 +227,37 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.51</version>
+            <version>${org.bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcmail-jdk15on</artifactId>
-            <version>1.51</version>
+            <version>${org.bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-document</artifactId>
-            <version>5.4</version>
+            <version>${dss.tools.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-token</artifactId>
-            <version>5.4</version>
+            <version>${dss.tools.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-xades</artifactId>
-            <version>5.4</version>
+            <version>${dss.tools.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-service</artifactId>
-            <version>5.4</version>
+            <version>${dss.tools.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-utils-apache-commons</artifactId>
-            <version>5.4</version>
+            <version>${dss.tools.version}</version>
         </dependency>
 
     </dependencies>
@@ -248,16 +265,12 @@
 
     <distributionManagement>
         <repository>
-            <id>nexus-releases</id>
-            <url>
-                https://secure.e-codex.eu/nexus/content/repositories/releases/
-            </url>
+            <id>${releases-repo.id}</id>
+            <url>${releases-repo.url}</url>
         </repository>
         <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>
-                https://secure.e-codex.eu/nexus/content/repositories/snapshots/
-            </url>
+            <id>${snapshots-repo.id}</id>
+            <url>${snapshots-repo.url}</url>
         </snapshotRepository>
         <site>
             <id>reportingsite</id>

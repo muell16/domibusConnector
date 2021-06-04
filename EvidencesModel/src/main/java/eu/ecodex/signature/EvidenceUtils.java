@@ -35,10 +35,10 @@ public abstract class EvidenceUtils {
     protected String javaKeyStorePath, javaKeyStorePassword, alias, keyPassword;
 
     public EvidenceUtils(String javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
-	this.javaKeyStorePath = javaKeyStorePath;
-	this.javaKeyStorePassword = javaKeyStorePassword;
-	this.alias = alias;
-	this.keyPassword = keyPassword;
+        this.javaKeyStorePath = javaKeyStorePath;
+        this.javaKeyStorePassword = javaKeyStorePassword;
+        this.alias = alias;
+        this.keyPassword = keyPassword;
     }
 
     public abstract byte[] signByteArray(byte[] xmlData);
@@ -46,83 +46,83 @@ public abstract class EvidenceUtils {
     public abstract boolean verifySignature(byte[] xmlData);
 
     protected synchronized static KeyPair getKeyPairFromKeyStore(String store, String storePass, String alias, String keyPass) {
-	LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
-	KeyStore ks;
-	InputStream kfis;
-	KeyPair keyPair = null;
+        LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
+        KeyStore ks;
+        InputStream kfis;
+        KeyPair keyPair = null;
 
-	Key key = null;
-	PublicKey publicKey = null;
-	PrivateKey privateKey = null;
-	try {
-	    ks = KeyStore.getInstance("JKS");
-	    final URL ksLocation = new URL(store);
-	    
-	    kfis = ksLocation.openStream();
-	    ks.load(kfis, (storePass == null) ? null : storePass.toCharArray() );
-	    
-	    if (ks.containsAlias(alias)) {
-		key = ks.getKey(alias, keyPass.toCharArray());
-		if (key instanceof PrivateKey) {
-		    X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-		    publicKey = cert.getPublicKey();
-		    privateKey = (PrivateKey) key;
-		    keyPair = new KeyPair(publicKey, privateKey);
-		} else {
-		    keyPair = null;
-		}
-	    } else {
-		keyPair = null;
-	    }
-	} catch (UnrecoverableKeyException e) {
-	    e.printStackTrace();
-	} catch (KeyStoreException e) {
-	    e.printStackTrace();
-	} catch (NoSuchAlgorithmException e) {
-	    e.printStackTrace();
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (CertificateException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+        Key key = null;
+        PublicKey publicKey = null;
+        PrivateKey privateKey = null;
+        try {
+            ks = KeyStore.getInstance("JKS");
+            final URL ksLocation = new URL(store);
 
-	return keyPair;
+            kfis = ksLocation.openStream();
+            ks.load(kfis, (storePass == null) ? null : storePass.toCharArray());
+
+            if (ks.containsAlias(alias)) {
+                key = ks.getKey(alias, keyPass.toCharArray());
+                if (key instanceof PrivateKey) {
+                    X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+                    publicKey = cert.getPublicKey();
+                    privateKey = (PrivateKey) key;
+                    keyPair = new KeyPair(publicKey, privateKey);
+                } else {
+                    keyPair = null;
+                }
+            } else {
+                keyPair = null;
+            }
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return keyPair;
     }
 
     public REMEvidenceType convertIntoEvidenceType(byte[] xmlData) {
-	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	dbf.setNamespaceAware(true);
-	REMEvidenceType convertedEvidence = null;
-	Document doc;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        REMEvidenceType convertedEvidence = null;
+        Document doc;
 
-	LOG.debug("Convert byte-array into Evidence");
-	try {
-	    doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlData));
+        LOG.debug("Convert byte-array into Evidence");
+        try {
+            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlData));
 
-	    convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
-	} catch (SAXException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-	    e.printStackTrace();
-	}
+            convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
 
-	return convertedEvidence;
+        return convertedEvidence;
     }
 
     private JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(Document domDocument) {
-	JAXBElement<REMEvidenceType> jaxbObj = null;
+        JAXBElement<REMEvidenceType> jaxbObj = null;
 
-	try {
-	    jaxbObj = JaxbContextHolder.getSpocsJaxBContext().createUnmarshaller().unmarshal(domDocument, REMEvidenceType.class);
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	}
+        try {
+            jaxbObj = JaxbContextHolder.getSpocsJaxBContext().createUnmarshaller().unmarshal(domDocument, REMEvidenceType.class);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
 
-	return jaxbObj;
+        return jaxbObj;
     }
 
 }
