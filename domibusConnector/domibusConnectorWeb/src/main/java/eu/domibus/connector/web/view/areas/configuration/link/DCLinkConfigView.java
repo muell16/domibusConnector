@@ -11,15 +11,13 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverview;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -89,7 +87,7 @@ public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<
             } else if (linkType == LinkType.BACKEND) {
                 ui.navigate(BackendLinkConfiguration.class);
             } else {
-                ui.navigate(ConfigurationOverviewView.class);
+                ui.navigate(ConfigurationOverview.class);
             }
         });
     }

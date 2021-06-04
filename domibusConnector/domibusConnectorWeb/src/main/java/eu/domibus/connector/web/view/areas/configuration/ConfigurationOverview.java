@@ -7,21 +7,18 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.utils.RoleRequired;
-
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.environment.EnvironmentConfiguration;
 import org.springframework.stereotype.Component;
 
 @UIScope
 @Component
-@Route(value = ConfigurationOverviewView.ROUTE, layout = ConfigurationLayout.class)
+@Route(value = ConfigurationOverview.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-public class ConfigurationOverviewView extends VerticalLayout implements BeforeEnterObserver {
+public class ConfigurationOverview extends VerticalLayout implements BeforeEnterObserver {
 
     public static final String ROUTE = "";
 
 
-    public ConfigurationOverviewView() {
+    public ConfigurationOverview() {
         Label l = new Label("Configuration");
         this.add(l);
     }

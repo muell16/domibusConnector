@@ -18,7 +18,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverview;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -90,7 +90,7 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
             } else if (linkType == LinkType.BACKEND) {
                 ui.navigate(BackendLinkConfiguration.class);
             } else {
-                ui.navigate(ConfigurationOverviewView.class);
+                ui.navigate(ConfigurationOverview.class);
             }
         });
     }
