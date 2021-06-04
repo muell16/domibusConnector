@@ -14,10 +14,9 @@ import eu.domibus.connector.web.login.LogoutView;
 import eu.domibus.connector.web.utils.TabKraken;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverviewView;
 import eu.domibus.connector.web.view.areas.info.Info;
-import eu.domibus.connector.web.view.areas.messages.Messages;
+import eu.domibus.connector.web.view.areas.messages.MessageOverview;
 import eu.domibus.connector.web.view.areas.pmodes.PmodeOverview;
 import eu.domibus.connector.web.view.areas.users.UserOverview;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
 @org.springframework.stereotype.Component
@@ -27,9 +26,7 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
     private Tabs tabs;
     private TabKraken tabManager = new TabKraken();
 
-    public MainLayout(
-            @Autowired Messages messagesView
-    ) {
+    public MainLayout() {
 
         setPrimarySection(Section.DRAWER);
 
@@ -42,7 +39,7 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .createTab()
                 .withLabel("Messages")
                 .withIcon(new Icon(VaadinIcon.LIST))
-                .addForComponent(messagesView);
+                .addForComponent(MessageOverview.class);
 
         tabManager
                 .createTab()
@@ -80,13 +77,10 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
         topBar.add(tabs);
 
 //        addToDrawer(menuTabs);
-
-
     }
 
     public void beforeEnter(BeforeEnterEvent event) {
 //        currentlyLoggedInUser.setText("User: " + SecurityUtils.getUsername());
         tabManager.beforeEnter(event);
     }
-
 }

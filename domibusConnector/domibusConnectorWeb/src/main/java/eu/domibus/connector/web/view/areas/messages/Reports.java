@@ -23,6 +23,7 @@ import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebReport;
 import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,8 @@ import java.util.*;
 
 @Component
 @UIScope
-@Route(value = Reports.ROUTE, layout = Messages.class)
+@Route(value = Reports.ROUTE, layout = MessageLayout.class)
+@TabMetadata(title = "Reports", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class Reports extends VerticalLayout {
 
 	public static final String ROUTE = "reports";

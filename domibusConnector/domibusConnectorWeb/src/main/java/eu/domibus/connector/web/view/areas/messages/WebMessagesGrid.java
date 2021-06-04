@@ -2,7 +2,6 @@ package eu.domibus.connector.web.view.areas.messages;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -21,11 +20,11 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	// collect all hideable columns, to be iterated over later.
 	private Map<String,Column> hideableColumns = new HashMap<>();
 	
-	private Messages messagesView;
+	private MessageDetails details;
 
-	public WebMessagesGrid(Messages messagesView) {
+	public WebMessagesGrid(MessageDetails details) {
 		super();
-		this.messagesView = messagesView;
+		this.details = details;
 		addAllColumns();
 		
 		for(Column<WebMessage> col : getColumns()) {
@@ -90,7 +89,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 	public Button geMessageDetailsLink(WebMessage connectorMessage) {
 		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
-		getDetails.addClickListener(e -> messagesView.showMessageDetails(connectorMessage));
+		getDetails.addClickListener(e -> details.show(connectorMessage));
 		return getDetails;
 	}
 	
@@ -102,9 +101,4 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 				});
 	}
-
-	public void setMessagesView(Messages messagesView) {
-		this.messagesView = messagesView;
-	}
-
 }

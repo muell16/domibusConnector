@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.view.areas.messages;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -19,19 +20,22 @@ import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.ConnectorMessageForm;
 import eu.domibus.connector.web.service.WebMessageService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
-@Route(value = MessageDetails.ROUTE, layout = Messages.class)
+@Route(value = MessageDetails.ROUTE, layout = MessageLayout.class)
 @UIScope
+@TabMetadata(title = "Message Details", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessageDetails extends VerticalLayout implements HasUrlParameter<String> {
 
 	public static final String ROUTE = "messageDetails";
@@ -41,22 +45,26 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 	private final static Logger LOGGER = LogManager.getLogger(MessageDetails.class);
 
 	private WebMessageService messageService;
-	private ConnectorMessageForm messageForm = new ConnectorMessageForm();
-	private VerticalLayout messageEvidencesArea = new VerticalLayout();
+	private ConnectorMessageForm messageForm;
+	private VerticalLayout messageEvidencesArea;
 
 	public MessageDetails(@Autowired WebMessageService messageService) {
-
 		this.messageService = messageService;
+		this.messageForm = new ConnectorMessageForm();
+		this.messageEvidencesArea = new VerticalLayout();
+	}
 
+	@PostConstruct
+	void init() {
 		Button refreshButton = new Button(new Icon(VaadinIcon.REFRESH));
 		refreshButton.setText("Refresh");
 		refreshButton.addClickListener(e -> {
 			if(messageForm.getBinder()!=null)loadMessageDetails(messageForm.getBinder().getBean());
-			});
+		});
 
 		HorizontalLayout buttons = new HorizontalLayout(
 				refreshButton
-			    );
+		);
 		buttons.setWidth("100vw");
 		add(buttons);
 
@@ -139,7 +147,6 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 
 				details.add(grid);
 
-
 				messageEvidencesArea.add(details);
 
 				messageEvidencesArea.setWidth("100vw");
@@ -147,6 +154,10 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 				messageEvidencesArea.setVisible(true);
 			}
 
+	}
+
+	public void show(WebMessage message) {
+		UI.getCurrent().navigate(MessageDetails.class, message.getConnectorMessageId());
 	}
 
 	private void clearMessageDetails() {
