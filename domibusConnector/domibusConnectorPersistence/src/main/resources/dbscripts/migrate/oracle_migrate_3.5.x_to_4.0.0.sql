@@ -253,6 +253,8 @@ select
     UPDATED
 from BKP_DC_MSG_INFO B;
 
+UPDATE DOMIBUS_CONNECTOR_MESSAGE m SET CREATED=(select CREATED from DOMIBUS_CONNECTOR_MESSAGE_INFO mi where m.ID=mi.MESSAGE_ID);
+
 UPDATE domibus_connector_message SET connector_message_id='_migrate_' || SYS_GUID() where CONNECTOR_MESSAGE_ID is null;
 
 INSERT INTO DOMIBUS_CONNECTOR_EVIDENCE
