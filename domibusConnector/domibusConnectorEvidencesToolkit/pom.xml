@@ -10,32 +10,32 @@
     <name>${project.artifactId}</name>
     <description>The evidence toolkit contains the evidence releated services. It is is responsibly for creating the evidences.</description>
     <dependencies>
-        <dependency>
-            <groupId>eu.ecodex.evidences</groupId>
-            <artifactId>EvidenceBuilder</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-api</artifactId>
-                    <groupId>javax.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-xjc</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bcmail-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>eu.ecodex.evidences</groupId>-->
+<!--            <artifactId>EvidenceBuilder</artifactId>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>jaxb-impl</artifactId>-->
+<!--                    <groupId>com.sun.xml.bind</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>jaxb-api</artifactId>-->
+<!--                    <groupId>javax.xml.bind</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>jaxb-xjc</artifactId>-->
+<!--                    <groupId>com.sun.xml.bind</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>bcmail-jdk15on</artifactId>-->
+<!--                    <groupId>org.bouncycastle</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>bcprov-jdk15on</artifactId>-->
+<!--                    <groupId>org.bouncycastle</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
@@ -108,25 +108,69 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.junit.jupiter</groupId>-->
-        <!--            <artifactId>junit-jupiter-engine</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15on</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-document</artifactId>
+            <version>${dss.tools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-token</artifactId>
+            <version>${dss.tools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-xades</artifactId>
+            <version>${dss.tools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-service</artifactId>
+            <version>${dss.tools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-utils-apache-commons</artifactId>
+            <version>${dss.tools.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
-        <!-- activate resource filtering to provide the tests with correct properties for the environment -->
-        <!-- activate resource filtering to provide the tests with correct properties for the environment 
-            BUT only filter resources from specific folder to avoid malforming the other resources
-        -->
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <filtering>true</filtering>
-                <directory>src/test/resources-filtered</directory>
-            </testResource>
-        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>schemas</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/xsd</schemaDirectory>
+                            <bindingDirectory>src/main/xjb</bindingDirectory>
+                            <schemaIncludes>
+                                <include>eDeliveryDetails.xsd</include>
+                                <include>TS102640_v2.xsd</include>
+                                <include>SPOCS_ts102640_soap_body.xsd</include>
+                            </schemaIncludes>
+                            <strict>true</strict>
+                            <extension>true</extension>
+                            <args>
+                                <arg>-no-header</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

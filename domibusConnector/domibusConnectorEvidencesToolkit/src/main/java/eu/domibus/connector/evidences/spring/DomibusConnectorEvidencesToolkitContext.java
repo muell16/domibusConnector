@@ -12,6 +12,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
 import eu.ecodex.evidences.EvidenceBuilder;
+import org.springframework.core.io.Resource;
 
 @Configuration
 @ComponentScan(basePackageClasses = {DomibusConnectorEvidencesToolkit.class})
@@ -26,7 +27,7 @@ public class DomibusConnectorEvidencesToolkitContext {
     @Bean
     @SuppressWarnings("squid:S2068")
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        String javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
+        Resource javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPath();
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
         String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();

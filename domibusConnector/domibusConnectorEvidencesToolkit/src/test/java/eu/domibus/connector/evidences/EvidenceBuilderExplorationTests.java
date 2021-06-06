@@ -10,13 +10,14 @@ import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
 public class EvidenceBuilderExplorationTests {
 
 
     @Test
     public void testEvidenceBuilderWithoutValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
-        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("", "", "", "");
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource(""), "", "", "");
 
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
         //if there is an error the generated evidence gets null!
@@ -25,7 +26,7 @@ public class EvidenceBuilderExplorationTests {
 
     @Test
     public void testEvidenceBuilderWithtValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
-        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("file:./src/test/resources/keystore/evidence_test.jks", "12345", "test", "12345");
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource("/keystore/evidence_test.jks"), "12345", "test", "12345");
 
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
 

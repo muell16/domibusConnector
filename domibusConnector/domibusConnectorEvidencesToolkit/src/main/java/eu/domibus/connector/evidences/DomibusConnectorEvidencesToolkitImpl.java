@@ -144,7 +144,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a rejection the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.toString());
+        event.setDetails(errorDetails);
 
         byte[] evidence = createSubmissionAcceptanceRejection(false, event, message, hash);
 
@@ -176,7 +178,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a rejection the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.toString());
+        event.setDetails(errorDetails);
 
         DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
@@ -199,7 +203,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a failure the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.toString());
+        event.setDetails(errorDetails);
 
         DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
@@ -237,7 +243,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a NonDelivery the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.toString());
+        event.setDetails(errorDetails);
 
         DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
@@ -274,7 +282,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a NonRetrieval the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.toString());
+        event.setDetails(errorDetails);
 
         DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
 
