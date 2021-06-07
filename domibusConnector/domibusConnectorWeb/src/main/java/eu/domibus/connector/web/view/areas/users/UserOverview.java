@@ -18,7 +18,7 @@ public class UserOverview extends VerticalLayout implements BeforeEnterObserver 
     // maybe it's better to directly route to the default active tab in
     // MainLayout
 
-    // Pmodelayout already has prefix "pmode"
+    // UserLayout already has prefix "user"
     public static final String ROUTE = "";
 
     // Always redirect to Import

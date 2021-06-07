@@ -29,7 +29,7 @@ import java.util.Optional;
 @TabMetadata(title = "Add new User", tabGroup = "User")
 public class NewUser extends VerticalLayout {
 
-	public static final String ROUTE = "new";
+	public static final String ROUTE = "newuser";
 
 	private final WebUserService userService;
 

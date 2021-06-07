@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 @TabMetadata(title = "All Messages", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessagesList extends VerticalLayout implements AfterNavigationObserver {
 
-	public static final String ROUTE = "messageList";
+	public static final String ROUTE = "messagelist";
 
 	public static final int INITIAL_PAGE_SIZE = 20;
 
@@ -155,11 +155,11 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 			hideableColsDialog.add(closeBtn);
 			
 			hideableColsDialog.open();
-			
+
 		});
 		
 		gridControl.add(hideColsBtn);
-		
+
 		return gridControl;
 	}
 

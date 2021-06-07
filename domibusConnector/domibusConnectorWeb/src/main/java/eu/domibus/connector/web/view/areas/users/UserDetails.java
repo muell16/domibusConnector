@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @TabMetadata(title = "User Details", tabGroup = UserLayout.TAB_GROUP_NAME)
 public class UserDetails extends VerticalLayout implements HasUrlParameter<String> {
 
-	public static final String ROUTE = "details";
+	public static final String ROUTE = "userdetails";
 
 	private WebUser user;
 	private WebUserService userService;
