@@ -26,9 +26,9 @@ import java.util.Map;
  * and also only show tabs which the corresponding view
  * can be accessed as enabled
  */
-public class TabKraken implements BeforeEnterObserver {
+public class DCTabHandler implements BeforeEnterObserver {
 
-    private static final Logger LOGGER = LogManager.getLogger(TabKraken.class);
+    private static final Logger LOGGER = LogManager.getLogger(DCTabHandler.class);
 
     Tabs tabMenu = new Tabs();
     Map<Tab, Class> tabsToPages = new HashMap<>();
@@ -36,7 +36,7 @@ public class TabKraken implements BeforeEnterObserver {
 
     private String tabFontSize = "normal";
 
-    public TabKraken() {
+    public DCTabHandler() {
         tabMenu.addSelectedChangeListener(this::tabSelectionChanged);
     }
 

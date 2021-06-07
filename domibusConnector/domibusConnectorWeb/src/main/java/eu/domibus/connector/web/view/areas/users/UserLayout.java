@@ -3,7 +3,7 @@ package eu.domibus.connector.web.view.areas.users;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.web.utils.TabKraken;
+import eu.domibus.connector.web.utils.DCTabHandler;
 import eu.domibus.connector.web.view.MainLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class UserLayout extends VerticalLayout implements BeforeEnterObserver, R
 
     public static final String TAB_GROUP_NAME = "User";
 
-    private TabKraken tabKraken = new TabKraken();
+    private DCTabHandler DCTabHandler = new DCTabHandler();
 
     ApplicationContext applicationContext;
 
@@ -34,13 +34,13 @@ public class UserLayout extends VerticalLayout implements BeforeEnterObserver, R
 
     @PostConstruct
     void init() {
-        tabKraken.createTabs(applicationContext, TAB_GROUP_NAME);
+        DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
 
-        add(tabKraken.getTabs());
+        add(DCTabHandler.getTabs());
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        tabKraken.beforeEnter(event);
+        DCTabHandler.beforeEnter(event);
     }
 }

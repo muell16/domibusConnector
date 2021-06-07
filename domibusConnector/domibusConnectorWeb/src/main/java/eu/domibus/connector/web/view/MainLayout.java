@@ -11,7 +11,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.login.LogoutView;
-import eu.domibus.connector.web.utils.TabKraken;
+import eu.domibus.connector.web.utils.DCTabHandler;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationOverview;
 import eu.domibus.connector.web.view.areas.info.Info;
 import eu.domibus.connector.web.view.areas.messages.MessageOverview;
@@ -24,7 +24,7 @@ import eu.domibus.connector.web.view.areas.users.UserOverview;
 public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterObserver {
 
     private Tabs tabs;
-    private TabKraken tabManager = new TabKraken();
+    private DCTabHandler tabManager = new DCTabHandler();
 
     public MainLayout() {
 

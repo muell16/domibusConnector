@@ -3,7 +3,7 @@ package eu.domibus.connector.web.view.areas.pmodes;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.web.utils.TabKraken;
+import eu.domibus.connector.web.utils.DCTabHandler;
 import eu.domibus.connector.web.view.MainLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class PmodeLayout extends VerticalLayout implements BeforeEnterObserver, 
     public static final String ROUTE_PREFIX = "pmode";
     public static final String TAB_GROUP_NAME = "Pmode";
 
-    private TabKraken tabKraken = new TabKraken();
+    private DCTabHandler DCTabHandler = new DCTabHandler();
 
     private ApplicationContext applicationContext;
 
@@ -33,12 +33,12 @@ public class PmodeLayout extends VerticalLayout implements BeforeEnterObserver, 
 
     @PostConstruct
     void init() {
-        tabKraken.createTabs(applicationContext, TAB_GROUP_NAME);
-        add(tabKraken.getTabs());
+        DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
+        add(DCTabHandler.getTabs());
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        tabKraken.beforeEnter(event);
+        DCTabHandler.beforeEnter(event);
     }
 }

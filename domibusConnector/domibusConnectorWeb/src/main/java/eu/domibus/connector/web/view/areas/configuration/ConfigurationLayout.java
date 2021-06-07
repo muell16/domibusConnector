@@ -12,7 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.web.utils.TabKraken;
+import eu.domibus.connector.web.utils.DCTabHandler;
 import eu.domibus.connector.web.view.MainLayout;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
     Button resetConfiguration;
     Button reloadConfiguration;
 
-    private TabKraken tabKraken = new TabKraken();
+    private DCTabHandler DCTabHandler = new DCTabHandler();
 
     @Autowired
     DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
@@ -58,13 +58,13 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.util = util;
 
-        tabKraken.createTabs(applicationContext, TAB_GROUP_NAME);
+        DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
 
         pageContent = new Div();
         pageContent.setSizeFull();
 
 //        add(createConfigurationButtonBar()); //deactivated, because does not work
-        add(tabKraken.getTabs(), pageContent);
+        add(DCTabHandler.getTabs(), pageContent);
 
         this.expand(pageContent);
         this.setHeight("80vh");
@@ -209,7 +209,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        tabKraken.beforeEnter(event);
+        DCTabHandler.beforeEnter(event);
 
 //        boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
 //        saveConfiguration.setEnabled(enabled);
