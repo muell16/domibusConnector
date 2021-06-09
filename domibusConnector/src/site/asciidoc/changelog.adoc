@@ -252,6 +252,10 @@ Upgrade manual: link:upgrade/upgrade-4.3.0.html[Upgrade to 4.3.0]
 ** Mysql 8, >= 5.6.6
 ** Oracle 11g
 
+=== 4.3.1
+
+* Fix Files.list API call issue which results in too many open files
+
 
 
 
