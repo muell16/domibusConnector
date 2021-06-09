@@ -1,21 +1,10 @@
 package eu.domibus.connector.web.view.areas.configuration.gateway;
 
-import com.vaadin.flow.router.Route;
-import eu.domibus.connector.web.utils.RoleRequired;
-
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
-import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.forms.FormsUtil;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 //@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!

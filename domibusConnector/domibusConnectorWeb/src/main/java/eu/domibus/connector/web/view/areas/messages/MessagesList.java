@@ -18,23 +18,21 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
-import eu.domibus.connector.web.dto.WebMessageDetail.Action;
-import eu.domibus.connector.web.dto.WebMessageDetail.Party;
-import eu.domibus.connector.web.dto.WebMessageDetail.Service;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.web.service.WebMessageService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.data.domain.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,9 +41,11 @@ import java.util.stream.Stream;
 
 @Component
 @UIScope
+@Route(value = MessagesList.ROUTE, layout = MessageLayout.class)
+@TabMetadata(title = "All Messages", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessagesList extends VerticalLayout implements AfterNavigationObserver {
 
-	private static final Logger LOGGER = LogManager.getLogger(MessagesList.class);
+	public static final String ROUTE = "messagelist";
 
 	public static final int INITIAL_PAGE_SIZE = 20;
 
@@ -53,11 +53,11 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	private final WebMessageService messageService;
 	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 
+	private final MessageDetails details;
+
 	private WebMessagesGrid grid;
 	private LinkedList<WebMessage> fullList = null;
-	private Messages messagesView;
 
-	
 	TextField fromPartyIdFilterText = new TextField();
 	TextField toPartyIdFilterText = new TextField();
 	TextField serviceFilterText = new TextField();
@@ -71,48 +71,40 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 	WebMessage exampleWebMessage = new WebMessage();
 	CallbackDataProvider<WebMessage, WebMessage> callbackDataProvider;
 
-	public void setMessagesView(Messages messagesView) {
-		this.messagesView = messagesView;
-		if(this.grid!=null) {
-			grid.setMessagesView(messagesView);
-		}
-	}
-
-	public MessagesList(WebMessageService messageService,
-						DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
+	public MessagesList(WebMessageService messageService, DomibusConnectorWebMessagePersistenceService messagePersistenceService, MessageDetails details) {
 		this.messageService = messageService;
 		this.dcMessagePersistenceService = messagePersistenceService;
-		
-		grid = new WebMessagesGrid(messagesView);
-		
+		this.details = details;
+	}
+
+	@PostConstruct
+	void init() {
+
+		grid = new WebMessagesGrid(details);
+
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
-		
-//		HorizontalLayout filtering = createFilterLayout();
-//
-//		
-//		HorizontalLayout downloadLayout = createDownloadLayout();
-		
-		VerticalLayout gridControl = createGridControlLayout();
-		
 
-		VerticalLayout main = new VerticalLayout(gridControl, 
-//				filtering, 
-				grid 
+//		HorizontalLayout filtering = createFilterLayout();
+//		HorizontalLayout downloadLayout = createDownloadLayout();
+
+		VerticalLayout gridControl = createGridControlLayout();
+
+		VerticalLayout main = new VerticalLayout(gridControl,
+//				filtering,
+				grid
 //				downloadLayout
-				);
+		);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("700px");
 		add(main);
 		setHeight("100vh");
 		setWidth("100vw");
 
-
 		callbackDataProvider
 				= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
 
 		grid.setDataProvider(callbackDataProvider);
-
 
 //		try {
 //			//any error here would prevent UI from being created!
@@ -163,11 +155,11 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 			hideableColsDialog.add(closeBtn);
 			
 			hideableColsDialog.open();
-			
+
 		});
 		
 		gridControl.add(hideColsBtn);
-		
+
 		return gridControl;
 	}
 

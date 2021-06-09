@@ -1,32 +1,36 @@
 package eu.domibus.connector.web.view.areas.users;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.forms.WebUserForm;
 import eu.domibus.connector.web.service.WebUserService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
-public class UserDetails extends VerticalLayout {
-	
+@Route(value = UserDetails.ROUTE, layout = UserLayout.class)
+@TabMetadata(title = "User Details", tabGroup = UserLayout.TAB_GROUP_NAME)
+public class UserDetails extends VerticalLayout implements HasUrlParameter<String> {
+
+	public static final String ROUTE = "userdetails";
+
 	private WebUser user;
 	private WebUserService userService;
 	private WebUserForm userForm = new WebUserForm();
@@ -107,11 +111,9 @@ public class UserDetails extends VerticalLayout {
 		
 //		setHeight("100vh");
 	}
-	
-	
 
-	public WebUser getUser() {
-		return user;
+	public void showDetails(WebUser user) {
+		UI.getCurrent().navigate(UserDetails.class, user.getUsername());
 	}
 
 	public void setUser(WebUser user) {
@@ -120,4 +122,13 @@ public class UserDetails extends VerticalLayout {
 		userForm.setUser(user);
 	}
 
+	@Override
+	public void setParameter(BeforeEvent event, @OptionalParameter String username)
+	{
+		WebUser user = userService.getAllUsers().stream()
+				.filter(u -> u.getUsername().equals(username))
+				.findFirst()
+				.orElse(new WebUser());
+		userForm.setUser(user);
+	}
 }

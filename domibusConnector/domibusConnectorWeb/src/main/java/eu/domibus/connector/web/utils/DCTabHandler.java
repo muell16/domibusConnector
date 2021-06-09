@@ -11,10 +11,11 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.server.VaadinSession;
 import eu.domibus.connector.web.configuration.SecurityUtils;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +26,9 @@ import java.util.Map;
  * and also only show tabs which the corresponding view
  * can be accessed as enabled
  */
-public class TabViewRouterHelper implements BeforeEnterObserver {
+public class DCTabHandler implements BeforeEnterObserver {
 
-    private static final Logger LOGGER = LogManager.getLogger(TabViewRouterHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(DCTabHandler.class);
 
     Tabs tabMenu = new Tabs();
     Map<Tab, Class> tabsToPages = new HashMap<>();
@@ -35,7 +36,7 @@ public class TabViewRouterHelper implements BeforeEnterObserver {
 
     private String tabFontSize = "normal";
 
-    public TabViewRouterHelper() {
+    public DCTabHandler() {
         tabMenu.addSelectedChangeListener(this::tabSelectionChanged);
     }
 
@@ -152,6 +153,18 @@ public class TabViewRouterHelper implements BeforeEnterObserver {
 
     }
 
-
-
+    public void createTabs(ApplicationContext applicationContext, String group)
+    {
+        applicationContext.getBeansWithAnnotation(TabMetadata.class)
+                .entrySet().stream()
+                .filter(e -> ((Component) e.getValue()).getClass().getAnnotation(TabMetadata.class).tabGroup().equals(group))
+                .forEach(e -> {
+                    Component component = (Component) e.getValue();
+                    TabMetadata annotation = component.getClass().getAnnotation(TabMetadata.class);
+                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
+                    this.createTab()
+                            .withLabel(annotation.title())
+                            .addForComponent(component.getClass());
+                });
+    }
 }

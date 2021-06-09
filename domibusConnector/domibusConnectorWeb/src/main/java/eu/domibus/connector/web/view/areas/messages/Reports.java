@@ -16,12 +16,14 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebReport;
 import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -33,8 +35,12 @@ import java.util.*;
 
 @Component
 @UIScope
+@Route(value = Reports.ROUTE, layout = MessageLayout.class)
+@TabMetadata(title = "Reports", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class Reports extends VerticalLayout {
-	
+
+	public static final String ROUTE = "reports";
+
 	private WebReportsService reportsService;
 	
 	Date fromDateValue;

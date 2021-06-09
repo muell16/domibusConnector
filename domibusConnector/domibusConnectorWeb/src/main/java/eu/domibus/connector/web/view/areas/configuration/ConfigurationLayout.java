@@ -1,6 +1,5 @@
 package eu.domibus.connector.web.view.areas.configuration;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -13,11 +12,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.web.configuration.SecurityUtils;
-import eu.domibus.connector.web.enums.UserRole;
-import eu.domibus.connector.web.utils.TabViewRouterHelper;
+import eu.domibus.connector.web.utils.DCTabHandler;
 import eu.domibus.connector.web.view.MainLayout;
-
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +31,16 @@ import java.util.Objects;
 public class ConfigurationLayout extends VerticalLayout implements BeforeEnterObserver, RouterLayout {
 
     public static final String ROUTE = "configuration";
+    public static final String TAB_GROUP_NAME = "Configuration";
 
     protected final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationLayout.class);
     private Div pageContent;
-
 
     Button saveConfiguration;
     Button resetConfiguration;
     Button reloadConfiguration;
 
-    private TabViewRouterHelper tabViewRouterManager = new TabViewRouterHelper();
+    private DCTabHandler DCTabHandler = new DCTabHandler();
 
     @Autowired
     DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
@@ -62,24 +58,13 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.util = util;
 
-
-        applicationContext.getBeansWithAnnotation(ConfigurationTab.class)
-                .entrySet()
-                .stream()
-                .forEach(entry -> {
-                    Component component = (Component) entry.getValue();
-                    ConfigurationTab annotation = component.getClass().getAnnotation(ConfigurationTab.class);
-                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
-                    tabViewRouterManager.createTab()
-                            .withLabel(annotation.title())
-                            .addForComponent(component.getClass());
-                });
+        DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
 
         pageContent = new Div();
         pageContent.setSizeFull();
 
 //        add(createConfigurationButtonBar()); //deactivated, because does not work
-        add(tabViewRouterManager.getTabs(), pageContent);
+        add(DCTabHandler.getTabs(), pageContent);
 
         this.expand(pageContent);
         this.setHeight("80vh");
@@ -224,7 +209,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        tabViewRouterManager.beforeEnter(event);
+        DCTabHandler.beforeEnter(event);
 
 //        boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
 //        saveConfiguration.setEnabled(enabled);

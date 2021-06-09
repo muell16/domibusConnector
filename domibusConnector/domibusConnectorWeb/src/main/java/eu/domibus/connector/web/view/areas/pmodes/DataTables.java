@@ -1,40 +1,36 @@
 package eu.domibus.connector.web.view.areas.pmodes;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.component.LumoLabel;
-import eu.domibus.connector.web.dto.WebMessage;
-import eu.domibus.connector.web.dto.WebMessageDetail;
-import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
+@Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
+@TabMetadata(title = "Data Tables", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class DataTables extends VerticalLayout {
-	
+
+	public static final String ROUTE = "datatables";
+
 	WebPModeService pmodeService;
 	
 	Grid<DomibusConnectorParty> partyGrid;

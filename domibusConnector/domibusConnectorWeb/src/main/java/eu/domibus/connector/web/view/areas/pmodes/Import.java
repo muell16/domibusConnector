@@ -1,31 +1,32 @@
 package eu.domibus.connector.web.view.areas.pmodes;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
-
-import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 
 
 
 @Component
 @UIScope
+@Route(value = Import.ROUTE, layout = PmodeLayout.class)
+@TabMetadata(title = "Import PModes", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class Import extends VerticalLayout {
-	
+
+	public static final String ROUTE = "import";
+
 	WebPModeService pmodeService;
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, @Autowired DataTables dataTables) {
@@ -82,5 +83,4 @@ public class Import extends VerticalLayout {
 		
 		add(areaResult);
 	}
-
 }
