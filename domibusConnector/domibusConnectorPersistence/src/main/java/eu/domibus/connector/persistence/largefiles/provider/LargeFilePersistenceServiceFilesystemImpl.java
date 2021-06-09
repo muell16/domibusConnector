@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //initialized by DomibusConnectorPersistenceContext.class
 public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
@@ -124,9 +125,9 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             try (OutputStream os = getOutputStream(bigDataReference)) {
                 StreamUtils.copy(input, os);
                 bigDataReference.setOutputStream(os);
-            } catch(FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
-            } catch(IOException e){
+            } catch (IOException e) {
                 throw new PersistenceException(String.format("Error while writing to file [%s]", storageFile), e);
             }
         } else {
@@ -205,9 +206,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     @Override
     public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Path storagePath = getStoragePath();
-        try {
-            return Files.list(storagePath)
-                    .filter(p -> !p.startsWith(".")) //exclude hidden files on Unix
+        try (Stream<Path> files = Files.list(storagePath)) {
+            return files.filter(p -> !p.startsWith(".")) //exclude hidden files on Unix
                     .collect(Collectors.toMap(
                             path -> new DomibusConnectorMessageId(path.getFileName().toString()),
                             this::listReferences
@@ -219,9 +219,9 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     private List<LargeFileReference> listReferences(Path messageFolder) {
         String messageFolderName = messageFolder.getFileName().toString();
-        try {
-            return Files.list(messageFolder)
-                    .filter( p -> !p.startsWith(".")) //filter hidden unix files
+        try (Stream<Path> files = Files.list(messageFolder)){
+            return
+                    files.filter(p -> !p.startsWith(".")) //filter hidden unix files
                     .map(p -> p.getFileName().toString())
                     .map(s -> mapMessageFolderAndFileNameToReference(messageFolderName, s))
                     .collect(Collectors.toList());
@@ -269,7 +269,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             throw new IllegalArgumentException(String.format("The by configuration (%s) provided file path [%s] does not exist an file path creation (%s) is false!",
                     "connector.persistence.filesystem.storage-path", //TODO: call property service for correct property name
                     storagePath,
-                    "connector.persistence.filesystem.create-dir") ); //TODO: call property service for correct property name
+                    "connector.persistence.filesystem.create-dir")); //TODO: call property service for correct property name
         }
 
     }
@@ -305,7 +305,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             throw new RuntimeException(e);
         }
 
-        byte[] iv = new byte[128/8];
+        byte[] iv = new byte[128 / 8];
         random.nextBytes(iv);
         IvParameterSpec ivspec = new IvParameterSpec(iv);
 
@@ -362,11 +362,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
 
     /**
-     *
-     *
-     *
      * BigDataPersistenceServiceFilesystemImpl implementation of BigDataReference
-     *  this class is internal api do not use this class outside the BigDataPersistenceServiceFilesystemImpl
+     * this class is internal api do not use this class outside the BigDataPersistenceServiceFilesystemImpl
      */
     static final class FileBasedLargeFileReference extends LargeFileReference {
 
