@@ -28,7 +28,7 @@ public interface EvidenceBuilder {
      * @param isAcceptance
      *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
      *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true. Allowed eventReasons are predefined by large scale project 
      *            SPOCS.
@@ -53,7 +53,7 @@ public interface EvidenceBuilder {
        * @param isAcceptance
        *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
        *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
-       * @param eventReasons
+       * @param eventReason
        *            List of Reasons for an Error. Ignored when isAcceptance ==
        *            true
        * @param evidenceIssuerDetails
@@ -76,7 +76,7 @@ public interface EvidenceBuilder {
      * @param isAcceptance
      *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
      *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true. Allowed eventReasons are predefined by large scale project 
      *            SPOCS.
@@ -97,7 +97,7 @@ public interface EvidenceBuilder {
      * @param isAcceptance
      *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
      *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true
      * @param evidenceIssuerDetails
@@ -114,7 +114,7 @@ public interface EvidenceBuilder {
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
 
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Allowed eventReasons are predefined
      *            by large scale project SPOCS.
      * @param evidenceIssuerDetails
@@ -131,7 +131,7 @@ public interface EvidenceBuilder {
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
 
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error.
      * @param evidenceIssuerDetails
      *            Details of the connector creating this evidence
@@ -151,7 +151,7 @@ public interface EvidenceBuilder {
      *            EventCode ("http:uri.etsi.org/REM/Event#Delivery",
      *            "http:uri.etsi.org/REM/Event#DeliveryExpiration") of the
      *            evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isDelivery ==
      *            true. Allowed eventReasons are predefined by 
      * 			  large scale project SPOCS.
@@ -173,7 +173,7 @@ public interface EvidenceBuilder {
      *            EventCode ("http:uri.etsi.org/REM/Event#Delivery",
      *            "http:uri.etsi.org/REM/Event#DeliveryExpiration") of the
      *            evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true
      * @param evidenceIssuerDetails
@@ -194,7 +194,7 @@ public interface EvidenceBuilder {
      *            EventCode ("http:uri.etsi.org/REM/Event#Retrieval",
      *            "http:uri.etsi.org/REM/Event#NonRetrievalExpiration") of the
      *            evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true. Allowed eventReasons are predefined by large scale project 
      *            SPOCS.
@@ -216,7 +216,7 @@ public interface EvidenceBuilder {
      *            EventCode ("http:uri.etsi.org/REM/Event#Retrieval",
      *            "http:uri.etsi.org/REM/Event#NonRetrievalExpiration") of the
      *            evidence.
-     * @param eventReasons
+     * @param eventReason
      *            List of Reasons for an Error. Ignored when isAcceptance ==
      *            true
      * @param evidenceIssuerDetails

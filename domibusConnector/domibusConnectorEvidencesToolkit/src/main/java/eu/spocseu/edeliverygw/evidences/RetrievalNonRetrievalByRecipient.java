@@ -73,7 +73,7 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 	 * This constructor creates a RetrievalNonRetrievalByRecipient object based
 	 * on a previous DeliveryNonDeliveryToRecipient evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidence
 	 *            The previous DeliveryNonDeliveryToRecipient evidence message.
@@ -91,7 +91,7 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 	 * This constructor creates a RetrievalNonRetrievalByRecipient object based
 	 * on a previous DeliveryNonDeliveryToRecipient evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidence
 	 *            The previous DeliveryNonDeliveryToRecipient evidence message.
@@ -110,7 +110,7 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 	 * This constructor creates a RetrievalNonRetrievalByRecipient object based
 	 * on a previous DeliveryNonDeliveryToRecipient evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidence
 	 *            The previous DeliveryNonDeliveryToRecipient evidence message.
@@ -143,7 +143,7 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 	 * RetrievalNonRetrievalByRecipient xml stream to create a JAXB evidence
 	 * object.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidenceSream
 	 *            The xml input stream with the evidence xml data.
@@ -151,8 +151,6 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 	 *            The type of the given InputStream. Possible values
 	 *            DeliveryNonDeliveryToRecipient or
 	 *            RelayREMMDAcceptanceRejection.
-	 * @throws JAXBException
-	 *             In the case of parsing errors
 	 */
 	public RetrievalNonRetrievalByRecipient(EDeliveryDetails details,
 			InputStream evidenceSream, Evidences typeOfInputStream)

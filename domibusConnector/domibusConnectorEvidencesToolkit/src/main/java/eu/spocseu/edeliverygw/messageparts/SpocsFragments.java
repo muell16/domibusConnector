@@ -104,12 +104,12 @@ public class SpocsFragments
 	// }
 
 	/**
-	 * This Method creates an {@link EDeliveryActorType} with the given
+	 * This Method creates an {@link EntityDetailsType} with the given
 	 * Parameters.
 	 * 
 	 * @param postalAddress
 	 * @param electronicAddressType
-	 * @return {@link EDeliveryActorType}
+	 * @return {@link EntityDetailsType}
 	 */
 	public static EntityDetailsType createEntityDetails(
 			NamePostalAddressType postalAddress,

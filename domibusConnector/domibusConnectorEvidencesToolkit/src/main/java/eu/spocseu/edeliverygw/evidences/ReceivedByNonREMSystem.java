@@ -47,7 +47,7 @@ public class ReceivedByNonREMSystem extends Evidence
 	/**
 	 * This constructor creates this ReceivedByNonREMSystem evidence:
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 */
 	public ReceivedByNonREMSystem(EDeliveryDetails details)

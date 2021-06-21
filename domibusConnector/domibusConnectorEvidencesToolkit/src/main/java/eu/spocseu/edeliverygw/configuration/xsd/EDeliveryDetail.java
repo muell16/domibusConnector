@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ * {@literal
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ * }
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -155,7 +156,8 @@ public class EDeliveryDetail {
      * <p>Java class for anonymous complex type.
      * 
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
+     * {@literal
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -168,7 +170,7 @@ public class EDeliveryDetail {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
+     * }
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -291,7 +293,8 @@ public class EDeliveryDetail {
      * <p>Java class for anonymous complex type.
      * 
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
+     * {@literal
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -304,6 +307,7 @@ public class EDeliveryDetail {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
+     * }
      * 
      * 
      */

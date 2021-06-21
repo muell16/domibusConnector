@@ -83,7 +83,7 @@ public class SubmissionAcceptanceRejection extends Evidence
 	 * SubmissionAcceptanceRejection which will be attached to the Dispatch
 	 * Message which will be send out.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param dispatch
 	 *            DispatchMessage as input information for this object. This is

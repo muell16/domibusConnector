@@ -85,7 +85,7 @@ public class RelayREMMDFailure extends Evidence
 	 * of a previous SubmissionAcceptanceRejection evidence. A success event
 	 * will be set by this constructor.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection

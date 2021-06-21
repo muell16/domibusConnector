@@ -72,7 +72,7 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 * This constructor creates a AcceptanceRejectionByRecipient object based on
 	 * a previous RelayREMMDAcceptanceRejection evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidence
 	 *            The previous RelayREMMDAcceptanceRejection evidence message.
@@ -89,9 +89,9 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 * This constructor creates a RejectionByRecipient (false) evidence based on
 	 * a previous DeliveryNonDeliveryToRecipient evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
-	 * @param errorEvent 
+	 * @param eventReason
 	 * 			 Error Event for false Evidence
 	 * @param evidence
 	 *            The previous RelayREMMDAcceptanceRejection evidence message.
@@ -118,7 +118,7 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 * This constructor creates a AcceptanceRejectionByRecipient object based on
 	 * a previous DeliveryNonDeliveryToRecipient evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidence
 	 *            The previous DeliveryNonDeliveryToRecipient evidence message.
@@ -136,7 +136,7 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 * AcceptanceRejectionByRecipient xml stream to create a JAXB evidence
 	 * object.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param evidenceSream
 	 *            The xml input stream with the evidence xml data.
@@ -144,7 +144,7 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 *            The type of the given InputStream. Possible values
 	 *            DeliveryNonDeliveryToRecipient or
 	 *            RelayREMMDAcceptanceRejection.
-	 * @throws JAXBException
+	 * @throws SpocsWrongInputDataException
 	 *             In the case of parsing errors
 	 */
 	public AcceptanceRejectionByRecipient(EDeliveryDetails details,

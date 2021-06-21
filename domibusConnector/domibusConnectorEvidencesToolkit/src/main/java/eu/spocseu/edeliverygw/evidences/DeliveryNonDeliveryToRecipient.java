@@ -74,11 +74,11 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 	 * DeliveryNonDeliveryToRecipient xml stream to create a JAXB evidence
 	 * object.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param deliveryNonDeliveryInpStream
 	 *            The xml input stream with the evidence xml data.
-	 * @throws JAXBException
+	 * @throws SpocsWrongInputDataException
 	 *             In the case of parsing errors
 	 */
 	public DeliveryNonDeliveryToRecipient(EDeliveryDetails details,
@@ -102,7 +102,7 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 	 * This constructor creates a DeliveryNonDeliveryToRecipient object based on
 	 * SubmissionAcceptanceRejection evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection
@@ -118,7 +118,7 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 	 * This constructor creates a NonDeliveryToRecipient (false) evidence based on
 	 * SubmissionAcceptanceRejection evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection
@@ -144,7 +144,7 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 	 * This constructor creates a DeliveryNonDeliveryToRecipient object based on
 	 * previous SubmissionAcceptanceRejection evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection

@@ -71,7 +71,7 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 	 * RelayREMMDAcceptanceRejection xml stream to create a JAXB evidence
 	 * object.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param relayREMMDAcceptanceRejectionInpStream
 	 *            The xml input stream with the evidence xml data.
@@ -100,7 +100,7 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 	 * of a previous SubmissionAcceptanceRejection evidence. A success event
 	 * will be set by this constructor.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection
@@ -116,7 +116,7 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 	 * This constructor creates a DeliveryNonDeliveryToRecipient object based on
 	 * previous SubmissionAcceptanceRejection evidence.
 	 * 
-	 * @param config
+	 * @param details
 	 *            Configuration object to set some properties
 	 * @param submissionAcceptanceRejection
 	 *            The previous SubmissionAcceptanceRejection
@@ -158,8 +158,8 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 	/**
 	 * for internal use only!
 	 * 
-	 * @param message
-	 * @param config
+	 * @param singleEvidence
+	 * @param details
 	 */
 
 	public RelayREMMDAcceptanceRejection(REMEvidenceType singleEvidence,
