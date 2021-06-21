@@ -254,5 +254,11 @@ Upgrade manual: link:upgrade/upgrade-4.3.0.html[Upgrade to 4.3.0]
 
 
 
+=== 4.3.1
 
+* Fix for wrong API usage of Files.list
+
+=== 4.3.2
+
+* Fix dead links within configuration site
 

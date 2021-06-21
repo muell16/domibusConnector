@@ -1,6 +1,7 @@
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}
+:prdir: ../../../../
 
 
 
@@ -107,7 +108,7 @@ to entered within the link-partner-name property and has to be: **default_gatewa
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-gwwspullplugin-test.properties[]
+include::{prdir}/domibusConnectorLinkCommon/src/test/resources/application-gwwspullplugin-test.properties[]
 ----
 
 ==== Setting up example for Gateway Push Link:
@@ -119,7 +120,7 @@ to entered within the link-partner-name property and has to be: **default_gatewa
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-gwwspushplugin-test.properties[]
+include::{prdir}/domibusConnectorLinkCommon/src/test/resources/application-gwwspushplugin-test.properties[]
 ----
 
 
@@ -133,7 +134,7 @@ the link-partner-name property is used! This property also has to be **unique**!
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-wsbackendplugin-test.properties[]
+include::{prdir}/domibusConnectorLinkCommon/src/test/resources/application-wsbackendplugin-test.properties[]
 ----
 
 

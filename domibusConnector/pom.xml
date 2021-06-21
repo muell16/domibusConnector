@@ -925,6 +925,7 @@
                         <attributes>
                             <project-version>${project.version}</project-version>
                             <imgdir>images</imgdir>
+                            <prdir>${project.basedir}</prdir>
                         </attributes>
                     </asciidoc>
                 </configuration>
