@@ -20,7 +20,7 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
 /**
  * Contains tests being able to create a valid ASiC-S container using various
  * possibilities to configure the connector certificates.
- * -> SUB-CONF-2
+ *  SUB-CONF-2
  */
 public class Test_InvalidConfig_ConnectorCertificate_Test {
 	

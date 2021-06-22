@@ -49,7 +49,7 @@ public class Test_ValidConfig_BusinessContent_Test {
 
 	/*
 	 * Variant 2 - Object with Business Document and with attachments
-	 * -> Removed due to more specific tests
+	 *  Removed due to more specific tests
 	 */
 
 	/*

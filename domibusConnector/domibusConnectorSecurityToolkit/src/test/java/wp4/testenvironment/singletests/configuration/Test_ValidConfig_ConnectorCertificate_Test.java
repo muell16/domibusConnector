@@ -19,7 +19,7 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 /**
  * Contains tests being able to create a valid ASiC-S container using various
  * possibilities to configure the connector certificates.
- * -> SUB-CONF-1
+ * - SUB-CONF-1
  */
 public class Test_ValidConfig_ConnectorCertificate_Test {
 	
