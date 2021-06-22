@@ -47,12 +47,14 @@ public class DomainEntityCreator {
     }
     
     public static DomibusConnectorAction createActionForm_A() {
-        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);        
+        DomibusConnectorAction a = new DomibusConnectorAction("Form_A");     
+//        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);
         return a;                
     }
     
     public static DomibusConnectorAction createActionRelayREMMDAcceptanceRejection() {
-        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection", true);        
+        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection");
+//        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection", true);
         return a;
     }
     

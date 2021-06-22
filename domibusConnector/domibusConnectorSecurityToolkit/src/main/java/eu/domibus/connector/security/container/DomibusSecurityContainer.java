@@ -338,7 +338,8 @@ public class DomibusSecurityContainer {
                                         MimeType.XML.getMimeTypeString(), container.getToken().getDocumentType());
                                 
                                 if (MimeType.XML.getMimeTypeString().equals(container.getToken().getDocumentType())
-                                        && !message.getMessageDetails().getAction().isDocumentRequired()) {
+//                                        && !message.getMessageDetails().getAction().isDocumentRequired()
+                                        ) {
                                     LOGGER.trace("recieveContainerContents: Writing byteContent into MessageContent.setXmlContent");
                                     try (InputStream businessContent = container.getBusinessDocument().openStream();) {
                                         message.getMessageContent().setXmlContent(IOUtils.toByteArray(businessContent));
