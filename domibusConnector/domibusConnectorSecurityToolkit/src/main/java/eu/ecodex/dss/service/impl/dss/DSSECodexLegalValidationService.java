@@ -27,10 +27,10 @@ import eu.ecodex.dss.util.LogDelegate;
 
 /**
  * The DSS implementation of the services
- * <p/>
- * <p>
+ *
+ *
  * DISCLAIMER: Project owner e-CODEX
- * </p>
+ *
  * 
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
@@ -53,9 +53,9 @@ public class DSSECodexLegalValidationService implements ECodexLegalValidationSer
     /**
      * {@inheritDoc}
      * 
-     * <p>The approach is quite simple:<br/>
-     * If the technical validation result is {@link TechnicalTrustLevel#SUCCESSFUL} then the legal result is also {@link LegalTrustLevel#SUCCESSFUL}.<br/>
-     * In all other cases it is {@link LegalTrustLevel#NOT_SUCCESSFUL}.</p>
+     * The approach is quite simple:
+     * If the technical validation result is {@link TechnicalTrustLevel#SUCCESSFUL} then the legal result is also {@link LegalTrustLevel#SUCCESSFUL}.
+     * In all other cases it is {@link LegalTrustLevel#NOT_SUCCESSFUL}.
      */
     @Override
     public LegalValidationResult create(final Token token) throws ECodexException {

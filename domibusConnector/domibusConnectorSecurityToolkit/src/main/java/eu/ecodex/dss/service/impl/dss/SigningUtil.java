@@ -57,7 +57,7 @@ import eu.europa.esig.dss.pades.signature.PAdESService;
 
 /**
  * a utility class used for signing documents in specific flavours
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

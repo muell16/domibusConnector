@@ -31,7 +31,7 @@ public class Test_SND_SBSC_1 {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 * @throws IOException 
 	 */
@@ -48,13 +48,13 @@ public class Test_SND_SBSC_1 {
 	
 	/**
 	 * Within this test, a working configuration for the basic implementation 
-	 * of a signature-based system<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- No Attachments<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * of a signature-based system
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- No Attachments
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SND_SBSC_1 - Variant 1 - PDF Business Document - No Attachments
 	 */
     @Test
@@ -89,13 +89,13 @@ public class Test_SND_SBSC_1 {
     
 	/**
 	 * Within this test, a working configuration for the basic implementation 
-	 * of a signature-based system<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A signed PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * of a signature-based system
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A signed PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SND_SBSC_1 - Variant 2 - Signed PDF Business Document - With Attachments
 	 */
     @Test
@@ -134,13 +134,13 @@ public class Test_SND_SBSC_1 {
     
 	/**
 	 * Within this test, a working configuration for the basic implementation 
-	 * of a signature-based system<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A signed, not supported PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * of a signature-based system
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A signed, not supported PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SND_SBSC_1 - Variant 3 - Signed PDF Business Document 
 	 * - Signature not Supported by DSS - With Attachments
 	 */
@@ -176,14 +176,14 @@ public class Test_SND_SBSC_1 {
     
 	/**
 	 * Within this test, a working configuration for the basic implementation 
-	 * of a signature-based system<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A detached Signature for the business document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * of a signature-based system
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A detached Signature for the business document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SND_SBSC_1 - Variant 4 - Detached-Signed PDF Business Document 
 	 * - Signature Supported by DSS - With Attachments
 	 */

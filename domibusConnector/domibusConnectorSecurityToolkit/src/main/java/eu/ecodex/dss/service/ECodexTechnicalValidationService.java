@@ -23,10 +23,10 @@ import eu.europa.esig.dss.DSSDocument;
  * 
  * note that all the methods may - but only - throw a {@link ECodexException}.
  * 
- * <p/>
- * <p>
+ *
+ *
  * DISCLAIMER: Project owner e-CODEX
- * </p>
+ *
  * 
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
@@ -34,7 +34,7 @@ import eu.europa.esig.dss.DSSDocument;
 public interface ECodexTechnicalValidationService {
 
     /**
-     * establishes the configuration (one time operation)<p/>
+     * establishes the configuration (one time operation)
      * this method is <b>not</b> called by the DSS implementation of the {@link ECodexContainerService} to forward its own setting.
      * 
      * @param conf the value (may be null)
@@ -42,11 +42,11 @@ public interface ECodexTechnicalValidationService {
     void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
 
     /**
-     * creates the technical validation including the result and possibly a ValidationReport (either national or DSS)<p/>
-     * <p/>
-     * It must return a token validation object in any case!<br/>
+     * creates the technical validation including the result and possibly a ValidationReport (either national or DSS)
+     *
+     * It must return a token validation object in any case!
      * If something fails , the token validation must indicate a trust level "FAIL" and must contain a comment that explains the reason.
-     * <p/>
+     *
      * The TokenValidation has to be created according to the business rules, e.g. the distinction between authentication-based and signature-based is important! 
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
@@ -61,7 +61,7 @@ public interface ECodexTechnicalValidationService {
 
     /**
      * creates a PDF document to be used as the human readable part of the token.pdf for the validation report (details)
-     * <p/>
+     *
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 

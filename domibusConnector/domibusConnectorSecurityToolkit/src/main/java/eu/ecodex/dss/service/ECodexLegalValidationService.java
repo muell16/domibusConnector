@@ -24,10 +24,10 @@ import eu.ecodex.dss.model.token.TokenValidation;
  * note that all the methods may - but only - throw a {@link eu.ecodex.dss.service.ECodexException}.
  * 
  * 
- * <p/>
- * <p>
+ *
+ *
  * DISCLAIMER: Project owner e-CODEX
- * </p>
+ *
  * 
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
@@ -35,7 +35,7 @@ import eu.ecodex.dss.model.token.TokenValidation;
 public interface ECodexLegalValidationService {
 
     /**
-     * establishes the configuration (one time operation)<p/>
+     * establishes the configuration (one time operation)
      * this method is <b>not</b> called by the DSS implementation of the {@link eu.ecodex.dss.service.ECodexContainerService} to forward its own setting.
      * 
      * @param conf the value (may be null)
@@ -43,10 +43,10 @@ public interface ECodexLegalValidationService {
     void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
 
     /**
-     * creates the legal validation (either national or DSS)<p/>
-     * <p/>
-     * It must return a legal validation result object in any case!<br/>
-     * <p/>
+     * creates the legal validation (either national or DSS)
+     *
+     * It must return a legal validation result object in any case!
+     *
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link eu.ecodex.dss.service.ECodexException}!
      * 

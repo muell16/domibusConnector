@@ -31,7 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * http://www.jira.e-codex.eu/browse/ECDX-45: is/setUnsigned();
  *
- * @XmlAccessorType(XmlAccessType.FIELD) changed to --> @XmlAccessorType(XmlAccessType.NONE) to allow to handle unsigned property.
+ * {@literal @XmlAccessorType(XmlAccessType.FIELD) changed to -->  @XmlAccessorType(XmlAccessType.NONE) to allow to handle unsigned property. }
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SignatureDataType", propOrder = {"signingTime", "signatureInformation", "certificateInformation", "technicalResult"})
@@ -69,7 +69,7 @@ public class Signature implements Serializable {
     /**
      * Sets the value of the authenticationCertValidation property.
      *
-     * @param value the value
+     * @param authenticationCertValidation the value
      * @return this class' instance for chaining
      */    
 	public Signature setAuthenticationCertValidation(AuthenticationCertificate authenticationCertValidation) {

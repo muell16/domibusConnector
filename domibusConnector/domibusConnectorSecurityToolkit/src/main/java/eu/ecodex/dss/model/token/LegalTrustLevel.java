@@ -97,7 +97,7 @@ public enum LegalTrustLevel {
     }
 
     /**
-     * detects the worst level in the provided array of levels:<br/>
+     * detects the worst level in the provided array of levels:
      * the precedence order is: {@link #NOT_SUCCESSFUL}, {@link #SUCCESSFUL}
      *
      * @param levels the values (with null supported)

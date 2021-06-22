@@ -39,7 +39,7 @@ public class Test_REC_IND_1 {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 * @throws IOException 
 	 */

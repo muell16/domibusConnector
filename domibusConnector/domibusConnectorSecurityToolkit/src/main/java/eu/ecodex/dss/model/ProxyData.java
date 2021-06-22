@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * This class holds attributes regarding a to be used proxy.
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

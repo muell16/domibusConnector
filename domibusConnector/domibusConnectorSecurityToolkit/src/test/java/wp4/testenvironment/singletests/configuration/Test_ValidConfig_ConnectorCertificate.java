@@ -26,7 +26,7 @@ public class Test_ValidConfig_ConnectorCertificate {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 */
 	@BeforeAll
@@ -128,7 +128,7 @@ public class Test_ValidConfig_ConnectorCertificate {
     }
 	
 	/**
-	 * This test is optional!<br/>
+	 * This test is optional!
 	 * In case of failure the reason could be that "PKCS12" is not the default keystore type of the Java VM
 	 * @throws Exception
 	 */

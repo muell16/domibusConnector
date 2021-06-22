@@ -265,8 +265,8 @@ public class Token implements Serializable {
     }
 
     /**
-     * Gets the value of signature data.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature data.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is {@link Signature}
@@ -282,7 +282,7 @@ public class Token implements Serializable {
     }
 
     /**
-     * Gets the value of signature data.<br/>
+     * Gets the value of signature data.
      * 
      * @return possible object is {@link Signature}
      */
@@ -292,8 +292,8 @@ public class Token implements Serializable {
     }
     
     /**
-     * Gets the value of signature certificate.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature certificate.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is {@link SignatureCertificate}
@@ -305,18 +305,18 @@ public class Token implements Serializable {
     }
 
     /**
-     * Gets the value of signature certificate for a given signature.<br/>
+     * Gets the value of signature certificate for a given signature.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.Signature }
+     * @param signature allowed object is {@link eu.ecodex.dss.model.token.Signature }
      * @return possible object is {@link SignatureCertificate}
      */
-    public SignatureCertificate getValidationVerificationSignatureCertificateInformation(Signature o) {
-        return ( o == null ) ? null : o.getCertificateInformation();
+    public SignatureCertificate getValidationVerificationSignatureCertificateInformation(Signature signature) {
+        return ( signature == null ) ? null : signature.getCertificateInformation();
     }
     
     /**
-     * Gets the certificate issuer<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the certificate issuer
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is {@link String} or null.
@@ -328,18 +328,18 @@ public class Token implements Serializable {
     }
     
     /**
-     * Gets the value of the issuer for a signature certificate for a given signature.<br/>
+     * Gets the value of the issuer for a signature certificate for a given signature.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
+     * @param signatureCertificate allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
      * @return possible object is {@link String} or null.
      */
-    public String getValidationVerificationSignatureCertificateIssuer(SignatureCertificate o) {
-        return ( o == null ) ? null : o.getIssuer();
+    public String getValidationVerificationSignatureCertificateIssuer(SignatureCertificate signatureCertificate) {
+        return ( signatureCertificate == null ) ? null : signatureCertificate.getIssuer();
     }
 
     /**
-     * Gets the value of signature information.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature information.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is {@link SignatureAttributes}
@@ -353,17 +353,17 @@ public class Token implements Serializable {
     /**
      * Gets the value of signature information.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.Signature }
+     * @param signature allowed object is {@link eu.ecodex.dss.model.token.Signature }
      * @return possible object is {@link SignatureAttributes}
      */
-    public SignatureAttributes getValidationVerificationSignatureInformation(Signature o) {
-        return ( o == null ) ? null : o.getSignatureInformation();
+    public SignatureAttributes getValidationVerificationSignatureInformation(Signature signature) {
+        return ( signature == null ) ? null : signature.getSignatureInformation();
     }
     
     
     /**
-     * Gets the value of signature attribute format.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature attribute format.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      *
      * @return possible object is {@link String} or null
@@ -377,16 +377,16 @@ public class Token implements Serializable {
     /**
      * Gets the value of signature attribute format.
      *
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
+     * @param signatureAttributes allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
      * @return possible object is {@link String} or null
      */
-    public String getValidationVerificationSignatureFormat(SignatureAttributes o) {
-        return ( o == null ) ? null : o.getSignatureFormat();
+    public String getValidationVerificationSignatureFormat(SignatureAttributes signatureAttributes) {
+        return ( signatureAttributes == null ) ? null : signatureAttributes.getSignatureFormat();
     }
 
     /**
-     * Gets the value of signature attribute level<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature attribute level
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      *
      * @return possible object is {@link String} or null.
@@ -400,11 +400,11 @@ public class Token implements Serializable {
     /**
      * Gets the value of signature attribute level
      *
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
+     * @param signatureAttributes allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
      * @return possible object is {@link String} or null.
      */
-    public String getValidationVerificationSignatureLevel(SignatureAttributes o) {
-        return ( o == null ) ? null : o.getSignatureLevel();
+    public String getValidationVerificationSignatureLevel(SignatureAttributes signatureAttributes) {
+        return ( signatureAttributes == null ) ? null : signatureAttributes.getSignatureLevel();
     }
 
     /**
@@ -432,8 +432,8 @@ public class Token implements Serializable {
     }
 
     /**
-     * Gets the value of signing time.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signing time.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      *
      * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar}
@@ -447,11 +447,11 @@ public class Token implements Serializable {
     /**
      * Gets the value of signing time.
      *
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.Signature }
+     * @param signature allowed object is {@link eu.ecodex.dss.model.token.Signature }
      * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar}
      */
-    public XMLGregorianCalendar getValidationVerificationSignatureSigningTime(Signature o) {
-        return ( o == null ) ? null : o.getSigningTime();
+    public XMLGregorianCalendar getValidationVerificationSignatureSigningTime(Signature signature) {
+        return ( signature == null ) ? null : signature.getSigningTime();
     }
     
     /**
@@ -495,8 +495,8 @@ public class Token implements Serializable {
     }
 
     /**
-     * Gets the value of certificate verification.<br/>
-    * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of certificate verification.
+    * Deprecated due to rework: Now multiple signatures are possible!
     * Will return data for first Signature or no result.
      * 
      * @return possible object is true or false
@@ -510,16 +510,16 @@ public class Token implements Serializable {
     /**
      * Gets the value of certificate verification.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
+     * @param signatureCertificate allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
      * @return possible object is true or false
      */
-    public boolean isValidationVerificationSignatureCertificateValid(SignatureCertificate o) {
-        return ( o != null ) && o.isCertificateValid();
+    public boolean isValidationVerificationSignatureCertificateValid(SignatureCertificate signatureCertificate) {
+        return ( signatureCertificate != null ) && signatureCertificate.isCertificateValid();
     }
 
     /**
-     * Gets the value of signature verification. <br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of signature verification. 
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is true or false
@@ -533,16 +533,16 @@ public class Token implements Serializable {
     /**
      * Gets the value of signature verification.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
+     * @param signatureAttributes allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
      * @return possible object is true or false
      */
-    public boolean isValidationVerificationSignatureValid(SignatureAttributes o) {
-        return ( o != null ) && o.isSignatureValid();
+    public boolean isValidationVerificationSignatureValid(SignatureAttributes signatureAttributes) {
+        return ( signatureAttributes != null ) && signatureAttributes.isSignatureValid();
     }
 
     /**
-     * Gets the value of structure verification.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of structure verification.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is true or false
@@ -556,16 +556,16 @@ public class Token implements Serializable {
     /**
      * Gets the value of structure verification.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
+     * @param signatureAttributes allowed object is {@link eu.ecodex.dss.model.token.SignatureAttributes }
      * @return possible object is true or false
      */
-    public boolean isValidationVerificationSignatureStructureValid(SignatureAttributes o) {
-        return( o != null ) && o.isStructureValid();
+    public boolean isValidationVerificationSignatureStructureValid(SignatureAttributes signatureAttributes) {
+        return( signatureAttributes != null ) && signatureAttributes.isStructureValid();
     }
 
     /**
-     * Gets the value of validity as signing time.<br/>
-     * Deprecated due to rework: Now multiple signatures are possible!<br/>
+     * Gets the value of validity as signing time.
+     * Deprecated due to rework: Now multiple signatures are possible!
      * Will return data for first Signature or no result.
      * 
      * @return possible object is true or false
@@ -579,11 +579,11 @@ public class Token implements Serializable {
     /**
      * Gets the value of validity as signing time.
      * 
-     * @param value allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
+     * @param signatureCertificate allowed object is {@link eu.ecodex.dss.model.token.SignatureCertificate }
      * @return possible object is true or false
      */
-    public boolean isValidationVerificationSignatureCertificateValidityAtSigningTime(SignatureCertificate o) {
-        return ( o != null ) && o.isValidityAtSigningTime();
+    public boolean isValidationVerificationSignatureCertificateValidityAtSigningTime(SignatureCertificate signatureCertificate) {
+        return ( signatureCertificate != null ) && signatureCertificate.isValidityAtSigningTime();
     }
 
 }

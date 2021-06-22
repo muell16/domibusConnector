@@ -36,7 +36,7 @@ import eu.europa.esig.dss.x509.CertificateToken;
 
 /**
  * Provides convenience-methods for creating a {@link SignatureParameters} instance.
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

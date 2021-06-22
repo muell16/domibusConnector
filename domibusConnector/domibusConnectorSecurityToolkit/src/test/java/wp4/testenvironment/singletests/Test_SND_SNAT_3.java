@@ -18,8 +18,8 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 public class Test_SND_SNAT_3 {
 	
 	/**
-	 * Within this test the configuration of an invalid connector certificate is tested.<br/>
-	 * <br/>
+	 * Within this test the configuration of an invalid connector certificate is tested.
+	 * 
 	 * The respective test is SND_SNAT_3 - Variant 1 - Invalid Connector Certificate Configuration
 	 */
     @Test

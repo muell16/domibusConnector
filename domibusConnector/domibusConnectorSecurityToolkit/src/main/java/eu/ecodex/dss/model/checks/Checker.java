@@ -12,7 +12,7 @@ package eu.ecodex.dss.model.checks;
 /**
  * responsible to check a technical or business rule. note that an implementation must be thread-safe.
  * 
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

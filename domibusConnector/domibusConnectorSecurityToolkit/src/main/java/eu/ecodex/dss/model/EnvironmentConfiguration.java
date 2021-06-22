@@ -12,7 +12,7 @@ package eu.ecodex.dss.model;
 
 /**
  * This class holds the configuration about the environment - e.g. proxy settings.
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

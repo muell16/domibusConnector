@@ -17,7 +17,7 @@ import eu.europa.esig.dss.DSSDocument;
 /**
  * Provide conveniences methods for XML stream.
  *
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -30,7 +30,7 @@ public class XmlStreamUtil {
     /**
      * Validate if the document is an XML and well-formed
      *
-     * @param document The {@link Document}
+     * @param document The {@link DSSDocument}
      * @return The result
      */
     public static boolean isXmlFile(final DSSDocument document) {

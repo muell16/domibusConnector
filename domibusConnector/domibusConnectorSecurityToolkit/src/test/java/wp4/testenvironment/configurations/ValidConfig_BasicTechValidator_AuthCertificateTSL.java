@@ -13,8 +13,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	private static String Path_to_valid_LOTL = "src/test/resources/tsl/LOTL.xml";
 	
 	/**
-	 * Gets a URI String to a valid TSL<br/>
-	 * The used TSL is not a LOTL.<br/>
+	 * Gets a URI String to a valid TSL
+	 * The used TSL is not a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static String get_URIString_with_TSL() {
@@ -22,8 +22,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
 	
 	/**
-	 * Gets the valid TSL as a FileInputStream for configuration. <br/>
-	 * The used TSL is not a LOTL.<br/>
+	 * Gets the valid TSL as a FileInputStream for configuration. 
+	 * The used TSL is not a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static FileInputStream get_FileInputStream_with_TSL() {
@@ -40,8 +40,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
 	
 	/**
-	 * Gets the valid TSL as a byte[] for configuration. <br/>
-	 * The used TSL is not a LOTL.<br/>
+	 * Gets the valid TSL as a byte[] for configuration. 
+	 * The used TSL is not a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static byte[] get_ByteArray_with_TSL() {
@@ -66,8 +66,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
 	
 	/**
-	 * Gets a URI String to a valid TSL<br/>
-	 * The used TSL is a LOTL.<br/>
+	 * Gets a URI String to a valid TSL
+	 * The used TSL is a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static String get_URIString_with_LOTL() {
@@ -75,8 +75,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
 	
 	/**
-	 * Gets the valid TSL as a FileInputStream for configuration. <br/>
-	 * The used TSL is a LOTL.<br/>
+	 * Gets the valid TSL as a FileInputStream for configuration. 
+	 * The used TSL is a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static FileInputStream get_FileInputStream_with_LOTL() {
@@ -93,8 +93,8 @@ public class ValidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
 	
 	/**
-	 * Gets the valid TSL as a byte[] for configuration. <br/>
-	 * The used TSL is a LOTL.<br/>
+	 * Gets the valid TSL as a byte[] for configuration. 
+	 * The used TSL is a LOTL.
 	 * The respective test case is currently under construction
 	 */
 	public static byte[] get_ByteArray_with_LOTL() {

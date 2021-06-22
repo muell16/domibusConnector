@@ -21,8 +21,8 @@ public class Test_SND_AUTH_2 {
 	
 	/**
 	 * Within this test, a working configuration for an authentication-based system is 
-	 * meant to be tested with an invalid businessContent object.<br/>
-	 * <br/>
+	 * meant to be tested with an invalid businessContent object.
+	 * 
 	 * The respective test is SND_AUTH_2 - Variant 1 - Invalid businessContent object
 	 */
     @Test
@@ -57,8 +57,8 @@ public class Test_SND_AUTH_2 {
     
 	/**
 	 * Within this test, a working configuration for an authentication-based system is 
-	 * meant to be tested with an invalid tokenIssuer object.<br/>
-	 * <br/>
+	 * meant to be tested with an invalid tokenIssuer object.
+	 * 
 	 * The respective test is SND_AUTH_2 - Variant 2 - Invalid TokenIssuer object
 	 */
     @Test
@@ -93,8 +93,8 @@ public class Test_SND_AUTH_2 {
     
 	/**
 	 * Within this test, a wrong configuration (invalid legal validator) for an authentication-based system is 
-	 * meant to be tested.<br/>
-	 * <br/>
+	 * meant to be tested.
+	 * 
 	 * The respective test is SND_AUTH_2 - Variant 3 - Invalid Legal Validation Result
 	 */
     @Test
@@ -131,8 +131,8 @@ public class Test_SND_AUTH_2 {
     
 	/**
 	 * Within this test, a wrong configuration (invalid technical validator) for an authentication-based system is 
-	 * meant to be tested.<br/>
-	 * <br/>
+	 * meant to be tested.
+	 * 
 	 * The respective test is SND_AUTH_2 - Variant 4 - Invalid Technical Validation Result
 	 */
     @Test

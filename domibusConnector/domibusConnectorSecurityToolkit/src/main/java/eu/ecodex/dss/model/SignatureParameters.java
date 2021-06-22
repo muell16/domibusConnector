@@ -19,7 +19,7 @@ import eu.europa.esig.dss.x509.CertificateToken;
 /**
  * Holds attributes to create a signature.
  * This is a simple POJO - no checks are done.
- * <p/>
+ * 
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

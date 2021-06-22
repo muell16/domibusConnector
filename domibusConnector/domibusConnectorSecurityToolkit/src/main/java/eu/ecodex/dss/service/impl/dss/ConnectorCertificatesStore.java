@@ -27,10 +27,10 @@ import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.util.LogDelegate;
 
 /**
- * Extracts all {@link X509Certificate}s from the keystore, caches them and provides functionality to check if a certificate is contained.<br/>
+ * Extracts all {@link X509Certificate}s from the keystore, caches them and provides functionality to check if a certificate is contained.
  * The initialise keystore is NOT automatically inspected, but via {@link #lookup}!
  *
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -45,8 +45,8 @@ class ConnectorCertificatesStore {
     private Map<BigInteger, byte[]> lookup = null;
 
     /**
-     * will load the keystore from the provided info, creating a new cache and extracting its X509 certificates.<br/>
-     * note that {@link #isValid(java.security.cert.X509Certificate)} will always report true, if nothing has been loaded.<br/>
+     * will load the keystore from the provided info, creating a new cache and extracting its X509 certificates.
+     * note that {@link #isValid(java.security.cert.X509Certificate)} will always report true, if nothing has been loaded.
      * duplicate certificates are ignored, that is if the serial number has already been stored internally.
      *
      * @param info if null or invalid, ignored. otherwise the location must provide a loadable keystore or an exception will be thrown
@@ -127,8 +127,8 @@ class ConnectorCertificatesStore {
     }
 
     /**
-     * checks if the cert is one of the certificates of the connectors.<br/>
-     * that is implementation-wise, if the certificate's serial number is in the internal map and the ASN.1 DER byte arrays are the same.<br/>
+     * checks if the cert is one of the certificates of the connectors.
+     * that is implementation-wise, if the certificate's serial number is in the internal map and the ASN.1 DER byte arrays are the same.
      * note that the method will also return true, if the keystore has NOT been loaded.
      *
      * @param cert the to be checked certificate

@@ -32,7 +32,7 @@ public abstract class AbstractChecker<T> implements Checker<T> {
     }
 
     /**
-     * a convenience method to add a problem, while addressing logging at the same time.<br/>
+     * a convenience method to add a problem, while addressing logging at the same time.
      * fatal = info; non-fatal = detail
      *
      * @param r the result

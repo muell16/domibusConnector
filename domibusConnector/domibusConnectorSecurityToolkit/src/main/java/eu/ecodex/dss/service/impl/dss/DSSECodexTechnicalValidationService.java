@@ -77,7 +77,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The DSS implementation of the services
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -103,8 +103,8 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	private ConnectorCertificatesStore ignoredCertificatesStore;
 	
 	/**
-	 * The method {@code #setProcessExecutor} must be called before.<br/>
-	 * <p/>
+	 * The method {@code #setProcessExecutor} must be called before.
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 	/**
 	 * {@inheritDoc}
-	 * <p/>
+	 *
 	 * the report must contain exactly one object of type {@link DiagnosticData}
 	 */
 	@Override
@@ -220,8 +220,8 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 	/**
 	 * {@inheritDoc}
-	 * <p/>
-	 * <br/>
+	 *
+	 *
 	 * note that you first have to use {@link #setProxyPreferenceManager} in order that this call has some effect -
 	 * otherwise
 	 * it will be ignored
@@ -363,8 +363,8 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	// klara
 	/**
 	 * This method provides the information to the library whether the given TSL is a LOTL, a TSL containing a list of 
-	 * TSLs, or a normal TSL. The default value of this attribute is "false".</br>
-	 * - false: TSL is a list of trusted certificates</br>
+	 * TSLs, or a normal TSL. The default value of this attribute is "false".
+	 * - false: TSL is a list of trusted certificates
 	 * - true: TSL is a list of lists
 	 *
 	 * @param isLOTL 

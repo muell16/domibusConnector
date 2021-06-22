@@ -12,7 +12,7 @@ package eu.ecodex.dss.service;
 /**
  * this is the only type of exceptions that the service methods should expose.
  * so, they should catch all exceptions deemed as "library-scoped" and wrap them accordingly.
- * <p/>
+ *
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

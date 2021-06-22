@@ -36,7 +36,7 @@ public class DigestUtil {
     }
 
     /**
-     * Generate an hash value for binary data using the {@link DigestAlgorithm} SHA256<br />
+     * Generate an hash value for binary data using the {@link DigestAlgorithm} SHA256
      * The hash value is encoded using the base64 algorithm.
      * 
      * @param bytes The input to be digested
@@ -48,7 +48,7 @@ public class DigestUtil {
     }
 
     /**
-     * Generate an hash value for binary data using the specified {@link DigestAlgorithm} parameters.<br />
+     * Generate an hash value for binary data using the specified {@link DigestAlgorithm} parameters.
      * The hash value is encoded using the base64 algorithm.
      * 
      * @param bytes The input to be digested
@@ -60,7 +60,7 @@ public class DigestUtil {
     }
 
     /**
-     * Generate an hash value for binary data using the specified algorithm parameters.<br />
+     * Generate an hash value for binary data using the specified algorithm parameters.
      * The hash value is encoded using the base64 algorithm.
      * 
      * @param bytes The input to be digested

@@ -17,7 +17,7 @@ import eu.europa.esig.dss.DSSDocument;
 
 /**
  * provides convenience-methods for documents. e.g. getting the byte-data from the stream
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -31,7 +31,7 @@ public class DocumentStreamUtil {
 	}
 
 	/**
-	 * checks whether the document provides data; read: at least 1 byte.<br/>
+	 * checks whether the document provides data; read: at least 1 byte.
 	 * note that exceptions are swallowed in order to determine only the final result.
 	 *
 	 * @param document the value
@@ -54,8 +54,8 @@ public class DocumentStreamUtil {
 	}
 
 	/**
-	 * fetches the complete byte array of the document's content.<br/>
-	 * note that - in contrast to {@link #hasData(eu.ecodex.dss.model.Document)} - exceptions are rethrown (but always
+	 * fetches the complete byte array of the document's content.
+	 * note that - in contrast to {@link #hasData(DSSDocument)} - exceptions are rethrown (but always
 	 * as runtimeexception)
 	 *
 	 * @param document the value

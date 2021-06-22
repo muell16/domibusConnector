@@ -17,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Utility class to store a document
- * <p/>
+ *
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

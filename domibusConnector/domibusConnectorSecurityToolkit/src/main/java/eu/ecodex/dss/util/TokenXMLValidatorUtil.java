@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
 import eu.europa.esig.dss.DSSDocument;
 
 /**
- * Utility class to validate a token xml file<br/>
+ * Utility class to validate a token xml file
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

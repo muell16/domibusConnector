@@ -21,8 +21,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * This class can be used to receive valid configurations of Connector Certificates.<br/>
- * <br/>
+ * This class can be used to receive valid configurations of Connector Certificates.
+ * 
  * The respective test case is SUB_CONF_01
  */
 public class ValidConfig_SignatureParameters {
@@ -38,15 +38,15 @@ public class ValidConfig_SignatureParameters {
 	private static final String PKCS12_KEY_PASSWORD = "teststore";
 
 	/**
-	 * Returns a "SignatureParameters" object containing<br/>
-	 * - An accessible private key<br/>
-	 * - The respective certificate<br/>
-	 * - The respective certificate chain<br/>
-	 * - The digest algorithm being set to SHA1<br/>
-	 * - The encryption algorithm being set to RSA<br/>
-	 * <br/>
-	 * The information has been set using standard java classes<br/>
-	 * <br/>
+	 * Returns a "SignatureParameters" object containing
+	 * - An accessible private key
+	 * - The respective certificate
+	 * - The respective certificate chain
+	 * - The digest algorithm being set to SHA1
+	 * - The encryption algorithm being set to RSA
+	 * 
+	 * The information has been set using standard java classes
+	 * 
 	 * The respective test case is SUB_CONF_01 - Variant 1
 	 */
 	public static SignatureParameters getJKSConfiguration() {
@@ -98,15 +98,15 @@ public class ValidConfig_SignatureParameters {
 	}
 
 	/**
-	 * Returns a "SignatureParameters" object containing<br/>
-	 * - An accessible private key<br/>
-	 * - The respective certificate<br/>
-	 * - The respective certificate chain<br/>
-	 * - The digest algorithm being set to SHA1<br/>
-	 * - The encryption algorithm being set to RSA<br/>
-	 * <br/>
-	 * The information has been set using standard java classes<br/>
-	 * <br/>
+	 * Returns a "SignatureParameters" object containing
+	 * - An accessible private key
+	 * - The respective certificate
+	 * - The respective certificate chain
+	 * - The digest algorithm being set to SHA1
+	 * - The encryption algorithm being set to RSA
+	 * 
+	 * The information has been set using standard java classes
+	 * 
 	 * The respective test case is SUB_CONF_01 - Variant 2
 	 */
 	public static SignatureParameters getPKCS12Configuration() {
@@ -157,16 +157,16 @@ public class ValidConfig_SignatureParameters {
 	}
 	
 	/**
-	 * Returns a "SignatureParameters" object containing created by a "SignatureParameterFactory" object<br/>
-	 * - An accessible private key<br/>
-	 * - The respective certificate<br/>
-	 * - The respective certificate chain<br/>
-	 * - The digest algorithm being set to SHA1<br/>
-	 * - The encryption algorithm being set to RSA<br/>
-	 * <br/>
-	 * The information has been set using standard java classes<br/>
-	 * <br/>
-	 * The respective test case is SUB_CONF_01 - Variant 3<br/>
+	 * Returns a "SignatureParameters" object containing created by a "SignatureParameterFactory" object
+	 * - An accessible private key
+	 * - The respective certificate
+	 * - The respective certificate chain
+	 * - The digest algorithm being set to SHA1
+	 * - The encryption algorithm being set to RSA
+	 * 
+	 * The information has been set using standard java classes
+	 * 
+	 * The respective test case is SUB_CONF_01 - Variant 3
 	 * @throws Exception 
 	 */
 	public static SignatureParameters getJKSConfig_By_SigParamFactory() throws Exception {
@@ -183,16 +183,16 @@ public class ValidConfig_SignatureParameters {
 	}
 	
 	/**
-	 * Returns a "SignatureParameters" object containing created by a "SignatureParameterFactory" object<br/>
-	 * - An accessible private key<br/>
-	 * - The respective certificate<br/>
-	 * - The respective certificate chain<br/>
-	 * - The digest algorithm being set to SHA1<br/>
-	 * - The encryption algorithm being set to RSA<br/>
-	 * <br/>
-	 * The information has been set using standard java classes<br/>
-	 * <br/>
-	 * The respective test case is SUB_CONF_01 - Variant 4<br/>
+	 * Returns a "SignatureParameters" object containing created by a "SignatureParameterFactory" object
+	 * - An accessible private key
+	 * - The respective certificate
+	 * - The respective certificate chain
+	 * - The digest algorithm being set to SHA1
+	 * - The encryption algorithm being set to RSA
+	 * 
+	 * The information has been set using standard java classes
+	 * 
+	 * The respective test case is SUB_CONF_01 - Variant 4
 	 * @throws Exception 
 	 */
 	public static SignatureParameters getPKCS12Config_By_SigParamFactory() throws Exception {

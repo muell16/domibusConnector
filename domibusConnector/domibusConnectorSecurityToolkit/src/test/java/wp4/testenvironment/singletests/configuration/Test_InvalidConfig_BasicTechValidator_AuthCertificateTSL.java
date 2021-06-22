@@ -29,7 +29,7 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 */
 	@BeforeAll
@@ -41,13 +41,13 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
 	}
     
 	/**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - No TSL has been configured.<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - No TSL has been configured.
 	 * - TSL has not been initialized.
 	 */
     @Test
@@ -91,13 +91,13 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
 	/**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - No TSL has been configured.<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - No TSL has been configured.
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -144,13 +144,13 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - A random XML has been configured as TSL<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - A random XML has been configured as TSL
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -198,13 +198,13 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - A random file has been configured as TSL<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - A random file has been configured as TSL
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -252,13 +252,13 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - The file meant to be the TSL does not exist<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - The file meant to be the TSL does not exist
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -306,14 +306,14 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - A LOTL pointing at a random XML has been configured as TSL<br/>
-	 * - LOTL has been marked as LOTL.<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - A LOTL pointing at a random XML has been configured as TSL
+	 * - LOTL has been marked as LOTL.
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -362,14 +362,14 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - A LOTL pointing at a random file has been configured as TSL<br/>
-	 * - LOTL has been marked as LOTL.<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - A LOTL pointing at a random file has been configured as TSL
+	 * - LOTL has been marked as LOTL.
 	 * - TSL has been initialized.
 	 */
     @Test
@@ -418,14 +418,14 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL {
     }
     
     /**
-	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * &nbsp;&nbsp;- A complete "TokenIssuer" object<br/>
-	 * - A valid LOTL has been configured <br/>
-	 * - LOTL has not been marked as LOTL.<br/>
+	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * &nbsp;&nbsp;- A complete "TokenIssuer" object
+	 * - A valid LOTL has been configured 
+	 * - LOTL has not been marked as LOTL.
 	 * - TSL has been initialized.
 	 */
     @Test

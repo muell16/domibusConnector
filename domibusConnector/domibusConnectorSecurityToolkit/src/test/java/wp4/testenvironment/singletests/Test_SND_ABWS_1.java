@@ -30,7 +30,7 @@ public class Test_SND_ABWS_1 {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 * @throws IOException 
 	 */
@@ -45,12 +45,12 @@ public class Test_SND_ABWS_1 {
     
 	/**
 	 * Within this test, a working configuration for an authentication-based system with signature is 
-	 * meant to be tested.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * - A complete "TokenIssuer" object<br/>
+	 * meant to be tested.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * - A complete "TokenIssuer" object
 	 */
     @Test
     public void test_WithoutSignature() throws Exception {
@@ -90,12 +90,12 @@ public class Test_SND_ABWS_1 {
 	
 	/**
 	 * Within this test, a working configuration for an authentication-based system with signature is 
-	 * meant to be tested.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A signed PDF Business Document<br/>
-	 * &nbsp;&nbsp;- A single Attachment<br/>
-	 * - A complete "TokenIssuer" object<br/>
+	 * meant to be tested.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A signed PDF Business Document
+	 * &nbsp;&nbsp;- A single Attachment
+	 * - A complete "TokenIssuer" object
 	 */
     @Test
     public void test_WithSignature() throws Exception {

@@ -108,7 +108,7 @@ public enum TechnicalTrustLevel {
     }
 
     /**
-     * detects the worst level in the provided array of levels:<br/>
+     * detects the worst level in the provided array of levels:
      * the precedence order is: {@link #FAIL}, {@link #SUFFICIENT}, {@link #SUCCESSFUL}
      *
      * @param levels the values (with null supported)

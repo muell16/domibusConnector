@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * holds information how to access the store holding the e-CODEX connector certificates used for ASiC-S validation
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

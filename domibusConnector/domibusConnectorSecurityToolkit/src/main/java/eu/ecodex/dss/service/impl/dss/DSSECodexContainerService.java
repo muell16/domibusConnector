@@ -77,7 +77,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * The DSS implementation of the services
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -124,7 +124,7 @@ public class DSSECodexContainerService implements ECodexContainerService {
 
 	/**
 	 * {@inheritDoc}
-	 * <p/>
+	 * 
 	 * Attaches an additional XAdES signature (based on this class' signingparameters) for the signed content to the signatures.xml.
 	 */
 	@Override
@@ -531,7 +531,7 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	}
 
 	/**
-	 * create the token with the provided data: issuer, tokenvalidation, tokendocument (including the digest algorithm/method/value)<br/>
+	 * create the token with the provided data: issuer, tokenvalidation, tokendocument (including the digest algorithm/method/value)
 	 * this is also the invocation point for the technical and legal validations provided by the corresponding configured services.
 	 *
 	 * @param businessDocument  for the tokendocument
@@ -626,7 +626,7 @@ public class DSSECodexContainerService implements ECodexContainerService {
 
 	/**
 	 * Create the ASiC-S document
-	 * <p/>
+	 * 
 	 * It creates an archive that contains the business document, the attachments and the trustOkToken.pdf It sign the
 	 * archive in accordance with the standard PAdES and the profile PAdES-BES
 	 *

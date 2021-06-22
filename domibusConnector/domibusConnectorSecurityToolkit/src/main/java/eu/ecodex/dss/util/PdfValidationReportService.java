@@ -54,17 +54,11 @@ import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
 import eu.europa.esig.dss.validation.reports.wrapper.TimestampWrapper;
 import eu.europa.esig.dss.x509.TimestampType;
 
-//import eu.europa.ec.markt.dss.DSSUtils;
-//import eu.europa.ec.markt.dss.NamespaceContextMap;
-//import eu.europa.ec.markt.dss.exception.DSSException;
-//import eu.europa.ec.markt.dss.validation102853.TimestampType;
-//import eu.europa.ec.markt.dss.validation102853.report.DiagnosticData;
-//import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
 
 /**
  * This service create a PDF report from the validation report of the document.
- * <p/>
- * <p/>
+ *
+ *
  * DISCLAIMER: Project owner DG-MARKT.
  *
  * @author <a href="mailto:dgmarkt.Project-DSS@arhs-developments.com">ARHS Developments</a>
@@ -643,10 +637,10 @@ public class PdfValidationReportService {
 	 *
 	 * @param xmlNode     The node where the search should be performed.
 	 * @param xPathString XPath query string
-	 * @return
-	 * @throws XPathExpressionException
+	 * @return the evaluation
+	 * @throws DSSException in case of an XPathExpressionException
 	 */
-	public static NodeList getNodeList(final Node xmlNode, final String xPathString) {
+	public static NodeList getNodeList(final Node xmlNode, final String xPathString) throws DSSException {
 
 		try {
 

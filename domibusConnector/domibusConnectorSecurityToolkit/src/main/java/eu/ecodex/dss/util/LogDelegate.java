@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * encapsulates the actual logging behind and provides some convenience methods
- * <p/>
- * <p/>
+ * 
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -38,7 +38,7 @@ public class LogDelegate {
 
     /**
      * pre-concatenates the class name to the message, because
-     * the final logger will report the methods of this class unfortunately.<br/>
+     * the final logger will report the methods of this class unfortunately.
      * if detectMethod is true, the invoking "business" method will be detected via reflection and appended to the class name.
      *
      * @param message the value

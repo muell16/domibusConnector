@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * tests that the businesscontent is not null, at least one document with data and name is provided
- * <p/>
+ * 
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

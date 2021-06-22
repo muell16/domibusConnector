@@ -25,7 +25,7 @@ public class Test_ValidConfig_AuthBasedNationalTechValidator {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 */
 	@BeforeAll
@@ -39,13 +39,13 @@ public class Test_ValidConfig_AuthBasedNationalTechValidator {
 	    
 	/**
 	 * Within this test, a working configuration for an authentication-based system is 
-	 * meant to be tested.<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A PDF Business Document<br/>
-	 * &nbsp;&nbsp;- No Attachments<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * meant to be tested.
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A PDF Business Document
+	 * &nbsp;&nbsp;- No Attachments
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SUB-CONF-3 - Variant 1
 	 */
 	@Test

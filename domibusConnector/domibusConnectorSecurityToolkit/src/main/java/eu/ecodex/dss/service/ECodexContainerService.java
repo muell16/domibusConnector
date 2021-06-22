@@ -20,11 +20,11 @@ import eu.ecodex.dss.model.token.TokenIssuer;
 
 /**
  * the contract about handling the {@link eu.ecodex.dss.model.ECodexContainer}
- * <p/>
+ *
  * 
  * note that all the methods may - but only - throw a {@link eu.ecodex.dss.service.ECodexException}.
  * 
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -35,7 +35,7 @@ import eu.ecodex.dss.model.token.TokenIssuer;
 public interface ECodexContainerService {
 
     /**
-     * establishes the configuration (one time operation)<p/>
+     * establishes the configuration (one time operation)
      * This shall also update the connector certificates.
      *
      * @param environmentConfiguration the value (may be null)
@@ -67,16 +67,16 @@ public interface ECodexContainerService {
     void setLegalValidationService(final ECodexLegalValidationService validationService);
 
     /**
-     * creates the container:<br/>
-     * - creates the token<br/>
-     * - creates and signs the PDF representation of the token<br/>
-     * - creates and signs the eCodexContainer itself<br/>
-     * <br/>
+     * creates the container:
+     * - creates the token
+     * - creates and signs the PDF representation of the token
+     * - creates and signs the eCodexContainer itself
+     *
      * the implementation typically uses the {@link ECodexTechnicalValidationService} (set as attribute) to gather the validation
      * report both as model object and its PDF representation. it will check the created TokenValidation for correct
      * content (non-null values and some dependencies) - e.g. if authentication-based then validationverification must
      * have provided authenticationdata.
-     * <p/>
+     *
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 
@@ -90,8 +90,8 @@ public interface ECodexContainerService {
 
     /**
      * 
-     * uses the inputstream representing the ASiC-S container (file or whatever = a zip)<br/>
-     * <p/>
+     * uses the inputstream representing the ASiC-S container (file or whatever = a zip)
+     *
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 
@@ -105,10 +105,10 @@ public interface ECodexContainerService {
 
     /**
      * checks the integrity of the ASiC-S container on base of the signatures.xml via the container's
-     * {@link ECodexContainer#asicDocument} attribute.<br/>
+     * {@link ECodexContainer#asicDocument} attribute.
      * read: it verifies that a) the signed content and the signature match. b) the token xml contains the (detached)
      * signature of the token pdf c) the token pdf is signed
-     * <p/>
+     * 
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 
@@ -120,10 +120,10 @@ public interface ECodexContainerService {
     CheckResult check(final ECodexContainer container) throws ECodexException;
 
     /**
-     * creates a new container instance having the same attribute instance like the provided container.<br/>
-     * but adds a new signature created upon the SignedContent.zip to the META-INF/signatures.xml.<br/>
-     * the new container instance has then a complete new ASiC document.<br/>
-     * <p/>
+     * creates a new container instance having the same attribute instance like the provided container.
+     * but adds a new signature created upon the SignedContent.zip to the META-INF/signatures.xml.
+     * the new container instance has then a complete new ASiC document.
+     *
      * 
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 

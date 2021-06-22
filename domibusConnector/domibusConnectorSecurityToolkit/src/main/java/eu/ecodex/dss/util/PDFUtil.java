@@ -94,7 +94,7 @@ public class PDFUtil {
     }
 
     /**
-     * Creates a {@link com.lowagie.text.Font} using the font name. <br />
+     * Creates a {@link com.lowagie.text.Font} using the font name. 
      * 
      * <p>
      * The file must be present in the classpath under /eu/ecodex/dss/fonts/.
@@ -111,7 +111,7 @@ public class PDFUtil {
     }
 
     /**
-     * Creates a {@link com.lowagie.text.Font} using the font name. <br />
+     * Creates a {@link com.lowagie.text.Font} using the font name. 
      * <p>
      * The file must be present in the classpath under /eu/ecodex/dss/fonts/.
      * </p>
@@ -133,7 +133,7 @@ public class PDFUtil {
     }
 
     /**
-     * Creates a {@link com.lowagie.text.Image} using the name. <br />
+     * Creates a {@link com.lowagie.text.Image} using the name. 
      * <p>
      * The file must be present in the classpath under /eu/ecodex/dss/images/.
      * </p>
@@ -148,7 +148,7 @@ public class PDFUtil {
     }
     
     /**
-     * Creates a {@link com.lowagie.text.Image} using the name. <br />
+     * Creates a {@link com.lowagie.text.Image} using the name. 
      * <p>
      * The file must be present in the classpath under /eu/ecodex/dss/images/.
      * </p>
@@ -223,7 +223,7 @@ public class PDFUtil {
     /**
      * Validate if the document is a PDF
      *
-     * @param document The {@link Document}
+     * @param document The {@link DSSDocument}
      * @return The result
      */
     public static boolean isPDFFile(final DSSDocument document) {
@@ -233,7 +233,7 @@ public class PDFUtil {
     /**
      * Validate if the document is a PDF and has at least one page
      *
-     * @param document The {@link Document}
+     * @param document The {@link DSSDocument}
      * @return The result
      */
     public static boolean isPDFContent(final DSSDocument document) {
@@ -274,11 +274,11 @@ public class PDFUtil {
     }
 
     /**
-     * Concatenate all pages inside only one PDF file. <br />
+     * Concatenate all pages inside only one PDF file. 
      * <p>
-     * If the document is empty , it's ignored. <br />
-     * If all documents are empty, it's not possible to create the document. <br />
-     * All the documents should be a PDF file.<br />
+     * If the document is empty , it's ignored. 
+     * If all documents are empty, it's not possible to create the document. 
+     * All the documents should be a PDF file.
      * 
      * @param filename The merged file name
      * @param documents PDF files.

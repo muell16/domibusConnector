@@ -26,7 +26,7 @@ public class Test_ValidConfig_SigBasedBasicTechValidator {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 * @throws IOException 
 	 */

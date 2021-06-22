@@ -27,7 +27,7 @@ import eu.europa.esig.dss.InMemoryDocument;
 
 /**
  * Provides convenience-methods for ZIP documents.
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -38,7 +38,7 @@ import eu.europa.esig.dss.InMemoryDocument;
 public class ZipStreamUtil {
 
 	/**
-	 * Extracts the documents contained in the zip document.<br />
+	 * Extracts the documents contained in the zip document.
 	 *
 	 * @param zipDocument the zip document
 	 * @return the result
@@ -80,7 +80,7 @@ public class ZipStreamUtil {
 	}
 
 	/**
-	 * Extracts the document with the requested name contained in the zip document.<br />
+	 * Extracts the document with the requested name contained in the zip document.
 	 *
 	 * @param zipDocument the zip document
 	 * @param name        the name of the requested file (including the path)
@@ -126,7 +126,7 @@ public class ZipStreamUtil {
 	/**
 	 * Validate if the document is a ZIP.
 	 *
-	 * @param zipDocument The {@link Document}
+	 * @param zipDocument The {@link DSSDocument}
 	 * @return The result
 	 */
 	public static boolean isZipFile(final DSSDocument zipDocument) {

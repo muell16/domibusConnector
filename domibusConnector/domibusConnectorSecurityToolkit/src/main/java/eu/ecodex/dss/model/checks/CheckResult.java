@@ -17,7 +17,7 @@ import java.util.List;
  * holds the result of a check.
  * note that this class is somewhat immutable: if a problem has been added, it cannot be removed anymore.
  *
- * <p/>
+ * 
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

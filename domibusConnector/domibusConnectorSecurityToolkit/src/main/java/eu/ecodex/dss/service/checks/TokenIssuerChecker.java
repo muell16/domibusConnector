@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * tests that the tokenissuer is not null, the service provider is set, the country is an ISO 3166 2-letter code and the advancedelectronicsystem is set
- * <p/>
+ * 
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

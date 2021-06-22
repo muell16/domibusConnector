@@ -13,7 +13,7 @@ package eu.ecodex.dss.model.checks;
  * represents an issue. in case it is fatal, no further processing can be performed.
  * this class is immutable.
  * 
- * <p/>
+ * 
  * <p>DISCLAIMER: Project owner e-CODEX</p>
  *
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>

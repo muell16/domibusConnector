@@ -15,11 +15,11 @@ import eu.ecodex.dss.model.checks.CheckResult;
 import java.util.List;
 
 /**
- * used for non-technical exceptions in order to indicate rule violations.<br/>
+ * used for non-technical exceptions in order to indicate rule violations.
  * i.e. the token structure's integrity must be good; or if the token issuer has an authentication-based system, then
  * authentication information must be provided.
  * 
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>

@@ -28,7 +28,7 @@ public class Test_SND_SMIX_2 {
 	static DSSECodexContainerService containerService;
 	
 	/**
-	 * Initializes all test cases with the same, working configuration.<br/>
+	 * Initializes all test cases with the same, working configuration.
 	 * Test case specific configurations are done within each test case itself. 
 	 * @throws IOException 
 	 */
@@ -45,12 +45,12 @@ public class Test_SND_SMIX_2 {
 	
 	/**
 	 * Within this test, a working configuration for the combined implementations 
-	 * of a signature-based system (National Implementation of Tech. Validator and Basic Legal Validator) is tested<br/>
-	 * The test contains:<br/>
-	 * - A complete "BusinessContent" object with<br/>
-	 * &nbsp;&nbsp;- A signed PDF Business Document<br/>
-	 * - A complete "TokenIssuer" object<br/>
-	 * <br/>
+	 * of a signature-based system (National Implementation of Tech. Validator and Basic Legal Validator) is tested
+	 * The test contains:
+	 * - A complete "BusinessContent" object with
+	 * &nbsp;&nbsp;- A signed PDF Business Document
+	 * - A complete "TokenIssuer" object
+	 * 
 	 * The respective test is SND_SMIX_2 - Variant 1 - PDF Business Document - No Attachments
 	 */
     @Test

@@ -69,7 +69,7 @@ import eu.europa.esig.jaxb.xmldsig.SignatureType;
 
 /**
  * this class creates the token validation; the execution is thread-safe
- * <p/>
+ * 
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -120,7 +120,7 @@ class DSSTokenValidationCreator {
 	}
 
 	/**
-	 * creates the tokenValidation object, this method will be executed only if the object has not been created before.<br/>
+	 * creates the tokenValidation object, this method will be executed only if the object has not been created before.
 	 * see also <a href="http://www.jira.e-codex.eu/browse/ECDX-25">http://www.jira.e-codex.eu/browse/ECDX-25</a> to get details about the requirements
 	 *
 	 * @throws Exception as of the underlying logic
@@ -748,8 +748,8 @@ class DSSTokenValidationCreator {
 	//}
 
 	/**
-	 * compares two signatures (information) via the signing time in the order <code>null - t0 - t1 ...</code>.<br/>
-	 * a signature without signing time will be treated as "lower" than one with.<br/>
+	 * compares two signatures (information) via the signing time in the order <code>null - t0 - t1 ...</code>.
+	 * a signature without signing time will be treated as "lower" than one with.
 	 * see also {@link AdvancedSignature}
 	 */
 	public static class SignatureTimeComparator implements Comparator<AdvancedSignature> {

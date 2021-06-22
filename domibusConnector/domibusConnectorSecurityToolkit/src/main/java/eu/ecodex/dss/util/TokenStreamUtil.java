@@ -27,12 +27,12 @@ import eu.ecodex.dss.model.token.Token;
 //import eu.europa.ec.markt.dss.validation.report.ValidationReport;
 
 /**
- * Utility class to decode/encode a {@link Token}<br/>
+ * Utility class to decode/encode a {@link Token}
  * It uses a static JAXBContext as this is thread-safe in contrast to the (un)marshallers, which are created on each
- * method call.<br/>
+ * method call.
  * If performance becomes an issue, these may be pooled.
  *
- * <p/>
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
