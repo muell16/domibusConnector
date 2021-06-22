@@ -10,12 +10,14 @@ import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 
 // SUB-CONF-05
 public class ValidConfig_BasicTechValidator {
 
-	private static final String IGNORED_KEYSTORE_PATH = "src/test/resources/keystores/ignore_tom_store.jks";
+	private static final Resource IGNORED_KEYSTORE_PATH = new ClassPathResource("/keystores/ignore_tom_store.jks");
 	private static final String IGNORED_KEYSTORE_PASSWORD = "teststore";
 	
 	// No Proxy
@@ -59,7 +61,7 @@ public class ValidConfig_BasicTechValidator {
 		techValService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 		
 		CertificateStoreInfo certStore = new CertificateStoreInfo();
-		certStore.setLocation("file:" + IGNORED_KEYSTORE_PATH);
+		certStore.setLocation(IGNORED_KEYSTORE_PATH);
 		certStore.setPassword(IGNORED_KEYSTORE_PASSWORD);
 		
 		techValService.setIgnoredCertificatesStore(certStore);

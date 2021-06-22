@@ -10,6 +10,7 @@
 package eu.ecodex.dss.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.Resource;
 
 /**
  * holds information how to access the store holding the e-CODEX connector certificates used for ASiC-S validation
@@ -22,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
  */
 public class CertificateStoreInfo {
-    private String location;
+    private Resource location;
     private String password;
 
     /**
@@ -30,14 +31,14 @@ public class CertificateStoreInfo {
      * @return the result
      */
     public boolean isValid() {
-        return !StringUtils.isEmpty(location);
+        return location.isReadable();
     }
 
     /**
      * the location (in url format) for loading the keystore
      * @return the value
      */
-    public String getLocation() {
+    public Resource getLocation() {
         return this.location;
     }
 
@@ -46,7 +47,7 @@ public class CertificateStoreInfo {
      * @param v the value
      * @return this class' instance for chaining
      */
-    public CertificateStoreInfo setLocation(final String v) {
+    public CertificateStoreInfo setLocation(final Resource v) {
         this.location = v;
         return this;
     }
@@ -75,7 +76,7 @@ public class CertificateStoreInfo {
     @Override
     public String toString() {
         return "CertificateStoreInfo{" +
-            "location=" + (location == null ? null : ('\'' + location + '\'')) +
+            "location=" + (location == null ? null : ('\'' + location.toString() + '\'')) +
             ", password=" + (password == null ? null : "[set]") +
             '}';
     }

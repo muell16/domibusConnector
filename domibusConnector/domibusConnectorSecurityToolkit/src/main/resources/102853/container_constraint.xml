@@ -3,17 +3,17 @@
 	<ContainerConstraints>
 		<AcceptableContainerTypes Level="FAIL">
 			<Id>ASiC-S</Id>
-<!--			<Id>ASiC-E</Id>	-->
+			<!--			<Id>ASiC-E</Id>	-->
 		</AcceptableContainerTypes>
-<!-- 		<ZipCommentPresent Level="WARN" /> -->
-<!-- 		<AcceptableZipComment Level="WARN"> -->
-<!-- 			<Id>mimetype=application/vnd.etsi.asic-s+zip</Id> -->
-<!-- 			<Id>mimetype=application/vnd.etsi.asic-e+zip</Id> -->
-<!-- 		</AcceptableZipComment> -->
+		<!-- 		<ZipCommentPresent Level="WARN" /> -->
+		<!-- 		<AcceptableZipComment Level="WARN"> -->
+		<!-- 			<Id>mimetype=application/vnd.etsi.asic-s+zip</Id> -->
+		<!-- 			<Id>mimetype=application/vnd.etsi.asic-e+zip</Id> -->
+		<!-- 		</AcceptableZipComment> -->
 		<MimeTypeFilePresent Level="FAIL" />
 		<AcceptableMimeTypeFileContent Level="WARN">
 			<Id>application/vnd.etsi.asic-s+zip</Id>
-<!--			<Id>application/vnd.etsi.asic-e+zip</Id> -->
+			<!--			<Id>application/vnd.etsi.asic-e+zip</Id> -->
 		</AcceptableMimeTypeFileContent>
 		<ManifestFilePresent Level="FAIL" />
 		<AllFilesSigned Level="WARN" />
@@ -33,16 +33,16 @@
 			<ReferenceDataIntact Level="FAIL" />
 			<SignatureIntact Level="FAIL" />
 			<ProspectiveCertificateChain Level="WARN" />
-<!-- 			<TrustedServiceTypeIdentifier Level="WARN"> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</Id> -->
-<!-- 			</TrustedServiceTypeIdentifier> -->
-<!-- 			<TrustedServiceStatus Level="FAIL"> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</Id> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</Id> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</Id> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</Id> -->
-<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</Id> -->
-<!-- 			</TrustedServiceStatus> -->
+			<!-- 			<TrustedServiceTypeIdentifier Level="WARN"> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</Id> -->
+			<!-- 			</TrustedServiceTypeIdentifier> -->
+			<!-- 			<TrustedServiceStatus Level="FAIL"> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</Id> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</Id> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</Id> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</Id> -->
+			<!-- 				<Id>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</Id> -->
+			<!-- 			</TrustedServiceStatus> -->
 			<SigningCertificate>
 				<Recognition Level="FAIL" />
 				<Signature Level="FAIL" />
@@ -57,11 +57,11 @@
 				</KeyUsage>
 				<SerialNumberPresent Level="WARN" />
 				<NotRevoked Level="WARN" />
-<!-- 				<NotOnHold Level="FAIL" /> -->
-<!-- 				<Qualification Level="WARN" /> -->
-<!-- 				<SupportedByQSCD Level="WARN" /> -->
-<!-- 				<IssuedToNaturalPerson Level="INFORM" /> -->
-<!-- 				<IssuedToLegalPerson Level="INFORM" /> -->
+				<!-- 				<NotOnHold Level="FAIL" /> -->
+				<!-- 				<Qualification Level="WARN" /> -->
+				<!-- 				<SupportedByQSCD Level="WARN" /> -->
+				<!-- 				<IssuedToNaturalPerson Level="INFORM" /> -->
+				<!-- 				<IssuedToLegalPerson Level="INFORM" /> -->
 				<UsePseudonym Level="INFORM" />
 				<Cryptographic Level="WARN">
 					<AcceptableEncryptionAlgo>
@@ -91,7 +91,7 @@
 				<RevocationDataNextUpdatePresent Level="WARN" />
 				<RevocationDataFreshness Level="WARN" />
 				<NotRevoked Level="WARN" />
-<!--				<NotOnHold Level="FAIL" /> -->
+				<!--				<NotOnHold Level="FAIL" /> -->
 				<Cryptographic Level="FAIL">
 					<AcceptableEncryptionAlgo>
 						<Algo>RSA</Algo>
@@ -140,19 +140,19 @@
 			<CertDigestMatch Level="WARN" />
 			<IssuerSerialMatch Level="IGNORE" />
 			<SigningTime Level="FAIL" />
-<!--		<ContentType Level="FAIL" value="1.2.840.113549.1.7.1" />
-			<ContentHints Level="FAIL" value="*" />
-			<CommitmentTypeIndication Level="FAIL">
-				<Id>1.2.840.113549.1.9.16.6.1</Id>
-				<Id>1.2.840.113549.1.9.16.6.4</Id>
-				<Id>1.2.840.113549.1.9.16.6.5</Id>
-				<Id>1.2.840.113549.1.9.16.6.6</Id>
-			</CommitmentTypeIndication>
-			<SignerLocation Level="FAIL" />
-			<ContentTimeStamp Level="FAIL" /> -->
+			<!--		<ContentType Level="FAIL" value="1.2.840.113549.1.7.1" />
+                        <ContentHints Level="FAIL" value="*" />
+                        <CommitmentTypeIndication Level="FAIL">
+                            <Id>1.2.840.113549.1.9.16.6.1</Id>
+                            <Id>1.2.840.113549.1.9.16.6.4</Id>
+                            <Id>1.2.840.113549.1.9.16.6.5</Id>
+                            <Id>1.2.840.113549.1.9.16.6.6</Id>
+                        </CommitmentTypeIndication>
+                        <SignerLocation Level="FAIL" />
+                        <ContentTimeStamp Level="FAIL" /> -->
 		</SignedAttributes>
 		<UnsignedAttributes>
-<!--		<CounterSignature Level="IGNORE" /> check presence -->
+			<!--		<CounterSignature Level="IGNORE" /> check presence -->
 		</UnsignedAttributes>
 	</SignatureConstraints>
 	<Timestamp>
@@ -257,9 +257,9 @@
 				<Recognition Level="FAIL" />
 				<Signature Level="FAIL" />
 				<NotExpired Level="FAIL" />
- 				<RevocationDataAvailable Level="WARN" />		 			<!-- Changed from FAIL -->
-				<RevocationDataNextUpdatePresent Level="WARN" /> 
-				<RevocationDataFreshness Level="WARN" />	 	 
+				<RevocationDataAvailable Level="WARN" />		 			<!-- Changed from FAIL -->
+				<RevocationDataNextUpdatePresent Level="WARN" />
+				<RevocationDataFreshness Level="WARN" />
 				<NotRevoked Level="FAIL" />
 				<NotOnHold Level="FAIL" />
 				<Cryptographic Level="WARN">
@@ -339,7 +339,7 @@
 		Date="2035-02-24">SHA384</Algo> <Algo Date="2035-02-24">SHA512</Algo> <Algo Date="2017-02-24">RIPEMD160</Algo> <Algo Date="2017-02-24">DSA128</Algo> <Algo Date="2015-02-24">RSA1024</Algo> 
 		<Algo Date="2015-02-24">RSA1536</Algo> <Algo Date="2020-02-24">RSA2048</Algo> <Algo Date="2020-02-24">RSA3072</Algo> <Algo Date="2035-02-24">RSA4096</Algo> <Algo Date="2035-02-24">ECDSA192</Algo> 
 		<Algo Date="2035-02-24">ECDSA256</Algo> </AlgoExpirationDate> </Cryptographic> -->
-	
+
 	<!-- eIDAS REGL 910/EU/2014 -->
 	<!-- eIDAS>
 	 	<TLFreshness Level="WARN" Unit="HOURS" Value="6" /> 	 

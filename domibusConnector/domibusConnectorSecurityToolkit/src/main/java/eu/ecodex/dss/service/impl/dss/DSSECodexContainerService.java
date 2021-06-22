@@ -33,6 +33,8 @@ import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.jaxb.xmldsig.DigestMethodType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -88,16 +90,19 @@ import java.util.zip.ZipOutputStream;
 public class DSSECodexContainerService implements ECodexContainerService {
 
 	private static final LogDelegate LOG = new LogDelegate(DSSECodexContainerService.class);
+	private static final Logger LOGGER = LogManager.getLogger(DSSECodexContainerService.class);
 
+//
+//
+//	static {
+//        String DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL = "dss.dn.unescapemultibyteutf8literal";
+//        System.setProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "true");
+//        boolean APPLY_UNESCAPEMULTIBYTEUTF8LITERAL = "true".equalsIgnoreCase(System.getProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "false"));
+//
+//        LOG.lConfig(
+//			  "The DSSECodexContainerService enabled the special SD-DSS patch for treatment of multibyte encoded utf8 literals in DN data -> illegal escapes in French XML signatures -> http://www.jira.e-codex.eu/browse/ECDX-59");
+//	}
 
-	static {
-        String DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL = "dss.dn.unescapemultibyteutf8literal";
-        System.setProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "true");
-        boolean APPLY_UNESCAPEMULTIBYTEUTF8LITERAL = "true".equalsIgnoreCase(System.getProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "false"));
-
-        LOG.lConfig(
-			  "The DSSECodexContainerService enabled the special SD-DSS patch for treatment of multibyte encoded utf8 literals in DN data -> illegal escapes in French XML signatures -> http://www.jira.e-codex.eu/browse/ECDX-59");
-	}
 
 	private static final BusinessContentChecker CHECKER_BUSINESS_CONTENT = new BusinessContentChecker();
 	private static final TokenIssuerChecker CHECKER_TOKEN_ISSUER = new TokenIssuerChecker();
@@ -365,12 +370,14 @@ public class DSSECodexContainerService implements ECodexContainerService {
 
 		validator.setCertificateVerifier(certificateVerifier);
 
+		//TODO: make this configureable!!
 		final InputStream resourceAsStream = DSSECodexContainerService.class.getResourceAsStream("/validation/102853/container_constraint.xml");
 		
 		Reports reports = validator.validateDocument(resourceAsStream);
 
 		final SimpleReport simpleReport = reports.getSimpleReport();
 		LOG.lInfo("Simple Report:\n{}", simpleReport);
+		LOGGER.debug("Detailed Report:\n{}", reports.getXmlDetailedReport());
 		// final DetailedReport detailedReport = validator.getDetailedReport();
 		final DiagnosticData diagnosticData = reports.getDiagnosticData();
 		final List<AdvancedSignature> signatures = validator.getSignatures();

@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import wp4.testenvironment.configurations.ValidConfig_BasicLegalValidator;
 import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator;
 import wp4.testenvironment.configurations.ValidConfig_CertificateVerifier;
@@ -27,13 +29,13 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
  */
 public class Test_SIN_IND_4_Test {
 
-	private static final String INVALID_JKS_KEYSTORE_PATH = "file:src/test/resources/keystores/keystore.jks";
+	private static final Resource INVALID_JKS_KEYSTORE_PATH = new ClassPathResource("/keystores/keystore.jks");
 	private static final String INVALID_JKS_KEYSTORE_PASSWORD = "test123";
 
-	private static final String VALID_JKS_KEYSTORE_PATH = "file:src/test/resources/keystores/trust_store.jks";
+	private static final Resource VALID_JKS_KEYSTORE_PATH = new ClassPathResource("/keystores/trust_store.jks");
 	private static final String VALID_JKS_KEYSTORE_PASSWORD = "teststore";
 
-	private static final String VALID_PKCS_KEYSTORE_PATH = "file:src/test/resources/keystores/signature_store.p12";
+	private static final Resource VALID_PKCS_KEYSTORE_PATH = new ClassPathResource("/keystores/signature_store.p12");
 	private static final String VALID_PKCS_KEYSTORE_PASSWORD = "teststore";
 	
 	private static String Path_ValidContainer_ASIC = "src/test/resources/container/ValidContainer.asics";

@@ -174,7 +174,7 @@ public class ValidConfig_SignatureParameters {
 		SignatureParameters sigParam = new SignatureParameters();
 		
 		CertificateStoreInfo certStore = new CertificateStoreInfo();
-		certStore.setLocation("file:" + JKS_KEYSTORE_PATH);
+		certStore.setLocation(JKS_KEYSTORE_PATH);
 		certStore.setPassword(JKS_KEYSTORE_PASSWORD);
 		
 		sigParam = SignatureParametersFactory.create(certStore, JKS_KEY_NAME, JKS_KEY_PASSWORD,EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
@@ -200,7 +200,7 @@ public class ValidConfig_SignatureParameters {
 		SignatureParameters sigParam = new SignatureParameters();
 		
 		CertificateStoreInfo certStore = new CertificateStoreInfo();
-		certStore.setLocation("file:" + PKCS12_KEYSTORE_PATH);
+		certStore.setLocation(PKCS12_KEYSTORE_PATH);
 		certStore.setPassword(PKCS12_KEYSTORE_PASSWORD);
 		
 		sigParam = SignatureParametersFactory.create(certStore, PKCS12_KEY_NAME, PKCS12_KEY_PASSWORD,EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);

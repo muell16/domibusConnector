@@ -33,6 +33,7 @@ import eu.europa.esig.dss.EncryptionAlgorithm;
 //import eu.europa.ec.markt.dss.parameter.ChainCertificate;
 //import eu.europa.ec.markt.dss.validation102853.CertificateToken;
 import eu.europa.esig.dss.x509.CertificateToken;
+import org.springframework.core.io.Resource;
 
 /**
  * Provides convenience-methods for creating a {@link SignatureParameters} instance.
@@ -100,12 +101,12 @@ public class SignatureParametersFactory {
 			return null;
 		}
 
-		final URL ksLocation = new URL(certStoreInfo.getLocation());
+		final Resource ksLocation = certStoreInfo.getLocation();
 		LOG.lDetail("loading keystore from url: {}", ksLocation);
 
 		final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 
-		final InputStream ksStream = ksLocation.openStream();
+		final InputStream ksStream = ksLocation.getInputStream();
 		try {
 			ks.load(ksStream, (certStoreInfo.getPassword() == null) ? null : certStoreInfo.getPassword().toCharArray());
 		} finally {

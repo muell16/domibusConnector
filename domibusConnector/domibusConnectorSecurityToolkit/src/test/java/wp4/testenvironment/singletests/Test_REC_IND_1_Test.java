@@ -12,6 +12,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import util.ContainerToFilesystem;
 import wp4.testenvironment.configurations.ValidConfig_BasicLegalValidator;
 import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator;
@@ -29,12 +31,12 @@ import eu.ecodex.dss.util.ZipStreamUtil;
 
 public class Test_REC_IND_1_Test {
 	
-	private static String Path_ValidContainer_ASIC = "src/test/resources/container/ValidContainer.asics";
-	private static String Path_AlteredContainer_ASIC = "src/test/resources/container/AlteredContainer.asics";
+	private static Resource Path_ValidContainer_ASIC = new ClassPathResource("/container/ValidContainer.asics");
+	private static Resource Path_AlteredContainer_ASIC = new ClassPathResource("/container/AlteredContainer.asics");
 	
-	private static String Path_ValidContainer_XML = "src/test/resources/container/ValidContainer.xml";
-	private static String Path_Random_XML = "src/test/resources/container/Random.xml";
-	private static String Path_RandomContainer_XML = "src/test/resources/container/RandomContainer.xml";
+	private static Resource Path_ValidContainer_XML = new ClassPathResource("/container/ValidContainer.xml");
+	private static Resource Path_Random_XML = new ClassPathResource("/container/Random.xml");
+	private static Resource Path_RandomContainer_XML = new ClassPathResource("/container/RandomContainer.xml");
 	
 	static DSSECodexContainerService containerService;
 	
@@ -59,8 +61,8 @@ public class Test_REC_IND_1_Test {
     @Test
     public void test_Valid_with_Respective_XML() throws Exception {
     	
-    	InputStream aSiCStream = getInputStream(Path_ValidContainer_ASIC);
-    	InputStream xMLStream = getInputStream(Path_ValidContainer_XML);
+    	InputStream aSiCStream = Path_ValidContainer_ASIC.getInputStream();
+    	InputStream xMLStream = Path_ValidContainer_XML.getInputStream();
     	
     	ECodexContainer container = containerService.receive(aSiCStream, xMLStream);
     	
@@ -104,8 +106,8 @@ public class Test_REC_IND_1_Test {
     @Test
     public void test_Valid_with_Random_XML() throws Exception {
     	
-    	InputStream aSiCStream = getInputStream(Path_ValidContainer_ASIC);
-    	InputStream xMLStream = getInputStream(Path_Random_XML);
+    	InputStream aSiCStream = Path_ValidContainer_ASIC.getInputStream();
+    	InputStream xMLStream = Path_Random_XML.getInputStream();
     	
     	try{
     		@SuppressWarnings("unused")
@@ -128,8 +130,8 @@ public class Test_REC_IND_1_Test {
     @Test
     public void test_Invalid_with_Valid_XML() throws Exception {
     	
-    	InputStream aSiCStream = getInputStream(Path_Random_XML);
-    	InputStream xMLStream = getInputStream(Path_ValidContainer_XML);
+    	InputStream aSiCStream = Path_Random_XML.getInputStream();
+    	InputStream xMLStream = Path_ValidContainer_XML.getInputStream();
     	
     	try{
     		@SuppressWarnings("unused")
@@ -152,8 +154,8 @@ public class Test_REC_IND_1_Test {
     @Test
     public void test_Altered_with_Valid_XML() throws Exception {
     	
-    	InputStream aSiCStream = getInputStream(Path_AlteredContainer_ASIC);
-    	InputStream xMLStream = getInputStream(Path_ValidContainer_XML);
+    	InputStream aSiCStream = Path_AlteredContainer_ASIC.getInputStream();
+    	InputStream xMLStream = Path_ValidContainer_XML.getInputStream();
     	
     	ECodexContainer container = containerService.receive(aSiCStream, xMLStream);
     	
@@ -174,8 +176,8 @@ public class Test_REC_IND_1_Test {
     @Test
     public void test_Invalid_with_Random_XML_Token() throws Exception {
     	
-    	InputStream aSiCStream = getInputStream(Path_ValidContainer_ASIC);
-    	InputStream xMLStream = getInputStream(Path_RandomContainer_XML);
+    	InputStream aSiCStream = Path_ValidContainer_ASIC.getInputStream();
+    	InputStream xMLStream = Path_RandomContainer_XML.getInputStream();
     	
     	ECodexContainer container = containerService.receive(aSiCStream, xMLStream);
     	

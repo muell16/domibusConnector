@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 
 import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.util.LogDelegate;
+import org.springframework.core.io.Resource;
 
 /**
  * Extracts all {@link X509Certificate}s from the keystore, caches them and provides functionality to check if a certificate is contained.
@@ -68,10 +69,10 @@ class ConnectorCertificatesStore {
         }
 
         // load a JKS keystore from the location-url
-        final URL ksLocation = new URL(info.getLocation());
-        LOG.lDetail("loading keystore from url: {}", ksLocation);
+        final Resource ksLocation = info.getLocation();
+        LOG.lDetail("loading keystore from resource: {}", ksLocation);
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        final InputStream ksStream = ksLocation.openStream();
+        final InputStream ksStream = ksLocation.getInputStream();
         try {
             ks.load(ksStream, (info.getPassword() == null) ? null : info.getPassword().toCharArray());
         } finally {
