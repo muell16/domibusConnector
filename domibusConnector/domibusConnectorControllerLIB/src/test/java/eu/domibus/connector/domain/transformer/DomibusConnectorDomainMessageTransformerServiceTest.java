@@ -437,7 +437,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(messageDetails.getRefToMessageId()).as("refToMessageid").isEqualTo("refToMessageId");
 
         assertThat(messageDetails.getAction().getAction()).isEqualTo("action");
-        assertThat(messageDetails.getAction().isDocumentRequired()).isTrue();
+//        assertThat(messageDetails.getAction().isDocumentRequired()).isTrue();
 
         assertThat(messageDetails.getService().getService()).isEqualTo("service");
         assertThat(messageDetails.getService().getServiceType()).isEqualTo("serviceType");

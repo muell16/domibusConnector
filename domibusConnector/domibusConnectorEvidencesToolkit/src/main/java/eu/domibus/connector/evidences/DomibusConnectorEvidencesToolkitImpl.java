@@ -111,11 +111,11 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
             if (action == null) {
                 throw new DomibusConnectorEvidencesToolkitException("Action still null!");
             }
-            if (action.isDocumentRequired()) {
-                throw new DomibusConnectorEvidencesToolkitException(
-                        "There is no document in the message though the Action " + action.getAction()
-                                + " requires one!");
-            }
+//            if (action.isDocumentRequired()) {
+//                throw new DomibusConnectorEvidencesToolkitException(
+//                        "There is no document in the message though the Action " + action.getAction()
+//                                + " requires one!");
+//            }
         } else {
             try {
                 hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getXmlContent());

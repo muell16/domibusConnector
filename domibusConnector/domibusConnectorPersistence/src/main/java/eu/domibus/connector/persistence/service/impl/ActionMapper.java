@@ -13,8 +13,8 @@ public class ActionMapper {
         if (persistenceAction != null) {
             eu.domibus.connector.domain.model.DomibusConnectorAction action
                     = new eu.domibus.connector.domain.model.DomibusConnectorAction(
-                    persistenceAction.getAction(),
-                    persistenceAction.isDocumentRequired()
+                    persistenceAction.getAction()
+//                    persistenceAction.isDocumentRequired()
             );
             action.setDbKey(persistenceAction.getId());
             return action;

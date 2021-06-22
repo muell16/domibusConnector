@@ -21,35 +21,35 @@ public class PersistenceEntityCreator {
     public static PDomibusConnectorAction createAction() {
         PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("action1");
-        domibusConnectorAction.setDocumentRequired(true);
+//        domibusConnectorAction.setDocumentRequired(true);
         return domibusConnectorAction;
     }
     
     public static PDomibusConnectorAction createRelayREMMDAcceptanceRejectionAction() {
         PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDAcceptanceRejection");
-        domibusConnectorAction.setDocumentRequired(false);
+//        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static PDomibusConnectorAction createDeliveryNonDeliveryToRecipientAction() {
         PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("DeliveryNonDeliveryToRecipient");
-        domibusConnectorAction.setDocumentRequired(false);
+//        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static PDomibusConnectorAction createRetrievalNonRetrievalToRecipientAction() {        
         PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RetrievalNonRetrievalToRecipient");
-        domibusConnectorAction.setDocumentRequired(false);
+//        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static PDomibusConnectorAction createRelayREMMDFailureAction() {        
         PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDFailure");
-        domibusConnectorAction.setDocumentRequired(false);
+//        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     

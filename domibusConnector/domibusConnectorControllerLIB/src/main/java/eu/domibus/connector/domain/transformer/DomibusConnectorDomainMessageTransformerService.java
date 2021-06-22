@@ -500,7 +500,8 @@ public class DomibusConnectorDomainMessageTransformerService {
         DomibusConnectorActionType actionTO = messageDetailsTO.getAction();
 
         DomibusConnectorAction action =
-                new DomibusConnectorAction(actionTO.getAction(), true); //default mapping is assumed true!
+//                new DomibusConnectorAction(actionTO.getAction(), true); //default mapping is assumed true!
+        		new DomibusConnectorAction(actionTO.getAction());
         messageDetails.setAction(action);
 
         //map service

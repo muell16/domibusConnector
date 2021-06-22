@@ -145,7 +145,7 @@ public class WebPModeService {
 				.map(a -> {
 					DomibusConnectorAction action = new DomibusConnectorAction();
 					action.setAction(a.getValue());
-					action.setDocumentRequired(false);
+//					action.setDocumentRequired(false);
 					return action;
 				})
 				.collect(Collectors.toList());

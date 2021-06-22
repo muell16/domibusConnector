@@ -26,8 +26,8 @@ public class PDomibusConnectorAction implements Serializable {
     @Column(name = "ACTION")
     private String action;
 
-    @Column(name = "PDF_REQUIRED")
-    private boolean documentRequired;
+//    @Column(name = "PDF_REQUIRED")
+//    private boolean documentRequired;
 
     @ManyToOne
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
@@ -57,19 +57,19 @@ public class PDomibusConnectorAction implements Serializable {
         this.action = action;
     }
 
-    public boolean isDocumentRequired() {
-        return documentRequired;
-    }
-
-    public void setDocumentRequired(boolean pdfRequired) {
-        this.documentRequired = pdfRequired;
-    }
+//    public boolean isDocumentRequired() {
+//        return documentRequired;
+//    }
+//
+//    public void setDocumentRequired(boolean pdfRequired) {
+//        this.documentRequired = pdfRequired;
+//    }
 
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("action", action);
-        toString.append("documentRequired", documentRequired);
+//        toString.append("documentRequired", documentRequired);
         return toString.build();
     }
 

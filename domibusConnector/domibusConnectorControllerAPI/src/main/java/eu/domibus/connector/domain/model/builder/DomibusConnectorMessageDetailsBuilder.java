@@ -84,7 +84,8 @@ public class DomibusConnectorMessageDetailsBuilder {
     }
 
     public DomibusConnectorMessageDetailsBuilder withAction(String action) {
-        this.action = new DomibusConnectorAction(action, true);
+        this.action = new DomibusConnectorAction(action);
+//        this.action = new DomibusConnectorAction(action, true);
         return this;
     }
 

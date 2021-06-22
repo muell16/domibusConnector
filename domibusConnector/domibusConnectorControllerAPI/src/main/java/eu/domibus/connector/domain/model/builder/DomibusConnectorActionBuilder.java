@@ -9,7 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorAction;
 public final class DomibusConnectorActionBuilder {
 
     private String action;
-	private boolean documentRequired;
+//	private boolean documentRequired;
     
     public static DomibusConnectorActionBuilder createBuilder() {
         return new DomibusConnectorActionBuilder();
@@ -22,16 +22,17 @@ public final class DomibusConnectorActionBuilder {
         return this;
     }
 
-    public DomibusConnectorActionBuilder withDocumentRequired(boolean required) {
-        this.documentRequired = required;
-        return this;
-    }
+//    public DomibusConnectorActionBuilder withDocumentRequired(boolean required) {
+//        this.documentRequired = required;
+//        return this;
+//    }
     
     public DomibusConnectorAction build() {
         if (action == null) {
             throw new IllegalArgumentException("action is required!");
         }
-        return new DomibusConnectorAction(action, documentRequired);
+        return new DomibusConnectorAction(action);
+//        return new DomibusConnectorAction(action, documentRequired);
     }
 
     public DomibusConnectorActionBuilder copyPropertiesFrom(DomibusConnectorAction action) {
@@ -39,7 +40,7 @@ public final class DomibusConnectorActionBuilder {
             throw new IllegalArgumentException("Action cannot be null here!");
         }
         this.action = action.getAction();
-        this.documentRequired = action.isDocumentRequired();
+//        this.documentRequired = action.isDocumentRequired();
         return this;
     }
 

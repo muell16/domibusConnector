@@ -417,7 +417,7 @@ public class LoadStoreMessageFromPath {
 
         messageDetails.setAction(DomibusConnectorActionBuilder.createBuilder()
                 .setAction(messageProperties.getProperty("action"))
-                .withDocumentRequired(false)
+//                .withDocumentRequired(false)
                 .build()
         );
 
