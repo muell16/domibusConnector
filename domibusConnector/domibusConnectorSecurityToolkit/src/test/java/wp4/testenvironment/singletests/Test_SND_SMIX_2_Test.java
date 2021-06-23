@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import util.ContainerToFilesystem;
 import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator;
@@ -24,6 +25,7 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
 import eu.ecodex.dss.util.DocumentStreamUtil;
 import eu.ecodex.dss.util.ZipStreamUtil;
 
+@Disabled("TODO: repair test")
 public class Test_SND_SMIX_2_Test {
 	static DSSECodexContainerService containerService;
 	

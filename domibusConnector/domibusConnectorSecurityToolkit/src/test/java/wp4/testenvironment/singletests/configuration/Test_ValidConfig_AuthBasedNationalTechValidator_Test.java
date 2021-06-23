@@ -2,6 +2,7 @@ package wp4.testenvironment.singletests.configuration;
 
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -49,6 +50,7 @@ public class Test_ValidConfig_AuthBasedNationalTechValidator_Test {
 	 * The respective test is SUB-CONF-3 - Variant 1
 	 */
 	@Test
+	@Disabled("repair test")
     public void test_PDF_without_Attachments() throws Exception {
 
     	BusinessContent content = ValidConfig_BusinessContent.get_UnsignedFile_WithoutAttachments();

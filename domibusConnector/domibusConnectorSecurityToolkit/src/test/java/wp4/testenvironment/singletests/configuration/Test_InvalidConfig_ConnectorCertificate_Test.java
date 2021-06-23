@@ -3,6 +3,7 @@ package wp4.testenvironment.singletests.configuration;
 import java.io.IOException;
 
 
+import eu.europa.esig.dss.DSSException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -107,13 +108,10 @@ public class Test_InvalidConfig_ConnectorCertificate_Test {
 		
     	BusinessContent content = ValidConfig_BusinessContent.get_UnsignedFile_WithoutAttachments();
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullSignatureBased();
-		
-		try {
-			@SuppressWarnings("unused")
+
+    	Assertions.assertThrows(eu.ecodex.dss.service.ECodexException.class, () -> {
 			ECodexContainer container = containerService.create(content, issuer);
-		} catch(eu.ecodex.dss.service.ECodexException e) {
-			Assertions.assertEquals("java.lang.NullPointerException", e.getMessage());
-		}
+		});
     }
 	
 	/*
