@@ -1,36 +1,32 @@
 -- *********************************************************************
 -- Update Database Script - from domibusConnector 4.3 to 4.4
 -- *********************************************************************
--- create new entity DC_KEYSTORE
--- extend entity DC_PMODE_SET by PMODES and FK_CONNECTORSTORE
---
+
 
 -- #################### 1/6 RENAME tables that need to be recreated ####################
+
 
 
 -- #################### 2/6 CREATE tables, structural changes ####################
 
 alter table DOMIBUS_CONNECTOR_ACTION drop column PDF_REQUIRED;
 
-ALTER TABLE DC_PMODE_SET ADD "PMODES" BLOB;
-ALTER TABLE DC_PMODE_SET ADD "FK_CONNECTORSTORE" NUMBER(10);
+ALTER TABLE DC_PMODE_SET ADD COLUMN PMODES bytea;
+ALTER TABLE DC_PMODE_SET ADD COLUMN FK_CONNECTORSTORE numeric(10);
 
-CREATE TABLE  "DC_KEYSTORE"
+CREATE TABLE DC_KEYSTORE
 (
-	"ID" NUMBER(10) NOT NULL,
-	"KEYSTORE" BLOB NOT NULL,
-	"PASSWORD" VARCHAR2(1024 BYTE),
-	"PW_SALT" VARCHAR2(512 BYTE),
-	"UPLOADED" TIMESTAMP NOT NULL
+	ID numeric(10) NOT NULL,
+	KEYSTORE bytea NOT NULL,
+	PASSWORD varchar(1024),
+	PW_SALT varchar(512),
+	UPLOADED timestamp without time zone NOT NULL
 )
 ;
 
-ALTER TABLE  "DC_KEYSTORE" 
- ADD CONSTRAINT "PK_DC_CONNECTORSTORE"
-	PRIMARY KEY ("ID") 
- USING INDEX
+ALTER TABLE DC_KEYSTORE ADD CONSTRAINT PK_DC_CONNECTORSTORE
+	PRIMARY KEY (ID)
 ;
-
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
@@ -40,10 +36,8 @@ ALTER TABLE  "DC_KEYSTORE"
 
 -- #################### 5/6 ADD the constraints ####################
 
-
-ALTER TABLE  "DC_PMODE_SET" 
- ADD CONSTRAINT "FK_DC_PMODE_SET_02"
-	FOREIGN KEY ("FK_CONNECTORSTORE") REFERENCES  "DC_KEYSTORE" ("ID")
+ALTER TABLE DC_PMODE_SET ADD CONSTRAINT FK_DC_PMODE_SET_02
+	FOREIGN KEY (FK_CONNECTORSTORE) REFERENCES DC_KEYSTORE (ID) ON DELETE No Action ON UPDATE No Action
 ;
 
 -- #################### 6/6 UPDATE Version ####################

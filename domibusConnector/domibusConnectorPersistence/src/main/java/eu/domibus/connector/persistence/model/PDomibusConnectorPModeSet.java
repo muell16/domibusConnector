@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
 import javax.persistence.*;
+
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,6 +39,9 @@ public class PDomibusConnectorPModeSet {
 
     @Column(name = "ACTIVE")
     private boolean active;
+    
+    @Column(name = "PMODES")
+    private Blob pmodes;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
     private List<PDomibusConnectorParty> parties = new ArrayList<>();
