@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author cheny01
  * @version $Revision: 1.0 $
- * @generatedBy CodePro at 02.11.12 10:26
+ *
  */
 public class ECodexEvidenceBuilderTest {
 
@@ -75,7 +75,7 @@ public class ECodexEvidenceBuilderTest {
      * test.
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testECodexEvidenceBuilder() throws Exception {
@@ -128,7 +128,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: Eventreason = UNKNOWN_ORIGINATOR_ADDRESS;
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateDeliveryNonDeliveryToRecipient() throws Exception {
@@ -175,7 +175,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: Eventreason = null
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateDeliveryNonDeliveryToRecipient_1() throws Exception {
@@ -243,7 +243,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: Eventreason = null
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateRetrievalNonRetrievalByRecipient() throws Exception {
@@ -311,7 +311,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: Eventreason = UNKNOWN_ORIGINATOR_ADDRESS;
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateRetrievalNonRetrievalByRecipient_1() throws Exception {
@@ -353,7 +353,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: isAcceptance=true
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateSubmissionAcceptanceRejection_shouldAcceptanceTrue() throws Exception {
@@ -393,7 +393,7 @@ public class ECodexEvidenceBuilderTest {
      * Case: isAcceptance=false
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:26
+     *
      */
     @Test
     public void testCreateSubmissionAcceptanceRejection_shouldAcceptanceFalse() throws Exception {
@@ -584,7 +584,7 @@ public class ECodexEvidenceBuilderTest {
      * Perform pre-test initialization.
      *
      * @throws Exception if the initialization fails for some reason
-     * @generatedBy CodePro at 02.11.12 10:26
+     * 
      */
     @BeforeEach
     public void setUp() throws Exception {

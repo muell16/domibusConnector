@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author cheny01
  * @version $Revision: 1.0 $
- * @generatedBy CodePro at 02.11.12 10:16
+ *
  */
 public class EvidenceUtilsImplTest {
 
@@ -69,7 +69,7 @@ public class EvidenceUtilsImplTest {
      * Run the EvidenceUtilsImpl(String,String,String,String) constructor test.
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:16
+     *
      */
     @Test
     public void testEvidenceUtilsImpl() throws Exception {
@@ -115,7 +115,7 @@ public class EvidenceUtilsImplTest {
     // *
     // * @throws Exception
     // *
-    // * @generatedBy CodePro at 02.11.12 10:16
+    // *
     // */
     // @Test
     // public void testConvertIntoEvidenceType()
@@ -172,7 +172,7 @@ public class EvidenceUtilsImplTest {
      * Run the byte[] signByteArray(byte[]) method test.
      *
      * @throws Exception
-     * @generatedBy CodePro at 02.11.12 10:16
+     *
      */
     @Test
     public void testSignByteArray() throws Exception {
@@ -247,7 +247,7 @@ public class EvidenceUtilsImplTest {
      * Run the boolean verifySignature(byte[]) method test.
      *
      * @throws Exception
-     * @generatedBy CodePro at 20.11.12 08:47
+     *
      */
     @Test
     public void testVerifySignature() throws Exception {
