@@ -19,11 +19,11 @@ import java.util.regex.Pattern;
 tag::BNF[]
 <ROUTING_RULE_PATTERN> ::= <BOOLEAN_EXPRESSION> | <COMPARE_EXPRESSION>
 <BOOLEAN_EXPRESSION> ::= <OPERAND>(<ROUTING_RULE_PATTERN>, <ROUTING_RULE_PATTERN>)
-<COMPARE_EXPRESSION> ::= equals(<AS4_TYPE>, '<VALUE>')
+<COMPARE_EXPRESSION> ::= equals(<AS4_TYPE>, '<VALUE>') | startswith(<AS4_TYPE>, '<VALUE>')
 <OPERAND> ::= "&" | "|"
 <AS4_TYPE> ::= ServiceType | ServiceName
 <VALUE> ::= <VALUE><LETTER> | <LETTER>
-<LETTER> can be every letter [a-z][A-Z][0-9] other characters might work, but the are not tested! ['\|&)( will definitiv not work!]
+<LETTER> can be every letter [a-z][A-Z][0-9] other printable characters might work, but they untested! ['\|&)( will definitiv not work!]
 
 end::BNF[]
 ##BNF}
@@ -43,6 +43,7 @@ public class RoutingRulePattern {
         OR("\\|"),
         AND("&"),
         EQUALS("equals"),
+        STARTSWITH("startswith"),
         SEMICOLON(","),
         BRACKET_OPEN("\\("),
         BRACKET_CLOSE("\\)"),
@@ -116,8 +117,8 @@ public class RoutingRulePattern {
             if (t == Token.OR || t == Token.AND) {
                 //parsing BOOLEAN_EXPRESSION
                 exp = parseBooleanExpression(t, tokens);
-            } else if (t == Token.EQUALS) {
-                exp = parseEqualsExpression(tokens);
+            } else if (t == Token.EQUALS || t == Token.STARTSWITH) {
+                exp = parseCompareExpression(t, tokens);
             } else {
                 throw new RuntimeException("Parsing error!");
             }
@@ -125,7 +126,7 @@ public class RoutingRulePattern {
         return exp;
     }
 
-    private Expression parseEqualsExpression(LinkedList<TokenAndValue> tokens) {
+    private Expression parseCompareExpression(Token t, LinkedList<TokenAndValue> tokens) {
         if (isNotToken(tokens.removeFirst(), Token.BRACKET_OPEN)) {
             throw new RuntimeException(String.format("Parse error, after '%s' must follow a '%s'", Token.EQUALS, Token.BRACKET_OPEN));
         }
@@ -142,7 +143,14 @@ public class RoutingRulePattern {
             throw new RuntimeException("No value provided!");
         }
         String valueString = stringValue.value.substring(1, stringValue.value.length() - 1); //remove leading ' and trailing '
-        Expression exp = new EqualsExpression(as4Attribute.t, valueString);
+        Expression exp;
+        if (t == Token.EQUALS) {
+            exp = new EqualsExpression(as4Attribute.t, valueString);
+        } else if (t == Token.STARTSWITH) {
+            exp = new StartsWithExpression(as4Attribute.t, valueString);
+        } else {
+            throw new RuntimeException(String.format("Parse error, illegal Token '%s'", t));
+        }
         if (isNotToken(tokens.removeFirst(), Token.BRACKET_CLOSE)) {
             throw new RuntimeException(String.format("Parse error, missing closing '%s'", Token.BRACKET_CLOSE));
         }
@@ -234,18 +242,40 @@ public class RoutingRulePattern {
 
         @Override
         boolean evaluate(DomibusConnectorMessage message) {
-            DomibusConnectorMessageDetails details = message.getMessageDetails();
-            if (as4Attribute == Token.AS4_SERVICE_NAME) {
-                return valueString.equals(details.getService().getService());
-            } else if (as4Attribute == Token.AS4_SERVICE_TYPE) {
-                return valueString.equals(details.getService().getServiceType());
-            } else {
-                throw new RuntimeException("Unsupported AS4 Attribute to match!");
-            }
+            return valueString.equals(extractAs4Value(message, as4Attribute));
         }
 
         public String toString() {
             return String.format( "%s == '%s'", as4Attribute, valueString);
+        }
+    }
+
+    private static class StartsWithExpression extends Expression {
+
+        private final Token as4Attribute;
+        private final String startsWithString;
+
+        private StartsWithExpression(Token as4Attribute, String startsWithString) {
+            this.as4Attribute = as4Attribute;
+            this.startsWithString = startsWithString;
+        }
+
+        @Override
+        boolean evaluate(DomibusConnectorMessage message) {
+            return extractAs4Value(message, as4Attribute).startsWith(startsWithString);
+        }
+
+        public String toString() { return String.format("%s startsWith '%s'", as4Attribute, startsWithString); }
+    }
+
+    private static String extractAs4Value(DomibusConnectorMessage message, Token as4Attribute) {
+        DomibusConnectorMessageDetails details = message.getMessageDetails();
+        if (as4Attribute == Token.AS4_SERVICE_NAME) {
+            return details.getService().getService();
+        } else if (as4Attribute == Token.AS4_SERVICE_TYPE) {
+            return details.getService().getServiceType();
+        } else {
+            throw new RuntimeException("Unsupported AS4 Attribute to match!");
         }
     }
 

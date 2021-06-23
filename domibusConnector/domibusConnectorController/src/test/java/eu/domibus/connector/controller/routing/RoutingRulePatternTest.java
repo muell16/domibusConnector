@@ -21,6 +21,26 @@ public class RoutingRulePatternTest {
     }
 
     @Test
+    void matchesStartWithServiceName() {
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
+        epoMessage.getMessageDetails().setService(service);
+
+        RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'serv')");
+        assertThat(pattern.matches(epoMessage)).isTrue();
+    }
+
+    @Test
+    void matchesStartWithServiceName_noMatch() {
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
+        epoMessage.getMessageDetails().setService(service);
+
+        RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'aserv')");
+        assertThat(pattern.matches(epoMessage)).isFalse();
+    }
+
+    @Test
     void matchesServiceName_shouldFail() {
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
         DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
