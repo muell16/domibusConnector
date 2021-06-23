@@ -26,10 +26,10 @@ import java.util.List;
 @Component
 @UIScope
 @Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
-@TabMetadata(title = "Data Tables", tabGroup = PmodeLayout.TAB_GROUP_NAME)
+@TabMetadata(title = "PMode Data", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class DataTables extends VerticalLayout {
 
-	public static final String ROUTE = "datatables";
+	public static final String ROUTE = "pmodedata";
 
 	WebPModeService pmodeService;
 	
