@@ -102,7 +102,9 @@ class DlqTestSuite {
 
                     System.out.println("\n\n######\n END OF LAMBDA EXECUTION \n\n###");
                 }),
-                () -> assertThat(domibusConnectorMessage[0]).isNotNull()
+                () -> assertThat(domibusConnectorMessage[0]).isNotNull(),
+                () -> assertThat(domibusConnectorMessage[0].getConnectorMessageId().getConnectorMessageId()).isEqualTo("asdfasdfasdf")
+
         );
 
         System.out.println("\n\n######\n" + domibusConnectorMessage[0].getConnectorMessageId() + "\n\n###");
