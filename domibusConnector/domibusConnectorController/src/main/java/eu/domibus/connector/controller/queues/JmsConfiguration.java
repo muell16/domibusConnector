@@ -24,7 +24,7 @@ public class JmsConfiguration {
     public static final String TO_LINK_QUEUE_BEAN = "toLinkQueueBean";
     public static final String TO_LINK_ERROR_QUEUE_BEAN = "toLinkErrorQueueBean";
     public static final String TO_CLEANUP_QUEUE_BEAN = "toCleanupQueueBean";
-    public static final String TO_CLEANUP_ERROR_QUEUE_BEAN = "toCleanupErrorQueueBean";
+    public static final String TO_CLEANUP_DEAD_LETTER_QUEUE_BEAN = "toCleanupDeadLetterQueueBean";
 
     @Bean // Serialize message content to json using TextMessage
     public MessageConverter jacksonJmsMessageConverter(
@@ -78,11 +78,11 @@ public class JmsConfiguration {
         return activeMQQueue;
     }
 
-    @Bean(TO_CLEANUP_ERROR_QUEUE_BEAN)
+    @Bean(TO_CLEANUP_DEAD_LETTER_QUEUE_BEAN)
     public Queue toCleanupErrorQueue(
             QueuesConfigurationProperties config
     ) {
-        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getCleanupErrorQueue());
+        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getCleanupDeadLetterQueue());
         return activeMQQueue;
     }
 

@@ -13,8 +13,7 @@ public class QueuesConfigurationProperties {
     private String toLinkErrorQueue = "submitToLinkErrorQueue";
 
     private String cleanupQueue = "cleanUpQueue";
-    private String cleanupErrorQueue = "cleanUpErrorQueue";
-    private String deadLetterQueue = "dlq";
+    private String cleanupDeadLetterQueue = "cleanUpDeadLetterQueue";
 
     public String getToConnectorControllerErrorQueue() {
         return toConnectorControllerErrorQueue;
@@ -56,19 +55,12 @@ public class QueuesConfigurationProperties {
         this.cleanupQueue = cleanupQueue;
     }
 
-    public String getCleanupErrorQueue() {
-        return cleanupErrorQueue;
+    public String getCleanupDeadLetterQueue() {
+        return cleanupDeadLetterQueue;
     }
 
-    public void setCleanupErrorQueue(String cleanupErrorQueue) {
-        this.cleanupErrorQueue = cleanupErrorQueue;
+    public void setCleanupDeadLetterQueue(String cleanupErrorQueue) {
+        this.cleanupDeadLetterQueue = cleanupErrorQueue;
     }
 
-    public String getDeadLetterQueue() {
-        return deadLetterQueue;
-    }
-
-    public void setDeadLetterQueue(String deadLetterQueue) {
-        this.deadLetterQueue = deadLetterQueue;
-    }
 }
