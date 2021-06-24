@@ -10,6 +10,7 @@ import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;
 
+import java.time.Duration;
+
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CLEANUP_DEAD_LETTER_QUEUE_BEAN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = {DlqTestSuite.MyTestContext.class, CleanupMessageProcessor.class}, properties = {"spring.liquibase.enabled=false"})
@@ -62,6 +68,9 @@ class DlqTestSuite {
     @Qualifier(TO_CLEANUP_DEAD_LETTER_QUEUE_BEAN)
     Queue toCleanupDlq;
 
+    @Autowired
+    TransactionTemplate txTemplate;
+
     @Test
     public void testDlq() throws JMSException, InterruptedException {
 
@@ -71,18 +80,32 @@ class DlqTestSuite {
 //        policy.setUseExponentialBackOff(true);
 //        policy.setMaximumRedeliveries(2);
 
-        Mockito.doThrow(new RuntimeException()).when(cleanupMessageProcessor).processMessage(any());
-                DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId(new DomibusConnectorMessageId("asdfasdfasdf"));
-        toCleanupQueueProducer.putOnQueue(message);
+        //stop test latest after 40s
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
 
-        Thread.sleep(120000L);
+            Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(cleanupMessageProcessor).processMessage(any());
+                    DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+            message.setConnectorMessageId(new DomibusConnectorMessageId("asdfasdfasdf"));
 
-        System.out.println(Mockito.mockingDetails(cleanupMessageProcessor).getInvocations().size());
+            txTemplate.executeWithoutResult(tx -> toCleanupQueueProducer.putOnQueue(message));
 
-        DomibusConnectorMessage domibusConnectorMessage = (DomibusConnectorMessage) jmsTemplate.receiveAndConvert(toCleanupDlq);
-        System.out.println(domibusConnectorMessage.getConnectorMessageId());
 
+//            Thread.sleep(20000L);
+
+            System.out.println("\n\n######\n" + Mockito.mockingDetails(cleanupMessageProcessor).getInvocations().size() + "\n\n###");
+
+            //wait 20s for a message to rcv
+//            jmsTemplate.setReceiveTimeout(20000);
+//            jmsTemplate.setSessionTransacted(true);
+
+
+            DomibusConnectorMessage domibusConnectorMessage = txTemplate.execute(status -> {
+                return (DomibusConnectorMessage) jmsTemplate.receiveAndConvert(toCleanupDlq);
+            });
+            assertThat(domibusConnectorMessage).isNotNull();
+
+            System.out.println("\n\n######\n" + domibusConnectorMessage.getConnectorMessageId() + "\n\n###");
+        });
     }
 }
 

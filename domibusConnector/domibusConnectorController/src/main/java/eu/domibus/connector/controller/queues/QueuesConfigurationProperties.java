@@ -13,7 +13,7 @@ public class QueuesConfigurationProperties {
     private String toLinkErrorQueue = "submitToLinkErrorQueue";
 
     private String cleanupQueue = "cleanUpQueue";
-    private String cleanupDeadLetterQueue = "cleanUpDeadLetterQueue";
+    private String cleanupDeadLetterQueue = "DLQ.cleanUpDeadLetterQueue";
 
     public String getToConnectorControllerErrorQueue() {
         return toConnectorControllerErrorQueue;
