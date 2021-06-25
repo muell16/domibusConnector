@@ -404,5 +404,10 @@ public class WebPModeService {
 		});
 	}
 
+	public boolean importPModes(byte[] pmodeFile, String value, byte[] connectorstore, String value2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }
