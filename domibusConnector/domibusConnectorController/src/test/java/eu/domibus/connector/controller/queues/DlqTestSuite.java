@@ -113,8 +113,7 @@ class DlqTestSuite {
 
                     nonXaJmsTemplate.setReceiveTimeout(20000);
                     nonXaJmsTemplate.setSessionTransacted(false);
-                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert("ActiveMQ.DLQ");
-//                    domibusConnectorMessage[0] = (DomibusConnectorMessage) converter.fromMessage(dlq);
+                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getCleanupDeadLetterQueue());
 
                 }),
                 () -> assertThat(domibusConnectorMessage[0]).isNotNull(),
