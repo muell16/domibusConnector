@@ -123,5 +123,13 @@ public class PDomibusConnectorPModeSet {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+	public Blob getPmodes() {
+		return pmodes;
+	}
+
+	public void setPmodes(Blob pmodes) {
+		this.pmodes = pmodes;
+	}
 }
 
