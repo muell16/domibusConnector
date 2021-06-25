@@ -200,7 +200,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>logging-tester</artifactId>
             <scope>test</scope>
         </dependency>
