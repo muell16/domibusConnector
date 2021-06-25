@@ -25,8 +25,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.Queue;
 import java.time.Duration;
 
@@ -97,30 +95,29 @@ class DlqTestSuite {
     MessageConverter converter;
 
     @Test
-    public void testDlq() throws JMSException {
+    public void when_message_handling_in_clean_up_queue_fails_the_message_should_end_up_in_the_cleanupqueue_deadletterqueue() {
 
-        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[1];
-
+        // Arrange
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(cleanupMessageProcessor).processMessage(any());
+
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("asdfasdfasdf"));
 
+        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[1];
+
+        // Act
         txTemplate.executeWithoutResult(tx -> toCleanupQueueProducer.putOnQueue(message));
 
-        //stop test latest after 40s
+        // Assert
         Assertions.assertAll("Should return Message from DLQ",
-                () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(240), () -> {
-
+                () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
                     nonXaJmsTemplate.setReceiveTimeout(20000);
                     nonXaJmsTemplate.setSessionTransacted(false);
                     domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getCleanupDeadLetterQueue());
-
                 }),
                 () -> assertThat(domibusConnectorMessage[0]).isNotNull(),
                 () -> assertThat(domibusConnectorMessage[0].getConnectorMessageId().getConnectorMessageId()).isEqualTo("asdfasdfasdf")
-
         );
-
     }
 }
 
