@@ -5,12 +5,16 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
+import eu.domibus.connector.persistence.model.enums.KeystoreType;
 
 @Entity
 @Table(name = PDomibusConnectorKeystore.TABLE_NAME)
@@ -29,6 +33,9 @@ public class PDomibusConnectorKeystore {
 		allocationSize = PDomibusConnectorPersistenceModel.ALLOCATION_SIZE)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
 	private Long id;
+	
+	@Column(name="UUID", nullable=false, unique=true)
+	private String uuid;
 
 	@Column(name="KEYSTORE", nullable=false)
     private Blob keystore;
@@ -41,6 +48,13 @@ public class PDomibusConnectorKeystore {
 	
 	@Column(name="UPLOADED")
     private Date uploaded;
+	
+	@Column(name="DESCRIPTION")
+	private String description;
+	
+	@Column(name="TYPE")
+	@Enumerated(EnumType.STRING)
+	private KeystoreType type;
 	
 	@PrePersist
     public void prePersist() {
@@ -86,6 +100,30 @@ public class PDomibusConnectorKeystore {
 
 	public void setUploaded(Date uploaded) {
 		this.uploaded = uploaded;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public KeystoreType getType() {
+		return type;
+	}
+
+	public void setType(KeystoreType type) {
+		this.type = type;
 	}
 
 	
