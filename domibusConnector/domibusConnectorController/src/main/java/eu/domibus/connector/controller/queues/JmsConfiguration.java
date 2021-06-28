@@ -20,9 +20,9 @@ import javax.validation.Validator;
 public class JmsConfiguration {
 
     public static final String TO_CONNECTOR_QUEUE_BEAN = "toConnectorQueueBean";
-    public static final String TO_CONNECTOR_ERROR_QUEUE_BEAN = "toConnectorErrorQueueBean";
+    public static final String TO_CONNECTOR_DEAD_LETTER_QUEUE_BEAN = "toConnectorDeadLetterQueueBean";
     public static final String TO_LINK_QUEUE_BEAN = "toLinkQueueBean";
-    public static final String TO_LINK_ERROR_QUEUE_BEAN = "toLinkErrorQueueBean";
+    public static final String TO_LINK_DEAD_LETTER_QUEUE_BEAN = "toLinkDeadLetterQueueBean";
     public static final String TO_CLEANUP_QUEUE_BEAN = "toCleanupQueueBean";
     public static final String TO_CLEANUP_DEAD_LETTER_QUEUE_BEAN = "toCleanupDeadLetterQueueBean";
 
@@ -45,11 +45,11 @@ public class JmsConfiguration {
         return activeMQQueue;
     }
 
-    @Bean(TO_CONNECTOR_ERROR_QUEUE_BEAN)
+    @Bean(TO_CONNECTOR_DEAD_LETTER_QUEUE_BEAN)
     public Queue toConnectorErrorQueueBean(
             QueuesConfigurationProperties config
     ) {
-        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getToConnectorControllerErrorQueue());
+        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getToConnectorControllerDeadLetterQueue());
         return activeMQQueue;
     }
 
@@ -62,11 +62,11 @@ public class JmsConfiguration {
         return activeMQQueue;
     }
 
-    @Bean(TO_LINK_ERROR_QUEUE_BEAN)
+    @Bean(TO_LINK_DEAD_LETTER_QUEUE_BEAN)
     public Queue toLinkErrorQueue(
             QueuesConfigurationProperties config
     ) {
-        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getToLinkErrorQueue());
+        ActiveMQQueue activeMQQueue = new ActiveMQQueue(config.getToLinkDeadLetterQueue());
         return activeMQQueue;
     }
 
