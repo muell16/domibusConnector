@@ -32,7 +32,7 @@ public class ToCleanupListener {
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             cleanupMessageProcessor.processMessage(message);
         } catch (Exception exc) {
-//            LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
+            LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
             throw exc;
         }
     }
