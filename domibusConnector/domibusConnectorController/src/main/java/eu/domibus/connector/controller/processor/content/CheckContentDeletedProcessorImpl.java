@@ -64,7 +64,7 @@ public class CheckContentDeletedProcessorImpl {
                 ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
                 //delete only refs which are older than one day
                 List<LargeFileReference> collect = references.stream()
-                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isAfter(tomorrow))
+                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isBefore(tomorrow))
                         .collect(Collectors.toList());
                 LOGGER.debug("Deleting references [{}] with no associated business message", collect);
                 collect.forEach(this::deleteReference);
