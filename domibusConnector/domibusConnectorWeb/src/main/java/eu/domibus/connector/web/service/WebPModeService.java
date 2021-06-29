@@ -18,6 +18,8 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.web.view.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import io.micrometer.core.instrument.util.StringUtils;
+
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -405,7 +407,15 @@ public class WebPModeService {
 	}
 
 	public boolean importPModes(byte[] pmodeFile, String value, byte[] connectorstore, String value2) {
-		// TODO Auto-generated method stub
+		
+		if(pmodeFile!=null && pmodeFile.length > 1 && connectorstore!=null && connectorstore.length > 1 && !StringUtils.isEmpty(value)) {
+			LOGGER.debug("pmodeFile length:        {}", pmodeFile.length);
+			LOGGER.debug("PMode-Set description:   {}", value);
+			LOGGER.debug("connectorstore lenght:   {}", connectorstore.length);
+			LOGGER.debug("connectorstore password: {}", value2);
+			return true;
+		}
+		
 		return false;
 	}
 

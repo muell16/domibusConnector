@@ -35,19 +35,23 @@ public class Import extends VerticalLayout {
 	
 	byte[] pmodeFile = null;
 	
-	Div areaPModeFileUploadResult;
-	LumoLabel pModeFileUploadResultLabel;
+	Div areaImportResult = new Div();
+	
+	Div areaPModeFileUploadResult = new Div();
+	LumoLabel pModeFileUploadResultLabel = new LumoLabel();
 	
 	byte[] connectorstore = null;
 	
-	Div areaConnectorstoreUploadResult;
-	LumoLabel connectorstoreUploadResultLabel;
+	Div areaConnectorstoreUploadResult = new Div();
+	LumoLabel connectorstoreUploadResultLabel = new LumoLabel();
 	
 	TextArea pModeSetDescription = new TextArea("Description:");
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, @Autowired DataTables dataTables) {
 		this.pmodeService = pmodeService;
+		
+		add(areaImportResult);
 		
 		Div areaPmodeFileUpload = createPModeImportArea();
 		
@@ -63,6 +67,9 @@ public class Import extends VerticalLayout {
 		add(areaConnectorstoreUpload);
 		add(areaConnectorstoreUploadResult);
 		
+		connectorstorePwd.setHelperText("The password of the truststore.");
+		add(connectorstorePwd);
+		
 		Button importBtn = new Button();
 		importBtn.setIcon(new Icon(VaadinIcon.EDIT));
 		importBtn.setText("Import PMode-Set");
@@ -75,31 +82,14 @@ public class Import extends VerticalLayout {
 		
 		add(importBtn);
 		
-//		MemoryBuffer  buffer = new MemoryBuffer ();
-//		
-//		Upload upload = new Upload(buffer);
-//		upload.setMaxFiles(1);
-//		upload.setId("PModes-Upload");
-//		upload.setAcceptedFileTypes("application/xml", "text/xml");
-//
-//		upload.addSucceededListener(event -> {
-//			boolean result = false;
-//			pmodeFile = ((ByteArrayOutputStream) buffer.getFileData().getOutputBuffer())
-//                            .toByteArray();
-////		    result = pmodeService.importPModes(contents, util);
-////		    showOutput(contents, result);
-//		    dataTables.reloadActions();
-//		    dataTables.reloadParties();
-//		    dataTables.reloadServices();
-//		});
-//		
-//		
-//		areaImporter.add(upload);
+
 		
 	}
 	
 	private Div createPModeImportArea() {
 		Div areaPmodeFileUpload = new Div();
+		
+		areaPmodeFileUpload.add(new LumoLabel("Upload new PMode file:"));
 		
 		MemoryBuffer  buffer = new MemoryBuffer ();
 		
@@ -107,7 +97,7 @@ public class Import extends VerticalLayout {
 		upload.setMaxFiles(1);
 		upload.setId("Upload PModes-File");
 		upload.setAcceptedFileTypes("application/xml", "text/xml");
-
+		
 		upload.addSucceededListener(event -> {
 			pmodeFile = ((ByteArrayOutputStream) buffer.getFileData().getOutputBuffer())
                             .toByteArray();
@@ -142,6 +132,8 @@ public class Import extends VerticalLayout {
 	private Div createConnectorstoreUploadArea() {
 		Div areaConnectorstoreUpload = new Div();
 		
+		areaConnectorstoreUpload.add(new LumoLabel("Upload new Connectorstore file:"));
+		
 		MemoryBuffer  buffer = new MemoryBuffer ();
 		
 		Upload upload = new Upload(buffer);
@@ -165,13 +157,14 @@ public class Import extends VerticalLayout {
 		
 		
 		areaConnectorstoreUpload.add(upload);
+
+		
 		
 		return areaConnectorstoreUpload;
 	}
 	
 	private void showOutput(boolean success, String text) {
-		VerticalLayout areaResult = new VerticalLayout();
-		areaResult.removeAll();
+		areaImportResult.removeAll();
 		
 		LumoLabel resultLabel = new LumoLabel();
 		resultLabel.setText("PMode-Set successfully imported!");
@@ -181,11 +174,8 @@ public class Import extends VerticalLayout {
 			resultLabel.setText("Import of PMode-Set failed!");
 			resultLabel.getStyle().set("color", "red");
 		}
-		areaResult.add(resultLabel);
+		areaImportResult.add(resultLabel);
 		
 		
-		areaResult.setWidth("100vw");
-		
-		add(areaResult);
 	}
 }
