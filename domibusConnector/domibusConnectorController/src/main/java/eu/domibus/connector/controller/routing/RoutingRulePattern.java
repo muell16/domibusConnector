@@ -53,7 +53,7 @@ public class RoutingRulePattern {
         BRACKET_OPEN("\\("),
         BRACKET_CLOSE("\\)"),
         WHITESPACE("\\p{javaWhitespace}"),
-        VALUE("'[\\w:_-~\\./#\\?]+'");
+        VALUE("'[\\w:_\\-~\\./#\\?]+'");
 
         private final Pattern pattern;
 
