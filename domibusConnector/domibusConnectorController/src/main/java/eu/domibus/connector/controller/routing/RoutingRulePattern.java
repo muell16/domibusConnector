@@ -21,7 +21,7 @@ tag::BNF[]
 <BOOLEAN_EXPRESSION> ::= <OPERAND>(<ROUTING_RULE_PATTERN>, <ROUTING_RULE_PATTERN>)
 <COMPARE_EXPRESSION> ::= equals(<AS4_TYPE>, '<VALUE>') | startswith(<AS4_TYPE>, '<VALUE>')
 <OPERAND> ::= "&" | "|"
-<AS4_TYPE> ::= ServiceType | ServiceName
+<AS4_TYPE> ::= ServiceType | ServiceName | FinalRecipient | Action
 <VALUE> ::= <VALUE><LETTER> | <LETTER>
 <LETTER> can be every letter [a-z][A-Z][0-9] other printable characters might work, but they untested! ['\|&)( will definitiv not work!]
 
@@ -40,6 +40,11 @@ public class RoutingRulePattern {
     private enum Token {
         AS4_SERVICE_TYPE("ServiceType"),
         AS4_SERVICE_NAME("ServiceName"),
+        AS4_FINAL_RECIPIENT("FinalRecipient"),
+        AS4_FROM_PARTY_ID("FromPartyId"),
+        AS4_FROM_PARTY_ID_TYPE("FromPartyIdType"),
+        AS4_FROM_PARTY_ROLE("FromPartyRole"),
+        AS4_ACTION("Action"),
         OR("\\|"),
         AND("&"),
         EQUALS("equals"),
@@ -274,6 +279,16 @@ public class RoutingRulePattern {
             return details.getService().getService();
         } else if (as4Attribute == Token.AS4_SERVICE_TYPE) {
             return details.getService().getServiceType();
+        } else if (as4Attribute == Token.AS4_ACTION) {
+            return details.getAction().getAction();
+        } else if (as4Attribute == Token.AS4_FINAL_RECIPIENT) {
+            return details.getFinalRecipient();
+        } else if (as4Attribute == Token.AS4_FROM_PARTY_ID_TYPE) {
+            return details.getFromParty().getPartyIdType();
+        } else if (as4Attribute == Token.AS4_FROM_PARTY_ID) {
+            return details.getFromParty().getPartyId();
+        } else if (as4Attribute == Token.AS4_FROM_PARTY_ROLE) {
+            return details.getFromParty().getRole();
         } else {
             throw new RuntimeException("Unsupported AS4 Attribute to match!");
         }
