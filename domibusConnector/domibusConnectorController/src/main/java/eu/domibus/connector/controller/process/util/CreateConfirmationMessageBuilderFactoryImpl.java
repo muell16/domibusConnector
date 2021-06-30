@@ -10,45 +10,41 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.impl.DomibusConnectorPModePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class CreateConfirmationMessageBuilderFactoryImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
 
-    private DomibusConnectorEvidencesToolkit evidencesToolkit;
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private DomibusConnectorMessageIdGenerator messageIdGenerator;
-    private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final DomibusConnectorEvidencesToolkit evidencesToolkit;
+    private final DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final DomibusConnectorPModePersistenceService pModePersistenceService;
 
-    @Autowired
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
+    public CreateConfirmationMessageBuilderFactoryImpl(DomibusConnectorEvidencesToolkit evidencesToolkit,
+                                                       DomibusConnectorEvidencePersistenceService evidencePersistenceService,
+                                                       DomibusConnectorMessageIdGenerator messageIdGenerator,
+                                                       ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                                       DomibusConnectorPModePersistenceService pModePersistenceService) {
         this.evidencesToolkit = evidencesToolkit;
-    }
-
-    @Autowired
-    public void setConfigurationPropertyLoaderService(ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
-        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
-    }
-
-    @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
         this.evidencePersistenceService = evidencePersistenceService;
+        this.messageIdGenerator = messageIdGenerator;
+        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
+        this.pModePersistenceService = pModePersistenceService;
     }
 
-    @Autowired
-    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator idGenerator) {
-        this.messageIdGenerator = idGenerator;
-    }
 
     public ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
         ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
@@ -244,11 +240,28 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
          * @return the builder object
          */
         public ConfirmationMessageBuilder switchFromToParty() {
+            DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
             LOGGER.debug("[{}]: switching fromParty with toParty in messageDetails", this);
-            DomibusConnectorParty fromParty = details.getFromParty();
-            DomibusConnectorParty toParty = details.getToParty();
-            details.setFromParty(toParty);
-            details.setToParty(fromParty);
+            DomibusConnectorParty fromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
+            DomibusConnectorParty toParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
+
+
+            fromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+            fromParty.setRole(null);
+            Optional<DomibusConnectorParty> lookedUpFromParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, fromParty);
+            if (!lookedUpFromParty.isPresent()) {
+                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role INITIATOR", fromParty));
+            }
+            details.setToParty(lookedUpFromParty.get());
+
+            toParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+            toParty.setRole(null);
+            Optional<DomibusConnectorParty> lookedUpToParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, toParty);
+            if (!lookedUpToParty.isPresent()) {
+                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role RESPONDER", toParty));
+            }
+            details.setFromParty(lookedUpToParty.get());
+
             return this;
         }
 

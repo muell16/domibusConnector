@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -190,6 +191,9 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchParty.getRole() != null) {
                         result = result && searchParty.getRole().equals(party.getRole());
                     }
+                    if (result && searchParty.getRoleType() != null) {
+                        result = result && searchParty.getRoleType().equals(party.getRoleType());
+                    }
                     if (result && searchParty.getPartyIdType() != null) {
                         result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
                     }
@@ -240,22 +244,22 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     }
 
-    private List<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
+    private Set<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
         return parties.stream()
                 .map(PartyMapper::mapPartyToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
+    private Set<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
         return services.stream()
                 .map(ServiceMapper::mapServiceToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
+    private Set<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
         return actions.stream()
                 .map(ActionMapper::mapActionToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 

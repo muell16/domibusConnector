@@ -72,21 +72,21 @@ public class BackendToGatewayMessageProcessorTest {
         MockitoAnnotations.initMocks(this);
 
 
-        CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl();
+//        CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl(evidencesToolkit, evidencePersistenceService, messageIdGenerator, configurationPropertyLoaderService, pModePersistenceService);
 //        createConfirmationMessageBuilderFactory.setActionPersistenceService(actionPersistenceService);
-        createConfirmationMessageBuilderFactory.setEvidencePersistenceService(evidencePersistenceService);
-        createConfirmationMessageBuilderFactory.setEvidencesToolkit(evidencesToolkit);
-        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> UUID.randomUUID().toString());
+//        createConfirmationMessageBuilderFactory.setEvidencePersistenceService(evidencePersistenceService);
+//        createConfirmationMessageBuilderFactory.setEvidencesToolkit(evidencesToolkit);
+//        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> UUID.randomUUID().toString());
 
         CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
         createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);
-        createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
+//        createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
 
         toGwDeliveredMessages = new ArrayList<>();
         toBackendDeliveredMessages = new ArrayList<>();
         backendToGatewayMessageProcessor = new BackendToGatewayMessageProcessor();
         backendToGatewayMessageProcessor.setCreateSubmissionRejectionAndReturnItService(createSubmissionRejectionAndReturnItService);
-        backendToGatewayMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
+//        backendToGatewayMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
         backendToGatewayMessageProcessor.setGwSubmissionService(gwSubmissionService);
         backendToGatewayMessageProcessor.setMessagePersistenceService(messagePersistenceService);
         backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);

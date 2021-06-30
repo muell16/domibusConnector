@@ -192,11 +192,10 @@ public class ConnectorMessageFlowITCase {
                     .isEqualTo(testMessage.getMessageDetails().getConversationId());
             assertThat(relayRemmdEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(testMessage.getMessageDetails().getToParty());
+                    .isEqualToIgnoringGivenFields(testMessage.getMessageDetails().getToParty(), "roleType", "dbKey");
             assertThat(relayRemmdEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(testMessage.getMessageDetails().getFromParty());
-            
+                    .isEqualToIgnoringGivenFields(testMessage.getMessageDetails().getFromParty(), "roleType", "dbKey");
 
 
             //message status confirmed

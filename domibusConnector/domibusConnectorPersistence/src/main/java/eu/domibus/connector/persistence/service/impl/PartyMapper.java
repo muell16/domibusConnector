@@ -16,7 +16,7 @@ public class PartyMapper {
                     persistenceParty.getPartyIdType(),
                     persistenceParty.getRole()
             );
-            p.setPartyName(persistenceParty.getPmodePartyIdentifier());
+            p.setRoleType(persistenceParty.getRoleType());
             p.setDbKey(persistenceParty.getId());
             return p;
         }
@@ -30,7 +30,7 @@ public class PartyMapper {
             persistenceParty.setPartyId(party.getPartyId());
             persistenceParty.setPartyIdType(party.getPartyIdType());
             persistenceParty.setRole(party.getRole());
-            persistenceParty.setPmodePartyIdentifier(party.getPartyName());
+            persistenceParty.setRoleType(party.getRoleType());
             persistenceParty.setId(party.getDbKey());
             return persistenceParty;
         }

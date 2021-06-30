@@ -8,10 +8,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
  */
 public final class DomibusConnectorPartyBuilder {
 
+
     private String partyId;
 	private String partyIdType;
 	private String role;
-    
+	private DomibusConnectorParty.PartyRoleType roleType;
+
     public static DomibusConnectorPartyBuilder createBuilder() {
         return new DomibusConnectorPartyBuilder();
     }
@@ -32,6 +34,11 @@ public final class DomibusConnectorPartyBuilder {
         this.role = role;
         return this;
     }
+
+    public DomibusConnectorPartyBuilder setRoleType(DomibusConnectorParty.PartyRoleType role) {
+        this.roleType = role;
+        return this;
+    }
     
     public DomibusConnectorParty build() {
         if (partyId == null) {
@@ -47,6 +54,7 @@ public final class DomibusConnectorPartyBuilder {
         this.partyId = party.getPartyId();
         this.partyIdType = party.getPartyIdType();
         this.role = party.getRole();
+        this.roleType = party.getRoleType();
         return this;
     }
         

@@ -61,7 +61,7 @@ public class BackendToGatewayConfirmationProcessorTest {
         backendToGatewayConfirmationProcessor = new BackendToGatewayConfirmationProcessor();
 
         backendToGatewayConfirmationProcessor.setMessagePersistenceService(messagePersistenceService);
-        backendToGatewayConfirmationProcessor.setConfirmationMessageService(mockingProvider.getCreateConfirmationMessageBuilderFactory());
+//        backendToGatewayConfirmationProcessor.setConfirmationMessageService(mockingProvider.getCreateConfirmationMessageBuilderFactory());
 
         backendToGatewayConfirmationProcessor.setGwSubmissionService(gwSubmissionService);
         backendToGatewayConfirmationProcessor.setBackendDeliveryService(backendDeliveryService);
