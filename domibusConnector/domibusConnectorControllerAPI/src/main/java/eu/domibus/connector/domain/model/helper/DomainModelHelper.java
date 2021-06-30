@@ -44,8 +44,7 @@ public class DomainModelHelper {
      *  <ul>
      *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
      *      <li>the message must contain exact one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
-     *      <li>the confirmation must have only a confirmation type - the evidence must be null: {@link DomibusConnectorMessageConfirmation#getEvidence()} == null</li>
-     *  </ul>
+     *      <li>the confirmation must have only a confirmation type - the evidence must be empty or null: ArrayUtils.isEmpty({@link DomibusConnectorMessageConfirmation#getEvidence()})</li>     *  </ul>
      *
      * @param message - the message to check
      * @return true if it is a evidence trigger message

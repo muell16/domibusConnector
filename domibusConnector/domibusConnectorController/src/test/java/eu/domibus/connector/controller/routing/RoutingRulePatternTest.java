@@ -53,10 +53,10 @@ public class RoutingRulePatternTest {
     @Test
     void matchesServiceName_withAnd() {
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
+        DomibusConnectorService service = new DomibusConnectorService("serviceName", "s:ervice-Type");
         epoMessage.getMessageDetails().setService(service);
 
-        RoutingRulePattern pattern = new RoutingRulePattern("&(equals(ServiceName, 'serviceName'),equals(ServiceName, 'serviceName'))");
+        RoutingRulePattern pattern = new RoutingRulePattern("&(equals(ServiceName, 'serviceName'),equals(ServiceType, 's:ervice-Type'))");
         assertThat(pattern.matches(epoMessage)).isTrue();
     }
 

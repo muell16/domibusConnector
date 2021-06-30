@@ -18,9 +18,11 @@ import javax.validation.constraints.NotNull;
  *
  *
  */
-@ConfigurationProperties(prefix="connector.test")
+@ConfigurationProperties(prefix=ConnectorTestConfigurationProperties.PREFIX)
 @Component
 public class ConnectorTestConfigurationProperties {
+
+    public static final String PREFIX = "connector.test";
 
     private boolean enabled = true;
 

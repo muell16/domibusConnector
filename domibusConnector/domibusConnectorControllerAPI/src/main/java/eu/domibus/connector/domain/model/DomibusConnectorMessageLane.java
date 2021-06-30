@@ -79,6 +79,11 @@ public class DomibusConnectorMessageLane {
         public void setMessageLaneId(String messageLaneId) {
             this.messageLaneId = messageLaneId;
         }
+
+        @Override
+        public String toString() {
+            return String.format("MessageLaneId: [%s]", this.messageLaneId);
+        }
     }
 
 }
