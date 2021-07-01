@@ -207,6 +207,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
             LOGGER.debug("Found no Parties which match Party [{}] in MessageLane [{}]", searchParty, lane);
             return Optional.empty();
         }
+        LOGGER.debug("Found party [{}] for search party [{}]", foundParties.get(0), searchParty);
         return Optional.of(foundParties.get(0));
     }
 

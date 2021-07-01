@@ -241,26 +241,28 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
          */
         public ConfirmationMessageBuilder switchFromToParty() {
             DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
-            LOGGER.debug("[{}]: switching fromParty with toParty in messageDetails", this);
+            LOGGER.debug("[{}]: switching fromParty [{}] with toParty [{}] in messageDetails", this, details.getFromParty(), details.getToParty());
             DomibusConnectorParty fromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
             DomibusConnectorParty toParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
 
 
-            fromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+            fromParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
             fromParty.setRole(null);
             Optional<DomibusConnectorParty> lookedUpFromParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, fromParty);
             if (!lookedUpFromParty.isPresent()) {
                 throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role INITIATOR", fromParty));
             }
             details.setToParty(lookedUpFromParty.get());
+            LOGGER.debug("To party is: [{}]", lookedUpFromParty.get());
 
-            toParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+            toParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
             toParty.setRole(null);
             Optional<DomibusConnectorParty> lookedUpToParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, toParty);
             if (!lookedUpToParty.isPresent()) {
                 throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role RESPONDER", toParty));
             }
             details.setFromParty(lookedUpToParty.get());
+            LOGGER.debug("From party is: [{}]", lookedUpToParty.get());
 
             return this;
         }

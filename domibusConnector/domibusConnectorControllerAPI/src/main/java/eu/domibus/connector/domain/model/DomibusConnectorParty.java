@@ -16,20 +16,14 @@ public class DomibusConnectorParty implements Serializable {
 	public static enum PartyRoleType {
 		INITIATOR("initiator"), RESPONDER("responder");
 
-
 		private PartyRoleType(String dbName) {
 			this.dbName = dbName;
 		}
 
 		String dbName;
-		int priority;
 
 		public String getDbName() {
 			return dbName;
-		}
-
-		public int getPriority() {
-			return priority;
 		}
 
 		public static PartyRoleType ofDbName(String dbName) {
@@ -44,11 +38,9 @@ public class DomibusConnectorParty implements Serializable {
 					.toString();
 		}
 
-
 	}
 
 	private Long dbKey;
-//	private String partyName;
 
 	private String partyId;
 	private String partyIdType;
@@ -81,14 +73,6 @@ public class DomibusConnectorParty implements Serializable {
 	public void setDbKey(Long dbKey) {
 		this.dbKey = dbKey;
 	}
-
-//	public String getPartyName() {
-//		return partyName;
-//	}
-//
-//	public void setPartyName(String partyName) {
-//		this.partyName = partyName;
-//	}
 
 	public String getPartyId(){
 		return this.partyId;

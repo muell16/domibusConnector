@@ -231,3 +231,11 @@ because its loading ALL messages from DB
 ==== Changes
 
 * Fix for Locking Problem which might occur on Mysql DBs under load
+
+
+=== 4.2.11
+
+==== Changes
+
+* Fix problem when using different Roles for Initiator and Responder within P-Modes => After the Upgrade the p-Modes must be reimported!
+* Fix problem with message reporting including evidences and case sensitive databases (eg. MySQL) (DOMIBUS_CONNECTOR_MESSAGE_info corrected to DOMIBUS_CONNECTOR_MESSAGE_INFO)
