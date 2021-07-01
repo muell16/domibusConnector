@@ -86,6 +86,23 @@ public class WebPModeServiceTest {
     }
 
     @Test
+    void importPModesSet3() throws IOException {
+        assertThat(webPModeService).isNotNull();
+
+        Resource resource = new ClassPathResource("pmodes/example-pmodes-3.xml");
+        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
+
+        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+
+        assertThat(webPModeService.getPartyList())
+                .as("example pmodes contains 12 parties")
+                .hasSize(34);
+
+        //TODO: also check party attributes within DB!
+
+    }
+
+    @Test
     void importPModesTwice() throws IOException {
         assertThat(webPModeService).isNotNull();
 

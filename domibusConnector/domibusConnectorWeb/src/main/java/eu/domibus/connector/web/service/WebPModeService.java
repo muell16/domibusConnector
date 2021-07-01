@@ -204,12 +204,12 @@ public class WebPModeService {
 										.getInitiatorParties()
 										.getInitiatorParty()
 										.stream()
-										.map(initiatorParty -> this.createParty(partyIdTypes, parties, roles.get(process.getInitiatorRole()), initiatorParty.getName())),
+										.map(initiatorParty -> this.createParty(partyIdTypes, parties, roles.get(process.getInitiatorRole()), initiatorParty.getName(), DomibusConnectorParty.PartyRoleType.INITIATOR)),
 								process.
 										getResponderParties().
 										getResponderParty().
 										stream().
-										map(responderParty -> this.createParty(partyIdTypes, parties, roles.get(process.getResponderRole()), responderParty.getName()))
+										map(responderParty -> this.createParty(partyIdTypes, parties, roles.get(process.getResponderRole()), responderParty.getName(), DomibusConnectorParty.PartyRoleType.RESPONDER))
 						).flatMap(Function.identity())
 				).flatMap(Function.identity())
 				.flatMap(Function.identity())
@@ -221,16 +221,17 @@ public class WebPModeService {
 
 
 	private Stream<DomibusConnectorParty> createParty(Map<String, PartyIdType> partyIdTypes, Map<String, Configuration.BusinessProcesses.Parties.Party> parties,
-													  Role role, String partyName) {
+													  Role role, String partyName, DomibusConnectorParty.PartyRoleType roleType) {
 
 		return parties.get(partyName)
 				.getIdentifier()
 				.stream()
 				.map(identifier -> {
 					DomibusConnectorParty p = new DomibusConnectorParty();
-					p.setPartyName(partyName);
+//					p.setPartyName(partyName);
 					p.setRole(role.getValue());
 					p.setPartyId(identifier.getPartyId());
+					p.setRoleType(roleType);
 					String partyIdTypeValue = partyIdTypes.get(identifier.getPartyIdType()).getValue();
 					p.setPartyIdType(partyIdTypeValue);
 					return p;

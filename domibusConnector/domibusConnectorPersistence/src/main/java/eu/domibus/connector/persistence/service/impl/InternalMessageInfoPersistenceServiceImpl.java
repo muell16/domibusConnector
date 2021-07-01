@@ -105,12 +105,18 @@ public class InternalMessageInfoPersistenceServiceImpl {
         messageInfo.setService(dbServiceFound.get());
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
+        if (dbFromParty.getRoleType() == null) {
+            dbFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        }
         Optional<PDomibusConnectorParty> dbFromPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbFromParty);
         checkNull(dbFromParty, dbFromPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbFromParty));
         messageInfo.setFrom(dbFromPartyFound.get());
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
+        if (dbToParty.getRoleType() == null) {
+            dbToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        }
         Optional<PDomibusConnectorParty> dbToPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbToParty);
         checkNull(dbToParty, dbToPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbToParty));

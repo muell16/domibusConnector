@@ -12,6 +12,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.DomibusConnectorPModePersistenceService;
 import eu.domibus.connector.testutil.logger.ListAppender;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.core.Logger;
@@ -50,6 +51,8 @@ class CheckEvidencesTimeoutProcessorImplTest {
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     @Mock
     private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    @Mock
+    private DomibusConnectorPModePersistenceService pModePersistenceService;
 
 
 
@@ -97,11 +100,11 @@ class CheckEvidencesTimeoutProcessorImplTest {
             .thenReturn(new EvidenceActionServiceConfigurationProperties());
 
 
-        CreateConfirmationMessageBuilderFactoryImpl confirmationMessageFactory = new CreateConfirmationMessageBuilderFactoryImpl();
-        confirmationMessageFactory.setEvidencePersistenceService(evidencePersistenceService);
-        confirmationMessageFactory.setEvidencesToolkit(evidencesToolkit);
-        confirmationMessageFactory.setMessageIdGenerator( () -> UUID.randomUUID().toString());
-        confirmationMessageFactory.setConfigurationPropertyLoaderService(configurationPropertyLoaderService);
+        CreateConfirmationMessageBuilderFactoryImpl confirmationMessageFactory = new CreateConfirmationMessageBuilderFactoryImpl(evidencesToolkit, evidencePersistenceService, () -> UUID.randomUUID().toString(), configurationPropertyLoaderService, pModePersistenceService);
+//        confirmationMessageFactory.setEvidencePersistenceService(evidencePersistenceService);
+//        confirmationMessageFactory.setEvidencesToolkit(evidencesToolkit);
+//        confirmationMessageFactory.setMessageIdGenerator( () -> UUID.randomUUID().toString());
+//        confirmationMessageFactory.setConfigurationPropertyLoaderService(configurationPropertyLoaderService);
         confirmationMessageBuilderFactory = confirmationMessageFactory;
 
         checkEvidencesTimeoutProcessor = new CheckEvidencesTimeoutProcessorImpl();
