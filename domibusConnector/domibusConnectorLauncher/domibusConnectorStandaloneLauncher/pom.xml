@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorLauncher</artifactId>
-        <version>4.2.10</version>
+        <version>4.2.11</version>
     </parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorStandaloneLauncher</artifactId>
