@@ -7,9 +7,9 @@ import java.util.Optional;
 
 /**
  * This service offers access to the current p mode configuration
- *  of an message lane
+ *  of a message lane
  *  and also provides methods to change the current p-mode set
- *  of an message lane
+ *  of a message lane
  */
 public interface DomibusConnectorPModeService {
 

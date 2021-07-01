@@ -1,11 +1,12 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageLaneDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
-import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
-import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,20 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.dao.DomibusConnectorMessageLaneDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPModeSet;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
+import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 
 @Service
 public class DomibusConnectorPModePersistenceService implements DomibusConnectorPModeService {
@@ -129,6 +138,9 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchParty.getRole() != null) {
                         result = result && searchParty.getRole().equals(party.getRole());
                     }
+                    if (result && searchParty.getRoleType() != null) {
+                        result = result && searchParty.getRoleType().equals(party.getRoleType());
+                    }
                     if (result && searchParty.getPartyIdType() != null) {
                         result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
                     }
@@ -179,22 +191,22 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     }
 
-    private List<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
+    private Set<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
         return parties.stream()
                 .map(PartyMapper::mapPartyToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
+    private Set<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
         return services.stream()
                 .map(ServiceMapper::mapServiceToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
+    private Set<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
         return actions.stream()
                 .map(ActionMapper::mapActionToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 
