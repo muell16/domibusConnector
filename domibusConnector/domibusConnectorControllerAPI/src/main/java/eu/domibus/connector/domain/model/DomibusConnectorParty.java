@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;
+import java.util.stream.Stream;
 
 
 /**
@@ -10,12 +11,44 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorParty implements Serializable {
 
+	public static enum PartyRoleType {
+		INITIATOR("initiator"), RESPONDER("responder");
+		
+		
+		private PartyRoleType(String dbName) {
+			this.dbName = dbName;
+		}
+		
+		String dbName;
+		
+		public String getDbName() {
+			return dbName;
+		}
+		
+		
+		public static PartyRoleType ofDbName(String dbName) {
+			return Stream.of(PartyRoleType.values())
+					.filter(l -> l.dbName.equalsIgnoreCase(dbName))
+					.findFirst().orElse(null);
+		}
+		
+		public String toString() {
+			return new ToStringCreator(this)
+					.append("name", this.name())
+					.toString();
+		}
+		
+		
+	}
+	
 	private Long dbKey;
 	private String partyName;
 
 	private String partyId;
 	private String partyIdType;
 	private String role;
+	private PartyRoleType roleType;
+	
 
 
 	/**
@@ -34,6 +67,32 @@ public class DomibusConnectorParty implements Serializable {
 	   this.partyId = partyId;
 	   this.partyIdType = partyIdType;
 	   this.role = role;
+	}
+	
+	/**
+	 * DomibusConnectorMessageDocument
+	 * @param partyId partyId
+	 * @param partyIdType partyIdType
+	 * @param roleType    roleType
+	 */
+	public DomibusConnectorParty(final String partyId, final String partyIdType, final PartyRoleType roleType){
+	   this.partyId = partyId;
+	   this.partyIdType = partyIdType;
+	   this.roleType = roleType;
+	}
+	
+	/**
+	 * DomibusConnectorMessageDocument
+	 * @param partyId partyId
+	 * @param partyIdType partyIdType
+	 * @param role    role
+	 * @param roleType    roleType
+	 */
+	public DomibusConnectorParty(final String partyId, final String partyIdType, final String role, final PartyRoleType roleType){
+	   this.partyId = partyId;
+	   this.partyIdType = partyIdType;
+	   this.role = role;
+	   this.roleType = roleType;
 	}
 
 	public Long getDbKey() {
@@ -76,12 +135,21 @@ public class DomibusConnectorParty implements Serializable {
 		this.role = role;
 	}
 
+	public PartyRoleType getRoleType() {
+		return roleType;
+	}
+
+	public void setRoleType(PartyRoleType roleType) {
+		this.roleType = roleType;
+	}
+
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("partyId", this.partyId);
 		builder.append("partyIdType", this.partyIdType);
         builder.append("role", this.role);
+        builder.append("roleType", this.roleType);
         return builder.toString();        
     }
 
@@ -94,6 +162,7 @@ public class DomibusConnectorParty implements Serializable {
 
 		if (partyId != null ? !partyId.equals(that.partyId) : that.partyId != null) return false;
 		if (partyIdType != null ? !partyIdType.equals(that.partyIdType) : that.partyIdType != null) return false;
+		if (roleType != null ? !roleType.equals(that.roleType) : that.roleType != null) return false;
 		return role != null ? role.equals(that.role) : that.role == null;
 	}
 
@@ -102,6 +171,7 @@ public class DomibusConnectorParty implements Serializable {
 		int result = partyId != null ? partyId.hashCode() : 0;
 		result = 31 * result + (partyIdType != null ? partyIdType.hashCode() : 0);
 		result = 31 * result + (role != null ? role.hashCode() : 0);
+		result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
 		return result;
 	}
 }

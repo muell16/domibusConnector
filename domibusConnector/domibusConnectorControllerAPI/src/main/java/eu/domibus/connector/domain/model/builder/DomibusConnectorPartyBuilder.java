@@ -12,6 +12,8 @@ public final class DomibusConnectorPartyBuilder {
 	private String partyIdType;
 	private String role;
     
+	private DomibusConnectorParty.PartyRoleType roleType;
+	
     public static DomibusConnectorPartyBuilder createBuilder() {
         return new DomibusConnectorPartyBuilder();
     }
@@ -33,6 +35,11 @@ public final class DomibusConnectorPartyBuilder {
         return this;
     }
     
+    public DomibusConnectorPartyBuilder setRoleType(DomibusConnectorParty.PartyRoleType role) {
+        this.roleType = role;
+        return this;
+    }
+    
     public DomibusConnectorParty build() {
         if (partyId == null) {
             throw new IllegalArgumentException("PartyId is not allowed to be null!");
@@ -40,13 +47,14 @@ public final class DomibusConnectorPartyBuilder {
         if (role == null) {
             throw new IllegalArgumentException("Role is not allowed to be null!");
         }
-        return new DomibusConnectorParty(partyId, partyIdType, role);
+        return new DomibusConnectorParty(partyId, partyIdType, role, roleType);
     }
 
     public DomibusConnectorPartyBuilder copyPropertiesFrom(DomibusConnectorParty party) {
         this.partyId = party.getPartyId();
         this.partyIdType = party.getPartyIdType();
         this.role = party.getRole();
+        this.roleType = party.getRoleType();
         return this;
     }
         

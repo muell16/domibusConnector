@@ -2,7 +2,7 @@ package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import eu.domibus.connector.persistence.model.enums.EbmsRoleType;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 
 import javax.persistence.*;
 
@@ -38,8 +38,8 @@ public class PDomibusConnectorParty {
     private String partyIdType;
     
     @Column(name = "ROLE_TYPE")
-    @Enumerated(EnumType.STRING)
-    private EbmsRoleType roleType;
+//    @Enumerated(EnumType.STRING)
+    private DomibusConnectorParty.PartyRoleType roleType;
 
     @ManyToOne
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
@@ -93,13 +93,13 @@ public class PDomibusConnectorParty {
         this.partyIdType = partyIdType;
     }
 
-    public EbmsRoleType getRoleType() {
-		return roleType;
-	}
+    public DomibusConnectorParty.PartyRoleType getRoleType() {
+        return roleType;
+    }
 
-	public void setRoleType(EbmsRoleType roleType) {
-		this.roleType = roleType;
-	}
+    public void setRoleType(DomibusConnectorParty.PartyRoleType roleType) {
+        this.roleType = roleType;
+    }
 
 	@Override
     public String toString() {

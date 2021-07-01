@@ -63,8 +63,8 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
 
         assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 12 parties")
-                .hasSize(12);
+                .as("example pmodes contains 24 parties")
+                .hasSize(24);
 
     }
 
@@ -78,8 +78,8 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
 
         assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 12 parties")
-                .hasSize(44);
+                .as("example pmodes contains 88 parties")
+                .hasSize(88);
 
         //TODO: also check party attributes within DB!
 
@@ -97,8 +97,8 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
 
         assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 12 parties")
-                .hasSize(12);
+                .as("example pmodes contains 24 parties")
+                .hasSize(24);
 
     }
 }
