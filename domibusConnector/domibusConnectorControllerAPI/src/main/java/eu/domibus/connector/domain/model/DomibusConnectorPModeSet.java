@@ -13,6 +13,8 @@ public class DomibusConnectorPModeSet {
     private List<DomibusConnectorParty> parties = new ArrayList<>();
     private List<DomibusConnectorAction> actions = new ArrayList<>();
     private List<DomibusConnectorService> services = new ArrayList<>();
+    
+    private String connectorstoreUUID;
 
 
     public List<DomibusConnectorParty> getParties() {
@@ -62,4 +64,12 @@ public class DomibusConnectorPModeSet {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+	public String getConnectorstoreUUID() {
+		return connectorstoreUUID;
+	}
+
+	public void setConnectorstoreUUID(String connectorstoreUUID) {
+		this.connectorstoreUUID = connectorstoreUUID;
+	}
 }

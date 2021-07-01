@@ -1,10 +1,26 @@
 package eu.domibus.connector.persistence.model;
 
-import javax.persistence.*;
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 
 @Entity
@@ -37,15 +53,18 @@ public class PDomibusConnectorPModeSet {
 
     @Column(name = "ACTIVE")
     private boolean active;
+    
+    @Column(name = "PMODES")
+    private Blob pmodes;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
-    private List<PDomibusConnectorParty> parties = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet", fetch = FetchType.EAGER)
+    private Set<PDomibusConnectorParty> parties = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
-    private List<PDomibusConnectorAction> actions = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet", fetch = FetchType.EAGER)
+    private Set<PDomibusConnectorAction> actions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
-    private List<PDomibusConnectorService> services = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet", fetch = FetchType.EAGER)
+    private Set<PDomibusConnectorService> services = new HashSet<>();
 
     public PDomibusConnectorMessageLane getMessageLane() {
         return messageLane;
@@ -87,27 +106,27 @@ public class PDomibusConnectorPModeSet {
         this.created = created;
     }
 
-    public List<PDomibusConnectorParty> getParties() {
+    public Set<PDomibusConnectorParty> getParties() {
         return parties;
     }
 
-    public void setParties(List<PDomibusConnectorParty> parties) {
+    public void setParties(Set<PDomibusConnectorParty> parties) {
         this.parties = parties;
     }
 
-    public List<PDomibusConnectorAction> getActions() {
+    public Set<PDomibusConnectorAction> getActions() {
         return actions;
     }
 
-    public void setActions(List<PDomibusConnectorAction> actions) {
+    public void setActions(Set<PDomibusConnectorAction> actions) {
         this.actions = actions;
     }
 
-    public List<PDomibusConnectorService> getServices() {
+    public Set<PDomibusConnectorService> getServices() {
         return services;
     }
 
-    public void setServices(List<PDomibusConnectorService> services) {
+    public void setServices(Set<PDomibusConnectorService> services) {
         this.services = services;
     }
 
@@ -118,5 +137,13 @@ public class PDomibusConnectorPModeSet {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+	public Blob getPmodes() {
+		return pmodes;
+	}
+
+	public void setPmodes(Blob pmodes) {
+		this.pmodes = pmodes;
+	}
 }
 

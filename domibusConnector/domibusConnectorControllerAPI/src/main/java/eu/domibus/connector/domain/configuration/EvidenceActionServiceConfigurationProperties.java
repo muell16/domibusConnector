@@ -125,6 +125,10 @@ public class EvidenceActionServiceConfigurationProperties {
             this.name = name;
             this.serviceType = serviceType;
         }
+        
+        public AS4Service(String name) {
+            this.name = name;
+        }
 
         public String getName() {
             return name;

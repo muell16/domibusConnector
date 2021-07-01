@@ -18,6 +18,8 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.web.view.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import io.micrometer.core.instrument.util.StringUtils;
+
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,12 +206,12 @@ public class WebPModeService {
 										.getInitiatorParties()
 										.getInitiatorParty()
 										.stream()
-										.map(initiatorParty -> this.createParty(partyIdTypes, parties, roles.get(process.getInitiatorRole()), initiatorParty.getName())),
+										.map(initiatorParty -> this.createParty(partyIdTypes, parties, roles.get(process.getInitiatorRole()), initiatorParty.getName(), DomibusConnectorParty.PartyRoleType.INITIATOR)),
 								process.
 										getResponderParties().
 										getResponderParty().
 										stream().
-										map(responderParty -> this.createParty(partyIdTypes, parties, roles.get(process.getResponderRole()), responderParty.getName()))
+										map(responderParty -> this.createParty(partyIdTypes, parties, roles.get(process.getResponderRole()), responderParty.getName(), DomibusConnectorParty.PartyRoleType.RESPONDER))
 						).flatMap(Function.identity())
 				).flatMap(Function.identity())
 				.flatMap(Function.identity())
@@ -221,7 +223,7 @@ public class WebPModeService {
 
 
 	private Stream<DomibusConnectorParty> createParty(Map<String, PartyIdType> partyIdTypes, Map<String, Configuration.BusinessProcesses.Parties.Party> parties,
-													  Role role, String partyName) {
+													  Role role, String partyName, DomibusConnectorParty.PartyRoleType roleType) {
 
 		return parties.get(partyName)
 				.getIdentifier()
@@ -231,6 +233,7 @@ public class WebPModeService {
 					p.setPartyName(partyName);
 					p.setRole(role.getValue());
 					p.setPartyId(identifier.getPartyId());
+					p.setRoleType(roleType);
 					String partyIdTypeValue = partyIdTypes.get(identifier.getPartyIdType()).getValue();
 					p.setPartyIdType(partyIdTypeValue);
 					return p;
@@ -402,6 +405,19 @@ public class WebPModeService {
 			set.setMessageLaneId(laneId);
 			return set;
 		});
+	}
+
+	public boolean importPModes(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd) {
+		
+		if(pmodeFile!=null && pmodeFile.length > 1 && connectorstore!=null && connectorstore.length > 1 && !StringUtils.isEmpty(description)) {
+			LOGGER.debug("pmodeFile length:        {}", pmodeFile.length);
+			LOGGER.debug("PMode-Set description:   {}", description);
+			LOGGER.debug("connectorstore lenght:   {}", connectorstore.length);
+			LOGGER.debug("connectorstore password: {}", connectorStorePwd);
+			return true;
+		}
+		
+		return false;
 	}
 
 
