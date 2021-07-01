@@ -29,7 +29,7 @@ public class DomibusConnectorEnvironmentConfiguration extends EnvironmentConfigu
 		CertificateStoreInfo trustedCertificates = new CertificateStoreInfo();
         StoreConfigurationProperties trustStore = securityToolkitConfigurationProperties.getTruststore();
         if (trustStore != null && trustStore.getPath() != null) {
-            trustedCertificates.setLocation(trustStore.getPath().getURL().toString());
+            trustedCertificates.setLocation(trustStore.getPath());
             trustedCertificates.setPassword(trustStore.getPassword());
             setConnectorCertificates(trustedCertificates);
             LOGGER.info("Setting trusted certificates trustStore to: [{}]", trustStore.getPath().getURL().toString());

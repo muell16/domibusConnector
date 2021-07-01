@@ -14,6 +14,7 @@ import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.ecodex.dss.util.ECodexDataLoader;
 
+import eu.europa.esig.dss.x509.CommonTrustedCertificateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,14 +44,14 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 	@Autowired
 	SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
 
-	@Value("${security.lotl.scheme.uri:null}")
-	String lotlSchemeUri;
-
-	@Value("${security.lotl.url:null}")
-	String lotlUrl;
-
-	@Value("${security.oj.url:null}")
-	String ojUrl;
+//	@Value("${security.lotl.scheme.uri:null}")
+//	String lotlSchemeUri;
+//
+//	@Value("${security.lotl.url:null}")
+//	String lotlUrl;
+//
+//	@Value("${security.oj.url:null}")
+//	String ojUrl;
 
 	@Autowired
 	DomibusConnectorProxyConfig proxyPreferenceManager;
@@ -62,34 +63,38 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (!securityToolkitConfigurationProperties.getKeyStore().getPath().exists()) {
-			createStore(securityToolkitConfigurationProperties.getKeyStore().getPath());
-		}
+//		if (!securityToolkitConfigurationProperties.getKeyStore().getPath().exists()) {
+//			createStore(securityToolkitConfigurationProperties.getKeyStore().getPath());
+//		}
 
-		TrustedListsCertificateSource certSource = new TrustedListsCertificateSource();
+//		TrustedListsCertificateSource certSource = new TrustedListsCertificateSource();
 		OnlineCRLSource crlSource = new OnlineCRLSource();
 		OnlineOCSPSource ocspSource = new OnlineOCSPSource();
 		ECodexDataLoader normalLoader = new ECodexDataLoader();
 		normalLoader.setAllowLDAP(false);
 		normalLoader.setProxyConfig(proxyPreferenceManager);
 
-		TSLRepository tslRepository = new TSLRepository();
-		tslRepository.setTrustedListsCertificateSource(certSource);
+		//completely ignore TSL
+//		TSLRepository tslRepository = new TSLRepository();
+//		tslRepository.setTrustedListsCertificateSource(certSource);
 
 		KeyStoreCertificateSource keyStoreCertificateSource = null;
-		InputStream res = securityToolkitConfigurationProperties.getKeyStore().getPath().getInputStream();
-		keyStoreCertificateSource = new KeyStoreCertificateSource(res, "JKS", securityToolkitConfigurationProperties.getKeyStore().getPassword());
+		InputStream res = securityToolkitConfigurationProperties.getTrustStore().getPath().getInputStream();
+		keyStoreCertificateSource = new KeyStoreCertificateSource(res, "JKS", securityToolkitConfigurationProperties.getTrustStore().getPassword());
 
-		TSLValidationJob job = new TSLValidationJob();
-		job.setDataLoader(normalLoader);
-		job.setLotlRootSchemeInfoUri(lotlSchemeUri);
-		job.setLotlUrl(lotlUrl);
-		job.setOjContentKeyStore(keyStoreCertificateSource);
-		job.setOjUrl(ojUrl);
-		job.setLotlCode("EU");
-		job.setRepository(tslRepository);
-		//job.refresh();
-		job.initRepository();
+		CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
+		trustedCertSource.importAsTrusted(keyStoreCertificateSource);
+
+//		TSLValidationJob job = new TSLValidationJob();
+//		job.setDataLoader(normalLoader);
+//		job.setLotlRootSchemeInfoUri(lotlSchemeUri);
+//		job.setLotlUrl(lotlUrl);
+////		job.setOjContentKeyStore(keyStoreCertificateSource);
+//		job.setOjUrl(ojUrl);
+//		job.setLotlCode("EU");
+//		job.setRepository(tslRepository);
+////		job.refresh();
+//		job.initRepository();
 
 		crlSource.setDataLoader(normalLoader);
 
@@ -99,28 +104,28 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 
 		ocspSource.setDataLoader(ocspDataLoader);
 
-		setTrustedCertSource(certSource);
+		setTrustedCertSource(trustedCertSource);
 		setCrlSource(crlSource);
 		setOcspSource(ocspSource);
 
 	}
 
-	private void createStore(org.springframework.core.io.Resource resource) {
-        String file = resource.getFilename();
-	    try (FileOutputStream fos = new FileOutputStream(file)){
-            KeyStore ks = KeyStore.getInstance("JKS");
-            LOGGER.debug("Creating key store with file [{}] and password [{}]", file, 
-                    securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
-            ks.store(fos, securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());            
-        } catch (IOException ioe) {
-	        LOGGER.error("Cannot create java key store with resource: [{}]", resource);
-        } catch (KeyStoreException e) {
-            LOGGER.error("Cannot create java key store", e);
-        } catch (CertificateException e) {
-            LOGGER.error("Cannot create java key store", e);
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Cannot create java key store", e);
-        }
-    }
+//	private void createStore(org.springframework.core.io.Resource resource) {
+//        String file = resource.getFilename();
+//	    try (FileOutputStream fos = new FileOutputStream(file)){
+//            KeyStore ks = KeyStore.getInstance("JKS");
+//            LOGGER.debug("Creating key store with file [{}] and password [{}]", file,
+//                    securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
+//            ks.store(fos, securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
+//        } catch (IOException ioe) {
+//	        LOGGER.error("Cannot create java key store with resource: [{}]", resource);
+//        } catch (KeyStoreException e) {
+//            LOGGER.error("Cannot create java key store", e);
+//        } catch (CertificateException e) {
+//            LOGGER.error("Cannot create java key store", e);
+//        } catch (NoSuchAlgorithmException e) {
+//            LOGGER.error("Cannot create java key store", e);
+//        }
+//    }
 
 }

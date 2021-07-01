@@ -23,8 +23,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
@@ -53,9 +51,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Disabled("Is used as template") //there is currently no other smoth way to run a
 // spring test with different environments/settings via junit5 test-templates, extension,...
 // so inheritance is used
-public class ECodexContainerFactoryServiceITCase {
+public class ECodexContainerFactoryServiceITCaseTemplate {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCase.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCaseTemplate.class);
     public static final String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private static File TEST_RESULTS_FOLDER;
 

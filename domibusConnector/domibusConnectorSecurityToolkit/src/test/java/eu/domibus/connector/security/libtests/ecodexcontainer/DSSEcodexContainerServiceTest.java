@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -67,7 +68,7 @@ public class DSSEcodexContainerServiceTest {
         
 
         CertificateStoreInfo certStore = new CertificateStoreInfo();
-        certStore.setLocation("file:src/test/resources/keys/connector-keystore.jks");
+        certStore.setLocation(new ClassPathResource("/keys/connector-keystore.jks"));
         certStore.setPassword("connector");
         String keyAlias = "domibusConnector";
         String keyPassword = "connector";
