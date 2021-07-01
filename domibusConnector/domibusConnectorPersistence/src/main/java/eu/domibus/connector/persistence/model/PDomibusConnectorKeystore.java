@@ -42,9 +42,6 @@ public class PDomibusConnectorKeystore {
 
 	@Column(name = "PASSWORD")
 	private String password;
-
-	@Column(name = "PW_SALT")
-	private String pwSalt;
 	
 	@Column(name="UPLOADED")
     private Date uploaded;
@@ -84,14 +81,6 @@ public class PDomibusConnectorKeystore {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getPwSalt() {
-		return pwSalt;
-	}
-
-	public void setPwSalt(String pwSalt) {
-		this.pwSalt = pwSalt;
 	}
 
 	public Date getUploaded() {

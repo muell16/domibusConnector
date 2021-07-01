@@ -10,7 +10,6 @@ CREATE TABLE DC_KEYSTORE
 	UUID varchar(255) NOT NULL,
 	KEYSTORE bytea NOT NULL,
 	PASSWORD varchar(1024),
-	PW_SALT varchar(512),
 	UPLOADED timestamp without time zone NOT NULL,
 	DESCRIPTION varchar(512),
 	TYPE varchar(50)
