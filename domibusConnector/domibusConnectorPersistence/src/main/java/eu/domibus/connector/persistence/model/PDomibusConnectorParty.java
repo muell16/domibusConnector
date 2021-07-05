@@ -92,6 +92,7 @@ public class PDomibusConnectorParty {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", partyId);
         toString.append("role", role);
+        toString.append("roleType", roleType);
         toString.append("idType", partyIdType);
         return toString.build();
     }
