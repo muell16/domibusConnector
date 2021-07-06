@@ -188,14 +188,14 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchParty.getPartyId() != null) {
                         result = result && searchParty.getPartyId().equals(party.getPartyId());
                     }
+                    if (result && searchParty.getPartyIdType() != null) {
+                        result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
+                    }
                     if (result && searchParty.getRole() != null) {
                         result = result && searchParty.getRole().equals(party.getRole());
                     }
                     if (result && searchParty.getRoleType() != null) {
                         result = result && searchParty.getRoleType().equals(party.getRoleType());
-                    }
-                    if (result && searchParty.getPartyIdType() != null) {
-                        result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
                     }
                     return result;
 
