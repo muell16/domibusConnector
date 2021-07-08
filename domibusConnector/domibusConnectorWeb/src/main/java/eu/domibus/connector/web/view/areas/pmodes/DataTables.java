@@ -121,6 +121,7 @@ public class DataTables extends VerticalLayout {
 		partyGrid.addColumn(DomibusConnectorParty::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getPartyIdType).setHeader("Party ID Type").setWidth("400px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Party Role").setWidth("350px").setSortable(true).setResizable(true);
+		partyGrid.addColumn(DomibusConnectorParty::getRoleType).setHeader("Party Role Type").setWidth("350px").setSortable(true).setResizable(true);
 		partyGrid.setItemDetailsRenderer(new ComponentRenderer<>(domibusConnectorParty -> {
 		    return editPartyLayout(domibusConnectorParty);}));
 		partyGrid.setWidth("1140px");
