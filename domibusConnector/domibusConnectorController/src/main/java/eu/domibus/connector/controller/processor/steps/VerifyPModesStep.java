@@ -48,6 +48,9 @@ public class VerifyPModesStep implements MessageProcessStep {
             throw new RuntimeException("error, service not configured!" + messageDetails.getService());
         }
 
+        if (messageDetails.getToParty().getRoleType() == null) {
+            messageDetails.getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        }
         Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getToParty());
         if (toParty.isPresent()) {
             messageDetails.setToParty(toParty.get());
@@ -57,9 +60,12 @@ public class VerifyPModesStep implements MessageProcessStep {
             throw new RuntimeException("error, party not configured:" + messageDetails.getToParty());
         }
 
+        if (messageDetails.getFromParty().getRoleType() == null) {
+            messageDetails.getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        }
         Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getFromParty());
         if (fromParty.isPresent()) {
-            messageDetails.setToParty(fromParty.get());
+            messageDetails.setFromParty(fromParty.get());
         } else {
             LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getFromParty());
             //TODO: improve exception

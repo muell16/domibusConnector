@@ -3,14 +3,18 @@
 --changeset connector:initialPersistenceTestdata_1
 ----------------------- Values for DOMIBUS_CONNECTOR_BACKEND_INFO ------------------------------
 
-INSERT INTO DOMIBUS_CONNECTOR_BACKEND_INFO (ID, BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_KEY_PASS, BACKEND_SERVICE_TYPE, BACKEND_DESCRIPTION, BACKEND_PUSH_ADDRESS)
-VALUES (1, 'bob', 'bob', '', 'EPO', 'a epo backend', null);
 
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES
-  (1, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+  (101, 1, 'domibus-blue', 'defaultResponder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
 
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES
-  (2, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET,  PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+  (102, 1, 'domibus-red', 'defaultResponder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET,  PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+(103, 1, 'domibus-blue', 'defaultInitiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET,  PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+(104, 1, 'domibus-red', 'defaultInitiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
 
 
 --changeset connector:initialPersistenceTestdataPmodes_2

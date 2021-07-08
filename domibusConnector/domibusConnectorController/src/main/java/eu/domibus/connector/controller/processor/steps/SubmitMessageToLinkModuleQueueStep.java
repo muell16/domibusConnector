@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.processor.steps;
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -50,10 +51,18 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
     public void submitMessageOpposite(DomibusConnectorMessage originalMessage, DomibusConnectorMessage message) {
         DomibusConnectorMessageDetails switchedDetails = DomainModelHelper.switchMessageDirection(originalMessage.getMessageDetails());
         DomibusConnectorMessageDetails msgDetails = message.getMessageDetails();
+        DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
 
         msgDetails.setDirection(switchedDetails.getDirection());
+
         msgDetails.setFromParty(switchedDetails.getFromParty());
+        msgDetails.getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        msgDetails.getFromParty().setRole(originalDetails.getFromParty().getRole());
+
         msgDetails.setToParty(switchedDetails.getToParty());
+        msgDetails.getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        msgDetails.getToParty().setRole(originalDetails.getToParty().getRole());
+
         msgDetails.setOriginalSender(switchedDetails.getOriginalSender());
         msgDetails.setFinalRecipient(switchedDetails.getFinalRecipient());
         LOGGER.debug("Message Direction attributes are changed to [{}]", msgDetails);

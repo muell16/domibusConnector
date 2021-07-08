@@ -8,7 +8,6 @@ import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperti
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
@@ -19,7 +18,6 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import liquibase.util.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -41,7 +39,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -878,6 +875,79 @@ public class ConnectorMessageFlowITCase {
         });
     }
 
+    /**
+     * Send message from Backend to GW
+     *
+     *   -) Backend must have received SUBMISSION_ACCEPTANCE
+     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     *
+     *  Test uses different roles for initiator and responder
+     *
+     */
+    @Test
+    public void sendMessageFromBackend_redToBlue(TestInfo testInfo) {
+        String EBMS_ID = null;
+        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName() + "conid1";
+        String BACKEND_MESSAGE_ID = testInfo.getDisplayName() + "_backend";
+        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
+            DomibusConnectorMessage submittedMessage = submitMessageRedToBlue(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
+
+            DomibusConnectorMessage toGwDelivered = toGwDeliveredMessages.take(); //wait until a message is put into queue
+
+            assertThat(toGwDelivered).as("Gw must RCV message").isNotNull();
+
+            assertThat(toGwDelivered.getTransportedMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
+            assertThat(toGwDelivered.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                    .as("evidence must be of type submission acceptance")
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+
+            //ASIC-S + token XML
+            assertThat(toGwDelivered.getMessageAttachments()).hasSize(2);
+            assertThat(toGwDelivered.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
+            assertThat(toGwDelivered.getMessageContent().getXmlContent()).isNotNull(); //business XML
+
+            assertThat(toGwDelivered.getMessageDetails().getFromParty())
+                    .as("Check that correct party is lookup up from p-modes")
+                    .isEqualToIgnoringNullFields(DomainEntityCreator.createPartyDomibusRed_defaultInitiatorRole());
+
+            assertThat(toGwDelivered.getMessageDetails().getToParty())
+                    .as("Check that correct party is lookup up from p-modes")
+                    .isEqualToIgnoringNullFields(DomainEntityCreator.createPartyDomibusBlue_defaultResponderRole());
+
+
+            //check sent message in DB
+            DomibusConnectorMessage loadedMsg = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            assertThat(loadedMsg.getMessageDetails().getEbmsMessageId()).isNotBlank();
+//            assertThat(loadedMsg.getTransportedMessageConfirmations()).hasSize(1);
+            assertThat(loadedMsg.getRelatedMessageConfirmations()).hasSize(1);
+
+
+            DomibusConnectorMessage toBackendEvidence = toBackendDeliveredMessages.take();
+            assertThat(toBackendEvidence).isNotNull();
+            DomibusConnectorMessageDetails toBackendEvidenceMsgDetails = toBackendEvidence.getMessageDetails();
+            assertThat(toBackendEvidence.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+            assertThat(toBackendEvidence.getTransportedMessageConfirmations().get(0).getEvidence())
+                    .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
+                    .hasSizeGreaterThan(100);
+
+            assertThat(toBackendEvidenceMsgDetails.getDirection())
+                    .as("Direction must be set!")
+                    .isNotNull();
+            assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
+                    .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
+                    .isEqualTo(BACKEND_MESSAGE_ID);
+            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+                    .as("Parties must be switched")
+                    .isEqualToIgnoringGivenFields(DomainEntityCreator.createPartyDomibusBlue_defaultInitiatorRole(), "roleType", "dbKey");
+
+            assertThat(toBackendEvidenceMsgDetails.getToParty())
+                    .as("Parties must be switched")
+                    .isEqualToIgnoringGivenFields(DomainEntityCreator.createPartyDomibusRed_defaultResponderRole(), "roleType", "dbKey");
+
+        });
+    }
+
 
     /**
      * Send message from Backend to GW with no BusinessContent (only business XML is provided!)
@@ -1374,6 +1444,30 @@ public class ConnectorMessageFlowITCase {
                         .withBackendMessageId(backendMessageId)
                         .withFromParty(DomainEntityCreator.createPartyAT())
                         .withToParty(DomainEntityCreator.createPartyDE())
+                        .withFinalRecipient("final")
+                        .withOriginalSender("original")
+                        .build()
+                ).build();
+
+        submitFromBackendToController(msg);
+        LOGGER.info("Message with id [{}] submitted", connectorMessageId);
+        return msg;
+    }
+
+    private DomibusConnectorMessage submitMessageRedToBlue(String ebmsId, String connectorMessageId, String backendMessageId) {
+        DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
+        DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
+                .setConnectorMessageId(connectorMessageId)
+                .setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId())
+                .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                        .create()
+                        .withEbmsMessageId(ebmsId)
+                        .withAction("action1")
+                        .withService("service1", "servicetype")
+                        .withConversationId("conv1")
+                        .withBackendMessageId(backendMessageId)
+                        .withFromParty(DomainEntityCreator.createPartyDomibusRed_partyIdOnly()) //use partyId only, the other attributes should be lookup up by the connector
+                        .withToParty(DomainEntityCreator.createPartyDomibusBlue_partyIdOnly())
                         .withFinalRecipient("final")
                         .withOriginalSender("original")
                         .build()

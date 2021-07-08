@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -24,7 +25,7 @@ public class PDomibusConnectorParty {
     private Long id;
 
     @Column(name = "IDENTIFIER")
-    private String pmodePartyIdentifier;
+    private DomibusConnectorParty.PartyRoleType roleType;
 
     @Column(name = "PARTY_ID")
     private String partyId;
@@ -47,12 +48,12 @@ public class PDomibusConnectorParty {
         this.id = id;
     }
 
-    public String getPmodePartyIdentifier() {
-        return pmodePartyIdentifier;
+    public DomibusConnectorParty.PartyRoleType getRoleType() {
+        return roleType;
     }
 
-    public void setPmodePartyIdentifier(String pmodePartyIdentifier) {
-        this.pmodePartyIdentifier = pmodePartyIdentifier;
+    public void setRoleType(DomibusConnectorParty.PartyRoleType roleType) {
+        this.roleType = roleType;
     }
 
     public PDomibusConnectorPModeSet getpModeSet() {
