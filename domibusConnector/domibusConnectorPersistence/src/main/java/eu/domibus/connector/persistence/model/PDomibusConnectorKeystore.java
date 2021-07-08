@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +12,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import eu.domibus.connector.persistence.model.enums.KeystoreType;
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 
 @Entity
 @Table(name = PDomibusConnectorKeystore.TABLE_NAME)
@@ -50,8 +48,8 @@ public class PDomibusConnectorKeystore {
 	private String description;
 	
 	@Column(name="TYPE")
-	@Enumerated(EnumType.STRING)
-	private KeystoreType type;
+//	@Enumerated(EnumType.STRING)
+	private DomibusConnectorKeystore.KeystoreType type;
 	
 	@PrePersist
     public void prePersist() {
@@ -107,13 +105,15 @@ public class PDomibusConnectorKeystore {
 		this.description = description;
 	}
 
-	public KeystoreType getType() {
+	public DomibusConnectorKeystore.KeystoreType getType() {
 		return type;
 	}
 
-	public void setType(KeystoreType type) {
+	public void setType(DomibusConnectorKeystore.KeystoreType type) {
 		this.type = type;
 	}
+
+
 
 	
 }

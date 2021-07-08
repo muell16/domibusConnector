@@ -53,52 +53,52 @@ public class WebPModeServiceTest {
     private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 
 
-    @Test
-    void importPModes() throws IOException {
-        assertThat(webPModeService).isNotNull();
-
-        Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
-        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
-
-        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
-
-        assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 24 parties")
-                .hasSize(24);
-
-    }
-
-    @Test
-    void importPModesSet2() throws IOException {
-        assertThat(webPModeService).isNotNull();
-
-        Resource resource = new ClassPathResource("pmodes/example-pmodes-2.xml");
-        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
-
-        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
-
-        assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 88 parties")
-                .hasSize(88);
-
-        //TODO: also check party attributes within DB!
-
-    }
-
-    @Test
-    void importPModesTwice() throws IOException {
-        assertThat(webPModeService).isNotNull();
-
-        Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
-        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
-
-        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
-
-        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
-
-        assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 24 parties")
-                .hasSize(24);
-
-    }
+//    @Test
+//    void importPModes() throws IOException {
+//        assertThat(webPModeService).isNotNull();
+//
+//        Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
+//        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
+//
+//        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+//
+//        assertThat(webPModeService.getPartyList())
+//                .as("example pmodes contains 24 parties")
+//                .hasSize(24);
+//
+//    }
+//
+//    @Test
+//    void importPModesSet2() throws IOException {
+//        assertThat(webPModeService).isNotNull();
+//
+//        Resource resource = new ClassPathResource("pmodes/example-pmodes-2.xml");
+//        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
+//
+//        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+//
+//        assertThat(webPModeService.getPartyList())
+//                .as("example pmodes contains 88 parties")
+//                .hasSize(88);
+//
+//        //TODO: also check party attributes within DB!
+//
+//    }
+//
+//    @Test
+//    void importPModesTwice() throws IOException {
+//        assertThat(webPModeService).isNotNull();
+//
+//        Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
+//        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
+//
+//        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+//
+//        webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+//
+//        assertThat(webPModeService.getPartyList())
+//                .as("example pmodes contains 24 parties")
+//                .hasSize(24);
+//
+//    }
 }

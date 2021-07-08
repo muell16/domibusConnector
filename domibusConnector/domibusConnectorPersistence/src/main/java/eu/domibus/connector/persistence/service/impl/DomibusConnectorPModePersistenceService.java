@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -7,6 +8,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +26,11 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageLaneDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPModeSet;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
@@ -40,6 +48,13 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     @Autowired
     DomibusConnectorMessageLaneDao messageLaneDao;
+    
+    @Autowired
+    DomibusConnectorKeystoreDao keystoreDao;
+    
+  //Entity manager is required to access LobCreator
+  	@PersistenceContext
+  	EntityManager entityManager;
 
 
     @Override
@@ -178,12 +193,20 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         PDomibusConnectorPModeSet dbPmodeSet = new PDomibusConnectorPModeSet();
         dbPmodeSet.setDescription(connectorPModeSet.getDescription());
         dbPmodeSet.setCreated(Timestamp.from(Instant.now()));
+        
+        Session hibernateSession = entityManager.unwrap(Session.class);
+		Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(connectorPModeSet.getpModes());
+		dbPmodeSet.setPmodes(blob);
+        
         dbPmodeSet.setMessageLane(pDomibusConnectorMessageLane);
         dbPmodeSet.setActions(mapActionListToDb(connectorPModeSet.getActions()));
         dbPmodeSet.setServices(mapServiceListToDb(connectorPModeSet.getServices()));
         dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
         dbPmodeSet.setActive(true);
 
+        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstoreUUID());
+        dbPmodeSet.setConnectorstore(connectorstore.get());
+        
         List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
         currentActivePModeSet.forEach(s -> s.setActive(false));
         this.domibusConnectorPModeSetDao.saveAll(currentActivePModeSet);

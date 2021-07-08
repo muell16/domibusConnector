@@ -29,11 +29,11 @@ public class DomibusConnectorKeystore {
 					.findFirst().orElse(null);
 		}
 		
-		public String toString() {
-			return new ToStringCreator(this)
-					.append("name", this.name())
-					.toString();
-		}
+//		public String toString() {
+//			return new ToStringCreator(this)
+//					.append("name", this.name())
+//					.toString();
+//		}
 		
 		
 	}
