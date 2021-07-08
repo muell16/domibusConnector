@@ -262,3 +262,11 @@ Upgrade manual: link:upgrade/upgrade-4.3.0.html[Upgrade to 4.3.0]
 
 * Fix dead links within configuration site
 
+=== 4.3.3
+
+* Fix problem with messages incl. evidences report within UI when case sensitive DB (eg. MySQL) is used
+* Fix problem when Initiator Role and Responder Role are different and the role is not defined by the
+sending backend application. This fix enables the connector to retrieve this information from the uploaded p-modes.
+
+After this fix has been applied, the p-Modes must be uploaded again!
+

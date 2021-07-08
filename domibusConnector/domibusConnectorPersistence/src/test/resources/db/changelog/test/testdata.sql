@@ -6,11 +6,17 @@
 INSERT INTO DOMIBUS_CONNECTOR_BACKEND_INFO (ID, BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_KEY_PASS, BACKEND_SERVICE_TYPE, BACKEND_DESCRIPTION, BACKEND_PUSH_ADDRESS)
 VALUES (1, 'bob', 'bob', '', 'EPO', 'a epo backend', null);
 
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES
-  (1, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+  (101, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
 
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES
-  (2, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+  (102, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+(103, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, IDENTIFIER) VALUES
+(104, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
 
 
 --changeset connector:initialPersistenceTestdataPmodes_2
@@ -30,21 +36,37 @@ INSERT INTO DOMIBUS_CONNECTOR_SERVICE (ID, FK_PMODE_SET, SERVICE, SERVICE_TYPE) 
 
 ----------------------- Values for DOMIBUS_CONNECTOR_PARTY ------------------------------
 
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (11, 1, 'ARHS', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (12, 1, 'AT', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (13, 1, 'CTP', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (14, 1, 'CZ', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (15, 1, 'DE', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (16, 1, 'EC', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (17, 1, 'EE', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (18, 1, 'ES', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (19, 1, 'FR', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (20, 1, 'GR', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (21, 1, 'IT', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (22, 1, 'ITIC', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (23, 1, 'MT', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (24, 1, 'NL', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE) VALUES (25, 1, 'PL', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (11, 1, 'ARHS', 'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (12, 1, 'AT',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (13, 1, 'CTP',  'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (14, 1, 'CZ',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (15, 1, 'DE',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (16, 1, 'EC',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (17, 1, 'EE',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (18, 1, 'ES',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (19, 1, 'FR',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (20, 1, 'GR',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (21, 1, 'IT',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (22, 1, 'ITIC', 'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (23, 1, 'MT',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (24, 1, 'NL',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (25, 1, 'PL',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (26, 1, 'ARHS', 'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (27, 1, 'AT',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (28, 1, 'CTP',  'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (29, 1, 'CZ',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (30, 1, 'DE',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (31, 1, 'EC',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (32, 1, 'EE',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (33, 1, 'ES',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (34, 1, 'FR',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (35, 1, 'GR',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (36, 1, 'IT',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (37, 1, 'ITIC', 'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (38, 1, 'MT',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (39, 1, 'NL',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, IDENTIFIER, PARTY_ID_TYPE) VALUES (40, 1, 'PL',   'GW', 'initiator', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 ----------------------- Values for DOMIBUS_CONNECTOR_ACTION ------------------------------1,
 
 INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION, PDF_REQUIRED) VALUES (11, 1, 'Form_A', 1);
