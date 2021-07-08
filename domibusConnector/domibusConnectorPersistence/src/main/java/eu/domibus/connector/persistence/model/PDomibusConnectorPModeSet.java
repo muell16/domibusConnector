@@ -65,6 +65,10 @@ public class PDomibusConnectorPModeSet {
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet", fetch = FetchType.EAGER)
     private Set<PDomibusConnectorService> services = new HashSet<>();
+    
+    @ManyToOne
+    @JoinColumn(name = "FK_CONNECTORSTORE", referencedColumnName = "ID")
+    private PDomibusConnectorKeystore connectorstore;
 
     public PDomibusConnectorMessageLane getMessageLane() {
         return messageLane;
@@ -74,7 +78,15 @@ public class PDomibusConnectorPModeSet {
         this.messageLane = messageLane;
     }
 
-    @PrePersist
+    public PDomibusConnectorKeystore getConnectorstore() {
+		return connectorstore;
+	}
+
+	public void setConnectorstore(PDomibusConnectorKeystore connectorstore) {
+		this.connectorstore = connectorstore;
+	}
+
+	@PrePersist
     public void prePersist() {
         this.created = Timestamp.from(Instant.now());
         this.parties.forEach(p -> p.setpModeSet(this));

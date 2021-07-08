@@ -9,6 +9,7 @@ public class DomibusConnectorPModeSet {
     private DomibusConnectorMessageLane.MessageLaneId messageLaneId;
     private String description;
     private Date createDate;
+    private byte[] pModes;
 
     private List<DomibusConnectorParty> parties = new ArrayList<>();
     private List<DomibusConnectorAction> actions = new ArrayList<>();
@@ -71,5 +72,13 @@ public class DomibusConnectorPModeSet {
 
 	public void setConnectorstoreUUID(String connectorstoreUUID) {
 		this.connectorstoreUUID = connectorstoreUUID;
+	}
+
+	public byte[] getpModes() {
+		return pModes;
+	}
+
+	public void setpModes(byte[] pModes) {
+		this.pModes = pModes;
 	}
 }

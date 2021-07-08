@@ -1,6 +1,7 @@
 package eu.domibus.connector.web.view.areas.pmodes;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -11,6 +12,8 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
@@ -35,7 +38,7 @@ public class Import extends VerticalLayout {
 	
 	byte[] pmodeFile = null;
 	
-	Div areaImportResult = new Div();
+	VerticalLayout areaImportResult = new VerticalLayout();
 	
 	Div areaPModeFileUploadResult = new Div();
 	LumoLabel pModeFileUploadResultLabel = new LumoLabel();
@@ -47,11 +50,11 @@ public class Import extends VerticalLayout {
 	
 	TextArea pModeSetDescription = new TextArea("Description:");
 	TextField connectorstorePwd = new TextField("Connectorstore password");
+	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, @Autowired DataTables dataTables) {
 		this.pmodeService = pmodeService;
 		
-		add(areaImportResult);
 		
 		Div areaPmodeFileUpload = createPModeImportArea();
 		
@@ -70,18 +73,25 @@ public class Import extends VerticalLayout {
 		connectorstorePwd.setHelperText("The password of the truststore.");
 		add(connectorstorePwd);
 		
+		connectorstoreType.setLabel("Connectorstore type: ");
+		connectorstoreType.setHelperText("The type of the truststore. Usually JKS.");
+		connectorstoreType.setItems(KeystoreType.values());
+		connectorstoreType.setValue(KeystoreType.JKS);
+		add(connectorstoreType);
+		
 		Button importBtn = new Button();
 		importBtn.setIcon(new Icon(VaadinIcon.EDIT));
 		importBtn.setText("Import PMode-Set");
 		importBtn.addClickListener(e -> {
 			boolean result = false;
-			result = pmodeService.importPModes(pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue());
+			result = pmodeService.importPModeSet(util, pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue(), connectorstoreType.getValue());
 			showOutput(result, result?"PMode-Set successfully imported!":"Import of PMode-Set failed!");
 		});
 		importBtn.setEnabled(true);
 		
 		add(importBtn);
 		
+		add(areaImportResult);
 
 		
 	}
@@ -165,6 +175,8 @@ public class Import extends VerticalLayout {
 	
 	private void showOutput(boolean success, String text) {
 		areaImportResult.removeAll();
+		areaConnectorstoreUploadResult.removeAll();
+		areaPModeFileUploadResult.removeAll();
 		
 		LumoLabel resultLabel = new LumoLabel();
 		resultLabel.setText("PMode-Set successfully imported!");
@@ -176,6 +188,18 @@ public class Import extends VerticalLayout {
 		}
 		areaImportResult.add(resultLabel);
 		
-		
+		if(success) {
+			LumoLabel pModeFileText = new LumoLabel("Imported P-Mode file: ");
+			TextArea area = new TextArea();
+			try {
+				area.setValue(new String(pmodeFile, "UTF-8"));
+				area.setWidth("80vw");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			areaImportResult.setWidth("100vw");
+			areaImportResult.add(pModeFileText);
+			areaImportResult.add(area);
+		}
 	}
 }

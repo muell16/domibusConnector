@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.web.view.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
@@ -45,6 +46,9 @@ public class WebPModeService {
 
 	@Autowired
 	private DomibusConnectorPModeService pModeService;
+	
+	@Autowired
+	private DomibusConnectorKeystorePersistenceService keystorePersistenceService;
 
 
 	// SETTER //
@@ -56,6 +60,10 @@ public class WebPModeService {
 		this.propertiesPersistenceService = propertiesPersistenceService;
 	}
 
+
+	public void setKeystorePersistenceService(DomibusConnectorKeystorePersistenceService keystorePersistenceService) {
+		this.keystorePersistenceService = keystorePersistenceService;
+	}
 
 	public static Object byteArrayToXmlObject(final byte[] xmlAsBytes, final Class<?> instantiationClazz,
 											  final Class<?>... initializationClasses) throws Exception {
@@ -80,7 +88,7 @@ public class WebPModeService {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean importPModes(byte[] contents, ConfigurationUtil util) {
+	public boolean importPModes(byte[] contents, ConfigurationUtil util, String description, String connectorstoreUUID) {
 		if (contents == null || contents.length<1) {
 			throw new IllegalArgumentException("pModes are not allowed to be null or empty!");
 		}
@@ -94,7 +102,7 @@ public class WebPModeService {
 		}
 
 		try {
-			DomibusConnectorPModeSet pModeSet = mapPModeConfigurationToPModeSet(pmodes);
+			DomibusConnectorPModeSet pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, connectorstoreUUID);
 			this.updatePModeSet(pModeSet);
 		} catch (Exception e) {
 			LOGGER.error("Cannot import provided pmode file into database!", e);
@@ -111,11 +119,30 @@ public class WebPModeService {
 
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
+	public String importConnectorstore(byte[] connectorstoreBytes, String password, KeystoreType connectorstoreType) {
+		DomibusConnectorKeystore connectorstore = new DomibusConnectorKeystore();
+		
+		String description = "Connectorstore uploaded with PMode-Set imported at "+new Date();
+		connectorstore.setDescription(description);
+		
+		connectorstore.setKeystoreBytes(connectorstoreBytes);
+		connectorstore.setPasswordPlain(password);
+		connectorstore.setType(connectorstoreType);
+		
+		connectorstore = keystorePersistenceService.persistNewKeystore(connectorstore);
+		
+		return connectorstore.getUuid();
+	}
+	
 
-	private DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes) {
+	private DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes, byte[] contents, String description, String connectorstoreUUID) {
 		DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeSet();
-		pModeSet.setDescription("Created by p-Mode Upload");
-
+		pModeSet.setDescription(description);
+		pModeSet.setpModes(contents);
+		pModeSet.setConnectorstoreUUID(connectorstoreUUID);
+		
 		pModeSet.setServices(importServices(pmodes));
 		pModeSet.setActions(importActions(pmodes));
 		pModeSet.setParties(importParties(pmodes));
@@ -407,16 +434,18 @@ public class WebPModeService {
 		});
 	}
 
-	public boolean importPModes(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd) {
+	public boolean importPModeSet(ConfigurationUtil util, byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType) {
 		
-		if(pmodeFile!=null && pmodeFile.length > 1 && connectorstore!=null && connectorstore.length > 1 && !StringUtils.isEmpty(description)) {
-			LOGGER.debug("pmodeFile length:        {}", pmodeFile.length);
-			LOGGER.debug("PMode-Set description:   {}", description);
-			LOGGER.debug("connectorstore lenght:   {}", connectorstore.length);
-			LOGGER.debug("connectorstore password: {}", connectorStorePwd);
-			return true;
+		if(pmodeFile==null || pmodeFile.length < 1
+				|| connectorstore==null || connectorstore.length < 1 
+				|| StringUtils.isEmpty(description)) {
+			return false;
 		}
-		
+		String connectorstoreUUID = importConnectorstore(connectorstore, connectorStorePwd, connectorstoreType);
+
+		if(!StringUtils.isEmpty(connectorstoreUUID)) {
+			return importPModes(pmodeFile, util, description, connectorstoreUUID);
+		}else
 		return false;
 	}
 
