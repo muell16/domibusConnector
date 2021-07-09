@@ -10,14 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,7 +88,14 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Map<DomibusConnectorMessageId, List<LargeFileReference>> collect = availableLargeFilePersistenceProvider
                 .stream()
-                .map(provider -> provider.getAllAvailableReferences())
+                .map(provider -> {
+                    try {
+                        return provider.getAllAvailableReferences();
+                    } catch (Exception e) {
+                        //ignore..
+                    }
+                    return new HashMap<DomibusConnectorMessageId, List<LargeFileReference>> ();
+                })
                 .flatMap(refmap -> refmap.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return collect;

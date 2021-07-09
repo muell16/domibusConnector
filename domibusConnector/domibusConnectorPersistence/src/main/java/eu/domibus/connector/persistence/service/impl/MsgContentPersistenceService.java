@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -314,7 +311,12 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
                     }
                 });
 
-        String storageRefs = deletionExceptions.stream().map(d -> d.getReferenceFailedToDelete().getStorageIdReference()).collect(Collectors.joining(","));
+        String storageRefs = deletionExceptions.stream()
+                .map(LargeFileDeletionException::getReferenceFailedToDelete)
+                .filter(Objects::nonNull)
+                .map(LargeFileReference::getStorageIdReference)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(","));
         LOGGER.info("The following storage references [{}] failed to be deleted immediately. The will be deleted later by timer jobs.", storageRefs);
 
     }

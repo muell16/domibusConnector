@@ -149,13 +149,13 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         if (servletContext != null) {
 
             bootstrapConfigLocation = bootstrapConfigLocation +
-                    ",file:./config/" + servletContext + "/" +
-                    ",file:./conf/" + servletContext + "/";
+                    ",file:./config/" + servletContext.getContextPath() + "/" +
+                    ",file:./conf/" + servletContext.getContextPath() + "/";
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
 
             springConfigLocation = springConfigLocation +
-                    ",file:./config/" + servletContext + "/" +
-                    ",file:./conf/" + servletContext + "/";
+                    ",file:./config/" + servletContext.getContextPath() + "/" +
+                    ",file:./conf/" + servletContext.getContextPath() + "/";
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
 
         }
@@ -171,15 +171,6 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             }
         }
         super.onStartup(servletContext);
-    }
-
-    private void setFromServletContextIfNotNull(String name, String setPropertyName) {
-        String value = servletContext.getInitParameter(name);
-        LOGGER.info("Config name from servletContext is [{}] value is [{}]", name, value);
-        if (value != null) {
-            LOGGER.info("Setting servletInitParam [{}] to value [{}]", setPropertyName, value);
-            servletContext.setInitParameter(setPropertyName, value);
-        }
     }
 
 

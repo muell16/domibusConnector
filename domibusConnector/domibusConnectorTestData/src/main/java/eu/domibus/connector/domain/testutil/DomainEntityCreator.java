@@ -36,13 +36,33 @@ public class DomainEntityCreator {
         return p;
     }
 
-    public static DomibusConnectorParty createPartyDomibusRed() {
-        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
+    public static DomibusConnectorParty createPartyDomibusRed_partyIdOnly() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red",null, null);
         return p;
     }
 
-    public static DomibusConnectorParty createPartyDomibusBlue() {
-        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
+    public static DomibusConnectorParty createPartyDomibusRed_defaultResponderRole() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "defaultResponder");
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusRed_defaultInitiatorRole() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "defaultInitiator");
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusBlue_partyIdOnly() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue",null, null);
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusBlue_defaultResponderRole() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "defaultResponder");
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusBlue_defaultInitiatorRole() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "defaultInitiator");
         return p;
     }
     
@@ -343,8 +363,8 @@ public class DomainEntityCreator {
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyDomibusBlue());
-        messageDetails.setFromParty(createPartyDomibusRed());
+        messageDetails.setToParty(createPartyDomibusBlue_partyIdOnly());
+        messageDetails.setFromParty(createPartyDomibusRed_partyIdOnly());
 
         return messageDetails;
     }
