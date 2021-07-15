@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.processor.steps;
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -92,8 +92,8 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     }
 
     private boolean shouldBeSubmitted(DomibusConnectorMessage businessMessage, DomibusConnectorMessageDirection direction) {
-        ConnectorMessageLaneProperties config =
-                configurationPropertyLoaderService.loadConfiguration(businessMessage.getMessageLaneId(), ConnectorMessageLaneProperties.class);
+        ConnectorMessageProcessingProperties config =
+                configurationPropertyLoaderService.loadConfiguration(businessMessage.getMessageLaneId(), ConnectorMessageProcessingProperties.class);
         boolean result =  direction.getTarget() != MessageTargetSource.BACKEND || config.isSendGeneratedEvidencesToBackend();
         LOGGER.debug("Evidence will be submitted back to Backend as EvidenceMessage: [{}]", result);
         return result;

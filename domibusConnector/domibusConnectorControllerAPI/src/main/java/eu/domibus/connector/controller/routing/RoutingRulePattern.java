@@ -7,8 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -37,7 +40,7 @@ public class RoutingRulePattern {
 
     private Expression expression;
 
-    private enum Token {
+    public static enum Token {
         AS4_SERVICE_TYPE("ServiceType"),
         AS4_SERVICE_NAME("ServiceName"),
         AS4_FINAL_RECIPIENT("FinalRecipient"),
@@ -56,9 +59,15 @@ public class RoutingRulePattern {
         VALUE("'[\\w:_\\-~\\./#\\?]+'");
 
         private final Pattern pattern;
+        private final String string;
 
         private Token(String regex) {
+            this.string = regex;
             this.pattern = Pattern.compile("^" + regex); //match from beginning
+        }
+
+        public String toString() {
+            return string;
         }
 
         public int lastMatchingCharacter(String s) {
@@ -71,6 +80,16 @@ public class RoutingRulePattern {
         }
 
     }
+
+    private static final List<Token> COMPARE_TOKENS = Stream.of(
+                Token.AS4_SERVICE_TYPE,
+                Token.AS4_SERVICE_NAME,
+                Token.AS4_FINAL_RECIPIENT,
+                Token.AS4_ACTION,
+                Token.AS4_FROM_PARTY_ID,
+                Token.AS4_FROM_PARTY_ID_TYPE,
+                Token.AS4_FROM_PARTY_ROLE
+            ).collect(Collectors.toList());
 
     private static class TokenAndValue {
         Token t;
@@ -136,8 +155,8 @@ public class RoutingRulePattern {
             throw new RuntimeException(String.format("Parse error, after '%s' must follow a '%s'", Token.EQUALS, Token.BRACKET_OPEN));
         }
         TokenAndValue as4Attribute = tokens.removeFirst();
-        if (isNotToken(as4Attribute, Token.AS4_SERVICE_NAME) && isNotToken(as4Attribute, Token.AS4_SERVICE_TYPE)) {
-            throw new RuntimeException(String.format("Parse error, '%s' or '%s' is expected", Token.AS4_SERVICE_NAME, Token.AS4_SERVICE_TYPE));
+        if (isNotToken(as4Attribute, COMPARE_TOKENS)) {
+            throw new RuntimeException(String.format("Parse error, any of '%s' is expected", COMPARE_TOKENS));
         }
 
         if (isNotToken(tokens.removeFirst(), Token.SEMICOLON)) {
@@ -191,12 +210,20 @@ public class RoutingRulePattern {
         return null;
     }
 
+    private boolean isNotToken(TokenAndValue tv, List<Token> t) {
+        return !(isToken(tv, t)); //tv == null || tv.t != t;
+    }
+
     private boolean isNotToken(TokenAndValue tv, Token t) {
         return !(isToken(tv, t)); //tv == null || tv.t != t;
     }
 
     private boolean isToken(TokenAndValue tv, Token t) {
         return tv != null && tv.t == t;
+    }
+
+    private boolean isToken(TokenAndValue tv, List<Token> t) {
+        return tv != null && t.contains(tv.t);
     }
 
     public boolean matches(DomibusConnectorMessage message) {

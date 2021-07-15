@@ -20,10 +20,14 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
+@Profile("plugin-" + TestbackendPlugin.IMPL_NAME)
 @Component
-@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class SubmitToTestLink implements SubmitToLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitToTestLink.class);
@@ -68,6 +72,7 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
             TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
             state.setConnectorTransportId(transportFor);
             state.setLinkPartner(linkPartner);
+            state.setRemoteMessageId("Testbackend_" + LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             state.setStatus(TransportState.ACCEPTED);
             transportStateService.updateTransportStatus(state);
             LOGGER.info("Generated Delivery evidence trigger message for connector test message with EBMS ID [{}]", message.getConnectorMessageId());

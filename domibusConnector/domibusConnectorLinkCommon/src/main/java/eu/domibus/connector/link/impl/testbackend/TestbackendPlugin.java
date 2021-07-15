@@ -27,8 +27,8 @@ import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_P
  *  It's only purpose is to respond with a delivery evidence for any received message.
  *
  */
+@Profile("plugin-" + TestbackendPlugin.IMPL_NAME)
 @Component
-@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class TestbackendPlugin implements LinkPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(TestbackendPlugin.class);

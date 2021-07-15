@@ -3,9 +3,10 @@ package eu.domibus.connector.controller.spring;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "properties")
-public class ConnectorMessageLaneProperties {
+@ConfigurationProperties(prefix = ConnectorMessageProcessingProperties.PREFIX)
+public class ConnectorMessageProcessingProperties {
 
+    public static final String PREFIX = "processing";
 
     /**
      * should the by the connector created evidences

@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
-import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -32,11 +32,11 @@ public class GenerateEbmsIdStep implements MessageProcessStep {
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "GenerateEbmsIdStep")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
-        ConnectorMessageLaneProperties connectorMessageLaneProperties = configurationPropertyLoaderService.loadConfiguration(domibusConnectorMessage.getMessageLaneId(), ConnectorMessageLaneProperties.class);
-        if (connectorMessageLaneProperties.isEbmsIdGeneratorEnabled()) {
+        ConnectorMessageProcessingProperties connectorMessageProcessingProperties = configurationPropertyLoaderService.loadConfiguration(domibusConnectorMessage.getMessageLaneId(), ConnectorMessageProcessingProperties.class);
+        if (connectorMessageProcessingProperties.isEbmsIdGeneratorEnabled()) {
             LOGGER.debug("Setting EBMS id within connector is enabled");
             if (StringUtils.isEmpty(domibusConnectorMessage.getMessageDetails().getEbmsMessageId())) {
-                String ebmsId = UUID.randomUUID().toString() + "@" + connectorMessageLaneProperties.getEbmsIdSuffix();
+                String ebmsId = UUID.randomUUID().toString() + "@" + connectorMessageProcessingProperties.getEbmsIdSuffix();
                 domibusConnectorMessage.getMessageDetails().setEbmsMessageId(ebmsId);
                 LOGGER.info("Setting EBMS id to [{}]", ebmsId);
             }

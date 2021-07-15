@@ -1,12 +1,11 @@
-package eu.domibus.connector.controller.spring;
+package eu.domibus.connector.config.c2ctests;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -22,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class ConnectorTestConfigurationProperties {
 
-    public static final String PREFIX = "connector.test";
+    public static final String PREFIX = "c2ctests";
 
     private boolean enabled = true;
 
@@ -33,8 +32,7 @@ public class ConnectorTestConfigurationProperties {
 
 
     @Valid
-    @NotNull
-    private EvidenceActionServiceConfigurationProperties.AS4Service service = new EvidenceActionServiceConfigurationProperties.AS4Service("Connector-TEST", "urn:e-codex:services:");
+    private EvidenceActionServiceConfigurationProperties.AS4Service service = null;
 
     @Valid
     @NotNull

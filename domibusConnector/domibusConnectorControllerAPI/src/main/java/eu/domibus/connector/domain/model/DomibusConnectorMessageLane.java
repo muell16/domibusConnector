@@ -84,6 +84,21 @@ public class DomibusConnectorMessageLane {
         public String toString() {
             return String.format("MessageLaneId: [%s]", this.messageLaneId);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof MessageLaneId)) return false;
+
+            MessageLaneId that = (MessageLaneId) o;
+
+            return messageLaneId != null ? messageLaneId.equals(that.messageLaneId) : that.messageLaneId == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return messageLaneId != null ? messageLaneId.hashCode() : 0;
+        }
     }
 
 }

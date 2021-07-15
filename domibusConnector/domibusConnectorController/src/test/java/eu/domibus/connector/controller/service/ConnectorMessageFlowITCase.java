@@ -4,11 +4,9 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.processor.confirmation.CheckEvidencesTimeoutProcessorImpl;
-import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
@@ -19,7 +17,6 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import liquibase.util.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -41,7 +38,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -89,9 +85,6 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     CheckEvidencesTimeoutProcessorImpl checkEvidencesTimeoutProcessor;
-
-    @Autowired
-    ConnectorTestConfigurationProperties testConfigurationProperties;
 
     @Autowired
     DataSource ds;

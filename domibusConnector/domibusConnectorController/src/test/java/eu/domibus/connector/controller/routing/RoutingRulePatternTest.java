@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -69,6 +70,20 @@ public class RoutingRulePatternTest {
         RoutingRulePattern pattern = new RoutingRulePattern("|(equals(ServiceName, 'serviceName'),equals(ServiceName, 'serName'))");
         assertThat(pattern.matches(epoMessage)).isTrue();
     }
+
+    @Test
+    public void testAction() {
+
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        DomibusConnectorAction action = new DomibusConnectorAction("Connector-TEST");
+        epoMessage.getMessageDetails().setAction(action);
+
+        RoutingRulePattern pattern = new RoutingRulePattern("equals(Action, 'Connector-TEST')");
+        assertThat(pattern.matches(epoMessage)).isTrue();
+
+
+    }
+
 
 
 }
