@@ -26,7 +26,8 @@ public final class DomibusConnectorMessageConfirmationBuilder {
 
     public DomibusConnectorMessageConfirmation build() {
         if (evidence == null) {
-            throw new IllegalArgumentException("Evidence is not allowed to be null!");
+            evidence = new byte[0];
+            //throw new IllegalArgumentException("Evidence is not allowed to be null!");
         }
         if (evidenceType == null) {
             throw new IllegalArgumentException("Evidence type must be set!");

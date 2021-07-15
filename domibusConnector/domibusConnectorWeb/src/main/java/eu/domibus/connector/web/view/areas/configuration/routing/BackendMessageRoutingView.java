@@ -6,14 +6,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
-import eu.domibus.connector.controller.routing.DCRoutingConfigurationManager;
+import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
+import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
 
 @Component
 @UIScope
@@ -24,12 +25,12 @@ public class BackendMessageRoutingView extends VerticalLayout {
 
     public static final String ROUTE = "backendrouting";
 
-    private final DCRoutingConfigurationManager dcRoutingConfigurationManager;
+    private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
 
-    private Grid<DCMessageRoutingConfigurationProperties.RoutingRule> routingRuleGrid;
+    private Grid<RoutingRule> routingRuleGrid;
 
-    public BackendMessageRoutingView(DCRoutingConfigurationManager dcRoutingConfigurationManager) {
-        this.dcRoutingConfigurationManager = dcRoutingConfigurationManager;
+    public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl) {
+        this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
         initUI();
     }
 
@@ -43,16 +44,17 @@ public class BackendMessageRoutingView extends VerticalLayout {
         TextField defaultBackendNameTextField = new TextField();
         defaultBackendNameTextField.setReadOnly(true);
         defaultBackendNameTextField.setLabel("DefaultBackend");
-        defaultBackendNameTextField.setValue(dcRoutingConfigurationManager.getDefaultBackendName());
+        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(DomibusConnectorMessageLane.getDefaultMessageLaneId()));
 
         add(defaultBackendNameTextField);
 
         routingRuleGrid = new Grid<>();
-        routingRuleGrid.addColumn(DCMessageRoutingConfigurationProperties.RoutingRule::getLinkName).setHeader("Backend Name");
+        routingRuleGrid.addColumn(RoutingRule::getLinkName).setHeader("Backend Name");
         routingRuleGrid.addColumn(rule -> rule.getMatchClause().getMatchRule()).setHeader("matching string");
         routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
 
-        List<DCMessageRoutingConfigurationProperties.RoutingRule> backendRoutingRules = dcRoutingConfigurationManager.getBackendRoutingRules();
+
+        Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorMessageLane.getDefaultMessageLaneId());
         routingRuleGrid.setItems(backendRoutingRules);
 
         this.add(routingRuleGrid);

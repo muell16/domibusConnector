@@ -61,10 +61,10 @@ public class CheckContentDeletedProcessorImpl {
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageIdString)) {
             if (msg == null) {
                 LOGGER.debug("No message with connector message id [{}] found in database deleting references only when older as 1 day", id);
-                ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
+                ZonedDateTime yesterday = ZonedDateTime.now().minusDays(1);
                 //delete only refs which are older than one day
                 List<LargeFileReference> collect = references.stream()
-                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isAfter(tomorrow))
+                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isBefore(yesterday))
                         .collect(Collectors.toList());
                 LOGGER.debug("Deleting references [{}] with no associated business message", collect);
                 collect.forEach(this::deleteReference);

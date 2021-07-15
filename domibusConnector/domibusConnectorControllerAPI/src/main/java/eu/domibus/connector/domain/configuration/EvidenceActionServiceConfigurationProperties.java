@@ -5,10 +5,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * This property class is meant to be loaded over the
@@ -42,7 +44,9 @@ public class EvidenceActionServiceConfigurationProperties {
 
     public static class EvidenceServiceAction {
         @Valid
+        @NotNull
         private EvidenceActionServiceConfigurationProperties.AS4Action action;
+
         @Valid
         @NestedConfigurationProperty
         private EvidenceActionServiceConfigurationProperties.AS4Service service;
@@ -88,6 +92,8 @@ public class EvidenceActionServiceConfigurationProperties {
 
     }
 
+    @Validated
+    @Valid
     public static class AS4Action {
         @NotBlank
         private String action;
@@ -111,6 +117,8 @@ public class EvidenceActionServiceConfigurationProperties {
         }
     }
 
+    @Validated
+    @Valid
     public static class AS4Service {
         @NotBlank
         private String name;

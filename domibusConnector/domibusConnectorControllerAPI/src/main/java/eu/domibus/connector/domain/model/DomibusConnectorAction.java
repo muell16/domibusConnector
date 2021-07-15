@@ -12,7 +12,6 @@ public class DomibusConnectorAction implements Serializable {
 
 	private Long dbKey;
 	private String action;
-//	private boolean documentRequired;
 
 	/**
 	 * Default constructor, needed for frameworks
@@ -26,30 +25,11 @@ public class DomibusConnectorAction implements Serializable {
 	 */
 	public DomibusConnectorAction(final String action){
 		this.action = action;
-//		this(action, false);
 	}
-
-//	/**
-//	 * 
-//	 * @param action action
-//	 * @param documentRequired    documentRequired
-//	 */
-//	public DomibusConnectorAction(final String action, final boolean documentRequired){
-//	   this.action = action;
-//	   this.documentRequired = documentRequired;
-//	}
 
 	public String getAction(){
 		return this.action;
 	}
-
-//	public boolean isDocumentRequired(){
-//		return this.documentRequired;
-//	}
-//
-//	public void setDocumentRequired(boolean documentRequired) {
-//		this.documentRequired = documentRequired;
-//	}
 
 	public void setAction(String action) {
 		this.action = action;
@@ -66,8 +46,7 @@ public class DomibusConnectorAction implements Serializable {
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-        builder.append("action", this.action);        
-//        builder.append("requiresDocument", this.documentRequired);
+        builder.append("action", this.action);
         return builder.toString();        
     }
     

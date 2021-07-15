@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableJms
 @EnableScheduling
-@EnableConfigurationProperties(ConnectorControllerProperties.class)
+@EnableConfigurationProperties(ConnectorConfigurationProperties.class)
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
 public class ControllerContext {
 
