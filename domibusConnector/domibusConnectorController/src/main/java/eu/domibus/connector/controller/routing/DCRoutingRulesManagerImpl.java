@@ -18,12 +18,9 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     private Map<DomibusConnectorMessageLane.MessageLaneId, RoutingConfig> backendRoutingConfig = new HashMap<>();
 
     private final DCMessageRoutingConfigurationProperties routingConfigurationProperties;
-    private final ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
 
-    public DCRoutingRulesManagerImpl(DCMessageRoutingConfigurationProperties routingConfigurationProperties,
-                                     ConnectorTestConfigurationProperties connectorTestConfigurationProperties) {
+    public DCRoutingRulesManagerImpl(DCMessageRoutingConfigurationProperties routingConfigurationProperties) {
         this.routingConfigurationProperties = routingConfigurationProperties;
-        this.connectorTestConfigurationProperties = connectorTestConfigurationProperties;
     }
 
     @Override
