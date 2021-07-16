@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
@@ -33,12 +33,12 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     private static final Logger LOGGER = LogManager.getLogger(SubmitConfirmationAsEvidenceMessageStep.class);
 
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
     private final ConfirmationCreatorService confirmationCreator;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     public SubmitConfirmationAsEvidenceMessageStep(SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
-                                                   ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                                   ConfigurationPropertyManagerService configurationPropertyLoaderService,
                                                    ConfirmationCreatorService confirmationCreator,
                                                    DomibusConnectorMessageIdGenerator messageIdGenerator) {
         this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;

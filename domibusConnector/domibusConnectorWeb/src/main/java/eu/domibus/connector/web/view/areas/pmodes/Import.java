@@ -13,11 +13,13 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +54,7 @@ public class Import extends VerticalLayout {
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
-	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, @Autowired DataTables dataTables) {
+	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.pmodeService = pmodeService;
 		
 		
@@ -84,7 +86,7 @@ public class Import extends VerticalLayout {
 		importBtn.setText("Import PMode-Set");
 		importBtn.addClickListener(e -> {
 			boolean result = false;
-			result = pmodeService.importPModeSet(util, pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue(), connectorstoreType.getValue());
+			result = importPModeSet(pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue(), connectorstoreType.getValue());
 			showOutput(result, result?"PMode-Set successfully imported!":"Import of PMode-Set failed!");
 		});
 		importBtn.setEnabled(true);
@@ -200,6 +202,22 @@ public class Import extends VerticalLayout {
 			areaImportResult.setWidth("100vw");
 			areaImportResult.add(pModeFileText);
 			areaImportResult.add(area);
+		}
+	}
+
+	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType) {
+
+		if (pmodeFile == null || pmodeFile.length < 1
+				|| connectorstore == null || connectorstore.length < 1
+				|| StringUtils.isEmpty(description)) {
+			return false;
+		}
+		DomibusConnectorKeystore connectorstoreUUID = pmodeService.importConnectorstore(connectorstore, connectorStorePwd, connectorstoreType);
+
+		if (connectorstoreUUID != null) {
+			return pmodeService.importPModes(pmodeFile, description, connectorstoreUUID);
+		} else {
+			return false;
 		}
 	}
 }

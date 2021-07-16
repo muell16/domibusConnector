@@ -125,7 +125,7 @@ public class DomibusConnectorKeystore {
         builder.append("uuid", this.uuid);
 		builder.append("uploaded", this.uploaded);
         builder.append("description", this.description);
-        builder.append("type", this.type.name());
+        builder.append("type", this.type);
         return builder.toString();  
 	}
 

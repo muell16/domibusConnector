@@ -18,12 +18,6 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
-            <!--            <exclusions>-->
-            <!--            	<exclusion>-->
-            <!--            		<groupId>xalan</groupId>-->
-            <!--            		<artifactId>xalan</artifactId>-->
-            <!--            	</exclusion>-->
-            <!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -99,6 +93,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>eu.domibus.connector</groupId>-->
+<!--            <artifactId>domibusConnectorPersistence</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--            <classifier>tests</classifier>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>

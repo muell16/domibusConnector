@@ -1,25 +1,18 @@
 package eu.domibus.connector.controller.processor.util;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 @Component
 public class ConfirmationCreatorService {
@@ -27,12 +20,12 @@ public class ConfirmationCreatorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmationCreatorService.class);
 
     private final DomibusConnectorEvidencesToolkit evidencesToolkit;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
     public ConfirmationCreatorService(DomibusConnectorEvidencesToolkit evidencesToolkit,
                                       DomibusConnectorEvidencePersistenceService evidencePersistenceService,
                                       DomibusConnectorMessageIdGenerator messageIdGenerator,
-                                      ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                      ConfigurationPropertyManagerService configurationPropertyLoaderService,
                                       DCMessagePersistenceService messagePersistenceService) {
         this.evidencesToolkit = evidencesToolkit;
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;

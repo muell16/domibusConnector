@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.configuration;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import lombok.Data;
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * This property class is meant to be loaded over the
- * {@link eu.domibus.connector.common.service.ConfigurationPropertyLoaderService} so also
+ * {@link ConfigurationPropertyManagerService} so also
  * MessageLane specific properties are taken into account
  */
 @ConfigurationProperties(prefix = "connector.confirmation-messages")

@@ -1,26 +1,19 @@
 --liquibase formatted sql
 --
 --changeset connector:initialPersistenceTestdata_1
------------------------ Values for DOMIBUS_CONNECTOR_BACKEND_INFO ------------------------------
-
-INSERT INTO DOMIBUS_CONNECTOR_BACKEND_INFO (ID, BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_KEY_PASS, BACKEND_SERVICE_TYPE, BACKEND_DESCRIPTION, BACKEND_PUSH_ADDRESS)
-VALUES (1, 'bob', 'bob', '', 'EPO', 'a epo backend', null);
-
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
-  (1, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
-
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
-  (2, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
-  
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
-(103, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
-
-INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
-(104, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
 
 
---changeset connector:initialPersistenceTestdataPmodes_2
------------------------ Values for Services,Actions,Parties ------------------------------
+----------------------- Values for PMODE SET default BusinessDomain ------------------------------
+
+DELETE DC_MESSAGE_LANE;
+INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION) VALUES (1, 'default_message_lane', 'default');
+
+INSERT INTO DC_KEYSTORE (ID, UUID, KEYSTORE, TYPE) VALUES (1, 'store1', RAWTOHEX('Test'), 'JKS');
+
+DELETE DC_PMODE_SET;
+INSERT INTO DC_PMODE_SET (ID, ACTIVE, FK_MESSAGE_LANE, FK_CONNECTORSTORE) VALUES (1, 1, 1, 1);
+
+
 
 ----------------------- Values for DOMIBUS_CONNECTOR_SERVICE ------------------------------
 INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION) VALUES (1, 1, 'action1');
@@ -35,6 +28,17 @@ INSERT INTO DOMIBUS_CONNECTOR_SERVICE (ID, FK_PMODE_SET, SERVICE, SERVICE_TYPE) 
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE (ID, FK_PMODE_SET, SERVICE, SERVICE_TYPE) VALUES (14, 1, 'TEST-ping-connector', 'urn:e-codex:services:');
 
 ----------------------- Values for DOMIBUS_CONNECTOR_PARTY ------------------------------
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
+(1, 1, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
+(2, 1, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'responder');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
+(3, 1, 'domibus-blue', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
+
+INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, PARTY_ID_TYPE, ROLE_TYPE) VALUES
+(4, 1, 'domibus-red', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1', 'initiator');
 
 INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, ROLE_TYPE, PARTY_ID_TYPE) VALUES (11, 1, 'ARHS', 'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY (ID, FK_PMODE_SET, PARTY_ID, ROLE, ROLE_TYPE, PARTY_ID_TYPE) VALUES (12, 1, 'AT',   'GW', 'responder', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
@@ -86,11 +90,3 @@ INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION) VALUES (24, 1, '
 INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION) VALUES (25, 1, 'RetrievalNonRetrievalToRecipient');
 INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION) VALUES (26, 1, 'Test_Form');
 INSERT INTO DOMIBUS_CONNECTOR_ACTION (ID, FK_PMODE_SET, ACTION) VALUES (27, 1, 'TEST-ping-connector');
-
-
-
-INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) VALUES ('DOMIBUS_CONNECTOR_MESSAGE.ID', 1000);
-INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) VALUES ('DOMIBUS_CONNECTOR_MESSAGE_INFO.ID', 1000);
-INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) VALUES ('DOMIBUS_CONNECTOR_MSG_CONT.ID', 1000);
-INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) VALUES ('DOMIBUS_CONNECTOR_EVIDENCE.ID', 1000);
-

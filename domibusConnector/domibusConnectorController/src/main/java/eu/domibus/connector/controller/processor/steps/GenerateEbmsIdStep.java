@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
@@ -23,9 +23,9 @@ public class GenerateEbmsIdStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(GenerateEbmsIdStep.class);
 
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
-    public GenerateEbmsIdStep(ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+    public GenerateEbmsIdStep(ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;
     }
 

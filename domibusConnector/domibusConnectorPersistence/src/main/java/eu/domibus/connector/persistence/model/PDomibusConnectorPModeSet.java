@@ -55,7 +55,7 @@ public class PDomibusConnectorPModeSet {
     private boolean active;
     
     @Column(name = "PMODES")
-    private Blob pmodes;
+    private byte[] pmodes;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet", fetch = FetchType.EAGER)
     private Set<PDomibusConnectorParty> parties = new HashSet<>();
@@ -150,12 +150,12 @@ public class PDomibusConnectorPModeSet {
         this.active = active;
     }
 
-	public Blob getPmodes() {
-		return pmodes;
-	}
+    public byte[] getPmodes() {
+        return pmodes;
+    }
 
-	public void setPmodes(Blob pmodes) {
-		this.pmodes = pmodes;
-	}
+    public void setPmodes(byte[] pmodes) {
+        this.pmodes = pmodes;
+    }
 }
 

@@ -10,13 +10,13 @@ import javax.validation.constraints.NotNull;
  * classes and also binds the configuration
  *
  */
-public interface ConfigurationPropertyLoaderService {
+public interface ConfigurationPropertyManagerService {
 
 
     /**
      *
      * determines the prefix from the clazz
-     * which must be anotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
+     * which must be annotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
      *
      * then {@link #loadConfiguration(DomibusConnectorMessageLane.MessageLaneId, Class, String)} is called
      *
@@ -37,5 +37,16 @@ public interface ConfigurationPropertyLoaderService {
      * @return the initialized class
      */
     <T> T loadConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, @NotNull Class<T> clazz, String prefix);
+
+
+    /**
+     *
+     * @param laneId the laneId, if null defaultLaneId is used
+     * @param configurationClazz must be annotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
+     *
+     *
+     */
+    void updateConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, Object configurationClazz);
+
 
 }

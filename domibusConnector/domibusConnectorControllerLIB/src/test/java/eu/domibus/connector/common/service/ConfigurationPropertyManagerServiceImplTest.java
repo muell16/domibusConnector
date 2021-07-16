@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "connector.confirmation-messages.retrieval.service.name=aService",
         "connector.confirmation-messages.retrieval.action=retrievalAction",
 })
-class ConfigurationPropertyLoaderServiceImplTest {
+class ConfigurationPropertyManagerServiceImplTest {
 
     @Autowired
     ConfigurationPropertyLoaderServiceImpl propertyLoaderService;

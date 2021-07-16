@@ -57,10 +57,9 @@ public interface DomibusConnectorPModeService {
 
     /**
      *
-     * @param lane - the MessageLaneConfiguration which is changed
      * @param connectorPModeSet - this PModeSet will become the new current pModeSet
      */
-    void updatePModeConfigurationSet(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorPModeSet connectorPModeSet);
+    void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet);
 
     /**
      * @param lane - the MessageLaneConfiguration which is changed

@@ -40,10 +40,7 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
 		}
 
 		dbKeystore.setUuid(uuid);
-
-		Session hibernateSession = entityManager.unwrap(Session.class);
-		Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(pKeystore.getKeystoreBytes());
-		dbKeystore.setKeystore(blob);
+		dbKeystore.setKeystore(pKeystore.getKeystoreBytes());
 
 		dbKeystore.setPassword(pKeystore.getPasswordPlain());		
 		dbKeystore.setDescription(pKeystore.getDescription());

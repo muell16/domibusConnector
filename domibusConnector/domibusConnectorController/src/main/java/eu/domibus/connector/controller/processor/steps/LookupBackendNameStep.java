@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -27,11 +27,11 @@ public class LookupBackendNameStep implements MessageProcessStep {
 
     private final DCRoutingRulesManagerImpl dcRoutingConfigManager;
     private final DCMessagePersistenceService dcMessagePersistenceService;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
     public LookupBackendNameStep(DCRoutingRulesManagerImpl dcMessageRoutingConfigurationProperties,
                                  DCMessagePersistenceService dcMessagePersistenceService,
-                                 ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+                                 ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.dcRoutingConfigManager = dcMessageRoutingConfigurationProperties;
         this.dcMessagePersistenceService = dcMessagePersistenceService;
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;

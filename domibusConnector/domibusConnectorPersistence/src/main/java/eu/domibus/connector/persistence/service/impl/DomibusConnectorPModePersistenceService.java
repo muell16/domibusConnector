@@ -43,19 +43,17 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPModePersistenceService.class);
 
-    @Autowired
-    DomibusConnectorPModeSetDao domibusConnectorPModeSetDao;
+    private final DomibusConnectorPModeSetDao domibusConnectorPModeSetDao;
+    private final DomibusConnectorMessageLaneDao messageLaneDao;
+    private final DomibusConnectorKeystoreDao keystoreDao;
 
-    @Autowired
-    DomibusConnectorMessageLaneDao messageLaneDao;
-    
-    @Autowired
-    DomibusConnectorKeystoreDao keystoreDao;
-    
-  //Entity manager is required to access LobCreator
-  	@PersistenceContext
-  	EntityManager entityManager;
-
+    public DomibusConnectorPModePersistenceService(DomibusConnectorPModeSetDao domibusConnectorPModeSetDao,
+                                                   DomibusConnectorMessageLaneDao messageLaneDao,
+                                                   DomibusConnectorKeystoreDao keystoreDao) {
+        this.domibusConnectorPModeSetDao = domibusConnectorPModeSetDao;
+        this.messageLaneDao = messageLaneDao;
+        this.keystoreDao = keystoreDao;
+    }
 
     @Override
     @Cacheable
@@ -113,7 +111,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchService.getService() != null) {
                         result = result && searchService.getService().equals(service.getService());
                     }
-                    if (result && searchService.getServiceType() != null) {
+                    if (result && searchService.getServiceType() != null) { //check for null a uri can be a empty string
                         result = result && searchService.getServiceType().equals(service.getServiceType());
                     }
                     return result;
@@ -156,7 +154,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchParty.getRoleType() != null) {
                         result = result && searchParty.getRoleType().equals(party.getRoleType());
                     }
-                    if (result && searchParty.getPartyIdType() != null) {
+                    if (result && searchParty.getPartyIdType() != null) { //check for null a uri can be a empty string
                         result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
                     }
                     return result;
@@ -175,12 +173,16 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     @Override
     @CacheEvict
     @Transactional
-    public void updatePModeConfigurationSet(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorPModeSet connectorPModeSet) {
+    public void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet) {
+        if (connectorPModeSet == null) {
+            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
+        }
+        DomibusConnectorMessageLane.MessageLaneId lane = connectorPModeSet.getMessageLaneId();
         if (lane == null) {
             throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
         }
-        if (connectorPModeSet == null) {
-            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
+        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+            throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
         }
 
         connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
@@ -193,10 +195,8 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         PDomibusConnectorPModeSet dbPmodeSet = new PDomibusConnectorPModeSet();
         dbPmodeSet.setDescription(connectorPModeSet.getDescription());
         dbPmodeSet.setCreated(Timestamp.from(Instant.now()));
-        
-        Session hibernateSession = entityManager.unwrap(Session.class);
-		Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(connectorPModeSet.getpModes());
-		dbPmodeSet.setPmodes(blob);
+
+		dbPmodeSet.setPmodes(connectorPModeSet.getpModes());
         
         dbPmodeSet.setMessageLane(pDomibusConnectorMessageLane);
         dbPmodeSet.setActions(mapActionListToDb(connectorPModeSet.getActions()));
@@ -204,7 +204,14 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
         dbPmodeSet.setActive(true);
 
-        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstoreUUID());
+        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+            throw new IllegalArgumentException("You must provide a already persisted keystore!");
+        }
+        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstoreUUID().getUuid());
+        if (!connectorstore.isPresent()) {
+            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstoreUUID());
+            throw new IllegalArgumentException(error);
+        }
         dbPmodeSet.setConnectorstore(connectorstore.get());
         
         List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);

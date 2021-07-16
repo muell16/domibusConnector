@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;
+
+import java.util.Objects;
 import java.util.stream.Stream;
 
 
@@ -160,10 +162,10 @@ public class DomibusConnectorParty implements Serializable {
 
 		DomibusConnectorParty that = (DomibusConnectorParty) o;
 
-		if (partyId != null ? !partyId.equals(that.partyId) : that.partyId != null) return false;
-		if (partyIdType != null ? !partyIdType.equals(that.partyIdType) : that.partyIdType != null) return false;
-//		if (roleType != null ? !roleType.equals(that.roleType) : that.roleType != null) return false;
-		return role != null ? role.equals(that.role) : that.role == null;
+		if (!Objects.equals(partyId, that.partyId)) return false;
+		if (!Objects.equals(partyIdType, that.partyIdType)) return false;
+		if (!Objects.equals(roleType, that.roleType)) return false;
+		return Objects.equals(role, that.role);
 	}
 
 	@Override
@@ -171,7 +173,7 @@ public class DomibusConnectorParty implements Serializable {
 		int result = partyId != null ? partyId.hashCode() : 0;
 		result = 31 * result + (partyIdType != null ? partyIdType.hashCode() : 0);
 		result = 31 * result + (role != null ? role.hashCode() : 0);
-//		result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
+		result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
 		return result;
 	}
 }

@@ -36,7 +36,7 @@ public class PDomibusConnectorKeystore {
 	private String uuid;
 
 	@Column(name="KEYSTORE", nullable=false)
-    private Blob keystore;
+    private byte[] keystore;
 
 	@Column(name = "PASSWORD")
 	private String password;
@@ -65,11 +65,11 @@ public class PDomibusConnectorKeystore {
 		this.id = id;
 	}
 
-	public Blob getKeystore() {
+	public byte[] getKeystore() {
 		return keystore;
 	}
 
-	public void setKeystore(Blob keystore) {
+	public void setKeystore(byte[] keystore) {
 		this.keystore = keystore;
 	}
 

@@ -2,7 +2,7 @@ package eu.domibus.connector.link.impl.testbackend;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
@@ -38,7 +38,7 @@ public class TestBackendConfiguration {
     private final DCActiveLinkManagerService dcActiveLinkManagerService;
     private final DCRoutingRulesManager routingRulesManager;
     private final DCBusinessDomainManager businessDomainManager;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
 
 //    private final ConnectorTestConfigurationProperties testConfigurationProperties;
@@ -46,7 +46,7 @@ public class TestBackendConfiguration {
     public TestBackendConfiguration(DCActiveLinkManagerService dcActiveLinkManagerService,
                                     DCRoutingRulesManager routingRulesManager,
                                     DCBusinessDomainManager businessDomainManager,
-                                    ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+                                    ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.dcActiveLinkManagerService = dcActiveLinkManagerService;
 //        this.testConfigurationProperties = testConfigurationProperties;
         this.routingRulesManager = routingRulesManager;
