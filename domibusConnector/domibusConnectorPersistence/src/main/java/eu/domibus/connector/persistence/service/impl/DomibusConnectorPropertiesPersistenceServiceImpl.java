@@ -36,7 +36,7 @@ public class DomibusConnectorPropertiesPersistenceServiceImpl implements Domibus
 	}
 
 	@Override
-	@Transactional(readOnly = false, value = "transactionManager")
+	@Transactional
 	public void saveProperties(Properties properties) {
 		Set<String> stringPropertyNames = properties.stringPropertyNames();
 		for(String propertyName:stringPropertyNames) {
@@ -58,7 +58,7 @@ public class DomibusConnectorPropertiesPersistenceServiceImpl implements Domibus
 	}
 	
 	@Override
-	@Transactional(readOnly = false, value = "transactionManager")
+	@Transactional
 	public void resetProperties(Properties properties) {
 		Iterable<PDomibusConnectorProperties> allDbProperties = propertiesDao.findAll();
 		Iterator<PDomibusConnectorProperties> it = allDbProperties.iterator();

@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
@@ -26,10 +26,10 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
     private static final Logger LOGGER = LogManager.getLogger(ValidateMessageConfirmationStep.class);
 
     private final ConfirmationCreatorService confirmationCreatorService;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
     public ValidateMessageConfirmationStep(ConfirmationCreatorService confirmationCreatorService,
-                                           ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+                                           ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.confirmationCreatorService = confirmationCreatorService;
         this.configurationPropertyLoaderService = configurationPropertyLoaderService;
     }

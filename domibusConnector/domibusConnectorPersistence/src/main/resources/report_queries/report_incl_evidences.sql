@@ -18,7 +18,7 @@ from
      case when m.DELIVERED_BACKEND is null then toParty.PARTY_ID else fromParty.PARTY_ID end   as party
    from 
      DOMIBUS_CONNECTOR_MESSAGE m
-       join DOMIBUS_CONNECTOR_MESSAGE_info i on i.MESSAGE_ID=m.ID
+       join DOMIBUS_CONNECTOR_MESSAGE_INFO i on i.MESSAGE_ID=m.ID
        join DOMIBUS_CONNECTOR_SERVICE serviceTable on i.FK_SERVICE = serviceTable.ID
        join DOMIBUS_CONNECTOR_PARTY toParty on i.FK_TO_PARTY_ID = toParty.ID
        join DOMIBUS_CONNECTOR_PARTY fromParty on i.FK_FROM_PARTY_ID = fromParty.ID

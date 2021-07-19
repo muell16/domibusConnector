@@ -4,6 +4,7 @@ package eu.domibus.connector.link.service;
 import eu.domibus.connector.link.impl.domibusgwwsplugin.DomibusGwWsPlugin;
 import eu.domibus.connector.link.impl.gwwspullplugin.DCGatewayPullPlugin;
 import eu.domibus.connector.link.impl.gwwspushplugin.WsGatewayPlugin;
+import eu.domibus.connector.link.impl.testbackend.TestbackendPlugin;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPlugin;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

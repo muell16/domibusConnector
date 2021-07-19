@@ -1,11 +1,18 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageLaneDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
-import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
-import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import java.sql.Blob;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +21,39 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorMessageLaneDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPModeSet;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
+import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 
 @Service
 public class DomibusConnectorPModePersistenceService implements DomibusConnectorPModeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPModePersistenceService.class);
 
-    @Autowired
-    DomibusConnectorPModeSetDao domibusConnectorPModeSetDao;
+    private final DomibusConnectorPModeSetDao domibusConnectorPModeSetDao;
+    private final DomibusConnectorMessageLaneDao messageLaneDao;
+    private final DomibusConnectorKeystoreDao keystoreDao;
 
-    @Autowired
-    DomibusConnectorMessageLaneDao messageLaneDao;
-
+    public DomibusConnectorPModePersistenceService(DomibusConnectorPModeSetDao domibusConnectorPModeSetDao,
+                                                   DomibusConnectorMessageLaneDao messageLaneDao,
+                                                   DomibusConnectorKeystoreDao keystoreDao) {
+        this.domibusConnectorPModeSetDao = domibusConnectorPModeSetDao;
+        this.messageLaneDao = messageLaneDao;
+        this.keystoreDao = keystoreDao;
+    }
 
     @Override
     @Cacheable
@@ -89,7 +111,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchService.getService() != null) {
                         result = result && searchService.getService().equals(service.getService());
                     }
-                    if (result && searchService.getServiceType() != null) {
+                    if (result && searchService.getServiceType() != null) { //check for null a uri can be a empty string
                         result = result && searchService.getServiceType().equals(service.getServiceType());
                     }
                     return result;
@@ -129,7 +151,10 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                     if (result && searchParty.getRole() != null) {
                         result = result && searchParty.getRole().equals(party.getRole());
                     }
-                    if (result && searchParty.getPartyIdType() != null) {
+                    if (result && searchParty.getRoleType() != null) {
+                        result = result && searchParty.getRoleType().equals(party.getRoleType());
+                    }
+                    if (result && searchParty.getPartyIdType() != null) { //check for null a uri can be a empty string
                         result = result && searchParty.getPartyIdType().equals(party.getPartyIdType());
                     }
                     return result;
@@ -148,12 +173,16 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     @Override
     @CacheEvict
     @Transactional
-    public void updatePModeConfigurationSet(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorPModeSet connectorPModeSet) {
+    public void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet) {
+        if (connectorPModeSet == null) {
+            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
+        }
+        DomibusConnectorMessageLane.MessageLaneId lane = connectorPModeSet.getMessageLaneId();
         if (lane == null) {
             throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
         }
-        if (connectorPModeSet == null) {
-            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
+        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+            throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
         }
 
         connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
@@ -166,12 +195,25 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         PDomibusConnectorPModeSet dbPmodeSet = new PDomibusConnectorPModeSet();
         dbPmodeSet.setDescription(connectorPModeSet.getDescription());
         dbPmodeSet.setCreated(Timestamp.from(Instant.now()));
+
+		dbPmodeSet.setPmodes(connectorPModeSet.getpModes());
+        
         dbPmodeSet.setMessageLane(pDomibusConnectorMessageLane);
         dbPmodeSet.setActions(mapActionListToDb(connectorPModeSet.getActions()));
         dbPmodeSet.setServices(mapServiceListToDb(connectorPModeSet.getServices()));
         dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
         dbPmodeSet.setActive(true);
 
+        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+            throw new IllegalArgumentException("You must provide a already persisted keystore!");
+        }
+        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstoreUUID().getUuid());
+        if (!connectorstore.isPresent()) {
+            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstoreUUID());
+            throw new IllegalArgumentException(error);
+        }
+        dbPmodeSet.setConnectorstore(connectorstore.get());
+        
         List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
         currentActivePModeSet.forEach(s -> s.setActive(false));
         this.domibusConnectorPModeSetDao.saveAll(currentActivePModeSet);
@@ -179,22 +221,22 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     }
 
-    private List<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
+    private Set<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
         return parties.stream()
                 .map(PartyMapper::mapPartyToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
+    private Set<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
         return services.stream()
                 .map(ServiceMapper::mapServiceToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private List<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
+    private Set<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
         return actions.stream()
                 .map(ActionMapper::mapActionToPersistence)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 

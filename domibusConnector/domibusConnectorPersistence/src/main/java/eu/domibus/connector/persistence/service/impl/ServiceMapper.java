@@ -28,7 +28,8 @@ public class ServiceMapper {
     PDomibusConnectorService mapServiceToPersistence(@Nullable DomibusConnectorService service) {
         if (service != null) {
             PDomibusConnectorService persistenceService = new PDomibusConnectorService();
-            BeanUtils.copyProperties(service, persistenceService);
+            persistenceService.setServiceType(service.getServiceType());
+            persistenceService.setService(service.getService());
             persistenceService.setId(service.getDbKey());
             return persistenceService;
         }

@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class, CommonProperties.class})
 @TestPropertySource(
         locations = {"classpath:test.properties", "classpath:test-auth.properties"},
-        properties = {"liquibase.enabled=false"})
+        properties = {"liquibase.enabled=false", "logging.level.eu.ecodex.dss.service.impl.dss=DEBUG"})
 public class DomibusConnectorSecurityToolkitAuthITCase {
 
     @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"},

@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.model.helper;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -71,9 +72,16 @@ public class DomainModelHelperTest {
         assertThat(swMsgDetails.getDirection()).isEqualTo(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         //assert that party is switched
         assertThat(swMsgDetails.getFromParty()).isNotNull();
-        assertThat(swMsgDetails.getFromParty()).isEqualTo(origMsgDetails.getToParty());
+        assertThat(swMsgDetails.getFromParty()).isEqualToComparingOnlyGivenFields(origMsgDetails.getToParty(), "partyId", "partyIdType", "role");
+        assertThat(swMsgDetails.getFromParty().getRoleType())
+                .as("party role type of from party is always initiator")
+                .isEqualTo(DomibusConnectorParty.PartyRoleType.INITIATOR);
         assertThat(swMsgDetails.getToParty()).isNotNull();
-        assertThat(swMsgDetails.getToParty()).isEqualTo(origMsgDetails.getFromParty());
+        assertThat(swMsgDetails.getToParty())
+                .isEqualToComparingOnlyGivenFields(origMsgDetails.getFromParty(), "partyId", "partyIdType", "role");
+        assertThat(swMsgDetails.getToParty().getRoleType())
+                .as("party role type of to party is always responder")
+                .isEqualTo(DomibusConnectorParty.PartyRoleType.RESPONDER);
         //assertThat final recipient/original sender is switched
         assertThat(swMsgDetails.getFinalRecipient()).isEqualTo(origMsgDetails.getOriginalSender());
         assertThat(swMsgDetails.getOriginalSender()).isEqualTo(origMsgDetails.getFinalRecipient());

@@ -3,56 +3,68 @@
 
 = Connector Internal Message Flow
 
-== Qeues Processor Overview
+== Queues Processor Overview
 
 [plantuml,queues,png]
 ----
 @startuml
 
-top to bottom direction
 
-skinparam monochrome true
+top to bottom direction
+skinparam monochrome false
 skinparam linetype ortho
+
+ legend
+ |= |= Notes |
+ |<back:#FF0000>   </back>| The queues are named after their actual destination string |
+ |<back:yellow>   </back>| Components are named as in the source code |
+ |<back:white>   </back>| White boxes illustrate a transaction |
+ endlegend
 
 interface gw_link_partner
 interface backend_link_partner
 
-queue link_to_con
-'queue link_to_con_error
+queue toConnectorControllerQueue
+queue DLQ.toConnectorControllerQueue
 
-queue con_to_link
-'queue con_to_link_error
+queue submitToLinkQueue
+queue DLQ.submitToLinkQueue
 
-queue cleanup_queue
+queue cleanUpQueue
+queue DLQ.cleanUpQueue
+
 
 package JTATransaction_Connector {
-    component to_connector_message_listener
-
-    component MessageConfirmationProcessor
+    component ToConnectorControllerListener
+    component EvidenceMessageProcessor
     component BackendToGatewayMessageProcessor
     component GatewayToBackendMessageProcessor
 }
-
-package JTATransaction_LinkModule {
-  component LinkModule
+package JTATransaction_ToLink {
+  component ToLinkPartnerListener
+  component SubmitToLinkService
 }
+package JTATransaction_CleanUp {
+  component ToCleanUpListener
+  component CleanupMessageProcessor
 
-gw_link_partner --> link_to_con
-backend_link_partner --> link_to_con
-
-link_to_con --> to_connector_message_listener
-to_connector_message_listener --> MessageConfirmationProcessor : For any evidence message
-to_connector_message_listener --> BackendToGatewayMessageProcessor : For a business message from backend to gateway
-to_connector_message_listener --> GatewayToBackendMessageProcessor : For a business message from gateway to backend
-
-JTATransaction_Connector -d-> con_to_link : messages, evidences
-JTATransaction_Connector -d-> dlq.link_to_con : in case of any processing errors (Dead Letter Queue)
-
-con_to_link -d-> JTATransaction_LinkModule
-
-JTATransaction_LinkModule -d-> dlq.con_to_link: in case of any error (Dead Letter Queue)
-JTATransaction_LinkModule -d-> cleanup_queue : when processing finished
-
-
+}
+gw_link_partner --> toConnectorControllerQueue
+backend_link_partner --> toConnectorControllerQueue
+toConnectorControllerQueue --> ToConnectorControllerListener
+ToConnectorControllerListener --> EvidenceMessageProcessor : For any evidence message
+JTATransaction_Connector --> cleanUpQueue : on successful evidence processing
+ToConnectorControllerListener --> GatewayToBackendMessageProcessor : For a business message from gateway to backend
+ToConnectorControllerListener --> BackendToGatewayMessageProcessor : For a business message from backend to gateway
+JTATransaction_Connector -d-> submitToLinkQueue : messages, evidences
+JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on error (Dead Letter Queue)
+submitToLinkQueue -d-> ToLinkPartnerListener
+ToLinkPartnerListener -d-> SubmitToLinkService
+JTATransaction_ToLink -d-> DLQ.submitToLinkQueue: on error (Dead Letter Queue)
+JTATransaction_ToLink -d-> cleanUpQueue : no errors
+cleanUpQueue -d-> ToCleanUpListener
+JTATransaction_CleanUp -d-> DLQ.cleanUpQueue : on error (Dead Letter Queue)
+ToCleanUpListener -d-> CleanupMessageProcessor
+CleanupMessageProcessor -d-> exit
 @enduml
 ----

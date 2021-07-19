@@ -182,4 +182,5 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return configureApplicationContext(application);
     }
+
 }

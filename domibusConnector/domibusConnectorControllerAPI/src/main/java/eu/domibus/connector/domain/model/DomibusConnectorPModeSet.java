@@ -9,10 +9,14 @@ public class DomibusConnectorPModeSet {
     private DomibusConnectorMessageLane.MessageLaneId messageLaneId;
     private String description;
     private Date createDate;
+    private byte[] pModes;
 
     private List<DomibusConnectorParty> parties = new ArrayList<>();
     private List<DomibusConnectorAction> actions = new ArrayList<>();
     private List<DomibusConnectorService> services = new ArrayList<>();
+    
+    private DomibusConnectorKeystore connectorstoreUUID;
+    private DomibusConnectorParty homeParty;
 
 
     public List<DomibusConnectorParty> getParties() {
@@ -61,5 +65,29 @@ public class DomibusConnectorPModeSet {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public DomibusConnectorKeystore getConnectorstoreUUID() {
+        return connectorstoreUUID;
+    }
+
+    public void setConnectorstoreUUID(DomibusConnectorKeystore connectorstoreUUID) {
+        this.connectorstoreUUID = connectorstoreUUID;
+    }
+
+    public byte[] getpModes() {
+		return pModes;
+	}
+
+	public void setpModes(byte[] pModes) {
+		this.pModes = pModes;
+	}
+
+    public DomibusConnectorParty getHomeParty() {
+        return homeParty;
+    }
+
+    public void setHomeParty(DomibusConnectorParty homeParty) {
+        this.homeParty = homeParty;
     }
 }

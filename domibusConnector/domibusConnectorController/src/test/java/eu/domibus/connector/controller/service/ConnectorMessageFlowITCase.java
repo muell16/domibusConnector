@@ -4,22 +4,20 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.processor.confirmation.CheckEvidencesTimeoutProcessorImpl;
-import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import liquibase.util.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -41,7 +39,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -89,9 +86,6 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     CheckEvidencesTimeoutProcessorImpl checkEvidencesTimeoutProcessor;
-
-    @Autowired
-    ConnectorTestConfigurationProperties testConfigurationProperties;
 
     @Autowired
     DataSource ds;
@@ -202,12 +196,18 @@ public class ConnectorMessageFlowITCase {
             assertThat(relayRemmdEvidenceMsgDetails.getConversationId())
                     .as("Conversation ID must be the same as the business message")
                     .isEqualTo(testMessage.getMessageDetails().getConversationId());
+
+
             assertThat(relayRemmdEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(testMessage.getMessageDetails().getToParty());
+                    .isEqualTo(DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(testMessage.getMessageDetails().getToParty())
+                            .setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR)
+                            .build());
             assertThat(relayRemmdEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(testMessage.getMessageDetails().getFromParty());
+                    .isEqualTo(DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(testMessage.getMessageDetails().getFromParty())
+                            .setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER)
+                            .build());
 
 
             //message status confirmed
@@ -534,10 +534,10 @@ public class ConnectorMessageFlowITCase {
             assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
             assertThat(deliveryEvidenceMessageDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyDE());
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyDE(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyAT());
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyAT(), "partyId", "partyIdType", "role");
 
 
 
@@ -661,10 +661,10 @@ public class ConnectorMessageFlowITCase {
             assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
             assertThat(deliveryEvidenceMessageDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyDE());
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyDE(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyAT());
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyAT(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getOriginalSender())
                     .as("original sender must have switched")
                     .isEqualTo(FINAL_RECIPIENT);
@@ -729,15 +729,19 @@ public class ConnectorMessageFlowITCase {
                     .as("Evidence Messages transported back to GW must have as refToMessageId the EBMS id")
                     .containsOnly(EBMS_ID, EBMS_ID);
 
+            DomibusConnectorParty partyDE = DomainEntityCreator.createPartyDE();
+            partyDE.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
             assertThat(toGwDeliveredMessages)
                     .extracting(m -> m.getMessageDetails().getFromParty())
                     .as("From Party must be switched")
-                    .containsOnly(DomainEntityCreator.createPartyDE(), DomainEntityCreator.createPartyDE());
+                    .containsOnly(partyDE, partyDE);
 
+            DomibusConnectorParty partyAT = DomainEntityCreator.createPartyAT();
+            partyAT.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
             assertThat(toGwDeliveredMessages)
                     .extracting(m -> m.getMessageDetails().getToParty())
                     .as("To Party must be switched")
-                    .containsOnly(DomainEntityCreator.createPartyAT(), DomainEntityCreator.createPartyAT());
+                    .containsOnly(partyAT, partyAT);
 
             assertThat(toBackendDeliveredMessages)
                     .as("no messages should have been delivered to backend")
@@ -867,13 +871,18 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
                     .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
+
             assertThat(toBackendEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
-
+                    .isEqualTo(DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(submittedMessage.getMessageDetails().getToParty())
+                            .setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR)
+                            .build());
             assertThat(toBackendEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+                    .isEqualTo(DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(submittedMessage.getMessageDetails().getFromParty())
+                            .setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER)
+                            .build());
+
 
         });
     }
@@ -934,10 +943,10 @@ public class ConnectorMessageFlowITCase {
 
             assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getToParty())
                     .as("Parties must be same")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getToParty(), "partyId", "partyIdType", "role");
             assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getFromParty())
                     .as("Parties must be same")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getFromParty(), "partyId", "partyIdType", "role");
             assertThat(toGwSubmittedBusinessMessage.getMessageDetails().getOriginalSender())
                     .as("Original sender must be same")
                     .isEqualTo(submittedMessage.getMessageDetails().getOriginalSender());
@@ -968,10 +977,10 @@ public class ConnectorMessageFlowITCase {
 
             assertThat(toBackendEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getToParty(), "partyId", "partyIdType", "role");
             assertThat(toBackendEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getFromParty(), "partyId", "partyIdType", "role");
 
 
         });
@@ -1340,10 +1349,10 @@ public class ConnectorMessageFlowITCase {
 
             assertThat(toBackendEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getFromParty(), "partyId", "partyIdType", "role");
             assertThat(toBackendEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+                    .isEqualToComparingOnlyGivenFields(submittedMessage.getMessageDetails().getToParty(), "partyId", "partyIdType", "role");
             assertThat(toBackendEvidenceMsgDetails.getOriginalSender())
                     .as("OriginalSender final recipient must be switched")
                     .isEqualTo(submittedMessage.getMessageDetails().getFinalRecipient());

@@ -17,6 +17,7 @@ import eu.europa.esig.dss.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,8 +63,8 @@ public class ECodexContainerFactoryService {
 
             CertificateStoreInfo certStore = new CertificateStoreInfo();
 
-            String storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
-            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString());
+            Resource storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPath();
+            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore());
             certStore.setLocation(storeLocation);
             certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
 

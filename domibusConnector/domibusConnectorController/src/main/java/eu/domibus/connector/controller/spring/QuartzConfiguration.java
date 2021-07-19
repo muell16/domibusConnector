@@ -12,7 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 public class QuartzConfiguration {
 
     @Autowired
-    ConnectorControllerProperties connectorControllerProperties;
+    ConnectorConfigurationProperties connectorConfigurationProperties;
 
     @Bean
     QuartzInstanceIdGenerator quartzInstanceIdGenerator() {
@@ -22,7 +22,7 @@ public class QuartzConfiguration {
     class QuartzInstanceIdGenerator implements InstanceIdGenerator {
         @Override
         public String generateInstanceId() throws SchedulerException {
-            return connectorControllerProperties.getInstanceName();
+            return connectorConfigurationProperties.getInstanceName();
         }
     }
 

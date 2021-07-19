@@ -44,7 +44,7 @@ public class DomainModelHelper {
      *  <ul>
      *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
      *      <li>the message must contain exact one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
-     *      <li>the confirmation must have only a confirmation type - the evidence must be null: {@link DomibusConnectorMessageConfirmation#getEvidence()} == null</li>
+     *      <li>the confirmation must have only a confirmation type - the evidence must be empty or null: ArrayUtils.isEmpty({@link DomibusConnectorMessageConfirmation#getEvidence()})</li>
      *  </ul>
      *
      * @param message - the message to check
@@ -117,6 +117,10 @@ public class DomainModelHelper {
      *     <li>OriginalSender with FinalRecipient</li>
      * </ul>
      *
+     * When the party is switched, the party role type is preserved
+     * so the fromParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#INITIATOR}
+     * and the toParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#RESPONDER}
+     *
      *
      * @param messageDetails
      * @return
@@ -128,13 +132,15 @@ public class DomainModelHelper {
         DomibusConnectorMessageDirection originalDirection = details.getDirection();
         String finalRecipient = details.getFinalRecipient();
         String originalSender = details.getOriginalSender();
-        DomibusConnectorParty fromParty = details.getFromParty();
-        DomibusConnectorParty toParty = details.getToParty();
+        DomibusConnectorParty newToParty = details.getFromParty();
+        newToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        DomibusConnectorParty newFromParty = details.getToParty();
+        newFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
         details.setFinalRecipient(originalSender);
         details.setOriginalSender(finalRecipient);
-        details.setFromParty(toParty);
-        details.setToParty(fromParty);
+        details.setFromParty(newFromParty);
+        details.setToParty(newToParty);
         return details;
     }
 

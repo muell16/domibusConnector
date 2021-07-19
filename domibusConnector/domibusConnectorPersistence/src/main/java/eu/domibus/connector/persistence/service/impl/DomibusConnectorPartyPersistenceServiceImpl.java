@@ -103,6 +103,7 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
             );
             p.setDbKey(persistenceParty.getId());
             p.setPartyName(persistenceParty.getPmodePartyIdentifier());
+            p.setRoleType(persistenceParty.getRoleType());
             return p;
         }
         return null;

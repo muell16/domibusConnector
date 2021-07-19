@@ -3,7 +3,6 @@ package eu.domibus.connector.controller.queues.listener;
 import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
-import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -17,7 +16,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Component
@@ -28,16 +26,13 @@ public class ToConnectorControllerListener {
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
     private final EvidenceMessageProcessor evidenceMessageProcessor;
-    private final ToConnectorQueue toConnectorQueue;
 
     public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
                                          ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor,
-                                         EvidenceMessageProcessor evidenceMessageProcessor,
-                                         ToConnectorQueue toConnectorQueue) {
+                                         EvidenceMessageProcessor evidenceMessageProcessor) {
         this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
         this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
         this.evidenceMessageProcessor = evidenceMessageProcessor;
-        this.toConnectorQueue = toConnectorQueue;
     }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
@@ -60,18 +55,10 @@ public class ToConnectorControllerListener {
                 throw new IllegalStateException("Illegal Message format received!");
             }
         } catch (Exception exc) {
-            //cannot recover here: put into DLQ!
             LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Check Dead Letter Queue and technical logs for details!", exc.getMessage());
             String error = "Failed to process messsage due: " + exc.getMessage();
             LOGGER.error(error, exc);
             throw exc;
-//            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
-//                    .setText(error)
-//                    .setDetails(exc)
-//                    .setSource(ToConnectorControllerListener.class)
-//                    .build();
-//            message.getMessageProcessErrors().add(build);
-//            toConnectorQueue.putOnErrorQueue(message);
         }
     }
 

@@ -1,9 +1,9 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.spring.ConnectorMessageLaneProperties;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -33,12 +33,12 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     private static final Logger LOGGER = LogManager.getLogger(SubmitConfirmationAsEvidenceMessageStep.class);
 
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
-    private final ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
     private final ConfirmationCreatorService confirmationCreator;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     public SubmitConfirmationAsEvidenceMessageStep(SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
-                                                   ConfigurationPropertyLoaderService configurationPropertyLoaderService,
+                                                   ConfigurationPropertyManagerService configurationPropertyLoaderService,
                                                    ConfirmationCreatorService confirmationCreator,
                                                    DomibusConnectorMessageIdGenerator messageIdGenerator) {
         this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
@@ -92,8 +92,8 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     }
 
     private boolean shouldBeSubmitted(DomibusConnectorMessage businessMessage, DomibusConnectorMessageDirection direction) {
-        ConnectorMessageLaneProperties config =
-                configurationPropertyLoaderService.loadConfiguration(businessMessage.getMessageLaneId(), ConnectorMessageLaneProperties.class);
+        ConnectorMessageProcessingProperties config =
+                configurationPropertyLoaderService.loadConfiguration(businessMessage.getMessageLaneId(), ConnectorMessageProcessingProperties.class);
         boolean result =  direction.getTarget() != MessageTargetSource.BACKEND || config.isSendGeneratedEvidencesToBackend();
         LOGGER.debug("Evidence will be submitted back to Backend as EvidenceMessage: [{}]", result);
         return result;

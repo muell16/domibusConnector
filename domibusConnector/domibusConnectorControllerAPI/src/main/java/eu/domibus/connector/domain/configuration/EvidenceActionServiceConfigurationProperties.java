@@ -1,18 +1,21 @@
 package eu.domibus.connector.domain.configuration;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * This property class is meant to be loaded over the
- * {@link eu.domibus.connector.common.service.ConfigurationPropertyLoaderService} so also
+ * {@link ConfigurationPropertyManagerService} so also
  * MessageLane specific properties are taken into account
  */
 @ConfigurationProperties(prefix = "connector.confirmation-messages")
@@ -42,7 +45,9 @@ public class EvidenceActionServiceConfigurationProperties {
 
     public static class EvidenceServiceAction {
         @Valid
+        @NotNull
         private EvidenceActionServiceConfigurationProperties.AS4Action action;
+
         @Valid
         @NestedConfigurationProperty
         private EvidenceActionServiceConfigurationProperties.AS4Service service;
@@ -88,6 +93,8 @@ public class EvidenceActionServiceConfigurationProperties {
 
     }
 
+    @Validated
+    @Valid
     public static class AS4Action {
         @NotBlank
         private String action;
@@ -111,6 +118,8 @@ public class EvidenceActionServiceConfigurationProperties {
         }
     }
 
+    @Validated
+    @Valid
     public static class AS4Service {
         @NotBlank
         private String name;
@@ -124,6 +133,10 @@ public class EvidenceActionServiceConfigurationProperties {
         public AS4Service(String name, String serviceType) {
             this.name = name;
             this.serviceType = serviceType;
+        }
+        
+        public AS4Service(String name) {
+            this.name = name;
         }
 
         public String getName() {
