@@ -46,6 +46,14 @@ public class DomibusConnectorMessageLane {
         return new EvidenceActionServiceConfigurationProperties();
     }
 
+    public Properties getMessageLaneProperties() {
+        return messageLaneProperties;
+    }
+
+    public void setMessageLaneProperties(Properties messageLaneProperties) {
+        this.messageLaneProperties = messageLaneProperties;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

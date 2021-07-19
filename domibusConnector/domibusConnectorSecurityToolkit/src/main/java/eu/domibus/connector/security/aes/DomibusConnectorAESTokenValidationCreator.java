@@ -5,9 +5,8 @@ import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeFactory;
 
 import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.ecodex.dss.model.token.AuthenticationInformation;
@@ -15,22 +14,21 @@ import eu.ecodex.dss.model.token.TechnicalTrustLevel;
 import eu.ecodex.dss.model.token.TechnicalValidationResult;
 import eu.ecodex.dss.model.token.TokenValidation;
 import eu.ecodex.dss.model.token.ValidationVerification;
-import eu.ecodex.dss.util.LogDelegate;
+import org.springframework.stereotype.Component;
 
-@Component("domibusConnectorAESTokenValidationCreator")
+@Component
 public class DomibusConnectorAESTokenValidationCreator {
 
-    private static final LogDelegate LOG = new LogDelegate(DomibusConnectorAESTokenValidationCreator.class);
-    
-//    @Value("${identity.provider:null}")
-//    String identityProvider;
+    private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorAESTokenValidationCreator.class);
 
-    @Autowired
-    TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
+
+    private final TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
+
+    public DomibusConnectorAESTokenValidationCreator(TokenIssuerFactoryProperties tokenIssuerFactoryProperties) {
+        this.tokenIssuerFactoryProperties = tokenIssuerFactoryProperties;
+    }
 
     TokenValidation createTokenValidation(DomibusConnectorMessage message) throws Exception {
-
-        LOG.lInfo("creating result");
 
         TokenValidation tValidation = new TokenValidation();
 
@@ -55,12 +53,12 @@ public class DomibusConnectorAESTokenValidationCreator {
             decide(TechnicalTrustLevel.SUCCESSFUL, "The signature is valid.", tValidation);
 
         } catch (Exception e) {
-            LOG.mCause("run", e);
+            LOGGER.warn("Exception occured during createTokenValidation", e);
 
             // Cannot generate the DSS validation report
             validationResult.setTrustLevel(TechnicalTrustLevel.FAIL);
             validationResult.setComment("An error occured, while validating the signature via DSS.");
-            LOG.lWarn("b/o encountered exception: result determined to {}: {}", validationResult.getTrustLevel(),
+            LOGGER.warn("b/o encountered exception: result determined to {}: {}", validationResult.getTrustLevel(),
                     validationResult.getComment());
         }
         return tValidation;
@@ -70,8 +68,7 @@ public class DomibusConnectorAESTokenValidationCreator {
         final TechnicalValidationResult r = tValidation.getTechnicalResult();
         r.setTrustLevel(level);
         r.setComment(comments);
-        LOG.lInfo("result determined to {}: {}", r.getTrustLevel(), r.getComment());
-
+        LOGGER.debug("result determined to {}: {}", r.getTrustLevel(), r.getComment());
     }
 
 }

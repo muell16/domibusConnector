@@ -1,6 +1,13 @@
 package eu.domibus.connector.security.container.service;
 
 import eu.domibus.connector.common.spring.CommonProperties;
+import eu.domibus.connector.domain.model.DCMessageProcessSettings;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.security.aes.DomibusConnectorAESTechnicalValidationService;
+import eu.domibus.connector.security.aes.DomibusConnectorAESTokenValidationCreator;
 import eu.domibus.connector.security.configuration.DomibusConnectorEnvironmentConfiguration;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
@@ -9,8 +16,13 @@ import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidat
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
+import eu.ecodex.dss.model.token.AdvancedSystemType;
+import eu.ecodex.dss.model.token.Token;
+import eu.ecodex.dss.model.token.TokenDocument;
+import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
+import eu.ecodex.dss.util.TokenJAXBObjectFactory;
 import eu.europa.esig.dss.DSSDocument;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
@@ -26,7 +38,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
+import org.xml.sax.SAXException;
 
+import javax.naming.spi.ObjectFactory;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +64,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         SecurityToolkitConfigurationProperties.class,
         ECodexContainerFactoryService.class,
         TokenIssuerFactory.class,
+        DomibusConnectorAESTokenValidationCreator.class,
         CommonProperties.class,
         TokenIssuerFactoryProperties.class
 })
@@ -87,7 +110,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with XML as business doc")
     public void createContainerFromXML(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -95,7 +118,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         DSSDocument businessDoc = loadDocumentFromResource("examples/ExampleXmlSigned.xml", "ExampleXmlSigned.xml", MimeType.XML);
         businessContent.setDocument(businessDoc);
 
-        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(new DomibusConnectorMessage()));
 
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
         assertThat(asicDocument).isNotNull();
@@ -112,8 +135,64 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
+    }
+
+    @Test
+    @DisplayName("Build ASIC-S container with XML authentication based")
+    public void createContainerFromXMLWithAuthenticationBased(TestInfo testInfo) throws ECodexException, IOException, ParserConfigurationException, SAXException, JAXBException {
+
+
+        DCMessageProcessSettings settings = new DCMessageProcessSettings();
+        settings.setValidationServiceName(AdvancedSystemType.AUTHENTICATION_BASED.name());
+        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+                        .withOriginalSender("originalSender")
+                        .build())
+                .build();
+        msg.setDcMessageProcessSettings(settings);
+
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(msg);
+
+        BusinessContent businessContent = new BusinessContent();
+
+        //bytes name mimetype
+        DSSDocument businessDoc = loadDocumentFromResource("examples/ExampleXmlSigned.xml", "ExampleXmlSigned.xml", MimeType.XML);
+        businessContent.setDocument(businessDoc);
+
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(msg));
+
+        DSSDocument asicDocument = eCodexContainer.getAsicDocument();
+        assertThat(asicDocument).isNotNull();
+//
+        asicDocument.setName("asic-s.asics.zip");
+        writeDssDocToDisk(testInfo, asicDocument);
+
+        DSSDocument tokenXML = eCodexContainer.getTokenXML();
+        assertThat(tokenXML).isNotNull();
+        tokenXML.setName("asic-s_trustoktoken.xml");
+        writeDssDocToDisk(testInfo, tokenXML);
+
+        //check if produced container and token can also be resolved again
+        byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
+        byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
+
+
+
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
+        eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(Token.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<Token> jaxbToken = unmarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(tokenXml)), Token.class);
+
+        Token token = jaxbToken.getValue();
+
+        assertThat(token.getAdvancedElectronicSystem())
+                .as("The system type has been passed with the message and should be AUTHENTICATION BASED!")
+                .isEqualTo(AdvancedSystemType.AUTHENTICATION_BASED);
 
     }
 
@@ -122,7 +201,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with ASIC-S as business doc")
     public void createContainerFromAsicS(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -130,7 +209,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         DSSDocument businessDoc = loadDocumentFromResource("examples/ExampleAsics.asics", "ExampleAsics.asics", MimeType.ASICS);
         businessContent.setDocument(businessDoc);
 
-        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(new DomibusConnectorMessage()));
 
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
         assertThat(asicDocument).isNotNull();
@@ -147,7 +226,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
         //there must be a token XML
@@ -165,7 +244,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with unsigned doc.txt")
     public void createContainerFromTextDocument(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -173,7 +252,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         DSSDocument businessDoc = loadDocumentFromResource("examples/text.txt", "text.txt", MimeType.TEXT);
         businessContent.setDocument(businessDoc);
 
-        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(new DomibusConnectorMessage()));
 
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
         assertThat(asicDocument).isNotNull();
@@ -190,7 +269,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
     }
@@ -200,7 +279,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
     public void simpleTestCreateContainerServiceAndBuildAsicContainer() throws ECodexException, IOException {
 
 
-        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -211,7 +290,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         DSSDocument dssDocument = loadDocumentFromResource("examples/Form_A.pdf", "Addition.pdf", MimeType.PDF);
         businessContent.addAttachment(dssDocument);
 
-        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(new DomibusConnectorMessage()));
 
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
         assertThat(asicDocument).isNotNull();
@@ -228,7 +307,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
     }
@@ -237,7 +316,7 @@ public class ECodexContainerFactoryServiceITCaseTemplate {
     @Test
     public void testCreateContainerServiceAndResolveAsicContainer() throws IOException, ECodexException {
 
-        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
 
 
         InputStream asicContainer = getClass().getResourceAsStream("/examples/asic-s.asics");

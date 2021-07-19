@@ -16,7 +16,6 @@ import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +24,20 @@ public class ECodexContainerFactoryService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryService.class);
 
-    @Autowired
-    EnvironmentConfiguration environmentConfiguration;
+    private final EnvironmentConfiguration environmentConfiguration;
+    private final DomibusConnectorCertificateVerifier certificateVerifier;
+    private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+    private final DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
 
-    @Autowired
-    DomibusConnectorCertificateVerifier certificateVerifier;
-
-    @Autowired
-    SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
-
-    @Autowired
-    DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
+    public ECodexContainerFactoryService(EnvironmentConfiguration environmentConfiguration,
+                                         DomibusConnectorCertificateVerifier certificateVerifier,
+                                         SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
+                                         DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory) {
+        this.environmentConfiguration = environmentConfiguration;
+        this.certificateVerifier = certificateVerifier;
+        this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
+        this.technicalValidationServiceFactory = technicalValidationServiceFactory;
+    }
 
     public ECodexContainerService createECodexContainerService(DomibusConnectorMessage message) {
         DSSECodexContainerService containerService = new DSSECodexContainerService();
@@ -48,7 +50,7 @@ public class ECodexContainerFactoryService {
 
         containerService.setContainerSignatureParameters(createSignatureParameters());
 
-        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.technicalValidationService(message);
+        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.createTechnicalValidationService(message);
         containerService.setTechnicalValidationService(eCodexTechnicalValidationService);
 
         return containerService;

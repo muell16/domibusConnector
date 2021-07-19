@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
 import org.quartz.SchedulerException;
 import org.quartz.spi.InstanceIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

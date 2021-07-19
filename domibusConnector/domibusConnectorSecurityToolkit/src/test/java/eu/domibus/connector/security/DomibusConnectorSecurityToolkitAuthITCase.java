@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,8 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * and DSSECodexContainerService is loading data from remote location
  * (the trust lists)
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class, CommonProperties.class})
+@SpringBootTest(classes = {DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class, CommonProperties.class})
 @TestPropertySource(
         locations = {"classpath:test.properties", "classpath:test-auth.properties"},
         properties = {"liquibase.enabled=false", "logging.level.eu.ecodex.dss.service.impl.dss=DEBUG"})
@@ -52,11 +52,11 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
                     HibernateJpaAutoConfiguration.class, LiquibaseAutoConfiguration.class})
     public static class TestContextConfiguration {
 
-        @Bean
-        public static PropertySourcesPlaceholderConfigurer
-        propertySourcesPlaceholderConfigurer() {
-            return new PropertySourcesPlaceholderConfigurer();
-        }
+//        @Bean
+//        public static PropertySourcesPlaceholderConfigurer
+//        propertySourcesPlaceholderConfigurer() {
+//            return new PropertySourcesPlaceholderConfigurer();
+//        }
 
         @Bean
         public static LargeFilePersistenceService bigDataPersistenceService() {
@@ -75,10 +75,10 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
     @Autowired
     LargeFilePersistenceService bigDataPersistenceService;
 
-    @Resource
+    @Autowired
     private DomibusSecurityContainer securityContainer;
 
-    @Resource
+    @Autowired
     private DomibusConnectorSecurityToolkit securityToolkit;
 
     @Test

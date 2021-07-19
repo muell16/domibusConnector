@@ -43,6 +43,8 @@ public class DomibusConnectorMessage implements Serializable {
 	//holds all errors which occured during message processing...
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
+	private DCMessageProcessSettings dcMessageProcessSettings;
+
 
 	/**
 	 * Default constructor, needed for frameworks
@@ -198,6 +200,14 @@ public class DomibusConnectorMessage implements Serializable {
 	 */
 	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
 	   	return this.transportedMessageConfirmations.add(confirmation);
+	}
+
+	public DCMessageProcessSettings getDcMessageProcessSettings() {
+		return dcMessageProcessSettings;
+	}
+
+	public void setDcMessageProcessSettings(DCMessageProcessSettings dcMessageProcessSettings) {
+		this.dcMessageProcessSettings = dcMessageProcessSettings;
 	}
 
 	@JsonIgnore

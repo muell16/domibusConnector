@@ -1,38 +1,58 @@
 package eu.domibus.connector.security.container.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.model.token.TokenIssuer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TokenIssuerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenIssuerFactory.class);
 
-//    @Value("${token.issuer.country:#{null}}")
-//    String country;
-//
-//    @Value("${token.issuer.service.provider:#{null}}")
-//    String serviceProvider;
-//
-//    @Value("${token.issuer.aes.value:#{null}}")
-//    AdvancedSystemType advancedElectronicSystem;
+    private final TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
 
-    @Autowired
-    TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
+    public TokenIssuerFactory(TokenIssuerFactoryProperties tokenIssuerFactoryProperties) {
+        this.tokenIssuerFactoryProperties = tokenIssuerFactoryProperties;
+    }
 
     public TokenIssuer getTokenIssuer(DomibusConnectorMessage message) {
         TokenIssuer tokenIssuer = new TokenIssuer();
         tokenIssuer.setCountry(tokenIssuerFactoryProperties.getCountry());
         tokenIssuer.setServiceProvider(tokenIssuerFactoryProperties.getServiceProvider());
-        tokenIssuer.setAdvancedElectronicSystem(tokenIssuerFactoryProperties.getAdvancedElectronicSystemType());
+        tokenIssuer.setAdvancedElectronicSystem(this.getAdvancedElectronicSystemType(message));
+
         LOGGER.debug("#getTokenIssuer: TokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}], returned tokenIssuer [{}]",
                 tokenIssuerFactoryProperties.getCountry(), tokenIssuerFactoryProperties.getServiceProvider(), tokenIssuerFactoryProperties.getAdvancedElectronicSystemType(), tokenIssuer);
 
         return tokenIssuer;
+    }
+
+    private final List<String> issuerServiceNames = Stream.of(AdvancedSystemType.values()).map(Enum::name).collect(Collectors.toList());
+
+
+    public AdvancedSystemType getAdvancedElectronicSystemType(DomibusConnectorMessage message) {
+        String validationServiceName = "";
+        if (message.getDcMessageProcessSettings() != null && StringUtils.hasText(message.getDcMessageProcessSettings().getValidationServiceName())) {
+            validationServiceName = message.getDcMessageProcessSettings().getValidationServiceName();
+        }
+
+        if (issuerServiceNames.contains(validationServiceName)) {
+            LOGGER.debug("The validation service is determined from the validationServiceName of the message itself. It has been set by the backend application to [{}]", validationServiceName);
+            return (AdvancedSystemType.valueOf(validationServiceName));
+        } else {
+            LOGGER.warn("The backend application has provided a illegal validationServiceName of [{}]. This setting will be ignored.", validationServiceName);
+        }
+        return tokenIssuerFactoryProperties.getAdvancedElectronicSystemType();
+
     }
 
 //    @PostConstruct

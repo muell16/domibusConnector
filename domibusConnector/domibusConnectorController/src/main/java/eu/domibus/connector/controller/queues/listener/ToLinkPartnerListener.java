@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.queues.listener;
 
 
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -30,6 +31,7 @@ public class ToLinkPartnerListener {
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             submitToLink.submitToLink(message);
         } catch (Exception exc) {
             LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);

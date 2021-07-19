@@ -1,0 +1,51 @@
+package eu.domibus.connector.common.spring;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.config.Scope;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+class BeanStore {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(BeanStore.class.getName());
+
+    private final Map<String, Object> objects = new HashMap<>();
+
+    private final Map<String, Runnable> destructionCallbacks = new HashMap<>();
+
+
+    synchronized Object get(String name, ObjectFactory<?> objectFactory) {
+        Object bean = objects.get(name);
+        if (bean == null) {
+            bean = objectFactory.getObject();
+            objects.put(name, bean);
+        }
+        return bean;
+    }
+
+    synchronized Object remove(String name) {
+        destructionCallbacks.remove(name);
+        return objects.remove(name);
+    }
+
+    synchronized void registerDestructionCallback(String name, Runnable callback) {
+        destructionCallbacks.put(name, callback);
+    }
+
+    synchronized void destroy() {
+        destructionCallbacks.clear();
+        objects.clear();
+    }
+
+
+
+
+
+
+}

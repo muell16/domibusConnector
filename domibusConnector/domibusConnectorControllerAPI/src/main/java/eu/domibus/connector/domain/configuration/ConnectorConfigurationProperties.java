@@ -1,16 +1,13 @@
-package eu.domibus.connector.controller.spring;
+package eu.domibus.connector.domain.configuration;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Validated
 @Valid
@@ -33,12 +30,17 @@ public class ConnectorConfigurationProperties {
     DomibusConnectorMessageLane.MessageLaneId defaultBusinessDomainId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
 
     @NotNull
-    Map<String, BusinessDomainConfig> businessDomain = new HashMap<>();
+    Map<DomibusConnectorMessageLane.MessageLaneId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
 
     @Validated
     public static class BusinessDomainConfig {
         @NotNull
         private boolean enabled = true;
+
+        @NotBlank
+        private DomibusConnectorMessageLane.MessageLaneId id;
+
+        private String description;
 
         private Map<String, String> properties = new HashMap<>();
 
@@ -56,6 +58,22 @@ public class ConnectorConfigurationProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public DomibusConnectorMessageLane.MessageLaneId getId() {
+            return id;
+        }
+
+        public void setId(DomibusConnectorMessageLane.MessageLaneId id) {
+            this.id = id;
         }
     }
 
@@ -75,12 +93,11 @@ public class ConnectorConfigurationProperties {
         this.defaultBusinessDomainId = defaultBusinessDomainId;
     }
 
-    public Map<String, BusinessDomainConfig> getBusinessDomain() {
+    public Map<DomibusConnectorMessageLane.MessageLaneId, BusinessDomainConfig> getBusinessDomain() {
         return businessDomain;
     }
 
-    public void setBusinessDomain(Map<String, BusinessDomainConfig> businessDomain) {
+    public void setBusinessDomain(Map<DomibusConnectorMessageLane.MessageLaneId, BusinessDomainConfig> businessDomain) {
         this.businessDomain = businessDomain;
     }
-
 }

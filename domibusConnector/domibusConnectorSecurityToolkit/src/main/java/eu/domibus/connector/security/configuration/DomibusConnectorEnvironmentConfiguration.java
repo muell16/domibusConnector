@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.model.EnvironmentConfiguration;
 
-@Component("domibusConnectorEnvironmentConfiguration")
+@Component
 public class DomibusConnectorEnvironmentConfiguration extends EnvironmentConfiguration implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEnvironmentConfiguration.class);
