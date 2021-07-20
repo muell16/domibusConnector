@@ -2,6 +2,7 @@ package eu.domibus.connector.web.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -116,25 +117,53 @@ public class WebKeystoreService {
 	}
 
 	public KeyStore loadKeyStore(String path, String password) {
-        if (password == null) {
-            password = "";
-        }
         if(path.startsWith("file:")) {
         	path = path.substring(5);
         }
-        char[] pwdArray = password.toCharArray();
         File store = new File(path);
-        try (FileInputStream fis = new FileInputStream(store)) {
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(fis, pwdArray);
-            return keyStore;
-        } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
-            throw new CannotLoadKeyStoreException(String.format("Cannot load key store from path %s", path), e);
+        FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(store);
+		} catch (FileNotFoundException e) {
+			throw new CannotLoadKeyStoreException(String.format("Cannot load key store from path %s", path), e);
+		}
+        
+        return loadKeyStore(fis, password);
+       
+    }
+	
+	public KeyStore loadKeyStore(InputStream is, String password) {
+		if (password == null) {
+            password = "";
         }
+		
+		char[] pwdArray = password.toCharArray();
+		
+        try {
+        	KeyStore keyStore = KeyStore.getInstance("JKS");
+			keyStore.load(is, pwdArray);
+			return keyStore;
+		} catch (NoSuchAlgorithmException | CertificateException | IOException e) {
+			throw new CannotLoadKeyStoreException(String.format("Cannot load key store!"), e);
+		} catch (KeyStoreException e) {
+			throw new CannotLoadKeyStoreException(String.format("Cannot load key store!"), e);
+		}
+        
     }
 	
 	public List<CertificateInfo> loadStoreCertificatesInformation(String path, String password) {
 		KeyStore keyStore = loadKeyStore(path, password);
+		return loadStoreCertificatesInformation(keyStore);
+		
+	}
+	
+	public List<CertificateInfo> loadStoreCertificatesInformation(InputStream is, String password) {
+		KeyStore keyStore = loadKeyStore(is, password);
+		return loadStoreCertificatesInformation(keyStore);
+		
+	}
+	
+	private List<CertificateInfo> loadStoreCertificatesInformation(KeyStore keyStore) {
 		List<CertificateInfo> certsInfo = new ArrayList<CertificateInfo>();
 		try {
 			Enumeration<String> aliases = keyStore.aliases();
@@ -171,7 +200,6 @@ public class WebKeystoreService {
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
 	
 	

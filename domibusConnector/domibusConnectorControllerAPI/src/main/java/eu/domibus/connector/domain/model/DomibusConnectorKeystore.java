@@ -9,19 +9,25 @@ import org.springframework.core.style.ToStringCreator;
 public class DomibusConnectorKeystore {
 	
 	public static enum KeystoreType {
-		JKS("JKS"), JCEKS("JCEKS"), PKCS12("PKCS12"), PKCS12S2("PKCS12S2") ;
+		JKS("JKS", ".jks"), JCEKS("JCEKS",".jceks"), PKCS12("PKCS12",".pkcs12"), PKCS12S2("PKCS12S2",".pkcs12s2") ;
 		
 		
-		private KeystoreType(String dbName) {
+		private KeystoreType(String dbName, String fileExtension) {
 			this.dbName = dbName;
+			this.fileExtension = fileExtension;
 		}
 		
+		
 		String dbName;
+		String fileExtension;
 		
 		public String getDbName() {
 			return dbName;
 		}
 		
+		public String getFileExtension() {
+			return fileExtension;
+		}
 		
 		public static KeystoreType ofDbName(String dbName) {
 			return Stream.of(KeystoreType.values())

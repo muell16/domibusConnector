@@ -1,9 +1,11 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import java.sql.Blob;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +54,23 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
 		pKeystore.setUploaded(dbKeystore.getUploaded());
 		
 		return pKeystore;
+	}
+	
+	@Override
+	@Transactional
+	public void updateKeystorePassword(DomibusConnectorKeystore pKeystore, String newKeystorePassword) {
+		if (StringUtils.isEmpty(pKeystore.getUuid())) {
+            throw new IllegalArgumentException("UUID of keystore must not be null!");
+        }
+		
+		Optional<PDomibusConnectorKeystore> dbKeystore = keystoreDao.findByUuid(pKeystore.getUuid());
+		if(dbKeystore.isPresent()) {
+			dbKeystore.get().setPassword(newKeystorePassword);
+			keystoreDao.save(dbKeystore.get());
+		}else {
+			throw new NoResultException(String.format("No keystore with UUID [%s] found in database!", pKeystore.getUuid()));
+		}
+		
 	}
 
 	@Override

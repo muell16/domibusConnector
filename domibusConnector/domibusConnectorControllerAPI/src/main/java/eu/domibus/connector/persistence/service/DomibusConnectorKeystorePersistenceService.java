@@ -9,5 +9,7 @@ public interface DomibusConnectorKeystorePersistenceService {
 	DomibusConnectorKeystore getKeystoreByUUID(String uuid);
 
 	DomibusConnectorKeystore persistNewKeystore(DomibusConnectorKeystore pKeystore);
+
+	void updateKeystorePassword(DomibusConnectorKeystore pKeystore, String newKeystorePassword);
 	
 }

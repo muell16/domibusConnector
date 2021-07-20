@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.view.areas.configuration.util;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -49,30 +50,40 @@ public class ConfigurationUtil {
 	public Grid<CertificateInfo> createKeystoreInformationGrid(TextField keyStorePathField, TextField keyStorePasswordField) {
 		if(keyStorePathField.getValue()!=null && !keyStorePasswordField.getValue().isEmpty()) {
 			List<CertificateInfo> evidencesKeyStore = keystoreService.loadStoreCertificatesInformation(keyStorePathField.getValue(), keyStorePasswordField.getValue());
-			Grid<CertificateInfo> grid = new Grid<>();
-			
-			grid.setItems(evidencesKeyStore);
-			
-			grid.addColumn(CertificateInfo::getAlias).setHeader("Alias").setWidth("200px");
-			grid.addColumn(CertificateInfo::getSubject).setHeader("Subject").setWidth("300px");
-			grid.addColumn(CertificateInfo::getIssuer).setHeader("Issuer").setWidth("300px");
-			grid.addColumn(CertificateInfo::getNotBefore).setHeader("Valid from").setWidth("300px");
-			grid.addColumn(CertificateInfo::getNotAfter).setHeader("Valid until").setWidth("300px");
-			grid.addColumn(CertificateInfo::getAlgorithm).setHeader("Algorithm").setWidth("200px");
-			grid.addColumn(CertificateInfo::getType).setHeader("Type").setWidth("200px");
-			
-			grid.setWidth("1800px");
-//			grid.setHeight("500px");
-			grid.setMultiSort(true);
-			
-			for(Column<CertificateInfo> col : grid.getColumns()) {
-				col.setSortable(true);
-				col.setResizable(true);
-			}
-			return grid;
+			return createKeystoreInformationGrid(evidencesKeyStore);
 		}
 		
 		return null;
+	}
+	
+	public Grid<CertificateInfo> createKeystoreInformationGrid(InputStream is, String password){
+		List<CertificateInfo> keyStore = keystoreService.loadStoreCertificatesInformation(is, password);
+		return createKeystoreInformationGrid(keyStore);
+	}
+	
+	
+	public Grid<CertificateInfo> createKeystoreInformationGrid(List<CertificateInfo> keyStore){
+		Grid<CertificateInfo> grid = new Grid<>();
+		
+		grid.setItems(keyStore);
+		
+		grid.addColumn(CertificateInfo::getAlias).setHeader("Alias").setWidth("200px");
+		grid.addColumn(CertificateInfo::getSubject).setHeader("Subject").setWidth("300px");
+		grid.addColumn(CertificateInfo::getIssuer).setHeader("Issuer").setWidth("300px");
+		grid.addColumn(CertificateInfo::getNotBefore).setHeader("Valid from").setWidth("300px");
+		grid.addColumn(CertificateInfo::getNotAfter).setHeader("Valid until").setWidth("300px");
+		grid.addColumn(CertificateInfo::getAlgorithm).setHeader("Algorithm").setWidth("200px");
+		grid.addColumn(CertificateInfo::getType).setHeader("Type").setWidth("200px");
+		
+		grid.setWidth("1800px");
+//		grid.setHeight("500px");
+		grid.setMultiSort(true);
+		
+		for(Column<CertificateInfo> col : grid.getColumns()) {
+			col.setSortable(true);
+			col.setResizable(true);
+		}
+		return grid;
 	}
 	
 	public Div createConfigurationItemDiv(ConfigurationLabel labels, com.vaadin.flow.component.Component c, Object initialValue) {
