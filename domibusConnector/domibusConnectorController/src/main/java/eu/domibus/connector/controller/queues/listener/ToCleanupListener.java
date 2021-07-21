@@ -36,6 +36,8 @@ public class ToCleanupListener {
         } catch (Exception exc) {
             LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
             throw exc;
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 }

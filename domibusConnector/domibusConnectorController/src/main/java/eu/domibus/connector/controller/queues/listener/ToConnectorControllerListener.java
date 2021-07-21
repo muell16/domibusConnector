@@ -61,6 +61,8 @@ public class ToConnectorControllerListener {
             String error = "Failed to process messsage due: " + exc.getMessage();
             LOGGER.error(error, exc);
             throw exc;
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 

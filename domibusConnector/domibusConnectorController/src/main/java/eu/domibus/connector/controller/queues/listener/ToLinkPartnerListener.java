@@ -36,6 +36,8 @@ public class ToLinkPartnerListener {
         } catch (Exception exc) {
             LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);
             throw exc;
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 }

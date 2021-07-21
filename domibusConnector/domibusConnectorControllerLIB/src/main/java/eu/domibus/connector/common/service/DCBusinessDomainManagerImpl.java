@@ -14,7 +14,6 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 //    private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
 
-    @Autowired
     public DCBusinessDomainManagerImpl(DCBusinessDomainPersistenceService businessDomainPersistenceService) {
 //        this.businessDomainConfigurationProperties = businessDomainConfigurationProperties;
         this.businessDomainPersistenceService = businessDomainPersistenceService;

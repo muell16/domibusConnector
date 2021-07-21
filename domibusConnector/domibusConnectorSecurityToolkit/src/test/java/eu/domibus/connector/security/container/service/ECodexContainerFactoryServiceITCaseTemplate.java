@@ -7,7 +7,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidationServiceFactory;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
@@ -40,12 +39,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
+
+
     private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCaseTemplate.class);
     public static final String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private static File TEST_RESULTS_FOLDER;
-
-//    @Autowired
-//    DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
 
     @Autowired
     ECodexContainerFactoryService eCodexContainerFactoryService;
@@ -53,9 +51,6 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @Autowired
     TokenIssuerFactory tokenIssuerFactory;
 
-//    DomibusConnectorTechnicalValidationServiceFactory getDomibusConnectorTechnicalValidationServiceFactory() {
-//        return technicalValidationServiceFactory;
-//    }
 
     TokenIssuerFactory getTokenIssuerFactory() {
         return tokenIssuerFactory;
@@ -76,6 +71,11 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @BeforeEach
     public void beforeEach() {
         CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+    }
+
+    @AfterEach
+    public void afterEach() {
+        CurrentBusinessDomain.setCurrentBusinessDomain(null);
     }
 
     @Test
