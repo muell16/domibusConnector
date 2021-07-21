@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public final class DomibusConnectorMessageBuilder {
 
-    private DomibusConnectorMessageLane.MessageLaneId messageLaneId;
+    private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
     private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
@@ -123,7 +123,7 @@ public final class DomibusConnectorMessageBuilder {
         }        
         message.setMessageDetails(this.messageDetails);
         message.setConnectorMessageId(this.connectorMessageId);
-        message.setMessageLaneId(this.messageLaneId);
+        message.setMessageLaneId(this.businessDomainId);
         message.setMessageContent(this.messageContent);
         message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
@@ -139,7 +139,7 @@ public final class DomibusConnectorMessageBuilder {
                 .copyPropertiesFrom(message.getMessageDetails())
                 .build();
         this.connectorMessageId = message.getConnectorMessageId();
-        this.messageLaneId = message.getMessageLaneId();
+        this.businessDomainId = message.getMessageLaneId();
         if (message.getMessageContent() != null) {
             this.messageContent = DomibusConnectorMessageContentBuilder.createBuilder()
                     .copyPropertiesFrom(message.getMessageContent())
@@ -172,8 +172,8 @@ public final class DomibusConnectorMessageBuilder {
         return this;
     }
 
-    public DomibusConnectorMessageBuilder setMessageLaneId(DomibusConnectorMessageLane.MessageLaneId laneId) {
-        this.messageLaneId = laneId;
+    public DomibusConnectorMessageBuilder setMessageLaneId(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
+        this.businessDomainId = laneId;
         return this;
     }
 

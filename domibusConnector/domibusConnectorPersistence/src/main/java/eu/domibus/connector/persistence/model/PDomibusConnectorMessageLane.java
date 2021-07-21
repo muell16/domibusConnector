@@ -1,10 +1,11 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 
 import javax.persistence.*;
 
-import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * In the future the connector will supoort multiple UseCases, Backends, Gateways
@@ -30,17 +31,17 @@ public class PDomibusConnectorMessageLane {
     private Long id;
 
     @Column(name= "NAME", unique = true, length = 255)
-    private DomibusConnectorMessageLane.MessageLaneId name;
+    private DomibusConnectorBusinessDomain.BusinessDomainId name;
 
     @Column(name = "DESCRIPTION")
     @Lob
     private String description;
 
-//    @ManyToOne(optional = true)
-//    private PDomibusConnectorMessageLane parent;
-
-    //TODO: add properties...
-
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "DC_MESSAGE_LANE_PROPERTY", joinColumns=@JoinColumn(name="DC_MESSAGE_LANE_ID", referencedColumnName = "ID"))
+    @MapKeyColumn (name="PROPERTY_NAME")
+    @Column(name="PROPERTY_VALUE")
+    private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {
         return id;
@@ -50,11 +51,11 @@ public class PDomibusConnectorMessageLane {
         this.id = id;
     }
 
-    public DomibusConnectorMessageLane.MessageLaneId getName() {
+    public DomibusConnectorBusinessDomain.BusinessDomainId getName() {
         return name;
     }
 
-    public void setName(DomibusConnectorMessageLane.MessageLaneId name) {
+    public void setName(DomibusConnectorBusinessDomain.BusinessDomainId name) {
         this.name = name;
     }
 
@@ -64,5 +65,13 @@ public class PDomibusConnectorMessageLane {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

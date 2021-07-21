@@ -36,7 +36,7 @@ VALUES (2, 2,
 
 
 INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION)
-VALUES (1, 'default_message_lane', 'default message lane');
+VALUES (1, 'defaultMessageLane', 'default message lane');
 
 INSERT INTO DC_DB_VERSION (TAG)
 VALUES ('V4.4');

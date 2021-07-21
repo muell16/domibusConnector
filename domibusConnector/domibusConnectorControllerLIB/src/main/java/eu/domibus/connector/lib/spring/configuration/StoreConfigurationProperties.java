@@ -6,6 +6,8 @@ import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoad
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStream;
@@ -22,16 +24,19 @@ import java.security.cert.CertificateException;
 
 
 @Validated
-@CheckStoreIsLoadable
+//@CheckStoreIsLoadable
 public class StoreConfigurationProperties {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreConfigurationProperties.class);
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * Path to the Key/Truststore
      */
     @ConfigurationLabel("Path to key or truststore")
-    @CheckResourceIsReadable
+//    @CheckResourceIsReadable
     private Resource path;
 
     /**
@@ -44,17 +49,20 @@ public class StoreConfigurationProperties {
     @ConfigurationLabel("JavaKeystoreType - default JKS")
     private String type = "JKS";
 
-    @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public StoreConfigurationProperties() {
     }
 
-    public StoreConfigurationProperties(Resource path, String password) {
-        this.path = path;
-        this.password = password;
-    }
+//    public StoreConfigurationProperties(Resource path, String password) {
+//        this.path = path;
+//        this.password = password;
+//    }
 
     public Resource getPath() {
         return path;
+    }
+
+    public Resource getPathAsResource() {
+        return getPath();
     }
 
     public void setPath(Resource path) {
@@ -77,19 +85,17 @@ public class StoreConfigurationProperties {
         this.type = type;
     }
 
-    public boolean isWriteable() {
-        if (this.getPath().isFile()) {
-            try {
-                return this.getPath().getFile().canWrite();
-            } catch (IOException e) {
-                LOGGER.error("#isWriteable: cannot open path", this.getPath());
-            }
-        }
-        return false;
-    }
+//    public boolean isWriteable() {
+//        if (this.getPath().isFile()) {
+//            try {
+//                return this.getPath().getFile().canWrite();
+//            } catch (IOException e) {
+//                LOGGER.error("#isWriteable: cannot open path", this.getPath());
+//            }
+//        }
+//        return false;
+//    }
 
-    @Nullable
-    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     public String getPathUrlAsString() {
         try {
             if (path == null) {
@@ -108,7 +114,7 @@ public class StoreConfigurationProperties {
             throw new ValidationException("Path is null!");
         }
         try {
-            InputStream inputStream = this.getPath().getInputStream();
+            InputStream inputStream = this.getPathAsResource().getInputStream();
             if (inputStream == null) {
                 throw new ValidationException("Input Stream from path is null!");
             }
@@ -150,12 +156,12 @@ public class StoreConfigurationProperties {
     }
 
     public KeyStore loadKeyStore() {
-        validatePathReadable();
+//        validatePathReadable();
         if (password == null) {
             password = "";
         }
         char[] pwdArray = password.toCharArray();
-        try (InputStream inputStream = getPath().getInputStream()) {
+        try (InputStream inputStream = getPathAsResource().getInputStream()) {
             KeyStore keyStore = KeyStore.getInstance(this.type);
             keyStore.load(inputStream, pwdArray);
             return keyStore;

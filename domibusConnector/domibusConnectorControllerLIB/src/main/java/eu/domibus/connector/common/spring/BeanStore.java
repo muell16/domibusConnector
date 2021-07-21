@@ -21,12 +21,13 @@ class BeanStore {
 
 
     synchronized Object get(String name, ObjectFactory<?> objectFactory) {
-        Object bean = objects.get(name);
-        if (bean == null) {
-            bean = objectFactory.getObject();
-            objects.put(name, bean);
-        }
-        return bean;
+        return objectFactory.getObject();
+//        Object bean = objects.get(name);
+//        if (bean == null) {
+//            bean = objectFactory.getObject();
+//            objects.put(name, bean);
+//        }
+//        return bean;
     }
 
     synchronized Object remove(String name) {
@@ -39,6 +40,13 @@ class BeanStore {
     }
 
     synchronized void destroy() {
+        for (Runnable destructionCallback : destructionCallbacks.values()) {
+            try {
+                destructionCallback.run();
+            } catch (Exception e) {
+                LOGGER.error("BeanStore destruction callback failed", e);
+            }
+        }
         destructionCallbacks.clear();
         objects.clear();
     }

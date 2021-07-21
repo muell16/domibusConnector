@@ -65,7 +65,7 @@ public class ECodexContainerFactoryService {
 
             CertificateStoreInfo certStore = new CertificateStoreInfo();
 
-            Resource storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPath();
+            Resource storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathAsResource();
             LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore());
             certStore.setLocation(storeLocation);
             certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());

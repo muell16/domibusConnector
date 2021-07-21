@@ -1,6 +1,6 @@
 package eu.domibus.connector.security.spring;
 
-import eu.domibus.connector.common.spring.CommonProperties;
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
@@ -22,17 +22,21 @@ import javax.validation.constraints.NotNull;
  * contains security toolkit related configuration in a
  * typesafe way
  */
+//@BusinessDomainScoped
+//@Component
+//@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
+//@PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
+//@Validated
+@BusinessDomainScoped
+@Component
+@Valid
 @ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
-@PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
-@Validated
 public class SecurityToolkitConfigurationProperties {
 
     public static final String CONFIG_PREFIX = "connector.security";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityToolkitConfigurationProperties.class);
 
-//    @Autowired
-//    CommonProperties commonProperties;
 
     @Valid
     @NotNull
@@ -44,8 +48,8 @@ public class SecurityToolkitConfigurationProperties {
     @NestedConfigurationProperty
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
-    @Valid
-    @NotNull
+//    @Valid
+//    @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
@@ -115,21 +119,4 @@ public class SecurityToolkitConfigurationProperties {
         this.createOjStoreIfMissing = createOjStoreIfMissing;
     }
 
-//    @PostConstruct
-//    public void checkValues() {
-//        throwIfNull(this.getPrivateKey(), "private-key");
-//        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
-//
-//    }
-//
-//    public void throwIfNull(Object prop, String propName) {
-//        if (prop == null) {
-//            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
-//            if (commonProperties.isFailOnInvalidProperty()) {
-//                throw new IllegalArgumentException(error);
-//            } else {
-//                LOGGER.warn(error);
-//            }
-//        }
-//    }
 }

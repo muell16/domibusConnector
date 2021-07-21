@@ -1,20 +1,13 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
@@ -62,15 +55,15 @@ public class InternalMessageInfoPersistenceServiceImpl {
      *
      */
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
-        DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+        DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbAction);
+        Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbAction);
         checkNull(dbAction, dbActionFound,
                 String.format("No action [%s] is configured at the connector!", dbAction.getId()));
         messageInfo.setAction(dbActionFound.get());
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbService);
+        Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbService);
         checkNull(dbService, dbServiceFound,
                 String.format("No service [%s] is configured at the connector!", dbService.getId()));
         messageInfo.setService(dbServiceFound.get());
@@ -79,7 +72,7 @@ public class InternalMessageInfoPersistenceServiceImpl {
         if (dbFromParty.getRoleType() == null) {
             dbFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
         }
-        Optional<PDomibusConnectorParty> dbFromPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbFromParty);
+        Optional<PDomibusConnectorParty> dbFromPartyFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbFromParty);
         checkNull(dbFromParty, dbFromPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbFromParty));
         messageInfo.setFrom(dbFromPartyFound.get());
@@ -88,7 +81,7 @@ public class InternalMessageInfoPersistenceServiceImpl {
         if (dbToParty.getRoleType() == null) {
             dbToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
         }
-        Optional<PDomibusConnectorParty> dbToPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbToParty);
+        Optional<PDomibusConnectorParty> dbToPartyFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbToParty);
         checkNull(dbToParty, dbToPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbToParty));
         messageInfo.setTo(dbToPartyFound.get());

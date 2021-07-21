@@ -1,6 +1,5 @@
 package eu.domibus.connector.security.container.service;
 
-import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
@@ -65,7 +64,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         ECodexContainerFactoryService.class,
         TokenIssuerFactory.class,
         DomibusConnectorAESTokenValidationCreator.class,
-        CommonProperties.class,
         TokenIssuerFactoryProperties.class
 })
 @EnableConfigurationProperties

@@ -15,7 +15,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
-@EnableConfigurationProperties(SecurityToolkitConfigurationProperties.class)
+//@EnableConfigurationProperties(SecurityToolkitConfigurationProperties.class)
 public class SecurityToolkitContext {
 
 

@@ -35,7 +35,7 @@ public class ConfirmationCreatorService {
     public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
 
         EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
-                configurationPropertyLoaderService.loadConfiguration(DomibusConnectorMessageLane.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+                configurationPropertyLoaderService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
 
         switch (type) {
             case DELIVERY:

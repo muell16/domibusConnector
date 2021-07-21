@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain.configuration;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,18 +27,19 @@ public class ConnectorConfigurationProperties {
     private String instanceName = UUID.randomUUID().toString().substring(0,6);
 
     @NotNull
-    DomibusConnectorMessageLane.MessageLaneId defaultBusinessDomainId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+    DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 
     @NotNull
-    Map<DomibusConnectorMessageLane.MessageLaneId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
+    Map<DomibusConnectorBusinessDomain.BusinessDomainId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
 
     @Validated
     public static class BusinessDomainConfig {
         @NotNull
         private boolean enabled = true;
 
-        @NotBlank
-        private DomibusConnectorMessageLane.MessageLaneId id;
+//        @NotNull
+//        @Valid
+//        private DomibusConnectorMessageLane.MessageLaneId id;
 
         private String description;
 
@@ -68,13 +69,13 @@ public class ConnectorConfigurationProperties {
             this.description = description;
         }
 
-        public DomibusConnectorMessageLane.MessageLaneId getId() {
-            return id;
-        }
-
-        public void setId(DomibusConnectorMessageLane.MessageLaneId id) {
-            this.id = id;
-        }
+//        public DomibusConnectorMessageLane.MessageLaneId getId() {
+//            return id;
+//        }
+//
+//        public void setId(DomibusConnectorMessageLane.MessageLaneId id) {
+//            this.id = id;
+//        }
     }
 
     public String getInstanceName() {
@@ -85,19 +86,19 @@ public class ConnectorConfigurationProperties {
         this.instanceName = instanceName;
     }
 
-    public DomibusConnectorMessageLane.MessageLaneId getDefaultBusinessDomainId() {
+    public DomibusConnectorBusinessDomain.BusinessDomainId getDefaultBusinessDomainId() {
         return defaultBusinessDomainId;
     }
 
-    public void setDefaultBusinessDomainId(DomibusConnectorMessageLane.MessageLaneId defaultBusinessDomainId) {
+    public void setDefaultBusinessDomainId(DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId) {
         this.defaultBusinessDomainId = defaultBusinessDomainId;
     }
 
-    public Map<DomibusConnectorMessageLane.MessageLaneId, BusinessDomainConfig> getBusinessDomain() {
+    public Map<DomibusConnectorBusinessDomain.BusinessDomainId, BusinessDomainConfig> getBusinessDomain() {
         return businessDomain;
     }
 
-    public void setBusinessDomain(Map<DomibusConnectorMessageLane.MessageLaneId, BusinessDomainConfig> businessDomain) {
+    public void setBusinessDomain(Map<DomibusConnectorBusinessDomain.BusinessDomainId, BusinessDomainConfig> businessDomain) {
         this.businessDomain = businessDomain;
     }
 }

@@ -1,6 +1,5 @@
 package eu.domibus.connector.security;
 
-import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
@@ -41,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * and DSSECodexContainerService is loading data from remote location
  * (the trust lists)
  */
-@SpringBootTest(classes = {DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class, CommonProperties.class})
+@SpringBootTest(classes = {DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class})
 @TestPropertySource(
         locations = {"classpath:test.properties", "classpath:test-auth.properties"},
         properties = {"liquibase.enabled=false", "logging.level.eu.ecodex.dss.service.impl.dss=DEBUG"})

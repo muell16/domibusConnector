@@ -8,7 +8,7 @@
 
     <DC_MESSAGE_LANE
             ID="1"
-            NAME="default_message_lane"
+            NAME="defaultMessageLane"
             description="none"
     />
 

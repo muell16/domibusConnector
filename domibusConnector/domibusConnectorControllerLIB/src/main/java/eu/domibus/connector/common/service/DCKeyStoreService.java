@@ -1,8 +1,12 @@
 package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 
 /**
@@ -15,6 +19,14 @@ import java.security.KeyStore;
  */
 @Service
 public class DCKeyStoreService {
+
+    public InputStream loadKeyStoreAsInputStream(StoreConfigurationProperties storeConfigurationProperties) {
+        try {
+            return storeConfigurationProperties.getPathAsResource().getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public KeyStore loadKeyStore(StoreConfigurationProperties storeConfigurationProperties) {
         return storeConfigurationProperties.loadKeyStore();

@@ -1,16 +1,16 @@
 package eu.domibus.connector.common.converters;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.core.convert.converter.Converter;
 
-public class BusinessDomainIdConverter implements Converter<String, DomibusConnectorMessageLane.MessageLaneId> {
+public class BusinessDomainIdConverter implements Converter<String, DomibusConnectorBusinessDomain.BusinessDomainId> {
 
     @Override
-    public DomibusConnectorMessageLane.MessageLaneId convert(String source) {
+    public DomibusConnectorBusinessDomain.BusinessDomainId convert(String source) {
         if (source == null) {
             return null;
         }
-        return new DomibusConnectorMessageLane.MessageLaneId(source);
+        return new DomibusConnectorBusinessDomain.BusinessDomainId(source);
     }
 
 }

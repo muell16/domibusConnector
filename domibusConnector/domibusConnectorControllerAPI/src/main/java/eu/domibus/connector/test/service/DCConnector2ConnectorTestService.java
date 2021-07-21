@@ -28,7 +28,7 @@ public interface DCConnector2ConnectorTestService {
      * @param businessDomain the provided businessDomain
      * @return the example test message
      */
-    public DomibusConnectorMessage createTestMessage(DomibusConnectorMessageLane.MessageLaneId businessDomain);
+    public DomibusConnectorMessage createTestMessage(DomibusConnectorBusinessDomain.BusinessDomainId businessDomain);
 
     /**
      * Will take the provided testMessage and
@@ -40,6 +40,6 @@ public interface DCConnector2ConnectorTestService {
      */
     public void submitTestMessage(DomibusConnectorMessage testMessage);
 
-    public List<DomibusConnectorMessage> getTestMessages(DomibusConnectorMessageLane.MessageLaneId businessDomain);
+    public List<DomibusConnectorMessage> getTestMessages(DomibusConnectorBusinessDomain.BusinessDomainId businessDomain);
 
 }

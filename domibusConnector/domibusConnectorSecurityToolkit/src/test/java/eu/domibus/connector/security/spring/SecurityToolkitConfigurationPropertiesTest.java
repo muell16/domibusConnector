@@ -1,6 +1,5 @@
 package eu.domibus.connector.security.spring;
 
-import eu.domibus.connector.common.spring.CommonProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test security toolkit config resolving
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes={SecurityToolkitConfigurationProperties.class, CommonProperties.class})
+@ContextConfiguration(classes={SecurityToolkitConfigurationProperties.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"},
         properties= {   "liquibase.enabled=false",
 //               "connector.security.keystore.password=password",

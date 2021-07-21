@@ -25,7 +25,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorAction action);
+    Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction action);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -37,7 +37,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorService domibusConnectorService);
+    Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService domibusConnectorService);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -55,7 +55,7 @@ public interface DomibusConnectorPModeService {
      *
      * @throws  IncorrectResultSizeException if more than one Party was found
      */
-    Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorParty domibusConnectorParty) throws IncorrectResultSizeException;
+    Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty domibusConnectorParty) throws IncorrectResultSizeException;
 
     /**
      *
@@ -67,7 +67,7 @@ public interface DomibusConnectorPModeService {
      * @param lane - the MessageLaneConfiguration which is changed
      * @return  the current PModeSet of the given MessageLane
      */
-    Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId lane);
+    Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane);
 
 	void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet);
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DomibusConnectorPModeSet {
 
-    private DomibusConnectorMessageLane.MessageLaneId messageLaneId;
+    private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
     private String description;
     private Date createDate;
     private byte[] pModes;
@@ -43,12 +43,12 @@ public class DomibusConnectorPModeSet {
         this.services = services;
     }
 
-    public DomibusConnectorMessageLane.MessageLaneId getMessageLaneId() {
-        return messageLaneId;
+    public DomibusConnectorBusinessDomain.BusinessDomainId getMessageLaneId() {
+        return businessDomainId;
     }
 
-    public void setMessageLaneId(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-        this.messageLaneId = messageLaneId;
+    public void setMessageLaneId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        this.businessDomainId = businessDomainId;
     }
 
     public String getDescription() {

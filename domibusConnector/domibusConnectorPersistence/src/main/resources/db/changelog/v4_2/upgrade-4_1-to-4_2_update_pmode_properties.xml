@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
 
-    <changeSet id="create_default_message_lane" author="SKS" >
+    <changeSet id="create_defaultMessageLane" author="SKS" >
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
@@ -15,7 +15,7 @@
         </preConditions>
         <insert tableName="DC_MESSAGE_LANE">
             <column name="ID">1</column>
-            <column name="NAME">default_message_lane</column>
+            <column name="NAME">defaultMessageLane</column>
             <column name="DESCRIPTION">default message lane</column>
         </insert>
     </changeSet>

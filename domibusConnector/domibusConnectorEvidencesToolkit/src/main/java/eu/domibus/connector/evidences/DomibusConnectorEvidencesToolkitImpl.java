@@ -1,12 +1,13 @@
 package eu.domibus.connector.evidences;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -22,7 +23,8 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import org.apache.commons.lang3.ArrayUtils;
 
-@Component("domibusConnectorEvidencesToolkit")
+@BusinessDomainScoped
+@Component
 public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvidencesToolkit {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitImpl.class);
@@ -35,12 +37,10 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
     @Autowired
     PostalAdressConfigurationProperties postalAdressConfigurationProperties;
-	
-	@Value("${gateway.name}")
-	private String gatewayName;
-	
-	@Value("${gateway.endpoint.address}")
-	private String gatewayEndpointAddress;
+
+    @Autowired
+    HomePartyConfigurationProperties homePartyConfigurationProperties;
+
 	
 //	@Value("${postal.address.street}")
 //	private String postalAddressStreet;
@@ -393,8 +393,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         EDeliveryDetail detail = new EDeliveryDetail();
 
         EDeliveryDetail.Server server = new EDeliveryDetail.Server();
-        server.setGatewayName(gatewayName);
-        server.setGatewayAddress(gatewayEndpointAddress);
+        server.setGatewayName(homePartyConfigurationProperties.getName());
+        server.setGatewayAddress(homePartyConfigurationProperties.getEndpointAddress());
         detail.setServer(server);
 
         EDeliveryDetail.PostalAdress postalAddress = new EDeliveryDetail.PostalAdress();

@@ -1,5 +1,6 @@
 package eu.domibus.connector.evidences.spring;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ public class DomibusConnectorEvidencesToolkitContext {
     private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
     @Bean
-    @SuppressWarnings("squid:S2068")
+    @BusinessDomainScoped
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        Resource javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPath();
+        Resource javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPathAsResource();
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
         String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();
@@ -37,6 +38,7 @@ public class DomibusConnectorEvidencesToolkitContext {
     }
 
     @Bean
+    @BusinessDomainScoped
     public HashValueBuilder hashValueBuilder() {
         return new HashValueBuilder(evidencesToolkitConfigurationProperties.getHashAlgorithm());
     }

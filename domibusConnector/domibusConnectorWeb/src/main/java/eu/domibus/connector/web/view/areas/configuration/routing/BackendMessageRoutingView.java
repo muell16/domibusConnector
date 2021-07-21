@@ -8,7 +8,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
@@ -44,7 +44,7 @@ public class BackendMessageRoutingView extends VerticalLayout {
         TextField defaultBackendNameTextField = new TextField();
         defaultBackendNameTextField.setReadOnly(true);
         defaultBackendNameTextField.setLabel("DefaultBackend");
-        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(DomibusConnectorMessageLane.getDefaultMessageLaneId()));
+        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()));
 
         add(defaultBackendNameTextField);
 
@@ -54,7 +54,7 @@ public class BackendMessageRoutingView extends VerticalLayout {
         routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
 
 
-        Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+        Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
         routingRuleGrid.setItems(backendRoutingRules);
 
         this.add(routingRuleGrid);

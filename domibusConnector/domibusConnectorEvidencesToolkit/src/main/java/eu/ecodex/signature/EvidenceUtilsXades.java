@@ -15,6 +15,8 @@ import eu.europa.esig.dss.xades.XAdESSignatureParameters;
 import eu.europa.esig.dss.xades.signature.XAdESService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
@@ -29,8 +31,12 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static eu.domibus.connector.tools.logging.LoggingUtils.logPassword;
+
 
 public class EvidenceUtilsXades extends EvidenceUtils {
+
+    private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsXades.class);
 
     public EvidenceUtilsXades(Resource javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
         super(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
@@ -49,10 +55,16 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         return signedData;
     }
 
+
     private byte[] createAndVerifySignature(byte[] xmlData) throws Exception {
         LOG.info("Xades Signer started");
         //
+
         KeyInfos keyInfos = getKeyInfosFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        if (keyInfos == null) {
+            throw new RuntimeException(String.format("Was not able to load keyInfo from javaKeyStorePath=[%s], javaKeyStorePassword=[%s], alias=[%s], keyPassword=[%s]",
+                    javaKeyStorePath, logPassword(LOGGER, javaKeyStorePassword), alias, logPassword(LOGGER, keyPassword)));
+        }
 
         PrivateKey privKey = keyInfos.getPrivKey();
 
@@ -170,6 +182,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         return buf;
     }
 
+    //TODO: refactor: use key store service
     protected synchronized static KeyInfos getKeyInfosFromKeyStore(Resource store, String storePass, String alias, String keyPass) throws MalformedURLException {
         LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
         KeyStore ks;
@@ -194,7 +207,8 @@ public class EvidenceUtilsXades extends EvidenceUtils {
                     privateKey = (PrivateKey) key;
                     keyInfos.setPrivKey(privateKey);
                 } else {
-                    keyInfos = null;
+                    //keyInfos = null;
+                    throw new IllegalArgumentException(String.format("The provided alias [%s] in store [%s] is not a private key", alias, store));
                 }
 
                 try {
@@ -204,20 +218,11 @@ public class EvidenceUtilsXades extends EvidenceUtils {
                 }
 
             } else {
-                keyInfos = null;
+//                keyInfos = null;
+                throw new RuntimeException(String.format("The provided store [%s] does not contain an alias [%s]", store, alias));
             }
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            throw new RuntimeException(e);
         } finally {
             IOUtils.closeQuietly(kfis);
         }

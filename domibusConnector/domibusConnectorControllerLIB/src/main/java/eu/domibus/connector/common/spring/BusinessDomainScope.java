@@ -1,18 +1,19 @@
 package eu.domibus.connector.common.spring;
 
+import eu.domibus.connector.common.service.BusinessDomainConfigurationChange;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
+import org.springframework.context.ApplicationListener;
 
-import javax.enterprise.inject.spi.Bean;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class BusinessDomainScope implements Scope {
+public class BusinessDomainScope implements Scope, ApplicationListener<BusinessDomainConfigurationChange> {
 
-    private Map<DomibusConnectorMessageLane.MessageLaneId, BeanStore> businessDomainToBeanStore = new HashMap<>();
+    private Map<DomibusConnectorBusinessDomain.BusinessDomainId, BeanStore> businessDomainToBeanStore = new HashMap<>();
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
@@ -41,7 +42,7 @@ public class BusinessDomainScope implements Scope {
     }
 
     private synchronized BeanStore getBeanStore() {
-        DomibusConnectorMessageLane.MessageLaneId currentBusinessDomain = CurrentBusinessDomain.getCurrentBusinessDomain();
+        DomibusConnectorBusinessDomain.BusinessDomainId currentBusinessDomain = CurrentBusinessDomain.getCurrentBusinessDomain();
         if (currentBusinessDomain == null) {
             throw new IllegalStateException("There is currently no business domain scope active!");
         }
@@ -51,5 +52,19 @@ public class BusinessDomainScope implements Scope {
             businessDomainToBeanStore.put(currentBusinessDomain, beanStore);
         }
         return beanStore;
+    }
+
+    @Override
+    public void onApplicationEvent(BusinessDomainConfigurationChange event) {
+        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = event.getBusinessDomainId();
+        destroyBeanStoreForBusinessScope(businessDomainId);
+    }
+
+    private synchronized void destroyBeanStoreForBusinessScope(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        BeanStore beanStore = businessDomainToBeanStore.get(businessDomainId);
+        if (beanStore != null) {
+            beanStore.destroy();
+            businessDomainToBeanStore.remove(businessDomainId);
+        }
     }
 }

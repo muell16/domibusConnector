@@ -14,17 +14,17 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
+import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.web.view.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
-import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
-import io.micrometer.core.instrument.util.StringUtils;
 
-import org.apache.cxf.common.jaxb.JAXBUtils;
+import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
+import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
@@ -43,13 +43,19 @@ public class WebPModeService {
     private final DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
     private final DomibusConnectorPModeService pModeService;
     private final DomibusConnectorKeystorePersistenceService keystorePersistenceService;
+    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
+    private final ApplicationContext ctx;
 
     public WebPModeService(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService,
                            DomibusConnectorPModeService pModeService,
-                           DomibusConnectorKeystorePersistenceService keystorePersistenceService) {
+                           DomibusConnectorKeystorePersistenceService keystorePersistenceService,
+                           ConfigurationPropertyManagerService configurationPropertyManagerService,
+                           ApplicationContext ctx) {
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.pModeService = pModeService;
         this.keystorePersistenceService = keystorePersistenceService;
+        this.configurationPropertyManagerService = configurationPropertyManagerService;
+        this.ctx = ctx;
     }
 
     public static Object byteArrayToXmlObject(final byte[] xmlAsBytes, final Class<?> instantiationClazz,
@@ -88,22 +94,32 @@ public class WebPModeService {
             throw new RuntimeException(e);
         }
 
+        DomibusConnectorPModeSet pModeSet;
         try {
-            DomibusConnectorPModeSet pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, store);
+            pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, store);
             this.updatePModeSet(pModeSet);
         } catch (Exception e) {
             LOGGER.error("Cannot import provided pmode file into database!", e);
             throw new RuntimeException(e);
         }
 
-//        try {
-//            updateHomePartyConfigurationProperties(pmodes, util);
-//        } catch (Exception e) {
-//            LOGGER.error("Error while updating home party properties");
-//        }
-
+        try {
+            updateHomePartyConfigurationProperties(pmodes);
+            updateSecurityConfiguration(store);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating home party properties", e);
+            throw new RuntimeException(e);
+        }
 
         return true;
+    }
+
+    private void updateSecurityConfiguration(DomibusConnectorKeystore store) {
+        SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), SecurityToolkitConfigurationProperties.class);
+        securityToolkitConfigurationProperties.getTrustStore().setPassword(store.getPasswordPlain());
+        securityToolkitConfigurationProperties.getTrustStore().setType(store.getType().toString());
+        securityToolkitConfigurationProperties.getTrustStore().setPath(ctx.getResource(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid()));
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), securityToolkitConfigurationProperties);
     }
 
     @Transactional(readOnly = false)
@@ -165,7 +181,7 @@ public class WebPModeService {
                 .collect(Collectors.toList());
     }
 
-    private void updateHomePartyConfigurationProperties(Configuration pmodes, ConfigurationUtil configurationUtil) {
+    private void updateHomePartyConfigurationProperties(Configuration pmodes) {
         String homePartyName = pmodes.getParty();
 
         Configuration.BusinessProcesses.Parties.Party homeParty = pmodes
@@ -177,11 +193,11 @@ public class WebPModeService {
                 .findFirst()
                 .get();
 
-        Properties homePartyProperties = new Properties();
-        homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homeParty.getName());
-        homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homeParty.getEndpoint());
-        propertiesPersistenceService.saveProperties(homePartyProperties);
-        configurationUtil.updateConfigurationComponentsOnProperties(homePartyProperties);
+        HomePartyConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), HomePartyConfigurationProperties.class);
+        homePartyConfigurationProperties.setName(homeParty.getName());
+        homePartyConfigurationProperties.setEndpointAddress(homeParty.getEndpoint());
+
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), homePartyConfigurationProperties);
 
     }
 
@@ -400,16 +416,16 @@ public class WebPModeService {
     }
 
     private DomibusConnectorPModeSet updatePModeSet(DomibusConnectorPModeSet pModes) {
-        DomibusConnectorMessageLane.MessageLaneId laneId = pModes.getMessageLaneId();
+        DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getMessageLaneId();
         if (laneId == null) {
-            laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+            laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
             LOGGER.info("Setting default lane [{}] pModeSet", laneId);
             pModes.setMessageLaneId(laneId);
         }
         this.pModeService.updatePModeConfigurationSet(pModes);
         return this.getCurrentPModeSet(laneId);
     }
-    
+
     @Transactional(readOnly = false)
     public void updateActivePModeSetDescription(DomibusConnectorPModeSet pModes) {
     	DomibusConnectorMessageLane.MessageLaneId laneId = pModes.getMessageLaneId();
@@ -420,25 +436,25 @@ public class WebPModeService {
         }
         this.pModeService.updateActivePModeSetDescription(pModes);
     }
-    
+
     @Transactional(readOnly = false)
     public void updateConnectorstorePassword(DomibusConnectorPModeSet pModes, String newConnectorstorePwd) {
-    	
+
     	this.keystorePersistenceService.updateKeystorePassword(pModes.getConnectorstore(), newConnectorstorePwd);
     }
 
-    public DomibusConnectorPModeSet getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId laneId) {
+    private DomibusConnectorPModeSet getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
         return this.pModeService.getCurrentPModeSet(laneId).get();
     }
 
     public List<DomibusConnectorPModeSet> getInactivePModeSets(){
     	final DomibusConnectorMessageLane.MessageLaneId laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
-    	
+
     	return this.pModeService.getInactivePModeSets(laneId);
     }
-    
+
     private DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
-        final DomibusConnectorMessageLane.MessageLaneId laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+        final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
         Optional<DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(laneId);
         return currentPModeSetOptional.orElseGet(() -> {
             DomibusConnectorPModeSet set = new DomibusConnectorPModeSet();
@@ -446,7 +462,7 @@ public class WebPModeService {
             return set;
         });
     }
-    
+
     public DomibusConnectorKeystore getConnectorstore(String connectorstoreUUID) {
     	return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
     }

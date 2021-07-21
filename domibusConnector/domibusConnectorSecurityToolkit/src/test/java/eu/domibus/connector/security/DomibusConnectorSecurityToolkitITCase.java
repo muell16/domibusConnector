@@ -1,6 +1,5 @@
 package eu.domibus.connector.security;
 
-import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
@@ -44,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class, CommonProperties.class})
+@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"}, 
         properties= {   "liquibase.enabled=false"
 })

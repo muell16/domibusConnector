@@ -124,7 +124,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 
             evidenceMessage.setMessageLaneId(businessMessage.getMessageLaneId());
             if (evidenceMessage.getMessageLaneId() == null) {
-                evidenceMessage.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+                evidenceMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
             }
 
             evidenceMessage.setConnectorMessageId(messageId);

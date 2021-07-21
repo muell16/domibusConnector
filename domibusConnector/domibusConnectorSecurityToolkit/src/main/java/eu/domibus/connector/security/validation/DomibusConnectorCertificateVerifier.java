@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.ecodex.dss.util.ECodexDataLoader;
@@ -32,33 +33,19 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
 
 
-@Component("domibusConnectorCertificateVerifier")
+@BusinessDomainScoped
+@Component
 public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifier implements InitializingBean {
-
-//	private static final String OJ_STORE_PASSWORD = "ecodex";
-//
-//	private static final String OJ_STORE_JKS = "/keys/ojStore.jks";
 
 	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorCertificateVerifier.class);
 
-	@Autowired
-	SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+	private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+	private final DomibusConnectorProxyConfig proxyPreferenceManager;
 
-//	@Value("${security.lotl.scheme.uri:null}")
-//	String lotlSchemeUri;
-//
-//	@Value("${security.lotl.url:null}")
-//	String lotlUrl;
-//
-//	@Value("${security.oj.url:null}")
-//	String ojUrl;
-
-	@Autowired
-	DomibusConnectorProxyConfig proxyPreferenceManager;
-
-	public DomibusConnectorCertificateVerifier() {
-
-
+	public DomibusConnectorCertificateVerifier(SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
+											   DomibusConnectorProxyConfig proxyPreferenceManager) {
+		this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
+		this.proxyPreferenceManager = proxyPreferenceManager;
 	}
 
 	@Override
@@ -79,8 +66,8 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 //		tslRepository.setTrustedListsCertificateSource(certSource);
 
 		KeyStoreCertificateSource keyStoreCertificateSource = null;
-		InputStream res = securityToolkitConfigurationProperties.getTrustStore().getPath().getInputStream();
-		keyStoreCertificateSource = new KeyStoreCertificateSource(res, "JKS", securityToolkitConfigurationProperties.getTrustStore().getPassword());
+		InputStream res = securityToolkitConfigurationProperties.getTrustStore().getPathAsResource().getInputStream();
+		keyStoreCertificateSource = new KeyStoreCertificateSource(res, securityToolkitConfigurationProperties.getTrustStore().getType(), securityToolkitConfigurationProperties.getTrustStore().getPassword());
 
 		CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
 		trustedCertSource.importAsTrusted(keyStoreCertificateSource);

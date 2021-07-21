@@ -1,15 +1,15 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 
 import java.util.Collection;
 
 public interface DCRoutingRulesManager {
-    void addBackendRoutingRule(DomibusConnectorMessageLane.MessageLaneId messageLaneId, RoutingRule routingRule);
+    void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule);
 
-    Collection<RoutingRule> getBackendRoutingRules(DomibusConnectorMessageLane.MessageLaneId messageLaneId);
+    Collection<RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 
-    String getDefaultBackendName(DomibusConnectorMessageLane.MessageLaneId messageLaneId);
+    String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 
-    boolean isBackendRoutingEnabled(DomibusConnectorMessageLane.MessageLaneId messageLaneId);
+    boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 }

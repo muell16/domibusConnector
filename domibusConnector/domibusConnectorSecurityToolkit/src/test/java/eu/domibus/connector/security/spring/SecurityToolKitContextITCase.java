@@ -1,6 +1,5 @@
 package eu.domibus.connector.security.spring;
 
-import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ public class SecurityToolKitContextITCase {
 
     @SpringBootApplication(
             scanBasePackages = {"eu.domibus.connector.security", "eu.domibus.connector.persistence"},
-            scanBasePackageClasses = {CommonProperties.class},
             exclude = {
                     DataSourceAutoConfiguration.class,
                     DataSourceTransactionManagerAutoConfiguration.class,
@@ -56,10 +54,6 @@ public class SecurityToolKitContextITCase {
             return new PropertySourcesPlaceholderConfigurer();
         }
 
-        @Bean
-        public CommonProperties commonProperties() {
-            return new CommonProperties();
-        }
                 
     }
     

@@ -1,7 +1,5 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
-
 import javax.persistence.AttributeConverter;
 import java.sql.Timestamp;
 import java.time.ZoneId;
