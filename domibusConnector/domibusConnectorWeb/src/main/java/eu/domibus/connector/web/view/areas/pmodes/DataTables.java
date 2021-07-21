@@ -142,6 +142,8 @@ public class DataTables extends VerticalLayout {
 				() -> new ByteArrayInputStream(pModeSet.getpModes()));
 		
 			downloadPModesAnchor.setHref(resource);
+		}else {
+			downloadPModesAnchor.setEnabled(false);
 		}
 		downloadPModesAnchor.getElement().setAttribute("download", true);
 		downloadPModesAnchor.setTarget("_blank");
