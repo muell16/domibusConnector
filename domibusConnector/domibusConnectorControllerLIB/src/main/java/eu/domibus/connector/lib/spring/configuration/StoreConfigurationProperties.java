@@ -24,7 +24,7 @@ import java.security.cert.CertificateException;
 
 
 @Validated
-//@CheckStoreIsLoadable
+@CheckStoreIsLoadable
 public class StoreConfigurationProperties {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreConfigurationProperties.class);
@@ -36,7 +36,7 @@ public class StoreConfigurationProperties {
      * Path to the Key/Truststore
      */
     @ConfigurationLabel("Path to key or truststore")
-//    @CheckResourceIsReadable
+    @CheckResourceIsReadable
     private Resource path;
 
     /**

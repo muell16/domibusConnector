@@ -620,9 +620,9 @@
             </dependency>
             <!-- google code findbugs annotations -->
             <dependency>
-                <groupId>com.google</groupId>
+                <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>28.2-jre</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>

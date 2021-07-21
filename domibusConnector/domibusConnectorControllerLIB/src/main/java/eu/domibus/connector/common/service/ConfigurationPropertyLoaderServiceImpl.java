@@ -43,14 +43,14 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 
     private final ApplicationContext ctx;
     private final ConversionService conversionService;
-    private final DCBusinessDomainManagerImpl businessDomainManager;
+    private final DCBusinessDomainManager businessDomainManager;
     private final ConfigurationPropertyCollector configurationPropertyCollector;
 
 
 
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
                                                   @ConnectorConversationService ConversionService conversionService,
-                                                  DCBusinessDomainManagerImpl businessDomainManager,
+                                                  DCBusinessDomainManager businessDomainManager,
                                                   ConfigurationPropertyCollector configurationPropertyCollector) {
         this.ctx = ctx;
         this.conversionService = conversionService;

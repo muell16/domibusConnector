@@ -1,55 +1,52 @@
 package eu.domibus.connector.evidences;
 
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
+import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {
-        DomibusConnectorEvidencesToolkitTest.DomibusConnectorEvidencesToolkitTestContext.class,
-        DomibusConnectorEvidencesToolkitContext.class,
-        EvidencesToolkitConfigurationProperties.class,
-})
+@SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
-@EnableConfigurationProperties
 public class DomibusConnectorEvidencesToolkitTest {
 
-    @Configuration
-    static class DomibusConnectorEvidencesToolkitTestContext {
-
-        @Bean
-        public static PropertySourcesPlaceholderConfigurer
-        propertySourcesPlaceholderConfigurer() {
-            return new PropertySourcesPlaceholderConfigurer();
-        }
-    }
+    @SpringBootApplication(
+            scanBasePackages = {"eu.domibus.connector.evidences", "eu.domibus.connector.common"}
+    )
+    public static class TestContext {}
 
     private static Logger LOG = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitTest.class);
+
+    @MockBean
+    DCBusinessDomainManager dcBusinessDomainManager;
 
     @Autowired
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
@@ -57,6 +54,12 @@ public class DomibusConnectorEvidencesToolkitTest {
     @Autowired
     private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
+    @BeforeEach
+    public void beforeEach() {
+        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Mockito.when(dcBusinessDomainManager.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())))
+                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultMessageLane()));
+    }
 
     @Test
     public void testCreateSubmissionAcceptance() throws DomibusConnectorEvidencesToolkitException, TransformerException {

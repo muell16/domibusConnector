@@ -5,7 +5,10 @@ import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurat
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,8 +18,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(properties = {
         "debug=true",
@@ -37,6 +42,13 @@ public class ConfigurationPropertyLoaderServiceImplTest {
 
     @SpringBootApplication(scanBasePackages = "eu.domibus.connector.common")
     public static class TestContext {
+
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())))
+                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultMessageLane()));
 
     }
 

@@ -2,6 +2,7 @@ package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,6 +14,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 //    private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
 
+    @Autowired
     public DCBusinessDomainManagerImpl(DCBusinessDomainPersistenceService businessDomainPersistenceService) {
 //        this.businessDomainConfigurationProperties = businessDomainConfigurationProperties;
         this.businessDomainPersistenceService = businessDomainPersistenceService;
