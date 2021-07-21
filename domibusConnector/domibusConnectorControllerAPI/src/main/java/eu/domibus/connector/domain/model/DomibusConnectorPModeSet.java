@@ -15,7 +15,7 @@ public class DomibusConnectorPModeSet {
     private List<DomibusConnectorAction> actions = new ArrayList<>();
     private List<DomibusConnectorService> services = new ArrayList<>();
     
-    private DomibusConnectorKeystore connectorstoreUUID;
+    private DomibusConnectorKeystore connectorstore;
     private DomibusConnectorParty homeParty;
 
 
@@ -67,12 +67,12 @@ public class DomibusConnectorPModeSet {
         this.createDate = createDate;
     }
 
-    public DomibusConnectorKeystore getConnectorstoreUUID() {
-        return connectorstoreUUID;
+    public DomibusConnectorKeystore getConnectorstore() {
+        return connectorstore;
     }
 
-    public void setConnectorstoreUUID(DomibusConnectorKeystore connectorstoreUUID) {
-        this.connectorstoreUUID = connectorstoreUUID;
+    public void setConnectorstore(DomibusConnectorKeystore connectorstore) {
+        this.connectorstore = connectorstore;
     }
 
     public byte[] getpModes() {

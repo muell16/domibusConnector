@@ -123,11 +123,11 @@ public class WebPModeService {
     }
 
 
-    private DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes, byte[] contents, String description, DomibusConnectorKeystore connectorstoreUUID) {
+    private DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes, byte[] contents, String description, DomibusConnectorKeystore connectorstore) {
         DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeSet();
         pModeSet.setDescription(description);
         pModeSet.setpModes(contents);
-        pModeSet.setConnectorstoreUUID(connectorstoreUUID);
+        pModeSet.setConnectorstore(connectorstore);
 
         pModeSet.setServices(importServices(pmodes));
         pModeSet.setActions(importActions(pmodes));
@@ -409,11 +409,34 @@ public class WebPModeService {
         this.pModeService.updatePModeConfigurationSet(pModes);
         return this.getCurrentPModeSet(laneId);
     }
+    
+    @Transactional(readOnly = false)
+    public void updateActivePModeSetDescription(DomibusConnectorPModeSet pModes) {
+    	DomibusConnectorMessageLane.MessageLaneId laneId = pModes.getMessageLaneId();
+        if (laneId == null) {
+            laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+            LOGGER.info("Setting default lane [{}] pModeSet", laneId);
+            pModes.setMessageLaneId(laneId);
+        }
+        this.pModeService.updateActivePModeSetDescription(pModes);
+    }
+    
+    @Transactional(readOnly = false)
+    public void updateConnectorstorePassword(DomibusConnectorPModeSet pModes, String newConnectorstorePwd) {
+    	
+    	this.keystorePersistenceService.updateKeystorePassword(pModes.getConnectorstore(), newConnectorstorePwd);
+    }
 
-    private DomibusConnectorPModeSet getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId laneId) {
+    public DomibusConnectorPModeSet getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId laneId) {
         return this.pModeService.getCurrentPModeSet(laneId).get();
     }
 
+    public List<DomibusConnectorPModeSet> getInactivePModeSets(){
+    	final DomibusConnectorMessageLane.MessageLaneId laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+    	
+    	return this.pModeService.getInactivePModeSets(laneId);
+    }
+    
     private DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
         final DomibusConnectorMessageLane.MessageLaneId laneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
         Optional<DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(laneId);
@@ -422,6 +445,10 @@ public class WebPModeService {
             set.setMessageLaneId(laneId);
             return set;
         });
+    }
+    
+    public DomibusConnectorKeystore getConnectorstore(String connectorstoreUUID) {
+    	return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
     }
 
 }

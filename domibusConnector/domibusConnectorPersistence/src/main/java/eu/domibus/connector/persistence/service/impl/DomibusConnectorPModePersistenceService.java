@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 import java.sql.Blob;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane.MessageLaneId;
 import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
@@ -169,6 +171,25 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         }
         return Optional.of(foundParties.get(0));
     }
+    
+    @Override
+    @Cacheable
+    public List<DomibusConnectorPModeSet> getInactivePModeSets(MessageLaneId lane){
+    	if (lane == null) {
+            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
+        }
+    	
+    	List<DomibusConnectorPModeSet> result = new ArrayList<DomibusConnectorPModeSet>();
+    	
+    	List<PDomibusConnectorPModeSet> inactivePModeSets = domibusConnectorPModeSetDao.getInactivePModeSets(lane);
+    	
+    	inactivePModeSets.forEach(s -> {
+    		
+    		result.add(mapToDomain(s));
+    		});
+    	
+    	return result;
+    }
 
     @Override
     @CacheEvict
@@ -181,7 +202,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         if (lane == null) {
             throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
         }
-        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+        if (connectorPModeSet.getConnectorstore() == null) {
             throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
         }
 
@@ -204,14 +225,15 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
         dbPmodeSet.setActive(true);
 
-        if (connectorPModeSet.getConnectorstoreUUID() == null) {
+        if (connectorPModeSet.getConnectorstore() == null) {
             throw new IllegalArgumentException("You must provide a already persisted keystore!");
         }
-        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstoreUUID().getUuid());
+        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstore().getUuid());
         if (!connectorstore.isPresent()) {
-            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstoreUUID());
+            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstore());
             throw new IllegalArgumentException(error);
         }
+        
         dbPmodeSet.setConnectorstore(connectorstore.get());
         
         List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
@@ -219,6 +241,24 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         this.domibusConnectorPModeSetDao.saveAll(currentActivePModeSet);
         this.domibusConnectorPModeSetDao.save(dbPmodeSet);
 
+    }
+    
+    @Override
+    @Transactional
+    public void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet) {
+    	DomibusConnectorMessageLane.MessageLaneId lane = connectorPModeSet.getMessageLaneId();
+        if (lane == null) {
+            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
+        }
+          
+    	List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
+    	
+    	currentActivePModeSet.forEach(s -> {
+    		if(s.isActive()) {
+    			s.setDescription(connectorPModeSet.getDescription());
+    			this.domibusConnectorPModeSetDao.save(s);
+    		}
+    	});
     }
 
     private Set<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
@@ -264,6 +304,9 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         pModeSet.setCreateDate(dbPmodes.getCreated());
         pModeSet.setDescription(dbPmodes.getDescription());
         pModeSet.setMessageLaneId(dbPmodes.getMessageLane().getName());
+        pModeSet.setpModes(dbPmodes.getPmodes());
+        
+        pModeSet.setConnectorstore(KeystoreMapper.mapKeystoreToDomain(dbPmodes.getConnectorstore()));
 
         pModeSet.setParties(
                 dbPmodes.getParties()

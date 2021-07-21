@@ -82,7 +82,7 @@ class DomibusConnectorPModePersistenceServiceTest {
         DomibusConnectorKeystore keystore = new DomibusConnectorKeystore();
         keystore.setUuid("store1123");
 
-        pModeSet.setConnectorstoreUUID(keystore);
+        pModeSet.setConnectorstore(keystore);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             pModePersistenceService.updatePModeConfigurationSet(pModeSet);
@@ -99,7 +99,7 @@ class DomibusConnectorPModePersistenceServiceTest {
 
         DomibusConnectorKeystore keystore = new DomibusConnectorKeystore();
         keystore.setUuid("store1");
-        pModeSet.setConnectorstoreUUID(keystore);
+        pModeSet.setConnectorstore(keystore);
 
         pModeSet.getServices().add(DomainEntityCreator.createServiceEPO());
         pModeSet.getActions().add(DomainEntityCreator.createActionForm_A());
