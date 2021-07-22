@@ -8,7 +8,7 @@
 
     <DC_MESSAGE_LANE
             ID="1"
-            NAME="defaultMessageLane"
+            NAME="defaultBusinessDomain"
             description="none"
     />
 
