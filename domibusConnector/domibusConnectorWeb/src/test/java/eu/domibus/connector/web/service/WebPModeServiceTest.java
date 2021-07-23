@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -77,10 +78,23 @@ public class WebPModeServiceTest {
         assertThat(homePartyConfigurationProperties.getEndpointAddress())
                 .isEqualTo("https://ctpo.example.com/domibus/services/msh");
 
+
+
+        Assertions.assertAll(
+                () -> assertThat(homePartyConfigurationProperties.getEndpointAddress())
+                        .isEqualTo("https://ctpo.example.com/domibus/services/msh"),
+                () -> assertThat(homePartyConfigurationProperties.getName())
+                        .isEqualTo("service_ctp")
+//TODO: check why this is not working...
+//                () -> assertThat(securityToolkitConfigurationProperties.getTruststore().getPassword())
+//                        .isEqualTo("pw"),
+//                () -> assertThat(StreamUtils.copyToByteArray(securityToolkitConfigurationProperties.getTruststore()
+//                        .getPathAsResource().getInputStream()))
+//                        .isEqualTo(keyStoreBytes)
+        );
+
         //TODO: check key store config...
-//        assertThat(securityToolkitConfigurationProperties.getTruststore().getPassword())
-//                .isEqualTo("pw");
-//        assertThat(StreamUtils.copyToByteArray(securityToolkitConfigurationProperties.getTruststore().getPathAsResource().getInputStream())).isEqualTo(keyStoreBytes);
+
 //        assertThat(securityToolkitConfigurationProperties.getTruststore().get)
 
 

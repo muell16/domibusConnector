@@ -59,7 +59,6 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     }
 
     @Override
-    @Cacheable //TODO: evict cache if message lane is updated!
     public <T> T loadConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz) {
         String prefix = getPrefixFromAnnotation(clazz);
 
@@ -77,7 +76,6 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         return prefix;
     }
 
-    @Cacheable //TODO: evict cache if message lane is updated!
     public <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
         if (clazz == null) {
             throw new IllegalArgumentException("Clazz is not allowed to be null!");
@@ -105,14 +103,6 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         return t;
     }
 
-//    public <T> T loadConfigurationWithChangeRecorder(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, Class<T> clazz, String prefix) {
-//        T t = loadConfiguration(laneId, clazz, prefix);
-////        Proxy p = new Proxy
-//        ProxyFactory pf = new ProxyFactory(t);
-//
-//        return (T) pf.getProxy();
-//
-//    }
 
     private MapConfigurationPropertySource loadLaneProperties(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
         Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
@@ -124,16 +114,37 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         }
     }
 
+    /**
+     *
+     * A {@link BusinessDomainConfigurationChange} event is fired with the changed properties
+     * and affected BusinessDomain
+     * So factories, Scopes can react to this event and refresh the settings
+     *
+     * @param laneId the laneId, if null defaultLaneId is used
+     * @param updatedConfigClazz - the configurationClazz which has been altered, updated
+     *                           only the changed properties are updated at the configuration source
+     *
+     *
+     */
     @Override
-    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationClazz) {
+    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
         if (laneId == null) {
             throw new IllegalArgumentException("LaneId is not allowed to be null!");
         }
 
-        Map<String, String> props = createPropertyMap(laneId, configurationClazz);
-        businessDomainManager.updateConfig(laneId, props);
+        Object currentConfig = this.loadConfiguration(laneId, updatedConfigClazz.getClass());
+        Map<String, String> previousProps = createPropertyMap(laneId, currentConfig); //collect current active properties
+        Map<String, String> props = createPropertyMap(laneId, updatedConfigClazz); //collect updated properties
 
-        ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, props));
+        //only collect differences
+        Map<String, String> diffProps = props.entrySet().stream()
+                .filter(entry -> Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        LOGGER.trace("Updating of [{}] the following properties [{}]", updatedConfigClazz.getClass(), diffProps);
+
+        businessDomainManager.updateConfig(laneId, props);
+        ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
     }
 
     Map<String, String> createPropertyMap(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationClazz) {
@@ -155,47 +166,13 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 
     private void readBeanPropertiesToStringMap(Object configurationClazz, HashMap<String, String> properties, String prefix) {
 
-//        try {
-//            Map<String, String> describe = BeanUtils.describe(configurationClazz);
-//            describe.entrySet()
-//                    .stream()
-//                    .fil
-//            PropertyUtils.isWriteable();
-//        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//            throw new RuntimeException(e);
-//        }
-
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(configurationClazz);
-//        ConfigurablePropertyAccessor configurablePropertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(configurationClazz);
-//
-//        TypeDescriptor hallo = configurablePropertyAccessor.getPropertyTypeDescriptor("hallo");
-//
-//
-//
         Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(configurationClazz.getClass());
         Map<String, String> collect = configurationPropertyFromClazz.stream()
                 .map(ConfigurationProperty::getPropertyName)
                 .collect(Collectors.toMap(name -> name, name -> String.valueOf(beanWrapper.getPropertyValue(name.substring(prefix.length() + 1)))));
 
         properties.putAll(collect);
-
-//        Arrays.stream(beanWrapper.getPropertyDescriptors())
-//                .filter(pd -> !"class".matches(pd.getName()))
-//                .forEach(
-//                pd -> {
-//                    TypeDescriptor propertyTypeDescriptor = beanWrapper.getPropertyTypeDescriptor(pd.getName());
-//                    Object propertyValue = beanWrapper.getPropertyValue(pd.getName());
-//                    if (propertyTypeDescriptor == null) {
-//                        throw new IllegalArgumentException("Property type descriptor is null!");
-//                    } else if (propertyTypeDescriptor.hasAnnotation(NestedConfigurationProperty.class)) {
-//                        readBeanPropertiesToStringMap(propertyValue, properties, prefix + "." + pd.getName());
-//                    } else {
-//                        if (propertyValue != null) {
-//                            properties.put(prefix + "." + pd.getName(), propertyValue.toString());
-//                        }
-//                    }
-//                }
-//        );
 
     }
 
