@@ -1,9 +1,17 @@
 package eu.domibus.connector.web.view.areas.configuration.evidences;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
+import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebKeystoreService;
@@ -56,7 +64,8 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	ConfigurationUtil util;
+	private final ConfigurationPropertyManagerService configurationPropertyManagerService;
+	private final ConfigurationUtil util;
 	
 	LumoCheckbox useEvidenceTimeout = new LumoCheckbox();
 	TextField checkIntervalField = FormsUtil.getFormattedTextField();
@@ -75,10 +84,36 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 	TextField keyStorePasswordField = FormsUtil.getFormattedTextField();
 	TextField keyAliasField = FormsUtil.getFormattedTextField();
 	TextField keyPasswordField = FormsUtil.getFormattedTextField();
-	
-	public EvidenceBuilderConfiguration(@Autowired ConfigurationUtil util, @Autowired WebKeystoreService keystoreService) {
+
+	private void saveButtonClicked(ClickEvent clickEvent) {
+		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+		EvidencesToolkitConfigurationProperties config = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesToolkitConfigurationProperties.class);
+		config.getKeyStore().setPath(keyStorePathField.getValue());
+		config.getKeyStore().setPassword(keyStorePasswordField.getValue());
+		configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), config);
+
+		PostalAdressConfigurationProperties postalAdressConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, PostalAdressConfigurationProperties.class);
+		postalAdressConfigurationProperties.setCountry(addressCountryField.getValue());
+		postalAdressConfigurationProperties.setStreet(addressStreetField.getValue());
+		postalAdressConfigurationProperties.setZipCode(addressPostalCodeField.getValue());
+		postalAdressConfigurationProperties.setLocality(addressLocalityField.getValue());
+		configurationPropertyManagerService.updateConfiguration(businessDomain, postalAdressConfigurationProperties);
+
+
+//		EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesTimeoutConfigurationProperties.class);
+
+	}
+
+	public EvidenceBuilderConfiguration(ConfigurationUtil util,
+										ConfigurationPropertyManagerService configurationPropertyManagerService,
+										WebKeystoreService keystoreService) {
+		this.configurationPropertyManagerService = configurationPropertyManagerService;
 		this.util = util;
-		
+
+		Button saveEvidenceConfigButton = new Button("Save Evidence Config");
+		saveEvidenceConfigButton.addClickListener(this::saveButtonClicked);
+		add(saveEvidenceConfigButton);
+
 		add(new ConfigurationItemChapterDiv("Evidence timeout configuration:"));
 		
 		useEvidenceTimeout.addValueChangeListener(e -> {
