@@ -25,6 +25,7 @@ import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -35,6 +36,7 @@ import java.util.Optional;
 @Component
 @Route(value = MessageDetails.ROUTE, layout = MessageLayout.class)
 @UIScope
+@Order(2)
 @TabMetadata(title = "Message Details", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessageDetails extends VerticalLayout implements HasUrlParameter<String> {
 

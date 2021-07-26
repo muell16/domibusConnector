@@ -18,6 +18,7 @@ import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 @Component
 @UIScope
 @Route(value = UserList.ROUTE, layout = UserLayout.class)
+@Order(1)
 @TabMetadata(title = "All Users", tabGroup = UserLayout.TAB_GROUP_NAME)
 public class UserList extends VerticalLayout implements AfterNavigationObserver {
 

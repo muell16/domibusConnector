@@ -15,6 +15,7 @@ import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Component
 @UIScope
 @Route(value = NewUser.ROUTE, layout = UserLayout.class)
+@Order(3)
 @TabMetadata(title = "Add new User", tabGroup = "User")
 public class NewUser extends VerticalLayout {
 

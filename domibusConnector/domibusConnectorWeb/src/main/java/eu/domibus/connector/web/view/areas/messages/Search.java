@@ -19,6 +19,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.service.WebMessageService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @UIScope
 @Route(value = Search.ROUTE, layout= MessageLayout.class)
+@Order(3)
 @TabMetadata(title = "Search", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class Search extends VerticalLayout {
 
