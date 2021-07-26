@@ -41,19 +41,6 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     @Autowired
     HomePartyConfigurationProperties homePartyConfigurationProperties;
 
-	
-//	@Value("${postal.address.street}")
-//	private String postalAddressStreet;
-//
-//	@Value("${postal.address.locality}")
-//	private String postalAddressLocality;
-//
-//	@Value("${postal.address.postal.code}")
-//	private String postalAddressPostalCode;
-//
-//	@Value("${postal.address.country}")
-//	private String postalAddressCountry;
-	
     @Override
     public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
         LOGGER.debug("#createEvidence: [{}] for message [{}]", type, message);

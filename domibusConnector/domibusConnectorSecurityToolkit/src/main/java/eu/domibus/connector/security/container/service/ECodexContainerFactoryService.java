@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.container.service;
 
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerifier;
@@ -28,15 +29,18 @@ public class ECodexContainerFactoryService {
     private final DomibusConnectorCertificateVerifier certificateVerifier;
     private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
     private final DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
+    private final DCKeyStoreService dcKeyStoreService;
 
     public ECodexContainerFactoryService(EnvironmentConfiguration environmentConfiguration,
                                          DomibusConnectorCertificateVerifier certificateVerifier,
                                          SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
-                                         DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory) {
+                                         DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory,
+                                         DCKeyStoreService dcKeyStoreService) {
         this.environmentConfiguration = environmentConfiguration;
         this.certificateVerifier = certificateVerifier;
         this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
         this.technicalValidationServiceFactory = technicalValidationServiceFactory;
+        this.dcKeyStoreService = dcKeyStoreService;
     }
 
     public ECodexContainerService createECodexContainerService(DomibusConnectorMessage message) {
@@ -65,8 +69,8 @@ public class ECodexContainerFactoryService {
 
             CertificateStoreInfo certStore = new CertificateStoreInfo();
 
-            Resource storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathAsResource();
-            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore());
+            Resource storeLocation = dcKeyStoreService.loadKeyStoreAsResource(securityToolkitConfigurationProperties.getKeyStore());
+            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), storeLocation);
             certStore.setLocation(storeLocation);
             certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
 

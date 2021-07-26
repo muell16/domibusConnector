@@ -1,55 +1,50 @@
 package eu.domibus.connector.security.validation;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-
-import javax.annotation.Resource;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import eu.domibus.connector.tools.logging.LoggingUtils;
 import eu.ecodex.dss.util.ECodexDataLoader;
 
 import eu.europa.esig.dss.x509.CommonTrustedCertificateSource;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import eu.europa.esig.dss.client.crl.OnlineCRLSource;
 import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.client.ocsp.OnlineOCSPSource;
-import eu.europa.esig.dss.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.tsl.service.TSLRepository;
-import eu.europa.esig.dss.tsl.service.TSLValidationJob;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
 
 
 @BusinessDomainScoped
 @Component
-public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifier implements InitializingBean {
+public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifier {
 
-	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorCertificateVerifier.class);
+	static Logger LOGGER = LogManager.getLogger(DomibusConnectorCertificateVerifier.class);
 
 	private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
 	private final DomibusConnectorProxyConfig proxyPreferenceManager;
+	private final DCKeyStoreService dcKeyStoreService;
 
 	public DomibusConnectorCertificateVerifier(SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
-											   DomibusConnectorProxyConfig proxyPreferenceManager) {
+											   DomibusConnectorProxyConfig proxyPreferenceManager,
+											   DCKeyStoreService dcKeyStoreService) {
 		this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
 		this.proxyPreferenceManager = proxyPreferenceManager;
+		this.dcKeyStoreService = dcKeyStoreService;
+		init();
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
+//	@Override
+	public void init() {
 //		if (!securityToolkitConfigurationProperties.getKeyStore().getPath().exists()) {
 //			createStore(securityToolkitConfigurationProperties.getKeyStore().getPath());
 //		}
@@ -65,9 +60,19 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 //		TSLRepository tslRepository = new TSLRepository();
 //		tslRepository.setTrustedListsCertificateSource(certSource);
 
+		LOGGER.debug("Using truststore location [{}], password [{}], type [{}]", securityToolkitConfigurationProperties.getTrustStore().getPath(),
+				LoggingUtils.logPassword(LOGGER, securityToolkitConfigurationProperties.getTrustStore().getPassword()),
+				securityToolkitConfigurationProperties.getTrustStore().getType());
 		KeyStoreCertificateSource keyStoreCertificateSource = null;
-		InputStream res = securityToolkitConfigurationProperties.getTrustStore().getPathAsResource().getInputStream();
+		InputStream res = null;
+		try {
+			res = dcKeyStoreService.loadKeyStoreAsResource(securityToolkitConfigurationProperties.getTrustStore()).getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to load trust store", e);
+		}
 		keyStoreCertificateSource = new KeyStoreCertificateSource(res, securityToolkitConfigurationProperties.getTrustStore().getType(), securityToolkitConfigurationProperties.getTrustStore().getPassword());
+
+
 
 		CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
 		trustedCertSource.importAsTrusted(keyStoreCertificateSource);

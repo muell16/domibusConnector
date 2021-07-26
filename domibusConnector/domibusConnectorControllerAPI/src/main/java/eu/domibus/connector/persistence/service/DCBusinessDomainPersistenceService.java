@@ -12,4 +12,6 @@ public interface DCBusinessDomainPersistenceService {
     List<DomibusConnectorBusinessDomain> findAll();
 
     DomibusConnectorBusinessDomain update(DomibusConnectorBusinessDomain domibusConnectorBusinessDomain);
+
+    DomibusConnectorBusinessDomain create(DomibusConnectorBusinessDomain businessDomain);
 }

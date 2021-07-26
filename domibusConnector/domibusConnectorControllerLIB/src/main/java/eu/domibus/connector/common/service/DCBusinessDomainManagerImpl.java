@@ -49,8 +49,15 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
             domibusConnectorBusinessDomain.setMessageLaneProperties(updatedProperties);
 
             businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
+        } else {
+            throw new RuntimeException("no business domain found for update config!");
         }
 
+    }
+
+    @Override
+    public void createBusinessDomain(DomibusConnectorBusinessDomain businessDomain) {
+        businessDomainPersistenceService.create(businessDomain);
     }
 
     Map<String, String> updateChangedProperties(Map<String, String> currentProperties, Map<String, String> properties) {

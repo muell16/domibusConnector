@@ -9,8 +9,8 @@ import java.time.Duration;
 
 @Component
 @BusinessDomainScoped
-@ConfigurationProperties(prefix = "test.example")
-public class MyTestProperties {
+@ConfigurationProperties(prefix = "test.example2")
+public class MyTestProperties2 {
 
     private String prop1;
 

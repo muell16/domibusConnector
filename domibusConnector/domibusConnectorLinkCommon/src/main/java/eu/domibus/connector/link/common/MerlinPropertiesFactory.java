@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.common;
 
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
@@ -14,8 +15,13 @@ public class MerlinPropertiesFactory {
 
     private final static Logger LOGGER = LogManager.getLogger(MerlinPropertiesFactory.class);
 
+//    private final DCKeyStoreService dcKeyStoreService;
+//
+//    public MerlinPropertiesFactory(DCKeyStoreService dcKeyStoreService) {
+//        this.dcKeyStoreService = dcKeyStoreService;
+//    }
 
-//    public Map<String, Object> mapCertAndStoreConfigPropertiesToMerlinProperties(KeyAndKeyStoreAndTrustStoreConfigurationProperties config, String prefix);
+    //    public Map<String, Object> mapCertAndStoreConfigPropertiesToMerlinProperties(KeyAndKeyStoreAndTrustStoreConfigurationProperties config, String prefix);
 //    CxfTrustKeyStoreConfigurationProperties
 
     /**
@@ -40,7 +46,8 @@ public class MerlinPropertiesFactory {
         p.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStore.getPassword());
         LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", keyStore.getPath());
         try {
-            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPathUrlAsString());
+//            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPathUrlAsString());
+            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPath());
         } catch (Exception e) {
             throw new RuntimeException("Error with property: [" + prefix + ".config.key-store.path]\n" +
                     "value is [" + keyStore.getPath() + "]");
@@ -54,7 +61,7 @@ public class MerlinPropertiesFactory {
         p.put("org.apache.wss4j.crypto.merlin.truststore.password", trustStore.getPassword());
         try {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", trustStore.getPath());
-            p.put("org.apache.wss4j.crypto.merlin.truststore.file", trustStore.getPathUrlAsString());
+            p.put("org.apache.wss4j.crypto.merlin.truststore.file", trustStore.getPath());
         } catch (Exception e) {
             LOGGER.info("Trust Store Property: [" + prefix + ".config.trust-store.path]" +
                             "\n cannot be processed. Using the configured key store [{}] as trust store",

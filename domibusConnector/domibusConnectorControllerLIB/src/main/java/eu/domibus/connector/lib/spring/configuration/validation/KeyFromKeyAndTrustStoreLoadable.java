@@ -1,19 +1,18 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 
 import javax.validation.*;
 import java.util.Set;
 
 public class KeyFromKeyAndTrustStoreLoadable implements ConstraintValidator<CheckKeyIsLoadableFromKeyStore, KeyAndKeyStoreAndTrustStoreConfigurationProperties> {
 
-    private Validator validator;
+    private final Validator validator;
+    private final HelperMethods helperMethods;
 
-    @Override
-    public void initialize(CheckKeyIsLoadableFromKeyStore constraintAnnotation) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+    public KeyFromKeyAndTrustStoreLoadable(Validator validator, HelperMethods helperMethods) {
+        this.validator = validator;
+        this.helperMethods = helperMethods;
     }
 
     @Override
@@ -32,7 +31,7 @@ public class KeyFromKeyAndTrustStoreLoadable implements ConstraintValidator<Chec
 
 //        context.disableDefaultConstraintViolation();
 
-        return HelperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
+        return helperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
 
 
     }

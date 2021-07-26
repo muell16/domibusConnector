@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class DomibusConnectorBusinessDomain {
 
     private boolean enabled;
 
-    private Map<String, String> messageLaneProperties;
+    private Map<String, String> messageLaneProperties = new HashMap<>();
 
     private ConfigurationSource configurationSource;
 

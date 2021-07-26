@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
@@ -33,7 +34,9 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationPropertyManagerService {
@@ -137,43 +140,61 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         Map<String, String> props = createPropertyMap(laneId, updatedConfigClazz); //collect updated properties
 
         //only collect differences
-        Map<String, String> diffProps = props.entrySet().stream()
-                .filter(entry -> Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, String> diffProps = new HashMap<>();
+        props.entrySet().stream()
+                .filter(entry -> !Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
+                .forEach(e -> diffProps.put(e.getKey().toString(), e.getValue()));
 
-        LOGGER.trace("Updating of [{}] the following properties [{}]", updatedConfigClazz.getClass(), diffProps);
+        LOGGER.debug("Updating of [{}] the following properties [{}]", updatedConfigClazz.getClass(), diffProps);
 
-        businessDomainManager.updateConfig(laneId, props);
+        businessDomainManager.updateConfig(laneId, diffProps);
         ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
     }
 
     Map<String, String> createPropertyMap(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationClazz) {
-        HashMap<String, String> propertyMap = new HashMap<>();
         String prefix = getPrefixFromAnnotation(configurationClazz.getClass());
-        readBeanPropertiesToStringMap(configurationClazz, propertyMap, prefix);
-        return mapCamelCaseToLowerHyphen(propertyMap);
+        Map<String, String> propertyMap = readBeanPropertiesToStringMap(configurationClazz, prefix);
+        return propertyMap;
+//        return mapCamelCaseToLowerHyphen(propertyMap);
     }
 
     //convert property names from KebabCase to CamelCase
     // eg.:  cn-name to cnName
-    private Map<String, String> mapCamelCaseToLowerHyphen(Map<String, String> properties) {
-        Map<String, String> map = properties
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(e -> CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, e.getKey()), e -> e.getValue()));
-        return map;
-    }
+//    private Map<String, String> mapCamelCaseToLowerHyphen(Map<String, String> properties) {
+//        Map<String, String> map = new HashMap<>();
+//        properties.forEach((key, value) -> map.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, key), value));
+////        properties.forEach((key, value) -> map.put(key.replace("-", ""), value));
+//        return map;
+//    }
 
-    private void readBeanPropertiesToStringMap(Object configurationClazz, HashMap<String, String> properties, String prefix) {
-
+    private Map<String, String> readBeanPropertiesToStringMap(Object configurationClazz, String prefix) {
+        HashMap<String, String> properties = new HashMap<>();
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(configurationClazz);
         Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(configurationClazz.getClass());
-        Map<String, String> collect = configurationPropertyFromClazz.stream()
-                .map(ConfigurationProperty::getPropertyName)
-                .collect(Collectors.toMap(name -> name, name -> String.valueOf(beanWrapper.getPropertyValue(name.substring(prefix.length() + 1)))));
+        configurationPropertyFromClazz.stream()
+                .map(ConfigurationProperty::getPropertyName) // get property name
+                .map(name -> name.substring(prefix.length() + 1)) // strip prefix
+                .forEach( name -> properties.put(createPropertyName(prefix, name), getToStringConvertedPropertyValue(beanWrapper, name))
+                );
+        return properties;
+    }
 
-        properties.putAll(collect);
+    private String createPropertyName(String prefix, String name) {
+        name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, name);
+        return ConfigurationPropertyName.of(prefix + "." + name).toString();
+    }
 
+    private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
+        Object propertyValue = beanWrapper.getPropertyValue(name);
+        if (propertyValue == null) {
+            return null;
+        }
+        if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
+            String stringValue = conversionService.convert(propertyValue, String.class);
+            return stringValue;
+        }
+        return propertyValue.toString();
+//        throw new RuntimeException(String.format("Cannot convert Property of type [%s] to String!", propertyValue.getClass()));
     }
 
 

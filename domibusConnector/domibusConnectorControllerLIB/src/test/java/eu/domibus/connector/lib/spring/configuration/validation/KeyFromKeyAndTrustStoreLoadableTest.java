@@ -4,6 +4,8 @@ import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStore
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -15,17 +17,13 @@ import java.util.Set;
 import static eu.domibus.connector.lib.spring.configuration.validation.ConstraintViolationSetHelper.printSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(classes = ValidationTestContext.class)
 public class KeyFromKeyAndTrustStoreLoadableTest {
 
-    private static Validator validator;
+    @Autowired
+    private Validator validator;
 
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties props;
-
-    @BeforeAll
-    public static void beforeClass() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
 
     @BeforeEach
     public void setUp() {

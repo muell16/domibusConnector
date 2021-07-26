@@ -21,13 +21,13 @@ class BeanStore {
 
 
     synchronized Object get(String name, ObjectFactory<?> objectFactory) {
-        return objectFactory.getObject();
-//        Object bean = objects.get(name);
-//        if (bean == null) {
-//            bean = objectFactory.getObject();
-//            objects.put(name, bean);
-//        }
-//        return bean;
+//        return objectFactory.getObject();
+        Object bean = objects.get(name);
+        if (bean == null) {
+            bean = objectFactory.getObject();
+            objects.put(name, bean);
+        }
+        return bean;
     }
 
     synchronized Object remove(String name) {

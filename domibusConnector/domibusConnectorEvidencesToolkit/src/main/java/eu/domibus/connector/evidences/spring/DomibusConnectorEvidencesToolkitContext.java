@@ -1,6 +1,7 @@
 package eu.domibus.connector.evidences.spring;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,19 @@ public class DomibusConnectorEvidencesToolkitContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitContext.class);
 
-    @Autowired
-    private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
+    private final EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
+    private final DCKeyStoreService keyStoreService;
+
+    public DomibusConnectorEvidencesToolkitContext(EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties,
+                                                   DCKeyStoreService keyStoreService) {
+        this.evidencesToolkitConfigurationProperties = evidencesToolkitConfigurationProperties;
+        this.keyStoreService = keyStoreService;
+    }
 
     @Bean
     @BusinessDomainScoped
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        Resource javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPathAsResource();
+        Resource javaKeyStorePath = keyStoreService.loadKeyStoreAsResource(evidencesToolkitConfigurationProperties.getKeyStore());
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
         String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();

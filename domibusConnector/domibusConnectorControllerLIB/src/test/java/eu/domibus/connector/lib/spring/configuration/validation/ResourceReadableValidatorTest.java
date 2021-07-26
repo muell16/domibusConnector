@@ -1,29 +1,32 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 
-
-
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 import javax.validation.Validator;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(classes = ValidationTestContext.class)
 public class ResourceReadableValidatorTest {
 
-    private static Validator validator;
 
-    @BeforeAll
-    public static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+    @Autowired
+    Validator validator;
+
+    @Test
+    public void testResource() {
+        String res = "testfile";
+        TestEntity t = new TestEntity();
+        t.setLocation(res);
+
+        Set<ConstraintViolation<TestEntity>> validate = validator.validate(t);
+
+        assertThat(validate).isEmpty();
     }
 
 
@@ -42,9 +45,9 @@ public class ResourceReadableValidatorTest {
 
     @Test
     public void testResourceConfiguredPathDoesNotExist_shouldNotValidate() {
-        Resource res = new FileSystemResource("/dhjafjkljadflkjdaskldfaskjhdfs");
+        String res = "/dsafdsadffds";
         TestEntity t = new TestEntity();
-        t.setResource(res);
+        t.setLocation(res);
 
         Set<ConstraintViolation<TestEntity>> validate = validator.validate(t);
 
@@ -58,14 +61,14 @@ public class ResourceReadableValidatorTest {
     public static class TestEntity {
 
         @CheckResourceIsReadable
-        Resource resource;
+        String location;
 
-        public Resource getResource() {
-            return resource;
+        public String getLocation() {
+            return location;
         }
 
-        public void setResource(Resource resource) {
-            this.resource = resource;
+        public void setLocation(String location) {
+            this.location = location;
         }
     }
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
@@ -46,6 +47,7 @@ import org.springframework.util.StreamUtils;
  * 
  */
 @Component
+@BusinessDomainScoped
 public class DomibusSecurityContainer {
 
     public static final String RED_TOKEN_WARNING_MESSAGE = "A RedToken was generated!";

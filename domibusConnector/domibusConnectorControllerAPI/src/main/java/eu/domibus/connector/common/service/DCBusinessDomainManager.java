@@ -15,4 +15,7 @@ public interface DCBusinessDomainManager {
     Optional<DomibusConnectorBusinessDomain> getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);
 
     void updateConfig(DomibusConnectorBusinessDomain.BusinessDomainId id, Map<String, String> properties);
+
+    void createBusinessDomain(DomibusConnectorBusinessDomain businessDomain);
+
 }

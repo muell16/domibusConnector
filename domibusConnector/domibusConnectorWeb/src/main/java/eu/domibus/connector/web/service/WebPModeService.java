@@ -104,10 +104,10 @@ public class WebPModeService {
         }
 
         try {
-            updateHomePartyConfigurationProperties(pmodes);
             updateSecurityConfiguration(store);
+            updateHomePartyConfigurationProperties(pmodes);
         } catch (Exception e) {
-            LOGGER.error("Error while updating home party properties", e);
+            LOGGER.error("Error while updating properties", e);
             throw new RuntimeException(e);
         }
 
@@ -118,7 +118,7 @@ public class WebPModeService {
         SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), SecurityToolkitConfigurationProperties.class);
         securityToolkitConfigurationProperties.getTrustStore().setPassword(store.getPasswordPlain());
         securityToolkitConfigurationProperties.getTrustStore().setType(store.getType().toString());
-        securityToolkitConfigurationProperties.getTrustStore().setPath(ctx.getResource(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid()));
+        securityToolkitConfigurationProperties.getTrustStore().setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), securityToolkitConfigurationProperties);
     }
 

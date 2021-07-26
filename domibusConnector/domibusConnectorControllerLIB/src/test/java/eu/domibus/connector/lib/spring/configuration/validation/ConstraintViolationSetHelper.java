@@ -16,7 +16,8 @@ public class ConstraintViolationSetHelper {
 
     public static StoreConfigurationProperties generateTestStore() {
         StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
-        storeConfigurationProperties.setPath(new ClassPathResource("keystores/client-bob.jks"));
+//        storeConfigurationProperties.setPath(new ClassPathResource("keystores/client-bob.jks"));
+        storeConfigurationProperties.setPath("classpath:keystores/client-bob.jks");
         storeConfigurationProperties.setPassword("12345");
         return storeConfigurationProperties;
     }
