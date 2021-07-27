@@ -3,7 +3,9 @@ package eu.domibus.connector.common.service;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.lang.Nullable;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * This service loads with @ConfigurationProperties annotated
@@ -38,6 +40,8 @@ public interface ConfigurationPropertyManagerService {
      */
     <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz, String prefix);
 
+
+    <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz);
 
     /**
      *

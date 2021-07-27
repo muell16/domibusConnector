@@ -31,7 +31,8 @@ public class EvidencesTimeoutConfigurationProperties {
      * the default value is 1 minute (60000ms)
      */
     @NotNull
-    private DomibusConnectorDuration checkTimeout;
+    private DomibusConnectorDuration checkTimeout; //TODO put this into a global configuration, since the timer job
+    //configuration should be globally handled!
 
     /**
      * This property defines the timeout how long the connector should

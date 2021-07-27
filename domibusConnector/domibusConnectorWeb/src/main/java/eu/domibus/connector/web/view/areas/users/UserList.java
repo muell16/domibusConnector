@@ -10,6 +10,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
@@ -30,7 +32,7 @@ import java.util.List;
 @UIScope
 @Route(value = UserList.ROUTE, layout = UserLayout.class)
 @TabMetadata(title = "All Users", tabGroup = UserLayout.TAB_GROUP_NAME)
-public class UserList extends VerticalLayout {
+public class UserList extends VerticalLayout implements BeforeEnterObserver {
 
 	public static final String ROUTE = "userlist";
 
@@ -68,7 +70,7 @@ public class UserList extends VerticalLayout {
 		add(main);
 		setHeight("100vh");
 		setWidth("100vw");
-		reloadList();
+//		reloadList();
 	}
 
 	private HorizontalLayout createFilterLayout() {
@@ -151,6 +153,13 @@ public class UserList extends VerticalLayout {
 
 	public void reloadList() {
 		grid.setItems(userService.getAllUsers());
+	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		if (event.getNavigationTarget() == this.getClass()) {
+			reloadList();
+		}
 	}
 }
 

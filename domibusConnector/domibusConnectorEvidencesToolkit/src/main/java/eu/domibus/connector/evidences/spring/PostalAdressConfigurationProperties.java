@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -20,19 +21,19 @@ public class PostalAdressConfigurationProperties {
     /**
      * The street
      */
-    @NotNull
+    @NotBlank
     private String street;
 
     /**
      * Locality, eg, Brussels, Vienna, ...
      */
-    @NotNull
+    @NotBlank
     private String locality;
 
     /**
      * The zipCode
      */
-    @NotNull
+    @NotBlank
     private String zipCode;
 
     /**
@@ -42,7 +43,7 @@ public class PostalAdressConfigurationProperties {
      *
      *
      */
-    @NotNull
+    @NotBlank
     private String country;
 
     public String getStreet() {

@@ -5,16 +5,11 @@ import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
@@ -22,21 +17,17 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationPropertyManagerService {
@@ -48,17 +39,20 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     private final ConversionService conversionService;
     private final DCBusinessDomainManager businessDomainManager;
     private final ConfigurationPropertyCollector configurationPropertyCollector;
+    private final Validator validator;
 
 
 
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
                                                   @ConnectorConversationService ConversionService conversionService,
                                                   DCBusinessDomainManager businessDomainManager,
-                                                  ConfigurationPropertyCollector configurationPropertyCollector) {
+                                                  ConfigurationPropertyCollector configurationPropertyCollector,
+                                                  Validator validator) {
         this.ctx = ctx;
         this.conversionService = conversionService;
         this.businessDomainManager = businessDomainManager;
         this.configurationPropertyCollector = configurationPropertyCollector;
+        this.validator = validator;
     }
 
     @Override
@@ -115,6 +109,15 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         } else {
             throw new IllegalArgumentException(String.format("No active business domain for id [%s]", laneId));
         }
+    }
+
+
+    @Override
+    public <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz) {
+        if (laneId == null) {
+            throw new IllegalArgumentException("LaneId is not allowed to be null!");
+        }
+        return validator.validate(updatedConfigClazz);
     }
 
     /**

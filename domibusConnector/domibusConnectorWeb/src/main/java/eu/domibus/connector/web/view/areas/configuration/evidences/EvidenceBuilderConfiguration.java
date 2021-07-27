@@ -2,9 +2,12 @@ package eu.domibus.connector.web.view.areas.configuration.evidences;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
@@ -22,6 +25,10 @@ import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemC
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.validation.ConstraintViolation;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -55,7 +62,7 @@ import org.springframework.stereotype.Component;
 @Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-public class EvidenceBuilderConfiguration  extends VerticalLayout {
+public class EvidenceBuilderConfiguration  extends VerticalLayout implements BeforeEnterObserver {
 
 	public static final String ROUTE = "evidencebuilder";
 
@@ -86,23 +93,32 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 	TextField keyPasswordField = FormsUtil.getFormattedTextField();
 
 	private void saveButtonClicked(ClickEvent clickEvent) {
-		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
-		EvidencesToolkitConfigurationProperties config = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesToolkitConfigurationProperties.class);
-		config.getKeyStore().setPath(keyStorePathField.getValue());
-		config.getKeyStore().setPassword(keyStorePasswordField.getValue());
-		configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), config);
+		EvidencesToolkitConfigurationProperties evidenceConfigBean = evidenceConfigBinder.getBean();
+		configurationPropertyManagerService.updateConfiguration(getCurrentBusinessDomain(), evidenceConfigBean);
 
-		PostalAdressConfigurationProperties postalAdressConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, PostalAdressConfigurationProperties.class);
-		postalAdressConfigurationProperties.setCountry(addressCountryField.getValue());
-		postalAdressConfigurationProperties.setStreet(addressStreetField.getValue());
-		postalAdressConfigurationProperties.setZipCode(addressPostalCodeField.getValue());
-		postalAdressConfigurationProperties.setLocality(addressLocalityField.getValue());
-		configurationPropertyManagerService.updateConfiguration(businessDomain, postalAdressConfigurationProperties);
-
-
-//		EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesTimeoutConfigurationProperties.class);
+		PostalAdressConfigurationProperties postalAddressConfigBean = postAddrBinder.getBean();
+		Set<ConstraintViolation<PostalAdressConfigurationProperties>> constraintViolations = configurationPropertyManagerService.validateConfiguration(getCurrentBusinessDomain(), postalAddressConfigBean);
+		if (!constraintViolations.isEmpty()) {
+			Notification.show("There are validation errors! " + constraintViolations
+					.stream()
+					.map(e -> e.getMessage())
+					.collect(Collectors.joining(",")), 10000, Notification.Position.MIDDLE);
+		}
+		configurationPropertyManagerService.updateConfiguration(getCurrentBusinessDomain(), postalAddressConfigBean);
 
 	}
+
+	/**
+	 * retrieves the currently edited business domain
+	 * @return the currently edited/viewed business domain within this view/form
+	 */
+	private DomibusConnectorBusinessDomain.BusinessDomainId getCurrentBusinessDomain() {
+		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+		return businessDomain;
+	}
+
+	Binder<EvidencesToolkitConfigurationProperties> evidenceConfigBinder;
+	Binder<PostalAdressConfigurationProperties> postAddrBinder;
 
 	public EvidenceBuilderConfiguration(ConfigurationUtil util,
 										ConfigurationPropertyManagerService configurationPropertyManagerService,
@@ -113,6 +129,20 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 		Button saveEvidenceConfigButton = new Button("Save Evidence Config");
 		saveEvidenceConfigButton.addClickListener(this::saveButtonClicked);
 		add(saveEvidenceConfigButton);
+
+		postAddrBinder = new Binder<>(PostalAdressConfigurationProperties.class);
+
+		postAddrBinder.bind(addressCountryField, "country");
+		postAddrBinder.bind(addressStreetField, "street");
+		postAddrBinder.bind(addressLocalityField, "locality");
+		postAddrBinder.bind(addressPostalCodeField, "zipCode");
+
+		evidenceConfigBinder = new Binder<>(EvidencesToolkitConfigurationProperties.class);
+		evidenceConfigBinder.bind(keyStorePathField, "keyStore.path");
+		evidenceConfigBinder.bind(keyStorePasswordField, "keyStore.password");
+
+		Button reset = new Button("Reset config");
+		reset.addClickListener((e) -> this.reinitBinder());
 
 		add(new ConfigurationItemChapterDiv("Evidence timeout configuration:"));
 		
@@ -128,6 +158,7 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.checkTimoutIntervalLabels, checkIntervalField));
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.relayTimoutLabels, relayTimeoutField));
+
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.deliveryTimoutLabels, deliveryTimoutField));
 		
@@ -161,4 +192,22 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyPasswordLabels, keyPasswordField));
 	}
 
+	private void reinitBinder() {
+		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = getCurrentBusinessDomain();
+		EvidencesToolkitConfigurationProperties config = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesToolkitConfigurationProperties.class);
+		evidenceConfigBinder.setBean(config);
+
+		PostalAdressConfigurationProperties postalAdressConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, PostalAdressConfigurationProperties.class);
+		postAddrBinder.setBean(postalAdressConfigurationProperties);
+
+	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		if (event.getNavigationTarget() == this.getClass()) {
+			reinitBinder();
+		}
+	}
+
 }
+
