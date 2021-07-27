@@ -1,5 +1,6 @@
 package eu.domibus.connector.common.service;
 
+import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = DCBusinessDomainManagerImpl.class)
+@SpringBootTest(classes = {DCBusinessDomainManagerImpl.class, ConnectorConfigurationProperties.class})
 class DCBusinessDomainManagerImplTest {
 
     @Autowired
