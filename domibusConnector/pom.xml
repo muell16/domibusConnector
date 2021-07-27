@@ -129,6 +129,11 @@
                 <artifactId>logging-tester</artifactId>
                 <version>${ecodex.dependencies.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.ecodex.utils</groupId>
+                <artifactId>spring-property-configuration-manager</artifactId>
+                <version>${ecodex.dependencies.version}</version>
+            </dependency>
 
             <!-- E-CODEX LIBRARIES -->
 <!--            <dependency>-->
@@ -499,6 +504,11 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>3.2</version>
@@ -610,9 +620,9 @@
             </dependency>
             <!-- google code findbugs annotations -->
             <dependency>
-                <groupId>com.google</groupId>
+                <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>28.2-jre</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>

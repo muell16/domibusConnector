@@ -1,9 +1,11 @@
 package eu.domibus.connector.security.validation;
 
-import javax.annotation.Resource;
-
+import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
+import eu.ecodex.dss.model.token.AdvancedSystemType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,34 +19,43 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 @Service
 public class DomibusConnectorTechnicalValidationServiceFactory {
 
-	@Autowired
-	TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
-	
-	@Resource(name="domibusConnectorEnvironmentConfiguration")
-	EnvironmentConfiguration environmentConfiguration;
-	
-	@Resource(name="domibusConnectorCertificateVerifier")
-	DomibusConnectorCertificateVerifier certificateVerifier;
-	
-	@Autowired
-	DomibusConnectorProxyConfig proxyPreferenceManager;
-	
-	//@Resource(name="domibusConnectorAESTokenValidationCreator")
-	@Autowired(required=false) //not required if SIGNATURE_BASED
-    private DomibusConnectorAESTokenValidationCreator delegate;
+	private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorTechnicalValidationServiceFactory.class);
 
-	public ECodexTechnicalValidationService technicalValidationService(DomibusConnectorMessage message) {
-		switch(tokenIssuerFactoryProperties.getAdvancedElectronicSystemType()) {
-		case SIGNATURE_BASED: return getSignTechnicalValidationService();
-		case AUTHENTICATION_BASED: return getAuthTechnicalAESValidationService(message);
-		default: throw new IllegalArgumentException("Configuration for 'token.issuer.aes.value' not properly set!");
+	private final TokenIssuerFactory tokenIssuerFactory;
+	private final EnvironmentConfiguration environmentConfiguration;
+	private final DomibusConnectorCertificateVerifier certificateVerifier;
+	private final DomibusConnectorProxyConfig proxyPreferenceManager;
+	 //not required if SIGNATURE_BASED
+    private final DomibusConnectorAESTokenValidationCreator delegate;
+
+	public DomibusConnectorTechnicalValidationServiceFactory(TokenIssuerFactory tokenIssuerFactory,
+															 EnvironmentConfiguration environmentConfiguration,
+															 DomibusConnectorCertificateVerifier certificateVerifier,
+															 DomibusConnectorProxyConfig proxyPreferenceManager,
+															 @Autowired(required = false) DomibusConnectorAESTokenValidationCreator delegate) {
+		this.tokenIssuerFactory = tokenIssuerFactory;
+		this.environmentConfiguration = environmentConfiguration;
+		this.certificateVerifier = certificateVerifier;
+		this.proxyPreferenceManager = proxyPreferenceManager;
+		this.delegate = delegate;
+	}
+
+
+
+	public ECodexTechnicalValidationService createTechnicalValidationService(DomibusConnectorMessage message) {
+		AdvancedSystemType advancedElectronicSystemType = tokenIssuerFactory.getAdvancedElectronicSystemType(message);
+		switch(advancedElectronicSystemType) {
+			case SIGNATURE_BASED: return getSignTechnicalValidationService();
+			case AUTHENTICATION_BASED: return getAuthTechnicalAESValidationService(message);
+			default: throw new IllegalArgumentException("Configuration for 'token.issuer.aes.value' not properly set!");
 		}
 	}
-	
+
 	private DomibusConnectorAESTechnicalValidationService getAuthTechnicalAESValidationService(DomibusConnectorMessage message) {
-    	DomibusConnectorAESTechnicalValidationService technicalValidationService = new DomibusConnectorAESTechnicalValidationService(message, delegate, proxyPreferenceManager);
-    	technicalValidationService.setEnvironmentConfiguration(new EnvironmentConfiguration());
-    	
+		if (delegate == null) {
+			throw new IllegalStateException("If the the token is AUTHENTICATION BASED a AES validation service must be available!");
+		}
+    	DomibusConnectorAESTechnicalValidationService technicalValidationService = new DomibusConnectorAESTechnicalValidationService(message, delegate);
     	return technicalValidationService;
     }
 	
@@ -57,7 +68,6 @@ public class DomibusConnectorTechnicalValidationServiceFactory {
     	
     	return technicalValidationService;
 	}
-	
-	
+
 
 }

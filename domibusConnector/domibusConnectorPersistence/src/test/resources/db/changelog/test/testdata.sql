@@ -6,7 +6,7 @@
 ----------------------- Values for PMODE SET default BusinessDomain ------------------------------
 
 DELETE DC_MESSAGE_LANE;
-INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION) VALUES (1, 'default_message_lane', 'default');
+INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION) VALUES (1, 'defaultBusinessDomain', 'default');
 
 INSERT INTO DC_KEYSTORE (ID, UUID, KEYSTORE, TYPE) VALUES (1, 'store1', RAWTOHEX('Test'), 'JKS');
 

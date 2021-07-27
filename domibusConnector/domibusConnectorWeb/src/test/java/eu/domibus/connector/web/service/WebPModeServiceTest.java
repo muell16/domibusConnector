@@ -1,72 +1,111 @@
 package eu.domibus.connector.web.service;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
-import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
+import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
-import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(
-    properties = { "spring.liquibase.change-log=classpath:/db/changelog/install.xml" }
+    properties = {
+            "spring.liquibase.change-log=classpath:/db/changelog/install.xml",
+            "spring.liquibase.enabled=true"
+    }
 )
 @ActiveProfiles({PersistenceProfiles.STORAGE_DB_PROFILE_NAME, "test"})
-@Commit
 public class WebPModeServiceTest {
 
     @SpringBootApplication(
-            scanBasePackages = {"eu.domibus.connector.persistence"}
+            scanBasePackages = {"eu.domibus.connector"}
     )
-    @Import(WebPModeService.class)
     public static class TestContext {
-
     }
 
+    @MockBean
+    SubmitToLinkService submitToLinkService;
+
+    @Autowired
+    HomePartyConfigurationProperties homePartyConfigurationProperties;
+
+    @Autowired
+    SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+
+    @Autowired
+    ConfigurationPropertyManagerService configManager;
 
     @Autowired
     WebPModeService webPModeService;
 
-
-    @Autowired
-    private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
+//    @AfterEach
+    public void resetCurrentDomain() {
+        CurrentBusinessDomain.setCurrentBusinessDomain(null);
+    }
 
 
     @Test
     void importPModes() throws IOException {
-        assertThat(webPModeService).isNotNull();
+//        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
+        try {
+            Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
+            byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
 
-        Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
-        byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
+            byte[] keyStoreBytes = "Hello World".getBytes(StandardCharsets.UTF_8);
 
-        DomibusConnectorKeystore keystore = webPModeService.importConnectorstore(new byte[0], "pw", DomibusConnectorKeystore.KeystoreType.JKS);
-        webPModeService.importPModes(pMode, "description", keystore);
+            DomibusConnectorKeystore keystore = webPModeService.importConnectorstore(keyStoreBytes, "pw", DomibusConnectorKeystore.KeystoreType.JKS);
+            webPModeService.importPModes(pMode, "description", keystore);
 
-        assertThat(webPModeService.getPartyList())
-                .as("example pmodes contains 24 parties")
-                .hasSize(24);
+            assertThat(webPModeService.getPartyList())
+                    .as("example pmodes contains 24 parties")
+                    .hasSize(24);
+
+            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+
+            SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), SecurityToolkitConfigurationProperties.class);
+            assertThat(securityToolkitConfigurationProperties.getTrustStore().getPassword()).isEqualTo("pw");
+
+            Assertions.assertAll(
+                    () -> assertThat(homePartyConfigurationProperties.getEndpointAddress())
+                            .isEqualTo("https://ctpo.example.com/domibus/services/msh"),
+                    () -> assertThat(homePartyConfigurationProperties.getName())
+                            .isEqualTo("service_ctp"),
+//TODO: check why this is not working...
+                    () -> assertThat(securityToolkitConfigurationProperties.getTruststore().getPassword())
+                            .isEqualTo("pw"),
+                    () -> assertThat(this.securityToolkitConfigurationProperties.getTruststore().getPath())
+                            .isEqualTo(DatabaseResourceLoader.DB_URL_PREFIX + keystore.getUuid())
+            );
+
+            //TODO: check key store config...
+
+//        assertThat(securityToolkitConfigurationProperties.getTruststore().get)
+
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
+        }
+//        });
 
     }
 

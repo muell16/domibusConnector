@@ -108,18 +108,20 @@ public class DCGatewayPullPluginConfiguration {
     public Properties gwWsLinkEncryptProperties() {
         Properties props = new Properties();
 
+        //TODO: use MerlinPropertiesFactory
+
         CxfTrustKeyStoreConfigurationProperties cxf = configurationProperties.getSoap(); //.getCxf();
         StoreConfigurationProperties cxfKeyStore = cxf.getKeyStore();
 
         props.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxfKeyStore.getType());
-        props.put("org.apache.wss4j.crypto.merlin.keystore.file", cxfKeyStore.getPathUrlAsString());
+        props.put("org.apache.wss4j.crypto.merlin.keystore.file", cxfKeyStore.getPath());
         props.put("org.apache.wss4j.crypto.merlin.keystore.password", cxfKeyStore.getPassword());
         props.put("org.apache.wss4j.crypto.merlin.keystore.alias", cxf.getPrivateKey().getAlias());
         props.put("org.apache.wss4j.crypto.merlin.keystore.private.password", cxf.getPrivateKey().getPassword());
 
         props.put("org.apache.wss4j.crypto.merlin.truststore.type", cxf.getTrustStore().getType());
-        props.put("org.apache.wss4j.crypto.merlin.truststore.file", cxf.getTrustStore().getPathUrlAsString());
+        props.put("org.apache.wss4j.crypto.merlin.truststore.file", cxf.getTrustStore().getPath());
         props.put("org.apache.wss4j.crypto.merlin.truststore.password", cxf.getTrustStore().getPassword());
 
         LOGGER.debug(CONFIG, "Creating gwWsLinkEncryptProperties with properties [{}]", props);

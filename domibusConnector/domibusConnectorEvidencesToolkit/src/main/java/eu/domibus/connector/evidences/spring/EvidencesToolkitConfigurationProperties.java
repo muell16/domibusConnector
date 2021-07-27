@@ -1,5 +1,6 @@
 package eu.domibus.connector.evidences.spring;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
+@BusinessDomainScoped
 @Component
 @ConfigurationProperties(prefix = EvidencesToolkitConfigurationProperties.CONFIG_PREFIX)
 @Validated

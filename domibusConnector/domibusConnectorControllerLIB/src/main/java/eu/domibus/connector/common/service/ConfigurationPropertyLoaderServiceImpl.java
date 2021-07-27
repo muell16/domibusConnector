@@ -1,18 +1,22 @@
 package eu.domibus.connector.common.service;
 
+import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.convert.ConversionService;
@@ -21,9 +25,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.util.*;
 
 @Service
 public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationPropertyManagerService {
@@ -33,17 +37,32 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 
     private final ApplicationContext ctx;
     private final ConversionService conversionService;
+    private final DCBusinessDomainManager businessDomainManager;
+    private final ConfigurationPropertyCollector configurationPropertyCollector;
+    private final Validator validator;
+
 
 
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
-                                                  @ConnectorConversationService ConversionService conversionService) {
+                                                  @ConnectorConversationService ConversionService conversionService,
+                                                  DCBusinessDomainManager businessDomainManager,
+                                                  ConfigurationPropertyCollector configurationPropertyCollector,
+                                                  Validator validator) {
         this.ctx = ctx;
         this.conversionService = conversionService;
+        this.businessDomainManager = businessDomainManager;
+        this.configurationPropertyCollector = configurationPropertyCollector;
+        this.validator = validator;
     }
 
     @Override
-    @Cacheable //TODO: evict cache if message lane is updated!
-    public <T> T loadConfiguration(DomibusConnectorMessageLane.MessageLaneId laneId, Class<T> clazz) {
+    public <T> T loadConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz) {
+        String prefix = getPrefixFromAnnotation(clazz);
+
+        return this.loadConfiguration(laneId, clazz, prefix);
+    }
+
+    private String getPrefixFromAnnotation(Class<?> clazz) {
         if (!AnnotatedElementUtils.hasAnnotation(clazz, ConfigurationProperties.class)) {
             throw new IllegalArgumentException("clazz must be annotated with " + ConfigurationProperties.class);
         }
@@ -51,12 +70,10 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 
         ConfigurationProperties annotation = clazz.getAnnotation(ConfigurationProperties.class);
         String prefix = annotation.prefix();
-
-        return this.loadConfiguration(laneId, clazz, prefix);
+        return prefix;
     }
 
-    @Cacheable //TODO: evict cache if message lane is updated!
-    public <T> T loadConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, Class<T> clazz, String prefix) {
+    public <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
         if (clazz == null) {
             throw new IllegalArgumentException("Clazz is not allowed to be null!");
         }
@@ -65,22 +82,17 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         }
         LOGGER.debug("Loading property class [{}]", clazz);
 
-        //todo: load message lane properties here, be carefull laneId can be null!
-        MapConfigurationPropertySource messageLaneProperties = new MapConfigurationPropertySource(new Properties()) {
-            public Object getUnderlyingSource() {
-                return String.format("MessageLane [%s] Properties", laneId);
-            }
-        };
+        MapConfigurationPropertySource messageLaneSource = loadLaneProperties(laneId);
 
         Environment environment = ctx.getEnvironment();
-        Iterable<ConfigurationPropertySource> sources = ConfigurationPropertySources.get(environment);
+        Iterable<ConfigurationPropertySource> environmentSource = ConfigurationPropertySources.get(environment);
+        List<ConfigurationPropertySource> configSources = new ArrayList<>();
+        configSources.add(messageLaneSource);
+        environmentSource.forEach(s -> configSources.add(s));
+
         PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment);
 
-        List<ConfigurationPropertySource> configSources = new ArrayList<>();
-        configSources.add(messageLaneProperties);
-        sources.forEach(s -> configSources.add(s));
-
-        Binder binder = new Binder(sources, placeholdersResolver, conversionService, null);
+        Binder binder = new Binder(configSources, placeholdersResolver, conversionService, null);
 
         Bindable<T> bindable = Bindable.of(clazz);
         T t = binder.bindOrCreate(prefix, bindable);
@@ -88,9 +100,104 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         return t;
     }
 
-    @Override
-    public void updateConfiguration(DomibusConnectorMessageLane.MessageLaneId laneId, Object configurationClazz) {
 
+    private MapConfigurationPropertySource loadLaneProperties(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
+        Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
+        if (businessDomain.isPresent()) {
+            MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(businessDomain.get().getMessageLaneProperties());
+            return mapConfigurationPropertySource;
+        } else {
+            throw new IllegalArgumentException(String.format("No active business domain for id [%s]", laneId));
+        }
+    }
+
+
+    @Override
+    public <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz) {
+        if (laneId == null) {
+            throw new IllegalArgumentException("LaneId is not allowed to be null!");
+        }
+        return validator.validate(updatedConfigClazz);
+    }
+
+    /**
+     *
+     * A {@link BusinessDomainConfigurationChange} event is fired with the changed properties
+     * and affected BusinessDomain
+     * So factories, Scopes can react to this event and refresh the settings
+     *
+     * @param laneId the laneId, if null defaultLaneId is used
+     * @param updatedConfigClazz - the configurationClazz which has been altered, updated
+     *                           only the changed properties are updated at the configuration source
+     *
+     *
+     */
+    @Override
+    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
+        if (laneId == null) {
+            throw new IllegalArgumentException("LaneId is not allowed to be null!");
+        }
+
+        Object currentConfig = this.loadConfiguration(laneId, updatedConfigClazz.getClass());
+        Map<String, String> previousProps = createPropertyMap(laneId, currentConfig); //collect current active properties
+        Map<String, String> props = createPropertyMap(laneId, updatedConfigClazz); //collect updated properties
+
+        //only collect differences
+        Map<String, String> diffProps = new HashMap<>();
+        props.entrySet().stream()
+                .filter(entry -> !Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
+                .forEach(e -> diffProps.put(e.getKey().toString(), e.getValue()));
+
+        LOGGER.debug("Updating of [{}] the following properties [{}]", updatedConfigClazz.getClass(), diffProps);
+
+        businessDomainManager.updateConfig(laneId, diffProps);
+        ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
+    }
+
+    Map<String, String> createPropertyMap(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationClazz) {
+        String prefix = getPrefixFromAnnotation(configurationClazz.getClass());
+        Map<String, String> propertyMap = readBeanPropertiesToStringMap(configurationClazz, prefix);
+        return propertyMap;
+//        return mapCamelCaseToLowerHyphen(propertyMap);
+    }
+
+    //convert property names from KebabCase to CamelCase
+    // eg.:  cn-name to cnName
+//    private Map<String, String> mapCamelCaseToLowerHyphen(Map<String, String> properties) {
+//        Map<String, String> map = new HashMap<>();
+//        properties.forEach((key, value) -> map.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, key), value));
+////        properties.forEach((key, value) -> map.put(key.replace("-", ""), value));
+//        return map;
+//    }
+
+    private Map<String, String> readBeanPropertiesToStringMap(Object configurationClazz, String prefix) {
+        HashMap<String, String> properties = new HashMap<>();
+        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(configurationClazz);
+        Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(configurationClazz.getClass());
+        configurationPropertyFromClazz.stream()
+                .map(ConfigurationProperty::getPropertyName) // get property name
+                .map(name -> name.substring(prefix.length() + 1)) // strip prefix
+                .forEach( name -> properties.put(createPropertyName(prefix, name), getToStringConvertedPropertyValue(beanWrapper, name))
+                );
+        return properties;
+    }
+
+    private String createPropertyName(String prefix, String name) {
+        name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, name);
+        return ConfigurationPropertyName.of(prefix + "." + name).toString();
+    }
+
+    private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
+        Object propertyValue = beanWrapper.getPropertyValue(name);
+        if (propertyValue == null) {
+            return null;
+        }
+        if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
+            String stringValue = conversionService.convert(propertyValue, String.class);
+            return stringValue;
+        }
+        return propertyValue.toString();
+//        throw new RuntimeException(String.format("Cannot convert Property of type [%s] to String!", propertyValue.getClass()));
     }
 
 

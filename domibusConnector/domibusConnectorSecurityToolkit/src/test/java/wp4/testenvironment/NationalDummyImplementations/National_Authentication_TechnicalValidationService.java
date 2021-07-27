@@ -21,10 +21,7 @@ public class National_Authentication_TechnicalValidationService implements ECode
 	private TechnicalValidationResult techResult;
 	private AuthenticationInformation authInfo;
 	private ValidationVerification valVeri;
-	
-	@Override
-	public void setEnvironmentConfiguration(EnvironmentConfiguration conf) {
-	}
+
 
 	@Override
 	public TokenValidation create(DSSDocument businessDocument, DSSDocument detachedSignature) throws ECodexException {

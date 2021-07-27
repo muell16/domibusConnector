@@ -1,9 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,7 +53,31 @@ public class DomibusConnectorPropertiesPersistenceServiceImpl implements Domibus
 			}
 		}
 	}
-	
+
+	@Override
+	@Transactional
+	public int saveProperties(Map<String, String> propertyChanges) {
+		List<PDomibusConnectorProperties> deleteList = new ArrayList<>();
+		List<PDomibusConnectorProperties> saveList = new ArrayList<>();
+		for (Map.Entry<String, String> propertyChangeEntry : propertyChanges.entrySet()) {
+			Optional<PDomibusConnectorProperties> property = propertiesDao.findByPropertyName(propertyChangeEntry.getKey());
+			if (propertyChangeEntry.getValue() == null && property.isPresent()) {
+				deleteList.add(property.get());
+			} else if (property.isPresent()) {
+				property.get().setPropertyValue(propertyChangeEntry.getValue());
+				saveList.add(property.get());
+			} else {
+				PDomibusConnectorProperties newProperty  = new PDomibusConnectorProperties();
+				newProperty.setPropertyName(propertyChangeEntry.getKey());
+				newProperty.setPropertyValue(propertyChangeEntry.getValue());
+				saveList.add(newProperty);
+			}
+		}
+		propertiesDao.deleteAll(deleteList);
+		propertiesDao.saveAll(saveList);
+		return deleteList.size() + saveList.size();
+	}
+
 	@Override
 	@Transactional
 	public void resetProperties(Properties properties) {

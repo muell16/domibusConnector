@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.container.service;
 
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerifier;
@@ -16,7 +17,6 @@ import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +25,23 @@ public class ECodexContainerFactoryService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryService.class);
 
-    @Autowired
-    EnvironmentConfiguration environmentConfiguration;
+    private final EnvironmentConfiguration environmentConfiguration;
+    private final DomibusConnectorCertificateVerifier certificateVerifier;
+    private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+    private final DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
+    private final DCKeyStoreService dcKeyStoreService;
 
-    @Autowired
-    DomibusConnectorCertificateVerifier certificateVerifier;
-
-    @Autowired
-    SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
-
-    @Autowired
-    DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
+    public ECodexContainerFactoryService(EnvironmentConfiguration environmentConfiguration,
+                                         DomibusConnectorCertificateVerifier certificateVerifier,
+                                         SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
+                                         DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory,
+                                         DCKeyStoreService dcKeyStoreService) {
+        this.environmentConfiguration = environmentConfiguration;
+        this.certificateVerifier = certificateVerifier;
+        this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
+        this.technicalValidationServiceFactory = technicalValidationServiceFactory;
+        this.dcKeyStoreService = dcKeyStoreService;
+    }
 
     public ECodexContainerService createECodexContainerService(DomibusConnectorMessage message) {
         DSSECodexContainerService containerService = new DSSECodexContainerService();
@@ -48,7 +54,7 @@ public class ECodexContainerFactoryService {
 
         containerService.setContainerSignatureParameters(createSignatureParameters());
 
-        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.technicalValidationService(message);
+        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.createTechnicalValidationService(message);
         containerService.setTechnicalValidationService(eCodexTechnicalValidationService);
 
         return containerService;
@@ -63,8 +69,8 @@ public class ECodexContainerFactoryService {
 
             CertificateStoreInfo certStore = new CertificateStoreInfo();
 
-            Resource storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPath();
-            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore());
+            Resource storeLocation = dcKeyStoreService.loadKeyStoreAsResource(securityToolkitConfigurationProperties.getKeyStore());
+            LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), storeLocation);
             certStore.setLocation(storeLocation);
             certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
 

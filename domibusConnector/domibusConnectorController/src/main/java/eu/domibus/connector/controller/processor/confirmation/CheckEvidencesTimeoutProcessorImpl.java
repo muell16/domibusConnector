@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
@@ -69,6 +70,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     void checkNotRejectedNorConfirmedWithoutRelayREMMD(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             Duration relayREMMDTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDTimeout().getDuration();
             Duration relayREMMDWarnTimeout = evidencesTimeoutConfigurationProperties.getRelayREMMDWarnTimeout().getDuration();
 
@@ -87,6 +89,8 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                 LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for relayREMMD confirmation timeout. No RelayREMMD evidence for this message has been received yet!",
                         message.getConnectorMessageId());
             }
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 
@@ -101,6 +105,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     void checkNotRejectedWithoutDelivery(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             LOGGER.trace("checkNotRejectedWithoutDelivery# checking message: [{}]");
             Duration deliveryTimeout = evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getDuration();
             Duration deliveryWarnTimeout = evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getDuration();
@@ -119,6 +124,8 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                 LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached warning limit for delivery confirmation timeout. No Delivery evidence for this message has been received yet!",
                         message.getConnectorMessageId());
             }
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 

@@ -1,5 +1,7 @@
 package eu.domibus.connector.evidences.spring;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.service.DCKeyStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +19,24 @@ import org.springframework.core.io.Resource;
 @Configuration
 @ComponentScan(basePackageClasses = {DomibusConnectorEvidencesToolkit.class})
 @EnableConfigurationProperties
+@BusinessDomainScoped
 public class DomibusConnectorEvidencesToolkitContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitContext.class);
 
-    @Autowired
-    private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
+    private final EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
+    private final DCKeyStoreService keyStoreService;
+
+    public DomibusConnectorEvidencesToolkitContext(EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties,
+                                                   DCKeyStoreService keyStoreService) {
+        this.evidencesToolkitConfigurationProperties = evidencesToolkitConfigurationProperties;
+        this.keyStoreService = keyStoreService;
+    }
 
     @Bean
-    @SuppressWarnings("squid:S2068")
+    @BusinessDomainScoped
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        Resource javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPath();
+        Resource javaKeyStorePath = keyStoreService.loadKeyStoreAsResource(evidencesToolkitConfigurationProperties.getKeyStore());
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
         String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();
@@ -37,6 +46,7 @@ public class DomibusConnectorEvidencesToolkitContext {
     }
 
     @Bean
+    @BusinessDomainScoped
     public HashValueBuilder hashValueBuilder() {
         return new HashValueBuilder(evidencesToolkitConfigurationProperties.getHashAlgorithm());
     }

@@ -88,7 +88,8 @@ public abstract class CxfCertKeyProperties {
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.getPrivateKey().getStore().getPassword());
         LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", this.getPrivateKey().getStore().getPath());
         try {
-            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getPrivateKey().getStore().getPathUrlAsString());
+            //TODO: fix this
+//            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getPrivateKey().getStore().getPathUrlAsString());
         } catch (Exception e) {
             throw new RuntimeException("Error with property: [" + getPrefix() + ".privateKey.store.path]\n" +
                     "value is [" + this.getPrivateKey().getStore().getPath() + "]");
@@ -98,7 +99,8 @@ public abstract class CxfCertKeyProperties {
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
         try {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
-            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
+            //TODO: fix this
+//            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
         } catch (Exception e) {
             LOGGER.info("Trust Store Property: [" + getPrefix() + ".trust.store.path]" +
                             "\n cannot be processed. Using the configured privateKey store [{}] as trust store",

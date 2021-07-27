@@ -417,7 +417,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
         messageBuilder.setMessageDetails(details);
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
-        messageBuilder.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId()); //TODO: replace with value from DB!
+        messageBuilder.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()); //TODO: replace with value from DB!
 
         this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
 

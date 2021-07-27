@@ -541,7 +541,7 @@ create table DC_MESSAGE_LANE_PROPERTY
 );
 
 INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION)
-VALUES (1, 'default_message_lane', 'default message lane');
+VALUES (1, 'defaultMessageLane', 'default message lane');
 
 create table DC_LINK_PARTNER
 (

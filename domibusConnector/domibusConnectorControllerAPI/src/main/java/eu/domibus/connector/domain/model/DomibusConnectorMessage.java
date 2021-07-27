@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
@@ -26,7 +25,7 @@ public class DomibusConnectorMessage implements Serializable {
 
 	@NotNull
 	@Valid
-	private DomibusConnectorMessageLane.MessageLaneId messageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
+	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 	@NotNull
 	@Valid
 	private DomibusConnectorMessageId connectorMessageId;
@@ -42,6 +41,8 @@ public class DomibusConnectorMessage implements Serializable {
 	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
 	//holds all errors which occured during message processing...
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
+
+	private DCMessageProcessSettings dcMessageProcessSettings;
 
 
 	/**
@@ -152,12 +153,12 @@ public class DomibusConnectorMessage implements Serializable {
 		return relatedMessageConfirmations;
 	}
 
-	public DomibusConnectorMessageLane.MessageLaneId getMessageLaneId() {
-		return messageLaneId;
+	public DomibusConnectorBusinessDomain.BusinessDomainId getMessageLaneId() {
+		return businessDomainId;
 	}
 
-	public void setMessageLaneId(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-		this.messageLaneId = messageLaneId;
+	public void setMessageLaneId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+		this.businessDomainId = businessDomainId;
 	}
 
 	/**
@@ -198,6 +199,14 @@ public class DomibusConnectorMessage implements Serializable {
 	 */
 	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
 	   	return this.transportedMessageConfirmations.add(confirmation);
+	}
+
+	public DCMessageProcessSettings getDcMessageProcessSettings() {
+		return dcMessageProcessSettings;
+	}
+
+	public void setDcMessageProcessSettings(DCMessageProcessSettings dcMessageProcessSettings) {
+		this.dcMessageProcessSettings = dcMessageProcessSettings;
 	}
 
 	@JsonIgnore

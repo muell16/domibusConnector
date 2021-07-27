@@ -1,9 +1,11 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.lang.Nullable;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * This service loads with @ConfigurationProperties annotated
@@ -18,10 +20,10 @@ public interface ConfigurationPropertyManagerService {
      * determines the prefix from the clazz
      * which must be annotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
      *
-     * then {@link #loadConfiguration(DomibusConnectorMessageLane.MessageLaneId, Class, String)} is called
+     * then {@link #loadConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId, Class, String)} is called
      *
      */
-    <T> T loadConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, @NotNull Class<T> clazz);
+    <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz);
 
     /**
      *
@@ -36,17 +38,19 @@ public interface ConfigurationPropertyManagerService {
      * @param <T> - type of the clazz
      * @return the initialized class
      */
-    <T> T loadConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, @NotNull Class<T> clazz, String prefix);
+    <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz, String prefix);
 
+
+    <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz);
 
     /**
      *
      * @param laneId the laneId, if null defaultLaneId is used
-     * @param configurationClazz must be annotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
+     * @param configurationBean TODO: write javadoc...
      *
      *
      */
-    void updateConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, Object configurationClazz);
+    void updateConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationBean);
 
 
 }

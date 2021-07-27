@@ -30,19 +30,14 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorAESTechnicalValidationService.class);
     
-    private DomibusConnectorAESTokenValidationCreator delegate;
-
-    private DomibusConnectorProxyConfig preferenceManager;
+    private final DomibusConnectorAESTokenValidationCreator delegate;
     
     private final DomibusConnectorMessage message;
 
-    private EnvironmentConfiguration environmentConfiguration;
-
-    public DomibusConnectorAESTechnicalValidationService(final DomibusConnectorMessage message, final DomibusConnectorAESTokenValidationCreator delegate, final DomibusConnectorProxyConfig preferenceManager) {
+    public DomibusConnectorAESTechnicalValidationService(final DomibusConnectorMessage message, final DomibusConnectorAESTokenValidationCreator delegate) {
         super();
         this.message = message;
         this.delegate = delegate;
-        this.preferenceManager = preferenceManager;
     }
 
     /**
@@ -135,63 +130,62 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
      *
      *
      */
-    @Override
-    public void setEnvironmentConfiguration(final EnvironmentConfiguration conf) {
-        this.environmentConfiguration = conf;
-
-        LOGGER.debug("set environment configuration: " + environmentConfiguration);
-
-        if (preferenceManager == null) {
-            LOGGER.warn("NO preference manager set - unable to forward environment configuration",
-                    environmentConfiguration);
-            return;
-        }
-
-        final ProxyData proxyHttp = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTP();
-        final ProxyData proxyHttps = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTPS();
-
-        if (proxyHttp != null) {
-            LOGGER.info(
-                    "HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
-            ProxyProperties httpProperties = new ProxyProperties();
-            httpProperties.setHost(proxyHttp.getHost());
-            httpProperties.setPort(proxyHttp.getPort());
-            httpProperties.setUser(proxyHttp.getAuthName());
-            httpProperties.setPassword(proxyHttp.getAuthPass());
-            preferenceManager.setHttpProperties(httpProperties);
-        } else {
-            LOGGER.info(
-                    "No HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
-        }
-
-        if (proxyHttps != null) {
-            LOGGER.info(
-                    "HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
-            ProxyProperties httpsProperties = new ProxyProperties();
-            httpsProperties.setHost(proxyHttps.getHost());
-            httpsProperties.setPort(proxyHttps.getPort());
-            httpsProperties.setUser(proxyHttps.getAuthName());
-            httpsProperties.setPassword(proxyHttps.getAuthPass());
-            preferenceManager.setHttpProperties(httpsProperties);
-        } else {
-            LOGGER.info(
-                    "No HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
-        }
-
-        String logMessage = "Proxy Configuration for security library: \n" + "HTTP Proxy Enabled: "
-                + (preferenceManager.getHttpProperties() == null);
-
-        if (preferenceManager.getHttpProperties() != null) {
-            logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
-        }
-
-        logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() == null);
-
-        if (preferenceManager.getHttpsProperties() != null) {
-            logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
-        }
-
-        LOGGER.info(logMessage);
-    }
+//    public void setEnvironmentConfiguration(final EnvironmentConfiguration conf) {
+//        this.environmentConfiguration = conf;
+//
+//        LOGGER.debug("set environment configuration: " + environmentConfiguration);
+//
+//        if (preferenceManager == null) {
+//            LOGGER.warn("NO preference manager set - unable to forward environment configuration",
+//                    environmentConfiguration);
+//            return;
+//        }
+//
+//        final ProxyData proxyHttp = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTP();
+//        final ProxyData proxyHttps = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTPS();
+//
+//        if (proxyHttp != null) {
+//            LOGGER.info(
+//                    "HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
+//            ProxyProperties httpProperties = new ProxyProperties();
+//            httpProperties.setHost(proxyHttp.getHost());
+//            httpProperties.setPort(proxyHttp.getPort());
+//            httpProperties.setUser(proxyHttp.getAuthName());
+//            httpProperties.setPassword(proxyHttp.getAuthPass());
+//            preferenceManager.setHttpProperties(httpProperties);
+//        } else {
+//            LOGGER.info(
+//                    "No HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
+//        }
+//
+//        if (proxyHttps != null) {
+//            LOGGER.info(
+//                    "HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
+//            ProxyProperties httpsProperties = new ProxyProperties();
+//            httpsProperties.setHost(proxyHttps.getHost());
+//            httpsProperties.setPort(proxyHttps.getPort());
+//            httpsProperties.setUser(proxyHttps.getAuthName());
+//            httpsProperties.setPassword(proxyHttps.getAuthPass());
+//            preferenceManager.setHttpProperties(httpsProperties);
+//        } else {
+//            LOGGER.info(
+//                    "No HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
+//        }
+//
+//        String logMessage = "Proxy Configuration for security library: \n" + "HTTP Proxy Enabled: "
+//                + (preferenceManager.getHttpProperties() == null);
+//
+//        if (preferenceManager.getHttpProperties() != null) {
+//            logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
+//        }
+//
+//        logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() == null);
+//
+//        if (preferenceManager.getHttpsProperties() != null) {
+//            logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
+//        }
+//
+//        LOGGER.info(logMessage);
+//    }
 
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
@@ -38,14 +39,15 @@ import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.util.StreamUtils;
 
 /**
  * TODO: documentation needed
  * 
  */
-@Component("domibusConnectorSecurityContainer")
+@Component
+@BusinessDomainScoped
 public class DomibusSecurityContainer {
 
     public static final String RED_TOKEN_WARNING_MESSAGE = "A RedToken was generated!";
@@ -70,14 +72,15 @@ public class DomibusSecurityContainer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
 
-    @Autowired
-    ECodexContainerFactoryService eCodexContainerFactoryService;
-            
-    @Autowired
-    LargeFilePersistenceService bigDataPersistenceService;
+    private final ECodexContainerFactoryService eCodexContainerFactoryService;
+    private final LargeFilePersistenceService bigDataPersistenceService;
+    private final TokenIssuerFactory tokenIssuerFactory;
 
-    @Autowired
-    TokenIssuerFactory tokenIssuerFactory;
+    public DomibusSecurityContainer(ECodexContainerFactoryService eCodexContainerFactoryService, LargeFilePersistenceService bigDataPersistenceService, TokenIssuerFactory tokenIssuerFactory) {
+        this.eCodexContainerFactoryService = eCodexContainerFactoryService;
+        this.bigDataPersistenceService = bigDataPersistenceService;
+        this.tokenIssuerFactory = tokenIssuerFactory;
+    }
 
     BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
         if (message.getMessageContent() == null) {

@@ -8,12 +8,18 @@ import java.util.Set;
 
 public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<CheckKeyIsLoadableFromKeyStore, KeyAndKeyStoreConfigurationProperties> {
 
-    private Validator validator;
+    private final Validator validator;
+    private final HelperMethods helperMethods;
+
+    public KeyFromKeyStoreLoadableValidator(Validator validator, HelperMethods helperMethods) {
+        this.validator = validator;
+        this.helperMethods = helperMethods;
+    }
 
     @Override
     public void initialize(CheckKeyIsLoadableFromKeyStore constraintAnnotation) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+//        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+//        validator = factory.getValidator();
     }
 
     @Override
@@ -34,7 +40,7 @@ public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<Ch
         context.disableDefaultConstraintViolation();
 
 
-        return HelperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
+        return helperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
     }
 
 

@@ -1,10 +1,6 @@
 package eu.domibus.connector.web.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -13,23 +9,23 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import java.security.cert.X509Certificate;
 
+import eu.domibus.connector.common.service.DCKeyStoreService;
+import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.CannotLoadKeyStoreException;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.ValidationException;
+import eu.domibus.connector.common.service.DCKeyStoreService.CannotLoadKeyStoreException;
 
 @Service("webKeystoreService")
 public class WebKeystoreService {
 
-	public WebKeystoreService() {
-		// TODO Auto-generated constructor stub
+	private final DCKeyStoreService dcKeyStoreService;
+
+	public WebKeystoreService(DCKeyStoreService dcKeyStoreService) {
+		this.dcKeyStoreService = dcKeyStoreService;
 	}
 	
 	public class CertificateInfo{
@@ -111,26 +107,30 @@ public class WebKeystoreService {
 			this.type = type;
 		}
 
-	
-		
-		
 	}
 
+	public KeyStore loadKeyStore(StoreConfigurationProperties storeConfigurationProperties) {
+		KeyStore keyStore = dcKeyStoreService.loadKeyStore(storeConfigurationProperties);
+		return keyStore;
+	}
+
+	/**
+	 * loads keystore by, the assumed type is JKS
+	 * @param path path
+	 * @param password password
+	 * @return the loaded keystore
+	 *
+	 * the method {@link #loadKeyStore(StoreConfigurationProperties)} should
+	 * be used instead
+	 */
+	@Deprecated
 	public KeyStore loadKeyStore(String path, String password) {
-        if(path.startsWith("file:")) {
-        	path = path.substring(5);
-        }
-        File store = new File(path);
-        FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(store);
-		} catch (FileNotFoundException e) {
-			throw new CannotLoadKeyStoreException(String.format("Cannot load key store from path %s", path), e);
-		}
-        
-        return loadKeyStore(fis, password);
-       
-    }
+		StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
+		storeConfigurationProperties.setPath(path);
+		storeConfigurationProperties.setPassword(password);
+		KeyStore keyStore = dcKeyStoreService.loadKeyStore(storeConfigurationProperties);
+		return keyStore;
+	}
 	
 	public KeyStore loadKeyStore(InputStream is, String password) {
 		if (password == null) {
@@ -150,17 +150,27 @@ public class WebKeystoreService {
 		}
         
     }
-	
+
+
+	/**
+	 * the method {@link #loadStoreCertificatesInformation(StoreConfigurationProperties)} should
+	 * be used instead
+	 */
+	@Deprecated
 	public List<CertificateInfo> loadStoreCertificatesInformation(String path, String password) {
 		KeyStore keyStore = loadKeyStore(path, password);
 		return loadStoreCertificatesInformation(keyStore);
-		
 	}
-	
+
+	public List<CertificateInfo> loadStoreCertificatesInformation(StoreConfigurationProperties storeConfigurationProperties) {
+		KeyStore keyStore = loadKeyStore(storeConfigurationProperties);
+		return loadStoreCertificatesInformation(keyStore);
+	}
+
+
 	public List<CertificateInfo> loadStoreCertificatesInformation(InputStream is, String password) {
 		KeyStore keyStore = loadKeyStore(is, password);
 		return loadStoreCertificatesInformation(keyStore);
-		
 	}
 	
 	private List<CertificateInfo> loadStoreCertificatesInformation(KeyStore keyStore) {

@@ -226,7 +226,6 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	 * otherwise
 	 * it will be ignored
 	 */
-	@Override
 	public void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration) {
 		this.environmentConfiguration = environmentConfiguration;
 		

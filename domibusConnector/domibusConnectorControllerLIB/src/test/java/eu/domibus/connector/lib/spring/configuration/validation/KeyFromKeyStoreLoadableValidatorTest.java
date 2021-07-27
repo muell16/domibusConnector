@@ -4,6 +4,8 @@ import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfiguration
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.validation.ConstraintViolation;
@@ -16,19 +18,13 @@ import java.util.Set;
 import static eu.domibus.connector.lib.spring.configuration.validation.ConstraintViolationSetHelper.printSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@SpringBootTest(classes = ValidationTestContext.class)
 public class KeyFromKeyStoreLoadableValidatorTest {
 
-    private static Validator validator;
+    @Autowired
+    private  Validator validator;
 
     private KeyAndKeyStoreConfigurationProperties props;
-
-    @BeforeAll
-    public static void beforeClass() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
 
     @BeforeEach
     public void setUp() {
@@ -47,7 +43,8 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
     @Test
     public void isValid_wrongStorePath_shouldNotValidate() {
-        props.getKeyStore().setPath(new ClassPathResource("/does/not/exist"));
+//        props.getKeyStore().setPath(new ClassPathResource("/does/not/exist"));
+        props.getKeyStore().setPath("classpath:/does/not/exist");
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);

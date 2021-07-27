@@ -1,10 +1,12 @@
 package eu.domibus.connector.persistence.testutil;
 
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
@@ -17,6 +19,7 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 
 
 @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
+@EnableConfigurationProperties(ConnectorConfigurationProperties.class)
 public class SetupPersistenceContext {
 
     private DatabaseDataSourceConnection dbUnitConnection;

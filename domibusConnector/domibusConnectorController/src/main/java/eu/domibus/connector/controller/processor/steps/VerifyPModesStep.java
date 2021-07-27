@@ -5,8 +5,6 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import eu.domibus.connector.tools.logging.MDCHelper;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -26,10 +24,10 @@ public class VerifyPModesStep implements MessageProcessStep {
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
-        DomibusConnectorMessageLane.MessageLaneId messageLaneId = domibusConnectorMessage.getMessageLaneId();
+        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = domibusConnectorMessage.getMessageLaneId();
         DomibusConnectorMessageDetails messageDetails = domibusConnectorMessage.getMessageDetails();
 
-        Optional<DomibusConnectorAction> action = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getAction());
+        Optional<DomibusConnectorAction> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
         if (action.isPresent()) {
             messageDetails.setAction(action.get());
         } else {
@@ -39,7 +37,7 @@ public class VerifyPModesStep implements MessageProcessStep {
         }
 
 
-        Optional<DomibusConnectorService> service = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getService());
+        Optional<DomibusConnectorService> service = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getService());
         if (service.isPresent()) {
             messageDetails.setService(service.get());
         } else {
@@ -48,7 +46,7 @@ public class VerifyPModesStep implements MessageProcessStep {
             throw new RuntimeException("error, service not configured!" + messageDetails.getService());
         }
 
-        Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getToParty());
+        Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getToParty());
         if (toParty.isPresent()) {
             messageDetails.setToParty(toParty.get());
         } else {
@@ -57,7 +55,7 @@ public class VerifyPModesStep implements MessageProcessStep {
             throw new RuntimeException("error, party not configured:" + messageDetails.getToParty());
         }
 
-        Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(messageLaneId, messageDetails.getFromParty());
+        Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getFromParty());
         if (fromParty.isPresent()) {
             messageDetails.setToParty(fromParty.get());
         } else {

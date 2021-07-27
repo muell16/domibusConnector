@@ -1,11 +1,5 @@
 package eu.domibus.connector.web.view.areas.pmodes;
 
-import java.io.ByteArrayInputStream;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -17,18 +11,18 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
-
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
-import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.CannotLoadKeyStoreException;
+import eu.domibus.connector.common.service.DCKeyStoreService;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 @Component
 @UIScope
@@ -50,7 +44,8 @@ public class DataTables extends VerticalLayout {
 	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.pmodeService = pmodeService;
 
-		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+		//CAVE: activePModeSet can be null!!
+		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
 
 		VerticalLayout activePModeSetDiv = createActivePmodeSetDiv(util);
 		
@@ -165,7 +160,7 @@ public class DataTables extends VerticalLayout {
 					activePModeSet.getConnectorstore().getPasswordPlain());
 			
 			connectorstore.add(connectorstoreInformationGrid);
-		}catch(CannotLoadKeyStoreException e) {
+		}catch(DCKeyStoreService.CannotLoadKeyStoreException e) {
 			LumoLabel resultLabel = new LumoLabel();
 			String text = e.getMessage();
 			if(e.getCause()!=null) {

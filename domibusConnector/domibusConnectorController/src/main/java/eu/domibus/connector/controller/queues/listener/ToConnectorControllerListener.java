@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.queues.listener;
 
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
@@ -44,6 +45,7 @@ public class ToConnectorControllerListener {
         }
         String messageId = message.getConnectorMessageId().toString();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+            CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
             if (DomainModelHelper.isEvidenceMessage(message)) {
                 evidenceMessageProcessor.processMessage(message);
@@ -59,6 +61,8 @@ public class ToConnectorControllerListener {
             String error = "Failed to process messsage due: " + exc.getMessage();
             LOGGER.error(error, exc);
             throw exc;
+        } finally {
+            CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
     }
 

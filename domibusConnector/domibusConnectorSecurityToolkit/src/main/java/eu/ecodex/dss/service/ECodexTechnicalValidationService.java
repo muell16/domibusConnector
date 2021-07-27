@@ -39,7 +39,7 @@ public interface ECodexTechnicalValidationService {
      * 
      * @param conf the value (may be null)
      */
-    void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
+//    void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
 
     /**
      * creates the technical validation including the result and possibly a ValidationReport (either national or DSS)

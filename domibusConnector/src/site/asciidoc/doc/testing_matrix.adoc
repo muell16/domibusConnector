@@ -1,8 +1,9 @@
 = Testing Matrix
 
 
-The Connector has been tested on
+== The Connector has been tested on
 
+.Infrastructure Components
 |===
 | Connector Version | OS | Java | Application Server | Database Connector | Database | Database creation
 
@@ -45,3 +46,35 @@ The Connector has been tested on
 | H2 4.200
 | H2 4.200
 | Liquibase
+
+| 4.4.x
+| Windows 10
+| Adopt Open JDK 1.8.x
+| Standalone
+| H2 4.200
+| H2 4.200
+| Liquibase
+
+|===
+
+== The Connector has been tested with
+
+.Gateway Connection
+|===
+| Connector Version | Plugin Version | GW Version
+
+| 4.4.x
+| 4.2.x
+| 4.2.1
+
+|===
+
+.Backend Connection
+|===
+
+| Connector Version | Backend Lib Version
+
+| 4.4.x
+| 4.1.x
+
+|===

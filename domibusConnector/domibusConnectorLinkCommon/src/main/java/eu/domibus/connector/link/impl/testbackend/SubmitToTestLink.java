@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -72,14 +73,13 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
             TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
             state.setConnectorTransportId(transportFor);
             state.setLinkPartner(linkPartner);
-            state.setRemoteMessageId("Testbackend_" + LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            state.setRemoteMessageId("Testbackend_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             state.setStatus(TransportState.ACCEPTED);
             transportStateService.updateTransportStatus(state);
             LOGGER.info("Generated Delivery evidence trigger message for connector test message with EBMS ID [{}]", message.getConnectorMessageId());
         } else {
             LOGGER.warn("Test message received, but test backend is not enabled! No response will be sent!");
         }
-
 
     }
 

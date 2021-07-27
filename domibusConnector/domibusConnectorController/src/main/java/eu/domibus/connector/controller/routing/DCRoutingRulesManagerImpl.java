@@ -1,8 +1,7 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,7 +14,7 @@ import java.util.*;
 @Service
 public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
 
-    private Map<DomibusConnectorMessageLane.MessageLaneId, RoutingConfig> backendRoutingConfig = new HashMap<>();
+    private Map<DomibusConnectorBusinessDomain.BusinessDomainId, RoutingConfig> backendRoutingConfig = new HashMap<>();
 
     private final DCMessageRoutingConfigurationProperties routingConfigurationProperties;
 
@@ -24,31 +23,31 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     @Override
-    public synchronized void addBackendRoutingRule(DomibusConnectorMessageLane.MessageLaneId messageLaneId, RoutingRule routingRule) {
+    public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
 
-        RoutingConfig routingConfig = getMessageRoutingConfigurationProperties(messageLaneId);
+        RoutingConfig routingConfig = getMessageRoutingConfigurationProperties(businessDomainId);
         routingConfig.routingRules.add(routingRule);
 
     }
 
     @Override
-    public Collection<RoutingRule> getBackendRoutingRules(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-        RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(messageLaneId);
+    public Collection<RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
         return Collections.unmodifiableCollection(dcMessageRoutingConfigurationProperties.routingRules);
     }
 
     @Override
-    public String getDefaultBackendName(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-        return getMessageRoutingConfigurationProperties(messageLaneId).defaultLinkPartner.getLinkName();
+    public String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        return getMessageRoutingConfigurationProperties(businessDomainId).defaultLinkPartner.getLinkName();
     }
 
     @Override
-    public boolean isBackendRoutingEnabled(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-        return getMessageRoutingConfigurationProperties(messageLaneId).routingEnabled;
+    public boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        return getMessageRoutingConfigurationProperties(businessDomainId).routingEnabled;
     }
 
-    private synchronized RoutingConfig getMessageRoutingConfigurationProperties(DomibusConnectorMessageLane.MessageLaneId messageLaneId) {
-        RoutingConfig routingConfig = backendRoutingConfig.get(messageLaneId);
+    private synchronized RoutingConfig getMessageRoutingConfigurationProperties(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+        RoutingConfig routingConfig = backendRoutingConfig.get(businessDomainId);
         if (routingConfig == null) {
             routingConfig = new RoutingConfig();
 
@@ -56,7 +55,7 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
             routingConfig.routingEnabled = routingConfigurationProperties.isEnabled();
 
             routingConfig.routingRules.addAll(routingConfigurationProperties.getBackendRules());
-            backendRoutingConfig.put(messageLaneId, routingConfig);
+            backendRoutingConfig.put(businessDomainId, routingConfig);
 
         }
         return routingConfig;

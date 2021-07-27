@@ -25,8 +25,7 @@ public class National_Signature_TechnicalValidationService implements ECodexTech
 	private SignatureCertificate sigCert;
 	private SignatureAttributes sigAttr;
 	private ValidationVerification valVeri;
-	
-	@Override
+
 	public void setEnvironmentConfiguration(EnvironmentConfiguration conf) {
 	}
 

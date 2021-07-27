@@ -445,7 +445,7 @@ from bkp_dc_bigdata;
 -- DC_MESSAGE_LANE
 
 INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION)
-VALUES (1, 'default_message_lane', 'default message lane');
+VALUES (1, 'defaultMessageLane', 'default message lane');
 
 -- DC_PMODE_SET
 

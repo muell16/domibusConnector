@@ -805,7 +805,7 @@ public class ConnectorMessageFlowITCase {
         try {
             DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
             assertThat(testMessage).isNotNull();
-            testMessage.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+            testMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
             testMessage.getMessageDetails().setFinalRecipient(FINAL_RECIPIENT);
             testMessage.getMessageDetails().setOriginalSender(ORIGINAL_SENDER);
             testMessage.getMessageDetails().setEbmsMessageId(EBMS_ID);
@@ -1373,7 +1373,7 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
         DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
                 .setConnectorMessageId(connectorMessageId)
-                .setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId())
+                .setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())
                 .setMessageDetails(DomibusConnectorMessageDetailsBuilder
                         .create()
                         .withEbmsMessageId(ebmsId)
@@ -1400,7 +1400,7 @@ public class ConnectorMessageFlowITCase {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
-            message.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
         }
         dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
@@ -1416,7 +1416,7 @@ public class ConnectorMessageFlowITCase {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
-            message.setMessageLaneId(DomibusConnectorMessageLane.getDefaultMessageLaneId());
+            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
         }
         dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
