@@ -10,9 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebUser;
@@ -22,6 +20,7 @@ import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +31,7 @@ import java.util.List;
 @UIScope
 @Route(value = UserList.ROUTE, layout = UserLayout.class)
 @TabMetadata(title = "All Users", tabGroup = UserLayout.TAB_GROUP_NAME)
-public class UserList extends VerticalLayout implements BeforeEnterObserver {
+public class UserList extends VerticalLayout implements AfterNavigationObserver {
 
 	public static final String ROUTE = "userlist";
 
@@ -50,7 +49,7 @@ public class UserList extends VerticalLayout implements BeforeEnterObserver {
 		this.userService = service;
 		this.userDetails = userDetails;
 
-		fullList = userService.getAllUsers();
+		fullList = new ArrayList<>();
 
 		grid.setItems(fullList);
 		grid.addComponentColumn(webUser -> getDetailsLink(webUser)).setHeader("Details").setWidth("30px");
@@ -70,7 +69,6 @@ public class UserList extends VerticalLayout implements BeforeEnterObserver {
 		add(main);
 		setHeight("100vh");
 		setWidth("100vw");
-//		reloadList();
 	}
 
 	private HorizontalLayout createFilterLayout() {
@@ -155,11 +153,11 @@ public class UserList extends VerticalLayout implements BeforeEnterObserver {
 		grid.setItems(userService.getAllUsers());
 	}
 
+
 	@Override
-	public void beforeEnter(BeforeEnterEvent event) {
-		if (event.getNavigationTarget() == this.getClass()) {
-			reloadList();
-		}
+	public void afterNavigation(AfterNavigationEvent event) {
+		reloadList();
 	}
+
 }
 

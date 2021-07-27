@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
 @Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-public class EvidenceBuilderConfiguration  extends VerticalLayout implements BeforeEnterObserver {
+public class EvidenceBuilderConfiguration  extends VerticalLayout implements AfterNavigationObserver {
 
 	public static final String ROUTE = "evidencebuilder";
 
@@ -203,10 +203,8 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Bef
 	}
 
 	@Override
-	public void beforeEnter(BeforeEnterEvent event) {
-		if (event.getNavigationTarget() == this.getClass()) {
-			reinitBinder();
-		}
+	public void afterNavigation(AfterNavigationEvent event) {
+		reinitBinder();
 	}
 
 }
