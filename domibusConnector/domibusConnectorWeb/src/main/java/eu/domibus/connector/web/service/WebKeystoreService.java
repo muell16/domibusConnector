@@ -120,7 +120,7 @@ public class WebKeystoreService {
 	 * @param password password
 	 * @return the loaded keystore
 	 *
-	 * the method {@link this#loadKeyStore(StoreConfigurationProperties)} should
+	 * the method {@link #loadKeyStore(StoreConfigurationProperties)} should
 	 * be used instead
 	 */
 	@Deprecated
@@ -153,7 +153,7 @@ public class WebKeystoreService {
 
 
 	/**
-	 * the method {@link this#loadStoreCertificatesInformation(StoreConfigurationProperties)} should
+	 * the method {@link #loadStoreCertificatesInformation(StoreConfigurationProperties)} should
 	 * be used instead
 	 */
 	@Deprecated
