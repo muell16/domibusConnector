@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

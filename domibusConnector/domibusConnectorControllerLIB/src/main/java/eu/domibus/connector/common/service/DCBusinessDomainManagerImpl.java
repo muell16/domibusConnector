@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;

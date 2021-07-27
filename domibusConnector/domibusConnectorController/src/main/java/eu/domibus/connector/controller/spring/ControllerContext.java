@@ -2,7 +2,7 @@
 package eu.domibus.connector.controller.spring;
 
 
-import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

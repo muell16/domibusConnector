@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.apache.logging.log4j.LogManager;

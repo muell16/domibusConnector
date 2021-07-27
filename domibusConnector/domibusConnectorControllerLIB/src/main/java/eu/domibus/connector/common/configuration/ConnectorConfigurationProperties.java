@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.configuration;
+package eu.domibus.connector.common.configuration;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
