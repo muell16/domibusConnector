@@ -1,7 +1,6 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane.MessageLaneId;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 
 import java.util.List;
@@ -71,6 +70,6 @@ public interface DomibusConnectorPModeService {
 
 	void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet);
 
-	List<DomibusConnectorPModeSet> getInactivePModeSets(MessageLaneId lane);
+	List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane);
 
 }

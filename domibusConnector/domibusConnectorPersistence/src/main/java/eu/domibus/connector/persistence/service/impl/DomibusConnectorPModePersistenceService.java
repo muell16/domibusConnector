@@ -1,13 +1,12 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.persistence.dao.DomibusConnectorBusinessDomainDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
+import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
+import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,23 +14,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane.MessageLaneId;
-import eu.domibus.connector.domain.model.DomibusConnectorPModeSet;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
-import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorBusinessDomainDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPModeSet;
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
-import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DomibusConnectorPModePersistenceService implements DomibusConnectorPModeService {
@@ -51,7 +40,6 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @Cacheable
     public Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction searchAction) {
         return getConfiguredSingleDB(lane, ActionMapper.mapActionToPersistence(searchAction))
                 .map(ActionMapper::mapActionToDomain);
@@ -85,7 +73,6 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @Cacheable
     public Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService searchService) {
         return getConfiguredSingleDB(lane, ServiceMapper.mapServiceToPersistence(searchService))
                 .map(ServiceMapper::mapServiceToDomain);
@@ -123,7 +110,6 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @Cacheable
     public Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty searchParty) throws IncorrectResultSizeException {
         return getConfiguredSingleDB(lane, PartyMapper.mapPartyToPersistence(searchParty))
                 .map(PartyMapper::mapPartyToDomain);
@@ -167,7 +153,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     @Override
     @Cacheable
-    public List<DomibusConnectorPModeSet> getInactivePModeSets(MessageLaneId lane){
+    public List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane){
     	if (lane == null) {
             throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
         }
@@ -239,7 +225,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     @Override
     @Transactional
     public void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet) {
-    	DomibusConnectorMessageLane.MessageLaneId lane = connectorPModeSet.getMessageLaneId();
+        DomibusConnectorBusinessDomain.BusinessDomainId lane = connectorPModeSet.getMessageLaneId();
         if (lane == null) {
             throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
         }

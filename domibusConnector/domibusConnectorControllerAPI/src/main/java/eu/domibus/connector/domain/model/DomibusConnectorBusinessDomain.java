@@ -1,7 +1,6 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;

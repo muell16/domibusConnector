@@ -1,9 +1,6 @@
 package eu.domibus.connector.web.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +13,8 @@ import java.util.List;
 
 import java.security.cert.X509Certificate;
 
+import eu.domibus.connector.common.service.DCKeyStoreService;
+import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.common.service.DCKeyStoreService.CannotLoadKeyStoreException;
@@ -23,8 +22,10 @@ import eu.domibus.connector.common.service.DCKeyStoreService.CannotLoadKeyStoreE
 @Service("webKeystoreService")
 public class WebKeystoreService {
 
-	public WebKeystoreService() {
-		// TODO Auto-generated constructor stub
+	private final DCKeyStoreService dcKeyStoreService;
+
+	public WebKeystoreService(DCKeyStoreService dcKeyStoreService) {
+		this.dcKeyStoreService = dcKeyStoreService;
 	}
 	
 	public class CertificateInfo{
@@ -106,26 +107,30 @@ public class WebKeystoreService {
 			this.type = type;
 		}
 
-	
-		
-		
 	}
 
+	public KeyStore loadKeyStore(StoreConfigurationProperties storeConfigurationProperties) {
+		KeyStore keyStore = dcKeyStoreService.loadKeyStore(storeConfigurationProperties);
+		return keyStore;
+	}
+
+	/**
+	 * loads keystore by, the assumed type is JKS
+	 * @param path path
+	 * @param password password
+	 * @return the loaded keystore
+	 *
+	 * the method {@link this#loadKeyStore(StoreConfigurationProperties)} should
+	 * be used instead
+	 */
+	@Deprecated
 	public KeyStore loadKeyStore(String path, String password) {
-        if(path.startsWith("file:")) {
-        	path = path.substring(5);
-        }
-        File store = new File(path);
-        FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(store);
-		} catch (FileNotFoundException e) {
-			throw new CannotLoadKeyStoreException(String.format("Cannot load key store from path %s", path), e);
-		}
-        
-        return loadKeyStore(fis, password);
-       
-    }
+		StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
+		storeConfigurationProperties.setPath(path);
+		storeConfigurationProperties.setPassword(password);
+		KeyStore keyStore = dcKeyStoreService.loadKeyStore(storeConfigurationProperties);
+		return keyStore;
+	}
 	
 	public KeyStore loadKeyStore(InputStream is, String password) {
 		if (password == null) {
