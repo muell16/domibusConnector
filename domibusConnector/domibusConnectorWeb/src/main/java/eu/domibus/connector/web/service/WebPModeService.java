@@ -428,7 +428,7 @@ public class WebPModeService {
             pModes.setMessageLaneId(laneId);
         }
         this.pModeService.updatePModeConfigurationSet(pModes);
-        return this.getCurrentPModeSet(laneId);
+        return this.getCurrentPModeSet(laneId).orElseThrow(() -> new IllegalStateException("After update there must be a p-ModeSet with this id"));
     }
 
     @Transactional(readOnly = false)

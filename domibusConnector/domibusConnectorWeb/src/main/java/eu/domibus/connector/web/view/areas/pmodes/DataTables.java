@@ -1,14 +1,5 @@
 package eu.domibus.connector.web.view.areas.pmodes;
 
-import java.io.ByteArrayInputStream;
-import java.util.List;
-import java.util.Optional;
-
-import eu.domibus.connector.common.service.DCKeyStoreService;
-import eu.domibus.connector.domain.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,14 +11,18 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
-
-import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.CannotLoadKeyStoreException;
+import eu.domibus.connector.common.service.DCKeyStoreService;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 @Component
 @UIScope
