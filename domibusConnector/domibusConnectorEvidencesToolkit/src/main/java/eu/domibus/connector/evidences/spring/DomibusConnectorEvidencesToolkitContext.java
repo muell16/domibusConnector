@@ -19,6 +19,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 @ComponentScan(basePackageClasses = {DomibusConnectorEvidencesToolkit.class})
 @EnableConfigurationProperties
+@BusinessDomainScoped
 public class DomibusConnectorEvidencesToolkitContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitContext.class);

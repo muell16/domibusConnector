@@ -82,17 +82,17 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         }
         LOGGER.debug("Loading property class [{}]", clazz);
 
-        MapConfigurationPropertySource messageLaneProperties = loadLaneProperties(laneId);
+        MapConfigurationPropertySource messageLaneSource = loadLaneProperties(laneId);
 
         Environment environment = ctx.getEnvironment();
-        Iterable<ConfigurationPropertySource> sources = ConfigurationPropertySources.get(environment);
+        Iterable<ConfigurationPropertySource> environmentSource = ConfigurationPropertySources.get(environment);
         List<ConfigurationPropertySource> configSources = new ArrayList<>();
-        configSources.add(messageLaneProperties);
-        sources.forEach(s -> configSources.add(s));
+        configSources.add(messageLaneSource);
+        environmentSource.forEach(s -> configSources.add(s));
 
         PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment);
 
-        Binder binder = new Binder(sources, placeholdersResolver, conversionService, null);
+        Binder binder = new Binder(configSources, placeholdersResolver, conversionService, null);
 
         Bindable<T> bindable = Bindable.of(clazz);
         T t = binder.bindOrCreate(prefix, bindable);

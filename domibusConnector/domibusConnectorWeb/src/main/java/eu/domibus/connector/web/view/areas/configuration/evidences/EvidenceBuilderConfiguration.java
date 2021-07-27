@@ -10,7 +10,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.common.service.BusinessDomainConfigurationChange;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
@@ -24,6 +26,7 @@ import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
@@ -73,7 +76,8 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 
 	private final ConfigurationPropertyManagerService configurationPropertyManagerService;
 	private final ConfigurationUtil util;
-	
+	private final PostalAdressConfigurationProperties p;
+
 	LumoCheckbox useEvidenceTimeout = new LumoCheckbox();
 	TextField checkIntervalField = FormsUtil.getFormattedTextField();
 	TextField relayTimeoutField = FormsUtil.getFormattedTextField();
@@ -94,7 +98,15 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 
 	private void saveButtonClicked(ClickEvent clickEvent) {
 		EvidencesToolkitConfigurationProperties evidenceConfigBean = evidenceConfigBinder.getBean();
+		Set<ConstraintViolation<EvidencesToolkitConfigurationProperties>> evidenceConfigViolations = configurationPropertyManagerService.validateConfiguration(getCurrentBusinessDomain(), evidenceConfigBean);
+		if (!evidenceConfigViolations.isEmpty()) {
+			Notification.show("There are validation errors! " + evidenceConfigViolations
+					.stream()
+					.map(e -> e.getMessage())
+					.collect(Collectors.joining(",")), 10000, Notification.Position.MIDDLE);
+		}
 		configurationPropertyManagerService.updateConfiguration(getCurrentBusinessDomain(), evidenceConfigBean);
+
 
 		PostalAdressConfigurationProperties postalAddressConfigBean = postAddrBinder.getBean();
 		Set<ConstraintViolation<PostalAdressConfigurationProperties>> constraintViolations = configurationPropertyManagerService.validateConfiguration(getCurrentBusinessDomain(), postalAddressConfigBean);
@@ -122,13 +134,16 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 
 	public EvidenceBuilderConfiguration(ConfigurationUtil util,
 										ConfigurationPropertyManagerService configurationPropertyManagerService,
+										PostalAdressConfigurationProperties p,
 										WebKeystoreService keystoreService) {
+		this.p = p;
 		this.configurationPropertyManagerService = configurationPropertyManagerService;
 		this.util = util;
 
 		Button saveEvidenceConfigButton = new Button("Save Evidence Config");
 		saveEvidenceConfigButton.addClickListener(this::saveButtonClicked);
 		add(saveEvidenceConfigButton);
+
 
 		postAddrBinder = new Binder<>(PostalAdressConfigurationProperties.class);
 
@@ -140,9 +155,12 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 		evidenceConfigBinder = new Binder<>(EvidencesToolkitConfigurationProperties.class);
 		evidenceConfigBinder.bind(keyStorePathField, "keyStore.path");
 		evidenceConfigBinder.bind(keyStorePasswordField, "keyStore.password");
+		evidenceConfigBinder.bind(keyAliasField, "privateKey.alias");
+		evidenceConfigBinder.bind(keyPasswordField, "privateKey.password");
 
-		Button reset = new Button("Reset config");
-		reset.addClickListener((e) -> this.reinitBinder());
+		Button resetButton = new Button("Reload current config");
+		resetButton.addClickListener((e) -> this.reinitBinder());
+		add(resetButton);
 
 		add(new ConfigurationItemChapterDiv("Evidence timeout configuration:"));
 		
@@ -159,7 +177,6 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.relayTimoutLabels, relayTimeoutField));
 
-		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.deliveryTimoutLabels, deliveryTimoutField));
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.retrievalTimoutLabels, retrievalTimeoutField));
@@ -185,7 +202,7 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyStorePasswordLabels, keyStorePasswordField));
 		
-		add(util.createKeystoreInformationGrid(keyStorePathField, keyStorePasswordField));
+//		add(util.createKeystoreInformationGrid(keyStorePathField, keyStorePasswordField));
 		
 		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyAliasLabels, keyAliasField));
 		
@@ -198,6 +215,7 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout implements Aft
 		evidenceConfigBinder.setBean(config);
 
 		PostalAdressConfigurationProperties postalAdressConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, PostalAdressConfigurationProperties.class);
+//		CurrentBusinessDomain.setCurrentBusinessDomain(businessDomain);
 		postAddrBinder.setBean(postalAdressConfigurationProperties);
 
 	}

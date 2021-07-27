@@ -150,17 +150,27 @@ public class WebKeystoreService {
 		}
         
     }
-	
+
+
+	/**
+	 * the method {@link this#loadStoreCertificatesInformation(StoreConfigurationProperties)} should
+	 * be used instead
+	 */
+	@Deprecated
 	public List<CertificateInfo> loadStoreCertificatesInformation(String path, String password) {
 		KeyStore keyStore = loadKeyStore(path, password);
 		return loadStoreCertificatesInformation(keyStore);
-		
 	}
-	
+
+	public List<CertificateInfo> loadStoreCertificatesInformation(StoreConfigurationProperties storeConfigurationProperties) {
+		KeyStore keyStore = loadKeyStore(storeConfigurationProperties);
+		return loadStoreCertificatesInformation(keyStore);
+	}
+
+
 	public List<CertificateInfo> loadStoreCertificatesInformation(InputStream is, String password) {
 		KeyStore keyStore = loadKeyStore(is, password);
 		return loadStoreCertificatesInformation(keyStore);
-		
 	}
 	
 	private List<CertificateInfo> loadStoreCertificatesInformation(KeyStore keyStore) {

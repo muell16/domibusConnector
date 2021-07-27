@@ -10,6 +10,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.apache.log4j.Logger;
 import org.etsi.uri._02640.soapbinding.v1_.DeliveryConstraints;
 import org.etsi.uri._02640.soapbinding.v1_.Destinations;
@@ -35,7 +36,9 @@ import eu.spocseu.edeliverygw.evidences.RetrievalNonRetrievalByRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
+@BusinessDomainScoped
 public class ECodexEvidenceBuilder implements EvidenceBuilder {
     private static Logger LOG = Logger.getLogger(ECodexEvidenceBuilder.class);
 

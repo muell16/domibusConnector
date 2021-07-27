@@ -29,6 +29,13 @@ public class ConnectorConfigurationProperties {
     @NotNull
     DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 
+    /**
+     * should the business domains be loaded from
+     * Database
+     * @see {@link eu.domibus.connector.common.service.DCBusinessDomainManager}
+     */
+    boolean loadBusinessDomainsFromDb = true;
+
     @NotNull
     Map<DomibusConnectorBusinessDomain.BusinessDomainId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
 
@@ -36,10 +43,6 @@ public class ConnectorConfigurationProperties {
     public static class BusinessDomainConfig {
         @NotNull
         private boolean enabled = true;
-
-//        @NotNull
-//        @Valid
-//        private DomibusConnectorMessageLane.MessageLaneId id;
 
         private String description;
 
@@ -69,13 +72,6 @@ public class ConnectorConfigurationProperties {
             this.description = description;
         }
 
-//        public DomibusConnectorMessageLane.MessageLaneId getId() {
-//            return id;
-//        }
-//
-//        public void setId(DomibusConnectorMessageLane.MessageLaneId id) {
-//            this.id = id;
-//        }
     }
 
     public String getInstanceName() {
@@ -100,5 +96,13 @@ public class ConnectorConfigurationProperties {
 
     public void setBusinessDomain(Map<DomibusConnectorBusinessDomain.BusinessDomainId, BusinessDomainConfig> businessDomain) {
         this.businessDomain = businessDomain;
+    }
+
+    public boolean isLoadBusinessDomainsFromDb() {
+        return loadBusinessDomainsFromDb;
+    }
+
+    public void setLoadBusinessDomainsFromDb(boolean loadBusinessDomainsFromDb) {
+        this.loadBusinessDomainsFromDb = loadBusinessDomainsFromDb;
     }
 }
