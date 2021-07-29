@@ -50,22 +50,23 @@ public class ConfigurationUtil {
 	public Grid<CertificateInfo> createKeystoreInformationGrid(TextField keyStorePathField, TextField keyStorePasswordField) {
 		if(keyStorePathField.getValue()!=null && !keyStorePasswordField.getValue().isEmpty()) {
 			List<CertificateInfo> evidencesKeyStore = keystoreService.loadStoreCertificatesInformation(keyStorePathField.getValue(), keyStorePasswordField.getValue());
-			return createKeystoreInformationGrid(evidencesKeyStore);
+			Grid<CertificateInfo> grid = createKeystoreInformationGrid();
+			grid.setItems(evidencesKeyStore);
+			return grid;
 		}
 		
 		return null;
 	}
 	
-	public Grid<CertificateInfo> createKeystoreInformationGrid(InputStream is, String password){
+	public List<CertificateInfo> getKeystoreInformation(InputStream is, String password){
 		List<CertificateInfo> keyStore = keystoreService.loadStoreCertificatesInformation(is, password);
-		return createKeystoreInformationGrid(keyStore);
+		
+		return keyStore;
 	}
 	
 	
-	public Grid<CertificateInfo> createKeystoreInformationGrid(List<CertificateInfo> keyStore){
+	public Grid<CertificateInfo> createKeystoreInformationGrid(){
 		Grid<CertificateInfo> grid = new Grid<>();
-		
-		grid.setItems(keyStore);
 		
 		grid.addColumn(CertificateInfo::getAlias).setHeader("Alias").setWidth("200px");
 		grid.addColumn(CertificateInfo::getSubject).setHeader("Subject").setWidth("300px");
