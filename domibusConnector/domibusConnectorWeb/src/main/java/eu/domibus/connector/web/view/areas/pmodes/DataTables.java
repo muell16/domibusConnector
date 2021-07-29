@@ -8,6 +8,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -18,40 +20,65 @@ import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @UIScope
 @Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
 @TabMetadata(title = "PMode-Set Data", tabGroup = PmodeLayout.TAB_GROUP_NAME)
-public class DataTables extends VerticalLayout {
+public class DataTables extends VerticalLayout implements AfterNavigationObserver {
 
 	public static final String ROUTE = "pmodedata";
 
 	WebPModeService pmodeService;
+	ConfigurationUtil util;
 
 	DomibusConnectorPModeSet activePModeSet;
+	
+	LumoLabel uploadedAt;
+	LumoLabel noActivePModeSet;
+	
+	Div areaNoActivePModeSetDiv = new Div();
+	VerticalLayout activePModeSetLayout = new VerticalLayout();
+	
+	Anchor downloadPModesAnchor = new Anchor();
+	
+	TextArea description = new TextArea("Description:");
+	Button updateDescription = new Button("Update PMode-Set description");
+	LumoLabel updateDescriptionResult = new LumoLabel();
+	
+	Grid<CertificateInfo> connectorstoreInformationGrid;
+	TextField connectorstorePassword = new TextField("Connectorstore password:");
+	LumoLabel connectorstoreResultLabel = new LumoLabel();
+	Button updateConnectorstorePassword = new Button("Update connectorstore password");
 
 	Grid<DomibusConnectorParty> partyGrid;
 	Grid<DomibusConnectorAction> actionGrid;
 	Grid<DomibusConnectorService> serviceGrid;
 
+	Grid<DomibusConnectorPModeSet> pModesGrid;
 
 	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.pmodeService = pmodeService;
-
+		this.util = util;
+		
+		
 		//CAVE: activePModeSet can be null!!
 		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
 
-		VerticalLayout activePModeSetDiv = createActivePmodeSetDiv(util);
+		createActivePmodeSetDiv();
 		
 		VerticalLayout histPModeSetsDiv = createPModeHistory();
 
-		VerticalLayout main = new VerticalLayout(activePModeSetDiv, histPModeSetsDiv);
+		VerticalLayout main = new VerticalLayout(activePModeSetLayout, histPModeSetsDiv);
 		main.setAlignItems(Alignment.STRETCH);
 		main.setHeight("100%");
 		add(main);
@@ -59,49 +86,56 @@ public class DataTables extends VerticalLayout {
 		setWidth("100vw");
 	}
 
-	private VerticalLayout createActivePmodeSetDiv(ConfigurationUtil util) {
-		VerticalLayout activePModeSetDiv = new VerticalLayout();
-		activePModeSetDiv.setWidth("100vw");
+	private void createActivePmodeSetDiv() {
+		activePModeSetLayout.setWidth("100vw");
 
+		noActivePModeSet = createChapterText("No active PModes-Set found! Please import PModes and Connectorstore!");
+		noActivePModeSet.getStyle().set("color", "red");
+		
+		activePModeSetLayout.add(areaNoActivePModeSetDiv);
+				
 		LumoLabel activePModeSetLabel = createChapterText("Active PMode Set data:");
 		
-		activePModeSetDiv.add(activePModeSetLabel);
+		activePModeSetLayout.add(activePModeSetLabel);
 
-		LumoLabel uploadedAt = new LumoLabel("Active PMode Set uploaded at: "+activePModeSet.getCreateDate().toString());
-		activePModeSetDiv.add(uploadedAt);
+		LumoLabel uploadedAtHeader = new LumoLabel("Active PMode Set uploaded at: ");
+		uploadedAt = new LumoLabel();
+		activePModeSetLayout.add(uploadedAtHeader);
+		activePModeSetLayout.add(uploadedAt);
 		
 		LumoLabel downloadActivePModesButton = new LumoLabel("Download active PModes");
-		final StreamResource resource = new StreamResource("activePModes-"+activePModeSet.getCreateDate().toString()+".xml",
-				() -> new ByteArrayInputStream(activePModeSet.getpModes()));
 		
-		Anchor downloadPModesAnchor = new Anchor();
-		downloadPModesAnchor.setHref(resource);
 		downloadPModesAnchor.getElement().setAttribute("download", true);
 		downloadPModesAnchor.setTarget("_blank");
 		downloadPModesAnchor.setTitle("Download active PModes");
 		downloadPModesAnchor.add(downloadActivePModesButton);
-		activePModeSetDiv.add(downloadPModesAnchor);
+		activePModeSetLayout.add(downloadPModesAnchor);
 
-		TextArea description = new TextArea("Description:");
-		description.setValue(activePModeSet.getDescription());
-		activePModeSetDiv.add(description);
-		description.setRequired(true);
-
-		Button updateDescription = new Button("Update PMode-Set description");
+		activePModeSetLayout.add(description);
+		
 		updateDescription.addClickListener(e -> {
+			updateDescriptionResult.setText("");
+			if(StringUtils.isEmpty(description.getValue())) {
+				updateDescriptionResult.setText("Description must not be empty!");
+				updateDescriptionResult.getStyle().set("color", "red");
+				return;
+			}
 			activePModeSet.setDescription(description.getValue());
 			pmodeService.updateActivePModeSetDescription(activePModeSet);
+			updateDescriptionResult.setText("Description updated.");
+			updateDescriptionResult.getStyle().set("color", "green");
 
 		});
-		activePModeSetDiv.add(updateDescription);
+		activePModeSetLayout.add(updateDescription);
+		activePModeSetLayout.add(updateDescriptionResult);
+		
 
 		
-		activePModeSetDiv.add(createServicesDiv());
-		activePModeSetDiv.add(createActionsDiv());
-		activePModeSetDiv.add(createPartiesDiv());
-		activePModeSetDiv.add(createConnectorstoreDiv(util));
+		activePModeSetLayout.add(createServicesDiv());
+		activePModeSetLayout.add(createActionsDiv());
+		activePModeSetLayout.add(createPartiesDiv());
+		activePModeSetLayout.add(createConnectorstoreDiv());
 
-		return activePModeSetDiv;
 	}
 	
 	private VerticalLayout createPModeHistory() {
@@ -112,10 +146,9 @@ public class DataTables extends VerticalLayout {
 		
 		histPModeSetDiv.add(histPModeSetLabel);
 		
-		Grid<DomibusConnectorPModeSet> pModesGrid = new Grid<DomibusConnectorPModeSet>();
+		pModesGrid = new Grid<DomibusConnectorPModeSet>();
 
-		List<DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
-		pModesGrid.setItems(inactivePModesList);
+		
 		pModesGrid.addColumn(DomibusConnectorPModeSet::getCreateDate).setHeader("Created date").setWidth("500px").setSortable(true).setResizable(true);
 		pModesGrid.addColumn(DomibusConnectorPModeSet::getDescription).setHeader("Description").setWidth("500px").setSortable(true).setResizable(true);
 		pModesGrid.addComponentColumn(domibusConnectorPModeSet -> createDownloadPModesAnchor(domibusConnectorPModeSet)).setHeader("PModes").setWidth("200px").setSortable(false).setResizable(true);
@@ -148,52 +181,38 @@ public class DataTables extends VerticalLayout {
 		return downloadPModesAnchor;
 	}
 	
-	private VerticalLayout createConnectorstoreDiv(ConfigurationUtil util) {
+	private VerticalLayout createConnectorstoreDiv() {
 		VerticalLayout connectorstore = new VerticalLayout();
 		
 		LumoLabel connectorstoreLabel = createGridTitleText("Connectorstore contents:");
 		connectorstore.add(connectorstoreLabel);
 		
-		try {
-			Grid<CertificateInfo> connectorstoreInformationGrid = util.createKeystoreInformationGrid(
-					new ByteArrayInputStream(activePModeSet.getConnectorstore().getKeystoreBytes()), 
-					activePModeSet.getConnectorstore().getPasswordPlain());
+		connectorstoreInformationGrid = util.createKeystoreInformationGrid();
+		connectorstoreInformationGrid.setVisible(false);
 			
-			connectorstore.add(connectorstoreInformationGrid);
-		}catch(DCKeyStoreService.CannotLoadKeyStoreException e) {
-			LumoLabel resultLabel = new LumoLabel();
-			String text = e.getMessage();
-			if(e.getCause()!=null) {
-				text += e.getCause().getMessage();
-			}
-			resultLabel.setText("Cannot load connectorstore! "+text);
-			resultLabel.getStyle().set("color", "red");
-			connectorstore.add(resultLabel);
-		}
+		connectorstore.add(connectorstoreInformationGrid);
 		
-		TextField password = new TextField("Connectorstore password:");
-		password.setValue(activePModeSet.getConnectorstore().getPasswordPlain());
-		connectorstore.add(password);
+		connectorstore.add(connectorstorePassword);
+
+		connectorstore.add(connectorstoreResultLabel);
 		
-		Button updatePassword = new Button("Update connectorstore password");
-		updatePassword.addClickListener(e -> {
-			activePModeSet.getConnectorstore().setPasswordPlain(password.getValue());
+		updateConnectorstorePassword.addClickListener(e -> {
+			activePModeSet.getConnectorstore().setPasswordPlain(connectorstorePassword.getValue());
 			try {
-				pmodeService.updateConnectorstorePassword(activePModeSet, password.getValue());
+				pmodeService.updateConnectorstorePassword(activePModeSet, connectorstorePassword.getValue());
+				
 				reloadPage();
 			}catch(Exception e1) {
-				LumoLabel resultLabel = new LumoLabel();
 				String text = e1.getMessage();
 				if(e1.getCause()!=null) {
 					text += e1.getCause().getMessage();
 				}
-				resultLabel.setText("Exception updating password! "+text);
-				resultLabel.getStyle().set("color", "red");
-				connectorstore.add(resultLabel);
+				connectorstoreResultLabel.setText("Exception updating password! "+text);
+				connectorstoreResultLabel.getStyle().set("color", "red");
 			}
 
 		});
-		connectorstore.add(updatePassword);
+		connectorstore.add(updateConnectorstorePassword);
 		
 		return connectorstore;
 	}
@@ -205,14 +224,13 @@ public class DataTables extends VerticalLayout {
 		services.add(servicesLabel);
 
 		serviceGrid = new Grid<DomibusConnectorService>();
-
-		List<DomibusConnectorService> serviceList = this.pmodeService.getServiceList();
-		serviceGrid.setItems(serviceList);
+		
 		serviceGrid.addColumn(DomibusConnectorService::getService).setHeader("Service").setWidth("500px").setSortable(true).setResizable(true);
 		serviceGrid.addColumn(DomibusConnectorService::getServiceType).setHeader("Service Type").setWidth("500px").setSortable(true).setResizable(true);
 		serviceGrid.setWidth("1020px");
 		serviceGrid.setHeight("320px");
 		serviceGrid.setMultiSort(true);
+		serviceGrid.setVisible(false);
 
 		services.add(serviceGrid);
 		return services;
@@ -226,12 +244,12 @@ public class DataTables extends VerticalLayout {
 
 		actionGrid = new Grid<DomibusConnectorAction>();
 
-		List<DomibusConnectorAction> actionList = pmodeService.getActionList();
-		actionGrid.setItems(actionList);
+		
 		actionGrid.addColumn(DomibusConnectorAction::getAction).setHeader("Action").setWidth("600px").setSortable(true).setResizable(true);
 		actionGrid.setWidth("620px");
 		actionGrid.setHeight("320px");
 		actionGrid.setMultiSort(true);
+		actionGrid.setVisible(false);
 
 		actions.add(actionGrid);
 		return actions;
@@ -245,14 +263,14 @@ public class DataTables extends VerticalLayout {
 
 		partyGrid = new Grid<DomibusConnectorParty>();
 
-		List<DomibusConnectorParty> partyList = this.pmodeService.getPartyList();
-		partyGrid.setItems(partyList);
+		
 		partyGrid.addColumn(DomibusConnectorParty::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getPartyIdType).setHeader("Party ID Type").setWidth("500px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Party Role").setWidth("500px").setSortable(true).setResizable(true);
 		partyGrid.setWidth("1270px");
 		partyGrid.setHeight("320px");
 		partyGrid.setMultiSort(true);
+		partyGrid.setVisible(false);
 
 
 		parties.add(partyGrid);
@@ -277,7 +295,7 @@ public class DataTables extends VerticalLayout {
 //	}
 	
 	private void reloadPage() {
-		UI.getCurrent().getPage().reload();
+		UI.getCurrent().navigate(DataTables.class);
 	}
 
 
@@ -297,6 +315,105 @@ public class DataTables extends VerticalLayout {
 		
 		label.getStyle().set("font-style", "italic");
 		return label;
+	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent arg0) {
+		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
+		
+		areaNoActivePModeSetDiv.removeAll();
+		
+		if(activePModeSet==null) {
+			areaNoActivePModeSetDiv.add(noActivePModeSet);
+			updateConnectorstorePassword.setEnabled(false);
+			downloadPModesAnchor.removeHref();
+			updateDescription.setEnabled(false);
+		}else {
+			updateDescription.setEnabled(true);
+			if(activePModeSet.getCreateDate()!=null) {
+				uploadedAt.setText(activePModeSet.getCreateDate().toString());
+			}else {
+				uploadedAt.setText("");
+			}
+			if(activePModeSet.getpModes()!=null && activePModeSet.getpModes().length > 1) {
+				String downloadFileName = "pModes-";
+				downloadFileName += activePModeSet.getCreateDate()!=null?activePModeSet.getCreateDate().toString():"unknown";
+				downloadFileName += ".xml";
+				final StreamResource resource = new StreamResource(downloadFileName,
+						() -> new ByteArrayInputStream(activePModeSet.getpModes()));
+				
+				downloadPModesAnchor.setHref(resource);
+			}else {
+				downloadPModesAnchor.removeHref();
+			}
+			if(!StringUtils.isEmpty(activePModeSet.getDescription())) {
+				description.setValue(activePModeSet.getDescription());
+			}else {
+				description.setValue("");
+			}
+			updateDescriptionResult.setText("");
+			
+			List<DomibusConnectorService> serviceList = this.pmodeService.getServiceList();
+			if(!CollectionUtils.isEmpty(serviceList)) {
+				serviceGrid.setItems(serviceList);
+				serviceGrid.setVisible(true);
+			}
+			
+			List<DomibusConnectorAction> actionList = pmodeService.getActionList();
+			if(!CollectionUtils.isEmpty(actionList)) {
+				actionGrid.setItems(actionList);
+				actionGrid.setVisible(true);
+			}
+			
+			List<DomibusConnectorParty> partyList = this.pmodeService.getPartyList();
+			if(!CollectionUtils.isEmpty(partyList)) {
+				partyGrid.setItems(partyList);
+				partyGrid.setVisible(true);
+			}
+			
+			connectorstoreResultLabel.setText("");
+			connectorstorePassword.setValue("");
+			if(activePModeSet.getConnectorstore()==null) {
+				connectorstoreResultLabel.setText("No connectorstore linked to PMode-Set!");
+				updateConnectorstorePassword.setEnabled(false);
+			}else {
+				DomibusConnectorKeystore connectorstore = activePModeSet.getConnectorstore();
+				if(connectorstore.getKeystoreBytes()==null || connectorstore.getKeystoreBytes().length<1) {
+					connectorstoreResultLabel.setText("Connectorstore empty!");
+				}else {
+					try {
+						List<CertificateInfo> storeContents = util.getKeystoreInformation(new ByteArrayInputStream(connectorstore.getKeystoreBytes()), 
+								connectorstore.getPasswordPlain());
+						if(!CollectionUtils.isEmpty(storeContents)) {
+							connectorstoreInformationGrid.setItems(storeContents);
+							connectorstoreInformationGrid.setVisible(true);
+						}
+						connectorstoreResultLabel.setText("");
+					}catch(DCKeyStoreService.CannotLoadKeyStoreException e) {
+						String text = e.getMessage();
+						if(e.getCause()!=null) {
+							text += e.getCause().getMessage();
+						}
+						connectorstoreResultLabel.setText("Cannot load connectorstore! "+text);
+						connectorstoreInformationGrid.setItems(new ArrayList<CertificateInfo>());
+						connectorstoreInformationGrid.setVisible(false);
+					}
+					
+				}
+				if(!StringUtils.isEmpty(connectorstore.getPasswordPlain())) {
+					connectorstorePassword.setValue(connectorstore.getPasswordPlain());
+				}
+				updateConnectorstorePassword.setEnabled(true);
+			}
+			if(!StringUtils.isEmpty(connectorstoreResultLabel.getText())) {
+				connectorstoreResultLabel.getStyle().set("color", "red");
+			}
+			
+		}
+		
+		List<DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
+		pModesGrid.setItems(inactivePModesList);
+		
 	}
 
 }

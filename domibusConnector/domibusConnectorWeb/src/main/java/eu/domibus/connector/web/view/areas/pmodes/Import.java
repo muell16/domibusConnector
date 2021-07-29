@@ -10,6 +10,8 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
@@ -32,7 +34,7 @@ import java.io.UnsupportedEncodingException;
 @UIScope
 @Route(value = Import.ROUTE, layout = PmodeLayout.class)
 @TabMetadata(title = "Import PMode-Set", tabGroup = PmodeLayout.TAB_GROUP_NAME)
-public class Import extends VerticalLayout {
+public class Import extends VerticalLayout implements AfterNavigationObserver{
 
 	public static final String ROUTE = "import";
 
@@ -220,4 +222,20 @@ public class Import extends VerticalLayout {
 			return false;
 		}
 	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent arg0) {
+		areaImportResult.removeAll();
+		areaConnectorstoreUploadResult.removeAll();
+		areaPModeFileUploadResult.removeAll();
+		
+		pModeSetDescription.setValue("");
+		pmodeFile = null;
+		
+		connectorstore = null;
+		connectorstorePwd.setValue("");
+		connectorstoreType.setValue(KeystoreType.JKS);
+	}
+
+
 }
