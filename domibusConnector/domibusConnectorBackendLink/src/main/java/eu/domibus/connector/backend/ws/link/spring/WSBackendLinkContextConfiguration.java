@@ -7,6 +7,8 @@ import eu.domibus.connector.link.common.CxfAttachmentCleanupService;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
+import org.apache.cxf.binding.BindingConfiguration;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +38,9 @@ public class WSBackendLinkContextConfiguration {
 
     public static final String BACKEND_POLICY_LOADER = "backendPolicyLoader";
     public static final String BACKEND_DELIVERY_CLOSE_INPUT_STREAM_INTERCEPTOR_BEAN = "backendDeliveryCloseInputStreamsInterceptor";
+
+    @Autowired
+    SpringBus bus;
 
     @Autowired
     WSBackendLinkConfigurationProperties configurationProperties;
@@ -87,6 +92,7 @@ public class WSBackendLinkContextConfiguration {
         endpoint.getProperties().put("security.signature.properties", configurationProperties.getWssProperties());
         endpoint.getProperties().put("security.encryption.username", "useReqSigCert");
 
+        endpoint.setBus(bus);
         endpoint.publish();
         LOGGER.debug("Published WebService {} under {}", DomibusConnectorBackendWSService.class, configurationProperties.getBackendPublishAddress());
         return endpoint;

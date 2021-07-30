@@ -2,6 +2,7 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -105,19 +106,20 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             throw new RuntimeException("Retrieved MessageContext mContext from WebServiceContext is null!");
         }
         WrappedMessageContext wmc = (WrappedMessageContext)mContext;
-        Message m = wmc.getWrappedMessage();
-        if (m == null) {
+        Message soapMessage = wmc.getWrappedMessage();
+        List<DomibusConnectorMessage> transformedMessages = new ArrayList<>();
+        if (soapMessage == null) {
             throw new RuntimeException("Retrieved Message m from WrappedMessageContext is null!");
         }
 
         try {
-            List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
-            messageIds.stream()
+            List<DomibusConnectorMessage> messages = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
+            messages.stream()
                     .forEach((message) -> {
                         messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-                        m.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(message));
-
+                        transformedMessages.add(message);
                     });
+            soapMessage.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(messages));
         } catch (Exception e) {
             throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
         }
@@ -199,17 +201,19 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private class ProcessMessageAfterDeliveredToBackendInterceptor extends AbstractPhaseInterceptor<Message> {
 
-        private final DomibusConnectorMessage connectorMessage;
+        private final List<DomibusConnectorMessage> connectorMessage;
 
-        ProcessMessageAfterDeliveredToBackendInterceptor(DomibusConnectorMessage connectorMessage) {
+        ProcessMessageAfterDeliveredToBackendInterceptor(List<DomibusConnectorMessage> connectorMessage) {
             super(Phase.POST_INVOKE);
             this.connectorMessage = connectorMessage;
         }
 
         @Override
         public void handleMessage(Message message) throws Fault {
-            LOGGER.trace("ProcessMessageAfterDeliveredToBackendInterceptor: handleMessage: invoking backendSubmissionService.processMessageAfterDeliveredToBackend");
-            backendSubmissionService.processMessageAfterDeliveredToBackend(connectorMessage);
+            LOGGER.trace("ProcessMessageAfterDeliveredToBackendInterceptor: handleMessages [{}]: invoking backendSubmissionService.processMessageAfterDeliveredToBackend", connectorMessage);
+            for (DomibusConnectorMessage m : connectorMessage) {
+                backendSubmissionService.processMessageAfterDeliveredToBackend(m);
+            }
         }
     }
 
