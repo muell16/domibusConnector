@@ -239,3 +239,10 @@ because its loading ALL messages from DB
 
 * Fix problem when using different Roles for Initiator and Responder within P-Modes => After the Upgrade the p-Modes must be reimported!
 * Fix problem with message reporting including evidences and case sensitive databases (eg. MySQL) (DOMIBUS_CONNECTOR_MESSAGE_info corrected to DOMIBUS_CONNECTOR_MESSAGE_INFO)
+
+=== 4.2.12
+
+==== Changes
+
+* Fix problem with setting timestamps when more than one evidence within the same soap message
+is transported via the pull backend.

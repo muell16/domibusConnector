@@ -13,12 +13,16 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 
@@ -28,9 +32,8 @@ import org.springframework.jms.annotation.JmsListener;
  */
 @SpringBootApplication(
     scanBasePackages={"eu.domibus.connector.backend"}
-)  
-@Configuration
-//@Profile("TestBackendContext")
+)
+@Import({LiquibaseAutoConfiguration.class})
 public class TestBackendContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TestBackendContext.class);
@@ -52,6 +55,12 @@ public class TestBackendContext {
     @Bean(REJECTED_DELIVERIES_LIST_BEAN)
     public BlockingQueue<DomibusConnectorRejectDeliveryException> createRejectedDeliveriesList() {
         return new LinkedBlockingQueue<>();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorDomainMessageTransformerService domibusConnectorDomainMessageTransformerService(LargeFilePersistenceProvider largeFilePersistenceProvider) {
+        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceProvider);
     }
 
     @Bean
