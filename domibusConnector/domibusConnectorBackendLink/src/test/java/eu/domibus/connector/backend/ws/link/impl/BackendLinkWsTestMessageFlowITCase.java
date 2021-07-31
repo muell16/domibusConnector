@@ -47,7 +47,6 @@ import java.util.concurrent.BlockingQueue;
  * so message tests between the ports can be done...
  * colorizing the outputs from the different spring contexts is not working!
  */
-@Disabled("TODO: fix test!")
 public class BackendLinkWsTestMessageFlowITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BackendLinkWsTestMessageFlowITCase.class);
@@ -61,7 +60,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
     @BeforeAll
     public static void beforeClass() {
-        setUpBackend();
+        backendApplicationContext = setUpBackend();
 
         bobApplicationContext = setUpClientBob(getBackendServiceWsAddress(backendApplicationContext));
         aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
@@ -78,14 +77,14 @@ public class BackendLinkWsTestMessageFlowITCase {
     }
 
     //setup and start connector backend
-    private static void setUpBackend() {
+    private static ConfigurableApplicationContext setUpBackend() {
         MDC.put("COLOR", "GREEN");
         String dbName = UUID.randomUUID().toString().substring(0, 10); //use random db name to avoid reusing db between test runs
         String[] backendProfiles = new String[]{"db_h2", "backendlink-ws", STORAGE_DB_PROFILE_NAME};
         String[] backendProperties = new String[]{"server.port=0",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",
-                "spring.liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
+                "spring.liquibase.change-log=classpath:/db/changelog/test/testdata.xml",
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
                 "spring.liquibase.enabled=true",
@@ -93,10 +92,11 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "connector.backend.ws.key.store.path=classpath:/connector.jks"
         };
 
-        backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
+        ConfigurableApplicationContext ctx = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
         System.out.println("backend context started...");
         LOGGER.info("backendServiceStarted....");
         MDC.remove("COLOR");
+        return ctx;
     }
 
 
@@ -105,6 +105,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         MDC.put("COLOR", "CYAN");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
         String[] properties = new String[]{
+                "spring.main.allow-bean-definition-overriding=true",
                 "ws.backendclient.name=alice",
                 "ws.backendclient.cn=alice",
                 "server.port=0",
@@ -119,6 +120,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         MDC.put("COLOR", "BLUE");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
         String[] properties = new String[]{
+                "spring.main.allow-bean-definition-overriding=true",
                 "ws.backendclient.name=bob",
                 "ws.backendclient.cn=bob",
                 "server.port=0",
@@ -156,7 +158,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         System.out.println("###########################RUN TEST#######################################");
         System.out.println("SERVER ADDRESS: " + getBackendServiceWsAddress(backendApplicationContext));
         System.out.println("CLIENT BOB ADDRESS: " + getBackendClientPushServiceAddress(bobApplicationContext));
-        System.out.println("CLIENT ALICE ADDRESS: " + getBackendClientPushServiceAddress(aliceApplicationContext));
+//        System.out.println("CLIENT ALICE ADDRESS: " + getBackendClientPushServiceAddress(aliceApplicationContext));
         System.out.println("wait 3 seconds....");
         Thread.sleep(3000);
 
@@ -179,6 +181,22 @@ public class BackendLinkWsTestMessageFlowITCase {
         assertThat(bob.isPushBackend()).isFalse();
         backendClientInfoPersistenceService.save(bob);
     }
+
+//    @Test
+//    public void testSetupBackend() {
+//        ConfigurableApplicationContext ctx = setUpBackend();
+//
+//        BackendClientInfoPersistenceService backendClientInfoPersistenceService = ctx.getBean(BackendClientInfoPersistenceService.class);
+//
+//        DomibusConnectorBackendClientInfo bob = backendClientInfoPersistenceService.getBackendClientInfoByName("bob");
+//        assertThat(bob).as("bob must not be null!").isNotNull();
+//        bob.setBackendPushAddress(null);
+//        assertThat(bob.isPushBackend()).isFalse();
+//        backendClientInfoPersistenceService.save(bob);
+//
+//        System.out.println("SERVER ADDRESS: " + getBackendServiceWsAddress(ctx));
+//    }
+
 
     @AfterEach
     public void tearDown() throws InterruptedException {
@@ -255,25 +273,10 @@ public class BackendLinkWsTestMessageFlowITCase {
     //@Ignore("not working because embedded broker is closed before queue is queried")
     @Test
     public void testSendMessageFromConnectorToBackend_withPull() throws InterruptedException {
-        Assertions.assertTimeout(Duration.ofSeconds(50), () -> {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
             DomibusConnectorMessage message = DomainEntityCreator.createMessage();
             message.setConnectorMessageId("msgid2");
-            message.getMessageDetails().setService(new DomibusConnectorService("BOB", "service_type"));
-            message.getMessageDetails().setEbmsMessageId("ebms_23");
-            message.getMessageDetails().setRefToMessageId(null);
-            message.getMessageDetails().setBackendMessageId(null);
-            message.getMessageDetails().setConversationId(null);
-
-            BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
-            DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-            DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
-
-            persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-//            bigDataPersistence.persistAllBigFilesFromMessage(message);
-
-            //start message processing in backendLinkModule
-            DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
-            messageToBackend.deliverMessageToBackend(message); //message should be on queue
+            genMsg(message);
 
 
             //Thread.sleep(3000); //to be sure wait a little bit before calling backendService
@@ -291,6 +294,65 @@ public class BackendLinkWsTestMessageFlowITCase {
             assertThat(domibusConnectorMessagesType.getMessages()).hasSize(1);
 
         });
+    }
+
+    /**
+     * test complete message flow in backend, when controller hands over
+     * message to backend for backend delivery, backend is pulling message...
+     */
+    //@Ignore("not working because embedded broker is closed before queue is queried")
+    @Test
+    public void testSendMessageFromConnectorToBackend_withPull2EvidenceMsg() throws InterruptedException {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
+            DomibusConnectorMessage msg1 = DomainEntityCreator.createMessage();
+            msg1.setConnectorMessageId("msgid45");
+            genMsg(msg1);
+
+            DomibusConnectorMessage msg2 = DomainEntityCreator.createMessage();
+            msg2.setConnectorMessageId("msgid56");
+            genMsg(msg2);
+
+//            Thread.sleep(3000); //to be sure wait a little bit before calling backendService
+
+            //ok client bob is now trying to fetch message
+            DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
+
+            DomibusConnectorMessagesType domibusConnectorMessagesType;
+            do {
+                EmptyRequestType emptyRequest = new EmptyRequestType();
+                domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+                Thread.sleep(500);
+            } while (domibusConnectorMessagesType != null && domibusConnectorMessagesType.getMessages().size() == 0);
+
+            assertThat(domibusConnectorMessagesType.getMessages()).hasSize(2);
+
+            DomibusConnectorMessagePersistenceService p = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+
+            DomibusConnectorMessage msgid45 = p.findMessageByConnectorMessageId("msgid45");
+            assertThat(msgid45.getMessageDetails().getDeliveredToBackend()).isNotNull();
+
+            DomibusConnectorMessage msgid56 = p.findMessageByConnectorMessageId("msgid56");
+            assertThat(msgid56.getMessageDetails().getDeliveredToBackend()).isNotNull();
+        });
+    }
+
+    private void genMsg(DomibusConnectorMessage message) {
+        message.getMessageDetails().setService(new DomibusConnectorService("BOB", "service_type"));
+        message.getMessageDetails().setEbmsMessageId("ebms_23");
+        message.getMessageDetails().setRefToMessageId(null);
+        message.getMessageDetails().setBackendMessageId(null);
+        message.getMessageDetails().setConversationId(null);
+
+        BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
+        DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+        DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
+
+        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+//            bigDataPersistence.persistAllBigFilesFromMessage(message);
+
+        //start message processing in backendLinkModule
+        DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
+        messageToBackend.deliverMessageToBackend(message); //message should be on queue
     }
 
 }
