@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Properties;
 
@@ -76,6 +77,13 @@ public class DomibusConnectorMessageLane {
 
         public void setMessageLaneId(String messageLaneId) {
             this.messageLaneId = messageLaneId;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("messageLaneId", messageLaneId)
+                    .toString();
         }
     }
 

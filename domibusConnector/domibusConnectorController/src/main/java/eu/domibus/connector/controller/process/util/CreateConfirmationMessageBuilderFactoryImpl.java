@@ -247,19 +247,19 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
 
 
             fromParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-            fromParty.setRole(null);
+            fromParty.setRole(details.getToParty().getRole()); //switch roles
             Optional<DomibusConnectorParty> lookedUpFromParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, fromParty);
             if (!lookedUpFromParty.isPresent()) {
-                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role INITIATOR", fromParty));
+                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with RoleType INITIATOR", fromParty));
             }
             details.setToParty(lookedUpFromParty.get());
             LOGGER.debug("To party is: [{}]", lookedUpFromParty.get());
 
             toParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-            toParty.setRole(null);
+            toParty.setRole(details.getFromParty().getRole()); //switch roles
             Optional<DomibusConnectorParty> lookedUpToParty = pModePersistenceService.getConfiguredSingle(defaultMessageLaneId, toParty);
             if (!lookedUpToParty.isPresent()) {
-                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with Role RESPONDER", toParty));
+                throw new RuntimeException(String.format("Cannot switch parties. No Party [%s] found in pmodes with RoleType RESPONDER", toParty));
             }
             details.setFromParty(lookedUpToParty.get());
             LOGGER.debug("From party is: [{}]", lookedUpToParty.get());

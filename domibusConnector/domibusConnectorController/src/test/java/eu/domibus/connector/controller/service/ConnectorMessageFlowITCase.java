@@ -904,11 +904,11 @@ public class ConnectorMessageFlowITCase {
 
             assertThat(toGwDeliveredBusinessMessage.getMessageDetails().getToParty())
                     .as("Parties must be same")
-                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+                    .isEqualToIgnoringGivenFields(submittedMessage.getMessageDetails().getToParty(), "roleType", "dbKey");
 
             assertThat(toGwDeliveredBusinessMessage.getMessageDetails().getFromParty())
                     .as("Parties must be same")
-                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+                    .isEqualToIgnoringGivenFields(submittedMessage.getMessageDetails().getFromParty(), "roleType", "dbKey");
 
 
             //check sent message in DB
