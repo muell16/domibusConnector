@@ -25,6 +25,7 @@ import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -36,6 +37,7 @@ import java.util.*;
 @Component
 @UIScope
 @Route(value = Reports.ROUTE, layout = MessageLayout.class)
+@Order(4)
 @TabMetadata(title = "Reports", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class Reports extends VerticalLayout {
 

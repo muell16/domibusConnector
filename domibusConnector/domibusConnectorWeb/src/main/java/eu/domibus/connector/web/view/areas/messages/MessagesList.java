@@ -28,6 +28,7 @@ import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.web.service.WebMessageService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 @Component
 @UIScope
 @Route(value = MessagesList.ROUTE, layout = MessageLayout.class)
+@Order(1)
 @TabMetadata(title = "All Messages", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessagesList extends VerticalLayout implements AfterNavigationObserver {
 

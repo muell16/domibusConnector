@@ -15,11 +15,18 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.CannotLoadKeyStoreException;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +40,7 @@ import java.util.List;
 @Component
 @UIScope
 @Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
+@Order(2)
 @TabMetadata(title = "PMode-Set Data", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class DataTables extends VerticalLayout implements AfterNavigationObserver {
 
@@ -42,19 +50,19 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 	ConfigurationUtil util;
 
 	DomibusConnectorPModeSet activePModeSet;
-	
+
 	LumoLabel uploadedAt;
 	LumoLabel noActivePModeSet;
-	
+
 	Div areaNoActivePModeSetDiv = new Div();
 	VerticalLayout activePModeSetLayout = new VerticalLayout();
-	
+
 	Anchor downloadPModesAnchor = new Anchor();
-	
+
 	TextArea description = new TextArea("Description:");
 	Button updateDescription = new Button("Update PMode-Set description");
 	LumoLabel updateDescriptionResult = new LumoLabel();
-	
+
 	Grid<CertificateInfo> connectorstoreInformationGrid;
 	TextField connectorstorePassword = new TextField("Connectorstore password:");
 	LumoLabel connectorstoreResultLabel = new LumoLabel();
@@ -69,8 +77,8 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.pmodeService = pmodeService;
 		this.util = util;
-		
-		
+
+
 		//CAVE: activePModeSet can be null!!
 		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
 
@@ -91,9 +99,9 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 
 		noActivePModeSet = createChapterText("No active PModes-Set found! Please import PModes and Connectorstore!");
 		noActivePModeSet.getStyle().set("color", "red");
-		
+
 		activePModeSetLayout.add(areaNoActivePModeSetDiv);
-				
+
 		LumoLabel activePModeSetLabel = createChapterText("Active PMode Set data:");
 		
 		activePModeSetLayout.add(activePModeSetLabel);
@@ -104,7 +112,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 		activePModeSetLayout.add(uploadedAt);
 		
 		LumoLabel downloadActivePModesButton = new LumoLabel("Download active PModes");
-		
+
 		downloadPModesAnchor.getElement().setAttribute("download", true);
 		downloadPModesAnchor.setTarget("_blank");
 		downloadPModesAnchor.setTitle("Download active PModes");
@@ -112,7 +120,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 		activePModeSetLayout.add(downloadPModesAnchor);
 
 		activePModeSetLayout.add(description);
-		
+
 		updateDescription.addClickListener(e -> {
 			updateDescriptionResult.setText("");
 			if(StringUtils.isEmpty(description.getValue())) {
@@ -128,7 +136,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 		});
 		activePModeSetLayout.add(updateDescription);
 		activePModeSetLayout.add(updateDescriptionResult);
-		
+
 
 		
 		activePModeSetLayout.add(createServicesDiv());
@@ -148,7 +156,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 		
 		pModesGrid = new Grid<DomibusConnectorPModeSet>();
 
-		
+
 		pModesGrid.addColumn(DomibusConnectorPModeSet::getCreateDate).setHeader("Created date").setWidth("500px").setSortable(true).setResizable(true);
 		pModesGrid.addColumn(DomibusConnectorPModeSet::getDescription).setHeader("Description").setWidth("500px").setSortable(true).setResizable(true);
 		pModesGrid.addComponentColumn(domibusConnectorPModeSet -> createDownloadPModesAnchor(domibusConnectorPModeSet)).setHeader("PModes").setWidth("200px").setSortable(false).setResizable(true);
@@ -200,7 +208,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 			activePModeSet.getConnectorstore().setPasswordPlain(connectorstorePassword.getValue());
 			try {
 				pmodeService.updateConnectorstorePassword(activePModeSet, connectorstorePassword.getValue());
-				
+
 				reloadPage();
 			}catch(Exception e1) {
 				String text = e1.getMessage();
@@ -224,7 +232,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 		services.add(servicesLabel);
 
 		serviceGrid = new Grid<DomibusConnectorService>();
-		
+
 		serviceGrid.addColumn(DomibusConnectorService::getService).setHeader("Service").setWidth("500px").setSortable(true).setResizable(true);
 		serviceGrid.addColumn(DomibusConnectorService::getServiceType).setHeader("Service Type").setWidth("500px").setSortable(true).setResizable(true);
 		serviceGrid.setWidth("1020px");
@@ -244,7 +252,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 
 		actionGrid = new Grid<DomibusConnectorAction>();
 
-		
+
 		actionGrid.addColumn(DomibusConnectorAction::getAction).setHeader("Action").setWidth("600px").setSortable(true).setResizable(true);
 		actionGrid.setWidth("620px");
 		actionGrid.setHeight("320px");
@@ -263,7 +271,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 
 		partyGrid = new Grid<DomibusConnectorParty>();
 
-		
+
 		partyGrid.addColumn(DomibusConnectorParty::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getPartyIdType).setHeader("Party ID Type").setWidth("500px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Party Role").setWidth("500px").setSortable(true).setResizable(true);
@@ -320,9 +328,9 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
 		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
-		
+
 		areaNoActivePModeSetDiv.removeAll();
-		
+
 		if(activePModeSet==null) {
 			areaNoActivePModeSetDiv.add(noActivePModeSet);
 			updateConnectorstorePassword.setEnabled(false);
@@ -341,7 +349,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 				downloadFileName += ".xml";
 				final StreamResource resource = new StreamResource(downloadFileName,
 						() -> new ByteArrayInputStream(activePModeSet.getpModes()));
-				
+
 				downloadPModesAnchor.setHref(resource);
 			}else {
 				downloadPModesAnchor.removeHref();
@@ -352,25 +360,25 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 				description.setValue("");
 			}
 			updateDescriptionResult.setText("");
-			
+
 			List<DomibusConnectorService> serviceList = this.pmodeService.getServiceList();
 			if(!CollectionUtils.isEmpty(serviceList)) {
 				serviceGrid.setItems(serviceList);
 				serviceGrid.setVisible(true);
 			}
-			
+
 			List<DomibusConnectorAction> actionList = pmodeService.getActionList();
 			if(!CollectionUtils.isEmpty(actionList)) {
 				actionGrid.setItems(actionList);
 				actionGrid.setVisible(true);
 			}
-			
+
 			List<DomibusConnectorParty> partyList = this.pmodeService.getPartyList();
 			if(!CollectionUtils.isEmpty(partyList)) {
 				partyGrid.setItems(partyList);
 				partyGrid.setVisible(true);
 			}
-			
+
 			connectorstoreResultLabel.setText("");
 			connectorstorePassword.setValue("");
 			if(activePModeSet.getConnectorstore()==null) {
@@ -382,7 +390,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 					connectorstoreResultLabel.setText("Connectorstore empty!");
 				}else {
 					try {
-						List<CertificateInfo> storeContents = util.getKeystoreInformation(new ByteArrayInputStream(connectorstore.getKeystoreBytes()), 
+						List<CertificateInfo> storeContents = util.getKeystoreInformation(new ByteArrayInputStream(connectorstore.getKeystoreBytes()),
 								connectorstore.getPasswordPlain());
 						if(!CollectionUtils.isEmpty(storeContents)) {
 							connectorstoreInformationGrid.setItems(storeContents);
@@ -398,7 +406,7 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 						connectorstoreInformationGrid.setItems(new ArrayList<CertificateInfo>());
 						connectorstoreInformationGrid.setVisible(false);
 					}
-					
+
 				}
 				if(!StringUtils.isEmpty(connectorstore.getPasswordPlain())) {
 					connectorstorePassword.setValue(connectorstore.getPasswordPlain());
@@ -408,12 +416,12 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 			if(!StringUtils.isEmpty(connectorstoreResultLabel.getText())) {
 				connectorstoreResultLabel.getStyle().set("color", "red");
 			}
-			
+
 		}
-		
+
 		List<DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
 		pModesGrid.setItems(inactivePModesList);
-		
+
 	}
 
 }

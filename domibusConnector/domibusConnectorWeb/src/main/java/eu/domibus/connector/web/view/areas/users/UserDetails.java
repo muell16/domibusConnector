@@ -19,6 +19,7 @@ import eu.domibus.connector.web.forms.WebUserForm;
 import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 //@HtmlImport("styles/shared-styles.html")
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 @UIScope
 @Route(value = UserDetails.ROUTE, layout = UserLayout.class)
+@Order(2)
 @TabMetadata(title = "User Details", tabGroup = UserLayout.TAB_GROUP_NAME)
 public class UserDetails extends VerticalLayout implements HasUrlParameter<String> {
 

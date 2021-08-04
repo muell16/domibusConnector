@@ -16,6 +16,7 @@ import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -153,18 +154,19 @@ public class DCTabHandler implements BeforeEnterObserver {
 
     }
 
-    public void createTabs(ApplicationContext applicationContext, String group)
-    {
+    public void createTabs(ApplicationContext applicationContext, String group) {
         applicationContext.getBeansWithAnnotation(TabMetadata.class)
-                .entrySet().stream()
-                .filter(e -> ((Component) e.getValue()).getClass().getAnnotation(TabMetadata.class).tabGroup().equals(group))
-                .forEach(e -> {
-                    Component component = (Component) e.getValue();
-                    TabMetadata annotation = component.getClass().getAnnotation(TabMetadata.class);
-                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", component, annotation.title());
+                .values().stream()
+                .map(o -> (Component) o)
+                .filter(c -> c.getClass().getAnnotation(TabMetadata.class).tabGroup().equals(group))
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .forEach(c -> {
+                    TabMetadata annotation = c.getClass().getAnnotation(TabMetadata.class);
+
+                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", c, annotation.title());
                     this.createTab()
                             .withLabel(annotation.title())
-                            .addForComponent(component.getClass());
+                            .addForComponent(c.getClass());
                 });
     }
 }

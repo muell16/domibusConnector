@@ -14,7 +14,6 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.web.component.LumoLabel;
@@ -23,6 +22,7 @@ import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 @Component
 @UIScope
 @Route(value = Import.ROUTE, layout = PmodeLayout.class)
+@Order(1)
 @TabMetadata(title = "Import PMode-Set", tabGroup = PmodeLayout.TAB_GROUP_NAME)
 public class Import extends VerticalLayout implements AfterNavigationObserver{
 
