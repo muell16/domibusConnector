@@ -328,6 +328,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled
     public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
@@ -563,6 +564,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
