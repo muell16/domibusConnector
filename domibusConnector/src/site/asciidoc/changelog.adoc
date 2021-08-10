@@ -246,3 +246,8 @@ because its loading ALL messages from DB
 
 * Fix problem with setting timestamps when more than one evidence within the same soap message
 is transported via the pull backend.
+
+
+=== 4.2.13
+
+* Additional version due invalid build (4.2.12)
