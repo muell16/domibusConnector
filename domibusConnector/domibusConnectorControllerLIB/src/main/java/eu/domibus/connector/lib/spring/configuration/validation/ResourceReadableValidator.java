@@ -1,5 +1,5 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
-;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;

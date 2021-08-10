@@ -15,7 +15,6 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties.CannotLoadKeyStoreException;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.service.WebPModeService;
@@ -30,12 +29,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @UIScope
