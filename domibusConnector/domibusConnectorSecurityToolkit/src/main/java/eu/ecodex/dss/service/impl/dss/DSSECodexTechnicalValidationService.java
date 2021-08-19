@@ -21,43 +21,30 @@ import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.util.LogDelegate;
 import eu.ecodex.dss.util.PdfValidationReportService;
 import eu.ecodex.dss.util.tsl.ReactiveDataLoader;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.DSSException;
-import eu.europa.esig.dss.InMemoryDocument;
-import eu.europa.esig.dss.MimeType;
-import eu.europa.esig.dss.client.http.proxy.ProxyConfig;
-import eu.europa.esig.dss.client.http.proxy.ProxyProperties;
-import eu.europa.esig.dss.tsl.TLInfo;
-import eu.europa.esig.dss.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.tsl.service.TSLRepository;
-import eu.europa.esig.dss.tsl.service.TSLValidationJob;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.model.DSSDocument;
+
+import eu.europa.esig.dss.model.DSSException;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
+
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
+import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.spi.tsl.TLInfo;
+import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
+
+import eu.europa.esig.dss.spi.x509.CandidatesForSigningCertificate;
 import eu.europa.esig.dss.validation.AdvancedSignature;
-import eu.europa.esig.dss.validation.CandidatesForSigningCertificate;
-//import eu.europa.ec.markt.dss.DSSUtils;
-//import eu.europa.ec.markt.dss.exception.DSSException;
-//import eu.europa.ec.markt.dss.manager.ProxyPreferenceManager;
-//import eu.europa.ec.markt.dss.signature.InMemoryDocument;
-//import eu.europa.ec.markt.dss.signature.validation.AdvancedSignature;
-//import eu.europa.ec.markt.dss.validation102853.CertificateToken;
-//import eu.europa.ec.markt.dss.validation102853.CertificateVerifier;
-//import eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier;
-//import eu.europa.ec.markt.dss.validation102853.ProcessExecutor;
-//import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
-//import eu.europa.ec.markt.dss.validation102853.bean.CandidatesForSigningCertificate;
-//import eu.europa.ec.markt.dss.validation102853.bean.CertificateValidity;
-//import eu.europa.ec.markt.dss.validation102853.certificate.CertificateRef;
-//import eu.europa.ec.markt.dss.validation102853.report.DiagnosticData;
-//import eu.europa.ec.markt.dss.validation102853.report.Reports;
-//import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
-//import eu.europa.ec.markt.dss.validation102853.tsl.TrustedListsCertificateSource;
+
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
 import eu.europa.esig.dss.validation.executor.ProcessExecutor;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-import eu.europa.esig.dss.x509.CertificateToken;
+
+import eu.europa.esig.dss.model.x509.CertificateToken;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -93,7 +80,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	private CertificateVerifier certificateVerifier;
 	private EnvironmentConfiguration environmentConfiguration;
 
-	private ProcessExecutor processExecutor;
+	private DocumentProcessExecutor processExecutor;
     
 	// klara: Added Attribute for TSL of authentication-certificates incl. setters/getters
 	private Object authenticationCertificateTSL;
@@ -309,7 +296,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	 *
 	 * @param processExecutor
 	 */
-	public void setProcessExecutor(ProcessExecutor processExecutor) {
+	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
 		this.processExecutor = processExecutor;
 	}
 	
@@ -328,35 +315,35 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 		dataLoader.isLOTL(this.isLOTL);
 
-		TLInfo test = new TLInfo();
+//		TLInfo test = new TLInfo();
 		
 		trustedListCertificatesSource = new TrustedListsCertificateSource();
 		
-		TSLRepository tslRepository = new TSLRepository();
-		tslRepository.setTrustedListsCertificateSource(trustedListCertificatesSource);
+//		TSLRepository tslRepository = new TSLRepository();
+//		tslRepository.setTrustedListsCertificateSource(trustedListCertificatesSource);
 		
-        TSLValidationJob job = new TSLValidationJob();
-        job.setDataLoader(dataLoader);
-        job.setCheckTSLSignatures(false);
-        job.setRepository(tslRepository);
+//        TSLValidationJob job = new TSLValidationJob();
+//        job.setDataLoader(dataLoader);
+//        job.setCheckTSLSignatures(false);
+//        job.setRepository(tslRepository);
 		
-		if(!isLOTL){
-			job.setLotlUrl("inmemory:intermediatetsl");
-		}else if(authenticationCertificateTSL instanceof String){
-			job.setLotlUrl((String) authenticationCertificateTSL);
-		}else if(authenticationCertificateTSL instanceof InputStream){
-			job.setLotlUrl("inmemory:inputstream");
-		}else if(authenticationCertificateTSL instanceof byte[]){
-			job.setLotlUrl("inmemory:bytearray");
-		}else{
-			// trustedListCertificatesSource.setLotlCertificate(null);
-		}
+//		if(!isLOTL){
+//			job.setLotlUrl("inmemory:intermediatetsl");
+//		}else if(authenticationCertificateTSL instanceof String){
+//			job.setLotlUrl((String) authenticationCertificateTSL);
+//		}else if(authenticationCertificateTSL instanceof InputStream){
+//			job.setLotlUrl("inmemory:inputstream");
+//		}else if(authenticationCertificateTSL instanceof byte[]){
+//			job.setLotlUrl("inmemory:bytearray");
+//		}else{
+//			// trustedListCertificatesSource.setLotlCertificate(null);
+//		}
 		
-		try {
-			job.initRepository();
-		} catch (Exception e) {
-			throw new ECodexException(e);
-		}
+//		try {
+//			job.initRepository();
+//		} catch (Exception e) {
+//			throw new ECodexException(e);
+//		}
 	}
 	
 	// klara
@@ -481,7 +468,8 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 					validator.setCertificateVerifier(new CommonCertificateVerifier());
 					
 					Reports rep = validator.validateDocument();
-					String certId = rep.getDiagnosticData().getFirstSigningCertificateId();
+//					String certId = rep.getDiagnosticData().getFirstSigningCertificateId();
+					String certId = rep.getDiagnosticData().getFirstSignatureId();
 					
 					List<AdvancedSignature> signatures = validator.getSignatures();
 					Iterator<AdvancedSignature> it = signatures.listIterator();

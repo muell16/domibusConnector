@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.bouncycastle.util.encoders.Base64;
 
-import eu.europa.esig.dss.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 
 /**
  * Provides convenience-methods for Digest.

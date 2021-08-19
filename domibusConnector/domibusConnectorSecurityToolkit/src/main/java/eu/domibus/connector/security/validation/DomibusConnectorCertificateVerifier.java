@@ -1,27 +1,23 @@
 package eu.domibus.connector.security.validation;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.service.DCKeyStoreService;
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.domibus.connector.tools.logging.LoggingUtils;
 import eu.ecodex.dss.util.ECodexDataLoader;
-
-import eu.europa.esig.dss.x509.CommonTrustedCertificateSource;
+import eu.europa.esig.dss.service.crl.OnlineCRLSource;
+import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
+import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
+import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
+import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
-import eu.europa.esig.dss.client.crl.OnlineCRLSource;
-import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
-import eu.europa.esig.dss.client.ocsp.OnlineOCSPSource;
-import eu.europa.esig.dss.validation.CommonCertificateVerifier;
-import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 @BusinessDomainScoped
@@ -31,11 +27,11 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 	static Logger LOGGER = LogManager.getLogger(DomibusConnectorCertificateVerifier.class);
 
 	private final SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
-	private final DomibusConnectorProxyConfig proxyPreferenceManager;
+	private final ProxyConfig proxyPreferenceManager;
 	private final DCKeyStoreService dcKeyStoreService;
 
 	public DomibusConnectorCertificateVerifier(SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties,
-											   DomibusConnectorProxyConfig proxyPreferenceManager,
+											   ProxyConfig proxyPreferenceManager,
 											   DCKeyStoreService dcKeyStoreService) {
 		this.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
 		this.proxyPreferenceManager = proxyPreferenceManager;
@@ -96,7 +92,7 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 
 		ocspSource.setDataLoader(ocspDataLoader);
 
-		setTrustedCertSource(trustedCertSource);
+		setTrustedCertSources(trustedCertSource);
 		setCrlSource(crlSource);
 		setOcspSource(ocspSource);
 

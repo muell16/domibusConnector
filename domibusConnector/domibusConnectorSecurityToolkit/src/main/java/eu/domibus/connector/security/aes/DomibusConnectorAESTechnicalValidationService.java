@@ -1,16 +1,6 @@
 package eu.domibus.connector.security.aes;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.ecodex.dss.model.EnvironmentConfiguration;
-import eu.ecodex.dss.model.ProxyData;
 import eu.ecodex.dss.model.token.OriginalValidationReportContainer;
 import eu.ecodex.dss.model.token.Token;
 import eu.ecodex.dss.model.token.TokenValidation;
@@ -18,13 +8,18 @@ import eu.ecodex.dss.model.token.ValidationVerification;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.util.PdfValidationReportService;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.InMemoryDocument;
-import eu.europa.esig.dss.MimeType;
-import eu.europa.esig.dss.client.http.proxy.ProxyProperties;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
+import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class DomibusConnectorAESTechnicalValidationService implements ECodexTechnicalValidationService {
 

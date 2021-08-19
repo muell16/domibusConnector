@@ -10,49 +10,27 @@
 package eu.ecodex.dss.util;
 
 
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
+import eu.europa.esig.dss.NamespaceContextMap;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.model.DSSException;
+import eu.europa.esig.dss.simplereport.SimpleReport;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.imageio.ImageIO;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.imageio.ImageIO;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfWriter;
-
-import eu.europa.esig.dss.DSSException;
-import eu.europa.esig.dss.DSSUtils;
-import eu.europa.esig.dss.NamespaceContextMap;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-import eu.europa.esig.dss.validation.reports.wrapper.TimestampWrapper;
-import eu.europa.esig.dss.x509.TimestampType;
+import java.util.*;
 
 
 /**
@@ -179,7 +157,7 @@ public class PdfValidationReportService {
 	                                       int index) throws DocumentException {
 
 		document.add(p("Signature information " + index, ParagraphStyle.HEADER1));
-		document.add(p("Signature verification", simpleReport.isSignatureValid(signatureId), ParagraphStyle.DEFAULT));
+		document.add(p("Signature verification", simpleReport.isValid(signatureId), ParagraphStyle.DEFAULT));
 		document.add(p("Signature algorithm: " + diagnosticData.getSignatureEncryptionAlgorithm(signatureId)));
 
 		document.add(p("Certificate Path Revocation Analysis", ParagraphStyle.HEADER2));
@@ -189,7 +167,7 @@ public class PdfValidationReportService {
 		boolean valid = false;
 		for (String certificateId : signatureCertificateChain) {
 			
-			final boolean validCertificate = diagnosticData.getCertificateRevocationStatus(certificateId); //isValidCertificate(certificateId);
+			final boolean validCertificate = diagnosticData.getCertificateRevocationStatus(certificateId).isGood(); //isValidCertificate(certificateId);
 			if (!validCertificate) {
 
 				valid = false;
@@ -216,7 +194,7 @@ public class PdfValidationReportService {
 
 		
 		document.add(p("Signature Level Analysis", ParagraphStyle.HEADER2));
-		final String signatureFormat = diagnosticData.getSignatureFormat(signatureId);
+		final String signatureFormat = diagnosticData.getSignatureFormat(signatureId).toString(); //TODO: use enumerations here instead of toString()
 		if (signatureFormat == null || signatureFormat.equals("")) {
 			document.add(p("No Signature Level Analysis is available."));
 		} else {

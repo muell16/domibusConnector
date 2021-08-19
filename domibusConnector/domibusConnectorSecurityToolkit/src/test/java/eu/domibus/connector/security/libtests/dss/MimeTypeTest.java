@@ -2,7 +2,7 @@
 package eu.domibus.connector.security.libtests.dss;
 
 import eu.europa.esig.dss.DSSException;
-import eu.europa.esig.dss.MimeType;
+import eu.europa.esig.dss.model.MimeType;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Assertions;

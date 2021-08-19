@@ -10,7 +10,7 @@
 package eu.ecodex.dss.util;
 
 import eu.ecodex.dss.model.token.Token;
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;

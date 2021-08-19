@@ -1,4 +1,4 @@
-package eu.domibus.connector.security.container;
+package eu.domibus.connector.security;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -34,9 +34,9 @@ import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.service.ECodexException;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.InMemoryDocument;
-import eu.europa.esig.dss.MimeType;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 
@@ -48,7 +48,7 @@ import org.springframework.util.StreamUtils;
  */
 @Component
 @BusinessDomainScoped
-public class DomibusSecurityContainer {
+public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolkit {
 
     public static final String RED_TOKEN_WARNING_MESSAGE = "A RedToken was generated!";
 
@@ -70,16 +70,27 @@ public class DomibusSecurityContainer {
 
     private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityToolkitImpl.class);
 
     private final ECodexContainerFactoryService eCodexContainerFactoryService;
     private final LargeFilePersistenceService bigDataPersistenceService;
     private final TokenIssuerFactory tokenIssuerFactory;
 
-    public DomibusSecurityContainer(ECodexContainerFactoryService eCodexContainerFactoryService, LargeFilePersistenceService bigDataPersistenceService, TokenIssuerFactory tokenIssuerFactory) {
+    public DomibusSecurityToolkitImpl(ECodexContainerFactoryService eCodexContainerFactoryService, LargeFilePersistenceService bigDataPersistenceService, TokenIssuerFactory tokenIssuerFactory) {
         this.eCodexContainerFactoryService = eCodexContainerFactoryService;
         this.bigDataPersistenceService = bigDataPersistenceService;
         this.tokenIssuerFactory = tokenIssuerFactory;
+    }
+
+    @Override
+    public DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+        recieveContainerContents(message);
+        return message;
+    }
+
+    @Override
+    public DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+        return this.createContainer(message);
     }
 
     BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
@@ -530,6 +541,8 @@ public class DomibusSecurityContainer {
             throw new RuntimeException("error while loading data from bigDataPersistenceService", ioe);
         }
     }
+
+
 
 //    DSSDocument createLargeFileBasedDssDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
 //        return new LargeFileBasedDssDocument(bigDataPersistenceService, dataRef);

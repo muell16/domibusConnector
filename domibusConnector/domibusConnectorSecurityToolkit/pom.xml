@@ -31,11 +31,11 @@
 <!--            <version>${dss.tools.version}</version>-->
         </dependency>
 
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-            <artifactId>dss-tsl-jaxb</artifactId>
+<!--        <dependency>-->
+<!--            <groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+<!--            <artifactId>dss-tsl-jaxb</artifactId>-->
 <!--            <version>${dss.tools.version}</version>-->
-        </dependency>
+<!--        </dependency>-->
 
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>

@@ -13,7 +13,7 @@ import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.service.ContainerFileDefinitions;
 import eu.ecodex.dss.util.DocumentStreamUtil;
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 import org.apache.commons.lang.StringUtils;
 

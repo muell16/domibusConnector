@@ -14,9 +14,9 @@ import org.apache.commons.io.IOUtils;
 import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.util.SignatureParametersFactory;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.EncryptionAlgorithm;
-import eu.europa.esig.dss.x509.CertificateToken;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import eu.europa.esig.dss.model.x509.CertificateToken;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

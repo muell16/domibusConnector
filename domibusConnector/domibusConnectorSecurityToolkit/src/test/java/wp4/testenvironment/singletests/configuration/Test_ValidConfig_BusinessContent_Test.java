@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import wp4.testenvironment.configurations.ValidConfig_BusinessContent;
 import eu.ecodex.dss.model.BusinessContent;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.InMemoryDocument;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
 
 //SUB-CONF-13
 public class Test_ValidConfig_BusinessContent_Test {

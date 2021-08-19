@@ -22,11 +22,6 @@ import javax.validation.constraints.NotNull;
  * contains security toolkit related configuration in a
  * typesafe way
  */
-//@BusinessDomainScoped
-//@Component
-//@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
-//@PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
-//@Validated
 @BusinessDomainScoped
 @Component
 @Valid

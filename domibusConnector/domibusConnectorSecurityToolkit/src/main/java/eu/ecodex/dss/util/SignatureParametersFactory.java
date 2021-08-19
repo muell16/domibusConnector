@@ -10,8 +10,16 @@
 
 package eu.ecodex.dss.util;
 
+import eu.ecodex.dss.model.CertificateStoreInfo;
+import eu.ecodex.dss.model.SignatureParameters;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import eu.europa.esig.dss.model.x509.CertificateToken;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.Resource;
+
 import java.io.InputStream;
-import java.net.URL;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -20,20 +28,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-
-import eu.ecodex.dss.model.CertificateStoreInfo;
-import eu.ecodex.dss.model.SignatureParameters;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.EncryptionAlgorithm;
-//import eu.europa.ec.markt.dss.DSSUtils;
-//import eu.europa.ec.markt.dss.DigestAlgorithm;
-//import eu.europa.ec.markt.dss.EncryptionAlgorithm;
-//import eu.europa.ec.markt.dss.parameter.ChainCertificate;
-//import eu.europa.ec.markt.dss.validation102853.CertificateToken;
-import eu.europa.esig.dss.x509.CertificateToken;
-import org.springframework.core.io.Resource;
 
 /**
  * Provides convenience-methods for creating a {@link SignatureParameters} instance.
@@ -80,7 +74,7 @@ public class SignatureParametersFactory {
 	 * @throws Exception as of the underlying classes
 	 */
 	public static SignatureParameters create(final CertificateStoreInfo certStoreInfo, final String certAlias, final String certPassword,
-	                                         final EncryptionAlgorithm encryptionAlgorithm, final DigestAlgorithm digestAlgorithm) throws Exception {
+											 final EncryptionAlgorithm encryptionAlgorithm, final DigestAlgorithm digestAlgorithm) throws Exception {
 		LOG.lDetail("parameters: {} for cert-alias '{}' algorithms: signature {} signing {}", certStoreInfo, certAlias, encryptionAlgorithm, digestAlgorithm);
 
 		// check if configuration is feasible

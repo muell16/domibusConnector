@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 
 import eu.ecodex.dss.model.BusinessContent;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.InMemoryDocument;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
 
 // SUB_CONF_14
 public class InvalidConfig_BusinessContent {

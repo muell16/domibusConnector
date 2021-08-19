@@ -10,8 +10,7 @@
 
 package eu.ecodex.dss.model.token;
 
-import eu.europa.esig.jaxb.xmldsig.DigestMethodType;
-
+import eu.europa.esig.xmldsig.jaxb.DigestMethodType;
 import org.apache.commons.lang.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;

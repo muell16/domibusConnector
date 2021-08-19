@@ -20,17 +20,21 @@ import eu.ecodex.dss.service.checks.BusinessContentChecker;
 import eu.ecodex.dss.service.checks.ECodexContainerChecker;
 import eu.ecodex.dss.service.checks.TokenIssuerChecker;
 import eu.ecodex.dss.util.*;
-import eu.europa.esig.dss.*;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.enumerations.*;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
+import eu.europa.esig.dss.model.x509.CertificateToken;
+import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.spi.DSSUtils;
 import eu.europa.esig.dss.validation.AdvancedSignature;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
 import eu.europa.esig.dss.validation.executor.ProcessExecutor;
-import eu.europa.esig.dss.validation.policy.rules.Indication;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-import eu.europa.esig.dss.x509.CertificateToken;
-import eu.europa.esig.jaxb.xmldsig.DigestMethodType;
+import eu.europa.esig.xmldsig.jaxb.DigestMethodType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -58,24 +62,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-//import eu.europa.ec.markt.dss.DSSUtils;
-//import eu.europa.ec.markt.dss.DigestAlgorithm;
-//import eu.europa.ec.markt.dss.EncryptionAlgorithm;
-//import eu.europa.ec.markt.dss.SignatureAlgorithm;
-//import eu.europa.ec.markt.dss.signature.DSSDocument;
-//import eu.europa.ec.markt.dss.signature.SignaturePackaging;
-//import eu.europa.ec.markt.dss.signature.validation.AdvancedSignature;
-//import eu.europa.ec.markt.dss.validation102853.CertificateToken;
-//import eu.europa.ec.markt.dss.validation102853.CertificateVerifier;
-//import eu.europa.ec.markt.dss.validation102853.ProcessExecutor;
-//import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
-//import eu.europa.ec.markt.dss.validation102853.X500PrincipalMatcher;
-//import eu.europa.ec.markt.dss.validation102853.report.Conclusion;
-//import eu.europa.ec.markt.dss.validation102853.report.DiagnosticData;
-//import eu.europa.ec.markt.dss.validation102853.report.Reports;
-//import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
-//import eu.europa.ec.markt.dss.validation102853.rules.Indication;
-//import eu.europa.ec.markt.tsl.jaxb.xmldsig.DigestMethodType;
 
 /**
  * The DSS implementation of the services
@@ -92,18 +78,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	private static final LogDelegate LOG = new LogDelegate(DSSECodexContainerService.class);
 	private static final Logger LOGGER = LogManager.getLogger(DSSECodexContainerService.class);
 
-//
-//
-//	static {
-//        String DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL = "dss.dn.unescapemultibyteutf8literal";
-//        System.setProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "true");
-//        boolean APPLY_UNESCAPEMULTIBYTEUTF8LITERAL = "true".equalsIgnoreCase(System.getProperty(DSS_DN_UNESCAPEMULTIBYTEUTF8LITERAL, "false"));
-//
-//        LOG.lConfig(
-//			  "The DSSECodexContainerService enabled the special SD-DSS patch for treatment of multibyte encoded utf8 literals in DN data -> illegal escapes in French XML signatures -> http://www.jira.e-codex.eu/browse/ECDX-59");
-//	}
-
-
 	private static final BusinessContentChecker CHECKER_BUSINESS_CONTENT = new BusinessContentChecker();
 	private static final TokenIssuerChecker CHECKER_TOKEN_ISSUER = new TokenIssuerChecker();
 	private static final ECodexContainerChecker CHECKER_ECODEX_CONTAINER = new ECodexContainerChecker();
@@ -119,9 +93,9 @@ public class DSSECodexContainerService implements ECodexContainerService {
 
 	private ConnectorCertificatesStore connectorCertificatesStore = new ConnectorCertificatesStore();
 
-	private ProcessExecutor processExecutor = null;
+	private DocumentProcessExecutor processExecutor = null;
 
-	public void setProcessExecutor(ProcessExecutor processExecutor) {
+	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
 		this.processExecutor = processExecutor;
 	}
 

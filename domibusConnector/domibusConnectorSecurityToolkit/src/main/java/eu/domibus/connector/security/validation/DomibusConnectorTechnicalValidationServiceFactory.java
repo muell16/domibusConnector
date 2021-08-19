@@ -1,9 +1,8 @@
 package eu.domibus.connector.security.validation;
 
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
-import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.ecodex.dss.model.token.AdvancedSystemType;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +23,14 @@ public class DomibusConnectorTechnicalValidationServiceFactory {
 	private final TokenIssuerFactory tokenIssuerFactory;
 	private final EnvironmentConfiguration environmentConfiguration;
 	private final DomibusConnectorCertificateVerifier certificateVerifier;
-	private final DomibusConnectorProxyConfig proxyPreferenceManager;
+	private final ProxyConfig proxyPreferenceManager;
 	 //not required if SIGNATURE_BASED
     private final DomibusConnectorAESTokenValidationCreator delegate;
 
 	public DomibusConnectorTechnicalValidationServiceFactory(TokenIssuerFactory tokenIssuerFactory,
 															 EnvironmentConfiguration environmentConfiguration,
 															 DomibusConnectorCertificateVerifier certificateVerifier,
-															 DomibusConnectorProxyConfig proxyPreferenceManager,
+															 ProxyConfig proxyPreferenceManager,
 															 @Autowired(required = false) DomibusConnectorAESTokenValidationCreator delegate) {
 		this.tokenIssuerFactory = tokenIssuerFactory;
 		this.environmentConfiguration = environmentConfiguration;

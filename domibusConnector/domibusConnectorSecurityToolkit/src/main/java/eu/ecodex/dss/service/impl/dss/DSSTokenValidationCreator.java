@@ -22,12 +22,15 @@ import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import eu.europa.esig.dss.validation.reports.wrapper.CertificateWrapper;
-import org.apache.commons.io.IOUtils;
+import eu.europa.esig.dss.detailedreport.DetailedReport;
+import eu.europa.esig.dss.diagnostic.CertificateWrapper;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.enumerations.SignatureForm;
+import eu.europa.esig.dss.enumerations.SignatureQualification;
+import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.simplereport.jaxb.XmlToken;
+import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import eu.ecodex.dss.model.token.OriginalValidationReportContainer;
 import eu.ecodex.dss.model.token.Signature;
@@ -38,34 +41,12 @@ import eu.ecodex.dss.model.token.TechnicalValidationResult;
 import eu.ecodex.dss.model.token.TokenValidation;
 import eu.ecodex.dss.model.token.ValidationVerification;
 import eu.ecodex.dss.util.LogDelegate;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.jaxb.simplereport.XmlSignature;
+import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.validation.AdvancedSignature;
 import eu.europa.esig.dss.validation.CertificateVerifier;
-import eu.europa.esig.dss.validation.SignatureQualification;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
-//import eu.europa.ec.markt.dss.signature.CommonDocument;
-//import eu.europa.ec.markt.dss.signature.DSSDocument;
-//import eu.europa.ec.markt.dss.signature.validation.AdvancedSignature;
-//import eu.europa.ec.markt.dss.validation102853.CertificateToken;
-//import eu.europa.ec.markt.dss.validation102853.CertificateVerifier;
-//import eu.europa.ec.markt.dss.validation102853.ProcessExecutor;
-//import eu.europa.ec.markt.dss.validation102853.SignatureForm;
-//import eu.europa.ec.markt.dss.validation102853.SignatureType;
-//import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
-//import eu.europa.ec.markt.dss.validation102853.report.DetailedReport;
-//import eu.europa.ec.markt.dss.validation102853.report.DiagnosticData;
-//import eu.europa.ec.markt.dss.validation102853.report.Reports;
-//import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
-//import eu.europa.ec.markt.dss.validation102853.rules.Indication;
-import eu.europa.esig.dss.validation.executor.ProcessExecutor;
-import eu.europa.esig.dss.validation.policy.rules.Indication;
-import eu.europa.esig.dss.validation.reports.DetailedReport;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-import eu.europa.esig.dss.x509.CertificateToken;
-import eu.europa.esig.jaxb.xmldsig.SignatureType;
+import eu.europa.esig.dss.model.x509.CertificateToken;
 
 /**
  * this class creates the token validation; the execution is thread-safe
@@ -84,7 +65,7 @@ class DSSTokenValidationCreator {
 	private final CertificateVerifier certificateVerifier;
 	private final DSSDocument businessDocument;
 	private final DSSDocument detachedSignature;
-	private final ProcessExecutor processExecutor;
+	private final DocumentProcessExecutor processExecutor;
 
 	private TokenValidation tValidation;
 
@@ -103,7 +84,7 @@ class DSSTokenValidationCreator {
 	 * @param detachedSignature   the optional detached signature document; if present this will be used to provide the signature
 	 * @param processExecutor
 	 */
-	DSSTokenValidationCreator(final CertificateVerifier certificateVerifier, final DSSDocument businessDocument, final DSSDocument detachedSignature, ProcessExecutor processExecutor) {
+	DSSTokenValidationCreator(final CertificateVerifier certificateVerifier, final DSSDocument businessDocument, final DSSDocument detachedSignature, DocumentProcessExecutor processExecutor) {
 		this.certificateVerifier = certificateVerifier;
 		this.businessDocument = businessDocument;
 		this.detachedSignature = detachedSignature;
@@ -218,7 +199,7 @@ class DSSTokenValidationCreator {
 		List<AdvancedSignature> invalidSignatures = new ArrayList<AdvancedSignature>();
 
 		for (AdvancedSignature curSignature : signatures) {
-			if(simpleReport.getSignatureFormat(curSignature.getId()) != null && simpleReport.getSignatureFormat(curSignature.getId()).toLowerCase().equals("xmldsig")){
+			if(simpleReport.getSignatureFormat(curSignature.getId()) != null && simpleReport.getSignatureFormat(curSignature.getId()).getSignatureForm().equals(SignatureForm.XAdES)){
 				invalidSignatures.add(curSignature);
 			}
 		}
@@ -305,17 +286,17 @@ class DSSTokenValidationCreator {
 //      int decreaseSigCount = 0;
 //		int decreaseValid = 0;
 		
-		List<XmlSignature> signatures = simpleReport.getJaxbModel().getSignature();
-		List<XmlSignature> toRemove = new ArrayList<XmlSignature>();
+		List<XmlToken> signatures = simpleReport.getJaxbModel().getSignatureOrTimestamp();
+		List<XmlToken> toRemove = new ArrayList<XmlToken>();
 		
-		for (XmlSignature curSig : signatures) {
+		for (XmlToken curSig : signatures) {
 			if(idsToRemove.contains(curSig.getId())) {
 				simpleReport.getSignatureIdList().remove(curSig.getId());
 				toRemove.add(curSig);
 			}
 		}
 		
-		for (XmlSignature curSig : toRemove) {
+		for (XmlToken curSig : toRemove) {
 			signatures.remove(curSig);
 		}
 	
@@ -383,7 +364,7 @@ class DSSTokenValidationCreator {
 		final X509Certificate signingCertificate = TechnicalValidationUtil.getCertificate(signingCertificateToken);
 		final String signingCertificateSubject = TechnicalValidationUtil.getSigningCertificateSubjectName(signingCertificate);
 		final String signingCertificateIssuer = TechnicalValidationUtil.getSigningCertificateIssuerName(signingCertificate);
-		final String signatureFormatLevel = TechnicalValidationUtil.getSignatureFormatLevel(simpleReport, signatureId);// PAdES-BES etc
+		final String signatureFormatLevel = TechnicalValidationUtil.getSignatureFormatLevelAsString(simpleReport, signatureId);// PAdES-BES etc
 		final SignatureQualification signatureConclusion = TechnicalValidationUtil.getSignatureConclusion(simpleReport, signatureId); // QES etc
 
 		CertificateWrapper issuerCertificateWrapper = null;
@@ -403,7 +384,7 @@ class DSSTokenValidationCreator {
 		final boolean validSignatureConclusion = TechnicalValidationUtil.checkSignatureConclusion(simpleReport, reports.getDetailedReport(), signatureId);
 		final boolean validSignatureFormat = !StringUtils.isEmpty(signatureFormatLevel);
 
-		final TechnicalTrustLevel validSignatureCertStatus = TechnicalValidationUtil.checkCertificateRevocation(signingCertificateToken, diagnosticData.getCertificateRevocationStatus(certificateId));
+		final TechnicalTrustLevel validSignatureCertStatus = TechnicalValidationUtil.checkCertificateRevocation(signingCertificateToken, diagnosticData.getCertificateRevocationStatus(certificateId).isRevoked());
 		final TechnicalTrustLevel validSignatureCertHistory = TechnicalValidationUtil.checkCertificateValidity(signingCertificateToken, signingTime);
 		final boolean validTrustAnchor = TechnicalValidationUtil.checkTrustAnchor(diagnosticData, certificateId);
 		final TechnicalTrustLevel validIssuerCertStatus = TechnicalValidationUtil.checkCertificateRevocation(issuingCertificateToken);

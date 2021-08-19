@@ -15,21 +15,18 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import eu.europa.esig.dss.DSSException;
+import eu.europa.esig.dss.model.DSSException;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.spi.client.http.DataLoader;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import eu.ecodex.dss.util.ECodexDataLoader;
 import eu.ecodex.dss.util.LogDelegate;
-import eu.europa.esig.dss.client.http.DataLoader;
-import eu.europa.esig.dss.client.http.proxy.ProxyConfig;
-//import eu.europa.ec.markt.dss.exception.DSSCannotFetchDataException;
-//import eu.europa.ec.markt.dss.exception.DSSCannotFetchDataException.MSG;
-//import eu.europa.ec.markt.dss.manager.ProxyPreferenceManager;
-//import eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader;
-//import eu.europa.ec.markt.dss.validation102853.loader.DataLoader;
 
+
+@Deprecated //replace with native DSS classes
 public class ReactiveDataLoader implements DataLoader {
 
 	private static final LogDelegate LOG = new LogDelegate(ReactiveDataLoader.class);

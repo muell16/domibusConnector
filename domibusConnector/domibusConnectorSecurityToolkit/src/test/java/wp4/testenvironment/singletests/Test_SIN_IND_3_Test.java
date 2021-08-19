@@ -24,7 +24,7 @@ import eu.ecodex.dss.service.ContainerFileDefinitions;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
 import eu.ecodex.dss.util.ZipStreamUtil;
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 import util.ContainerToFilesystem;
 
 /*

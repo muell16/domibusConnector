@@ -1,5 +1,11 @@
 package wp4.testenvironment.configurations;
 
+import eu.ecodex.dss.model.SignatureParameters;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import eu.europa.esig.dss.model.x509.CertificateToken;
+import org.apache.commons.io.IOUtils;
+
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -7,13 +13,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-
-import eu.ecodex.dss.model.SignatureParameters;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.EncryptionAlgorithm;
-import eu.europa.esig.dss.x509.CertificateToken;
 
 // SUB-CONF-02
 public class InvalidConfig_SignatureParameters {

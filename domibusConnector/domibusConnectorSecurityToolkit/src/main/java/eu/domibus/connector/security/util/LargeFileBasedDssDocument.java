@@ -1,16 +1,13 @@
-package eu.domibus.connector.security.container;
+package eu.domibus.connector.security.util;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
-import eu.europa.esig.dss.CommonDocument;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.MimeType;
+import eu.europa.esig.dss.model.CommonDocument;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.MimeType;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class LargeFileBasedDssDocument extends CommonDocument implements DSSDocument {
 

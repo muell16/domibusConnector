@@ -12,7 +12,7 @@ package eu.ecodex.dss.util;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 /**
  * Provide conveniences methods for XML stream.
