@@ -1,17 +1,29 @@
 package eu.ecodex.signature;
 
-import eu.europa.esig.dss.*;
-import eu.europa.esig.dss.client.http.DataLoader;
-import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
-import eu.europa.esig.dss.client.http.commons.FileCacheDataLoader;
+//import eu.europa.esig.dss.*;
+//import eu.europa.esig.dss.client.http.DataLoader;
+//import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
+//import eu.europa.esig.dss.client.http.commons.FileCacheDataLoader;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.SignatureLevel;
+import eu.europa.esig.dss.enumerations.SignaturePackaging;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.SignatureValue;
+import eu.europa.esig.dss.model.ToBeSigned;
+import eu.europa.esig.dss.model.x509.CertificateToken;
+import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
+import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
 import eu.europa.esig.dss.signature.DocumentSignatureService;
+import eu.europa.esig.dss.spi.client.http.DataLoader;
 import eu.europa.esig.dss.token.KSPrivateKeyEntry;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.x509.CertificateToken;
+//import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.dss.xades.XAdESSignatureParameters;
+import eu.europa.esig.dss.xades.XAdESTimestampParameters;
 import eu.europa.esig.dss.xades.signature.XAdESService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -116,7 +128,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         final byte[] signatureValue = signature.sign();
         final SignatureValue signedData = new SignatureValue(sigParam.getSignatureAlgorithm(), signatureValue);
 
-        DocumentSignatureService<XAdESSignatureParameters> signatureService = new XAdESService(getCompleteCertificateVerifier());
+        DocumentSignatureService<XAdESSignatureParameters, XAdESTimestampParameters> signatureService = new XAdESService(getCompleteCertificateVerifier());
         DSSDocument toBeSigned = new InMemoryDocument(xmlData);
         final DSSDocument signedDocument = signatureService.signDocument(toBeSigned, sigParam, signedData);
 
