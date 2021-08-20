@@ -10,6 +10,7 @@ import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CLEANUP_QUEUE_BEAN;
 
@@ -33,6 +34,7 @@ public class ToCleanupListener {
             cleanupMessageProcessor.processMessage(message);
         } catch (Exception exc) {
             LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw exc;
         }
     }
