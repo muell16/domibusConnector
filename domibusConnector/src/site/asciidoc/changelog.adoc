@@ -251,3 +251,10 @@ is transported via the pull backend.
 === 4.2.13
 
 * Additional version due invalid build (4.2.12)
+
+=== 4.2.14
+
+* Enable configuration of SignatureParameters (EncrpytionAlgorithm, DigestAlgorithm) via:
+** connector.security.digest-algorithm=SHA512
+** connector.security.encryption-algorithm=RSA
+

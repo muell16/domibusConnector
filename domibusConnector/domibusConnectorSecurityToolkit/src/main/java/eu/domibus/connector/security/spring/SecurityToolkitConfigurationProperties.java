@@ -3,6 +3,8 @@ package eu.domibus.connector.security.spring;
 import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import eu.europa.esig.dss.DigestAlgorithm;
+import eu.europa.esig.dss.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,12 @@ public class SecurityToolkitConfigurationProperties {
      */
     boolean createOjStoreIfMissing = true;
 
+    @NotNull
+    EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
+
+    @NotNull
+    DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA256;
+
     public StoreConfigurationProperties getKeyStore() {
         return keyStore;
     }
@@ -116,21 +124,19 @@ public class SecurityToolkitConfigurationProperties {
         this.createOjStoreIfMissing = createOjStoreIfMissing;
     }
 
-//    @PostConstruct
-//    public void checkValues() {
-//        throwIfNull(this.getPrivateKey(), "private-key");
-//        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
-//
-//    }
-//
-//    public void throwIfNull(Object prop, String propName) {
-//        if (prop == null) {
-//            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
-//            if (commonProperties.isFailOnInvalidProperty()) {
-//                throw new IllegalArgumentException(error);
-//            } else {
-//                LOGGER.warn(error);
-//            }
-//        }
-//    }
+    public EncryptionAlgorithm getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
+    }
+
+    public void setEncryptionAlgorithm(EncryptionAlgorithm encryptionAlgorithm) {
+        this.encryptionAlgorithm = encryptionAlgorithm;
+    }
+
+    public DigestAlgorithm getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    public void setDigestAlgorithm(DigestAlgorithm digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+    }
 }
