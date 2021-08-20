@@ -270,3 +270,9 @@ sending backend application. This fix enables the connector to retrieve this inf
 
 After this fix has been applied, the p-Modes must be uploaded again!
 
+
+=== 4.3.4
+
+* Enable configuration of SignatureParameters (EncrpytionAlgorithm, DigestAlgorithm) via:
+** connector.security.digest-algorithm=SHA512
+** connector.security.encryption-algorithm=RSA

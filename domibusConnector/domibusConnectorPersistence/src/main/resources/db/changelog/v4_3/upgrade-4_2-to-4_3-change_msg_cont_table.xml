@@ -23,16 +23,36 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>
+            <foreignKeyConstraintExists foreignKeyName="FK_DOMIBUS_CONNECTOR_BIGDATA" foreignKeyTableName="DOMIBUS_CONNECTOR_BIGDATA" />
         </preConditions>
-        <comment>Drop FK to message id, replace it with connector_message_id string</comment>
+        <comment>Drop FK to message id</comment>
         <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
                                   constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA" />
-        <dropNotNullConstraint tableName="DOMIBUS_CONNECTOR_BIGDATA" columnName="MESSAGE_ID" />
+    </changeSet>
 
+    <changeSet id="change_bigdata_table" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>
+        </preConditions>
+        <comment>drop not null constraint</comment>
+        <dropNotNullConstraint tableName="DOMIBUS_CONNECTOR_BIGDATA" columnName="MESSAGE_ID" />
+    </changeSet>
+
+
+
+
+    <changeSet id="change_bigdata_table" author="SKS" onValidationFail="MARK_RAN">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>
+        </preConditions>
+        <comment>Add column CONNECTOR_MESSAGE_ID with connector_message_id string</comment>
         <addColumn tableName="DOMIBUS_CONNECTOR_BIGDATA">
             <column name="CONNECTOR_MESSAGE_ID" type="java.sql.Types.VARCHAR(512)" />
         </addColumn>
     </changeSet>
+
 
 
 </databaseChangeLog>

@@ -67,8 +67,8 @@ public class ECodexContainerFactoryService {
             certStore.setLocation(storeLocation);
             certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
 
-            EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
-            DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
+            EncryptionAlgorithm encryptionAlgorithm = securityToolkitConfigurationProperties.getEncryptionAlgorithm();
+            DigestAlgorithm digestAlgorithm = securityToolkitConfigurationProperties.getDigestAlgorithm();
 
             String keyAlias = securityToolkitConfigurationProperties.getPrivateKey().getAlias();
             String keyPassword = securityToolkitConfigurationProperties.getPrivateKey().getPassword();
