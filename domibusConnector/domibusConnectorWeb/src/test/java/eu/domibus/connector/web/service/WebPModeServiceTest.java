@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(
-    properties = { "spring.liquibase.change-log=classpath:/db/changelog/install.xml" }
+    properties = { "spring.liquibase.change-log=classpath:/db/changelog/install.xml", "spring.jta.enabled=false" }
 )
 @ActiveProfiles({PersistenceProfiles.STORAGE_DB_PROFILE_NAME, "test"})
 @Commit

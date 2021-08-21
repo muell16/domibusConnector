@@ -26,7 +26,7 @@ public class ToCleanupListener {
     }
 
     @JmsListener(destination = TO_CLEANUP_QUEUE_BEAN)
-    @Transactional(rollbackFor = Throwable.class)
+    @Transactional(rollbackFor = Exception.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToCleanupListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
@@ -34,7 +34,6 @@ public class ToCleanupListener {
             cleanupMessageProcessor.processMessage(message);
         } catch (Exception exc) {
             LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw exc;
         }
     }

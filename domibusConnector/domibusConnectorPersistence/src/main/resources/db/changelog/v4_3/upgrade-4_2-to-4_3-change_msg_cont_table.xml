@@ -30,7 +30,7 @@
                                   constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA" />
     </changeSet>
 
-    <changeSet id="change_bigdata_table" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
+    <changeSet id="change_bigdata_table_2" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>
@@ -42,7 +42,7 @@
 
 
 
-    <changeSet id="change_bigdata_table" author="SKS" onValidationFail="MARK_RAN">
+    <changeSet id="change_bigdata_table_3" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>

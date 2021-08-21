@@ -44,19 +44,19 @@ public class DomibusConnectorPersistenceContext {
         return new LargeFilePersistenceServiceJpaImpl();
     }
 
-    @Bean
-    @Primary
-    @ConfigurationProperties(prefix="spring.datasource")
-    public DataSourceProperties dataSourceConfigurationProperties() {
-        return new DataSourceProperties();
-    }
-
-    @Bean
-    @Primary
-    public DataSource dataSource() {
-        DataSourceProperties properties = dataSourceConfigurationProperties();
-        LOGGER.debug("Creating data source with properties: [{}]", properties);
-        return properties.initializeDataSourceBuilder().build();
-    }
+//    @Bean
+//    @Primary
+//    @ConfigurationProperties(prefix="spring.datasource")
+//    public DataSourceProperties dataSourceConfigurationProperties() {
+//        return new DataSourceProperties();
+//    }
+//
+//    @Bean
+//    @Primary
+//    public DataSource dataSource() {
+//        DataSourceProperties properties = dataSourceConfigurationProperties();
+//        LOGGER.debug("Creating data source with properties: [{}]", properties);
+//        return properties.initializeDataSourceBuilder().build();
+//    }
 
 }

@@ -14,10 +14,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
@@ -29,20 +33,18 @@ public class ToConnectorControllerListener {
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
     private final EvidenceMessageProcessor evidenceMessageProcessor;
-    private final ToConnectorQueue toConnectorQueue;
 
     public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
                                          ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor,
-                                         EvidenceMessageProcessor evidenceMessageProcessor,
-                                         ToConnectorQueue toConnectorQueue) {
+                                         EvidenceMessageProcessor evidenceMessageProcessor
+                                         ) {
         this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
         this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
         this.evidenceMessageProcessor = evidenceMessageProcessor;
-        this.toConnectorQueue = toConnectorQueue;
     }
 
+    @Transactional //(rollbackFor = Exception.class)
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
-    @Transactional(rollbackFor = Throwable.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         if (message == null || message.getMessageDetails() == null) {
@@ -62,11 +64,12 @@ public class ToConnectorControllerListener {
             }
         } catch (Exception exc) {
             //cannot recover here: put into DLQ!
-            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Check Dead Letter Queue and technical logs for details!", exc.getMessage());
-            String error = "Failed to process messsage due: " + exc.getMessage();
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            boolean rollbackStatus = TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
+            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Rollback is [{}], check DLQ", exc.getMessage(), rollbackStatus);
+            String error = String.format("Failed to process messsage. Rollback is [%s], Reason for rollback is:\n%s", rollbackStatus, exc.getMessage());
             LOGGER.error(error, exc);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            throw exc;
+//            throw exc;
 //            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
 //                    .setText(error)
 //                    .setDetails(exc)
