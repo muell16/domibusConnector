@@ -51,7 +51,8 @@ public class ToConnectorControllerListener {
             throw new IllegalArgumentException("Message and Message Details must not be null");
         }
         String messageId = message.getConnectorMessageId().toString();
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+        MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
+        try {
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
             if (DomainModelHelper.isEvidenceMessage(message)) {
                 evidenceMessageProcessor.processMessage(message);
@@ -64,19 +65,12 @@ public class ToConnectorControllerListener {
             }
         } catch (Exception exc) {
             //cannot recover here: put into DLQ!
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             boolean rollbackStatus = TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
-            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Rollback is [{}], check DLQ", exc.getMessage(), rollbackStatus);
+            LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message [{}] due [{}]! Rollback is [{}], check DLQ", messageId, exc.getMessage(), rollbackStatus);
             String error = String.format("Failed to process messsage. Rollback is [%s], Reason for rollback is:\n%s", rollbackStatus, exc.getMessage());
             LOGGER.error(error, exc);
-//            throw exc;
-//            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
-//                    .setText(error)
-//                    .setDetails(exc)
-//                    .setSource(ToConnectorControllerListener.class)
-//                    .build();
-//            message.getMessageProcessErrors().add(build);
-//            toConnectorQueue.putOnErrorQueue(message);
+        } finally {
+            mdcCloseable.close();
         }
     }
 

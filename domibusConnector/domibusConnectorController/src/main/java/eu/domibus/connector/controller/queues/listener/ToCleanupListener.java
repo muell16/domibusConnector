@@ -30,11 +30,14 @@ public class ToCleanupListener {
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToCleanupListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+        MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
+        try {
             cleanupMessageProcessor.processMessage(message);
         } catch (Exception exc) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             LOGGER.error("Cannot cleanup, throwing exception, transaction is rollback, Check DLQ.", exc);
-            throw exc;
+        } finally {
+            mdcCloseable.close();
         }
     }
 }

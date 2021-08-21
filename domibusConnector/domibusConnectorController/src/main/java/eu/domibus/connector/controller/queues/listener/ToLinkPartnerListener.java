@@ -34,19 +34,14 @@ public class ToLinkPartnerListener {
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToLinkPartnerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+        MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
+        try {
             submitToLink.submitToLink(message);
         } catch (Exception exc) { //DomibusConnectorSubmitToLinkException
-//            LOGGER.error("Cannot submit to link, putting message on error queue", exc);
-//            DomibusConnectorMessageError build = DomibusConnectorMessageErrorBuilder.createBuilder()
-//                    .setText("Cannot submit to link, putting message on error queue")
-//                    .setDetails(exc)
-//                    .setSource(ToLinkPartnerListener.class)
-//                    .build();
-//            message.getMessageProcessErrors().add(build);
-//            toLinkQueue.putOnErrorQueue(message);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);
-            throw exc;
+        } finally {
+            mdcCloseable.close();
         }
     }
 }
