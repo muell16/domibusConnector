@@ -241,7 +241,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         return map;
     }
 
-    @Transactional //(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     protected void saveOnClose(DbBackedOutputStream dbBackedOutputStream) {
         PDomibusConnectorBigData bigData = bigDataDao.findById(dbBackedOutputStream.storageReference.getId()).get();
 
