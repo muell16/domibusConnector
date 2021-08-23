@@ -16,6 +16,7 @@ import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
@@ -60,6 +61,7 @@ public class ToConnectorControllerListener {
             LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message due [{}]! Check Dead Letter Queue and technical logs for details!", exc.getMessage());
             String error = "Failed to process messsage due: " + exc.getMessage();
             LOGGER.error(error, exc);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw exc;
         } finally {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);

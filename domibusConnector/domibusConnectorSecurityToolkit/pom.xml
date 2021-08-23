@@ -219,6 +219,10 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>eu.ecodex.utils</groupId>
+            <artifactId>spring-boot-property-converter</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment,

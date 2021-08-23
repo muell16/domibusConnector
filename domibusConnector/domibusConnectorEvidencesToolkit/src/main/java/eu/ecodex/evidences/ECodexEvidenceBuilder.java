@@ -265,7 +265,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
             evidenceToBeSigned.serialize(fo);
         } catch (JAXBException e) {
-            e.printStackTrace();
+            LOG.error("Cannot serialize evidence", e);
         }
 
         byte[] bytes = fo.toByteArray();

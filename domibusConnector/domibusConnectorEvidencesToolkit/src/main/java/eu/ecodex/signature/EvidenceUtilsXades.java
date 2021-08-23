@@ -61,7 +61,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         try {
             signedData = createAndVerifySignature(xmlData);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Cannot createAndVerifySignature", e);
         }
 
         return signedData;

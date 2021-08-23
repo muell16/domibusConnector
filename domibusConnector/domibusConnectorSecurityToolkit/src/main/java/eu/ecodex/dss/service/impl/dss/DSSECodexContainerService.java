@@ -350,8 +350,8 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		Reports reports = validator.validateDocument(resourceAsStream);
 
 		final SimpleReport simpleReport = reports.getSimpleReport();
-		LOG.lInfo("Simple Report:\n{}", simpleReport);
-		LOGGER.debug("Detailed Report:\n{}", reports.getXmlDetailedReport());
+//		LOG.lInfo("Simple Report:\n{}", simpleReport);
+		LOGGER.debug("Detailed Report of [{}]:\n{}", document.getName(), reports.getXmlDetailedReport());
 		// final DetailedReport detailedReport = validator.getDetailedReport();
 		final DiagnosticData diagnosticData = reports.getDiagnosticData();
 		final List<AdvancedSignature> signatures = validator.getSignatures();

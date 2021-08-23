@@ -1,11 +1,15 @@
 package eu.domibus.connector.dss.configuration;
 
+import eu.domibus.connector.lib.spring.configuration.validation.CheckFolderWriteable;
 import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +25,12 @@ public class BasicDssConfigurationProperties {
     private Map<String, @Valid Tsp> timeStampServers = new HashMap<>();
 
     private Map<String, @Valid TrustListSourceConfigurationProperties> trustSource = new HashMap<>();
+
+    @NotNull
+    private Duration tlCacheExpiration = Duration.ofDays(1);
+
+    @NotNull
+    private Path tlCacheLocation;
 
     public ProxyProperties getHttpsProxy() {
         return httpsProxy;
@@ -44,6 +54,30 @@ public class BasicDssConfigurationProperties {
 
     public void setTimeStampServers(Map<String, Tsp> timeStampServers) {
         this.timeStampServers = timeStampServers;
+    }
+
+    public Map<String, TrustListSourceConfigurationProperties> getTrustSource() {
+        return trustSource;
+    }
+
+    public void setTrustSource(Map<String, TrustListSourceConfigurationProperties> trustSource) {
+        this.trustSource = trustSource;
+    }
+
+    public Duration getTlCacheExpiration() {
+        return tlCacheExpiration;
+    }
+
+    public void setTlCacheExpiration(Duration tlCacheExpiration) {
+        this.tlCacheExpiration = tlCacheExpiration;
+    }
+
+    public Path getTlCacheLocation() {
+        return tlCacheLocation;
+    }
+
+    public void setTlCacheLocation(Path tlCacheLocation) {
+        this.tlCacheLocation = tlCacheLocation;
     }
 
     @Valid

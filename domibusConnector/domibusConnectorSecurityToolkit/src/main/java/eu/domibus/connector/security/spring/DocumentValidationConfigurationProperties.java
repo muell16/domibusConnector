@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Holds the configuration for the signature based document validation
@@ -40,7 +42,7 @@ public class DocumentValidationConfigurationProperties {
     @ConfigurationDescription("The DSS Certificate Validation Constraints config")
     private Resource certificateValidationConstraintXml = new ClassPathResource("/102853/constraint.xml");
 
-    private TrustListSourceConfigurationProperties trustedLists = new TrustListSourceConfigurationProperties();
+    private List<String> trustedListSources = new ArrayList<>();
 
     private boolean ocspEnabled = true;
 
@@ -78,11 +80,11 @@ public class DocumentValidationConfigurationProperties {
         this.certificateValidationConstraintXml = certificateValidationConstraintXml;
     }
 
-    public TrustListSourceConfigurationProperties getTrustedLists() {
-        return trustedLists;
+    public List<String> getTrustedListSources() {
+        return trustedListSources;
     }
 
-    public void setTrustedLists(TrustListSourceConfigurationProperties trustedLists) {
-        this.trustedLists = trustedLists;
+    public void setTrustedListSources(List<String> trustedListSources) {
+        this.trustedListSources = trustedListSources;
     }
 }

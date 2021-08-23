@@ -248,7 +248,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
 
     @Test
-    public void simpleTestCreateContainerServiceAndBuildAsicContainer() throws ECodexException, IOException {
+    public void simpleTestCreateContainerServiceAndBuildAsicContainer(TestInfo testInfo) throws ECodexException, IOException {
 
 
         ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
@@ -267,13 +267,13 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
         assertThat(asicDocument).isNotNull();
 //
-//        asicDocument.setName("asic-s.asics");
-//        writeDssDocToDisk("simpleTest", asicDocument);
+        asicDocument.setName("asic-s.asics");
+        writeDssDocToDisk(testInfo, asicDocument);
 
         DSSDocument tokenXML = eCodexContainer.getTokenXML();
         assertThat(tokenXML).isNotNull();
-//        tokenXML.setName("asic-s_trustoktoken.xml");
-//        writeDssDocToDisk("simpleTest", tokenXML);
+        tokenXML.setName("asic-s_trustoktoken.xml");
+        writeDssDocToDisk(testInfo, tokenXML);
 
         //check if produced container and token can also be resolved again
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
@@ -291,8 +291,8 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
 
 
-        InputStream asicContainer = getClass().getResourceAsStream("/examples/asic-s.asics");
-        InputStream xmlToken = getClass().getResourceAsStream("/examples/asic-s_trustoktoken.xml");
+        InputStream asicContainer = getClass().getResourceAsStream("/examples/asics1/asic-s.asics");
+        InputStream xmlToken = getClass().getResourceAsStream("/examples/asics1/asic-s_trustoktoken.xml");
 
         assertThat(asicContainer).isNotNull();
         assertThat(xmlToken).isNotNull();

@@ -6,13 +6,16 @@ import eu.europa.esig.dss.service.NonceSource;
 import eu.europa.esig.dss.service.SecureRandomNonceSource;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
+import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
 import eu.europa.esig.dss.service.http.commons.OCSPDataLoader;
 import eu.europa.esig.dss.service.http.commons.TimestampDataLoader;
 import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
 import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.service.tsp.OnlineTSPSource;
+import eu.europa.esig.dss.spi.client.http.DSSFileLoader;
 import eu.europa.esig.dss.spi.client.http.DataLoader;
+import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.x509.tsp.CompositeTSPSource;
 import eu.europa.esig.dss.spi.x509.tsp.TSPSource;
 import org.apache.logging.log4j.LogManager;
@@ -23,8 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Proxy;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -55,11 +59,24 @@ public class BasicDssConfiguration {
             String port = System.getProperty("https.proxyPort");
             try {
                 httpsProxy.setPort(Integer.parseInt(port));
+                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS https proxy config [{}] from SystemProperties", httpsProxy);
+                proxyConfig.setHttpProperties(httpsProxy);
             } catch (NumberFormatException nfe) {
                 //do nothing..
             }
-            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS https proxy config [{}] from SystemProperties", httpsProxy);
-            proxyConfig.setHttpProperties(httpsProxy);
+
+        } else if (StringUtils.hasText(System.getenv("HTTPS_PROXY"))) {
+            String envVariable = "HTTPS_PROXY";
+
+            ProxyProperties proxyProperties = getProxyPropertiesFromSystemEnv(envVariable);
+
+            if (proxyProperties != null) {
+                proxyConfig.setHttpsProperties(proxyProperties);
+                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS https proxy config [{}] from Environment variable [{}]", proxyProperties, envVariable);
+            }
+
+        } else {
+            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS https proxy to nothing. No proxy configured!");
         }
 
         //HTTP Proxy
@@ -72,14 +89,49 @@ public class BasicDssConfiguration {
             String port = System.getProperty("http.proxyPort");
             try {
                 httpProxy.setPort(Integer.parseInt(port));
+                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS http proxy config [{}] from SystemProperties", httpProxy);
+                proxyConfig.setHttpProperties(httpProxy);
             } catch (NumberFormatException nfe) {
                 //do nothing..
             }
-            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS http proxy config [{}] from SystemProperties", httpProxy);
-            proxyConfig.setHttpProperties(httpProxy);
+
+        } else if (StringUtils.hasText(System.getenv("HTTP_PROXY"))) {
+            String envVariable = "HTTP_PROXY";
+
+            ProxyProperties proxyProperties = getProxyPropertiesFromSystemEnv(envVariable);
+
+            if (proxyProperties != null) {
+                proxyConfig.setHttpProperties(proxyProperties);
+                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS http proxy config [{}] from Environment variable [{}]", proxyProperties, envVariable);
+            }
+
+        } else {
+            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting DSS http proxy to nothing. No proxy configured!");
         }
 
         return proxyConfig;
+    }
+
+    private ProxyProperties getProxyPropertiesFromSystemEnv(String envVariable) {
+        String value = System.getenv(envVariable);
+
+        ProxyProperties proxyProperties = null;
+
+        Pattern compile = Pattern.compile("(?:http:\\/\\/|https:\\/\\/)([\\w\\.]+):(\\d+)");
+        Matcher matcher = compile.matcher(value);
+        if (matcher.matches() && matcher.groupCount() == 2) {
+
+            proxyProperties = new ProxyProperties();
+            String proxyHost = matcher.group(1);
+            String proxyPort = matcher.group(2);
+            try {
+                proxyProperties.setPort(Integer.parseInt(proxyPort));
+            } catch (NumberFormatException nfe) {
+                //do nothing..
+            }
+            proxyProperties.setHost(proxyHost);
+        }
+        return proxyProperties;
     }
 
     @Bean(name = DEFAULT_DATALOADER_BEAN_NAME)

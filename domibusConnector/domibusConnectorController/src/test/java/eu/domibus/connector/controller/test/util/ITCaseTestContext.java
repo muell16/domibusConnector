@@ -37,6 +37,7 @@ import java.util.concurrent.BlockingQueue;
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
 //        "eu.domibus.connector.lib",
+        "eu.domibus.connector.dss",
         "eu.domibus.connector.common",      //load common
         "eu.domibus.connector.persistence", //load persistence
         "eu.domibus.connector.evidences",   //load evidences toolkit
@@ -69,9 +70,6 @@ public class ITCaseTestContext {
     public interface DomibusConnectorBackendDeliveryServiceInterceptor {
         void deliveryToBackend(DomibusConnectorMessage message);
     }
-
-    @Autowired
-    PlatformTransactionManager txManager;
 
     @Autowired
     DCMessagePersistenceService messagePersistenceService;
