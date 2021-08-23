@@ -28,6 +28,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.UUID;
@@ -52,9 +53,6 @@ public class ITCaseTestContext {
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);
 
 
-//    public static final java.lang.String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
-//    public static final java.lang.String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
-
     /**
      * Use this interface to tamper with the test...
      */
@@ -71,27 +69,12 @@ public class ITCaseTestContext {
     }
 
     @Autowired
-    PlatformTransactionManager txManager;
-
-    @Autowired
     DCMessagePersistenceService messagePersistenceService;
 
     @Bean
     public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-//    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
-//
-//    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
 
     @Bean
     public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
@@ -155,8 +138,6 @@ public class ITCaseTestContext {
         @Autowired
         DomibusConnectorBackendDeliveryServiceInterceptor interceptor;
 
-//        @Autowired
-//        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
 
         public synchronized void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {

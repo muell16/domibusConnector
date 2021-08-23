@@ -58,7 +58,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     @Override
-    @Transactional(readOnly = false)
     public LargeFileReference getReadableDataSource(LargeFileReference bigDataReference) {
         if (bigDataReference.getStorageIdReference() == null) {
             throw new IllegalArgumentException("storageIdReference must be not null!\n The reference must exist in database!");
@@ -117,7 +116,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
 
     @Override
-    @Transactional
     public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
 
@@ -157,7 +155,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     @Override
-    @Transactional(readOnly = false)
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
@@ -204,7 +201,6 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     @Override
-    @Transactional(readOnly = false)
     public void deleteDomibusConnectorBigDataReference(LargeFileReference bigDataReference) {
         LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data {}", bigDataReference);
 
@@ -245,7 +241,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         return map;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional //(propagation = Propagation.REQUIRES_NEW)
     protected void saveOnClose(DbBackedOutputStream dbBackedOutputStream) {
         PDomibusConnectorBigData bigData = bigDataDao.findById(dbBackedOutputStream.storageReference.getId()).get();
 

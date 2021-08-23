@@ -14,6 +14,7 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class EvidenceMessageProcessor implements DomibusConnectorMessageProcessor {
@@ -43,6 +44,7 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "EvidenceMessageProcessor")
     public void processMessage(DomibusConnectorMessage message) {
         try {

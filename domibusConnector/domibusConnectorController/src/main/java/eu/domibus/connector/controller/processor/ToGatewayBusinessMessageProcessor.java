@@ -15,6 +15,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Takes a originalMessage from backend and creates evidences for it
@@ -58,6 +59,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
         this.verifyPModesStep = verifyPModesStep;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DomibusConnectorMessage message) {
         try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getMessageDetails().getBackendMessageId())){

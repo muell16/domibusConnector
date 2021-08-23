@@ -43,7 +43,7 @@ public class ToConnectorControllerListener {
         this.evidenceMessageProcessor = evidenceMessageProcessor;
     }
 
-    @Transactional //(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
@@ -65,6 +65,7 @@ public class ToConnectorControllerListener {
             }
         } catch (Exception exc) {
             //cannot recover here: put into DLQ!
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             boolean rollbackStatus = TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
             LOGGER.error(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Failed to process message [{}] due [{}]! Rollback is [{}], check DLQ", messageId, exc.getMessage(), rollbackStatus);
             String error = String.format("Failed to process messsage. Rollback is [%s], Reason for rollback is:\n%s", rollbackStatus, exc.getMessage());

@@ -96,11 +96,6 @@ public class PDomibusConnectorMessage implements Serializable {
     @OneToMany(mappedBy = "businessMessage", fetch = FetchType.EAGER)
     private Set<PDomibusConnectorEvidence> relatedEvidences = new HashSet<>();
 
-    /**
-     * This evidences here are transported with the message
-     */
-//    @OneToMany(mappedBy = "transportMessage", fetch = FetchType.EAGER)
-//    private Set<PDomibusConnectorEvidence> transportedEvidences = new HashSet<>();
 
     @PrePersist    
     public void prePersist() {
@@ -146,14 +141,6 @@ public class PDomibusConnectorMessage implements Serializable {
     public void setConversationId(String conversationId) {
         this.conversationId = conversationId;
     }
-
-//    public Set<PDomibusConnectorEvidence> getTransportedEvidences() {
-//        return transportedEvidences;
-//    }
-
-//    public void setTransportedEvidences(Set<PDomibusConnectorEvidence> transportedEvidences) {
-//        this.transportedEvidences = transportedEvidences;
-//    }
 
     public String getHashValue() {
         return hashValue;

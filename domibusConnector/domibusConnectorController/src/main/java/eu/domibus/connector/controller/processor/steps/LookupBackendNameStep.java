@@ -10,6 +10,8 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -34,6 +36,7 @@ public class LookupBackendNameStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW) //suspend current TX and run in new TX, to reduce locking
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         if (!StringUtils.isEmpty(domibusConnectorMessage.getMessageDetails().getConnectorBackendClientName())) {
             //return when already set

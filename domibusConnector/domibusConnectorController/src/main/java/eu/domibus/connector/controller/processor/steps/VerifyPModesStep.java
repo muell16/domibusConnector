@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -25,6 +27,7 @@ public class VerifyPModesStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW) //suspend current TX and run in new TX, to limit Table locking AND make sure p-Mode config is read in ONE tx
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         DomibusConnectorMessageLane.MessageLaneId messageLaneId = domibusConnectorMessage.getMessageLaneId();
         DomibusConnectorMessageDetails messageDetails = domibusConnectorMessage.getMessageDetails();
