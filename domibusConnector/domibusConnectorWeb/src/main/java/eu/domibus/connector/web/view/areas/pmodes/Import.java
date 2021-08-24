@@ -200,7 +200,7 @@ public class Import extends VerticalLayout implements AfterNavigationObserver{
 				area.setValue(new String(pmodeFile, "UTF-8"));
 				area.setWidth("80vw");
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			areaImportResult.setWidth("100vw");
 			areaImportResult.add(pModeFileText);

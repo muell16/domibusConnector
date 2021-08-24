@@ -246,26 +246,8 @@ import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer trans = tf.newTransformer();
 			trans.transform(new DOMSource(doc), new StreamResult(os));
-		} catch (KeyException e1) {
-			e1.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		} catch (MarshalException e) {
-			e.printStackTrace();
-		} catch (XMLSignatureException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
+		} catch (SAXException | KeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | XMLSignatureException | MarshalException | TransformerException | ParserConfigurationException | IOException e) {
+			throw new RuntimeException(e);
 		}
 
 	}

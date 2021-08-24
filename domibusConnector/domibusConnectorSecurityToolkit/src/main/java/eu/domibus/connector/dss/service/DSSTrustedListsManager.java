@@ -180,10 +180,5 @@ public class DSSTrustedListsManager {
         return this.trustedListsCertificateSourceMap.keySet();
     }
 
-    public static interface CertificateSourceHolder {
-
-
-
-    }
 
 }

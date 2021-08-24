@@ -76,18 +76,8 @@ public abstract class EvidenceUtils {
             } else {
                 keyPair = null;
             }
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            LOG.error("Cannot get keypair from keystore", e); //TODO: runtime exception?
         }
 
         return keyPair;
@@ -104,12 +94,8 @@ public abstract class EvidenceUtils {
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlData));
 
             convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            LOG.error("Failed to convert convertIntoREMEvidenceType", e); //TODO: runtime exception?
         }
 
         return convertedEvidence;
@@ -121,7 +107,7 @@ public abstract class EvidenceUtils {
         try {
             jaxbObj = JaxbContextHolder.getSpocsJaxBContext().createUnmarshaller().unmarshal(domDocument, REMEvidenceType.class);
         } catch (JAXBException e) {
-            e.printStackTrace();
+            LOG.error(e); //TODO: runtime exception?
         }
 
         return jaxbObj;

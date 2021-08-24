@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {BasicDssConfiguration.class,
@@ -29,13 +30,10 @@ class DSSTrustedListsManagerTest {
     @Autowired
     DSSTrustedListsManager dssTrustedListsManager;
 
-    @Autowired
-    ProxyConfig proxyConfig;
-
-
     @Test
     public void testStartup() {
-        System.out.println("hallo welt!");
+        assertThat(dssTrustedListsManager.getAllSourceNames()).hasSize(1);
+        assertThat(dssTrustedListsManager.getCertificateSource("eu")).isPresent();
     }
 
 

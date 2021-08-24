@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.nio.file.Path;
@@ -83,7 +84,8 @@ public class BasicDssConfigurationProperties {
     @Valid
     public static class Tsp {
 
-        @Pattern(regexp = "^https:\\/\\/", message = "Only https urls are allowed")
+        //@Pattern(regexp = "^(https|http):\\/\\/", message = "Only http or https urls are allowed")
+        @NotBlank
         private String url;
 
         private String policyOid;

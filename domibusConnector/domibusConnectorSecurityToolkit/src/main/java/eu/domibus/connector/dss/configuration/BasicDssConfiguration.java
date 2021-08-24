@@ -183,8 +183,14 @@ public class BasicDssConfiguration {
                             OnlineTSPSource onlineTSPSource = new OnlineTSPSource();
                             onlineTSPSource.setNonceSource(nonceSource);
                             onlineTSPSource.setDataLoader(timestampDataLoader);
-                            onlineTSPSource.setPolicyOid(policyOid);
-                            onlineTSPSource.setTspServer(url);
+                            if (StringUtils.hasText(policyOid)) {
+                                onlineTSPSource.setPolicyOid(policyOid);
+                            }
+                            if (StringUtils.hasText(url)) {
+                                onlineTSPSource.setTspServer(url);
+                            } else {
+                                throw new IllegalArgumentException("Illegal tsp url!");
+                            }
                             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Adding TimeStampServer with key [{}] url [{}] and policyOid [{}] to TSP Sources", entry.getKey(), url, policyOid);
                             return onlineTSPSource;
                         }));

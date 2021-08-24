@@ -80,7 +80,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
             recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
             sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.warn(e);
         }
 
         Destinations destinations = new Destinations();

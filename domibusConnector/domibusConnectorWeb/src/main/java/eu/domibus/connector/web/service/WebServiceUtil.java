@@ -24,7 +24,7 @@ public class WebServiceUtil {
         try {
             wb.write(outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return new ByteArrayInputStream(outputStream.toByteArray());

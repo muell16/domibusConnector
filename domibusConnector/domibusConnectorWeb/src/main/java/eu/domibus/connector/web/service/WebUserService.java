@@ -48,7 +48,7 @@ public class WebUserService {
 			resettedUser = persistenceService.resetUserPassword(user, newInitialPassword);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return resettedUser!=null;
 	}
@@ -60,7 +60,7 @@ public class WebUserService {
 			user = persistenceService.createNewUser(newUser);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return user!=null;
 	}

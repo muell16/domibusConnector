@@ -142,7 +142,7 @@ class DSSTokenValidationCreator {
 			if (tValidation.getOriginalValidationReport() == null) {
 				tValidation.setOriginalValidationReport(new OriginalValidationReportContainer());
 			}
-			e.printStackTrace();
+
 			validationResult.setTrustLevel(TechnicalTrustLevel.FAIL);
 			validationResult.setComment("An error occurred, while validating the signature via DSS.");
 			LOG.lWarn("b/o encountered exception: result determined to {}: {}", validationResult.getTrustLevel(), validationResult.getComment());
