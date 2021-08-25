@@ -51,7 +51,6 @@ public class ECodexContainerFactoryService {
         containerService.setCertificateVerifier(certificateVerifier);
 
         ECodexLegalValidationService legalValidationService = new DSSECodexLegalValidationService();
-        legalValidationService.setEnvironmentConfiguration(environmentConfiguration);
         containerService.setLegalValidationService(legalValidationService);
 
         SignatureParameters signatureParameters = createSignatureParameters();

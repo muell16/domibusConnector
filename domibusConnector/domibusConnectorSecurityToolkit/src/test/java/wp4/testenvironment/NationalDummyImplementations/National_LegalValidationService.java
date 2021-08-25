@@ -12,9 +12,9 @@ public class National_LegalValidationService implements
 	
 	private LegalValidationResult result;
 	
-	@Override
-	public void setEnvironmentConfiguration(EnvironmentConfiguration conf) {
-	}
+//	@Override
+//	public void setEnvironmentConfiguration(EnvironmentConfiguration conf) {
+//	}
 
 	@Override
 	public LegalValidationResult create(Token token) throws ECodexException {

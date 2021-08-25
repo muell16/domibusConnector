@@ -47,11 +47,11 @@ public class DSSEcodexContainerServiceTest {
         DSSECodexContainerService containerService = new DSSECodexContainerService();
         
         
-        EnvironmentConfiguration environmentConfiguration = initEnvironmentConfiguration();
+//        EnvironmentConfiguration environmentConfiguration = initEnvironmentConfiguration();
         
         
         ECodexLegalValidationService ecodexLegalValidationService = new DSSECodexLegalValidationService();
-        ecodexLegalValidationService.setEnvironmentConfiguration(environmentConfiguration);             
+//        ecodexLegalValidationService.setEnvironmentConfiguration(environmentConfiguration);
         containerService.setLegalValidationService(ecodexLegalValidationService);
         
         

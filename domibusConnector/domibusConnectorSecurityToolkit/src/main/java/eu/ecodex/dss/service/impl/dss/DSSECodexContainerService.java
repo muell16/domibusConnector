@@ -793,7 +793,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration) {
 		LOG.lConfig("set environmentConfiguration: {}", environmentConfiguration);
 		try {
@@ -808,7 +807,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void setContainerSignatureParameters(final SignatureParameters signingParameters) {
 		this.signingParameters = signingParameters;
 		LOG.lConfig("set signingParameters: {}", signingParameters);
@@ -817,7 +815,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void setTechnicalValidationService(final ECodexTechnicalValidationService validationService) {
 		this.technicalValidationService = validationService;
 		LOG.lConfig("set technicalValidationService: {}", validationService);
@@ -826,7 +823,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void setLegalValidationService(final ECodexLegalValidationService validationService) {
 		this.legalValidationService = validationService;
 		LOG.lConfig("set legalValidationService: {}", validationService);
