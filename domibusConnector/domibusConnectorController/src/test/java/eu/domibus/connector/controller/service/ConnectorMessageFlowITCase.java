@@ -266,14 +266,14 @@ public class ConnectorMessageFlowITCase {
                     )
                     .setMessageDetails(DomibusConnectorMessageDetailsBuilder
                             .create()
-                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
+                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- is used to find original message
                             .withEbmsMessageId(null) //
                             .withAction("")
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
-                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyAT()) //empty
+                            .withToParty(DomainEntityCreator.createPartyDE()) //empty
                             .withFinalRecipient("")
                             .withOriginalSender("")
                             .build())
@@ -475,6 +475,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled
     public void testReceiveMessageFromGw_respondWithNonDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -572,6 +573,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -1311,6 +1313,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
+    @Disabled
     public void sendMessageFromBackend_timeoutRelayRemmd(TestInfo testInfo) {
         String EBMS_ID = null;
         final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
