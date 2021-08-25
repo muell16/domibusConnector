@@ -38,14 +38,15 @@ public class ToConnectorControllerListener {
     }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
-    @Transactional(rollbackFor = Throwable.class)
+    @Transactional(rollbackFor = Exception.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         if (message == null || message.getMessageDetails() == null) {
             throw new IllegalArgumentException("Message and Message Details must not be null");
         }
         String messageId = message.getConnectorMessageId().toString();
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+        MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
+        try {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
             if (DomainModelHelper.isEvidenceMessage(message)) {
@@ -65,6 +66,7 @@ public class ToConnectorControllerListener {
             throw exc;
         } finally {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);
+            mdcCloseable.close();
         }
     }
 

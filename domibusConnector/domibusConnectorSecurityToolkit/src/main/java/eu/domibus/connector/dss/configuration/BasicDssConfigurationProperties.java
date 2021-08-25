@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class BasicDssConfigurationProperties {
     private Duration tlCacheExpiration = Duration.ofDays(1);
 
     @NotNull
-    private Path tlCacheLocation;
+    private Path tlCacheLocation = Paths.get("./tlcache");
 
     public ProxyProperties getHttpsProxy() {
         return httpsProxy;

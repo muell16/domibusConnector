@@ -21,14 +21,14 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
 
-@ComponentScan(basePackages = {"eu.domibus.connector.security", "eu.domibus.connector.common"})
+@ComponentScan(basePackages = {"eu.domibus.connector.security", "eu.domibus.connector.common", "eu.domibus.connector.dss"})
 @EnableAutoConfiguration( exclude = {
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
         HibernateJpaAutoConfiguration.class
 })
 @Configuration
-@Import({BasicDssConfigurationProperties.class})
+//@Import({BasicDssConfigurationProperties.class})
 @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
 public class SecurityToolkitTestContext {
 

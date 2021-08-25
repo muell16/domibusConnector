@@ -27,11 +27,12 @@ public class ToLinkPartnerListener {
     }
 
     @JmsListener(destination = TO_LINK_QUEUE_BEAN)
-    @Transactional(rollbackFor = Throwable.class)
+    @Transactional(rollbackFor = Exception.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToLinkPartnerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
+        MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
+        try {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             submitToLink.submitToLink(message);
         } catch (Exception exc) {
@@ -40,6 +41,7 @@ public class ToLinkPartnerListener {
             throw exc;
         } finally {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);
+            mdcCloseable.close();
         }
     }
 }
