@@ -268,8 +268,9 @@ public class DataTables extends VerticalLayout implements AfterNavigationObserve
 
 		partyGrid.addColumn(DomibusConnectorParty::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
 		partyGrid.addColumn(DomibusConnectorParty::getPartyIdType).setHeader("Party ID Type").setWidth("500px").setSortable(true).setResizable(true);
-		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Party Role").setWidth("500px").setSortable(true).setResizable(true);
-		partyGrid.setWidth("1270px");
+		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Role").setWidth("500px").setSortable(true).setResizable(true);
+		partyGrid.addColumn(DomibusConnectorParty::getRoleType).setHeader("Role Type").setWidth("500px").setSortable(true).setResizable(true);
+		partyGrid.setWidth("1760px");
 		partyGrid.setHeight("320px");
 		partyGrid.setMultiSort(true);
 		partyGrid.setVisible(false);
