@@ -1,6 +1,5 @@
 package eu.domibus.connector.dss.configuration;
 
-import eu.domibus.connector.lib.spring.configuration.validation.CheckFolderWriteable;
 import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -8,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -26,7 +24,7 @@ public class BasicDssConfigurationProperties {
 
     private Map<String, @Valid Tsp> timeStampServers = new HashMap<>();
 
-    private Map<String, @Valid TrustListSourceConfigurationProperties> trustSource = new HashMap<>();
+    private Map<String, @Valid TrustListSourceConfigurationProperties> trustListSources = new HashMap<>();
 
     @NotNull
     private Duration tlCacheExpiration = Duration.ofDays(1);
@@ -58,12 +56,12 @@ public class BasicDssConfigurationProperties {
         this.timeStampServers = timeStampServers;
     }
 
-    public Map<String, TrustListSourceConfigurationProperties> getTrustSource() {
-        return trustSource;
+    public Map<String, TrustListSourceConfigurationProperties> getTrustListSources() {
+        return trustListSources;
     }
 
-    public void setTrustSource(Map<String, TrustListSourceConfigurationProperties> trustSource) {
-        this.trustSource = trustSource;
+    public void setTrustListSources(Map<String, TrustListSourceConfigurationProperties> trustListSources) {
+        this.trustListSources = trustListSources;
     }
 
     public Duration getTlCacheExpiration() {

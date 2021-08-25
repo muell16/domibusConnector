@@ -10,7 +10,6 @@ import eu.europa.esig.dss.spi.client.http.DSSFileLoader;
 import eu.europa.esig.dss.spi.client.http.DataLoader;
 import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.spi.x509.CommonCertificateSource;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.tsl.function.OfficialJournalSchemeInformationURI;
@@ -64,7 +63,7 @@ public class DSSTrustedListsManager {
     @PostConstruct
     public void init() {
 
-        Map<String, TrustListSourceConfigurationProperties> trustSource = basicDssConfigurationProperties.getTrustSource();
+        Map<String, TrustListSourceConfigurationProperties> trustSource = basicDssConfigurationProperties.getTrustListSources();
         trustSource.forEach(this::initTrustSource);
 
 

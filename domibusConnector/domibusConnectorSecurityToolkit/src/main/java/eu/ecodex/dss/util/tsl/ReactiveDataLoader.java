@@ -33,16 +33,29 @@ public class ReactiveDataLoader implements DataLoader {
 	
 	private Document inMemoryTSL;
 	private Object TSL;
-	private ECodexDataLoader dataLoader;
+	private DataLoader dataLoader;
 	private boolean isLOTL;
 	
 	public ReactiveDataLoader(Document inMemoryTSL, Object authenticationCertificateTSL, ProxyConfig proxyManager) {
 		this.inMemoryTSL = inMemoryTSL;
 		this.TSL = authenticationCertificateTSL;
+
+		ECodexDataLoader dataLoader = new ECodexDataLoader();
+		dataLoader.setProxyConfig(proxyManager);
+
+		this.dataLoader = dataLoader;
 		
-		this.dataLoader = new ECodexDataLoader();
-		this.dataLoader.setProxyConfig(proxyManager);
-		
+		this.isLOTL = false;
+	}
+
+	public ReactiveDataLoader(Document inMemoryTSL, Object authenticationCertificateTSL, DataLoader dataLoader) {
+		this.inMemoryTSL = inMemoryTSL;
+		this.TSL = authenticationCertificateTSL;
+
+//		this.dataLoader = new ECodexDataLoader();
+//		this.dataLoader.setProxyConfig(proxyManager);
+		this.dataLoader = dataLoader;
+
 		this.isLOTL = false;
 	}
 	
@@ -136,13 +149,13 @@ public class ReactiveDataLoader implements DataLoader {
 	public void setContentType(String contentType) {
 	}
 	
-	public boolean isAllowLDAP() {
-		return dataLoader.isAllowLDAP();
-	}
-
-	public void allowLDAP(boolean allowLDAP) {
-		dataLoader.setAllowLDAP(allowLDAP);
-	}
+//	public boolean isAllowLDAP() {
+//		return dataLoader.isAllowLDAP();
+//	}
+//
+//	public void allowLDAP(boolean allowLDAP) {
+//		dataLoader.setAllowLDAP(allowLDAP);
+//	}
 
 	@Override
 	public DataAndUrl get(List<String> urlStrings) {

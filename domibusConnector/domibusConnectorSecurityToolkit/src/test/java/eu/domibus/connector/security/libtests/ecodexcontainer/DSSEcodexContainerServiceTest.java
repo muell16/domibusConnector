@@ -55,13 +55,13 @@ public class DSSEcodexContainerServiceTest {
         containerService.setLegalValidationService(ecodexLegalValidationService);
         
         
-        DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService();
-        technicalValidationService.setEnvironmentConfiguration(environmentConfiguration);
-        technicalValidationService.setProxyPreferenceManager(initProxyConfig());
+//        DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService(certificateVerifier, processExecutor, trustedListCertificatesSource, ignoredCertificatesStore);
+//        technicalValidationService.setEnvironmentConfiguration(environmentConfiguration);
+//        technicalValidationService.setProxyPreferenceManager(initProxyConfig());
+//
+//        technicalValidationService.initAuthenticationCertificateVerification();
         
-        technicalValidationService.initAuthenticationCertificateVerification();
-        
-        containerService.setTechnicalValidationService(technicalValidationService);
+//        containerService.setTechnicalValidationService(technicalValidationService);
         
 
         CertificateStoreInfo certStore = new CertificateStoreInfo();

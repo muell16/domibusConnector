@@ -1,8 +1,10 @@
 package wp4.testenvironment.singletests.configuration;
 
-import java.util.List;
 
-
+import eu.ecodex.dss.service.impl.dss.ConnectorCertificatesStore;
+import eu.ecodex.dss.util.tsl.LotlCreator;
+import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
+import eu.europa.esig.dss.validation.executor.signature.DefaultSignatureProcessExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -15,7 +17,6 @@ import wp4.testenvironment.configurations.ValidConfig_CertificateVerifier;
 import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator_AuthCertificateTSL;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.model.token.LegalTrustLevel;
 import eu.ecodex.dss.model.token.TokenIssuer;
@@ -26,10 +27,14 @@ import eu.ecodex.dss.util.ZipStreamUtil;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import util.ContainerToFilesystem;
 
+import java.util.Optional;
+
 @Disabled("TODO: repair test")
 public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
 
 	static DSSECodexContainerService containerService;
+
+
 	
 	@BeforeAll
 	static public void init() {
@@ -37,19 +42,24 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
 		
     	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfiguration());
     	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
+
 	}
-	
+
+
+    private static DocumentProcessExecutor processExecutor = new DefaultSignatureProcessExecutor();
+	private Optional<ConnectorCertificatesStore> emptyOptional = Optional.empty();
+
 	/*
 	 * Variant 1 - Configuration by URIString using TSL
 	 */
     @Test
     public void test_Configuration_by_URIString_using_TSL() throws Exception {
 
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(), processExecutor, Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_TSL())), Optional.empty());
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_TSL());
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_TSL());
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	
@@ -89,12 +99,15 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     @Test
     public void test_Configuration_by_FileInputStream_using_TSL() throws Exception {
 
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+                processExecutor,
+                Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_TSL())),
+                Optional.empty());
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_TSL());
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_TSL());
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	
@@ -134,12 +147,15 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     @Test
     public void test_Configuration_by_ByteArray_using_TSL() throws Exception {
 
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+                processExecutor,
+                Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_TSL())),
+                Optional.empty());
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_TSL());
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_TSL());
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	
@@ -179,13 +195,15 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     @Test
     public void test_Configuration_by_URIString_using_LOTL() throws Exception {
 
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+                processExecutor,
+                Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_LOTL(), true, null)),
+                emptyOptional);
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_LOTL());
-    	validationService.isAuthenticationCertificateLOTL(true);
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_URIString_with_LOTL());
+//    	validationService.isAuthenticationCertificateLOTL(true);
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	
@@ -225,13 +243,16 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     @Test
     public void test_Configuration_by_FileInputStream_using_LOTL() throws Exception {
 
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+                processExecutor,
+                Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_LOTL(), true, null)),
+                emptyOptional);
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_LOTL());
-    	validationService.isAuthenticationCertificateLOTL(true);
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_LOTL());
+//    	validationService.isAuthenticationCertificateLOTL(true);
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	
@@ -271,13 +292,16 @@ public class Test_ValidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     @Test
     public void test_Configuration_by_ByteArray_using_LOTL() throws Exception {
     	
-    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService();
+    	DSSECodexTechnicalValidationService validationService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+                processExecutor,
+                Optional.of(LotlCreator.createTrustedListsCertificateSource(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL(), true, null)),
+                emptyOptional);
     	
-    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
-    	
-    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
-    	validationService.isAuthenticationCertificateLOTL(true);
-    	validationService.initAuthenticationCertificateVerification();
+//    	validationService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//
+//    	validationService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
+//    	validationService.isAuthenticationCertificateLOTL(true);
+//    	validationService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(validationService);
     	

@@ -525,9 +525,9 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		token.setIssuer(issuer);
 
 		// Create the technical validation
-		if (technicalValidationService instanceof DSSECodexTechnicalValidationService) {
-			((DSSECodexTechnicalValidationService) technicalValidationService).setProcessExecutor(processExecutor);
-		}
+//		if (technicalValidationService instanceof DSSECodexTechnicalValidationService) {
+//			((DSSECodexTechnicalValidationService) technicalValidationService).setProcessExecutor(processExecutor);
+//		}
 		final TokenValidation tokenValidation = technicalValidationService.create(businessDocument, detachedSignature);
 		// test some post-conditions according to the contract of the method
 		throwIfNull(tokenValidation, "the technical validation service did not create a token validation object");

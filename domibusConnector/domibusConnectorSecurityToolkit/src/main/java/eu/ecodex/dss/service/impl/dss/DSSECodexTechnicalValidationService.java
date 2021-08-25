@@ -20,7 +20,6 @@ import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.util.LogDelegate;
 import eu.ecodex.dss.util.PdfValidationReportService;
-import eu.ecodex.dss.util.tsl.ReactiveDataLoader;
 import eu.europa.esig.dss.diagnostic.DiagnosticData;
 import eu.europa.esig.dss.model.DSSDocument;
 
@@ -28,10 +27,7 @@ import eu.europa.esig.dss.model.DSSException;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.model.MimeType;
 
-import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
-import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
 import eu.europa.esig.dss.simplereport.SimpleReport;
-import eu.europa.esig.dss.spi.tsl.TLInfo;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 
 import eu.europa.esig.dss.spi.x509.CandidatesForSigningCertificate;
@@ -41,7 +37,6 @@ import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
-import eu.europa.esig.dss.validation.executor.ProcessExecutor;
 import eu.europa.esig.dss.validation.reports.Reports;
 
 import eu.europa.esig.dss.model.x509.CertificateToken;
@@ -53,6 +48,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.security.auth.x500.X500Principal;
 import javax.xml.parsers.DocumentBuilder;
@@ -76,19 +72,23 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 	private static final LogDelegate LOG = new LogDelegate(DSSECodexTechnicalValidationService.class);
 
-	private ProxyConfig preferenceManager;
-	private CertificateVerifier certificateVerifier;
-	private EnvironmentConfiguration environmentConfiguration;
+//	private ProxyConfig preferenceManager;
+	private final CertificateVerifier certificateVerifier;
+	private final DocumentProcessExecutor processExecutor;
+	private final Optional<TrustedListsCertificateSource> trustedListCertificatesSource;
+	private final Optional<ConnectorCertificatesStore> ignoredCertificatesStore;
 
-	private DocumentProcessExecutor processExecutor;
-    
-	// klara: Added Attribute for TSL of authentication-certificates incl. setters/getters
-	private Object authenticationCertificateTSL;
-	private boolean isLOTL;
-	private TrustedListsCertificateSource trustedListCertificatesSource;
-	
-	private ConnectorCertificatesStore ignoredCertificatesStore;
-	
+	public DSSECodexTechnicalValidationService(CertificateVerifier certificateVerifier,
+											   DocumentProcessExecutor processExecutor,
+											   Optional<TrustedListsCertificateSource> trustedListCertificatesSource,
+											   Optional<ConnectorCertificatesStore> ignoredCertificatesStore) {
+		this.certificateVerifier = certificateVerifier;
+		this.processExecutor = processExecutor;
+		this.trustedListCertificatesSource = trustedListCertificatesSource;
+		this.ignoredCertificatesStore = ignoredCertificatesStore;
+	}
+
+
 	/**
 	 * The method {@code #setProcessExecutor} must be called before.
 	 *
@@ -99,7 +99,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 		LOG.mEnter("create", businessDocument, detachedSignature);
 		try {
 			final DSSTokenValidationCreator delegate = new DSSTokenValidationCreator(certificateVerifier, businessDocument, detachedSignature, processExecutor);
-			delegate.setIgnoredCertificatesStore(ignoredCertificatesStore);
+			delegate.setIgnoredCertificatesStore(ignoredCertificatesStore.orElse(null));
 			delegate.run();
 			return delegate.getResult();
 		} catch (Exception e) {
@@ -195,15 +195,15 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 		}
 	}
 
-	/**
-	 * sets the certificate verifier used for the token validation
-	 *
-	 * @param certificateVerifier the value
-	 */
-	public void setCertificateVerifier(final CertificateVerifier certificateVerifier) {
-		this.certificateVerifier = certificateVerifier;
-		LOG.lConfig("set certificateVerifier: " + certificateVerifier);
-	}
+//	/**
+//	 * sets the certificate verifier used for the token validation
+//	 *
+//	 * @param certificateVerifier the value
+//	 */
+//	public void setCertificateVerifier(final CertificateVerifier certificateVerifier) {
+//		this.certificateVerifier = certificateVerifier;
+//		LOG.lConfig("set certificateVerifier: " + certificateVerifier);
+//	}
 
 	/**
 	 * {@inheritDoc}
@@ -213,111 +213,111 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	 * otherwise
 	 * it will be ignored
 	 */
-	public void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration) {
-		this.environmentConfiguration = environmentConfiguration;
-		
-		LOG.lConfig("set environment configuration: " + environmentConfiguration);
+//	public void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration) {
+//		this.environmentConfiguration = environmentConfiguration;
+//
+//		LOG.lConfig("set environment configuration: " + environmentConfiguration);
+//
+//		if (preferenceManager == null) {
+//			LOG.lWarn("NO preference manager set - unable to forward environment configuration", environmentConfiguration);
+//			return;
+//		}
+//
+//		final ProxyData proxyHttp = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTP();
+//		final ProxyData proxyHttps = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTPS();
+//
+//		if(proxyHttp != null) {
+//			LOG.lInfo("HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
+//			ProxyProperties httpProperties = new ProxyProperties();
+//			httpProperties.setHost((proxyHttp == null) ? null : proxyHttp.getHost());
+//			httpProperties.setPort((proxyHttp == null) ? null : proxyHttp.getPort());
+//			httpProperties.setUser((proxyHttp == null) ? null : proxyHttp.getAuthName());
+//			httpProperties.setPassword((proxyHttp == null) ? null : proxyHttp.getAuthPass());
+//			preferenceManager.setHttpProperties(httpProperties);
+//		} else {
+//			LOG.lInfo("No HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
+//		}
+//
+//		if(proxyHttps != null) {
+//			LOG.lInfo("HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
+//			ProxyProperties httpsProperties = new ProxyProperties();
+//			httpsProperties.setHost((proxyHttps == null) ? null : proxyHttps.getHost());
+//			httpsProperties.setPort((proxyHttps == null) ? null : proxyHttps.getPort());
+//			httpsProperties.setUser((proxyHttps == null) ? null : proxyHttps.getAuthName());
+//			httpsProperties.setPassword((proxyHttps == null) ? null : proxyHttps.getAuthPass());
+//			preferenceManager.setHttpProperties(httpsProperties);
+//		} else {
+//			LOG.lInfo("No HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
+//		}
+//
+//		String logMessage = "Proxy Configuration for security library: \n" +
+//							"HTTP Proxy Enabled: " + (preferenceManager.getHttpProperties() != null);
+//
+//		if(preferenceManager.getHttpProperties() != null) {
+//			logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
+//		}
+//
+//		logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() != null);
+//
+//		if(preferenceManager.getHttpsProperties() != null) {
+//			logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
+//		}
+//
+//		LOG.lInfo(logMessage);
+//	}
 
-		if (preferenceManager == null) {
-			LOG.lWarn("NO preference manager set - unable to forward environment configuration", environmentConfiguration);
-			return;
-		}
+//	/**
+//	 * sets the proxy preference manager, which is required for {@link #setEnvironmentConfiguration(eu.ecodex.dss.model.EnvironmentConfiguration)}
+//	 *
+//	 * @param proxyPreferenceManager the value
+//	 */
+//	public void setProxyPreferenceManager(final ProxyConfig proxyPreferenceManager) {
+//		this.preferenceManager = proxyPreferenceManager;
+//		LOG.lConfig("set proxy preference manager: " + proxyPreferenceManager);
+//
+//		String logMessage = "Proxy Configuration for security library: \n" +
+//				"HTTP Proxy Enabled: " + (preferenceManager.getHttpProperties() == null);
+//
+//		if(preferenceManager.getHttpProperties() != null) {
+//			logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
+//		}
+//
+//		logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() == null);
+//
+//		if(preferenceManager.getHttpsProperties() != null) {
+//			logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
+//		}
+//
+//		LOG.lInfo(logMessage);
+//	}
 
-		final ProxyData proxyHttp = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTP();
-		final ProxyData proxyHttps = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTPS();
-
-		if(proxyHttp != null) {
-			LOG.lInfo("HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
-			ProxyProperties httpProperties = new ProxyProperties();
-			httpProperties.setHost((proxyHttp == null) ? null : proxyHttp.getHost());
-			httpProperties.setPort((proxyHttp == null) ? null : proxyHttp.getPort());
-			httpProperties.setUser((proxyHttp == null) ? null : proxyHttp.getAuthName());
-			httpProperties.setPassword((proxyHttp == null) ? null : proxyHttp.getAuthPass());
-			preferenceManager.setHttpProperties(httpProperties);
-		} else {
-			LOG.lInfo("No HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
-		}
-		
-		if(proxyHttps != null) {
-			LOG.lInfo("HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
-			ProxyProperties httpsProperties = new ProxyProperties();
-			httpsProperties.setHost((proxyHttps == null) ? null : proxyHttps.getHost());
-			httpsProperties.setPort((proxyHttps == null) ? null : proxyHttps.getPort());
-			httpsProperties.setUser((proxyHttps == null) ? null : proxyHttps.getAuthName());
-			httpsProperties.setPassword((proxyHttps == null) ? null : proxyHttps.getAuthPass());
-			preferenceManager.setHttpProperties(httpsProperties);
-		} else {
-			LOG.lInfo("No HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
-		}
-		
-		String logMessage = "Proxy Configuration for security library: \n" +
-							"HTTP Proxy Enabled: " + (preferenceManager.getHttpProperties() != null);
-		
-		if(preferenceManager.getHttpProperties() != null) {
-			logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
-		}
-		
-		logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() != null);
-		
-		if(preferenceManager.getHttpsProperties() != null) {
-			logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
-		}
-		
-		LOG.lInfo(logMessage);
-	}
-
-	/**
-	 * sets the proxy preference manager, which is required for {@link #setEnvironmentConfiguration(eu.ecodex.dss.model.EnvironmentConfiguration)}
-	 *
-	 * @param proxyPreferenceManager the value
-	 */
-	public void setProxyPreferenceManager(final ProxyConfig proxyPreferenceManager) {
-		this.preferenceManager = proxyPreferenceManager;
-		LOG.lConfig("set proxy preference manager: " + proxyPreferenceManager);
-		
-		String logMessage = "Proxy Configuration for security library: \n" +
-				"HTTP Proxy Enabled: " + (preferenceManager.getHttpProperties() == null);
-
-		if(preferenceManager.getHttpProperties() != null) {
-			logMessage = logMessage + "\nHTTP Proxy Host: " + preferenceManager.getHttpProperties().getHost();
-		}
-
-		logMessage = logMessage + "\nHTTPS Proxy Enabled: " + (preferenceManager.getHttpsProperties() == null);
-
-		if(preferenceManager.getHttpsProperties() != null) {
-			logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
-		}
-
-		LOG.lInfo(logMessage);
-	}
-
-	/**
-	 * This method sets the {@code ProcessExecutor} that holds the logic of the validation.
-	 *
-	 * @param processExecutor
-	 */
-	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
-		this.processExecutor = processExecutor;
-	}
+//	/**
+//	 * This method sets the {@code ProcessExecutor} that holds the logic of the validation.
+//	 *
+//	 * @param processExecutor
+//	 */
+//	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
+//		this.processExecutor = processExecutor;
+//	}
 	
-    // klara
-	/**
-	 * This method is used for one-time initialization of a configured TSL for the purpose of authentication certificate verification.
-	 * A TSL can be configured using e.g. {@link #setAuthenticationCertificateTSL(String authenticationCertificateTSL)}.
-	 *
-	 * @throws ECodexException
-	 **/
-	public void initAuthenticationCertificateVerification() throws ECodexException{
-		
-		org.w3c.dom.Document inMemoryTSL = createInMemoryTSL();
-		
-		ReactiveDataLoader dataLoader = new ReactiveDataLoader(inMemoryTSL, this.authenticationCertificateTSL, this.preferenceManager);
-
-		dataLoader.isLOTL(this.isLOTL);
+//    // klara
+//	/**
+//	 * This method is used for one-time initialization of a configured TSL for the purpose of authentication certificate verification.
+//	 * A TSL can be configured using e.g. {@link #setAuthenticationCertificateTSL(String authenticationCertificateTSL)}.
+//	 *
+//	 * @throws ECodexException
+//	 **/
+//	public void initAuthenticationCertificateVerification() throws ECodexException{
+//
+//		org.w3c.dom.Document inMemoryTSL = createInMemoryTSL();
+//
+//		ReactiveDataLoader dataLoader = new ReactiveDataLoader(inMemoryTSL, this.authenticationCertificateTSL, this.preferenceManager);
+//
+//		dataLoader.isLOTL(this.isLOTL);
 
 //		TLInfo test = new TLInfo();
 		
-		trustedListCertificatesSource = new TrustedListsCertificateSource();
+//		trustedListCertificatesSource = new TrustedListsCertificateSource();
 		
 //		TSLRepository tslRepository = new TSLRepository();
 //		tslRepository.setTrustedListsCertificateSource(trustedListCertificatesSource);
@@ -344,27 +344,26 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //		} catch (Exception e) {
 //			throw new ECodexException(e);
 //		}
-	}
+//	}
 	
-	// klara
-	/**
-	 * This method provides the information to the library whether the given TSL is a LOTL, a TSL containing a list of 
-	 * TSLs, or a normal TSL. The default value of this attribute is "false".
-	 * - false: TSL is a list of trusted certificates
-	 * - true: TSL is a list of lists
-	 *
-	 * @param isLOTL 
-	 **/
-	public void isAuthenticationCertificateLOTL(boolean isLOTL) {
-		this.isLOTL = isLOTL;
-	}
+//	// klara
+//	/**
+//	 * This method provides the information to the library whether the given TSL is a LOTL, a TSL containing a list of
+//	 * TSLs, or a normal TSL. The default value of this attribute is "false".
+//	 * - false: TSL is a list of trusted certificates
+//	 * - true: TSL is a list of lists
+//	 *
+//	 * @param isLOTL
+//	 **/
+//	public void isAuthenticationCertificateLOTL(boolean isLOTL) {
+//		this.isLOTL = isLOTL;
+//	}
 	
     // klara: Added method for certificate verification against TSL of authentication-certificates
 	/**
-	 * This method checks whether the certificate a signature has been created with on a given document (within the document or detached) is present within 
-	 * a defined TSL. Before being able to verify the TSL needs to be configured (e.g. 
-	 * {@link #setAuthenticationCertificateTSL(String authenticationCertificateTSL)}) and initialized 
-	 * ({@link #initAuthenticationCertificateVerification()}).
+	 * This method checks whether the certificate a signature has been created with on a given document (within the document or detached) is present within
+	 * a defined TSL. Before being able to verify the TSL (trustedListCertificatesSource) needs to be configured
+	 *
 	 *
 	 * @param businessDocument
 	 * @param detachedSignature - null if no detached signature is present
@@ -372,28 +371,28 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	 * @throws ECodexException
 	 **/
 	protected AuthenticationCertificate verifyAuthenticationCertificate(final DSSDocument businessDocument, final DSSDocument detachedSignature) throws ECodexException {
-    	
+
 		AuthenticationCertificate validationResult = new AuthenticationCertificate();
-    	
-    	if(this.authenticationCertificateTSL != null) {
-    		
+
+    	if(trustedListCertificatesSource.isPresent()) {
+
     		X509Certificate signatureCert = getCertificate(businessDocument, detachedSignature);
-    		
+
     		if(signatureCert != null)
     		{
     			X500Principal subjectName = signatureCert.getSubjectX500Principal();
-    			
-				List<CertificateToken> tslCerts = trustedListCertificatesSource.getCertificates();
-    			
+
+				List<CertificateToken> tslCerts = trustedListCertificatesSource.get().getCertificates();
+
 				if(tslCerts != null && !tslCerts.isEmpty())	{
 					Iterator<CertificateToken> it = tslCerts.iterator();
-					
+
 					while(it.hasNext()){
 						CertificateToken curCertAndContext = it.next();
-						
+
 						if(curCertAndContext.getCertificate().getSubjectX500Principal().equals(subjectName)){
 							if(curCertAndContext.getCertificate().equals(signatureCert)){
-								validationResult.setValidationSuccessful(true);								
+								validationResult.setValidationSuccessful(true);
 							}
 						}
 					}
@@ -407,35 +406,42 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
     		LOG.lInfo("Attribute authenticationCertificateTSL has not been set - Validation of signature certificate against TSL of authentication service providers will always fail!");
     	}
 
+//    	if(this.authenticationCertificateTSL != null) {
+//
+//    		X509Certificate signatureCert = getCertificate(businessDocument, detachedSignature);
+//
+//    		if(signatureCert != null)
+//    		{
+//    			X500Principal subjectName = signatureCert.getSubjectX500Principal();
+//
+//				List<CertificateToken> tslCerts = trustedListCertificatesSource.getCertificates();
+//
+//				if(tslCerts != null && !tslCerts.isEmpty())	{
+//					Iterator<CertificateToken> it = tslCerts.iterator();
+//
+//					while(it.hasNext()){
+//						CertificateToken curCertAndContext = it.next();
+//
+//						if(curCertAndContext.getCertificate().getSubjectX500Principal().equals(subjectName)){
+//							if(curCertAndContext.getCertificate().equals(signatureCert)){
+//								validationResult.setValidationSuccessful(true);
+//							}
+//						}
+//					}
+//				}else{
+//					validationResult.setValidationSuccessful(false);
+//					LOG.lInfo("TSL of authentication certificates was null or empty - No certificate will be deemed to bevalid.");
+//				}
+//    		}
+//    	} else {
+//    		validationResult.setValidationSuccessful(false);
+//    		LOG.lInfo("Attribute authenticationCertificateTSL has not been set - Validation of signature certificate against TSL of authentication service providers will always fail!");
+//    	}
+
     	return validationResult;
     }
 
-	// klara
-	private org.w3c.dom.Document createInMemoryTSL() throws ECodexException {
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder db = null;
-		try {
-			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			throw new ECodexException(e);
-		}
-		
-        InputStream in = ResourceUtil.getStream("/TSL/DummyLOTL.xml");
-        
-		org.w3c.dom.Document document = null;
-		
-		try {
-			document = db.parse(in);
-		} catch (SAXException e) {
-			throw new ECodexException(e);
-		} catch (IOException e) {
-			throw new ECodexException(e);
-		}
-		
-		return document;
-	}
 
 	// klara
 	private X509Certificate getCertificate(DSSDocument businessDocument, DSSDocument detachedSignature) throws ECodexException {
@@ -513,47 +519,47 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 		return signatureCert;
 	}
 	
-	/**
-	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign 
-	 * a document are representing a, authentication service provider (and thereby are present on the TSL) 
-	 *
-	 * @param authenticationCertificateTSL - The URI to a TSL to be used. Currently supported are "http:", "https:" and "file:"
-	 **/
-    public void setAuthenticationCertificateTSL(String authenticationCertificateTSL) {
-		this.authenticationCertificateTSL = authenticationCertificateTSL;
-	}
-
-	/**
-	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign 
-	 * a document are representing a, authentication service provider (and thereby are present on the TSL) 
-	 *
-	 * @param authenticationCertificateTSL - The InputStream to a TSL
-	 **/
-    public void setAuthenticationCertificateTSL(InputStream authenticationCertificateTSL) {
-		this.authenticationCertificateTSL = authenticationCertificateTSL;
-	}
+//	/**
+//	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign
+//	 * a document are representing a, authentication service provider (and thereby are present on the TSL)
+//	 *
+//	 * @param authenticationCertificateTSL - The URI to a TSL to be used. Currently supported are "http:", "https:" and "file:"
+//	 **/
+//    public void setAuthenticationCertificateTSL(String authenticationCertificateTSL) {
+//		this.authenticationCertificateTSL = authenticationCertificateTSL;
+//	}
+//
+//	/**
+//	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign
+//	 * a document are representing a, authentication service provider (and thereby are present on the TSL)
+//	 *
+//	 * @param authenticationCertificateTSL - The InputStream to a TSL
+//	 **/
+//    public void setAuthenticationCertificateTSL(InputStream authenticationCertificateTSL) {
+//		this.authenticationCertificateTSL = authenticationCertificateTSL;
+//	}
+//
+//	/**
+//	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign
+//	 * a document are representing a, authentication service provider (and thereby are present on the TSL)
+//	 *
+//	 * @param authenticationCertificateTSL - The TSL as byte[]
+//	 **/
+//    public void setAuthenticationCertificateTSL(byte[] authenticationCertificateTSL) {
+//		this.authenticationCertificateTSL = authenticationCertificateTSL;
+//	}
     
-	/**
-	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign 
-	 * a document are representing a, authentication service provider (and thereby are present on the TSL) 
-	 *
-	 * @param authenticationCertificateTSL - The TSL as byte[]
-	 **/
-    public void setAuthenticationCertificateTSL(byte[] authenticationCertificateTSL) {
-		this.authenticationCertificateTSL = authenticationCertificateTSL;
-	}
-    
-    public void setIgnoredCertificatesStore(CertificateStoreInfo ignoredCertificatesStore) {
-		try {
-			LOG.lConfig("updating the ignored certificates");
-			if(this.ignoredCertificatesStore == null){
-				this.ignoredCertificatesStore = new ConnectorCertificatesStore();
-			}
-			
-			this.ignoredCertificatesStore.update(ignoredCertificatesStore);
-		} catch (Exception e) {
-			LOG.lError("could not update the ignored certificates", e);
-			throw (e instanceof RuntimeException) ? (RuntimeException) e : new RuntimeException(e);
-		}
-    }
+//    public void setIgnoredCertificatesStore(CertificateStoreInfo ignoredCertificatesStore) {
+//		try {
+//			LOG.lConfig("updating the ignored certificates");
+//			if(this.ignoredCertificatesStore == null){
+//				this.ignoredCertificatesStore = new ConnectorCertificatesStore();
+//			}
+//
+//			this.ignoredCertificatesStore.update(ignoredCertificatesStore);
+//		} catch (Exception e) {
+//			LOG.lError("could not update the ignored certificates", e);
+//			throw (e instanceof RuntimeException) ? (RuntimeException) e : new RuntimeException(e);
+//		}
+//    }
 }

@@ -47,8 +47,8 @@ public class SecurityToolkitConfigurationProperties {
 
 //    @Valid
 //    @NotNull
-    @NestedConfigurationProperty
-    StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
+//    @NestedConfigurationProperty
+//    StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
     @Valid
     @NotNull
@@ -90,13 +90,13 @@ public class SecurityToolkitConfigurationProperties {
         this.keyStore = keystore;
     }
 
-    public StoreConfigurationProperties getOjStore() {
-        return ojStore;
-    }
-
-    public void setOjStore(StoreConfigurationProperties ojStore) {
-        this.ojStore = ojStore;
-    }
+//    public StoreConfigurationProperties getOjStore() {
+//        return ojStore;
+//    }
+//
+//    public void setOjStore(StoreConfigurationProperties ojStore) {
+//        this.ojStore = ojStore;
+//    }
 
     public StoreConfigurationProperties getTruststore() {
         return trustStore;

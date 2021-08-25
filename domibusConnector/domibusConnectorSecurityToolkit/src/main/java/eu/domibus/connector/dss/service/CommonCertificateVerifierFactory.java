@@ -1,75 +1,65 @@
-package eu.domibus.connector.security.validation;
+package eu.domibus.connector.dss.service;
 
-import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.service.DCKeyStoreService;
-import eu.domibus.connector.dss.configuration.TrustListSourceConfigurationProperties;
-import eu.domibus.connector.dss.service.DSSTrustedListsManager;
+import eu.domibus.connector.dss.configuration.CertificateVerifierConfigurationProperties;
 import eu.domibus.connector.security.spring.DocumentValidationConfigurationProperties;
+import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerifier;
 import eu.domibus.connector.tools.logging.LoggingUtils;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.spi.x509.ListCertificateSource;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-/**
- * Certificate Verifier for the
- * BusinessDocument
- *
- */
-@BusinessDomainScoped
-@Component
-public class DCBusinessDocumentCertificateVerifier extends CommonCertificateVerifier {
+@Service
+public class CommonCertificateVerifierFactory {
 
     static Logger LOGGER = LogManager.getLogger(DomibusConnectorCertificateVerifier.class);
 
-    private final DocumentValidationConfigurationProperties documentValidationConfigurationProperties;
     private final OnlineCRLSource onlineCRLSource;
     private final OnlineOCSPSource onlineOCSPSource;
     private final DCKeyStoreService dcKeyStoreService;
     private final DSSTrustedListsManager trustedListsManager;
 
-    public DCBusinessDocumentCertificateVerifier(DocumentValidationConfigurationProperties documentValidationConfigurationProperties,
+    public CommonCertificateVerifierFactory(OnlineCRLSource onlineCRLSource,
+                                            OnlineOCSPSource onlineOCSPSource,
+                                            DCKeyStoreService dcKeyStoreService,
+                                            DSSTrustedListsManager trustedListsManager) {
 
-                                                 OnlineCRLSource onlineCRLSource, OnlineOCSPSource onlineOCSPSource, DCKeyStoreService dcKeyStoreService, DSSTrustedListsManager trustedListsManager) {
-        this.documentValidationConfigurationProperties = documentValidationConfigurationProperties;
         this.onlineCRLSource = onlineCRLSource;
         this.onlineOCSPSource = onlineOCSPSource;
         this.dcKeyStoreService = dcKeyStoreService;
         this.trustedListsManager = trustedListsManager;
-        init();
     }
-    
-    public void init() {
+
+    public CommonCertificateVerifier createCommonCertificateVerifier(CertificateVerifierConfigurationProperties certificateVerifierConfig) {
+        CommonCertificateVerifier commonCertificateVerifier = new CommonCertificateVerifier();
         ListCertificateSource listCertificateSource = new ListCertificateSource();
 
 
-        if (documentValidationConfigurationProperties.isOcspEnabled()) {
-            setOcspSource(onlineOCSPSource);
+        if (certificateVerifierConfig.isOcspEnabled()) {
+            commonCertificateVerifier.setOcspSource(onlineOCSPSource);
             LOGGER.info("OCSP checking is enabled");
         } else {
             LOGGER.info("OCSP checking is NOT enabled");
         }
-        if (documentValidationConfigurationProperties.isCrlEnabled()) {
+        if (certificateVerifierConfig.isCrlEnabled()) {
             LOGGER.info("CRL checking is enabled");
-            setCrlSource(onlineCRLSource);
+            commonCertificateVerifier.setCrlSource(onlineCRLSource);
         } else {
             LOGGER.info("CRL checking is NOT enabled");
         }
 
-        documentValidationConfigurationProperties
+        certificateVerifierConfig
                 .getTrustedListSources()
                 .forEach( name -> {
                     Optional<TrustedListsCertificateSource> certificateSource = trustedListsManager.getCertificateSource(name);
@@ -80,19 +70,23 @@ public class DCBusinessDocumentCertificateVerifier extends CommonCertificateVeri
                     }
                 });
 
+        if (certificateVerifierConfig.getIgnoreStore() != null) {
 
-        if (documentValidationConfigurationProperties.isTrustStoreEnabled()) {
-            LOGGER.debug("Using truststore location [{}], password [{}], type [{}]", documentValidationConfigurationProperties.getTrustStore().getPath(),
-                    LoggingUtils.logPassword(LOGGER, documentValidationConfigurationProperties.getTrustStore().getPassword()),
-                    documentValidationConfigurationProperties.getTrustStore().getType());
+        }
+
+
+        if (certificateVerifierConfig.isTrustStoreEnabled()) {
+            LOGGER.debug("Using truststore location [{}], password [{}], type [{}]", certificateVerifierConfig.getTrustStore().getPath(),
+                    LoggingUtils.logPassword(LOGGER, certificateVerifierConfig.getTrustStore().getPassword()),
+                    certificateVerifierConfig.getTrustStore().getType());
             KeyStoreCertificateSource keyStoreCertificateSource = null;
             InputStream res = null;
             try {
-                res = dcKeyStoreService.loadKeyStoreAsResource(documentValidationConfigurationProperties.getTrustStore()).getInputStream();
+                res = dcKeyStoreService.loadKeyStoreAsResource(certificateVerifierConfig.getTrustStore()).getInputStream();
             } catch (IOException e) {
                 throw new RuntimeException("Unable to load trust store", e);
             }
-            keyStoreCertificateSource = new KeyStoreCertificateSource(res, documentValidationConfigurationProperties.getTrustStore().getType(), documentValidationConfigurationProperties.getTrustStore().getPassword());
+            keyStoreCertificateSource = new KeyStoreCertificateSource(res, certificateVerifierConfig.getTrustStore().getType(), certificateVerifierConfig.getTrustStore().getPassword());
 
             CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
             trustedCertSource.importAsTrusted(keyStoreCertificateSource);
@@ -105,11 +99,9 @@ public class DCBusinessDocumentCertificateVerifier extends CommonCertificateVeri
             LOGGER.warn("No trusted certificate source has been configured within [{}]", DocumentValidationConfigurationProperties.CONFIG_PREFIX);
         }
 
-        setTrustedCertSources(listCertificateSource);
-
-
+        commonCertificateVerifier.setTrustedCertSources(listCertificateSource);
+        return commonCertificateVerifier;
 
     }
-
 
 }

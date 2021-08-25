@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class ECodexContainerFactoryService {
 
@@ -52,10 +54,15 @@ public class ECodexContainerFactoryService {
         legalValidationService.setEnvironmentConfiguration(environmentConfiguration);
         containerService.setLegalValidationService(legalValidationService);
 
+        SignatureParameters signatureParameters = createSignatureParameters();
         containerService.setContainerSignatureParameters(createSignatureParameters());
 
-        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.createTechnicalValidationService(message);
+        ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.createTechnicalBusinessDocumentValidationService(message);
         containerService.setTechnicalValidationService(eCodexTechnicalValidationService);
+
+        Objects.requireNonNull(legalValidationService, "the legal validation service has not been set");
+        Objects.requireNonNull(eCodexTechnicalValidationService, "the technical validation service has not been set");
+        Objects.requireNonNull(signatureParameters, "the signature parameters have not been set");
 
         return containerService;
     }

@@ -110,7 +110,7 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -163,8 +163,8 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomXML());
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomXML());
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -217,8 +217,8 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomFile());
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomFile());
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -271,8 +271,8 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_Invalid_Path());
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_Invalid_Path());
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -326,9 +326,9 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomXML());
-    	techValService.isAuthenticationCertificateLOTL(true);
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomXML());
+//    	techValService.isAuthenticationCertificateLOTL(true);
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -382,9 +382,9 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomFile());
-    	techValService.isAuthenticationCertificateLOTL(true);
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomFile());
+//    	techValService.isAuthenticationCertificateLOTL(true);
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
@@ -438,8 +438,8 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
-    	techValService.initAuthenticationCertificateVerification();
+//    	techValService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
+//    	techValService.initAuthenticationCertificateVerification();
     	
     	containerService.setTechnicalValidationService(techValService);
     	
