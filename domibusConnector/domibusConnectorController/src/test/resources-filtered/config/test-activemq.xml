@@ -7,29 +7,31 @@
 				http://activemq.apache.org/schema/core/activemq-core-5.4.0.xsd
 		">
 
-    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" persistent="false" dataDirectory="./data/broker" schedulerSupport="true">
-<!--        <plugins>-->
-<!--            <redeliveryPlugin fallbackToDeadLetter="true"-->
-<!--                              sendToDlqIfMaxRetriesExceeded="true">-->
-<!--                <redeliveryPolicyMap>-->
-<!--                    <redeliveryPolicyMap>-->
-<!--                        <redeliveryPolicyEntries>-->
-<!--                            &lt;!&ndash; a destination specific policy &ndash;&gt;-->
+    <broker xmlns="http://activemq.apache.org/schema/core"  brokerName="broker1" persistent="false" dataDirectory="./data/broker" schedulerSupport="true">
+        <plugins>
+            <redeliveryPlugin fallbackToDeadLetter="true"
+                              sendToDlqIfMaxRetriesExceeded="true">
+                <redeliveryPolicyMap>
+                    <redeliveryPolicyMap>
+                        <redeliveryPolicyEntries>
+                            <!-- a destination specific policy -->
 <!--                            <redeliveryPolicy queue="SpecialQueue"-->
 <!--                                              maximumRedeliveries="4"-->
 <!--                                              redeliveryDelay="10000"/>-->
-<!--                        </redeliveryPolicyEntries>-->
 
-<!--                        <defaultEntry>-->
-<!--                            &lt;!&ndash; the fallback policy for all other destinations &ndash;&gt;-->
-<!--                            <redeliveryPolicy maximumRedeliveries="2"-->
-<!--                                              initialRedeliveryDelay="500"-->
-<!--                                              redeliveryDelay="10"/>-->
-<!--                        </defaultEntry>-->
-<!--                    </redeliveryPolicyMap>-->
-<!--                </redeliveryPolicyMap>-->
-<!--            </redeliveryPlugin>-->
-<!--        </plugins>-->
+
+                        </redeliveryPolicyEntries>
+
+                        <defaultEntry>
+                            <!-- the fallback policy for all other destinations -->
+                            <redeliveryPolicy maximumRedeliveries="0"
+                                              initialRedeliveryDelay="1000"
+                                              redeliveryDelay="1000"/>
+                        </defaultEntry>
+                    </redeliveryPolicyMap>
+                </redeliveryPolicyMap>
+            </redeliveryPlugin>
+        </plugins>
 
         <destinationPolicy>
             <policyMap>
