@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
@@ -68,10 +69,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {ITCaseTestContext.class},
         properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
                 "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
+                "spring.jta.enabled=false"
 //                "logging.level.eu.domibus=TRACE"
 
 }
 )
+@Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectorMessageFlowITCase {
