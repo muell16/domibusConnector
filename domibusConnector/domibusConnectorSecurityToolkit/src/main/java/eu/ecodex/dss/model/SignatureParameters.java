@@ -56,7 +56,6 @@ public class SignatureParameters {
 	private DigestAlgorithm digestAlgorithm;
 
 
-
 	/**
 	 * returns the certificate; used for getting the identity of the signer; business-wise mandatory (but not in this pojo)
 	 *
@@ -79,7 +78,7 @@ public class SignatureParameters {
 //	}
 
 	/**
-	 * returns the private key of the signer; relates to the {@link #certificate}; business-wise mandatory (but not in this pojo)
+	 * returns the private key of the signer;
 	 *
 	 * @return the value
 	 */
@@ -88,7 +87,7 @@ public class SignatureParameters {
 	}
 
 	/**
-	 * sets the private key of the signer; relates to the {@link #certificate}; business-wise mandatory (but not in this pojo)
+	 * sets the private key of the signer;
 	 *
 	 * @param privateKey the value
 	 * @return this class' instance for chaining
@@ -99,7 +98,8 @@ public class SignatureParameters {
 	}
 
 	/**
-	 * the chain of certificates from the signer up to his root; must include the signer's {@link #certificate} as the first one; optional
+	 * the chain of certificates from the signer up to his root;
+	 * use getPrivateKey().getCertificateChain() instead!
 	 *
 	 * @return the value
 	 */
@@ -108,16 +108,6 @@ public class SignatureParameters {
 		return Arrays.asList(getPrivateKey().getCertificateChain());
 	}
 
-	/**
-	 * the chain of certificates from the signer up to his root; must include the signer's {@link #certificate} as the first one; optional
-	 *
-	 * @param certificateChain the value
-	 * @return this class' instance for chaining
-	 */
-//	public SignatureParameters setCertificateChain(final List<CertificateToken> certificateChain) {
-//		this.certificateChain = certificateChain;
-//		return this;
-//	}
 
 	/**
 	 * the algorithm used for signing; business-wise mandatory (but not in this pojo)
