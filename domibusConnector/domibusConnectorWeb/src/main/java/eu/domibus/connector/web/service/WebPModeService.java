@@ -21,7 +21,8 @@ import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.persistence.service.*;
 
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
-import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+
+import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -120,11 +121,11 @@ public class WebPModeService {
      * @param store - the StoreSettings to update
      */
     private void updateSecurityConfiguration(DomibusConnectorKeystore store) {
-        SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), SecurityToolkitConfigurationProperties.class);
-        securityToolkitConfigurationProperties.getTrustStore().setPassword(store.getPasswordPlain());
-        securityToolkitConfigurationProperties.getTrustStore().setType(store.getType().toString());
-        securityToolkitConfigurationProperties.getTrustStore().setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
-        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), securityToolkitConfigurationProperties);
+        DCEcodexContainerProperties dcEcodexContainerProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), DCEcodexContainerProperties.class);
+        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setPassword(store.getPasswordPlain());
+        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setType(store.getType().toString());
+        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), dcEcodexContainerProperties);
     }
 
     private void updateHomePartyConfigurationProperties(Configuration pmodes) {

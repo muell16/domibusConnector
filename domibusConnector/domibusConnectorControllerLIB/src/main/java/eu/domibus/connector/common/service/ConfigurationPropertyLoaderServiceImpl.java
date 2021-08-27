@@ -8,6 +8,7 @@ import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -188,15 +189,20 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     }
 
     private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
-        Object propertyValue = beanWrapper.getPropertyValue(name);
-        if (propertyValue == null) {
+        try {
+            Object propertyValue = beanWrapper.getPropertyValue(name);
+            if (propertyValue == null) {
+                return null;
+            }
+            if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
+                String stringValue = conversionService.convert(propertyValue, String.class);
+                return stringValue;
+            }
+            return propertyValue.toString();
+        } catch (NullValueInNestedPathException nullValueInNestedPathException) {
+
             return null;
         }
-        if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
-            String stringValue = conversionService.convert(propertyValue, String.class);
-            return stringValue;
-        }
-        return propertyValue.toString();
 //        throw new RuntimeException(String.format("Cannot convert Property of type [%s] to String!", propertyValue.getClass()));
     }
 

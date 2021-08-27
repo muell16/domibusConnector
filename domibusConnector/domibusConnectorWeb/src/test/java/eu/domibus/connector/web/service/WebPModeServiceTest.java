@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
+import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +52,7 @@ public class WebPModeServiceTest {
     HomePartyConfigurationProperties homePartyConfigurationProperties;
 
     @Autowired
-    SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
+    DCEcodexContainerProperties dcEcodexContainerProperties;
 
     @Autowired
     ConfigurationPropertyManagerService configManager;
@@ -83,8 +84,9 @@ public class WebPModeServiceTest {
 
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
-            SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), SecurityToolkitConfigurationProperties.class);
-            assertThat(securityToolkitConfigurationProperties.getTrustStore().getPassword()).isEqualTo("pw");
+
+            DCEcodexContainerProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), DCEcodexContainerProperties.class);
+            assertThat(securityToolkitConfigurationProperties.getSignatureValidation().getTrustStore().getPassword()).isEqualTo("pw");
 
             Assertions.assertAll(
                     () -> assertThat(homePartyConfigurationProperties.getEndpointAddress())
@@ -92,9 +94,9 @@ public class WebPModeServiceTest {
                     () -> assertThat(homePartyConfigurationProperties.getName())
                             .isEqualTo("service_ctp"),
 //TODO: check why this is not working...
-                    () -> assertThat(securityToolkitConfigurationProperties.getTruststore().getPassword())
+                    () -> assertThat(dcEcodexContainerProperties.getSignatureValidation().getTrustStore().getPassword())
                             .isEqualTo("pw"),
-                    () -> assertThat(this.securityToolkitConfigurationProperties.getTruststore().getPath())
+                    () -> assertThat(this.dcEcodexContainerProperties.getSignatureValidation().getTrustStore().getPath())
                             .isEqualTo(DatabaseResourceLoader.DB_URL_PREFIX + keystore.getUuid())
             );
 
