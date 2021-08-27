@@ -35,7 +35,7 @@ import eu.europa.esig.dss.model.DSSDocument;
 /**
  * Tests the following rules :
  * <ul>
- * <li>The conainer is not null</li>
+ * <li>The container is not null</li>
  * <li>The ASIC-S document is set and contains data</li>
  * <li>The business document is set and contains data</li>
  * <li>The trustOkToken PDF is set and contains data</li>

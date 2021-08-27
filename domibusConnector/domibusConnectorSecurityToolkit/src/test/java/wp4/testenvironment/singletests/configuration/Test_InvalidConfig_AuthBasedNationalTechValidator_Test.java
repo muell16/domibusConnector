@@ -1,13 +1,10 @@
 package wp4.testenvironment.singletests.configuration;
 
 
+import eu.ecodex.dss.model.SignatureCheckers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import wp4.testenvironment.configurations.InvalidConfig_AuthBasedNationalTechValidator;
-import wp4.testenvironment.configurations.ValidConfig_BusinessContent;
-import wp4.testenvironment.configurations.ValidConfig_NationalLegalValidator;
-import wp4.testenvironment.configurations.ValidConfig_SignatureParameters;
-import wp4.testenvironment.configurations.ValidConfig_TokenIssuer;
+import wp4.testenvironment.configurations.*;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
@@ -24,20 +21,25 @@ public class Test_InvalidConfig_AuthBasedNationalTechValidator_Test {
 	 */
     @Test
     public void test_NoResult() throws Exception {
-    	
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
-    	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfiguration());
-    	containerService.setTechnicalValidationService(InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_NullResult());
-    	containerService.setLegalValidationService(ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer());
+
+		TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+    	final DSSECodexContainerService containerService =
+				new DSSECodexContainerService(
+						InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_NullResult(),
+						ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer(),
+						ValidConfig_SignatureParameters.getJKSConfiguration(),
+						issuer,
+						checkers);
+
 
     	BusinessContent content = ValidConfig_BusinessContent.get_UnsignedFile_WithoutAttachments();
-    	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+
     	
     	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+    		ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		
@@ -59,20 +61,23 @@ public class Test_InvalidConfig_AuthBasedNationalTechValidator_Test {
 	 */
     @Test
     public void test_EmptyResult() throws Exception {
-    		
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
-    	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfiguration());
-    	containerService.setTechnicalValidationService(InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_EmptyResult());
-    	containerService.setLegalValidationService(ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer());
+
+		TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		final DSSECodexContainerService containerService =
+				new DSSECodexContainerService(
+						InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_EmptyResult(),
+						ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer(),
+						ValidConfig_SignatureParameters.getJKSConfiguration(),
+						issuer,
+						checkers);
 
     	BusinessContent content = ValidConfig_BusinessContent.get_UnsignedFile_WithoutAttachments();
-    	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
     	
     	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+    		ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		
@@ -94,20 +99,21 @@ public class Test_InvalidConfig_AuthBasedNationalTechValidator_Test {
 	 */
     @Test
     public void test_InvalidResult() throws Exception {
-    	
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
-    	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfiguration());
-    	containerService.setTechnicalValidationService(InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_InvalidResult());
-    	containerService.setLegalValidationService(ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer());
+
+		TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+    	final DSSECodexContainerService containerService = new DSSECodexContainerService(
+				InvalidConfig_AuthBasedNationalTechValidator.get_AuthBasedNationalTechValidator_InvalidResult(),
+				ValidConfig_NationalLegalValidator.get_NationalLegalValidator_NoDisclaimer(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+    			checkers);
 
     	BusinessContent content = ValidConfig_BusinessContent.get_UnsignedFile_WithoutAttachments();
-    	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
-    	
+
     	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+    		ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		

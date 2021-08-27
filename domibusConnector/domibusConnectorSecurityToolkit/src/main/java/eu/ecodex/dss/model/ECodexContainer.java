@@ -11,8 +11,12 @@ package eu.ecodex.dss.model;
 
 import eu.ecodex.dss.model.token.Token;
 import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.MimeType;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * this holds the to be signed content plus the created asic document 
@@ -175,4 +179,54 @@ public class ECodexContainer {
         this.asicDocument = asicDocument;
         return this;
     }
+
+    public abstract static class ECodexDSSDocumentType {
+
+        public abstract DSSDocument getDSSDocument(ECodexContainer eCodexContainer);
+        public abstract List<MimeType> getValidMimeTypes();
+
+    }
+
+    public static class TokenXmlTypesECodex extends ECodexDSSDocumentType {
+
+        @Override
+        public DSSDocument getDSSDocument(ECodexContainer eCodexContainer) {
+            Objects.requireNonNull(eCodexContainer, "eCodex container must not be null!");
+            return eCodexContainer.getTokenXML();
+        }
+
+        @Override
+        public List<MimeType> getValidMimeTypes() {
+            return Stream.of(MimeType.ASICS, MimeType.ASICE).collect(Collectors.toList());
+        }
+    }
+
+    public static class TokenPdfTypeECodex extends ECodexDSSDocumentType {
+
+        @Override
+        public DSSDocument getDSSDocument(ECodexContainer eCodexContainer) {
+            Objects.requireNonNull(eCodexContainer, "eCodex container must not be null!");
+            return eCodexContainer.getTokenPDF();
+        }
+
+        @Override
+        public List<MimeType> getValidMimeTypes() {
+            return Stream.of(MimeType.PDF).collect(Collectors.toList());
+        }
+    }
+
+    public static class AsicDocumentTypeECodex extends ECodexDSSDocumentType {
+
+        @Override
+        public DSSDocument getDSSDocument(ECodexContainer eCodexContainer) {
+            Objects.requireNonNull(eCodexContainer, "eCodex container must not be null!");
+            return eCodexContainer.getAsicDocument();
+        }
+
+        @Override
+        public List<MimeType> getValidMimeTypes() {
+            return Stream.of(MimeType.XML).collect(Collectors.toList());
+        }
+    }
+    
 }

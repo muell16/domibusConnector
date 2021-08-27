@@ -7,7 +7,6 @@ import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexLegalValidationService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexLegalValidationService;
-import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import eu.ecodex.dss.util.SignatureParametersFactory;
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
@@ -44,15 +43,15 @@ public class DSSEcodexContainerServiceTest {
     
     
     private DSSECodexContainerService initContainerService() throws Exception {
-        DSSECodexContainerService containerService = new DSSECodexContainerService();
+        DSSECodexContainerService containerService = null; // new DSSECodexContainerService(technicalValidationService, legalValidationService, signingParameters, certificateVerifier, connectorCertificatesSource, processExecutor, asicsSignatureChecker, xmlTokenSignatureChecker, pdfTokenSignatureChecker);
         
         
 //        EnvironmentConfiguration environmentConfiguration = initEnvironmentConfiguration();
         
         
-        ECodexLegalValidationService ecodexLegalValidationService = new DSSECodexLegalValidationService();
+//        ECodexLegalValidationService ecodexLegalValidationService = new DSSECodexLegalValidationService();
 //        ecodexLegalValidationService.setEnvironmentConfiguration(environmentConfiguration);
-        containerService.setLegalValidationService(ecodexLegalValidationService);
+//        containerService.setLegalValidationService(ecodexLegalValidationService);
         
         
 //        DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService(certificateVerifier, processExecutor, trustedListCertificatesSource, ignoredCertificatesStore);
@@ -74,7 +73,7 @@ public class DSSEcodexContainerServiceTest {
         
         SignatureParameters signingParameters = SignatureParametersFactory.create(certStore, keyAlias, keyPassword, encryptionAlgorithm, digestAlgorithm);
         assertThat(signingParameters).isNotNull();
-        containerService.setContainerSignatureParameters(signingParameters);
+//        containerService.setContainerSignatureParameters(signingParameters);
         
         
 //        CertificateVerifier certificateVerifier = Mockito.mock(CertificateVerifier.class);        
@@ -183,7 +182,7 @@ public class DSSEcodexContainerServiceTest {
         
         TokenIssuer tokenIssuer = createTokenIssuer();
         
-        ECodexContainer container = containerService.create(businessContent, tokenIssuer);
+        ECodexContainer container = containerService.create(businessContent);
         DSSDocument asicDocument = container.getAsicDocument();
         assertThat(asicDocument).isNotNull();
         

@@ -22,6 +22,7 @@ import org.springframework.core.io.Resource;
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
  */
+@Deprecated //TODO replace with certificate source...
 public class CertificateStoreInfo {
     private Resource location;
     private String password;

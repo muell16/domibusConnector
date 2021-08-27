@@ -9,12 +9,15 @@
  */
 package eu.ecodex.dss.model;
 
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import eu.europa.esig.dss.enumerations.SignatureAlgorithm;
 import eu.europa.esig.dss.model.x509.CertificateToken;
-import eu.europa.esig.dss.model.x509.CertificateToken;
+import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
+import eu.europa.esig.dss.token.SignatureTokenConnection;
 
 
 /**
@@ -29,37 +32,39 @@ import eu.europa.esig.dss.model.x509.CertificateToken;
 public class SignatureParameters {
 
 	/**
-	 * used for getting the identity of the signer; business-wise mandatory (but not in this pojo)
+	 * The connection to the signatureToken holder
+	 *  KeyStore, SmartCard, ...
+	 *  TODO: maybe this should be a factory, because SignatureTokenConnection is closeable...
 	 */
-	private CertificateToken certificate;
+	private SignatureTokenConnection signatureTokenConnection;
+
 
 	/**
-	 * the private key of the signer; relates to the {@link #certificate}; business-wise mandatory (but not in this pojo)
+	 * the private key of the signer
 	 */
-	private PrivateKey privateKey;
+	private DSSPrivateKeyEntry privateKey;
 
-	/**
-	 * the chain of certificates from the signer up to his root; must include the signer's {@link #certificate} as the first one; optional
-	 */
-	private List<CertificateToken> certificateChain;
 
 	/**
 	 * the algorithm used for signing; business-wise mandatory (but not in this pojo)
 	 */
-	private String signatureAlgorithm;
+	private EncryptionAlgorithm encryptionAlgorithm;
 
 	/**
 	 * the algorithm used for the digest; business-wise mandatory (but not in this pojo)
 	 */
-	private String digestAlgorithm;
+	private DigestAlgorithm digestAlgorithm;
+
+
 
 	/**
 	 * returns the certificate; used for getting the identity of the signer; business-wise mandatory (but not in this pojo)
 	 *
 	 * @return the value
 	 */
+	@Deprecated
 	public CertificateToken getCertificate() {
-		return certificate;
+		return privateKey.getCertificate();
 	}
 
 	/**
@@ -68,17 +73,17 @@ public class SignatureParameters {
 	 * @param certificate the value
 	 * @return this class' instance for chaining
 	 */
-	public SignatureParameters setCertificate(final CertificateToken certificate) {
-		this.certificate = certificate;
-		return this;
-	}
+//	public SignatureParameters setCertificate(final CertificateToken certificate) {
+//		this.certificate = certificate;
+//		return this;
+//	}
 
 	/**
 	 * returns the private key of the signer; relates to the {@link #certificate}; business-wise mandatory (but not in this pojo)
 	 *
 	 * @return the value
 	 */
-	public PrivateKey getPrivateKey() {
+	public DSSPrivateKeyEntry getPrivateKey() {
 		return privateKey;
 	}
 
@@ -88,7 +93,7 @@ public class SignatureParameters {
 	 * @param privateKey the value
 	 * @return this class' instance for chaining
 	 */
-	public SignatureParameters setPrivateKey(final PrivateKey privateKey) {
+	public SignatureParameters setPrivateKey(final DSSPrivateKeyEntry privateKey) {
 		this.privateKey = privateKey;
 		return this;
 	}
@@ -98,8 +103,9 @@ public class SignatureParameters {
 	 *
 	 * @return the value
 	 */
+	@Deprecated //use getPrivateKey().getCertificateChain() instead!
 	public List<CertificateToken> getCertificateChain() {
-		return certificateChain;
+		return Arrays.asList(getPrivateKey().getCertificateChain());
 	}
 
 	/**
@@ -108,18 +114,18 @@ public class SignatureParameters {
 	 * @param certificateChain the value
 	 * @return this class' instance for chaining
 	 */
-	public SignatureParameters setCertificateChain(final List<CertificateToken> certificateChain) {
-		this.certificateChain = certificateChain;
-		return this;
-	}
+//	public SignatureParameters setCertificateChain(final List<CertificateToken> certificateChain) {
+//		this.certificateChain = certificateChain;
+//		return this;
+//	}
 
 	/**
 	 * the algorithm used for signing; business-wise mandatory (but not in this pojo)
 	 *
 	 * @return the value
 	 */
-	public String getSignatureAlgorithm() {
-		return signatureAlgorithm;
+	public EncryptionAlgorithm getEncryptionAlgorithm() {
+		return encryptionAlgorithm;
 	}
 
 	/**
@@ -128,8 +134,8 @@ public class SignatureParameters {
 	 * @param encryptionAlgorithm the value
 	 * @return this class' instance for chaining
 	 */
-	public SignatureParameters setSignatureAlgorithm(final String encryptionAlgorithm) {
-		this.signatureAlgorithm = encryptionAlgorithm;
+	public SignatureParameters setEncryptionAlgorithm(final EncryptionAlgorithm encryptionAlgorithm) {
+		this.encryptionAlgorithm = encryptionAlgorithm;
 		return this;
 	}
 
@@ -138,7 +144,7 @@ public class SignatureParameters {
 	 *
 	 * @return the value
 	 */
-	public String getDigestAlgorithm() {
+	public DigestAlgorithm getDigestAlgorithm() {
 		return digestAlgorithm;
 	}
 
@@ -148,8 +154,19 @@ public class SignatureParameters {
 	 * @param digestAlgorithm the value
 	 * @return this class' instance for chaining
 	 */
-	public SignatureParameters setDigestAlgorithm(final String digestAlgorithm) {
+	public SignatureParameters setDigestAlgorithm(final DigestAlgorithm digestAlgorithm) {
 		this.digestAlgorithm = digestAlgorithm;
 		return this;
 	}
+
+	public SignatureTokenConnection getSignatureTokenConnection() {
+		return signatureTokenConnection;
+	}
+
+	public SignatureParameters setSignatureTokenConnection(SignatureTokenConnection signatureTokenConnection) {
+		this.signatureTokenConnection = signatureTokenConnection;
+		return this;
+	}
+
+
 }

@@ -81,12 +81,11 @@ public interface ECodexContainerService {
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 
      * @param businessContent the documents and attachments
-     * @param issuer information about the issuer
      * 
      * @return the result
      * @throws ECodexException wrapper around any exception occurred
      */
-    ECodexContainer create(final BusinessContent businessContent, final TokenIssuer issuer) throws ECodexException;
+    ECodexContainer create(final BusinessContent businessContent) throws ECodexException;
 
     /**
      * 

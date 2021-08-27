@@ -42,7 +42,7 @@ public class DomibusConnectorMessage implements Serializable {
 	//holds all errors which occured during message processing...
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
-	private DCMessageProcessSettings dcMessageProcessSettings;
+	private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
 
 
 	/**

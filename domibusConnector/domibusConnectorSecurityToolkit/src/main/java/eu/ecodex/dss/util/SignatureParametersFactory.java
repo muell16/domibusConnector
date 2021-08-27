@@ -14,19 +14,14 @@ import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.model.SignatureParameters;
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
-import eu.europa.esig.dss.model.x509.CertificateToken;
+import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
+import eu.europa.esig.dss.token.KeyStoreSignatureTokenConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStream;
-import java.security.Key;
 import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -76,6 +71,7 @@ public class SignatureParametersFactory {
 	public static SignatureParameters create(final CertificateStoreInfo certStoreInfo, final String certAlias, final String certPassword,
 											 final EncryptionAlgorithm encryptionAlgorithm, final DigestAlgorithm digestAlgorithm) throws Exception {
 		LOG.lDetail("parameters: {} for cert-alias '{}' algorithms: signature {} signing {}", certStoreInfo, certAlias, encryptionAlgorithm, digestAlgorithm);
+		final SignatureParameters params = new SignatureParameters();
 
 		// check if configuration is feasible
 		if (certStoreInfo == null) {
@@ -98,56 +94,27 @@ public class SignatureParametersFactory {
 		final Resource ksLocation = certStoreInfo.getLocation();
 		LOG.lDetail("loading keystore from url: {}", ksLocation);
 
-		final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 
 		final InputStream ksStream = ksLocation.getInputStream();
 		try {
-			ks.load(ksStream, (certStoreInfo.getPassword() == null) ? null : certStoreInfo.getPassword().toCharArray());
+			KeyStore.PasswordProtection pwProtection = new KeyStore.PasswordProtection(certStoreInfo.getPassword().toCharArray());
+			KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(ksStream, "JKS", pwProtection);
+			KeyStore.PasswordProtection keyPwProtection = new KeyStore.PasswordProtection(certPassword.toCharArray());
+			DSSPrivateKeyEntry key = keyStoreSignatureTokenConnection.getKey(certAlias, keyPwProtection);
+
+			params.setSignatureTokenConnection(keyStoreSignatureTokenConnection);
+			params.setPrivateKey(key);
+
 		} finally {
 			IOUtils.closeQuietly(ksStream);
 		}
 
-		LOG.lDetail("acquiring certificate for alias: {}", certAlias);
-		final Certificate cert = ks.getCertificate(certAlias);
-		if (cert == null) {
-			LOG.lWarn("the certificate for alias {} could not be found in the keystore");
-			return null;
+		if (encryptionAlgorithm != null) {
+			params.setEncryptionAlgorithm(encryptionAlgorithm);
 		}
-		if (!(cert instanceof X509Certificate)) {
-			LOG.lWarn("the certificate for alias {} does not represent an X509Certificate");
-			return null;
+		if (digestAlgorithm != null) {
+			params.setDigestAlgorithm(digestAlgorithm);
 		}
-
-		LOG.lDetail("acquiring private key for alias: {}", certAlias);
-		final Key key = ks.getKey(certAlias, certPassword.toCharArray());
-		if (key == null) {
-			LOG.lWarn("the key for alias {} could not be found in the keystore");
-			return null;
-		}
-		if (!(key instanceof PrivateKey)) {
-			LOG.lWarn("the key for alias {} does not represent a PrivateKey");
-			return null;
-		}
-
-		final SignatureParameters params = new SignatureParameters();
-		CertificateToken tkn = new CertificateToken((X509Certificate) cert);
-		params.setCertificate(tkn);
-		params.setPrivateKey((PrivateKey) key);
-
-		final List<CertificateToken> x509Certs = new ArrayList<CertificateToken>();
-		final Certificate[] certs = ks.getCertificateChain(certAlias);
-		for (final Certificate certificate : certs) {
-			if (certificate instanceof X509Certificate) {
-				CertificateToken chainCert = new CertificateToken((X509Certificate) certificate);
-				x509Certs.add(chainCert);
-			} else {
-				LOG.lWarn("the alias {} has a certificate chain item that does not represent an X509Certificate; it is ignored");
-			}
-		}
-		params.setCertificateChain(x509Certs);
-
-		params.setSignatureAlgorithm((encryptionAlgorithm == null) ? ((PrivateKey) key).getAlgorithm() : encryptionAlgorithm.getName());
-		params.setDigestAlgorithm((digestAlgorithm == null) ? null : digestAlgorithm.getName());
 
 		return params;
 	}

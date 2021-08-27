@@ -10,6 +10,8 @@
 
 package eu.ecodex.dss.model.token;
 
+import org.springframework.core.style.ToStringCreator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -93,6 +95,14 @@ public class TokenIssuer implements Serializable {
     public TokenIssuer setAdvancedElectronicSystem(final AdvancedSystemType value) {
         this.advancedElectronicSystem = value;
         return this;
+    }
+
+    public String toString() {
+        return new ToStringCreator(this)
+                .append("serviceProvider", this.serviceProvider)
+                .append("country", this.country)
+                .append("advancedElectronicSystem", this.advancedElectronicSystem)
+                .toString();
     }
 
 }

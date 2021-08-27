@@ -29,6 +29,7 @@ import eu.europa.esig.dss.enumerations.SignatureForm;
 import eu.europa.esig.dss.enumerations.SignatureQualification;
 import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.simplereport.jaxb.XmlToken;
+import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
 import org.apache.commons.lang.StringUtils;
 
@@ -69,7 +70,7 @@ class DSSTokenValidationCreator {
 
 	private TokenValidation tValidation;
 
-	private ConnectorCertificatesStore ignoredCertificateStore;
+	private CertificateSource ignoredCertificateStore;
 
 	/**
 	 * this holds the latest data of the threads
@@ -219,8 +220,11 @@ class DSSTokenValidationCreator {
 		List<String> idsToRemove = new ArrayList<String>();
 		
 		for (AdvancedSignature curSignature : signatures) {
-			if(ignoredCertificateStore == null || !ignoredCertificateStore.isValid(curSignature.getSigningCertificateToken().getCertificate()))
-			{
+			if(ignoredCertificateStore != null && !ignoredCertificateStore.getByPublicKey(curSignature.getSigningCertificateToken().getCertificate().getPublicKey()).isEmpty()) {
+				LOG.lDetail("Removing curSignature [{}] because the according certificate is within ignore list", curSignature);
+				idsToRemove.add(curSignature.getId());
+				diagnosticData.getSignatureIdList().remove(curSignature.getId());
+			} else {
 				Signature signature = new Signature();
 				SignatureAttributes tokenSignatureAttributes = new SignatureAttributes();
 				SignatureCertificate tokenSignatureCertificate = new SignatureCertificate();
@@ -251,9 +255,6 @@ class DSSTokenValidationCreator {
 				signature.setTechnicalResult(tokenSignatureResult);
 				
 				tValidation.getVerificationData().addSignatureData(signature);
-			} else {
-				idsToRemove.add(curSignature.getId());
-				diagnosticData.getSignatureIdList().remove(curSignature.getId());
 			}
 		}
 		
@@ -819,7 +820,7 @@ class DSSTokenValidationCreator {
 
 	}
 
-	public void setIgnoredCertificatesStore(ConnectorCertificatesStore ignoredCertificatesStore) {
+	public void setIgnoredCertificatesStore(CertificateSource ignoredCertificatesStore) {
 		this.ignoredCertificateStore = ignoredCertificatesStore;		
 	}
 }

@@ -24,10 +24,11 @@ import javax.validation.constraints.NotNull;
  * contains security toolkit related configuration in a
  * typesafe way
  */
-@BusinessDomainScoped
-@Component
-@Valid
-@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
+//@BusinessDomainScoped
+//@Component
+//@Valid
+//@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
+@Deprecated
 public class SecurityToolkitConfigurationProperties {
 
     public static final String CONFIG_PREFIX = "connector.security";
@@ -45,20 +46,10 @@ public class SecurityToolkitConfigurationProperties {
     @NestedConfigurationProperty
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
-//    @Valid
-//    @NotNull
-//    @NestedConfigurationProperty
-//    StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
-
     @Valid
     @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
-
-    /**
-     * Should the trust store created if it is missing?
-     */
-    boolean createOjStoreIfMissing = true;
 
     @NotNull
     EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
@@ -90,13 +81,6 @@ public class SecurityToolkitConfigurationProperties {
         this.keyStore = keystore;
     }
 
-//    public StoreConfigurationProperties getOjStore() {
-//        return ojStore;
-//    }
-//
-//    public void setOjStore(StoreConfigurationProperties ojStore) {
-//        this.ojStore = ojStore;
-//    }
 
     public StoreConfigurationProperties getTruststore() {
         return trustStore;
@@ -112,14 +96,6 @@ public class SecurityToolkitConfigurationProperties {
 
     public void setTrustStore(StoreConfigurationProperties trustStore) {
         this.trustStore = trustStore;
-    }
-
-    public boolean isCreateOjStoreIfMissing() {
-        return createOjStoreIfMissing;
-    }
-
-    public void setCreateOjStoreIfMissing(boolean createOjStoreIfMissing) {
-        this.createOjStoreIfMissing = createOjStoreIfMissing;
     }
 
     public EncryptionAlgorithm getEncryptionAlgorithm() {

@@ -1,14 +1,11 @@
 package wp4.testenvironment.singletests.configuration;
 
 
+import eu.ecodex.dss.model.SignatureCheckers;
+import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import wp4.testenvironment.configurations.InvalidConfig_BusinessContent;
-import wp4.testenvironment.configurations.ValidConfig_BasicLegalValidator;
-import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator;
-import wp4.testenvironment.configurations.ValidConfig_CertificateVerifier;
-import wp4.testenvironment.configurations.ValidConfig_SignatureParameters;
-import wp4.testenvironment.configurations.ValidConfig_TokenIssuer;
+import wp4.testenvironment.configurations.*;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
@@ -25,18 +22,22 @@ public class Test_InvalidConfig_BusinessContent_Test {
     public void test_Empty_Business_Content() throws Exception {
 
 		BusinessContent content = InvalidConfig_BusinessContent.get_EmptyContent();
-		
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
-    	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory());
-    	containerService.setTechnicalValidationService(ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig());
-    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
-    	containerService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullSignatureBased();
+
+		DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
     	
     	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+    		ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		
@@ -61,17 +62,28 @@ public class Test_InvalidConfig_BusinessContent_Test {
 
     	BusinessContent content = InvalidConfig_BusinessContent.get_MissingBusinessDocument();
     	
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
-    	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory());
-    	containerService.setTechnicalValidationService(ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig());
-    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
-    	containerService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//    	final DSSECodexContainerService containerService = new DSSECodexContainerService(technicalValidationService, legalValidationService, signingParameters, certificateVerifier, connectorCertificatesSource, processExecutor, asicsSignatureChecker, xmlTokenSignatureChecker, pdfTokenSignatureChecker);
+//
+//    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory());
+//    	containerService.setTechnicalValidationService(ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig());
+//    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
+//    	containerService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullSignatureBased();
-    	
-    	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+
+		DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory(),
+				issuer,
+				checkers);
+
+		try {
+			ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		
@@ -96,17 +108,25 @@ public class Test_InvalidConfig_BusinessContent_Test {
 
     	BusinessContent content = InvalidConfig_BusinessContent.get_NullContent();
     	
-    	final DSSECodexContainerService containerService = new DSSECodexContainerService();
+//    	final DSSECodexContainerService containerService = new DSSECodexContainerService(technicalValidationService, legalValidationService, signingParameters, certificateVerifier, connectorCertificatesSource, processExecutor, asicsSignatureChecker, xmlTokenSignatureChecker, pdfTokenSignatureChecker);
     	
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory());
-    	containerService.setTechnicalValidationService(ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig());
-    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
-    	containerService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
+//    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory());
+//    	containerService.setTechnicalValidationService(ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig());
+//    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
+//    	containerService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullSignatureBased();
-    	
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig(),
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfig_By_SigParamFactory(),
+				issuer,
+				checkers);
+
     	try {
-    		ECodexContainer container = containerService.create(content, issuer);
+    		ECodexContainer container = containerService.create(content);
     		
     		CheckResult checkResult = containerService.check(container);
     		

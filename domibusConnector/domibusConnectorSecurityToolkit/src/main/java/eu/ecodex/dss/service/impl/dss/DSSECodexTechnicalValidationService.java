@@ -31,6 +31,7 @@ import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 
 import eu.europa.esig.dss.spi.x509.CandidatesForSigningCertificate;
+import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.validation.AdvancedSignature;
 
 import eu.europa.esig.dss.validation.CertificateVerifier;
@@ -76,12 +77,12 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	private final CertificateVerifier certificateVerifier;
 	private final DocumentProcessExecutor processExecutor;
 	private final Optional<TrustedListsCertificateSource> trustedListCertificatesSource;
-	private final Optional<ConnectorCertificatesStore> ignoredCertificatesStore;
+	private final Optional<CertificateSource> ignoredCertificatesStore;
 
 	public DSSECodexTechnicalValidationService(CertificateVerifier certificateVerifier,
 											   DocumentProcessExecutor processExecutor,
 											   Optional<TrustedListsCertificateSource> trustedListCertificatesSource,
-											   Optional<ConnectorCertificatesStore> ignoredCertificatesStore) {
+											   Optional<CertificateSource> ignoredCertificatesStore) {
 		this.certificateVerifier = certificateVerifier;
 		this.processExecutor = processExecutor;
 		this.trustedListCertificatesSource = trustedListCertificatesSource;

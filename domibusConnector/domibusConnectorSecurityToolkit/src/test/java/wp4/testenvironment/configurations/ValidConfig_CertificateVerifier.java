@@ -15,6 +15,7 @@ import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
+import org.springframework.core.io.ClassPathResource;
 
 
 // SUB_CONF_17
@@ -110,7 +111,7 @@ public class ValidConfig_CertificateVerifier {
 //	        TSLRepository tslRepository = new TSLRepository();
 //	        tslRepository.setTrustedListsCertificateSource(certSource);
 			
-	        KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(new File("src/test/resources/keystore.jks"), "JKS", "apache");
+	        KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(new ClassPathResource("/keystores/keystore.jks").getInputStream(), "JKS", "test123");
 	        
 //	        TSLValidationJob job = new TSLValidationJob();
 //	        job.setDataLoader(normalLoader);

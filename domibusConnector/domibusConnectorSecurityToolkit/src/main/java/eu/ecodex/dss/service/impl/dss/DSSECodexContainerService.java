@@ -11,7 +11,7 @@ package eu.ecodex.dss.service.impl.dss;
 
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.EnvironmentConfiguration;
+import eu.ecodex.dss.model.SignatureCheckers;
 import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.model.token.*;
@@ -20,19 +20,11 @@ import eu.ecodex.dss.service.checks.BusinessContentChecker;
 import eu.ecodex.dss.service.checks.ECodexContainerChecker;
 import eu.ecodex.dss.service.checks.TokenIssuerChecker;
 import eu.ecodex.dss.util.*;
-import eu.europa.esig.dss.diagnostic.DiagnosticData;
 import eu.europa.esig.dss.enumerations.*;
 import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.model.MimeType;
-import eu.europa.esig.dss.model.x509.CertificateToken;
-import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.spi.DSSUtils;
-import eu.europa.esig.dss.validation.AdvancedSignature;
-import eu.europa.esig.dss.validation.CertificateVerifier;
-import eu.europa.esig.dss.validation.SignedDocumentValidator;
-import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
-import eu.europa.esig.dss.validation.executor.ProcessExecutor;
 import eu.europa.esig.dss.validation.reports.Reports;
 import eu.europa.esig.xmldsig.jaxb.DigestMethodType;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +46,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -82,22 +73,35 @@ public class DSSECodexContainerService implements ECodexContainerService {
 	private static final TokenIssuerChecker CHECKER_TOKEN_ISSUER = new TokenIssuerChecker();
 	private static final ECodexContainerChecker CHECKER_ECODEX_CONTAINER = new ECodexContainerChecker();
 
-	private SignatureParameters signingParameters;
 
-	private ECodexTechnicalValidationService technicalValidationService;
-	private ECodexLegalValidationService legalValidationService;
-	private CertificateVerifier certificateVerifier;
+	private final ECodexTechnicalValidationService technicalValidationService;
+	private final ECodexLegalValidationService legalValidationService;
 
-	private PDFGeneratorLegalSummary pdfGeneratorLegal = new PDFGeneratorLegalSummary();
-	private PDFGeneratorTechnicalSummary pdfGeneratorTechnical = new PDFGeneratorTechnicalSummary();
+	private final SignatureParameters signingParameters;
+	private final TokenIssuer tokenIssuer;
 
-	private ConnectorCertificatesStore connectorCertificatesStore = new ConnectorCertificatesStore();
+	private final DSSSignatureChecker<ECodexContainer.AsicDocumentTypeECodex> asicsSignatureChecker;
+	private final DSSSignatureChecker<ECodexContainer.TokenXmlTypesECodex> xmlTokenSignatureChecker;
+	private final DSSSignatureChecker<ECodexContainer.TokenPdfTypeECodex> pdfTokenSignatureChecker;
 
-	private DocumentProcessExecutor processExecutor = null;
+	private final PDFGeneratorLegalSummary pdfGeneratorLegal = new PDFGeneratorLegalSummary();
+	private final PDFGeneratorTechnicalSummary pdfGeneratorTechnical = new PDFGeneratorTechnicalSummary();
 
-	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
-		this.processExecutor = processExecutor;
+	public DSSECodexContainerService(ECodexTechnicalValidationService technicalValidationService,
+									 ECodexLegalValidationService legalValidationService,
+									 SignatureParameters signingParameters,
+									 TokenIssuer tokenIssuer,
+									 SignatureCheckers signatureCheckers
+							) {
+		this.technicalValidationService = technicalValidationService;
+		this.legalValidationService = legalValidationService;
+		this.signingParameters = signingParameters;
+		this.tokenIssuer = tokenIssuer;
+		this.asicsSignatureChecker = signatureCheckers.getAsicsSignatureChecker();
+		this.xmlTokenSignatureChecker = signatureCheckers.getXmlTokenSignatureChecker();
+		this.pdfTokenSignatureChecker = signatureCheckers.getPdfTokenSignatureChecker();
 	}
+
 
 	// usecase ADDSIGNATURE block -------------------------------------------------------------------------------------
 
@@ -311,108 +315,35 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		}
 
 		// Validate the trustOkToken XML signature
-		final CheckResult checkXmlResult = checkSignature(container.getTokenXML(), false);
+		final CheckResult checkXmlResult = xmlTokenSignatureChecker.checkSignature(container);
 		checkResult.addProblems(checkXmlResult);
 
 		// Validate the trustOkToken PDF signature
-		final CheckResult checkPdfResult = checkSignature(container.getTokenPDF(), false);
+		final CheckResult checkPdfResult = pdfTokenSignatureChecker.checkSignature(container);
 		checkResult.addProblems(checkPdfResult);
+
 		// Validate the Asic document signature
-		final CheckResult checkAsicResult = checkSignature(container.getAsicDocument(), true);
+		final CheckResult checkAsicResult = asicsSignatureChecker.checkSignature(container);
 		checkResult.addProblems(checkAsicResult);
 
 		return checkResult;
 	}
 
-	/**
-	 * checks the validity of the signatures of a document
-	 *
-	 * @param document            this holds the signatures
-	 * @param connectorCompliance if true, then all the signing certificates in the document will be checked against those of the connectors.
-	 * @return the result
-	 * @throws java.lang.Exception from the underlying framework
-	 */
-	private CheckResult checkSignature(final DSSDocument document, final boolean connectorCompliance) throws Exception {
-		throwIfNull(certificateVerifier, "the certificate verifier has not been set");
-
-		final DSSDocument dssDocument = document;
-
-		final CheckResult checkResult = new CheckResult();
-
-		final SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(dssDocument);
-		validator.setProcessExecutor(processExecutor);
-
-		validator.setCertificateVerifier(certificateVerifier);
-
-		//TODO: make this configureable!!
-		final InputStream resourceAsStream = DSSECodexContainerService.class.getResourceAsStream("/validation/102853/container_constraint.xml");
-		
-		Reports reports = validator.validateDocument(resourceAsStream);
-
-		final SimpleReport simpleReport = reports.getSimpleReport();
-//		LOG.lInfo("Simple Report:\n{}", simpleReport);
-		LOGGER.debug("Detailed Report of [{}]:\n{}", document.getName(), reports.getXmlDetailedReport());
-		// final DetailedReport detailedReport = validator.getDetailedReport();
-		final DiagnosticData diagnosticData = reports.getDiagnosticData();
-		final List<AdvancedSignature> signatures = validator.getSignatures();
-		if (signatures.isEmpty()) {
-
-			checkResult.addProblem(true, "The validation report [" + document.getName() + "] does not contain any signature information");
-			return checkResult;
-		}
-
-		for (final AdvancedSignature signature : signatures) {
-
-			if (connectorCompliance) {
-				// check that the signing signature is contained in the keystore holding (all) the certificates of the connectors
-				final CertificateToken signingCertificateToken = TechnicalValidationUtil.getSigningCertificateToken(signature);
-				final X509Certificate sigCert = TechnicalValidationUtil.getCertificate(signingCertificateToken);
-				if (!connectorCertificatesStore.isValid(sigCert)) {
-					checkResult.addProblem(true, "The signature is not contained in the (configured) certificates for the e-CODEX connectors.");
-				}
-			}
-			final String signatureId = signature.getId();
-			final Indication indication = simpleReport.getIndication(signatureId);
-			if (Indication.PASSED.equals(indication) || Indication.TOTAL_PASSED.equals(indication)) {
-				continue;
-			}
-			final List<String> errors = simpleReport.getErrors(signatureId);
-			final String message;
-			if (errors.isEmpty()) {
-
-				final DigestAlgorithm signatureDigestAlgorithm = diagnosticData.getSignatureDigestAlgorithm(signatureId);
-				final EncryptionAlgorithm signatureEncryptionAlgorithm = diagnosticData.getSignatureEncryptionAlgorithm(signatureId);
-				final SignatureAlgorithm algorithm = SignatureAlgorithm.getAlgorithm(signatureEncryptionAlgorithm, signatureDigestAlgorithm);
-				message = "The validation report [" + document.getName() + "] contains an invalid verification result for the signature algorithm: " + algorithm;
-			} else {
-				String newErrorMessage = "";
-				for (String error : errors) {
-
-					newErrorMessage += (newErrorMessage.isEmpty() ? "" : "/") + error;
-
-				}
-				message = newErrorMessage;
-			}
-			checkResult.addProblem(true, message);
-		}
-		return checkResult;
-	}
 
 	// usecase CREATE block -------------------------------------------------------------------------------------------
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public ECodexContainer create(final BusinessContent businessContent, final TokenIssuer issuer) throws ECodexException {
-		LOG.mEnter("create", businessContent, issuer);
+	public ECodexContainer create(final BusinessContent businessContent) throws ECodexException {
+		LOG.mEnter("create", businessContent, tokenIssuer);
 		try {
-			return createImpl(businessContent, issuer);
+			return createImpl(businessContent, tokenIssuer);
 		} catch (Exception e) {
-			LOG.mCause("create", e, businessContent, issuer);
+			LOG.mCause("create", e, businessContent, tokenIssuer);
 			throw ECodexException.wrap(e);
 		} finally {
-			LOG.mExit("create", businessContent, issuer);
+			LOG.mExit("create", businessContent, tokenIssuer);
 		}
 	}
 
@@ -462,8 +393,7 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		final ByteArrayOutputStream encodeXMLToken = TokenStreamUtil.encodeXMLStream(token);
 
 		tokenValidation.setOriginalValidationReport(validationOriginalReport);
-		final byte[] byteArray = encodeXMLToken.toByteArray();
-		String stringXMLToken = new String(byteArray);
+		String stringXMLToken = encodeXMLToken.toString();
 
 //				System.out.println("--------------------------------------------");
 //				System.out.println(stringXMLToken);
@@ -524,10 +454,6 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		final Token token = new Token();
 		token.setIssuer(issuer);
 
-		// Create the technical validation
-//		if (technicalValidationService instanceof DSSECodexTechnicalValidationService) {
-//			((DSSECodexTechnicalValidationService) technicalValidationService).setProcessExecutor(processExecutor);
-//		}
 		final TokenValidation tokenValidation = technicalValidationService.create(businessDocument, detachedSignature);
 		// test some post-conditions according to the contract of the method
 		throwIfNull(tokenValidation, "the technical validation service did not create a token validation object");
@@ -778,53 +704,5 @@ public class DSSECodexContainerService implements ECodexContainerService {
 		throw new ECodexException(message);
 	}
 
-	// setters block --------------------------------------------------------------------------------------------------
 
-	/**
-	 * sets the certificate verifier used for the token validation
-	 *
-	 * @param certificateVerifier the value
-	 */
-	public void setCertificateVerifier(final CertificateVerifier certificateVerifier) {
-		this.certificateVerifier = certificateVerifier;
-		LOG.lConfig("set certificateVerifier: {}", certificateVerifier);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration) {
-		LOG.lConfig("set environmentConfiguration: {}", environmentConfiguration);
-		try {
-			LOG.lConfig("updating the connector certificates");
-			connectorCertificatesStore.update((environmentConfiguration == null) ? null : environmentConfiguration.getConnectorCertificates());
-		} catch (Exception e) {
-			LOG.lError("could not update the connector certificates", e);
-			throw (e instanceof RuntimeException) ? (RuntimeException) e : new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setContainerSignatureParameters(final SignatureParameters signingParameters) {
-		this.signingParameters = signingParameters;
-		LOG.lConfig("set signingParameters: {}", signingParameters);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setTechnicalValidationService(final ECodexTechnicalValidationService validationService) {
-		this.technicalValidationService = validationService;
-		LOG.lConfig("set technicalValidationService: {}", validationService);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setLegalValidationService(final ECodexLegalValidationService validationService) {
-		this.legalValidationService = validationService;
-		LOG.lConfig("set legalValidationService: {}", validationService);
-	}
 }

@@ -20,6 +20,7 @@ import eu.europa.esig.dss.pades.PAdESSignatureParameters;
 import eu.europa.esig.dss.pades.PAdESTimestampParameters;
 import eu.europa.esig.dss.pades.signature.PAdESService;
 import eu.europa.esig.dss.signature.DocumentSignatureService;
+import eu.europa.esig.dss.token.SignatureTokenConnection;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.xades.XAdESSignatureParameters;
@@ -59,26 +60,29 @@ class SigningUtil {
 		
 		final ASiCWithXAdESSignatureParameters params = new ASiCWithXAdESSignatureParameters();
 		params.setSignatureLevel(SignatureLevel.XAdES_BASELINE_B);
+		params.setSignaturePackaging(SignaturePackaging.DETACHED);
 		params.aSiC().setContainerType(ASiCContainerType.ASiC_S);
 		params.bLevel().setSigningDate(new Date());
-		params.setCertificateChain(signingParameters.getCertificateChain());
-		params.setSigningCertificate(signingParameters.getCertificate());
+		params.setCertificateChain(signingParameters.getPrivateKey().getCertificateChain());
+		params.setSigningCertificate(signingParameters.getPrivateKey().getCertificate());
 		
 		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier();
 		final DocumentSignatureService<ASiCWithXAdESSignatureParameters, XAdESTimestampParameters> signatureService = new ASiCWithXAdESService(certificateVerifier);
 		
 		ToBeSigned bytesToSign = signatureService.getDataToSign(document, params);
+
+		SignatureValue signatureValue = signingParameters.getSignatureTokenConnection().sign(bytesToSign, signingParameters.getDigestAlgorithm(), signingParameters.getPrivateKey());
+
+//		 SignatureValue signatureValue = TestUtils.sign(params.getSignatureAlgorithm(), privateKeyEntry, dataToSign);
+//		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
+//		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
+//		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
+//		signature.initSign(signingParameters.getPrivateKey());
+//		signature.update(bytesToSign.getBytes());
+//		final byte[] signatureValue = signature.sign();
+//		final SignatureValue signedData = new SignatureValue(signingParameters.getSignatureAlgorithm(), signatureValue);
 		
-		// SignatureValue signatureValue = TestUtils.sign(params.getSignatureAlgorithm(), privateKeyEntry, dataToSign);
-		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
-		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
-		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
-		signature.initSign(signingParameters.getPrivateKey());
-		signature.update(bytesToSign.getBytes());
-		final byte[] signatureValue = signature.sign();
-		final SignatureValue signedData = new SignatureValue(sigAlgorithm, signatureValue);
-		
-		final DSSDocument signedDocument = signatureService.signDocument(document, params, signedData); 
+		final DSSDocument signedDocument = signatureService.signDocument(document, params, signatureValue);
 		
 		return signedDocument;
 	}
@@ -96,8 +100,8 @@ class SigningUtil {
 		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier(true);
 		final DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService = new PAdESService(certificateVerifier);
 
-		final EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.forName(signingParameters.getSignatureAlgorithm());
-		final DigestAlgorithm digestAlgorithm = DigestAlgorithm.forName(signingParameters.getDigestAlgorithm());
+		final EncryptionAlgorithm encryptionAlgorithm = signingParameters.getEncryptionAlgorithm();
+		final DigestAlgorithm digestAlgorithm = signingParameters.getDigestAlgorithm();
 
 		final PAdESSignatureParameters params = new PAdESSignatureParameters();
 
@@ -109,16 +113,18 @@ class SigningUtil {
 		params.setSigningCertificate(signingParameters.getCertificate());
 		
 		ToBeSigned bytesToSign = signatureService.getDataToSign(document, params);
-		
-		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
-		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
+
+		SignatureValue signedData = signingParameters.getSignatureTokenConnection().sign(bytesToSign, signingParameters.getDigestAlgorithm(), signingParameters.getPrivateKey());
+
+//		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
+//		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
 
 		// final SignatureValue signatureValue = DSSUtils.encrypt(jceSignatureAlgorithm, privateKey, bytesToSign);
-		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
-		signature.initSign(signingParameters.getPrivateKey());
-		signature.update(bytesToSign.getBytes());
-		final byte[] signatureValue = signature.sign();
-		final SignatureValue signedData = new SignatureValue(sigAlgorithm, signatureValue);
+//		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
+//		signature.initSign(signingParameters.getPrivateKey());
+//		signature.update(bytesToSign.getBytes());
+//		final byte[] signatureValue = signature.sign();
+//		final SignatureValue signedData = new SignatureValue(sigAlgorithm, signatureValue);
 
 		final DSSDocument signedDocument = signatureService.signDocument(document, params, signedData); 
 
@@ -139,31 +145,35 @@ class SigningUtil {
 		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier();
 		final XAdESService signatureService = new XAdESService(certificateVerifier);
 
-		final String encryptionAlgorithm_ = signingParameters.getSignatureAlgorithm();
-		final EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.forName(encryptionAlgorithm_);
-		final DigestAlgorithm digestAlgorithm = DigestAlgorithm.forName(signingParameters.getDigestAlgorithm());
+//		final String encryptionAlgorithm_ = signingParameters.getEncryptionAlgorithm();
+//		final EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.forName(encryptionAlgorithm_);
+//		final DigestAlgorithm digestAlgorithm = DigestAlgorithm.forName(signingParameters.getDigestAlgorithm());
 
 		final XAdESSignatureParameters params = new XAdESSignatureParameters();
 		params.setSignatureLevel(SignatureLevel.XAdES_BASELINE_B);
 		params.setSignaturePackaging(signaturePackaging); 
-		params.setEncryptionAlgorithm(encryptionAlgorithm);
-		params.setDigestAlgorithm(digestAlgorithm);
+		params.setEncryptionAlgorithm(signingParameters.getEncryptionAlgorithm());
+		params.setDigestAlgorithm(signingParameters.getDigestAlgorithm());
 		params.setCertificateChain(signingParameters.getCertificateChain());
 		params.setSigningCertificate(signingParameters.getCertificate());
 		params.bLevel().setSigningDate(new Date());
 		//params.setEmbedXML(true);
 		
 		ToBeSigned bytesToSign = signatureService.getDataToSign(document, params);
-		
-		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
-		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
 
-		// final SignatureValue signatureValue = DSSUtils.encrypt(jceSignatureAlgorithm, privateKey, bytesToSign);
-		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
-		signature.initSign(signingParameters.getPrivateKey());
-		signature.update(bytesToSign.getBytes());
-		final byte[] signatureValue = signature.sign();
-		final SignatureValue signedData = new SignatureValue(sigAlgorithm, signatureValue);
+		SignatureTokenConnection signatureTokenConnection = signingParameters.getSignatureTokenConnection();
+
+		SignatureValue signedData = signatureTokenConnection.sign(bytesToSign, signingParameters.getDigestAlgorithm(), signingParameters.getPrivateKey());
+
+//		final SignatureAlgorithm sigAlgorithm = params.getSignatureAlgorithm();
+//		final String jceSignatureAlgorithm = sigAlgorithm.getJCEId();
+//
+//		// final SignatureValue signatureValue = DSSUtils.encrypt(jceSignatureAlgorithm, privateKey, bytesToSign);
+//		final Signature signature = Signature.getInstance(jceSignatureAlgorithm);
+//		signature.initSign(signingParameters.getPrivateKey());
+//		signature.update(bytesToSign.getBytes());
+//		final byte[] signatureValue = signature.sign();
+//		final SignatureValue signedData = new SignatureValue(sigAlgorithm, signatureValue);
 
 		final DSSDocument signedDocument = signatureService.signDocument(document, params, signedData); 
 

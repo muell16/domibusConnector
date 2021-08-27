@@ -1,22 +1,20 @@
 package wp4.testenvironment.configurations;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Optional;
-
+import eu.ecodex.dss.model.CertificateStoreInfo;
+import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.service.impl.dss.ConnectorCertificatesStore;
+import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import eu.ecodex.dss.util.tsl.LotlCreator;
+import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.validation.executor.DocumentProcessExecutor;
 import eu.europa.esig.dss.validation.executor.signature.DefaultSignatureProcessExecutor;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Assertions;
-
-import eu.ecodex.dss.model.CertificateStoreInfo;
-import eu.ecodex.dss.service.ECodexException;
-import eu.ecodex.dss.service.ECodexTechnicalValidationService;
-import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Optional;
 
 
 // SUB-CONF-05
@@ -66,7 +64,15 @@ public class ValidConfig_BasicTechValidator {
 		CertificateStoreInfo certStore = new CertificateStoreInfo();
 		certStore.setLocation(IGNORED_KEYSTORE_PATH);
 		certStore.setPassword(IGNORED_KEYSTORE_PASSWORD);
-		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(), DEFAULT_PROCESS_EXECUTOR, Optional.empty(), Optional.of(new ConnectorCertificatesStore(certStore)));
+
+		KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(IGNORED_KEYSTORE_PATH.getInputStream(), "JKS", IGNORED_KEYSTORE_PASSWORD);
+
+
+		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(
+				ValidConfig_CertificateVerifier.get_WithProxy(),
+				DEFAULT_PROCESS_EXECUTOR,
+				Optional.empty(),
+				Optional.of(keyStoreCertificateSource));
 
 		return techValService;
 	}

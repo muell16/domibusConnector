@@ -1,6 +1,5 @@
 package wp4.testenvironment.configurations;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -9,6 +8,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
+import eu.europa.esig.dss.token.KeyStoreSignatureTokenConnection;
 import org.apache.commons.io.IOUtils;
 
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -28,14 +29,14 @@ import org.springframework.core.io.Resource;
 public class ValidConfig_SignatureParameters {
 	
 	private static final Resource JKS_KEYSTORE_PATH = new ClassPathResource("/keystores/signature_store.jks");
-	private static final String JKS_KEYSTORE_PASSWORD = "teststore";
+	private static final KeyStore.PasswordProtection JKS_KEYSTORE_PASSWORD = new KeyStore.PasswordProtection("teststore".toCharArray());
 	private static final String JKS_KEY_NAME = "sign_key";
-	private static final String JKS_KEY_PASSWORD = "teststore";
+	private static final KeyStore.PasswordProtection JKS_KEY_PASSWORD = new KeyStore.PasswordProtection("teststore".toCharArray());
 	
 	private static final Resource PKCS12_KEYSTORE_PATH = new ClassPathResource("keystores/signature_store.p12");
-	private static final String PKCS12_KEYSTORE_PASSWORD = "teststore";
+	private static final KeyStore.PasswordProtection PKCS12_KEYSTORE_PASSWORD = new KeyStore.PasswordProtection("teststore".toCharArray());
 	private static final String PKCS12_KEY_NAME = "sign_key";
-	private static final String PKCS12_KEY_PASSWORD = "teststore";
+	private static final KeyStore.PasswordProtection PKCS12_KEY_PASSWORD = new KeyStore.PasswordProtection("teststore".toCharArray());
 
 	/**
 	 * Returns a "SignatureParameters" object containing
@@ -55,34 +56,15 @@ public class ValidConfig_SignatureParameters {
 		
 		try{
 			SignatureParameters sigParam = new SignatureParameters();
-			
-			KeyStore ks = KeyStore.getInstance("JKS");
-			kfis = JKS_KEYSTORE_PATH.getInputStream();
-			ks.load(kfis, JKS_KEYSTORE_PASSWORD.toCharArray());
-			
-			PrivateKey privKey = (PrivateKey) ks.getKey(JKS_KEY_NAME, JKS_KEYSTORE_PASSWORD.toCharArray());
-			sigParam.setPrivateKey(privKey);
-			
-			X509Certificate cert = (X509Certificate) ks.getCertificate(JKS_KEY_NAME);
-			CertificateToken tkn = new CertificateToken(cert);
-			
-			sigParam.setCertificate(tkn);
-	
-			Certificate[] certs = ks.getCertificateChain(JKS_KEY_NAME);
-			
-			final List<CertificateToken> x509Certs = new ArrayList<CertificateToken>();
-			
-			for (final Certificate certificate : certs) {
-				if (certificate instanceof X509Certificate) {
-					CertificateToken chainCert = new CertificateToken((X509Certificate) certificate);
-			    	x509Certs.add(chainCert);
-				}
-			}
-			
-			sigParam.setCertificateChain(x509Certs);
-	
-			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1.getName());
-			sigParam.setSignatureAlgorithm(EncryptionAlgorithm.RSA.getName());
+
+			KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(JKS_KEYSTORE_PATH.getInputStream(), "JKS", JKS_KEYSTORE_PASSWORD);
+			sigParam.setSignatureTokenConnection(keyStoreSignatureTokenConnection);
+
+			DSSPrivateKeyEntry key = keyStoreSignatureTokenConnection.getKey(JKS_KEY_NAME, JKS_KEY_PASSWORD);
+			sigParam.setPrivateKey(key);
+
+			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1);
+			sigParam.setEncryptionAlgorithm(EncryptionAlgorithm.RSA);
 			
 			return sigParam;
 			
@@ -114,34 +96,15 @@ public class ValidConfig_SignatureParameters {
 		
 		try{
 			SignatureParameters sigParam = new SignatureParameters();
-			
-			KeyStore ks = KeyStore.getInstance("PKCS12");
-			kfis = PKCS12_KEYSTORE_PATH.getInputStream();
-			ks.load(kfis, PKCS12_KEYSTORE_PASSWORD.toCharArray());
-			
-			PrivateKey privKey = (PrivateKey) ks.getKey(PKCS12_KEY_NAME, PKCS12_KEYSTORE_PASSWORD.toCharArray());
-			sigParam.setPrivateKey(privKey);
-			
-			X509Certificate cert = (X509Certificate) ks.getCertificate(PKCS12_KEY_NAME);
-			CertificateToken tkn = new CertificateToken(cert);
-			
-			sigParam.setCertificate(tkn);
-	
-			Certificate[] certs = ks.getCertificateChain(PKCS12_KEY_NAME);
-			
-			final List<CertificateToken> x509Certs = new ArrayList<CertificateToken>();
-			
-			for (final Certificate certificate : certs) {
-				if (certificate instanceof X509Certificate) {
-					CertificateToken chainCert = new CertificateToken((X509Certificate) certificate);
-			    	x509Certs.add(chainCert);
-				}
-			}
-			
-			sigParam.setCertificateChain(x509Certs);
-	
-			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1.getName());
-			sigParam.setSignatureAlgorithm(EncryptionAlgorithm.RSA.getName());
+
+			KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(PKCS12_KEYSTORE_PATH.getInputStream(), "PKCS12", PKCS12_KEYSTORE_PASSWORD);
+			sigParam.setSignatureTokenConnection(keyStoreSignatureTokenConnection);
+
+			DSSPrivateKeyEntry key = keyStoreSignatureTokenConnection.getKey(PKCS12_KEY_NAME, PKCS12_KEY_PASSWORD);
+			sigParam.setPrivateKey(key);
+
+			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1);
+			sigParam.setEncryptionAlgorithm(EncryptionAlgorithm.RSA);
 			
 			return sigParam;
 			
@@ -169,15 +132,16 @@ public class ValidConfig_SignatureParameters {
 	 * The respective test case is SUB_CONF_01 - Variant 3
 	 * @throws Exception 
 	 */
+	@Deprecated
 	public static SignatureParameters getJKSConfig_By_SigParamFactory() throws Exception {
 		
 		SignatureParameters sigParam = new SignatureParameters();
 		
-		CertificateStoreInfo certStore = new CertificateStoreInfo();
-		certStore.setLocation(JKS_KEYSTORE_PATH);
-		certStore.setPassword(JKS_KEYSTORE_PASSWORD);
+//		CertificateStoreInfo certStore = new CertificateStoreInfo();
+//		certStore.setLocation(JKS_KEYSTORE_PATH);
+//		certStore.setPassword(JKS_KEY_PASSWORD_STRING);
 		
-		sigParam = SignatureParametersFactory.create(certStore, JKS_KEY_NAME, JKS_KEY_PASSWORD,EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
+//		sigParam = SignatureParametersFactory.create(certStore, JKS_KEY_NAME, JKS_KEY_PASSWORD_STRING, EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
 		
 		return sigParam;
 	}
@@ -195,53 +159,33 @@ public class ValidConfig_SignatureParameters {
 	 * The respective test case is SUB_CONF_01 - Variant 4
 	 * @throws Exception 
 	 */
+	@Deprecated
 	public static SignatureParameters getPKCS12Config_By_SigParamFactory() throws Exception {
 		
 		SignatureParameters sigParam = new SignatureParameters();
 		
-		CertificateStoreInfo certStore = new CertificateStoreInfo();
-		certStore.setLocation(PKCS12_KEYSTORE_PATH);
-		certStore.setPassword(PKCS12_KEYSTORE_PASSWORD);
-		
-		sigParam = SignatureParametersFactory.create(certStore, PKCS12_KEY_NAME, PKCS12_KEY_PASSWORD,EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
+//		CertificateStoreInfo certStore = new CertificateStoreInfo();
+//		certStore.setLocation(PKCS12_KEYSTORE_PATH);
+//		certStore.setPassword(PKCS12_KEYSTORE_PASSWORD);
+//
+//		sigParam = SignatureParametersFactory.create(certStore, PKCS12_KEY_NAME, PKCS12_KEY_PASSWORD,EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
 		
 		return sigParam;
 	}
 	
 	public static SignatureParameters getJKSConfiguration_SHA256() {
-		
-		InputStream kfis = null;
-		
+
 		try{
 			SignatureParameters sigParam = new SignatureParameters();
-			
-			KeyStore ks = KeyStore.getInstance("JKS");
-			kfis = JKS_KEYSTORE_PATH.getInputStream();
-			ks.load(kfis, JKS_KEYSTORE_PASSWORD.toCharArray());
-			
-			PrivateKey privKey = (PrivateKey) ks.getKey(JKS_KEY_NAME, JKS_KEYSTORE_PASSWORD.toCharArray());
-			sigParam.setPrivateKey(privKey);
-			
-			X509Certificate cert = (X509Certificate) ks.getCertificate(JKS_KEY_NAME);
-			CertificateToken tkn = new CertificateToken(cert);
-			
-			sigParam.setCertificate(tkn);
+
+			KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(JKS_KEYSTORE_PATH.getInputStream(), "JKS", JKS_KEYSTORE_PASSWORD);
+			sigParam.setSignatureTokenConnection(keyStoreSignatureTokenConnection);
+
+			DSSPrivateKeyEntry key = keyStoreSignatureTokenConnection.getKey(JKS_KEY_NAME, JKS_KEY_PASSWORD);
+			sigParam.setPrivateKey(key);
 	
-			Certificate[] certs = ks.getCertificateChain(JKS_KEY_NAME);
-			
-			final List<CertificateToken> x509Certs = new ArrayList<CertificateToken>();
-			
-			for (final Certificate certificate : certs) {
-				if (certificate instanceof X509Certificate) {
-					CertificateToken chainCert = new CertificateToken((X509Certificate) certificate);
-			    	x509Certs.add(chainCert);
-				}
-			}
-			
-			sigParam.setCertificateChain(x509Certs);
-	
-			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA256.getName());
-			sigParam.setSignatureAlgorithm(EncryptionAlgorithm.RSA.getName());
+			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA256);
+			sigParam.setEncryptionAlgorithm(EncryptionAlgorithm.RSA);
 			
 			return sigParam;
 			
@@ -251,45 +195,23 @@ public class ValidConfig_SignatureParameters {
 			e.printStackTrace();
 			return null;
 			
-		} finally {
-			IOUtils.closeQuietly(kfis);
 		}
 	}
 	
 	public static SignatureParameters getJKSConfiguration_SHA512() {
-		
-		InputStream kfis = null;
+
 		
 		try{
 			SignatureParameters sigParam = new SignatureParameters();
-			
-			KeyStore ks = KeyStore.getInstance("JKS");
-			kfis = JKS_KEYSTORE_PATH.getInputStream();
-			ks.load(kfis, JKS_KEYSTORE_PASSWORD.toCharArray());
-			
-			PrivateKey privKey = (PrivateKey) ks.getKey(JKS_KEY_NAME, JKS_KEYSTORE_PASSWORD.toCharArray());
-			sigParam.setPrivateKey(privKey);
-			
-			X509Certificate cert = (X509Certificate) ks.getCertificate(JKS_KEY_NAME);
-			CertificateToken tkn = new CertificateToken(cert);
-			
-			sigParam.setCertificate(tkn);
+
+			KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(PKCS12_KEYSTORE_PATH.getInputStream(), "PKCS12", PKCS12_KEYSTORE_PASSWORD);
+			sigParam.setSignatureTokenConnection(keyStoreSignatureTokenConnection);
+
+			DSSPrivateKeyEntry key = keyStoreSignatureTokenConnection.getKey(PKCS12_KEY_NAME, PKCS12_KEY_PASSWORD);
+			sigParam.setPrivateKey(key);
 	
-			Certificate[] certs = ks.getCertificateChain(JKS_KEY_NAME);
-			
-			final List<CertificateToken> x509Certs = new ArrayList<CertificateToken>();
-			
-			for (final Certificate certificate : certs) {
-				if (certificate instanceof X509Certificate) {
-					CertificateToken chainCert = new CertificateToken((X509Certificate) certificate);
-			    	x509Certs.add(chainCert);
-				}
-			}
-			
-			sigParam.setCertificateChain(x509Certs);
-	
-			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA512.getName());
-			sigParam.setSignatureAlgorithm(EncryptionAlgorithm.RSA.getName());
+			sigParam.setDigestAlgorithm(DigestAlgorithm.SHA512);
+			sigParam.setEncryptionAlgorithm(EncryptionAlgorithm.RSA);
 			
 			return sigParam;
 			
@@ -299,8 +221,6 @@ public class ValidConfig_SignatureParameters {
 			e.printStackTrace();
 			return null;
 			
-		} finally {
-			IOUtils.closeQuietly(kfis);
 		}
 	}
 }

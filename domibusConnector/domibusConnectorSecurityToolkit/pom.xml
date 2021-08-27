@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
@@ -8,7 +9,9 @@
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
-    <description>The securityToolkitModule resolves and creates the ASIC-S Container. Its a bridge betweent the connector and the securityLib</description>
+    <description>The securityToolkitModule resolves and creates the ASIC-S Container. Its a bridge betweent the
+        connector and the securityLib
+    </description>
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -22,62 +25,44 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-document</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-service</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
-<!--            <artifactId>dss-tsl-jaxb</artifactId>-->
-<!--            <version>${dss.tools.version}</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-tsl-validation</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-asic-xades</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-token</artifactId>
         </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-pades</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-pades-pdfbox</artifactId>
-<!--            <version>${dss.tools.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.bouncycastle</groupId>-->
-<!--            <artifactId>bctsp-jdk14</artifactId>-->
-<!--        </dependency>-->
+
 
         <dependency>
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
-<!--            <version>1.3.26</version>-->
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.lowagie</groupId>-->
-<!--            <artifactId>itext</artifactId>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>

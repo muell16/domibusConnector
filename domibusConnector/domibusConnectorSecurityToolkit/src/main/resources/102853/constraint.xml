@@ -1,4 +1,8 @@
-<ConstraintsParameters Name="ECodex-based" xmlns="http://dss.esig.europa.eu/validation/policy">
+<ConstraintsParameters
+		Name="ECodex-based"
+		xmlns="http://dss.esig.europa.eu/validation/policy"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
 	<Description>eCODEX validation policy</Description>
 	<ContainerConstraints>
 		<AcceptableContainerTypes Level="FAIL">
@@ -161,7 +165,7 @@
 		<!--<MessageImprintDataFound Level="FAIL" />-->
 		<!--<MessageImprintDataIntact Level="FAIL" />-->
 		<RevocationTimeAgainstBestSignatureTime	Level="FAIL" />
-		<BestSignatureTimeBeforeIssuanceDateOfSigningCertificate Level="FAIL" />
+<!--		<BestSignatureTimeBeforeIssuanceDateOfSigningCertificate Level="FAIL" />-->
 		<!--<SigningCertificateValidityAtBestSignatureTime Level="FAIL" />-->
 		<!--<AlgorithmReliableAtBestSignatureTime Level="FAIL" />-->
 		<Coherence Level="WARN" />
@@ -351,6 +355,6 @@
 		<TLNotExpired Level="FAIL" />
 		<TLWellSigned Level="WARN" />
 		<TLVersion Level="FAIL" value="5" />
-		<TLConsistency Level="FAIL" />
+<!--		<TLConsistency Level="FAIL" />-->
 	</eIDAS>
 </ConstraintsParameters>

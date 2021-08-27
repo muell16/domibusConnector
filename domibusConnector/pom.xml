@@ -244,6 +244,11 @@
                 <version>${dss.tools.version}</version>
             </dependency>
             <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-token</artifactId>
+                <version>${dss.tools.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>${org.bouncycastl.version}</version>
