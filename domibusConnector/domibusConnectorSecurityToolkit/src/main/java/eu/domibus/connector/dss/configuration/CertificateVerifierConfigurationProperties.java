@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.CheckForNull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,27 +21,27 @@ public class CertificateVerifierConfigurationProperties {
 
     private boolean trustStoreEnabled = true;
 
+    //TODO: add not null validation if trustStoreEnabled = true
     @Valid
-    @NotNull
     @NestedConfigurationProperty
     @ConfigurationLabel("Trust Store")
     @ConfigurationDescription("This store holds all valid certificates for validation")
-    private StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
+    private StoreConfigurationProperties trustStore; // = new StoreConfigurationProperties();
 
+    private boolean ignoreStoreEnabled = false;
 
     /**
      * Any certificate within this store
      * would not be considered for certificate validation
      */
+    //TODO: add not null validation if trustStoreEnabled = true
+    @Valid
     @NestedConfigurationProperty
-    @ConfigurationLabel("Trust Store")
-    @ConfigurationDescription("This store holds all ignored certificates for validation")
+    @ConfigurationLabel("Ignore Store")
+    @ConfigurationDescription("This store holds all ignored certificates for validation.\n" +
+            "Any certificate within this store\n" +
+            "would not be considered for certificate validation")
     private StoreConfigurationProperties ignoreStore;
-
-    @NotNull
-    @ConfigurationLabel("Validation Constraints")
-    @ConfigurationDescription("The DSS Certificate Validation Constraints config")
-    private Resource signatureValidationConstraintsXml = new ClassPathResource("/102853/constraint.xml");
 
     /**
      * The trust source which should be used
@@ -60,7 +61,7 @@ public class CertificateVerifierConfigurationProperties {
      */
     private boolean crlEnabled = true;
 
-    public String getCertificateVerifierName() {
+    public @CheckForNull String getCertificateVerifierName() {
         return certificateVerifierName;
     }
 
@@ -76,7 +77,7 @@ public class CertificateVerifierConfigurationProperties {
         this.trustStoreEnabled = trustStoreEnabled;
     }
 
-    public StoreConfigurationProperties getTrustStore() {
+    public @CheckForNull StoreConfigurationProperties getTrustStore() {
         return trustStore;
     }
 
@@ -84,7 +85,7 @@ public class CertificateVerifierConfigurationProperties {
         this.trustStore = trustStore;
     }
 
-    public StoreConfigurationProperties getIgnoreStore() {
+    public @CheckForNull StoreConfigurationProperties getIgnoreStore() {
         return ignoreStore;
     }
 
@@ -92,15 +93,7 @@ public class CertificateVerifierConfigurationProperties {
         this.ignoreStore = ignoreStore;
     }
 
-    public Resource getSignatureValidationConstraintsXml() {
-        return signatureValidationConstraintsXml;
-    }
-
-    public void setSignatureValidationConstraintsXml(Resource signatureValidationConstraintsXml) {
-        this.signatureValidationConstraintsXml = signatureValidationConstraintsXml;
-    }
-
-    public String getTrustedListSource() {
+    public @CheckForNull String getTrustedListSource() {
         return trustedListSource;
     }
 
@@ -122,5 +115,13 @@ public class CertificateVerifierConfigurationProperties {
 
     public void setCrlEnabled(boolean crlEnabled) {
         this.crlEnabled = crlEnabled;
+    }
+
+    public boolean isIgnoreStoreEnabled() {
+        return ignoreStoreEnabled;
+    }
+
+    public void setIgnoreStoreEnabled(boolean ignoreStoreEnabled) {
+        this.ignoreStoreEnabled = ignoreStoreEnabled;
     }
 }

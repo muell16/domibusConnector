@@ -6,13 +6,9 @@ import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationC
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
+import java.util.Set;
 
 public class CheckAllowedAdvancedElectronicSystemTypeValidator implements ConstraintValidator<CheckAllowedAdvancedElectronicSystemType, DCBusinessDocumentValidationConfigurationProperties> {
-
-    @Override
-    public void initialize(CheckAllowedAdvancedElectronicSystemType constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
 
     @Override
     public boolean isValid(DCBusinessDocumentValidationConfigurationProperties value, ConstraintValidatorContext context) {
@@ -21,7 +17,8 @@ public class CheckAllowedAdvancedElectronicSystemTypeValidator implements Constr
         }
         boolean valid = true;
         context.disableDefaultConstraintViolation();
-        List<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = value.getAllowedAdvancedSystemTypes();
+        Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = value.getAllowedAdvancedSystemTypes();
+        AdvancedElectronicSystemType defaultAesSystem = value.getDefaultAdvancedSystemType();
         if (allowedAdvancedSystemTypes.contains(AdvancedElectronicSystemType.SIGNATURE_BASED) && value.getSignatureValidation() == null) {
             context.buildConstraintViolationWithTemplate("AllowedAdvancedSystemTypes contains SIGNATURE_BASED so signature-validation must be configured")
                     .addPropertyNode("signature-validation")
@@ -31,6 +28,18 @@ public class CheckAllowedAdvancedElectronicSystemTypeValidator implements Constr
         if (allowedAdvancedSystemTypes.contains(AdvancedElectronicSystemType.AUTHENTICATION_BASED) && value.getAuthenticationValidation() == null) {
             context.buildConstraintViolationWithTemplate("AllowedAdvancedSystemTypes contains AUTHENTICATION_BASED so authentication-validation must be configured")
                     .addPropertyNode("authentication-validation")
+                    .addConstraintViolation();
+            valid = false;
+        }
+        if (defaultAesSystem == null) {
+            context.buildConstraintViolationWithTemplate("The DefaultAdvancedSystemType must be set to one of the AllowedAdvancedSystemTypes, but it is not set at all!")
+                    .addPropertyNode("defaultAdvancedSystemType")
+                    .addConstraintViolation();
+            valid = false;
+        }
+        if (!allowedAdvancedSystemTypes.contains(defaultAesSystem)) {
+            context.buildConstraintViolationWithTemplate("The DefaultAdvancedSystemType must be set to one of the AllowedAdvancedSystemTypes!")
+                    .addPropertyNode("defaultAdvancedSystemType")
                     .addConstraintViolation();
             valid = false;
         }

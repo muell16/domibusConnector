@@ -29,7 +29,7 @@ public class ValidConfig_BasicTechValidator {
 	// SUB-CONF-05 Variant 1
 	public static DSSECodexTechnicalValidationService get_BasicTechValidator_NoProxy_NoAuthCertConfig() throws IOException {
 		
-		DSSECodexTechnicalValidationService	techValService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(), DEFAULT_PROCESS_EXECUTOR, Optional.empty(), Optional.empty());
+		DSSECodexTechnicalValidationService	techValService = new DSSECodexTechnicalValidationService(ValidConfig_EtsiPolicy.etsiValidationPolicy(), ValidConfig_CertificateVerifier.get_WithProxy(), DEFAULT_PROCESS_EXECUTOR, Optional.empty(), Optional.empty());
 
 //		techValService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 		
@@ -42,7 +42,7 @@ public class ValidConfig_BasicTechValidator {
 
 		FileInputStream fis = ValidConfig_BasicTechValidator_AuthCertificateTSL.get_FileInputStream_with_TSL();
 
-		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(), DEFAULT_PROCESS_EXECUTOR, Optional.of(LotlCreator.createTrustedListsCertificateSource(fis)), Optional.empty());
+		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(ValidConfig_EtsiPolicy.etsiValidationPolicy(), ValidConfig_CertificateVerifier.get_WithProxy(), DEFAULT_PROCESS_EXECUTOR, Optional.of(LotlCreator.createTrustedListsCertificateSource(fis)), Optional.empty());
 
 //		techValService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());
 //		techValService.setAuthenticationCertificateTSL(fis);
@@ -69,6 +69,7 @@ public class ValidConfig_BasicTechValidator {
 
 
 		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(
+				ValidConfig_EtsiPolicy.etsiValidationPolicy(),
 				ValidConfig_CertificateVerifier.get_WithProxy(),
 				DEFAULT_PROCESS_EXECUTOR,
 				Optional.empty(),

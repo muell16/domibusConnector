@@ -20,7 +20,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @NotNull
 public @interface CheckAllowedAdvancedElectronicSystemType  {
 
-    String message() default "The provided xml is not a schema valid EtsiValidationPolicy!";
+    String message() default "";
 
     Class<?>[] groups() default {};
 

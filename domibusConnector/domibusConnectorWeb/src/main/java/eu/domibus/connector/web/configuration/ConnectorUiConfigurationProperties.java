@@ -21,6 +21,8 @@ public class ConnectorUiConfigurationProperties {
 
     String autoLoginPassword = "";
 
+    String defaultRoute = null;
+
     public boolean isAutoLoginEnabled() {
         return autoLoginEnabled;
     }
@@ -43,5 +45,13 @@ public class ConnectorUiConfigurationProperties {
 
     public void setAutoLoginPassword(String autoLoginPassword) {
         this.autoLoginPassword = autoLoginPassword;
+    }
+
+    public String getDefaultRoute() {
+        return defaultRoute;
+    }
+
+    public void setDefaultRoute(String defaultRoute) {
+        this.defaultRoute = defaultRoute;
     }
 }

@@ -15,7 +15,9 @@ public class InvalidConfig_BasicTechValidator {
 	
 	public static DSSECodexTechnicalValidationService get_BasicTechValidator_NoProxy_WithInvalidAuthCertConfig() throws IOException {
 		
-		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(ValidConfig_CertificateVerifier.get_WithProxy(),
+		DSSECodexTechnicalValidationService techValService = new DSSECodexTechnicalValidationService(
+				ValidConfig_EtsiPolicy.etsiValidationPolicy(),
+				ValidConfig_CertificateVerifier.get_WithProxy(),
 				new DefaultSignatureProcessExecutor(), Optional.of(LotlCreator.createTrustedListsCertificateSource(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_Invalid_Path())), Optional.empty());
 
 //		techValService.setCertificateVerifier(ValidConfig_CertificateVerifier.get_WithProxy());

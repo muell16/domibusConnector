@@ -55,9 +55,10 @@ public class CommonCertificateVerifierFactory {
         String trustedListSourceName = certificateVerifierConfig.getTrustedListSource();
         Optional<TrustedListsCertificateSource> certificateSource = trustedListsManager.getCertificateSource(trustedListSourceName);
         if (certificateSource.isPresent()) {
-            listCertificateSource.add(certificateSource.get());
+            TrustedListsCertificateSource tlSource = certificateSource.get();
+            listCertificateSource.add(tlSource);
         } else {
-            LOGGER.warn("There is no TrustedListsCertificateSource with key [{}] configured. Available are [{}]", trustedListSourceName, trustedListsManager.getAllSourceNames());
+            LOGGER.info("There is no TrustedListsCertificateSource with key [{}] configured. Available are [{}]", trustedListSourceName, trustedListsManager.getAllSourceNames());
         }
 
 
@@ -68,6 +69,9 @@ public class CommonCertificateVerifierFactory {
 
 
         if (certificateVerifierConfig.isTrustStoreEnabled()) {
+            if (certificateVerifierConfig.getTrustStore() == null) {
+                throw new IllegalArgumentException("Trust store is set to enabled, but it is not configured!");
+            }
             CertificateSource certificateSourceFromStore = certificateSourceFromKeyStoreCreator.createCertificateSourceFromStore(certificateVerifierConfig.getTrustStore());
             CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
             trustedCertSource.importAsTrusted(certificateSourceFromStore);

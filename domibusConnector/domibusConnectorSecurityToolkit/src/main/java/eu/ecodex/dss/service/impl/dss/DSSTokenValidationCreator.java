@@ -22,11 +22,13 @@ import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.europa.esig.dss.detailedreport.DetailedReport;
 import eu.europa.esig.dss.diagnostic.CertificateWrapper;
 import eu.europa.esig.dss.diagnostic.DiagnosticData;
 import eu.europa.esig.dss.enumerations.SignatureForm;
 import eu.europa.esig.dss.enumerations.SignatureQualification;
+import eu.europa.esig.dss.policy.EtsiValidationPolicy;
 import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.simplereport.jaxb.XmlToken;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
@@ -67,6 +69,7 @@ class DSSTokenValidationCreator {
 	private final DSSDocument businessDocument;
 	private final DSSDocument detachedSignature;
 	private final DocumentProcessExecutor processExecutor;
+	private final EtsiValidationPolicy etsiValidationPolicy;
 
 	private TokenValidation tValidation;
 
@@ -85,7 +88,13 @@ class DSSTokenValidationCreator {
 	 * @param detachedSignature   the optional detached signature document; if present this will be used to provide the signature
 	 * @param processExecutor
 	 */
-	DSSTokenValidationCreator(final CertificateVerifier certificateVerifier, final DSSDocument businessDocument, final DSSDocument detachedSignature, DocumentProcessExecutor processExecutor) {
+	DSSTokenValidationCreator(
+			final EtsiValidationPolicy etsiValidationPolicy,
+			final CertificateVerifier certificateVerifier,
+							  final DSSDocument businessDocument,
+							  final DSSDocument detachedSignature,
+							  DocumentProcessExecutor processExecutor) {
+		this.etsiValidationPolicy = etsiValidationPolicy;
 		this.certificateVerifier = certificateVerifier;
 		this.businessDocument = businessDocument;
 		this.detachedSignature = detachedSignature;
@@ -172,9 +181,10 @@ class DSSTokenValidationCreator {
 
 		// Validate the document and generate the validation report
 		LOG.lDetail("validating document");
-		final InputStream resourceAsStream = DSSECodexContainerService.class.getResourceAsStream("/validation/102853/constraint.xml");
+		//TODO: use config here...
+//		final InputStream resourceAsStream = DSSECodexContainerService.class.getResourceAsStream("/validation/102853/constraint.xml");
 		
-		Reports reports = validator.validateDocument(resourceAsStream);
+		Reports reports = validator.validateDocument(etsiValidationPolicy);
 		final SimpleReport simpleReport = reports.getSimpleReport();
 		final DiagnosticData diagnosticData = reports.getDiagnosticData();
 		final List<AdvancedSignature> signatures = validator.getSignatures();

@@ -4,6 +4,7 @@ import eu.europa.esig.dss.policy.ValidationPolicy;
 import eu.europa.esig.dss.policy.ValidationPolicyFacade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.xml.sax.SAXException;
 
@@ -14,9 +15,16 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ValidEtisValidationPolicyXmlValidator implements ConstraintValidator<ValidEtsiValidationPolicyXml, Resource> {
+public class ValidEtisValidationPolicyXmlValidator implements ConstraintValidator<ValidEtsiValidationPolicyXml, String> {
 
     private static final Logger LOGGER = LogManager.getLogger(ValidEtisValidationPolicyXmlValidator.class);
+
+    private final ApplicationContext applicationContext;
+
+    public ValidEtisValidationPolicyXmlValidator(ApplicationContext context) {
+        this.applicationContext = context;
+    }
+
 
     @Override
     public void initialize(ValidEtsiValidationPolicyXml constraintAnnotation) {
@@ -24,12 +32,13 @@ public class ValidEtisValidationPolicyXmlValidator implements ConstraintValidato
     }
 
     @Override
-    public boolean isValid(Resource value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         }
         try {
-            InputStream policyDataStream = value.getInputStream();
+            Resource resource = applicationContext.getResource(value);
+            InputStream policyDataStream = resource.getInputStream();
             ValidationPolicy validationPolicy = null;
             validationPolicy = ValidationPolicyFacade.newFacade().getValidationPolicy(policyDataStream);
             return true;

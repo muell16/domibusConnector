@@ -9,8 +9,6 @@
  */
 package eu.ecodex.dss.service.impl.dss;
 
-import eu.ecodex.dss.util.ResourceUtil;
-import eu.ecodex.dss.model.*;
 import eu.ecodex.dss.model.token.AuthenticationCertificate;
 import eu.ecodex.dss.model.token.OriginalValidationReportContainer;
 import eu.ecodex.dss.model.token.Token;
@@ -27,6 +25,7 @@ import eu.europa.esig.dss.model.DSSException;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.model.MimeType;
 
+import eu.europa.esig.dss.policy.EtsiValidationPolicy;
 import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 
@@ -52,12 +51,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.security.auth.x500.X500Principal;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.xml.sax.SAXException;
 
 /**
  * The DSS implementation of the services
@@ -74,15 +69,18 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	private static final LogDelegate LOG = new LogDelegate(DSSECodexTechnicalValidationService.class);
 
 //	private ProxyConfig preferenceManager;
+	private final EtsiValidationPolicy etsiValidationPolicy;
 	private final CertificateVerifier certificateVerifier;
 	private final DocumentProcessExecutor processExecutor;
 	private final Optional<TrustedListsCertificateSource> trustedListCertificatesSource;
 	private final Optional<CertificateSource> ignoredCertificatesStore;
 
-	public DSSECodexTechnicalValidationService(CertificateVerifier certificateVerifier,
+	public DSSECodexTechnicalValidationService(EtsiValidationPolicy etsiValidationPolicy,
+											   CertificateVerifier certificateVerifier,
 											   DocumentProcessExecutor processExecutor,
 											   Optional<TrustedListsCertificateSource> trustedListCertificatesSource,
 											   Optional<CertificateSource> ignoredCertificatesStore) {
+		this.etsiValidationPolicy = etsiValidationPolicy;
 		this.certificateVerifier = certificateVerifier;
 		this.processExecutor = processExecutor;
 		this.trustedListCertificatesSource = trustedListCertificatesSource;
@@ -99,7 +97,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 	public TokenValidation create(final DSSDocument businessDocument, final DSSDocument detachedSignature) throws ECodexException {
 		LOG.mEnter("create", businessDocument, detachedSignature);
 		try {
-			final DSSTokenValidationCreator delegate = new DSSTokenValidationCreator(certificateVerifier, businessDocument, detachedSignature, processExecutor);
+			final DSSTokenValidationCreator delegate = new DSSTokenValidationCreator(etsiValidationPolicy, certificateVerifier, businessDocument, detachedSignature, processExecutor);
 			delegate.setIgnoredCertificatesStore(ignoredCertificatesStore.orElse(null));
 			delegate.run();
 			return delegate.getResult();

@@ -39,11 +39,11 @@ import java.util.List;
  * security.oj.url
  * 
  */
-@Component
-@UIScope
-@Route(value = SecurityConfiguration.ROUTE, layout = ConfigurationLayout.class)
-@RoleRequired(role = "ADMIN")
-@TabMetadata(title = "ECodex Lib Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
+//@Component
+//@UIScope
+//@Route(value = SecurityConfiguration.ROUTE, layout = ConfigurationLayout.class)
+//@RoleRequired(role = "ADMIN")
+//@TabMetadata(title = "ECodex Lib Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 public class SecurityConfiguration extends VerticalLayout{
 
 	public static final String ROUTE = "ecodexlib";

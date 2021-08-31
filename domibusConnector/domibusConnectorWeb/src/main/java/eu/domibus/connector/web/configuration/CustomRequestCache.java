@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.configuration;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import javax.servlet.http.HttpServletRequest;

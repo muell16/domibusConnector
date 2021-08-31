@@ -1,7 +1,7 @@
 package eu.domibus.connector.security.aes;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
+import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.ecodex.dss.model.token.*;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
@@ -31,7 +31,7 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
 
 
     @Override
-    public ECodexTechnicalValidationService createTechnicalValidationService(DomibusConnectorMessage message, DCEcodexContainerProperties.AuthenticationValidationConfigurationProperties config) {
+    public ECodexTechnicalValidationService createTechnicalValidationService(DomibusConnectorMessage message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
         DomibusConnectorAESTokenValidationCreator domibusConnectorAESTokenValidationCreator = new DomibusConnectorAESTokenValidationCreator(config.getIdentityProvider());
         return new DomibusConnectorAESTechnicalValidationService(message, domibusConnectorAESTokenValidationCreator);
     }

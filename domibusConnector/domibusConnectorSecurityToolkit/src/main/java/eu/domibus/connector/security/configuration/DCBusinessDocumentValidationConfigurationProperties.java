@@ -3,6 +3,8 @@ package eu.domibus.connector.security.configuration;
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
+import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
+import eu.domibus.connector.security.aes.OriginalSenderBasedAESAuthenticationServiceFactory;
 import eu.domibus.connector.security.configuration.validation.CheckAllowedAdvancedElectronicSystemType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -12,8 +14,9 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This configuration class holds the settings for
@@ -62,7 +65,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      *  only a allowed system type can be 5
      */
     @NotNull
-    private List<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = Arrays.asList(AdvancedElectronicSystemType.values());
+    private Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = Stream.of(AdvancedElectronicSystemType.values()).collect(Collectors.toSet());
 
     /**
      *  If true the client can override the for the specific message used system type
@@ -74,21 +77,19 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      * Configuration for signature validation,
      *  used when the advancedSystemType is SIGNATURE_BASED
      */
-    //TODO: condiational null check, if allowedAdvancedSystemTypes contains SIGNATURE_BASED
     @Valid
     @NestedConfigurationProperty
     private SignatureValidationConfigurationProperties signatureValidation;
 
-    //TODO: conditional null check, if allowedAdvancedSystemTypes contains AUTHENTICATION_BASED
     @Valid
     @NestedConfigurationProperty
-    private DCEcodexContainerProperties.AuthenticationValidationConfigurationProperties authenticationValidation;
+    private DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties authenticationValidation;
 
-    public List<AdvancedElectronicSystemType> getAllowedAdvancedSystemTypes() {
+    public Set<AdvancedElectronicSystemType> getAllowedAdvancedSystemTypes() {
         return allowedAdvancedSystemTypes;
     }
 
-    public void setAllowedAdvancedSystemTypes(List<AdvancedElectronicSystemType> allowedAdvancedSystemTypes) {
+    public void setAllowedAdvancedSystemTypes(Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes) {
         this.allowedAdvancedSystemTypes = allowedAdvancedSystemTypes;
     }
 
@@ -116,11 +117,11 @@ public class DCBusinessDocumentValidationConfigurationProperties {
         this.serviceProvider = serviceProvider;
     }
 
-    public DCEcodexContainerProperties.AuthenticationValidationConfigurationProperties getAuthenticationValidation() {
+    public AuthenticationValidationConfigurationProperties getAuthenticationValidation() {
         return authenticationValidation;
     }
 
-    public void setAuthenticationValidation(DCEcodexContainerProperties.AuthenticationValidationConfigurationProperties authenticationValidation) {
+    public void setAuthenticationValidation(AuthenticationValidationConfigurationProperties authenticationValidation) {
         this.authenticationValidation = authenticationValidation;
     }
 
@@ -138,5 +139,44 @@ public class DCBusinessDocumentValidationConfigurationProperties {
 
     public void setSignatureValidation(SignatureValidationConfigurationProperties signatureValidation) {
         this.signatureValidation = signatureValidation;
+    }
+
+    public static class AuthenticationValidationConfigurationProperties {
+        /**
+         * If the AUTHENTICATION_BASED is used, the identity provider must be set
+         *  the identity provider is the system which has authenticated the user
+         */
+        @NotBlank
+        private String identityProvider;
+
+        @NotNull
+        private Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass = OriginalSenderBasedAESAuthenticationServiceFactory.class;
+
+        @NotNull
+        private Map<String, String> properties = new HashMap<>();
+
+        public String getIdentityProvider() {
+            return identityProvider;
+        }
+
+        public void setIdentityProvider(String identityProvider) {
+            this.identityProvider = identityProvider;
+        }
+
+        public Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> getAuthenticatorServiceFactoryClass() {
+            return authenticatorServiceFactoryClass;
+        }
+
+        public void setAuthenticatorServiceFactoryClass(Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass) {
+            this.authenticatorServiceFactoryClass = authenticatorServiceFactoryClass;
+        }
+
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+
+        public void setProperties(Map<String, String> properties) {
+            this.properties = properties;
+        }
     }
 }

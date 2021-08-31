@@ -10,6 +10,7 @@ import eu.domibus.connector.lib.spring.configuration.StoreConfigurationPropertie
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
+import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.SignatureCheckers;
 import eu.ecodex.dss.model.SignatureParameters;
@@ -19,6 +20,9 @@ import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexLegalValidationService;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.service.impl.dss.*;
+import eu.europa.esig.dss.policy.EtsiValidationPolicy;
+import eu.europa.esig.dss.policy.ValidationPolicy;
+import eu.europa.esig.dss.policy.ValidationPolicyFacade;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.validation.CertificateVerifier;
@@ -28,7 +32,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -120,7 +129,7 @@ public class ECodexContainerFactoryService {
         return advancedElectronicSystemType;
     }
 
-    private ECodexTechnicalValidationService createDSSAuthenticationBasedValidationService(DomibusConnectorMessage message, DCEcodexContainerProperties.AuthenticationValidationConfigurationProperties config) {
+    private ECodexTechnicalValidationService createDSSAuthenticationBasedValidationService(DomibusConnectorMessage message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
         Objects.requireNonNull(config, "AuthenticationValidationConfigurationProperties is not allowed to be null!");
         Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass = config.getAuthenticatorServiceFactoryClass();
         DCAuthenticationBasedTechnicalValidationServiceFactory bean = applicationContext.getBean(authenticatorServiceFactoryClass);
@@ -139,13 +148,30 @@ public class ECodexContainerFactoryService {
 
         CertificateVerifier businessDocumentCertificateVerifier = commonCertificateVerifierFactory.createCommonCertificateVerifier(signatureValidationConfigurationProperties);
 
+        EtsiValidationPolicy etsiValidationPolicy = loadEtsiValidationPolicy(signatureValidationConfigurationProperties);
+
         return new DSSECodexTechnicalValidationService(
+                etsiValidationPolicy,
                 businessDocumentCertificateVerifier,
                 new DefaultSignatureProcessExecutor(),
                 certificateSource,
                 Optional.ofNullable(ignoreCertificates)
                 );
 
+    }
+
+    private EtsiValidationPolicy loadEtsiValidationPolicy(SignatureValidationConfigurationProperties signatureValidationConfigurationProperties) {
+        try {
+            Resource resource = applicationContext.getResource(signatureValidationConfigurationProperties.getValidationConstraintsXml());
+            InputStream policyDataStream = resource.getInputStream();
+            EtsiValidationPolicy validationPolicy = null;
+            validationPolicy = (EtsiValidationPolicy) ValidationPolicyFacade.newFacade().getValidationPolicy(policyDataStream);
+            return validationPolicy;
+        } catch (IOException ioe) {
+            throw new RuntimeException("Error while loading resource", ioe);
+        } catch (XMLStreamException | JAXBException | SAXException e) {
+            throw new RuntimeException("Error while parsing EtsiValidationPolicy", e);
+        }
     }
 
 
@@ -198,16 +224,16 @@ public class ECodexContainerFactoryService {
     }
 
     private Resource signatureValidationConstraintsXml() {
-        return dcEcodexContainerProperties
+        return applicationContext.getResource(dcEcodexContainerProperties
                 .getSignatureValidation()
-                .getValidationConstraintsXml();
+                .getValidationConstraintsXml());
     }
 
     private SignatureParameters createSignatureParameters() {
         try {
             LOGGER.debug("creatingSignatureParameters");
 
-            DCEcodexContainerProperties.SignatureConfigurationProperties signatureConfig = dcEcodexContainerProperties.getSignature();
+            SignatureConfigurationProperties signatureConfig = dcEcodexContainerProperties.getSignature();
             CertificateSourceFromKeyStoreCreator.SignatureConnectionAndPrivateKeyEntry signatureConnectionFromStore = certificateSourceFromKeyStoreCreator.createSignatureConnectionFromStore(signatureConfig);
 
             SignatureParameters signatureParameters = new SignatureParameters();
