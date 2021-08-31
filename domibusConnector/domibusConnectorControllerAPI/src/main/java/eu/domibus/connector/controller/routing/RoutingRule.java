@@ -26,7 +26,7 @@ public class RoutingRule {
      */
     private int priority = 0;
 
-    private String routingRuleId = UUID.randomUUID().toString();
+    private String routingRuleId = UUID.randomUUID().toString().substring(0, 8);
 
     public String getLinkName() {
         return linkName;

@@ -13,6 +13,8 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
@@ -23,7 +25,9 @@ import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.view.areas.configuration.TabMetadata;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @UIScope
@@ -35,12 +39,16 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     public static final String ROUTE = "backendrouting";
 
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
+    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final DCLinkFacade dcLinkFacade;
 
     private Grid<RoutingRule> routingRuleGrid;
 
-    public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl, DCLinkFacade dcLinkFacade) {
+    private List<RoutingRule> currentRoutingRules;
+
+    public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl, ConfigurationPropertyManagerService configurationPropertyManagerService, DCLinkFacade dcLinkFacade) {
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
+        this.configurationPropertyManagerService = configurationPropertyManagerService;
         this.dcLinkFacade = dcLinkFacade;
         initUI();
     }
@@ -124,19 +132,39 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 			});
 			deleteRoutingRuleDialog.add(delButton);
 			deleteRoutingRuleDialog.open();
-			
-		});
+
+        });
 		return deleteRoutingRuleButton;
 	}
+
+	private void saveChanges() {
+        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
+                DCMessageRoutingConfigurationProperties.class);
+
+        routingConfigurationProperties.setBackendRules(currentRoutingRules);
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
+    }
+
+    private void resetChanges() {
+        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
+                DCMessageRoutingConfigurationProperties.class);
+
+        //TODO: only replace rules from DB source!
+    }
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
 
+        //returns all routing rules (configured within db AND PropertyFiles/SpringEnvironment)
 		Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-		routingRuleGrid.setItems(backendRoutingRules);
+
+		this.currentRoutingRules = new ArrayList<>(backendRoutingRules);
+        routingRuleGrid.setItems(this.currentRoutingRules);
 		
 	}
 
     //TODO: for validation purpose check DCLinkFacade if backendName is a configured backend
+    // warn when backend exists, but deactivated
+    // error when backend does not exist
 
 }
