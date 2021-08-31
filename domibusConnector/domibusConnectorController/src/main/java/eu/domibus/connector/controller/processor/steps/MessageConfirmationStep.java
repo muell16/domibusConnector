@@ -57,7 +57,7 @@ public class MessageConfirmationStep {
      * @param message - the business message
      * @param confirmation - the confirmation
      */
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "processConfirmationForMessage")
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
         try {
             if (!DomainModelHelper.isBusinessMessage(message)) {

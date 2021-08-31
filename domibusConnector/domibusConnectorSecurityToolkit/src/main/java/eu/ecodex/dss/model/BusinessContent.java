@@ -12,7 +12,7 @@ package eu.ecodex.dss.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 /**
  * this holds the document and its attachments

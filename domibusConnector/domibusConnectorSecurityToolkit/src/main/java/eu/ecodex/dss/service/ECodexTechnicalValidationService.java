@@ -12,7 +12,7 @@ package eu.ecodex.dss.service;
 import eu.ecodex.dss.model.EnvironmentConfiguration;
 import eu.ecodex.dss.model.token.Token;
 import eu.ecodex.dss.model.token.TokenValidation;
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 /**
  * <p>the contract about creating the technical validation (result and report) on the (main) business document</p> 

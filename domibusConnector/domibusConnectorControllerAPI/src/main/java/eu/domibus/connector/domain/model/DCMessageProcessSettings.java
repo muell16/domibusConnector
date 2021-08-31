@@ -1,14 +1,16 @@
 package eu.domibus.connector.domain.model;
 
+import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
+
 public class DCMessageProcessSettings {
 
-    private String validationServiceName;
+    private AdvancedElectronicSystemType validationServiceName;
 
-    public String getValidationServiceName() {
+    public AdvancedElectronicSystemType getValidationServiceName() {
         return validationServiceName;
     }
 
-    public void setValidationServiceName(String validationServiceName) {
+    public void setValidationServiceName(AdvancedElectronicSystemType validationServiceName) {
         this.validationServiceName = validationServiceName;
     }
 }

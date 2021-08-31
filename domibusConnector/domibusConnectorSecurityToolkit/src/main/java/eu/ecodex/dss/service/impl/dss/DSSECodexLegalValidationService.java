@@ -44,11 +44,11 @@ public class DSSECodexLegalValidationService implements ECodexLegalValidationSer
      * 
      * this is actually unused
      */
-    @Override
-    public void setEnvironmentConfiguration(final EnvironmentConfiguration conf) {
-        // unused
-        LOG.lConfig("environment configuration ignored (not needed)");
-    }
+//    @Override
+//    public void setEnvironmentConfiguration(final EnvironmentConfiguration conf) {
+//        // unused
+//        LOG.lConfig("environment configuration ignored (not needed)");
+//    }
 
     /**
      * {@inheritDoc}

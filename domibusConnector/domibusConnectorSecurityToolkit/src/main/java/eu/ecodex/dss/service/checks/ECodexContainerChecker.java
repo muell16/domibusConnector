@@ -30,12 +30,12 @@ import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.model.token.TokenValidation;
 import eu.ecodex.dss.model.token.ValidationVerification;
 import eu.ecodex.dss.util.DocumentStreamUtil;
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 /**
  * Tests the following rules :
  * <ul>
- * <li>The conainer is not null</li>
+ * <li>The container is not null</li>
  * <li>The ASIC-S document is set and contains data</li>
  * <li>The business document is set and contains data</li>
  * <li>The trustOkToken PDF is set and contains data</li>

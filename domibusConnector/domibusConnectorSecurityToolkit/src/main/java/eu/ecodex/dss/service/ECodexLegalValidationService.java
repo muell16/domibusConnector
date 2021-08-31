@@ -40,7 +40,7 @@ public interface ECodexLegalValidationService {
      * 
      * @param conf the value (may be null)
      */
-    void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
+//    void setEnvironmentConfiguration(final EnvironmentConfiguration conf);
 
     /**
      * creates the legal validation (either national or DSS)

@@ -12,6 +12,7 @@ package eu.ecodex.dss.util;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import eu.europa.esig.dss.model.DSSDocument;
 import org.apache.commons.io.IOUtils;
 
 import com.lowagie.text.DocumentException;
@@ -32,9 +33,9 @@ import eu.ecodex.dss.model.token.TechnicalTrustLevel;
 import eu.ecodex.dss.model.token.Token;
 import eu.ecodex.dss.model.token.TokenValidation;
 import eu.ecodex.dss.model.token.ValidationVerification;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.InMemoryDocument;
-import eu.europa.esig.dss.MimeType;
+
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
 
 /**
  * This creates the technical summary page of the trustoktoken

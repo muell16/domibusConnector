@@ -34,11 +34,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class EvidenceUtilsImpl extends EvidenceUtils {
+
+	private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsImpl.class);
 
 	public EvidenceUtilsImpl(Resource javaKeyStorePath,
 							 String javaKeyStorePassword, String alias, String keyPassword) {
@@ -111,26 +115,8 @@ public class EvidenceUtilsImpl extends EvidenceUtils {
 
 			signedByteArray = bos.toByteArray();
 
-		} catch (KeyException e1) {
-			e1.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		} catch (MarshalException e) {
-			e.printStackTrace();
-		} catch (XMLSignatureException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
+		} catch (KeyException | SAXException | IOException | ParserConfigurationException | TransformerException | MarshalException | XMLSignatureException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e1) {
+			LOGGER.error("Cannot signByteArray due", e1);
 		}
 
 		return signedByteArray;

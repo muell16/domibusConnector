@@ -18,7 +18,7 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles({"test", "db_h2", "storage-db", STORAGE_DB_PROFILE_NAME})
+@ActiveProfiles({"test", "db_h2", "storage-db", STORAGE_DB_PROFILE_NAME, "prop-test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestPropertyLoadingStoring {
 

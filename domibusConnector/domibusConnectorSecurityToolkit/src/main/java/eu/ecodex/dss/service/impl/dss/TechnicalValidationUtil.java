@@ -9,35 +9,28 @@
  */
 package eu.ecodex.dss.service.impl.dss;
 
-import java.security.cert.X509Certificate;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import eu.ecodex.dss.model.token.TechnicalTrustLevel;
+import eu.europa.esig.dss.detailedreport.DetailedReport;
+import eu.europa.esig.dss.detailedreport.jaxb.*;
+import eu.europa.esig.dss.diagnostic.CertificateWrapper;
+import eu.europa.esig.dss.diagnostic.DiagnosticData;
+import eu.europa.esig.dss.diagnostic.jaxb.XmlDiagnosticData;
+import eu.europa.esig.dss.enumerations.SignatureLevel;
+import eu.europa.esig.dss.enumerations.SignatureQualification;
+import eu.europa.esig.dss.model.x509.CertificateToken;
+import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.validation.AdvancedSignature;
 
 import javax.security.auth.x500.X500Principal;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Optional;
 
-import eu.europa.esig.dss.jaxb.detailedreport.*;
-import eu.europa.esig.dss.validation.reports.wrapper.CertificateWrapper;
-import org.apache.commons.lang.StringUtils;
-
-import eu.ecodex.dss.model.token.TechnicalTrustLevel;
-import eu.europa.esig.dss.SignatureLevel;
-import eu.europa.esig.dss.SignatureTokenType;
-import eu.europa.esig.dss.validation.AdvancedSignature;
-import eu.europa.esig.dss.validation.SignatureQualification;
-import eu.europa.esig.dss.validation.reports.DetailedReport;
-import eu.europa.esig.dss.validation.reports.SimpleReport;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-//import eu.europa.ec.markt.dss.signature.validation.AdvancedSignature;
-//import eu.europa.ec.markt.dss.validation102853.CertificateToken;
-//import eu.europa.ec.markt.dss.validation102853.SignatureType;
-//import eu.europa.ec.markt.dss.validation102853.report.DiagnosticData;
-//import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
-import eu.europa.esig.dss.x509.CertificateToken;
-import eu.europa.esig.jaxb.xmldsig.SignatureType;
 
 /**
  * Provides convenience-methods for Validation report.
@@ -211,15 +204,19 @@ class TechnicalValidationUtil {
 	 * @param signatureId  signature id
 	 * @return the format (if present) concatenated with "-" and the level (if present)
 	 */
-	public static String getSignatureFormatLevel(final SimpleReport simpleReport, final String signatureId) {
+	@Deprecated //use getSignatureFormatLvl instead!
+	public static String getSignatureFormatLevelAsString(final SimpleReport simpleReport, final String signatureId) {
+		return getSignatureFormatLevel(simpleReport, signatureId)
+				.map(SignatureLevel::toString)
+				.orElse(null);
+	}
+
+	public static Optional<SignatureLevel> getSignatureFormatLevel(final SimpleReport simpleReport, final String signatureId) {
 		if (simpleReport == null) {
-			return null;
+			return Optional.empty();
 		}
-		final String format = simpleReport.getSignatureFormat(signatureId);
-		if (StringUtils.isEmpty(format)) {
-			return null;
-		}
-		return format;
+		final SignatureLevel format = simpleReport.getSignatureFormat(signatureId);
+		return Optional.ofNullable(format);
 	}
 
 	/**
@@ -249,7 +246,7 @@ class TechnicalValidationUtil {
 		if (simpleReport == null) {
 			return false;
 		}
-		final boolean result = simpleReport.isSignatureValid(signatureId);
+		final boolean result = simpleReport.isValid(signatureId);
 		return result;
 	}
 
@@ -304,14 +301,14 @@ class TechnicalValidationUtil {
 	 */
 	public static boolean checkTrustAnchor(DiagnosticData diagnosticData, String certificateId) {
 
-		eu.europa.esig.dss.jaxb.diagnostic.DiagnosticData model = (diagnosticData == null) ? null : diagnosticData.getJaxbModel();
-		List<eu.europa.esig.dss.jaxb.diagnostic.XmlCertificate> certificates = (model == null) ? null : model.getUsedCertificates();
+		XmlDiagnosticData model = (diagnosticData == null) ? null : diagnosticData.getJaxbModel();
+		List<eu.europa.esig.dss.diagnostic.jaxb.XmlCertificate> certificates = (model == null) ? null : model.getUsedCertificates();
 
 		if(certificates == null) {
 			return false;
 		}
 
-		for (eu.europa.esig.dss.jaxb.diagnostic.XmlCertificate xmlCertificate : certificates) {
+		for (eu.europa.esig.dss.diagnostic.jaxb.XmlCertificate xmlCertificate : certificates) {
 			if(xmlCertificate.getId() != null && xmlCertificate.getId().equals(certificateId) && xmlCertificate.isTrusted()) {
 				return true;
 			}

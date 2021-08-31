@@ -253,6 +253,8 @@ Upgrade manual: link:upgrade/upgrade-4.3.0.html[Upgrade to 4.3.0]
 ** Oracle 11g
 
 
+include::changelog-4.4.x.adoc[]
+
 
 
 

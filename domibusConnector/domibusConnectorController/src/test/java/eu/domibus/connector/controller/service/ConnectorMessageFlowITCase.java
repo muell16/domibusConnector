@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
@@ -68,10 +69,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {ITCaseTestContext.class},
         properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
                 "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
+                "spring.jta.enabled=false"
 //                "logging.level.eu.domibus=TRACE"
 
 }
 )
+@Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectorMessageFlowITCase {
@@ -266,14 +269,14 @@ public class ConnectorMessageFlowITCase {
                     )
                     .setMessageDetails(DomibusConnectorMessageDetailsBuilder
                             .create()
-                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
+                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- is used to find original message
                             .withEbmsMessageId(null) //
                             .withAction("")
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
-                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyAT()) //empty
+                            .withToParty(DomainEntityCreator.createPartyDE()) //empty
                             .withFinalRecipient("")
                             .withOriginalSender("")
                             .build())
@@ -475,7 +478,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
-    @DirtiesContext
+    @Disabled
     public void testReceiveMessageFromGw_respondWithNonDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -573,7 +576,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
-    @DirtiesContext
+    @Disabled
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -1182,7 +1185,6 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
-    @DirtiesContext
     public void sendMessageFromBackend_rcvEvidenceRelayNonDeliveryRetrieval(TestInfo testInfo) {
         String EBMS_ID = null;
         String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
@@ -1314,7 +1316,7 @@ public class ConnectorMessageFlowITCase {
      *
      */
     @Test
-    @DirtiesContext
+    @Disabled
     public void sendMessageFromBackend_timeoutRelayRemmd(TestInfo testInfo) {
         String EBMS_ID = null;
         final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();

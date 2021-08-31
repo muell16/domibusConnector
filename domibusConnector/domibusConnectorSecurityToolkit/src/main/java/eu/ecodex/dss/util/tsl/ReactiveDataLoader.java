@@ -15,37 +15,47 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import eu.europa.esig.dss.DSSException;
+import eu.europa.esig.dss.model.DSSException;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.spi.client.http.DataLoader;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import eu.ecodex.dss.util.ECodexDataLoader;
 import eu.ecodex.dss.util.LogDelegate;
-import eu.europa.esig.dss.client.http.DataLoader;
-import eu.europa.esig.dss.client.http.proxy.ProxyConfig;
-//import eu.europa.ec.markt.dss.exception.DSSCannotFetchDataException;
-//import eu.europa.ec.markt.dss.exception.DSSCannotFetchDataException.MSG;
-//import eu.europa.ec.markt.dss.manager.ProxyPreferenceManager;
-//import eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader;
-//import eu.europa.ec.markt.dss.validation102853.loader.DataLoader;
 
+
+@Deprecated //replace with native DSS classes
 public class ReactiveDataLoader implements DataLoader {
 
 	private static final LogDelegate LOG = new LogDelegate(ReactiveDataLoader.class);
 	
 	private Document inMemoryTSL;
 	private Object TSL;
-	private ECodexDataLoader dataLoader;
+	private DataLoader dataLoader;
 	private boolean isLOTL;
 	
 	public ReactiveDataLoader(Document inMemoryTSL, Object authenticationCertificateTSL, ProxyConfig proxyManager) {
 		this.inMemoryTSL = inMemoryTSL;
 		this.TSL = authenticationCertificateTSL;
+
+		ECodexDataLoader dataLoader = new ECodexDataLoader();
+		dataLoader.setProxyConfig(proxyManager);
+
+		this.dataLoader = dataLoader;
 		
-		this.dataLoader = new ECodexDataLoader();
-		this.dataLoader.setProxyConfig(proxyManager);
-		
+		this.isLOTL = false;
+	}
+
+	public ReactiveDataLoader(Document inMemoryTSL, Object authenticationCertificateTSL, DataLoader dataLoader) {
+		this.inMemoryTSL = inMemoryTSL;
+		this.TSL = authenticationCertificateTSL;
+
+//		this.dataLoader = new ECodexDataLoader();
+//		this.dataLoader.setProxyConfig(proxyManager);
+		this.dataLoader = dataLoader;
+
 		this.isLOTL = false;
 	}
 	
@@ -139,13 +149,13 @@ public class ReactiveDataLoader implements DataLoader {
 	public void setContentType(String contentType) {
 	}
 	
-	public boolean isAllowLDAP() {
-		return dataLoader.isAllowLDAP();
-	}
-
-	public void allowLDAP(boolean allowLDAP) {
-		dataLoader.setAllowLDAP(allowLDAP);
-	}
+//	public boolean isAllowLDAP() {
+//		return dataLoader.isAllowLDAP();
+//	}
+//
+//	public void allowLDAP(boolean allowLDAP) {
+//		dataLoader.setAllowLDAP(allowLDAP);
+//	}
 
 	@Override
 	public DataAndUrl get(List<String> urlStrings) {

@@ -13,7 +13,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.model.DSSDocument;
 
 /**
  * provides convenience-methods for documents. e.g. getting the byte-data from the stream

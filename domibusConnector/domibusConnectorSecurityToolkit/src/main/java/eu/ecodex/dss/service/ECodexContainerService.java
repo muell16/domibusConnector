@@ -40,7 +40,7 @@ public interface ECodexContainerService {
      *
      * @param environmentConfiguration the value (may be null)
      */
-    void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration);
+//    void setEnvironmentConfiguration(final EnvironmentConfiguration environmentConfiguration);
 
     /**
      * configures the parameters for signing the ASiC-S container
@@ -48,7 +48,7 @@ public interface ECodexContainerService {
      * @param signingParameters the signature parameters for signing the container itself (in signatures.xml) and the
      *            token (PDF + xml); based on P12 file
      */
-    void setContainerSignatureParameters(final SignatureParameters signingParameters);
+//    void setContainerSignatureParameters(final SignatureParameters signingParameters);
 
     /**
      * sets the service creating the tokenvalidation and the pdf-appendix of the validation report; used in
@@ -56,7 +56,7 @@ public interface ECodexContainerService {
      * 
      * @param validationService the value
      */
-    void setTechnicalValidationService(final ECodexTechnicalValidationService validationService);
+//    void setTechnicalValidationService(final ECodexTechnicalValidationService validationService);
 
     /**
      * sets the service providing a validation in legal context; used in
@@ -64,7 +64,7 @@ public interface ECodexContainerService {
      * 
      * @param validationService the value
      */
-    void setLegalValidationService(final ECodexLegalValidationService validationService);
+//    void setLegalValidationService(final ECodexLegalValidationService validationService);
 
     /**
      * creates the container:
@@ -81,12 +81,11 @@ public interface ECodexContainerService {
      * IMPLEMENTORS: This method is allowed to throw only {@link ECodexException}!
      * 
      * @param businessContent the documents and attachments
-     * @param issuer information about the issuer
      * 
      * @return the result
      * @throws ECodexException wrapper around any exception occurred
      */
-    ECodexContainer create(final BusinessContent businessContent, final TokenIssuer issuer) throws ECodexException;
+    ECodexContainer create(final BusinessContent businessContent) throws ECodexException;
 
     /**
      * 

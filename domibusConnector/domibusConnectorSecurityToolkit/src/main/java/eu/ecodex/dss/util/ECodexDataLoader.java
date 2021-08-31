@@ -10,16 +10,15 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
+import eu.europa.esig.dss.model.DSSException;
+import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
+import eu.europa.esig.dss.spi.DSSUtils;
+import eu.europa.esig.dss.spi.client.http.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.esig.dss.DSSException;
-import eu.europa.esig.dss.DSSUtils;
-// import eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader;
-import eu.europa.esig.dss.client.http.Protocol;
-import eu.europa.esig.dss.client.http.DataLoader.DataAndUrl;
-import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
 
+@Deprecated //has become part of DSS Utils
 public class ECodexDataLoader extends CommonsDataLoader {
 	
 	private boolean allowLDAP = true;

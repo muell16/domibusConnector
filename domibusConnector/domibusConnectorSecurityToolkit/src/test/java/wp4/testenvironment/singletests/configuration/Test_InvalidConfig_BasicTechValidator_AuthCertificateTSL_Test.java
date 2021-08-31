@@ -2,17 +2,12 @@ package wp4.testenvironment.singletests.configuration;
 
 
 
+import eu.ecodex.dss.model.SignatureCheckers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import wp4.testenvironment.configurations.InvalidConfig_BasicTechValidator_AuthCertificateTSL;
-import wp4.testenvironment.configurations.ValidConfig_BasicLegalValidator;
-import wp4.testenvironment.configurations.ValidConfig_SignatureParameters;
-import wp4.testenvironment.configurations.ValidConfig_TokenIssuer;
-import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator;
-import wp4.testenvironment.configurations.ValidConfig_BasicTechValidator_AuthCertificateTSL;
-import wp4.testenvironment.configurations.ValidConfig_BusinessContent;
+import wp4.testenvironment.configurations.*;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
@@ -28,19 +23,8 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 // SUB-CONF-21
 @Disabled("TODO: repair test") //TODO
 public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
-	static DSSECodexContainerService containerService;
-	
-	/**
-	 * Initializes all test cases with the same, working configuration.
-	 * Test case specific configurations are done within each test case itself. 
-	 */
-	@BeforeAll
-	static public void init() {
-		containerService = new DSSECodexContainerService();
-		
-    	containerService.setContainerSignatureParameters(ValidConfig_SignatureParameters.getJKSConfiguration());
-    	containerService.setLegalValidationService(ValidConfig_BasicLegalValidator.get_LegalValidator());
-	}
+
+
     
 	/**
 	 * Within this test, a invalid configuration of the authentication certificate TSL is simulated.
@@ -59,11 +43,19 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+
+
+		ECodexContainer container = containerService.create(content);
+
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -109,14 +101,18 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
-    	
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+
+    	ECodexContainer container = containerService.create(content);
+
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -162,16 +158,18 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
-    	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomXML());
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
-    	
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+
+		ECodexContainer container = containerService.create(content);
+
         // The eCodex container has been created
         Assertions.assertNotNull(container);
         // The ASiC document has been created and contains data
@@ -217,14 +215,17 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_RandomFile());
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+    	ECodexContainer container = containerService.create(content);
+
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -270,15 +271,17 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
-    	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_Invalid_Path());
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+		ECodexContainer container = containerService.create(content);
+
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -325,16 +328,16 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
-    	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomXML());
-    	techValService.isAuthenticationCertificateLOTL(true);
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+		ECodexContainer container = containerService.create(content);
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -381,16 +384,16 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	TokenIssuer issuer = ValidConfig_TokenIssuer.get_FullAuthenticationBased();
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
-    	
-    	techValService.setAuthenticationCertificateTSL(InvalidConfig_BasicTechValidator_AuthCertificateTSL.get_LOTL_with_RandomFile());
-    	techValService.isAuthenticationCertificateLOTL(true);
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+		ECodexContainer container = containerService.create(content);
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);
@@ -438,14 +441,18 @@ public class Test_InvalidConfig_BasicTechValidator_AuthCertificateTSL_Test {
     	
     	DSSECodexTechnicalValidationService techValService = ValidConfig_BasicTechValidator.get_BasicTechValidator_NoProxy_NoAuthCertConfig();
     	
-    	techValService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
-    	techValService.initAuthenticationCertificateVerification();
-    	
-    	containerService.setTechnicalValidationService(techValService);
-    	
-    	ECodexContainer container = containerService.create(content, issuer);
-    	
-    	containerService.setCertificateVerifier(new CommonCertificateVerifier());
+//    	techValService.setAuthenticationCertificateTSL(ValidConfig_BasicTechValidator_AuthCertificateTSL.get_ByteArray_with_LOTL());
+//    	techValService.initAuthenticationCertificateVerification();
+
+		SignatureCheckers checkers = ValidConfig_SignatureCheckers.getSignatureCheckers();
+
+		DSSECodexContainerService containerService = new DSSECodexContainerService(
+				techValService,
+				ValidConfig_BasicLegalValidator.get_LegalValidator(),
+				ValidConfig_SignatureParameters.getJKSConfiguration(),
+				issuer,
+				checkers);
+		ECodexContainer container = containerService.create(content);
     	
         // The eCodex container has been created
         Assertions.assertNotNull(container);

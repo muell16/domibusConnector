@@ -3,6 +3,8 @@ package eu.domibus.connector.security.spring;
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,9 @@ import javax.validation.constraints.NotNull;
  */
 //@BusinessDomainScoped
 //@Component
+//@Valid
 //@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
-//@PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
-//@Validated
-@BusinessDomainScoped
-@Component
-@Valid
-@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
+@Deprecated
 public class SecurityToolkitConfigurationProperties {
 
     public static final String CONFIG_PREFIX = "connector.security";
@@ -48,20 +46,16 @@ public class SecurityToolkitConfigurationProperties {
     @NestedConfigurationProperty
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
-//    @Valid
-//    @NotNull
-    @NestedConfigurationProperty
-    StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
-
     @Valid
     @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
 
-    /**
-     * Should the trust store created if it is missing?
-     */
-    boolean createOjStoreIfMissing = true;
+    @NotNull
+    EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
+
+    @NotNull
+    DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA512;
 
     public StoreConfigurationProperties getKeyStore() {
         return keyStore;
@@ -87,13 +81,6 @@ public class SecurityToolkitConfigurationProperties {
         this.keyStore = keystore;
     }
 
-    public StoreConfigurationProperties getOjStore() {
-        return ojStore;
-    }
-
-    public void setOjStore(StoreConfigurationProperties ojStore) {
-        this.ojStore = ojStore;
-    }
 
     public StoreConfigurationProperties getTruststore() {
         return trustStore;
@@ -111,12 +98,19 @@ public class SecurityToolkitConfigurationProperties {
         this.trustStore = trustStore;
     }
 
-    public boolean isCreateOjStoreIfMissing() {
-        return createOjStoreIfMissing;
+    public EncryptionAlgorithm getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
     }
 
-    public void setCreateOjStoreIfMissing(boolean createOjStoreIfMissing) {
-        this.createOjStoreIfMissing = createOjStoreIfMissing;
+    public void setEncryptionAlgorithm(EncryptionAlgorithm encryptionAlgorithm) {
+        this.encryptionAlgorithm = encryptionAlgorithm;
     }
 
+    public DigestAlgorithm getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    public void setDigestAlgorithm(DigestAlgorithm digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+    }
 }

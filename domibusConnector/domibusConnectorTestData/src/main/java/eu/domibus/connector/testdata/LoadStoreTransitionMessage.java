@@ -538,7 +538,7 @@ public class LoadStoreTransitionMessage {
                 int nRead;
                 StreamUtils.copy(inputStream, buffer);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 

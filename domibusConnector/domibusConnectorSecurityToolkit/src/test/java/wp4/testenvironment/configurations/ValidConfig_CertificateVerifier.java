@@ -6,16 +6,17 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Properties;
 
-import eu.europa.esig.dss.client.crl.OnlineCRLSource;
-import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
-import eu.europa.esig.dss.client.http.proxy.ProxyConfig;
-import eu.europa.esig.dss.client.http.proxy.ProxyProperties;
-import eu.europa.esig.dss.client.ocsp.OnlineOCSPSource;
-import eu.europa.esig.dss.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.tsl.service.TSLRepository;
-import eu.europa.esig.dss.tsl.service.TSLValidationJob;
+
+import eu.europa.esig.dss.service.crl.OnlineCRLSource;
+import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
+import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
+import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
+import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
-import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
+import org.springframework.core.io.ClassPathResource;
+
 
 // SUB_CONF_17
 public class ValidConfig_CertificateVerifier {
@@ -63,20 +64,20 @@ public class ValidConfig_CertificateVerifier {
 			OnlineCRLSource crlSource = new OnlineCRLSource();
 			OnlineOCSPSource ocspSource = new OnlineOCSPSource();
 	        
-	        TSLRepository tslRepository = new TSLRepository();
-	        tslRepository.setTrustedListsCertificateSource(certSource);
+//	        TSLRepository tslRepository = new TSLRepository();
+//	        tslRepository.setTrustedListsCertificateSource(certSource);
 			
 	        KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(new File("src/test/resources/keystores/signature_store.jks"), "JKS", "teststore");
 	        
-	        TSLValidationJob job = new TSLValidationJob();
-	        job.setDataLoader(normalLoader);
-	        job.setLotlRootSchemeInfoUri("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html");
-	        job.setLotlUrl("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml");
-			job.setOjContentKeyStore(keyStoreCertificateSource);
-	        job.setOjUrl("http://eur-lex.europa.eu/legalcontent/EN/TXT/?uri=uriserv:OJ.C_.2016.233.01.0001.01.ENG");
-	        job.setLotlCode("EU");
-	        job.setRepository(tslRepository);
-	        job.initRepository();
+//	        TSLValidationJob job = new TSLValidationJob();
+//	        job.setDataLoader(normalLoader);
+//	        job.setLotlRootSchemeInfoUri("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html");
+//	        job.setLotlUrl("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml");
+//			job.setOjContentKeyStore(keyStoreCertificateSource);
+//	        job.setOjUrl("http://eur-lex.europa.eu/legalcontent/EN/TXT/?uri=uriserv:OJ.C_.2016.233.01.0001.01.ENG");
+//	        job.setLotlCode("EU");
+//	        job.setRepository(tslRepository);
+//	        job.initRepository();
 			
 			crlSource.setDataLoader(normalLoader);
 	
@@ -86,7 +87,7 @@ public class ValidConfig_CertificateVerifier {
 			
 			ocspSource.setDataLoader(ocspDataLoader);
 	
-			verifierVariant1.setTrustedCertSource(certSource);
+			verifierVariant1.setTrustedCertSources(certSource);
 			verifierVariant1.setCrlSource(crlSource);
 			verifierVariant1.setOcspSource(ocspSource);
 		} 
@@ -107,20 +108,20 @@ public class ValidConfig_CertificateVerifier {
 			OnlineCRLSource crlSource = new OnlineCRLSource();
 			OnlineOCSPSource ocspSource = new OnlineOCSPSource();
 	        
-	        TSLRepository tslRepository = new TSLRepository();
-	        tslRepository.setTrustedListsCertificateSource(certSource);
+//	        TSLRepository tslRepository = new TSLRepository();
+//	        tslRepository.setTrustedListsCertificateSource(certSource);
 			
-	        KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(new File("src/test/resources/keystore.jks"), "JKS", "apache");
+	        KeyStoreCertificateSource keyStoreCertificateSource = new KeyStoreCertificateSource(new ClassPathResource("/keystores/keystore.jks").getInputStream(), "JKS", "test123");
 	        
-	        TSLValidationJob job = new TSLValidationJob();
-	        job.setDataLoader(normalLoader);
-	        job.setLotlRootSchemeInfoUri("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html");
-	        job.setLotlUrl("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml");
-			job.setOjContentKeyStore(keyStoreCertificateSource);
-	        job.setOjUrl("http://eur-lex.europa.eu/legalcontent/EN/TXT/?uri=uriserv:OJ.C_.2016.233.01.0001.01.ENG");
-	        job.setLotlCode("EU");
-	        job.setRepository(tslRepository);
-	        job.refresh();
+//	        TSLValidationJob job = new TSLValidationJob();
+//	        job.setDataLoader(normalLoader);
+//	        job.setLotlRootSchemeInfoUri("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html");
+//	        job.setLotlUrl("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml");
+//			job.setOjContentKeyStore(keyStoreCertificateSource);
+//	        job.setOjUrl("http://eur-lex.europa.eu/legalcontent/EN/TXT/?uri=uriserv:OJ.C_.2016.233.01.0001.01.ENG");
+//	        job.setLotlCode("EU");
+//	        job.setRepository(tslRepository);
+//	        job.refresh();
 			
 			crlSource.setDataLoader(normalLoader);
 	
@@ -129,7 +130,7 @@ public class ValidConfig_CertificateVerifier {
 			
 			ocspSource.setDataLoader(ocspDataLoader);
 	
-			verifierVariant2.setTrustedCertSource(certSource);
+			verifierVariant2.setTrustedCertSources(certSource);
 			verifierVariant2.setCrlSource(crlSource);
 			verifierVariant2.setOcspSource(ocspSource);
 		}

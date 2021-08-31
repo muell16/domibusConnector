@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.transformer;
 
+import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
@@ -390,10 +391,31 @@ public class DomibusConnectorDomainMessageTransformerService {
 
             domibusConnectorMessage.setConnectorMessageId(messageIdThreadLocal.get());
 
+            setMessageProcessProperties(domibusConnectorMessage, transitionMessage);
+
             return domibusConnectorMessage;
 
         } finally {
             messageIdThreadLocal.remove();
+        }
+    }
+
+    private void setMessageProcessProperties(DomibusConnectorMessage domibusConnectorMessage, DomibusConnectorMessageType transitionMessage) {
+        if (transitionMessage.getMessageContent() != null &&
+                transitionMessage.getMessageContent().getDocument() != null &&
+                transitionMessage.getMessageContent()
+                        .getDocument()
+                        .getAesType() != null
+        ) {
+            DomibusConnectorDocumentAESType aesType = transitionMessage.getMessageContent()
+                    .getDocument()
+                    .getAesType();
+
+            AdvancedElectronicSystemType advancedElectronicSystemType = AdvancedElectronicSystemType.valueOf(aesType.name());
+
+            domibusConnectorMessage.getDcMessageProcessSettings()
+                .setValidationServiceName(advancedElectronicSystemType);
+            LOGGER.trace("#transformTransitionToDomain: setting AES type to ", advancedElectronicSystemType);
         }
     }
 

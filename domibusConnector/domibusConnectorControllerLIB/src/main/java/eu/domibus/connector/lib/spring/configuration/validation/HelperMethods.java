@@ -65,12 +65,13 @@ public class HelperMethods {
                 context.buildConstraintViolationWithTemplate(error).addConstraintViolation();
             }
         } catch (KeyStoreException e) {
-            e.printStackTrace();
-            String error = String.format("key with alias [%s] could not recovered! KeyStoreException!", alias, logPassword);
+
+            String error = String.format("key with alias [%s] and pw [%s] could not recovered! KeyStoreException!", alias, logPassword);
+            LOGGER.warn(error, e);
             context.buildConstraintViolationWithTemplate(error).addConstraintViolation();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            String error = String.format("key with alias [%s] could not recovered! No such algorithm exception", alias, logPassword);
+            String error = String.format("key with alias [%s] and pw [%s] could not recovered! No such algorithm exception", alias, logPassword);
+            LOGGER.warn(error, e);
             context.buildConstraintViolationWithTemplate(error).addConstraintViolation();
         } catch (UnrecoverableKeyException e) {
             String error = String.format("key with alias [%s] could not recovered! Check if the password [%s] is correct", alias, logPassword);

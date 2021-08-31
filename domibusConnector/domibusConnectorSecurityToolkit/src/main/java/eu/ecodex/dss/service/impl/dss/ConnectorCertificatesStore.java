@@ -39,11 +39,24 @@ import org.springframework.core.io.Resource;
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
  */
-class ConnectorCertificatesStore {
+@Deprecated //replace with DSS certificate source
+public class ConnectorCertificatesStore {
 
     private static final LogDelegate LOG = new LogDelegate(ConnectorCertificatesStore.class);
 
     private Map<BigInteger, byte[]> lookup = null;
+
+    public ConnectorCertificatesStore() {
+
+    }
+
+    public ConnectorCertificatesStore(final CertificateStoreInfo info) {
+        try {
+            this.update(info);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * will load the keystore from the provided info, creating a new cache and extracting its X509 certificates.

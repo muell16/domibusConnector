@@ -19,6 +19,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 
 @Component
@@ -26,10 +27,14 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigureUIServiceInitListener.class);
 
-    @Autowired
-    ConnectorUiConfigurationProperties connectorUiConfigurationProperties;
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final ConnectorUiConfigurationProperties connectorUiConfigurationProperties;
+    private final AuthenticationManager authenticationManager;
+
+    public ConfigureUIServiceInitListener(ConnectorUiConfigurationProperties connectorUiConfigurationProperties,
+                                          AuthenticationManager authenticationManager) {
+        this.connectorUiConfigurationProperties = connectorUiConfigurationProperties;
+        this.authenticationManager = authenticationManager;
+    }
 
     @Override
     public void serviceInit(ServiceInitEvent event) {
@@ -55,11 +60,22 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 
         if (!LoginView.class.equals(event.getNavigationTarget())
                 && !SecurityUtils.isUserLoggedIn()) {
-            event.rerouteTo(LoginView.class);
+            String path = event.getLocation().getPath();
+// should work after vaadin lib update
+// after Login forward to previous page
+//            RouteParameters p = new RouteParameters(LoginView.PREVIOUS_ROUTE_PARAMETER, path);
+//            event.forwardTo(LoginView.class, p);
+            event.forwardTo(LoginView.class);
         }
         Class<?> navigationTarget = event.getNavigationTarget();
         if (!SecurityUtils.isUserAllowedToView(navigationTarget)) {
-            event.rerouteTo(AccessDeniedView.class);
+            event.forwardTo(AccessDeniedView.class);
+        }
+        //forward to default page, used for development
+        if (connectorUiConfigurationProperties.isAutoLoginEnabled() &&
+                LoginView.class.equals(event.getNavigationTarget()) &&
+                StringUtils.hasText(connectorUiConfigurationProperties.getDefaultRoute())) {
+            event.forwardTo(connectorUiConfigurationProperties.getDefaultRoute());
         }
     }
 }

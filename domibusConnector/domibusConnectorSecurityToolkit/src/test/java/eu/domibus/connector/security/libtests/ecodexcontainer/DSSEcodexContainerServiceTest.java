@@ -1,35 +1,31 @@
 package eu.domibus.connector.security.libtests.ecodexcontainer;
 
-import eu.domibus.connector.security.container.DomibusSecurityContainer;
-import eu.ecodex.dss.model.BusinessContent;
-import eu.ecodex.dss.model.CertificateStoreInfo;
-import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.EnvironmentConfiguration;
-import eu.ecodex.dss.model.ProxyData;
-import eu.ecodex.dss.model.SignatureParameters;
+import eu.domibus.connector.security.DomibusSecurityToolkitImpl;
+import eu.ecodex.dss.model.*;
 import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexLegalValidationService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexContainerService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexLegalValidationService;
-import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import eu.ecodex.dss.util.SignatureParametersFactory;
-import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.EncryptionAlgorithm;
-import eu.europa.esig.dss.InMemoryDocument;
-import eu.europa.esig.dss.MimeType;
-import eu.europa.esig.dss.client.http.proxy.ProxyConfig;
-import eu.europa.esig.dss.client.http.proxy.ProxyProperties;
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
+import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import eu.europa.esig.dss.model.DSSDocument;
+import eu.europa.esig.dss.model.InMemoryDocument;
+import eu.europa.esig.dss.model.MimeType;
+import eu.europa.esig.dss.service.http.proxy.ProxyConfig;
+import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StreamUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Exploration tests for DSSEcodexContainerService
@@ -47,24 +43,24 @@ public class DSSEcodexContainerServiceTest {
     
     
     private DSSECodexContainerService initContainerService() throws Exception {
-        DSSECodexContainerService containerService = new DSSECodexContainerService();
+        DSSECodexContainerService containerService = null; // new DSSECodexContainerService(technicalValidationService, legalValidationService, signingParameters, certificateVerifier, connectorCertificatesSource, processExecutor, asicsSignatureChecker, xmlTokenSignatureChecker, pdfTokenSignatureChecker);
         
         
-        EnvironmentConfiguration environmentConfiguration = initEnvironmentConfiguration();
+//        EnvironmentConfiguration environmentConfiguration = initEnvironmentConfiguration();
         
         
-        ECodexLegalValidationService ecodexLegalValidationService = new DSSECodexLegalValidationService();
-        ecodexLegalValidationService.setEnvironmentConfiguration(environmentConfiguration);             
-        containerService.setLegalValidationService(ecodexLegalValidationService);
+//        ECodexLegalValidationService ecodexLegalValidationService = new DSSECodexLegalValidationService();
+//        ecodexLegalValidationService.setEnvironmentConfiguration(environmentConfiguration);
+//        containerService.setLegalValidationService(ecodexLegalValidationService);
         
         
-        DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService();
-        technicalValidationService.setEnvironmentConfiguration(environmentConfiguration);
-        technicalValidationService.setProxyPreferenceManager(initProxyConfig());
+//        DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService(certificateVerifier, processExecutor, trustedListCertificatesSource, ignoredCertificatesStore);
+//        technicalValidationService.setEnvironmentConfiguration(environmentConfiguration);
+//        technicalValidationService.setProxyPreferenceManager(initProxyConfig());
+//
+//        technicalValidationService.initAuthenticationCertificateVerification();
         
-        technicalValidationService.initAuthenticationCertificateVerification();
-        
-        containerService.setTechnicalValidationService(technicalValidationService);
+//        containerService.setTechnicalValidationService(technicalValidationService);
         
 
         CertificateStoreInfo certStore = new CertificateStoreInfo();
@@ -77,7 +73,7 @@ public class DSSEcodexContainerServiceTest {
         
         SignatureParameters signingParameters = SignatureParametersFactory.create(certStore, keyAlias, keyPassword, encryptionAlgorithm, digestAlgorithm);
         assertThat(signingParameters).isNotNull();
-        containerService.setContainerSignatureParameters(signingParameters);
+//        containerService.setContainerSignatureParameters(signingParameters);
         
         
 //        CertificateVerifier certificateVerifier = Mockito.mock(CertificateVerifier.class);        
@@ -161,7 +157,7 @@ public class DSSEcodexContainerServiceTest {
         
         DSSDocument xmlDocument = new InMemoryDocument(
             loadByteArrayFromClassPathRessource("/examples/Form_A.xml"),
-            DomibusSecurityContainer.CONTENT_XML_IDENTIFIER + ".xml", 
+            DomibusSecurityToolkitImpl.CONTENT_XML_IDENTIFIER + ".xml",
             MimeType.PDF);        
    
         businessContent.setDocument(xmlDocument);
@@ -169,7 +165,7 @@ public class DSSEcodexContainerServiceTest {
         
         DSSDocument formAPdf = new InMemoryDocument(
                             loadByteArrayFromClassPathRessource("/examples/Form_A.pdf"),
-                            DomibusSecurityContainer.MAIN_DOCUMENT_NAME + ".pdf", 
+                            DomibusSecurityToolkitImpl.MAIN_DOCUMENT_NAME + ".pdf",
                             MimeType.PDF);        
         businessContent.addAttachment(formAPdf);
         
@@ -186,7 +182,7 @@ public class DSSEcodexContainerServiceTest {
         
         TokenIssuer tokenIssuer = createTokenIssuer();
         
-        ECodexContainer container = containerService.create(businessContent, tokenIssuer);
+        ECodexContainer container = containerService.create(businessContent);
         DSSDocument asicDocument = container.getAsicDocument();
         assertThat(asicDocument).isNotNull();
         

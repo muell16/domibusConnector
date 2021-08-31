@@ -84,7 +84,7 @@ public class DomibusConnectorWebReportDaoImpl extends JdbcDaoSupport implements 
 		try {
 			newToDate = sdf.parse(newDateString);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return newToDate;
 	}
@@ -108,10 +108,8 @@ public class DomibusConnectorWebReportDaoImpl extends JdbcDaoSupport implements 
 			while ((strLine = br.readLine()) != null) {
 				sb.append(" " + strLine);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return sb.toString();
 	}

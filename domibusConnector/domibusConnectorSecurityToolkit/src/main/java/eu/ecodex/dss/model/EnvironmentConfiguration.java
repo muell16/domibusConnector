@@ -20,6 +20,7 @@ package eu.ecodex.dss.model;
  * @author <a href="mailto:eCodex.Project-DSS@arhs-developments.com">ARHS Developments</a>
  * @version $Revision: 1879 $ - $Date: 2013-04-18 09:39:53 +0200 (jeu., 18 avr. 2013) $
  */
+@Deprecated //use spring beans instead!
 public class EnvironmentConfiguration {
 
     /**
