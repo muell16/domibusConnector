@@ -68,7 +68,7 @@ implements AfterNavigationObserver {
         Label statusLabel = new Label();
         statusLabel.getStyle().set("color", "red");
 
-        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("10cm", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
+        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("15cm", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
 
         formLayout.addFormItem(validationConstraintsXml, "Location of EtsiValidationPolicyXml");
 

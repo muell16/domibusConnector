@@ -36,10 +36,9 @@ public class StoreConfigurationField extends CustomField<StoreConfigurationPrope
         this.add(formLayout);
 
         //TODO: add button to show content of key/truststore
-
-        formLayout.addFormItem(path, "Keystore Location");
-        formLayout.addFormItem(password, "Keystore password");
-        formLayout.addFormItem(type, "KeyStore Type");
+        formLayout.addFormItem(path, "Store Location");
+        formLayout.addFormItem(password, "Store password");
+        formLayout.addFormItem(type, "Store Type");
         type.setItems("JKS", "JCEKS", "PKCS");
 
         binder = validationBinderFactory.create(StoreConfigurationProperties.class);

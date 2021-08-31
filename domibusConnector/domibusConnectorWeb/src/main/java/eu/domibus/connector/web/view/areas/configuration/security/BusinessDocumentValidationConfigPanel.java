@@ -18,6 +18,8 @@ import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.spring.BusinessDomainScope;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.dss.service.CommonCertificateVerifierFactory;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
@@ -120,7 +122,13 @@ public class BusinessDocumentValidationConfigPanel extends VerticalLayout implem
                 DSSDocument document = new InMemoryDocument(bytes, fileName);
 
 
-                ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(new DomibusConnectorMessage());
+                DomibusConnectorMessage theMessage = DomibusConnectorMessageBuilder.createBuilder()
+                        .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+                                .withOriginalSender("TheOriginalSender")
+                                .build())
+                        .build();
+
+                ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(theMessage);
                 BusinessContent businessContent = new BusinessContent();
                 businessContent.setDocument(document);
                 ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent);
