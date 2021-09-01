@@ -6,7 +6,7 @@
         <artifactId>domibusConnector</artifactId>
         <version>4.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>domibusConnectorWebLib</artifactId>
+    <artifactId>domibusConnectorUILib</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pmode.xsd.resources.path>src/main/resources/pmode/domibus_3_2_4</pmode.xsd.resources.path>

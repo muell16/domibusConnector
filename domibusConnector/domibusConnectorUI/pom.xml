@@ -6,12 +6,12 @@
         <artifactId>domibusConnector</artifactId>
         <version>4.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>domibusConnectorWeb</artifactId>
+    <artifactId>domibusConnectorUI</artifactId>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorWebLib</artifactId>
+            <artifactId>domibusConnectorUILib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

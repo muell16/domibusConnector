@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
+            <artifactId>domibusConnectorUI</artifactId>
             <version>${project.version}</version>
             <classifier>classes</classifier>
         </dependency>

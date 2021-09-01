@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
+            <artifactId>domibusConnectorUI</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -79,7 +79,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</file>
+                                    <file>${project.basedir}/../domibusConnectorUI/target/domibusConnectorUI-${project.version}.war</file>
                                     <type>war</type>
                                 </artifact>
                             </artifacts>

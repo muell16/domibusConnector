@@ -22,8 +22,8 @@
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorStarter</module>
-        <module>domibusConnectorWebLib</module>
-        <module>domibusConnectorWeb</module>
+        <module>domibusConnectorUILib</module>
+        <module>domibusConnectorUI</module>
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLinkCommon</module>
         <module>domibusConnectorTestData</module>
