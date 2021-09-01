@@ -43,8 +43,8 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(finalRecipient, "Final Recipient");
 		addFormItem(service, "Service");
 		addFormItem(action, "Action");
-		addFormItem(fromParty, "From Party ID");
-		addFormItem(toParty, "To Party ID");
+		addFormItem(fromParty, "From Party");
+		addFormItem(toParty, "To Party");
 		addFormItem(backendName, "Backend Client Name");
 		addFormItem(direction, "Direction");
 		addFormItem(deliveredToNationalSystemString, "Delivered to Backend at");
