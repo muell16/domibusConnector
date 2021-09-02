@@ -88,7 +88,7 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorLinkCommon</artifactId>
+            <artifactId>domibusConnectorLink</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
