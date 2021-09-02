@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import eu.domibus.connector.web.exception.InitialPasswordException;
-import eu.domibus.connector.web.exception.UserLoginException;
-import eu.domibus.connector.web.persistence.service.DomibusConnectorWebUserPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.web.dto.WebUser;
+import eu.domibus.connector.ui.dto.WebUser;
+import eu.domibus.connector.ui.exception.InitialPasswordException;
+import eu.domibus.connector.ui.exception.UserLoginException;
+import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebUserPersistenceService;
 
 
 

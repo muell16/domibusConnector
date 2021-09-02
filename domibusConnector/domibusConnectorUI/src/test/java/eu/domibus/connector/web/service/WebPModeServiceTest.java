@@ -11,6 +11,8 @@ import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import eu.domibus.connector.ui.service.WebPModeService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
