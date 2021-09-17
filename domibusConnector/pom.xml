@@ -27,7 +27,7 @@
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLink</module>
         <module>domibusConnectorTestData</module>
-        <module>domibusConnectorLauncher</module>
+        <module>domibusConnectorBuilder</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
     </modules>
