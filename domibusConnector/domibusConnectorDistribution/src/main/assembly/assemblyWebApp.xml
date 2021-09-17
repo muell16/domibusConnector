@@ -28,35 +28,53 @@
             <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config</directory>
             <outputDirectory>example-config</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/config</directory>
+            <includes>
+                <include>*.properties</include>
+                <include>*.xml</include>
+            </includes>
+            <outputDirectory>/standalone/config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/lib</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>/standalone/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/config/keystores</directory>
+            <includes>
+                <include>*.jks</include>
+            </includes>
+            <outputDirectory>/standalone/config/keystores</outputDirectory>
+        </fileSet>
     </fileSets>
     <files>
         <file>
-            <source>${project.basedir}/../domibusConnectorUI/target/domibusConnectorUI-${project.version}.war</source>
+            <source>${project.basedir}/..//domibusConnectorBuilder/domibusConnectorBuilderDeployable/target/domibusConnectorBuilderDeployable-${project.version}.war</source>
             <outputDirectory>/webapp</outputDirectory>
             <destName>domibusConnector.war</destName>
         </file>
-<!--        <file>-->
-<!--            <source>-->
-<!--                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties-->
-<!--            </source>-->
-<!--            <outputDirectory>/documentation/config</outputDirectory>-->
-<!--        </file>-->
-<!--        <file>-->
-<!--            <source>-->
-<!--                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml-->
-<!--            </source>-->
-<!--            <outputDirectory>/documentation/config</outputDirectory>-->
-<!--        </file>-->
+        <file>
+            <source>${project.basedir}/../domibusConnectorBuilder/domibusConnectorBuilderStandalone/target/domibusConnectorBuilderStandalone-${project.version}.jar</source>
+            <destName>connector.jar</destName>
+            <outputDirectory>standalone/bin</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/bash/start.sh</source>
+            <fileMode>0777</fileMode>
+            <lineEnding>unix</lineEnding>
+            <outputDirectory>standalone</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/cmd/start.bat</source>
+            <lineEnding>windows</lineEnding>
+            <outputDirectory>standalone</outputDirectory>
+        </file>
     </files>
     <dependencySets>
-        <dependencySet>
-            <outputDirectory>standalone</outputDirectory>
-            <includes>
-                <include>${project.groupId}:domibusConnectorStandaloneLauncher:zip:standalonePackage:${project.version}</include>
-            </includes>
-            <unpack>true</unpack>
-            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
-        </dependencySet>
         <dependencySet>
             <includes>
                 <include>${project.groupId}:domibusConnectorDocumentation:zip:enterprise-architect-export:${project.version}</include>

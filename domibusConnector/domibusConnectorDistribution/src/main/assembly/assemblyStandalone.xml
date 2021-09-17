@@ -7,25 +7,25 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <files>
         <file>
-            <source>${project.basedir}/target/${project.artifactId}-${project.version}-standalone.jar</source>
+            <source>${project.basedir}/../domibusConnectorBuilder/domibusConnectorBuilderStandalone/target/domibusConnectorBuilderStandalone-${project.version}.jar</source>
             <destName>connector.jar</destName>
             <outputDirectory>bin</outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/src/main/bash/start.sh</source>
+            <source>${project.basedir}/src/main/resources/bash/start.sh</source>
             <!--<outputDirectory>/</outputDirectory>-->
             <fileMode>0777</fileMode>
             <lineEnding>unix</lineEnding>
         </file>
         <file>
-            <source>${project.basedir}/src/main/cmd/start.bat</source>
+            <source>${project.basedir}/src/main/resources/cmd/start.bat</source>
             <lineEnding>windows</lineEnding>
             <!--<outputDirectory>/</outputDirectory>-->
         </file>
     </files>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/config</directory>
+            <directory>${project.basedir}/src/main/resources/config</directory>
             <includes>
                 <include>*.properties</include>
                 <include>*.xml</include>
