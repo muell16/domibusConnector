@@ -10,12 +10,12 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.ui.login.LogoutView;
 import eu.domibus.connector.ui.utils.DCTabHandler;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 import eu.domibus.connector.ui.view.areas.info.Info;
 import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
+import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
 import eu.domibus.connector.ui.view.areas.pmodes.PmodeOverview;
 import eu.domibus.connector.ui.view.areas.users.UserOverview;
 
@@ -53,6 +53,13 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .withLabel("Configuration")
                 .withIcon(new Icon(VaadinIcon.COG_O))
                 .addForComponent(ConfigurationOverview.class);
+
+        tabManager
+                .createTab()
+                .withLabel("Monitoring")
+                .withIcon(new Icon(VaadinIcon.DASHBOARD))
+                .addForComponent(JmsMonitoringView.class);
+
 
         tabManager
                 .createTab()
