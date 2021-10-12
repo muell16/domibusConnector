@@ -33,9 +33,9 @@ import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest(classes = {DlqTestSuite.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
+@SpringBootTest(classes = {DeadLetterQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
-class DlqTestSuite {
+class DeadLetterQueueTest {
 
     @SpringBootApplication
     public static class MyTestContext {
