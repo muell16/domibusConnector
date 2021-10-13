@@ -1,14 +1,21 @@
 package eu.domibus.connector.ui.view.areas.configuration.routing;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
@@ -17,18 +24,25 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @UIScope
@@ -37,20 +51,30 @@ import java.util.List;
 @RoleRequired(role = "ADMIN")
 public class BackendMessageRoutingView extends VerticalLayout implements AfterNavigationObserver {
 
+    private static final Logger LOGGER = LogManager.getLogger(BackendMessageRoutingView.class);
+
     public static final String ROUTE = "backendrouting";
 
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-    private final DCLinkFacade dcLinkFacade;
+//    private final DCLinkFacade dcLinkFacade;
+//    private final WebPModeService webPModeService;
+    private final ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory;
 
     private Grid<RoutingRule> routingRuleGrid;
 
-    private List<RoutingRule> currentRoutingRules;
+    private Map<String, RoutingRule> currentRoutingRules;
 
-    public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl, ConfigurationPropertyManagerService configurationPropertyManagerService, DCLinkFacade dcLinkFacade) {
+    public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl,
+                                     ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
+                                     ConfigurationPropertyManagerService configurationPropertyManagerService,
+                                     DCLinkFacade dcLinkFacade,
+                                     WebPModeService webPModeService) {
+        this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
         this.configurationPropertyManagerService = configurationPropertyManagerService;
-        this.dcLinkFacade = dcLinkFacade;
+//        this.dcLinkFacade = dcLinkFacade;
+//        this.webPModeService = webPModeService;
         initUI();
     }
 
@@ -81,68 +105,223 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         add(defaultBackendNameTextField);
 
-        routingRuleGrid = new Grid<>();
-        
-        routingRuleGrid.addColumn(RoutingRule::getLinkName).setHeader("Backend Name");
-        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getMatchRule()).setHeader("matching string");
-        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
-        routingRuleGrid.addComponentColumn(rule -> getDeleteRoutingRuleLink(rule)).setWidth("50px");
+        routingRuleGrid = new Grid<>(RoutingRule.class);
+        routingRuleGrid.addColumn(getButtonRenderer());
+
+//        routingRuleGrid.setItemDetailsRenderer(getComponentRenderer());
+
+//        routingRuleGrid.addColumn("linkName")
+//                .addColumn(RoutingRule::getLinkName)
+//                .setEditorComponent(this::getBackendNameEditorComponent)
+//                .setHeader("Backend Name");
+//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getMatchRule()).setHeader("matching string");
+//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
+//        routingRuleGrid.addComponentColumn(rule -> getDeleteRoutingRuleLink(rule)).setWidth("50px");
+
+//        routingRuleGrid.setDetailsVisibleOnClick(true);
+
+
+
+
+//        routingRuleGrid.addComponentColumn(this::getBackendNameField).s
         
         this.add(routingRuleGrid);
         
         Button createNewRoutingRule = new Button("Create new roulting rule");
-        createNewRoutingRule.addClickListener(e -> {
-        	Dialog createRoutingRuleDialog = new Dialog();
-        	createNewRoutingRule.setText("Create new roulting rule");
-        	//TODO: Here to create a Dialog panel where the routing rule can be created via dropdown boxes:
-        	// -- Box to select backend for which the rule should apply. Only backends should be selectable that do not have a rule already.
-        	//    Also the connector backend must be excluded.
-        	// -- Box to select first Token
-        	// -- Box to select 'equals' of 'startsWith'
-        	// -- Box to enter value for regex query. Maybe from PMode data.
-        	// -- Box to select either 'and' or 'or'
-        	// -- If 'and' or 'or' chosen repeat steps 2-4.
-        	// -- Save button which validates data, saves the Rule into DB and closes Dialog panel.
-//        	createRoutingRuleDialog.add(delButton);
-        	createRoutingRuleDialog.open();
-        });
+        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
         add(createNewRoutingRule);
         
-        Button saveAllRoutingRules = new Button("Save all roulting rules");
-        saveAllRoutingRules.addClickListener(e -> {
-        	Dialog saveRoutingRulesDialog = new Dialog();
-        	saveAllRoutingRules.setText("Save all roulting rules");
-        	//TODO: Here to create a Dialog panel which warns the user that all backend rules existing are stored into database and 
-        	//      those from the properties file will not apply anymore.
-        	// On confirmation, save all backend rules to database and reload in context.
-//        	createRoutingRuleDialog.add(delButton);
-        	saveRoutingRulesDialog.open();
-        });
-        add(saveAllRoutingRules);
+//        Button saveAllRoutingRules = new Button("Save all roulting rules");
+//        saveAllRoutingRules.addClickListener(e -> {
+//        	Dialog saveRoutingRulesDialog = new Dialog();
+//        	saveAllRoutingRules.setText("Save all roulting rules");
+//        	//TODO: Here to create a Dialog panel which warns the user that all backend rules existing are stored into database and 
+//        	//      those from the properties file will not apply anymore.
+//        	// On confirmation, save all backend rules to database and reload in context.
+////        	createRoutingRuleDialog.add(delButton);
+//        	saveRoutingRulesDialog.open();
+//        });
+//        add(saveAllRoutingRules);
+    }
+    
+    private Renderer<RoutingRule> getButtonRenderer() {
+        return new ComponentRenderer<>(
+                (RoutingRule routingRule) -> {
+                    HorizontalLayout layout = new HorizontalLayout();
+                    //edit Button
+                    Button editButton = new Button();
+                    editButton.setIcon(VaadinIcon.WRENCH.create());
+                    editButton.addClickListener(clickEvent -> {
+                        editRoutingRule(routingRule);
+                    });
+                    layout.add(editButton);
+                    //delete button
+                    Button deleteButton = new Button();
+                    deleteButton.setIcon(VaadinIcon.TRASH.create());
+                    deleteButton.addClickListener(clickEvent -> {
+                        deleteRoutingRule(routingRule);
+                    });
+                    layout.add(deleteButton);
+                    return layout;
+                });
+
     }
 
-	private Button getDeleteRoutingRuleLink(RoutingRule rule) {
-		Button deleteRoutingRuleButton = new Button(new Icon(VaadinIcon.ERASER));
-		deleteRoutingRuleButton.addClickListener(e -> {
-			Dialog deleteRoutingRuleDialog = new Dialog();
-			Button delButton = new Button("Delete RoutingRule");
-			delButton.addClickListener(e1 -> {
-				//TODO: Warn user about taking effect.
-				//      On confirmation delete rule and reload rules in application context.
-				deleteRoutingRuleDialog.close();
-			});
-			deleteRoutingRuleDialog.add(delButton);
-			deleteRoutingRuleDialog.open();
+    private void createNewRoutingRuleClicked(ClickEvent<Button> buttonClickEvent) {
+        final Dialog d = new Dialog();
+        d.setModal(true);
+        d.setHeight("80%");
+        d.setWidth("80%");
+        d.setOpened(true);
+        d.setCloseOnOutsideClick(false);
+        d.setCloseOnEsc(false);
+
+        Label title = new Label("Add new Routing Rule");
+
+        HorizontalLayout saveCancelButton = new HorizontalLayout();
+        saveCancelButton.add(title);
+
+        d.add(saveCancelButton);
+
+        Label statusLabel = new Label();
+
+        RoutingRuleForm rrf = this.routingRuleFormObjectFactory.getObject();
+        d.add(rrf);
+        d.add(statusLabel);
+
+        RoutingRule r = new RoutingRule();
+
+        final Binder<RoutingRule> routingRuleBinder = new Binder<>(RoutingRule.class);
+        routingRuleBinder.bindInstanceFields(rrf);
+        routingRuleBinder.setBean(r);
+        routingRuleBinder.setStatusLabel(statusLabel);
+
+        Button saveButton = new Button(VaadinIcon.CHECK.create());
+        Button cancelButton = new Button(VaadinIcon.CLOSE.create());
+
+        cancelButton.addClickListener(e -> {
+            //do nothing...
+            d.close();
+        });
+
+        RoutingRule updatedRoutingRule = new RoutingRule();
+        saveButton.addClickListener(e -> {
+            //TODO: save routing rule...
+//            routingRuleBinder.readBean();
+            BinderValidationStatus<RoutingRule> validate = routingRuleBinder.validate();
+            LOGGER.info("Validation result: [{}]", validate);
+            boolean b = routingRuleBinder.writeBeanIfValid(updatedRoutingRule);
+            if (b) {
+                d.close();
+                updateAndSaveRoutingRule(updatedRoutingRule);
+            }
 
         });
-		return deleteRoutingRuleButton;
-	}
+
+        saveCancelButton.add(saveButton);
+        saveCancelButton.add(cancelButton);
+
+        saveChanges();
+    }
+    
+    private void editRoutingRule(RoutingRule r) {
+        final Dialog d = new Dialog();
+        d.setModal(true);
+        d.setHeight("80%");
+        d.setWidth("80%");
+        d.setOpened(true);
+        d.setCloseOnOutsideClick(false);
+        d.setCloseOnEsc(false);
+
+        Label title = new Label("Edit Routing Rule");
+
+        HorizontalLayout saveCancelButton = new HorizontalLayout();
+        saveCancelButton.add(title);
+
+        d.add(saveCancelButton);
+
+        Label statusLabel = new Label();
+
+        RoutingRuleForm rrf = this.routingRuleFormObjectFactory.getObject();
+        d.add(rrf);
+        d.add(statusLabel);
+
+        final Binder<RoutingRule> routingRuleBinder = new Binder<>(RoutingRule.class);
+        routingRuleBinder.bindInstanceFields(rrf);
+        routingRuleBinder.readBean(r);
+        routingRuleBinder.setStatusLabel(statusLabel);
+
+
+        Button saveButton = new Button(VaadinIcon.CHECK.create());
+        Button cancelButton = new Button(VaadinIcon.CLOSE.create());
+
+        cancelButton.addClickListener(e -> {
+            //do nothing...
+            d.close();
+        });
+
+        RoutingRule updatedRoutingRule = new RoutingRule();
+        saveButton.addClickListener(e -> {
+            //TODO: save routing rule...
+//            routingRuleBinder.readBean();
+            BinderValidationStatus<RoutingRule> validate = routingRuleBinder.validate();
+            LOGGER.info("Validation result: [{}]", validate);
+            boolean b = routingRuleBinder.writeBeanIfValid(updatedRoutingRule);
+            if (b) {
+                d.close();
+                updateAndSaveRoutingRule(updatedRoutingRule);
+            }
+
+        });
+
+        saveCancelButton.add(saveButton);
+        saveCancelButton.add(cancelButton);
+
+        saveChanges();
+    }
+
+    private void updateAndSaveRoutingRule(RoutingRule rr) {
+        this.currentRoutingRules.remove(rr.getRoutingRuleId());
+        this.currentRoutingRules.put(rr.getRoutingRuleId(), rr);
+        this.routingRuleGrid.setItems(this.currentRoutingRules.values());
+    }
+
+    private void deleteRoutingRule(RoutingRule r) {
+        Dialog d = new Dialog();
+        d.setModal(true);
+        d.setHeight("80%");
+        d.setWidth("80%");
+        d.setOpened(true);
+
+        Label l = new Label("Delete Routing Rule?");
+        d.add(l);
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        Button acceptButton = new Button(VaadinIcon.CHECK.create());
+        Button cancelButton = new Button(VaadinIcon.CLOSE.create());
+        d.add(horizontalLayout);
+        horizontalLayout.add(acceptButton);
+        horizontalLayout.add(cancelButton);
+
+        acceptButton.addClickListener(e -> {
+            currentRoutingRules.remove(r.getRoutingRuleId());
+            this.routingRuleGrid.setItems(currentRoutingRules.values());
+            d.close();
+        });
+        cancelButton.addClickListener(e -> {
+            d.close();
+        });
+
+        saveChanges();
+    }
+
+
 
 	private void saveChanges() {
         DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
                 DCMessageRoutingConfigurationProperties.class);
 
-        routingConfigurationProperties.setBackendRules(currentRoutingRules);
+        routingConfigurationProperties.setBackendRules(new ArrayList<>(currentRoutingRules.values()));
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
     }
 
@@ -159,8 +338,9 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         //returns all routing rules (configured within db AND PropertyFiles/SpringEnvironment)
 		Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
-		this.currentRoutingRules = new ArrayList<>(backendRoutingRules);
-        routingRuleGrid.setItems(this.currentRoutingRules);
+        this.currentRoutingRules = backendRoutingRules.stream()
+                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
+        routingRuleGrid.setItems(this.currentRoutingRules.values());
 		
 	}
 

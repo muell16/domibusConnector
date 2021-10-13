@@ -1,5 +1,6 @@
 package eu.domibus.connector.test.service;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.domain.model.*;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface DCConnector2ConnectorTestService {
 
     /**
      * Will take the provided testMessage and
-     *  submit it to the connector
+     *  submit it to the connector (put it on toConnectorQueue)
      *
      *  The message itself must be a valid message! Use {@link #createTestMessage} to get a valid test message.
      *
@@ -40,6 +41,16 @@ public interface DCConnector2ConnectorTestService {
      */
     public void submitTestMessage(DomibusConnectorMessage testMessage);
 
+    /**
+     * List all messages with backend name equals {@link DomibusConnectorDefaults#DEFAULT_TEST_BACKEND} and
+     * business domain equals {@param businessDomain}
+     *
+     * @param businessDomain
+     * @return - list of connector messages
+     *
+     * Question?: pagination?
+     *
+     */
     public List<DomibusConnectorMessage> getTestMessages(DomibusConnectorBusinessDomain.BusinessDomainId businessDomain);
 
 }

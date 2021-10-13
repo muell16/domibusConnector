@@ -11,13 +11,13 @@ import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.StoreType;
-import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -242,11 +242,11 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         msgCont.setContentType(type);
         msgCont.setConnectorMessageId(connectorMessageId.getConnectorMessageId());
 
-        if (ref != null && StringUtils.isEmpty(ref.getStorageProviderName())) {
+        if (ref != null && !StringUtils.hasText(ref.getStorageProviderName())) {
             LOGGER.debug("No storage provider is set for the large file reference [{}]!\nWill be converted to default Storage provider!", ref);
             ref = convertToDefaultStorageProvider(connectorMessageId.getConnectorMessageId(), ref);
         }
-        if (ref != null && StringUtils.isEmpty(ref.getStorageIdReference())) {
+        if (ref != null && !StringUtils.hasText(ref.getStorageIdReference())) {
             throw new PersistenceException("No storage id reference is set for the large file reference!");
         }
         if (ref != null && ref.getStorageProviderName() != null && !largeFilePersistenceService.isStorageProviderAvailable(ref)) {
@@ -261,7 +261,7 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
             msgCont.setPayloadMimeType(ref.getContentType());
             msgCont.setPayloadName(ref.getName());
             msgCont.setSize(ref.getSize());
-            if (StringUtils.isNotEmpty(ref.getText())) {
+            if (!StringUtils.hasText(ref.getText())) {
                 msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
             }
         }

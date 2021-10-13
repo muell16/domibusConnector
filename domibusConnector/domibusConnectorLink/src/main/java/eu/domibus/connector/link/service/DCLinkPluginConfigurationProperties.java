@@ -29,7 +29,11 @@ public class DCLinkPluginConfigurationProperties {
      */
     private boolean loadDbConfig = false;
 
-    private boolean failOnLinkPluginError = true;
+    /**
+     * start the connector if any link plugin init
+     * fails, by default start connector always
+     */
+    private boolean failOnLinkPluginError = false;
 
 
     /**

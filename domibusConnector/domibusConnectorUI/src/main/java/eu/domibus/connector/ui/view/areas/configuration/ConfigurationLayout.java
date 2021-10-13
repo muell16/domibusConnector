@@ -18,7 +18,6 @@ import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
@@ -43,21 +42,20 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
 
     private DCTabHandler DCTabHandler = new DCTabHandler();
 
-    @Autowired
-    DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
-    @Autowired
-    ConfigurationUtil util;
-    @Autowired
-    ApplicationContext applicationContext;
 
-    public ConfigurationLayout() {
+    private final DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
+    private final ConfigurationUtil util;
+    private final ApplicationContext applicationContext;
+
+    public ConfigurationLayout(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService, ConfigurationUtil util, ApplicationContext applicationContext) {
+        this.propertiesPersistenceService = propertiesPersistenceService;
+        this.util = util;
+        this.applicationContext = applicationContext;
     }
+
 
     @PostConstruct
     public void init() {
-
-        this.propertiesPersistenceService = propertiesPersistenceService;
-        this.util = util;
 
         DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
 

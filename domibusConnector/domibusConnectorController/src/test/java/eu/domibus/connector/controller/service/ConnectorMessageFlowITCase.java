@@ -18,7 +18,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.slf4j.Logger;

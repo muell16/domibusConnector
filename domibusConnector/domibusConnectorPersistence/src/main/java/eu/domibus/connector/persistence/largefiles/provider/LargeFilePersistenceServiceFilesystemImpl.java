@@ -6,7 +6,7 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionExce
 import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

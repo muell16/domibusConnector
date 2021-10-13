@@ -34,7 +34,8 @@ public class PDomibusConnectorBigData {
     private String mimeType;
 
     @Column(name="CONTENT")
-    private Blob content;
+    @Lob
+    private byte[] content;
     
     @Column(name="CHECKSUM")
     private String checksum;
@@ -89,11 +90,11 @@ public class PDomibusConnectorBigData {
         this.mimeType = mimeType;
     }
 
-    public Blob getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

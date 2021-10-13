@@ -82,10 +82,10 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             jpaBasedDomibusConnectorBigDataReference.setStorageProviderName(this.getProviderName());
 
             //TODO: use stream from db!
-            Blob content = bigData.getContent();
+            byte[] content = bigData.getContent();
             if (content != null) {
-                InputStream dbStream = content.getBinaryStream();
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(dbStream));
+//                InputStream dbStream = content.getBinaryStream();
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(content);
                 jpaBasedDomibusConnectorBigDataReference.setInputStream(byteArrayInputStream);
             } else {
                 String error = String.format("Blob Content of bigDataStorage with reference [%d] is null!", storageRef);
@@ -105,13 +105,14 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         } catch (NumberFormatException nfe) {
             String error = String.format("Cannot load big data with storage reference [%s]\nThe actual implementation expects a Long as storage ref key!", storageReference);
             throw new RuntimeException(error, nfe);
-        } catch (SQLException e) {
-            String error = String.format("Error while loading from database");
-            throw new RuntimeException(error, e);
-        } catch (IOException e) {
-            String error = String.format("Error while reading stream from database");
-            throw new RuntimeException(error, e);
         }
+//        } catch (SQLException e) {
+//            String error = String.format("Error while loading from database");
+//            throw new RuntimeException(error, e);
+//        } catch (IOException e) {
+//            String error = String.format("Error while reading stream from database");
+//            throw new RuntimeException(error, e);
+//        }
 
     }
 
@@ -137,9 +138,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
         byte[] toByteArray = outputStream.toByteArray();
 
-        Session hibernateSession = entityManager.unwrap(Session.class);
-        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
-        bigData.setContent(blob);
+//        Session hibernateSession = entityManager.unwrap(Session.class);
+//        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+        bigData.setContent(toByteArray);
         String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
         bigData.setChecksum(md5DigestAsHex);
 
@@ -181,9 +182,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 			}
             byte[] toByteArray = outputStream.toByteArray();
             
-            Session hibernateSession = entityManager.unwrap(Session.class);
-            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
-            bigData.setContent(blob);
+//            Session hibernateSession = entityManager.unwrap(Session.class);
+//            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+            bigData.setContent(toByteArray);
             String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
             bigData.setChecksum(md5DigestAsHex);
 
@@ -251,9 +252,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
         byte[] toByteArray = dbBackedOutputStream.toByteArray();
 
-        Session hibernateSession = entityManager.unwrap(Session.class);
-        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
-        bigData.setContent(blob);
+//        Session hibernateSession = entityManager.unwrap(Session.class);
+//        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+        bigData.setContent(toByteArray);
         String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
         bigData.setChecksum(md5DigestAsHex);
 

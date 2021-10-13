@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-@PropertySource({"classpath:/build-info.properties", "classpath:/default.properties", "classpath:/default-bootstrap.properties"})
+@PropertySource({"classpath:/build-info.properties", "classpath:/default.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
@@ -39,7 +39,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static final String CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME = "connector.config.location";
 
     public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
-    public static final String DEFAULT_SPRING_CONFIG_LOCATION = "classpath:/config/,file:./conf/,file:./conf/connector/,file:./config/,file:./config/connector/";
+    public static final String DEFAULT_SPRING_CONFIG_LOCATION = "optional:classpath:/config/,optional:file:./config/,optional:file:./config/connector/";
 
     private ServletContext servletContext;
 
@@ -149,13 +149,13 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         if (servletContext != null) {
 
             bootstrapConfigLocation = bootstrapConfigLocation +
-                    ",file:./config/" + servletContext.getContextPath() + "/" +
-                    ",file:./conf/" + servletContext.getContextPath() + "/";
+                    ",optional:file:./config/" + servletContext.getContextPath() + "/" +
+                    ",optional:file:./conf/" + servletContext.getContextPath() + "/";
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
 
             springConfigLocation = springConfigLocation +
-                    ",file:./config/" + servletContext.getContextPath() + "/" +
-                    ",file:./conf/" + servletContext.getContextPath() + "/";
+                    ",optional:file:./config/" + servletContext.getContextPath() + "/" +
+                    ",optional:file:./conf/" + servletContext.getContextPath() + "/";
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
 
         }

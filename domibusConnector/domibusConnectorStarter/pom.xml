@@ -40,22 +40,6 @@
             <artifactId>domibusConnectorPersistence</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- spring bootstrapping -->
-        <!--<dependency>-->
-        <!--<groupId>org.springframework.cloud</groupId>-->
-        <!--<artifactId>spring-cloud-config-client</artifactId>-->
-        <!--</dependency>-->
-        <!-- dependency for bootstraping config -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>bcpkix-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- additional spring parts -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

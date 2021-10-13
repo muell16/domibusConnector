@@ -3,10 +3,14 @@ package eu.domibus.connector.controller.queues.producer;
 import eu.domibus.connector.controller.service.PutOnQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.Session;
 import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.JmsConfiguration.TO_CONNECTOR_QUEUE_BEAN;

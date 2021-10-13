@@ -3,13 +3,10 @@ package eu.domibus.connector.ui.ui.binder;
 import com.vaadin.flow.data.binder.ErrorLevel;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.ValueContext;
-import liquibase.pro.packaged.C;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import javax.validation.metadata.BeanDescriptor;
 import java.util.Set;
 import java.util.stream.Collectors;
 
