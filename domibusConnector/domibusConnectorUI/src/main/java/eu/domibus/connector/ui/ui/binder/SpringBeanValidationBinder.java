@@ -11,7 +11,7 @@ import javax.validation.metadata.ConstraintDescriptor;
 import javax.validation.metadata.PropertyDescriptor;
 
 //TODO: create spring factory...
-public class SpringBeanValidationBinder<BEAN> extends BeanValidationBinder<BEAN> {
+public class SpringBeanValidationBinder<BEAN> extends Binder<BEAN> {
 
 
     private final Class<BEAN> beanType;
@@ -34,13 +34,13 @@ public class SpringBeanValidationBinder<BEAN> extends BeanValidationBinder<BEAN>
     public SpringBeanValidationBinder(javax.validation.Validator javaxValidator, Class<BEAN> beanType, boolean scanNestedDefinitions) {
         super(beanType, scanNestedDefinitions);
         this.javaxValidator = javaxValidator;
-        if (!BeanUtil.checkBeanValidationAvailable()) {
-            throw new IllegalStateException(
-                    com.vaadin.flow.data.binder.BeanValidationBinder.class.getSimpleName()
-                            + " cannot be used because a JSR-303 Bean Validation "
-                            + "implementation not found on the classpath or could not be initialized. Use "
-                            + Binder.class.getSimpleName() + " instead");
-        }
+//        if (!BeanUtil.checkBeanValidationAvailable()) {
+//            throw new IllegalStateException(
+//                    com.vaadin.flow.data.binder.BeanValidationBinder.class.getSimpleName()
+//                            + " cannot be used because a JSR-303 Bean Validation "
+//                            + "implementation not found on the classpath or could not be initialized. Use "
+//                            + Binder.class.getSimpleName() + " instead");
+//        }
         this.beanType = beanType;
     }
 
@@ -61,7 +61,7 @@ public class SpringBeanValidationBinder<BEAN> extends BeanValidationBinder<BEAN>
             PropertyDefinition<BEAN, ?> definition) {
         Class<?> actualBeanType = findBeanType(beanType, definition);
         //TODO: replace...
-        BeanValidator validator = new SpringBeanValidator(javaxValidator, actualBeanType,
+        SpringBeanValidator validator = new SpringBeanValidator(javaxValidator, actualBeanType,
                 definition.getTopLevelName());
 
         if (requiredConfigurator != null) {
@@ -94,7 +94,7 @@ public class SpringBeanValidationBinder<BEAN> extends BeanValidationBinder<BEAN>
     }
 
     private void configureRequired(BindingBuilder<BEAN, ?> binding,
-                                   PropertyDefinition<BEAN, ?> definition, BeanValidator validator) {
+                                   PropertyDefinition<BEAN, ?> definition, SpringBeanValidator validator) {
         assert requiredConfigurator != null;
         Class<?> propertyHolderType = definition.getPropertyHolderType();
         BeanDescriptor descriptor = validator.getJavaxBeanValidator()
@@ -110,6 +110,25 @@ public class SpringBeanValidationBinder<BEAN> extends BeanValidationBinder<BEAN>
                         binding))) {
             binding.getField().setRequiredIndicatorVisible(true);
         }
+    }
+
+    /**
+     * Sets a logic which allows to configure require indicator via
+     * {@link HasValue#setRequiredIndicatorVisible(boolean)} based on property
+     * descriptor.
+     * <p>
+     * Required indicator configuration will not be used at all if
+     * {@code configurator} is null.
+     * <p>
+     * By default the {@link RequiredFieldConfigurator#DEFAULT} configurator is
+     * used.
+     *
+     * @param configurator
+     *            required indicator configurator, may be {@code null}
+     */
+    public void setRequiredConfigurator(
+            RequiredFieldConfigurator configurator) {
+        requiredConfigurator = configurator;
     }
 
 

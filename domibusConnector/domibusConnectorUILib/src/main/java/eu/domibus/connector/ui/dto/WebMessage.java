@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.dto;
 
-import liquibase.util.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedList;

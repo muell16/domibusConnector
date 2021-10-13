@@ -5,6 +5,9 @@ import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanWrapper;
@@ -28,6 +31,11 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @Service
@@ -171,14 +179,32 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 //        return map;
 //    }
 
+    private static class ToPropertyConverterObject {
+        HashMap<String, String> properties = new HashMap<>();
+        Object bean;
+        String currentPropertyName;
+    }
+
     private Map<String, String> readBeanPropertiesToStringMap(Object configurationClazz, String prefix) {
         HashMap<String, String> properties = new HashMap<>();
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(configurationClazz);
         Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(configurationClazz.getClass());
+
+
+
+
         configurationPropertyFromClazz.stream()
                 .map(ConfigurationProperty::getPropertyName) // get property name
                 .map(name -> name.substring(prefix.length() + 1)) // strip prefix
-                .forEach( name -> properties.put(createPropertyName(prefix, name), getToStringConvertedPropertyValue(beanWrapper, name))
+                .forEach( name -> {
+//                            ToPropertyConverterObject o = new ToPropertyConverterObject();
+//                            o.bean = configurationClazz;
+//                            o.properties = properties;
+//                            o.currentPropertyName = createPropertyName(prefix, name);
+//                            addToStringConvertedPropertyToPropMap(o, beanWrapper);
+                           properties.put(createPropertyName(prefix, name), getToStringConvertedPropertyValue(beanWrapper, name));
+                        }
+
                 );
         return properties;
     }
@@ -188,10 +214,83 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         return ConfigurationPropertyName.of(prefix + "." + name).toString();
     }
 
-    private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
+    private void addToStringConvertedPropertyToPropMap(ToPropertyConverterObject o, BeanWrapper beanWrapper) {
+        String name = o.currentPropertyName;
         try {
+            Class propertyType = beanWrapper.getPropertyType(name);
             Object propertyValue = beanWrapper.getPropertyValue(name);
             if (propertyValue == null) {
+//                return null;
+                return;
+            }
+            //handle lists
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                Collection c = (Collection) propertyValue;
+                ToPropertyConverterObject obj = new ToPropertyConverterObject();
+                obj.bean = propertyValue;
+                obj.properties = o.properties;
+                obj.currentPropertyName = name;
+                addToPropMap(o, c);
+//                return null; // TODO: handle lists...
+                //TODO: map collection
+                return;
+            }
+            if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
+                String stringValue = conversionService.convert(propertyValue, String.class);
+//                return stringValue;
+                o.properties.put(name, stringValue);
+            } else {
+                o.properties.put(name, propertyValue.toString());
+            }
+//            return propertyValue.toString();
+        } catch (NullValueInNestedPathException nullValueInNestedPathException) {
+            LOGGER.error("Exception occured", nullValueInNestedPathException);
+            return;
+        }
+    }
+
+    private void addToPropMap(ToPropertyConverterObject o, Collection c) {
+        int i = 0;
+        for (Object item : c) {
+            String propName = o.currentPropertyName +
+                    "[" +
+                    i +
+                    "]";
+            ToPropertyConverterObject m = new ToPropertyConverterObject();
+            m.currentPropertyName = propName;
+            m.bean = item;
+            m.properties = o.properties;
+
+            addToPropMap(m);
+
+            i++;
+        };
+    }
+
+    private void addToPropMap(ToPropertyConverterObject m) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(m.bean.getClass());
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                String propName = propertyDescriptor.getName();
+                Object property = PropertyUtils.getProperty(m.bean, propName);
+
+            }
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
+
+        try {
+            Class propertyType = beanWrapper.getPropertyType(name);
+            Object propertyValue = beanWrapper.getPropertyValue(name);
+            if (propertyValue == null) {
+                return null;
+            }
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                //is collection: ignore
                 return null;
             }
             if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
@@ -200,7 +299,6 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
             }
             return propertyValue.toString();
         } catch (NullValueInNestedPathException nullValueInNestedPathException) {
-
             return null;
         }
 //        throw new RuntimeException(String.format("Cannot convert Property of type [%s] to String!", propertyValue.getClass()));
