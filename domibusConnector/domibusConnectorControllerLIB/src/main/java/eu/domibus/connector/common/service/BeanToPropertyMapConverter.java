@@ -2,6 +2,7 @@ package eu.domibus.connector.common.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.google.common.base.CaseFormat;
+import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,7 @@ public class BeanToPropertyMapConverter {
 
     private final ConversionService conversionService;
 
-    public BeanToPropertyMapConverter(ConversionService conversionService) {
+    public BeanToPropertyMapConverter(@ConnectorConversationService ConversionService conversionService) {
         this.conversionService = conversionService;
     }
 
