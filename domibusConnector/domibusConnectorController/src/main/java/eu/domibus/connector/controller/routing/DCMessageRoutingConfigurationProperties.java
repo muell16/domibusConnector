@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
+@BusinessDomainScoped
 @Component
 @ConfigurationProperties(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX)
 public class DCMessageRoutingConfigurationProperties {

@@ -1,29 +1,23 @@
 package eu.domibus.connector.common.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
-import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.domibus.connector.common.annotations.MapNested;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.NullValueInNestedPathException;
-import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
+import java.lang.reflect.AnnotatedParameterizedType;
+import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 @Component
@@ -57,6 +51,9 @@ public class BeanToPropertyMapConverter {
                 return; //do nothing if null
             }
             Class<?> beanType = bean.getClass();
+
+            nested = nested || beanType.getAnnotation(MapNested.class) != null;
+
             if (Collection.class.isAssignableFrom(bean.getClass())) {
                 //is collection
                 convertCollectionToProperties((Collection<?>) bean, prefix, nested);
@@ -92,12 +89,10 @@ public class BeanToPropertyMapConverter {
                     AnnotatedType annotatedType = declaredField.getAnnotatedType();
                     if (annotatedType instanceof AnnotatedParameterizedType) {
                         AnnotatedParameterizedType apt = (AnnotatedParameterizedType) annotatedType;
-                        System.out.println("AnnotatedParameterizedType " + apt);
                         AnnotatedType[] annotatedActualTypeArguments = apt.getAnnotatedActualTypeArguments();
                         for (AnnotatedType at : annotatedActualTypeArguments) {
                             nested = nested || at.getAnnotation(MapNested.class) != null;
                         }
-
                     }
 
                     String p = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, propName);

@@ -1,11 +1,13 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
+@MapNested
 public class RoutingRule {
 
     public static int HIGH_PRIORITY = -2000;

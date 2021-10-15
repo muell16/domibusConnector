@@ -24,6 +24,7 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -108,42 +109,23 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
 
-//        routingRuleGrid.setItemDetailsRenderer(getComponentRenderer());
-
-//        routingRuleGrid.addColumn("linkName")
-//                .addColumn(RoutingRule::getLinkName)
-//                .setEditorComponent(this::getBackendNameEditorComponent)
-//                .setHeader("Backend Name");
-//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getMatchRule()).setHeader("matching string");
-//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
-//        routingRuleGrid.addComponentColumn(rule -> getDeleteRoutingRuleLink(rule)).setWidth("50px");
-
-//        routingRuleGrid.setDetailsVisibleOnClick(true);
-
-
-
-
-//        routingRuleGrid.addComponentColumn(this::getBackendNameField).s
         
         this.add(routingRuleGrid);
         
         Button createNewRoutingRule = new Button("Create new roulting rule");
         createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
         add(createNewRoutingRule);
-        
-//        Button saveAllRoutingRules = new Button("Save all roulting rules");
-//        saveAllRoutingRules.addClickListener(e -> {
-//        	Dialog saveRoutingRulesDialog = new Dialog();
-//        	saveAllRoutingRules.setText("Save all roulting rules");
-//        	//TODO: Here to create a Dialog panel which warns the user that all backend rules existing are stored into database and 
-//        	//      those from the properties file will not apply anymore.
-//        	// On confirmation, save all backend rules to database and reload in context.
-////        	createRoutingRuleDialog.add(delButton);
-//        	saveRoutingRulesDialog.open();
-//        });
-//        add(saveAllRoutingRules);
+
+        Button saveChangesButton = new Button("Save Changes");
+        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
+        add(saveChangesButton);
+
     }
-    
+
+    private void saveChangesButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        this.saveChanges();
+    }
+
     private Renderer<RoutingRule> getButtonRenderer() {
         return new ComponentRenderer<>(
                 (RoutingRule routingRule) -> {
@@ -321,7 +303,12 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
                 DCMessageRoutingConfigurationProperties.class);
 
-        routingConfigurationProperties.setBackendRules(new ArrayList<>(currentRoutingRules.values()));
+        //update only routing rules from source environment
+        List<RoutingRule> newRoutingRules = currentRoutingRules.values()
+                .stream()
+                .filter(r -> r.getConfigurationSource() != ConfigurationSource.IMPL)
+                .collect(Collectors.toList());
+        routingConfigurationProperties.setBackendRules(newRoutingRules);
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
     }
 
@@ -329,7 +316,6 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
                 DCMessageRoutingConfigurationProperties.class);
 
-        //TODO: only replace rules from DB source!
     }
 
 	@Override

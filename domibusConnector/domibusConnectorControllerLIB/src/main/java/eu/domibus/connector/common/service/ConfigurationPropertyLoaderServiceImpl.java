@@ -45,7 +45,7 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     private final ApplicationContext ctx;
     private final ConversionService conversionService;
     private final DCBusinessDomainManager businessDomainManager;
-    private final ConfigurationPropertyCollector configurationPropertyCollector;
+//    private final ConfigurationPropertyCollector configurationPropertyCollector;
     private final Validator validator;
     private final BeanToPropertyMapConverter beanToPropertyMapConverter;
 
@@ -54,12 +54,12 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
                                                   @ConnectorConversationService ConversionService conversionService,
                                                   DCBusinessDomainManager businessDomainManager,
-                                                  ConfigurationPropertyCollector configurationPropertyCollector,
+//                                                  ConfigurationPropertyCollector configurationPropertyCollector,
                                                   Validator validator, BeanToPropertyMapConverter beanToPropertyMapConverter) {
         this.ctx = ctx;
         this.conversionService = conversionService;
         this.businessDomainManager = businessDomainManager;
-        this.configurationPropertyCollector = configurationPropertyCollector;
+//        this.configurationPropertyCollector = configurationPropertyCollector;
         this.validator = validator;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
     }
