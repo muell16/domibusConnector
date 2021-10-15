@@ -21,7 +21,8 @@ public class MyTestProperties {
     @NestedConfigurationProperty
     private NestedProp nested = new NestedProp();
 
-    private List<NestedProp> nestedPropList = new ArrayList<>();
+    //@NestedConfigurationProperty
+    private List<@MapNested NestedProp> nestedPropList = new ArrayList<>();
 
     public static class NestedProp {
         private String abc;

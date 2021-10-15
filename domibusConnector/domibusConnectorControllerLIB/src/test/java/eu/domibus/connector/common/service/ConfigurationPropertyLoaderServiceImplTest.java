@@ -105,36 +105,21 @@ public class ConfigurationPropertyLoaderServiceImplTest {
         myTestProperties.getNestedPropList().add(n1);
 
         Map<String, String> propertyMap = new HashMap<>();
-                propertyLoaderService.createPropertyMap(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), myTestProperties)
+                propertyLoaderService.createPropertyMap(myTestProperties)
                         .forEach((key, value) -> propertyMap.put(key.toString(), value));
 
         Map<String, String> expectedMap = new HashMap<>();
+        expectedMap.put("test.example.nested-prop-list[0].a-very-long-property-name", "verylongprop");
+        expectedMap.put("test.example.nested-prop-list[0].abc", "abc");
         expectedMap.put("test.example.prop1", "prop1");
         expectedMap.put("test.example.prop2", "23");
         expectedMap.put("test.example.nested.abc", "abc");
         expectedMap.put("test.example.nested.duration", "PT552H");
         expectedMap.put("test.example.nested.a-very-long-property-name", "propLong");
 
-        assertThat(propertyMap).containsExactlyEntriesOf(expectedMap);
+        assertThat(propertyMap).containsExactlyInAnyOrderEntriesOf(expectedMap);
 
         LOGGER.info("Mapped properties are: [{}]", propertyMap);
     }
-
-//    @EventListener
-//    public void listen(BusinessDomainConfigurationChange businessDomainConfigurationChange) {
-//        this.lastChange = businessDomainConfigurationChange;
-//    }
-
-//    @Test
-//    public void testComparePropNames() {
-//        ConfigurationPropertyName n1 = ConfigurationPropertyName.of("my.test.examp-le");
-//        ConfigurationPropertyName n2 = ConfigurationPropertyName.of("my.te-st.example");
-//        ConfigurationPropertyName n3 = ConfigurationPropertyName.of("my.te-st.example");
-//
-//        assertThat(n1).isEqualTo(n2);
-//        assertThat(n1).isEqualTo(n3);
-//
-//
-//    }
 
 }

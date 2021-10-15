@@ -5,9 +5,7 @@ import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanWrapper;
@@ -49,6 +47,7 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     private final DCBusinessDomainManager businessDomainManager;
     private final ConfigurationPropertyCollector configurationPropertyCollector;
     private final Validator validator;
+    private final BeanToPropertyMapConverter beanToPropertyMapConverter;
 
 
 
@@ -56,12 +55,13 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
                                                   @ConnectorConversationService ConversionService conversionService,
                                                   DCBusinessDomainManager businessDomainManager,
                                                   ConfigurationPropertyCollector configurationPropertyCollector,
-                                                  Validator validator) {
+                                                  Validator validator, BeanToPropertyMapConverter beanToPropertyMapConverter) {
         this.ctx = ctx;
         this.conversionService = conversionService;
         this.businessDomainManager = businessDomainManager;
         this.configurationPropertyCollector = configurationPropertyCollector;
         this.validator = validator;
+        this.beanToPropertyMapConverter = beanToPropertyMapConverter;
     }
 
     @Override
@@ -148,8 +148,8 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         }
 
         Object currentConfig = this.loadConfiguration(laneId, updatedConfigClazz.getClass());
-        Map<String, String> previousProps = createPropertyMap(laneId, currentConfig); //collect current active properties
-        Map<String, String> props = createPropertyMap(laneId, updatedConfigClazz); //collect updated properties
+        Map<String, String> previousProps = createPropertyMap(currentConfig); //collect current active properties
+        Map<String, String> props = createPropertyMap(updatedConfigClazz); //collect updated properties
 
         //only collect differences
         Map<String, String> diffProps = new HashMap<>();
@@ -163,146 +163,9 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
     }
 
-    Map<String, String> createPropertyMap(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationClazz) {
+    Map<String, String> createPropertyMap(Object configurationClazz) {
         String prefix = getPrefixFromAnnotation(configurationClazz.getClass());
-        Map<String, String> propertyMap = readBeanPropertiesToStringMap(configurationClazz, prefix);
-        return propertyMap;
-//        return mapCamelCaseToLowerHyphen(propertyMap);
+        return beanToPropertyMapConverter.readBeanPropertiesToMap(configurationClazz, prefix);
     }
-
-    //convert property names from KebabCase to CamelCase
-    // eg.:  cn-name to cnName
-//    private Map<String, String> mapCamelCaseToLowerHyphen(Map<String, String> properties) {
-//        Map<String, String> map = new HashMap<>();
-//        properties.forEach((key, value) -> map.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, key), value));
-////        properties.forEach((key, value) -> map.put(key.replace("-", ""), value));
-//        return map;
-//    }
-
-    private static class ToPropertyConverterObject {
-        HashMap<String, String> properties = new HashMap<>();
-        Object bean;
-        String currentPropertyName;
-    }
-
-    private Map<String, String> readBeanPropertiesToStringMap(Object configurationClazz, String prefix) {
-        HashMap<String, String> properties = new HashMap<>();
-        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(configurationClazz);
-        Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(configurationClazz.getClass());
-
-
-
-
-        configurationPropertyFromClazz.stream()
-                .map(ConfigurationProperty::getPropertyName) // get property name
-                .map(name -> name.substring(prefix.length() + 1)) // strip prefix
-                .forEach( name -> {
-//                            ToPropertyConverterObject o = new ToPropertyConverterObject();
-//                            o.bean = configurationClazz;
-//                            o.properties = properties;
-//                            o.currentPropertyName = createPropertyName(prefix, name);
-//                            addToStringConvertedPropertyToPropMap(o, beanWrapper);
-                           properties.put(createPropertyName(prefix, name), getToStringConvertedPropertyValue(beanWrapper, name));
-                        }
-
-                );
-        return properties;
-    }
-
-    private String createPropertyName(String prefix, String name) {
-        name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, name);
-        return ConfigurationPropertyName.of(prefix + "." + name).toString();
-    }
-
-    private void addToStringConvertedPropertyToPropMap(ToPropertyConverterObject o, BeanWrapper beanWrapper) {
-        String name = o.currentPropertyName;
-        try {
-            Class propertyType = beanWrapper.getPropertyType(name);
-            Object propertyValue = beanWrapper.getPropertyValue(name);
-            if (propertyValue == null) {
-//                return null;
-                return;
-            }
-            //handle lists
-            if (Collection.class.isAssignableFrom(propertyType)) {
-                Collection c = (Collection) propertyValue;
-                ToPropertyConverterObject obj = new ToPropertyConverterObject();
-                obj.bean = propertyValue;
-                obj.properties = o.properties;
-                obj.currentPropertyName = name;
-                addToPropMap(o, c);
-//                return null; // TODO: handle lists...
-                //TODO: map collection
-                return;
-            }
-            if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
-                String stringValue = conversionService.convert(propertyValue, String.class);
-//                return stringValue;
-                o.properties.put(name, stringValue);
-            } else {
-                o.properties.put(name, propertyValue.toString());
-            }
-//            return propertyValue.toString();
-        } catch (NullValueInNestedPathException nullValueInNestedPathException) {
-            LOGGER.error("Exception occured", nullValueInNestedPathException);
-            return;
-        }
-    }
-
-    private void addToPropMap(ToPropertyConverterObject o, Collection c) {
-        int i = 0;
-        for (Object item : c) {
-            String propName = o.currentPropertyName +
-                    "[" +
-                    i +
-                    "]";
-            ToPropertyConverterObject m = new ToPropertyConverterObject();
-            m.currentPropertyName = propName;
-            m.bean = item;
-            m.properties = o.properties;
-
-            addToPropMap(m);
-
-            i++;
-        };
-    }
-
-    private void addToPropMap(ToPropertyConverterObject m) {
-        try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(m.bean.getClass());
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                String propName = propertyDescriptor.getName();
-                Object property = PropertyUtils.getProperty(m.bean, propName);
-
-            }
-        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getToStringConvertedPropertyValue(BeanWrapper beanWrapper, String name) {
-
-        try {
-            Class propertyType = beanWrapper.getPropertyType(name);
-            Object propertyValue = beanWrapper.getPropertyValue(name);
-            if (propertyValue == null) {
-                return null;
-            }
-            if (Collection.class.isAssignableFrom(propertyType)) {
-                //is collection: ignore
-                return null;
-            }
-            if (conversionService.canConvert(propertyValue.getClass(), String.class)) {
-                String stringValue = conversionService.convert(propertyValue, String.class);
-                return stringValue;
-            }
-            return propertyValue.toString();
-        } catch (NullValueInNestedPathException nullValueInNestedPathException) {
-            return null;
-        }
-//        throw new RuntimeException(String.format("Cannot convert Property of type [%s] to String!", propertyValue.getClass()));
-    }
-
 
 }
