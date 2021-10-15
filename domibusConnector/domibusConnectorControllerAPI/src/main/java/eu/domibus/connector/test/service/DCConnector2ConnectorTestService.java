@@ -43,9 +43,9 @@ public interface DCConnector2ConnectorTestService {
 
     /**
      * List all messages with backend name equals {@link DomibusConnectorDefaults#DEFAULT_TEST_BACKEND} and
-     * business domain equals {@param businessDomain}
+     * business domain equals businessDomain
      *
-     * @param businessDomain
+     * @param businessDomain - business Domain
      * @return - list of connector messages
      *
      * Question?: pagination?
