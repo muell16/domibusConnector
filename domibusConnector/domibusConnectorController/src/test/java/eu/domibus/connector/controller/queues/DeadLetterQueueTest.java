@@ -28,9 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Message;
 import java.time.Duration;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +45,7 @@ class DeadLetterQueueTest {
     public void beforeEach() {
         nonXaJmsTemplate = new JmsTemplate(nonXaConnectionFactory);
         nonXaJmsTemplate.setMessageConverter(converter);
+        Mockito.reset(submitToLinkService);
     }
 
     @MockBean
@@ -64,14 +63,14 @@ class DeadLetterQueueTest {
     @MockBean
     ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
 
+    @MockBean
+    CleanupMessageProcessor cleanupMessageProcessor;
+
     @Autowired
     ToLinkQueue toLinkQueueProducer;
 
     @Autowired
     ToConnectorQueue toConnectorQueueProducer;
-
-    @MockBean
-    CleanupMessageProcessor cleanupMessageProcessor;
 
     @Autowired
     JmsTemplate nonXaJmsTemplate;
@@ -188,40 +187,6 @@ class DeadLetterQueueTest {
                 () -> assertThat(domibusConnectorMessage[0])
                         .isNotNull()
                         .extracting(c -> c.getConnectorMessageId().getConnectorMessageId()).isEqualTo("yxcvyxcvyxcv")
-        );
-    }
-
-    @Test
-    public void dlq1() {
-
-        // Arrange
-        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(submitToLinkService).submitToLink(any());
-
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId(new DomibusConnectorMessageId("msg1"));
-
-        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[2];
-        final List<Message>[] msgs = new List[1];
-
-        // Act
-        txTemplate.executeWithoutResult(tx -> toLinkQueueProducer.putOnQueue(message));
-        txTemplate.executeWithoutResult(tx -> msgs[0] = toLinkQueueProducer.listAllMessagesWithinQueue());
-
-        // Assert
-        Assertions.assertAll("Should return Message from DLQ",
-                () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
-                    nonXaJmsTemplate.setReceiveTimeout(20000);
-                    nonXaJmsTemplate.setSessionTransacted(false);
-                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkDeadLetterQueue());
-                    domibusConnectorMessage[1] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkQueue());
-                }),
-                () -> assertThat(domibusConnectorMessage[0])
-                        .isNotNull()
-                        .extracting(c -> c.getConnectorMessageId().getConnectorMessageId()).isEqualTo("msg1"),
-                () -> assertThat(domibusConnectorMessage[1])
-                        .isNull(),
-                () -> assertThat(msgs[0])
-                        .isNull()
         );
     }
 }
