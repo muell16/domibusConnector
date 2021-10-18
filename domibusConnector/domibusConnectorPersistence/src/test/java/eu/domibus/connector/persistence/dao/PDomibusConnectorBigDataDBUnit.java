@@ -16,6 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -56,8 +57,9 @@ public class PDomibusConnectorBigDataDBUnit {
 
             txTemplate.execute(status -> {
                 Session hibernateSession = entityManager.unwrap(Session.class);
-                Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob("HELLO WORLD I AM A VERY LONG CONTENT".getBytes());
-                bigData.setContent(blob);
+//                Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob("HELLO WORLD I AM A VERY LONG CONTENT".getBytes());
+//                bigData.setContent(blob);
+                bigData.setContent("hallo welt".getBytes(StandardCharsets.UTF_8));
                 bigData.setMimeType("application/octet-stream");
                 bigData.setName("name");
 

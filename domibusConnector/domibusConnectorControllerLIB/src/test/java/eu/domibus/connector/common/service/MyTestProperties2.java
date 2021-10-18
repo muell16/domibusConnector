@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @BusinessDomainScoped
@@ -18,6 +20,10 @@ public class MyTestProperties2 {
 
     @NestedConfigurationProperty
     private NestedProp nested = new NestedProp();
+
+    private List<String> list = new ArrayList<>();
+
+    private List<NestedProp> nestedProps = new ArrayList<>();
 
     public static class NestedProp {
         private String abc;
@@ -75,5 +81,21 @@ public class MyTestProperties2 {
 
     public String getProp1AsAnotherString() {
         return prop1;
+    }
+
+    public List<String> getList() {
+        return list;
+    }
+
+    public void setList(List<String> list) {
+        this.list = list;
+    }
+
+    public List<NestedProp> getNestedProps() {
+        return nestedProps;
+    }
+
+    public void setNestedProps(List<NestedProp> nestedProps) {
+        this.nestedProps = nestedProps;
     }
 }

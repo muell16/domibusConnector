@@ -1,6 +1,7 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@Disabled
 public class FolderWriteableValidatorTest {
 
 
