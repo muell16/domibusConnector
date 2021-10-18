@@ -6,7 +6,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 import javax.jms.Message;
 import javax.jms.Queue;
-import javax.transaction.Transactional;
 import java.util.List;
 
 public abstract class ManageableQueue implements HasManageableDlq {
@@ -18,7 +17,6 @@ public abstract class ManageableQueue implements HasManageableDlq {
     }
 
     @Override
-    @Transactional
     public void putOnQueue(DomibusConnectorMessage message) {
         queueHelper.putOnQueue(message);
     }
