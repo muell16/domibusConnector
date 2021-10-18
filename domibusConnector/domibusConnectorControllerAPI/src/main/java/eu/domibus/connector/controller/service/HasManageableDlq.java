@@ -1,10 +1,15 @@
 package eu.domibus.connector.controller.service;
 
 import javax.jms.Message;
+import javax.jms.Queue;
 import java.util.List;
-import java.util.Optional;
 
 public interface HasManageableDlq extends PutOnQueue {
-    List<Message> listAllMessagesWithinQueue();
-    Optional<Message> fetchMsg(String jmsId);
+    // does listAll belong here?
+    Queue getDlq();
+    List<Message> listAllMessages();
+    List<Message> listAllMessagesInDlq();
+    void moveMsgFromDlqToQueue(String jmsId);
+    void deleteMsgFromDlq(String jmsId);
+    void deleteMsgFromQueue(String jmsId);
 }
