@@ -21,6 +21,16 @@ public class JmsMonitoringView extends VerticalLayout implements AfterNavigation
 
     public JmsMonitoringView() {
         final Div div = new Div(new Text("Hello World!"));
+
+//        List<WebJmsMessage> linkMsgs = new ArrayList<>(); // todo load msgs
+//        List<WebJmsMessage> linkDlqMsgs = new ArrayList<>(); // todo load msgs
+//
+//        Grid<WebJmsMessage> toLinkQueueMsgs = new Grid<>(WebJmsMessage.class);
+//        Grid<WebJmsMessage> toLinkQueueDlqMsgs = new Grid<>(WebJmsMessage.class);
+//        toLinkQueueMsgs.setItems(linkMsgs);
+//        toLinkQueueMsgs.setItems(linkDlqMsgs);
+        // ... for other queues
+        // todo create controller / way to load the messages from backend
         add(div);
     }
 

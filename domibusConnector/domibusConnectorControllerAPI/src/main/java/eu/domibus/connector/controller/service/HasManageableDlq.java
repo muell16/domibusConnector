@@ -5,7 +5,6 @@ import javax.jms.Queue;
 import java.util.List;
 
 public interface HasManageableDlq extends PutOnQueue {
-    // does listAll belong here?
     Queue getDlq();
     List<Message> listAllMessages();
     List<Message> listAllMessagesInDlq();
