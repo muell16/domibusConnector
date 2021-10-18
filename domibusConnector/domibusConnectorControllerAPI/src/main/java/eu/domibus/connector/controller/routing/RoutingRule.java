@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @MapNested
@@ -18,10 +19,10 @@ public class RoutingRule {
     @NotBlank
     private String linkName;
 
-    @NotBlank
+    @NotNull
     private RoutingRulePattern matchClause;
 
-    private String description;
+    private String description = "";
 
     /**
      * higher numbers mean higher priority

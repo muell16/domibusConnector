@@ -6,8 +6,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @BusinessDomainScoped
 @Component
@@ -18,7 +21,12 @@ public class DCMessageRoutingConfigurationProperties {
 
     private boolean enabled = true;
 
+    @NotNull
+    private RoutingRule rule;
+
     private List<RoutingRule> backendRules = new ArrayList<>();
+
+    private Map<String, RoutingRule> ruleMap = new HashMap<>();
 
     private List<RoutingRule> gatewayRules = new ArrayList<>();
 
@@ -105,4 +113,19 @@ public class DCMessageRoutingConfigurationProperties {
         this.connectorGatewayName = connectorGatewayName;
     }
 
+    public Map<String, RoutingRule> getRuleMap() {
+        return ruleMap;
+    }
+
+    public void setRuleMap(Map<String, RoutingRule> ruleMap) {
+        this.ruleMap = ruleMap;
+    }
+
+    public RoutingRule getRule() {
+        return rule;
+    }
+
+    public void setRule(RoutingRule rule) {
+        this.rule = rule;
+    }
 }
