@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
@@ -15,24 +16,24 @@ import java.util.*;
 @Service
 public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
 
-    private Map<DomibusConnectorBusinessDomain.BusinessDomainId, RoutingConfig> backendRoutingConfig = new HashMap<>();
+    private final ConfigurationPropertyManagerService propertyManager;
 
-    private final DCMessageRoutingConfigurationProperties routingConfigurationProperties;
-
-    public DCRoutingRulesManagerImpl(DCMessageRoutingConfigurationProperties routingConfigurationProperties) {
-        this.routingConfigurationProperties = routingConfigurationProperties;
+    public DCRoutingRulesManagerImpl(ConfigurationPropertyManagerService propertyManager) {
+        this.propertyManager = propertyManager;
     }
 
     @Override
     public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
         RoutingConfig routingConfig = getMessageRoutingConfigurationProperties(businessDomainId);
-        routingConfig.routingRules.add(routingRule);
+//        routingConfig.routingRules.a0dd(routingRule);
+        //TODO!!
     }
 
     @Override
-    public Collection<RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public Map<String, RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
-        return Collections.unmodifiableCollection(dcMessageRoutingConfigurationProperties.routingRules);
+//        return Collections.unmodifiableCollection(dcMessageRoutingConfigurationProperties.routingRules);
+        return dcMessageRoutingConfigurationProperties.routingRules;
     }
 
     @Override
@@ -46,28 +47,21 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     private synchronized RoutingConfig getMessageRoutingConfigurationProperties(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
-        try {
-            CurrentBusinessDomain.setCurrentBusinessDomain(businessDomainId);
+        DCMessageRoutingConfigurationProperties routProps = propertyManager.loadConfiguration(businessDomainId, DCMessageRoutingConfigurationProperties.class);
 
-            RoutingConfig routingConfig = backendRoutingConfig.get(businessDomainId);
-            if (routingConfig == null) {
-                routingConfig = new RoutingConfig();
+        RoutingConfig routingConfig = new RoutingConfig();
 
-                routingConfig.defaultLinkPartner = new DomibusConnectorLinkPartner.LinkPartnerName(routingConfigurationProperties.getDefaultBackendName());
-                routingConfig.routingEnabled = routingConfigurationProperties.isEnabled();
+        routingConfig.defaultLinkPartner = new DomibusConnectorLinkPartner.LinkPartnerName(routProps.getDefaultBackendName());
+        routingConfig.routingEnabled = true;
 
-                routingConfig.routingRules.addAll(routingConfigurationProperties.getBackendRules());
-                backendRoutingConfig.put(businessDomainId, routingConfig);
+        routingConfig.routingRules.putAll(routProps.getBackendRules());
 
-            }
-            return routingConfig;
-        } finally {
-            CurrentBusinessDomain.setCurrentBusinessDomain(null);
-        }
+        return routingConfig;
+
     }
 
     private static class RoutingConfig {
-        private SortedSet<RoutingRule> routingRules = new TreeSet<>(Comparator.comparingInt(RoutingRule::getPriority));
+        private Map<String, RoutingRule> routingRules = new HashMap<>();
         private DomibusConnectorLinkPartner.LinkPartnerName defaultLinkPartner;
         private boolean routingEnabled;
     }

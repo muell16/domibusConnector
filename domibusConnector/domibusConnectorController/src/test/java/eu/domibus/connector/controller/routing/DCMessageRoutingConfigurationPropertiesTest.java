@@ -8,6 +8,7 @@ import eu.domibus.connector.common.spring.BusinessDomainScopeConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +19,18 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Import({BusinessDomainScopeConfiguration.class, DCMessageRoutingConfiguration.class})
-@SpringBootTest(classes = {DCMessageRoutingConfigurationProperties.class,
+@SpringBootTest(classes = {
         DCBusinessDomainManagerImpl.class,
         ConnectorConfigurationProperties.class,
         BusinessDomainScopeConfiguration.class},
 properties = {
-        "connector.routing.rule.link-name=backend_alice",
-        "connector.routing.rule.match-clause=equals(ServiceName, 'Test')",
-        "connector.routing.rule-map[m1].link-name=backend_alice",
-        "connector.routing.rule-map[m1].match-clause=equals(ServiceName, 'Test')",
+        "connector.routing.enabled=false",
         "connector.routing.backend-rules[0].link-name=backend_alice",
         "connector.routing.backend-rules[0].match-clause=|(&(equals(ServiceName, 'Test'), equals(FromPartyId, 'gw01')), equals(FromPartyId, 'gw02'))",
         "connector.routing.backend-rules[1].link-name=backend_abc",
@@ -58,16 +57,21 @@ public class DCMessageRoutingConfigurationPropertiesTest {
      }
 
     @Test
+//    @Disabled //properties are not loaded?
     public void testProps() {
         CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
-//        List<RoutingRule> backendRules = props.getBackendRules();
+        Map<String, RoutingRule> backendRules = props.getBackendRules();
 
         String property = ctx.getEnvironment().getProperty("connector.routing.rule.link-name");
 
-        assertThat(props.getRule()).isNotNull();
+//        assertThat(props.getRule()).isNotNull();
 
-//        assertThat(backendRules).hasSize(4);
+        assertThat(props.isEnabled()).isFalse();
+
+        assertThat(backendRules).hasSize(4);
+
+        assertThat(backendRules.get("2").getLinkName()).isEqualTo("backend_abc");
 //        assertThat(props.getRuleMap()).hasSize(1);
 
         //TODO: verify property mapping!!!

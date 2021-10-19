@@ -24,4 +24,9 @@ public class NotExpression extends Expression {
     public Token getTokenTypeAndValue() {
         return tokenTypeAndValue;
     }
+
+    public String toString() {
+        return tokenTypeAndValue.tokenType.getHumanString() + "(" + exp1.toString() + ")";
+    }
+
 }

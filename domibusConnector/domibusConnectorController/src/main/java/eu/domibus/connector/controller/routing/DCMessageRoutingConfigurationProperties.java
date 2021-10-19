@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @BusinessDomainScoped
-@Component
+//@Component
 @ConfigurationProperties(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX)
 public class DCMessageRoutingConfigurationProperties {
 

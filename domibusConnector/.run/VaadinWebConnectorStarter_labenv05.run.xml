@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="VaadinWebConnectorStarter_labenv05" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="domibusConnectorBuilderStandalone" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="eu.domibus.connector.starter.DomibusConnectorStarter" />
+    <option name="DEBUG_MODE" value="true" />
+    <option name="ENABLE_JMX_AGENT" value="false" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="CLASSPATH_FILE" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <additionalParameters>
+      <param>
+        <option name="name" value="spring.config.location" />
+        <option name="value" value="C:\Entwicklung\ecodex-lab-box\labenv05\domibus-connector\config" />
+      </param>
+    </additionalParameters>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
