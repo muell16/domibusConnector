@@ -46,6 +46,7 @@ class BeanToPropertyMapConverterTest {
         n1.setaVeryLongPropertyName("verylongprop");
 
         myTestProperties.getNestedPropList().add(n1);
+        myTestProperties.getNestedPropMap().put("n1", n1);
 
         Map<String, String> propertyMap = beanToPropertyMapConverter.readBeanPropertiesToMap(myTestProperties, "test.example");
 
@@ -57,8 +58,10 @@ class BeanToPropertyMapConverterTest {
         expectedMap.put("test.example.nested.a-very-long-property-name", "propLong");
         expectedMap.put("test.example.nested-prop-list[0].a-very-long-property-name", "verylongprop");
         expectedMap.put("test.example.nested-prop-list[0].abc", "abc");
+        expectedMap.put("test.example.nested-prop-map[n1].a-very-long-property-name", "verylongprop");
+        expectedMap.put("test.example.nested-prop-map[n1].abc", "abc");
 
-        assertThat(propertyMap).containsExactlyEntriesOf(expectedMap);
+        assertThat(propertyMap).containsExactlyInAnyOrderEntriesOf(expectedMap);
 
         LOGGER.info("Mapped properties are: [{}]", propertyMap);
     }

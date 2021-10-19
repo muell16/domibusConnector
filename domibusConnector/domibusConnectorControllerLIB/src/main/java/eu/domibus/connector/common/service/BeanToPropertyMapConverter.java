@@ -57,6 +57,8 @@ public class BeanToPropertyMapConverter {
             if (Collection.class.isAssignableFrom(bean.getClass())) {
                 //is collection
                 convertCollectionToProperties((Collection<?>) bean, prefix, nested);
+            } else if (Map.class.isAssignableFrom(bean.getClass())) {
+                convertMapToProperties((Map<?, ?>) bean, prefix, nested);
             } else if (!nested && conversionService.canConvert(beanType, String.class)) {
 
                 properties.put(prefix.toString(), conversionService.convert(bean, String.class));
@@ -114,6 +116,14 @@ public class BeanToPropertyMapConverter {
                 convertToProperties(o, prefix.append("[" + i + "]"), nested);
                 i++;
             }
+
+        }
+
+        private void convertMapToProperties(Map<?, ?> map, ConfigurationPropertyName prefix, boolean nested) {
+
+            map.forEach((key, value) -> {
+                convertToProperties(value, prefix.append("[" + key + "]"), nested);
+            });
 
         }
 
