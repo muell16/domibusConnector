@@ -35,10 +35,6 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
         return Collections.unmodifiableCollection(dcMessageRoutingConfigurationProperties.routingRules);
     }
 
-//    public void updateDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
-//
-//    }
-//
     @Override
     public String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         return getMessageRoutingConfigurationProperties(businessDomainId).defaultLinkPartner.getLinkName();

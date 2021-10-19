@@ -304,10 +304,10 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
                 DCMessageRoutingConfigurationProperties.class);
 
         //update only routing rules from source environment
-        List<RoutingRule> newRoutingRules = currentRoutingRules.values()
+        Map<String, RoutingRule> newRoutingRules = currentRoutingRules.values()
                 .stream()
                 .filter(r -> r.getConfigurationSource() != ConfigurationSource.IMPL)
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
         routingConfigurationProperties.setBackendRules(newRoutingRules);
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
     }
@@ -322,11 +322,15 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 	public void afterNavigation(AfterNavigationEvent arg0) {
 
         //returns all routing rules (configured within db AND PropertyFiles/SpringEnvironment)
-		Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+//		Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+//
+//        this.currentRoutingRules = backendRoutingRules
+//                .stream()
+//                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
+//        routingRuleGrid.setItems(this.currentRoutingRules.values());
+//        this.currentRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+//        routingRuleGrid.setItems(this.currentRoutingRules);
 
-        this.currentRoutingRules = backendRoutingRules.stream()
-                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
-        routingRuleGrid.setItems(this.currentRoutingRules.values());
 		
 	}
 
