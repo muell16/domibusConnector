@@ -16,8 +16,8 @@ import javax.annotation.PostConstruct;
 @ParentLayout(MainLayout.class)
 public class MonitoringLayout extends VerticalLayout implements BeforeEnterObserver, RouterLayout {
 
-    public static final String ROUTE_PREFIX = "monitoring";
-    public static final String TAB_GROUP_NAME = "Monitoring";
+    public static final String ROUTE_PREFIX = "manage";
+    public static final String TAB_GROUP_NAME = "Manage";
 
     private DCTabHandler dcTabHandler = new DCTabHandler();
 
