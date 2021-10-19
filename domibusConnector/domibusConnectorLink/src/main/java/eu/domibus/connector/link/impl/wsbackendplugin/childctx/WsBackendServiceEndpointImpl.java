@@ -18,10 +18,7 @@ import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkP
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
-import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
-import eu.domibus.connector.ws.backend.webservice.GetMessageByIdRequest;
-import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
+import eu.domibus.connector.ws.backend.webservice.*;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
@@ -164,7 +161,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
     }
 
     @Override
-    public EmptyRequestType submitMessageResult(DomibsConnectorAcknowledgementType submitMessageResultRequest) {
+    public EmptyRequestType submitMessageResult(SubmitMessageResultRequest submitMessageResultRequest) {
         throw new RuntimeException("Not Implemented yet!");
     }
 
