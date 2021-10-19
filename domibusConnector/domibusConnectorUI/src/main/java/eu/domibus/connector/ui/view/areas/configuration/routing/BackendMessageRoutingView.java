@@ -328,9 +328,14 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 //                .stream()
 //                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
 //        routingRuleGrid.setItems(this.currentRoutingRules.values());
+//<<<<<<< Updated upstream
+////        this.currentRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+////        routingRuleGrid.setItems(this.currentRoutingRules);
+//
+//=======
 //        this.currentRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-//        routingRuleGrid.setItems(this.currentRoutingRules);
-
+//        routingRuleGrid.setItems(this.currentRoutingRules.values());
+//>>>>>>> Stashed changes
 		
 	}
 
