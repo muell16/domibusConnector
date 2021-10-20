@@ -20,9 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CommonPersistenceTest
-@Import({ConfigurationPropertyLoaderServiceImpl.class,
-        DCBusinessDomainManagerImpl.class,
-        BeanToPropertyMapConverter.class})
+
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 public class DCRoutingRulePersistenceServiceImplTest {
 
