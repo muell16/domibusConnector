@@ -692,7 +692,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
@@ -702,12 +702,14 @@
                     </dependencies>
                     <configuration>
                         <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
+                        <forkCount>1</forkCount>
+                        <reuseForks>false</reuseForks>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
@@ -717,6 +719,8 @@
                     </dependencies>
                     <configuration>
                         <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
+                        <forkCount>1</forkCount>
+                        <reuseForks>false</reuseForks>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1043,7 +1047,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.0.0-M4</version>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <skipSurefireReport>true</skipSurefireReport>

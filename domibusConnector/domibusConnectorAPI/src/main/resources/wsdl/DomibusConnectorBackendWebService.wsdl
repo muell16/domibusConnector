@@ -18,6 +18,22 @@
                 <xsd:sequence>
                 </xsd:sequence>
             </xsd:complexType>
+            <xsd:complexType name="ListPendingMessageIdsResponse">
+					<xsd:sequence>
+						<xsd:element name="messageTransportIds" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="GetMessageByIdRequest">
+				<xsd:sequence>
+					<xsd:element name="messageTransportId" type="xsd:string" minOccurs="1" maxOccurs="1" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="SubmitMessageResultRequest">
+				<xsd:sequence>
+					<xsd:element name="messageTransportId" type="xsd:string" minOccurs="1" maxOccurs="1" />
+					<xsd:element name="result" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
         </xsd:schema>
     </wsdl:types>
 
@@ -30,10 +46,27 @@
     <wsdl:message name="requestMessagesRequest">
         <wsdl:part name="requestMessagesRequest" type="tns:EmptyRequestType">
         </wsdl:part>
-		
-    </wsdl:message>
+	</wsdl:message>
     <wsdl:message name="requestMessagesResponse">
         <wsdl:part name="requestMessagesResponse" type="dct:DomibusConnectorMessagesType"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPendingMessageIdsRequest">
+		<wsdl:part name="listPendingMessageIdsRequest" type="tns:EmptyRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="listPendingMessageIdsResponse">
+		<wsdl:part name="listPendingMessageIdsResponse" type="tns:ListPendingMessageIdsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="getMessageByIdRequest">
+		<wsdl:part name="getMessageByIdRequest" type="tns:GetMessageByIdRequest"/>
+	</wsdl:message>
+	<wsdl:message name="getMessageByIdResponse">
+		<wsdl:part name="getMessageByIdResponse" type="dct:DomibusConnectorMessageType"/>
+	</wsdl:message>
+	<wsdl:message name="submitMessageResultRequest">
+        <wsdl:part name="submitMessageResultRequest" type="tns:SubmitMessageResultRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="submitMessageResultResponse">
+        <wsdl:part name="submitMessageResultResponse" type="tns:EmptyRequestType"></wsdl:part>
     </wsdl:message>
 	
     <wsdl:portType name="DomibusConnectorBackendWebService">
@@ -45,6 +78,18 @@
             <wsdl:input message="tns:requestMessagesRequest"></wsdl:input>
             <wsdl:output message="tns:requestMessagesResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="listPendingMessageIds">
+			<wsdl:input message="tns:listPendingMessageIdsRequest"/>
+			<wsdl:output message="tns:listPendingMessageIdsResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="getMessageById">
+			<wsdl:input message="tns:getMessageByIdRequest"/>
+			<wsdl:output message="tns:getMessageByIdResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="submitMessageResult">
+			<wsdl:input message="tns:submitMessageResultRequest"/>
+			<wsdl:output message="tns:submitMessageResultResponse"/>
+		</wsdl:operation>
     </wsdl:portType>
 
     <wsdl:binding name="DomibusConnectorBackendWSBinding"
@@ -61,6 +106,33 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="requestMessages">
+            <soap12:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="listPendingMessageIds">
+			<soap12:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getMessageById">
+			<soap12:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+        <wsdl:operation name="submitMessageResult">
             <soap12:operation soapAction="" style="document" />
             <wsdl:input>
                 <soap12:body use="literal" />
