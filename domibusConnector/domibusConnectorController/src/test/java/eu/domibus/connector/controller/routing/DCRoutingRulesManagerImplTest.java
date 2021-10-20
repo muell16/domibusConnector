@@ -38,6 +38,8 @@ public class DCRoutingRulesManagerImplTest {
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
 
         routingRulesManager.addBackendRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rr);
+
+        
     }
 
     @Test

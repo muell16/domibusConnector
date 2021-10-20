@@ -8,6 +8,12 @@ import java.util.Map;
 public interface DCRoutingRulesManager {
     void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule);
 
+    void persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule);
+
+    void deleteBackendRoutingRuleFromPersistence(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId);
+
+    void deleteBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId);
+
     Map<String, RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 
     String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);

@@ -29,6 +29,8 @@ public class RoutingRule {
      */
     private int priority = 0;
 
+    private boolean deleted = false;
+
     private String routingRuleId = generateID();
 
     public static String generateID() {
@@ -81,6 +83,14 @@ public class RoutingRule {
 
     public void setRoutingRuleId(String routingRuleId) {
         this.routingRuleId = routingRuleId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

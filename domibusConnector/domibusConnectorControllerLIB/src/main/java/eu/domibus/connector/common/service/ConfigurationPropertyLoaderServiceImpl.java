@@ -23,6 +23,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,6 +37,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationPropertyManagerService {
@@ -45,7 +49,6 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     private final ApplicationContext ctx;
     private final ConversionService conversionService;
     private final DCBusinessDomainManager businessDomainManager;
-//    private final ConfigurationPropertyCollector configurationPropertyCollector;
     private final Validator validator;
     private final BeanToPropertyMapConverter beanToPropertyMapConverter;
 
@@ -54,12 +57,10 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
                                                   @ConnectorConversationService ConversionService conversionService,
                                                   DCBusinessDomainManager businessDomainManager,
-//                                                  ConfigurationPropertyCollector configurationPropertyCollector,
                                                   Validator validator, BeanToPropertyMapConverter beanToPropertyMapConverter) {
         this.ctx = ctx;
         this.conversionService = conversionService;
         this.businessDomainManager = businessDomainManager;
-//        this.configurationPropertyCollector = configurationPropertyCollector;
         this.validator = validator;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
     }
@@ -82,6 +83,16 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         return prefix;
     }
 
+    /**
+     * Binds a class to the configuration properties loaded
+     * from the message lane and the spring environment
+     *
+     * @param laneId - the lane id
+     * @param clazz - the clazz to init
+     * @param prefix - the prefix for the properties
+     * @param <T> a class
+     * @return the configuration object
+     */
     public <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
         if (clazz == null) {
             throw new IllegalArgumentException("Clazz is not allowed to be null!");
@@ -102,6 +113,29 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment);
 
         Binder binder = new Binder(configSources, placeholdersResolver, conversionService, null);
+
+        Bindable<T> bindable = Bindable.of(clazz);
+        T t = binder.bindOrCreate(prefix, bindable);
+
+        return t;
+    }
+
+    @Override
+    public <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz, String prefix) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("Clazz is not allowed to be null!");
+        }
+        if (!StringUtils.hasText(prefix)) {
+            throw new IllegalArgumentException("Prefix is not allowed to be null!");
+        }
+        LOGGER.debug("Loading property class [{}]", clazz);
+
+        MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(map);
+
+        List<ConfigurationPropertySource> configSources = new ArrayList<>();
+        configSources.add(mapConfigurationPropertySource);
+
+        Binder binder = new Binder(configSources, null, conversionService, null);
 
         Bindable<T> bindable = Bindable.of(clazz);
         T t = binder.bindOrCreate(prefix, bindable);
