@@ -4,9 +4,8 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DomibusConnectorTransportStep {
 
@@ -17,7 +16,7 @@ public class DomibusConnectorTransportStep {
     private java.lang.String transportSystemMessageId;
     private java.lang.String remoteMessageId;
     private LocalDateTime created;
-    private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
+    private PriorityQueue<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new PriorityQueue<>();
     private LocalDateTime finalStateReached;
 
     public DomibusConnectorMessage getTransportedMessage() {
@@ -77,11 +76,11 @@ public class DomibusConnectorTransportStep {
     }
 
     public List<DomibusConnectorTransportStepStatusUpdate> getStatusUpdates() {
-        return statusUpdates;
+        return new ArrayList<>(statusUpdates);
     }
 
     public void setStatusUpdates(List<DomibusConnectorTransportStepStatusUpdate> statusUpdates) {
-        this.statusUpdates = statusUpdates;
+        this.statusUpdates.addAll(statusUpdates);
     }
 
     public void addTransportStatus(DomibusConnectorTransportStepStatusUpdate stepStatusUpdate) {
@@ -111,6 +110,26 @@ public class DomibusConnectorTransportStep {
 
     public void setFinalStateReached(LocalDateTime setFinalStateReached) {
         this.finalStateReached = setFinalStateReached;
+    }
+
+    public boolean isInPendingState() {
+        TransportState state = TransportState.PENDING;
+        return isInState(state);
+    }
+
+    public boolean isInPendingDownloadedState() {
+        TransportState state = TransportState.PENDING_DOWNLOADED;
+        return isInState(state);
+    }
+
+    public boolean isInAcceptedState() {
+        TransportState state = TransportState.ACCEPTED;
+        return isInState(state);
+    }
+
+    private boolean isInState(TransportState state) {
+        DomibusConnectorTransportStepStatusUpdate lastState = this.statusUpdates.peek();
+        return lastState != null && lastState.getTransportState() == state;
     }
 
     public static class DomibusConnectorTransportStepStatusUpdate {

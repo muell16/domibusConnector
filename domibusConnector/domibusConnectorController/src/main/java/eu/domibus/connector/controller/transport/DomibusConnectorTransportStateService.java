@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
 
@@ -143,6 +144,11 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     @Override
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         return transportStepPersistenceService.findPendingStepBy(linkPartnerName);
+    }
+
+    @Override
+    public Optional<DomibusConnectorTransportStep> getTransportStepById(TransportId transportId) {
+        return transportStepPersistenceService.findStepById(transportId);
     }
 
 }

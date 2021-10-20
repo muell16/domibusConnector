@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TransportStepPersistenceService {
 
@@ -15,4 +16,6 @@ public interface TransportStepPersistenceService {
     DomibusConnectorTransportStep update(DomibusConnectorTransportStep transportStep);
 
     List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+
+    Optional<DomibusConnectorTransportStep> findStepById(TransportStateService.TransportId transportId);
 }

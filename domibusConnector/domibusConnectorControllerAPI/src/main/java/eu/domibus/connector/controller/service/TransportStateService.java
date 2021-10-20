@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This service handles the technical transport state of a message
@@ -42,6 +43,8 @@ public interface TransportStateService {
     public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+
+    public Optional<DomibusConnectorTransportStep> getTransportStepById(TransportId transportId);
 
     public static class TransportId {
         private java.lang.String transportId;

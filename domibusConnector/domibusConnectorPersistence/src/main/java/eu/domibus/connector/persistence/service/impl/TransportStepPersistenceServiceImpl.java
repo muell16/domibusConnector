@@ -88,6 +88,12 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Optional<DomibusConnectorTransportStep> findStepById(TransportStateService.TransportId transportId) {
+        Optional<PDomibusConnectorTransportStep> byTransportId = transportStepDao.findByTransportId(transportId);
+        return byTransportId.map(this::mapTransportStepToDomain);
+    }
+
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
