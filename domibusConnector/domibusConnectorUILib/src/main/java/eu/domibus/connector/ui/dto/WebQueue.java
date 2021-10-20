@@ -1,17 +1,28 @@
 package eu.domibus.connector.ui.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.jms.Message;
 import java.util.List;
 
-@Data
+
 public class WebQueue {
+
+    @Setter
     private String name;
+    @Getter
+    @Setter
     private List<Message> messages;
+    @Getter
+    @Setter
     private List<Message> dlqMessages;
+    @Getter
+    @Setter
     private int msgsOnQueue;
+    @Getter
+    @Setter
     private int msgsOnDlq;
 
     public String getName() {
