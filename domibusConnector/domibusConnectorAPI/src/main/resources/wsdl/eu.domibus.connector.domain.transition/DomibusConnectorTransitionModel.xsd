@@ -118,7 +118,7 @@
         <xs:sequence>
             <xs:element name="responseForMessageId" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="result" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="resultMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="resultMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="assignedMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="messageErrors" type="tns:DomibusConnectorMessageErrorType" minOccurs="0"
                         maxOccurs="unbounded"/>
