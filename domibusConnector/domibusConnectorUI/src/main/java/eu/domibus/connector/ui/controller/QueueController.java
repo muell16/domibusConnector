@@ -7,6 +7,7 @@ import eu.domibus.connector.ui.dto.WebQueue;
 import lombok.Getter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -31,6 +32,7 @@ public class QueueController {
         this.queues = getQueues();
     }
 
+    @Transactional
     public List<WebQueue> getQueues() {
         List<WebQueue> result = new ArrayList<>();
         final WebQueue toLinkWebQueue = new WebQueue();
