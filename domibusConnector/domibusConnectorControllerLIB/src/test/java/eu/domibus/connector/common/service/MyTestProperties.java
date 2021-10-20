@@ -1,13 +1,16 @@
 package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.annotations.MapNested;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @BusinessDomainScoped
@@ -19,9 +22,12 @@ public class MyTestProperties {
     private Integer prop2;
 
     @NestedConfigurationProperty
+    @MapNested
     private NestedProp nested = new NestedProp();
 
-    private List<NestedProp> nestedPropList = new ArrayList<>();
+    private List<@MapNested NestedProp> nestedPropList = new ArrayList<>();
+
+    private Map<String, @MapNested NestedProp> nestedPropMap = new HashMap<>();
 
     public static class NestedProp {
         private String abc;
@@ -87,5 +93,13 @@ public class MyTestProperties {
 
     public void setNestedPropList(List<NestedProp> nestedPropList) {
         this.nestedPropList = nestedPropList;
+    }
+
+    public Map<String, NestedProp> getNestedPropMap() {
+        return nestedPropMap;
+    }
+
+    public void setNestedPropMap(Map<String, NestedProp> nestedPropMap) {
+        this.nestedPropMap = nestedPropMap;
     }
 }

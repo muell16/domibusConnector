@@ -3,11 +3,9 @@ package eu.domibus.connector.ui.view.areas.configuration.routing;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -24,11 +22,10 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.service.WebBusinessDomainService;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
@@ -36,13 +33,10 @@ import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 @UIScope
@@ -57,6 +51,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
+    private final WebBusinessDomainService webBusinessDomainService;
 //    private final DCLinkFacade dcLinkFacade;
 //    private final WebPModeService webPModeService;
     private final ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory;
@@ -69,12 +64,12 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
                                      ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
                                      ConfigurationPropertyManagerService configurationPropertyManagerService,
                                      DCLinkFacade dcLinkFacade,
-                                     WebPModeService webPModeService) {
+                                     WebPModeService webPModeService,
+                                     WebBusinessDomainService webBusinessDomainService) {
         this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
         this.configurationPropertyManagerService = configurationPropertyManagerService;
-//        this.dcLinkFacade = dcLinkFacade;
-//        this.webPModeService = webPModeService;
+        this.webBusinessDomainService = webBusinessDomainService;
         initUI();
     }
 
@@ -108,42 +103,23 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
 
-//        routingRuleGrid.setItemDetailsRenderer(getComponentRenderer());
-
-//        routingRuleGrid.addColumn("linkName")
-//                .addColumn(RoutingRule::getLinkName)
-//                .setEditorComponent(this::getBackendNameEditorComponent)
-//                .setHeader("Backend Name");
-//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getMatchRule()).setHeader("matching string");
-//        routingRuleGrid.addColumn(rule -> rule.getMatchClause().getExpression()).setHeader("matching expression");
-//        routingRuleGrid.addComponentColumn(rule -> getDeleteRoutingRuleLink(rule)).setWidth("50px");
-
-//        routingRuleGrid.setDetailsVisibleOnClick(true);
-
-
-
-
-//        routingRuleGrid.addComponentColumn(this::getBackendNameField).s
         
         this.add(routingRuleGrid);
         
         Button createNewRoutingRule = new Button("Create new roulting rule");
         createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
         add(createNewRoutingRule);
-        
-//        Button saveAllRoutingRules = new Button("Save all roulting rules");
-//        saveAllRoutingRules.addClickListener(e -> {
-//        	Dialog saveRoutingRulesDialog = new Dialog();
-//        	saveAllRoutingRules.setText("Save all roulting rules");
-//        	//TODO: Here to create a Dialog panel which warns the user that all backend rules existing are stored into database and 
-//        	//      those from the properties file will not apply anymore.
-//        	// On confirmation, save all backend rules to database and reload in context.
-////        	createRoutingRuleDialog.add(delButton);
-//        	saveRoutingRulesDialog.open();
-//        });
-//        add(saveAllRoutingRules);
+
+        Button saveChangesButton = new Button("Save Changes");
+        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
+        add(saveChangesButton);
+
     }
-    
+
+    private void saveChangesButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        this.saveChanges();
+    }
+
     private Renderer<RoutingRule> getButtonRenderer() {
         return new ComponentRenderer<>(
                 (RoutingRule routingRule) -> {
@@ -281,6 +257,8 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     }
 
     private void updateAndSaveRoutingRule(RoutingRule rr) {
+        dcRoutingRulesManagerImpl.deleteBackendRoutingRuleFromPersistence(webBusinessDomainService.getCurrentBusinessDomain(), rr.getRoutingRuleId());
+        dcRoutingRulesManagerImpl.addBackendRoutingRule(webBusinessDomainService.getCurrentBusinessDomain(), rr);
         this.currentRoutingRules.remove(rr.getRoutingRuleId());
         this.currentRoutingRules.put(rr.getRoutingRuleId(), rr);
         this.routingRuleGrid.setItems(this.currentRoutingRules.values());
@@ -305,6 +283,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         acceptButton.addClickListener(e -> {
             currentRoutingRules.remove(r.getRoutingRuleId());
+            dcRoutingRulesManagerImpl.deleteBackendRoutingRuleFromPersistence(webBusinessDomainService.getCurrentBusinessDomain(), r.getRoutingRuleId());
             this.routingRuleGrid.setItems(currentRoutingRules.values());
             d.close();
         });
@@ -312,37 +291,38 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
             d.close();
         });
 
-        saveChanges();
+//        saveChanges();
     }
 
 
 
 	private void saveChanges() {
-        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                DCMessageRoutingConfigurationProperties.class);
-
-        routingConfigurationProperties.setBackendRules(new ArrayList<>(currentRoutingRules.values()));
-        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
+//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
+//                DCMessageRoutingConfigurationProperties.class);
+//
+//        //update only routing rules from source environment
+//        Map<String, RoutingRule> newRoutingRules = currentRoutingRules.values()
+//                .stream()
+//                .filter(r -> r.getConfigurationSource() != ConfigurationSource.IMPL)
+//                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
+//        routingConfigurationProperties.setBackendRules(newRoutingRules);
+//        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
     }
 
     private void resetChanges() {
-        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                DCMessageRoutingConfigurationProperties.class);
+//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(webBusinessDomainService.getCurrentBusinessDomain(),
+//                DCMessageRoutingConfigurationProperties.class);
 
-        //TODO: only replace rules from DB source!
     }
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
 
-        //returns all routing rules (configured within db AND PropertyFiles/SpringEnvironment)
-		Collection<RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Map<String, RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        this.currentRoutingRules = backendRoutingRules;
+        routingRuleGrid.setItems(backendRoutingRules.values());
 
-        this.currentRoutingRules = backendRoutingRules.stream()
-                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
-        routingRuleGrid.setItems(this.currentRoutingRules.values());
-		
-	}
+    }
 
     //TODO: for validation purpose check DCLinkFacade if backendName is a configured backend
     // warn when backend exists, but deactivated
