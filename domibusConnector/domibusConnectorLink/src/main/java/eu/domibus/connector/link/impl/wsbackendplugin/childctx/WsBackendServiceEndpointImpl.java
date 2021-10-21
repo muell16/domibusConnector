@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkPartner;
@@ -162,6 +163,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                 List<String> pendingIds = pendingTransportsForLinkPartner.stream()
                         .map(DomibusConnectorTransportStep::getTransportId)
                         .map(TransportStateService.TransportId::getTransportId)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
 
                 listPendingMessageIdsResponse.getMessageTransportIds().addAll(pendingIds);
@@ -205,20 +207,22 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
     }
 
     @Override
-    public EmptyRequestType submitMessageResult(SubmitMessageResultRequest submitMessageResultRequest) {
-        TransportStateService.TransportId transportId = new TransportStateService.TransportId(submitMessageResultRequest.getMessageTransportId());
+    public EmptyRequestType acknowledgeMessage(DomibusConnectorMessageResponseType ack) {
+        TransportStateService.TransportId transportId = new TransportStateService.TransportId(ack.getResponseForMessageId());
 
         TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
-        if (submitMessageResultRequest.isResult()) {
+        if (ack.isResult()) {
             transportState.setStatus(TransportState.ACCEPTED);
         } else {
             transportState.setStatus(TransportState.FAILED);
         }
-        //transportState.setRemoteMessageId(submitMessageResultRequest.);
+        transformerService.transformTransitionToDomain(ack.getMessageErrors());
+        transportState.setRemoteMessageId(ack.getAssignedMessageId());
+        transportState.setText(ack.getResultMessage());
+
         transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
         return new EmptyRequestType();
     }
-
 
 
     private Optional<DomibusConnectorLinkPartner> checkBackendClient() throws DomibusConnectorBackendDeliveryException {
