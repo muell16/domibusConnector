@@ -49,6 +49,11 @@
             </policyMap>
         </destinationPolicy>
 
+        <!-- destroy the spring context on shutdown to stop jetty -->
+        <shutdownHooks>
+            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
+
 
         <!--
                 The managementContext is used to configure how ActiveMQ is exposed in
@@ -87,11 +92,6 @@
         <transportConnectors>
             <transportConnector name="vm" uri="vm://broker1"/>
         </transportConnectors>
-
-        <!-- destroy the spring context on shutdown to stop jetty -->
-        <shutdownHooks>
-            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
-        </shutdownHooks>
 
     </broker>
 

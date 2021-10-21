@@ -8,6 +8,25 @@
 		">
 
     <broker xmlns="http://activemq.apache.org/schema/core"  brokerName="broker1" persistent="false" dataDirectory="./data/broker" schedulerSupport="true">
+
+        <destinationPolicy>
+            <policyMap>
+                <policyEntries>
+                    <!-- Set the following policy on all queues using the '>' wildcard -->
+                    <policyEntry queue=">">
+                        <deadLetterStrategy>
+                            <!--
+                                Use the prefix 'DLQ.' for the destination name, and make
+                                the DLQ a queue rather than a topic
+                            -->
+                            <individualDeadLetterStrategy queuePrefix="DLQ." useQueueForQueueMessages="true"/>
+                        </deadLetterStrategy>
+                    </policyEntry>
+
+                </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+
         <plugins>
             <redeliveryPlugin fallbackToDeadLetter="true"
                               sendToDlqIfMaxRetriesExceeded="true">
@@ -33,24 +52,11 @@
             </redeliveryPlugin>
         </plugins>
 
-        <destinationPolicy>
-            <policyMap>
-                <policyEntries>
-                    <!-- Set the following policy on all queues using the '>' wildcard -->
-                    <policyEntry queue=">">
-                        <deadLetterStrategy>
-                            <!--
-                                Use the prefix 'DLQ.' for the destination name, and make
-                                the DLQ a queue rather than a topic
-                            -->
-                            <individualDeadLetterStrategy queuePrefix="DLQ." useQueueForQueueMessages="true"/>
-                        </deadLetterStrategy>
-                    </policyEntry>
 
-                </policyEntries>
-            </policyMap>
-        </destinationPolicy>
-
+        <!-- destroy the spring context on shutdown to stop jetty -->
+        <shutdownHooks>
+            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
 
         <!--
                 The managementContext is used to configure how ActiveMQ is exposed in
@@ -89,11 +95,6 @@
         <transportConnectors>
             <transportConnector name="vm" uri="vm://broker1"/>
         </transportConnectors>
-
-        <!-- destroy the spring context on shutdown to stop jetty -->
-        <shutdownHooks>
-            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
-        </shutdownHooks>
 
     </broker>
 
