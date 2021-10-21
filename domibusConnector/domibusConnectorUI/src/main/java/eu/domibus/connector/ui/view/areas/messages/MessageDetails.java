@@ -37,7 +37,7 @@ import java.util.Optional;
 @Component
 @Route(value = MessageDetails.ROUTE, layout = MessageLayout.class)
 @UIScope
-@Order(2)
+@Order(3)
 @TabMetadata(title = "Message Details", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class MessageDetails extends VerticalLayout implements HasUrlParameter<String> {
 
