@@ -34,6 +34,7 @@ import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -43,6 +44,7 @@ import java.util.*;
 @TabMetadata(title = "Backend Message Routing", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = BackendMessageRoutingView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
+@Order(4)
 public class BackendMessageRoutingView extends VerticalLayout implements AfterNavigationObserver {
 
     private static final Logger LOGGER = LogManager.getLogger(BackendMessageRoutingView.class);
