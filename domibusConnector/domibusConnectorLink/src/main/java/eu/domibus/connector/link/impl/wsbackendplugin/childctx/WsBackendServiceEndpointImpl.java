@@ -190,10 +190,10 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                 DomibusConnectorMessage msg = domibusConnectorTransportStep.getTransportedMessage();
 
                 //add post invoke message processor
-                MessageContext mContext = webServiceContext.getMessageContext();
-                WrappedMessageContext wmc = (WrappedMessageContext)mContext;
-                ProcessMessageAfterDownloaded interceptor = new ProcessMessageAfterDownloaded(transportId);
-                wmc.getWrappedMessage().getInterceptorChain().add(interceptor);
+//                MessageContext mContext = webServiceContext.getMessageContext();
+//                WrappedMessageContext wmc = (WrappedMessageContext)mContext;
+//                ProcessMessageAfterDownloaded interceptor = new ProcessMessageAfterDownloaded(transportId);
+//                wmc.getWrappedMessage().getInterceptorChain().add(interceptor);
 
                 return transformerService.transformDomainToTransition(msg);
             } else {
