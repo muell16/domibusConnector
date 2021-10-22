@@ -136,10 +136,10 @@ public class MoveMessagesFromDlqToQueueTest {
 
         nonXaJmsTemplate.convertAndSend(dlq1, message);
         final List<Message> messages = sut.listAllMessagesInDlq();
-        final String jmsMessageID = messages.get(0).getJMSMessageID();
+        final Message jmsMessage = messages.get(0);
 
         // Act
-        sut.moveMsgFromDlqToQueue(jmsMessageID);
+        sut.moveMsgFromDlqToQueue(jmsMessage);
         final List<Message> listMsgDlq = sut.listAllMessagesInDlq();
         final DomibusConnectorMessage msgOnQueue = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(q1);
         final List<Message> listMsgDlq2 = sut.listAllMessagesInDlq();

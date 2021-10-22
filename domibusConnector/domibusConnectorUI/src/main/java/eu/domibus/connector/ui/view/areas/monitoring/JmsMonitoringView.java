@@ -32,12 +32,17 @@ public class JmsMonitoringView extends VerticalLayout implements AfterNavigation
     }
 
     private ComponentRenderer<DetailsLayout, WebQueue> createDetailsRenderer() {
-        return new ComponentRenderer<>(() -> new DetailsLayout(queueController),
+        return new ComponentRenderer<>(() -> new DetailsLayout(queueController, this),
                 DetailsLayout::setData);
+    }
+
+    void updateData(WebQueue select) {
+        queueGrid.setItems(queueController.getQueues());
+        if (select != null) queueGrid.select(select);
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
-        queueGrid.setItems(queueController.getQueues());
+        updateData(null);
     }
 }

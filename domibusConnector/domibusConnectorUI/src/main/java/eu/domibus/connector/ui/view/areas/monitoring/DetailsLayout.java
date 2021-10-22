@@ -9,21 +9,24 @@ public class DetailsLayout extends VerticalLayout {
 
     private final QueueController queueController;
 
+    JmsMonitoringView parentView;
+
     private MessageGrid msgsGrid;
     private MessageGrid dlqMsgsGrid;
 
-    public DetailsLayout(QueueController queueController) {
+    public DetailsLayout(QueueController queueController, JmsMonitoringView view) {
         this.queueController = queueController;
+        this.parentView = view;
         this.setWidth("100%");
         final Label msgsLabel = new Label("Messages on Queue");
         final Label dlqLabel = new Label("Messages on DLQ");
-        msgsGrid = new MessageGrid(this.queueController);
-        dlqMsgsGrid = new MessageGrid(this.queueController);
+        msgsGrid = new MessageGrid(this.queueController, view);
+        dlqMsgsGrid = new MessageGrid(this.queueController, view);
         add(msgsLabel, msgsGrid, dlqLabel, dlqMsgsGrid);
     }
 
-    public void setData(WebQueue queue) {
-        msgsGrid.setMessages(queue.getMessages());
-        dlqMsgsGrid.setMessages(queue.getDlqMessages());
+    void setData(WebQueue queue) {
+        msgsGrid.setData(queue.getMessages(), queue);
+        dlqMsgsGrid.setData(queue.getDlqMessages(), queue);
     }
 }

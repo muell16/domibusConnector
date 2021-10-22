@@ -56,8 +56,8 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
 
         tabManager
                 .createTab()
-                .withLabel("Manage")
-                .withIcon(new Icon(VaadinIcon.WRENCH))
+                .withLabel("Monitoring")
+                .withIcon(new Icon(VaadinIcon.DASHBOARD))
                 .addForComponent(JmsMonitoringView.class);
 
 

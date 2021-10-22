@@ -149,17 +149,17 @@ public class DeleteMessagesFromQueuesTest {
         nonXaJmsTemplate.setReceiveTimeout(1000L);
         final List<Message> queue = sut.listAllMessages();
         final List<Message> dlq = sut.listAllMessagesInDlq();
-        final String jmsIdQueue = queue.get(0).getJMSMessageID();
-        final String jmsIdDlq = dlq.get(0).getJMSMessageID();
+        final Message jmsMsgQueue = queue.get(0);
+        final Message jmsMsgDlq = dlq.get(0);
 
         // Assert Precondition
         assertThat(queue).isNotEmpty();
         assertThat(dlq).isNotEmpty();
 
         // Act
-        sut.deleteMsgFromQueue(jmsIdQueue);
-        sut.deleteMsgFromDlq(jmsIdDlq);
-        sut.deleteMsgFromDlq(jmsIdDlq); // tests that code works if you delete a msg that is not there, should be in another test, but no time
+        sut.deleteMsg(jmsMsgQueue);
+        sut.deleteMsg(jmsMsgDlq);
+        sut.deleteMsg(jmsMsgDlq); // tests that code works if you delete a msg that is not there, should be in another test, but no time
 
         // Assert
         assertThat(sut.listAllMessages()).isEmpty();
