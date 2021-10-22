@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,6 +41,8 @@ public interface ConfigurationPropertyManagerService {
      */
     <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz, String prefix);
 
+
+    <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz, String prefix);
 
     <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz);
 

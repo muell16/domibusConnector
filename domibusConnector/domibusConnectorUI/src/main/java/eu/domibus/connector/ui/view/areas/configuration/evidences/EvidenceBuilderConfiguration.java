@@ -28,6 +28,7 @@ import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
@@ -66,6 +67,7 @@ import java.util.stream.Collectors;
 @Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
+@Order(7)
 public class EvidenceBuilderConfiguration  extends VerticalLayout implements AfterNavigationObserver {
 
 	public static final String ROUTE = "evidencebuilder";

@@ -17,6 +17,7 @@ import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationItemCh
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -57,6 +58,7 @@ import java.util.List;
 @Route(value = EnvironmentConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @TabMetadata(title = "Environment Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @RoleRequired(role = "ADMIN")
+@Order(1)
 public class EnvironmentConfiguration extends VerticalLayout{
 
 	public static final String ROUTE = "environment";

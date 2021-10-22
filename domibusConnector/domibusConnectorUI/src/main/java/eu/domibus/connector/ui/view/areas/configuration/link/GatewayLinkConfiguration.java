@@ -9,6 +9,7 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 @TabMetadata(title = "Gateway Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = GatewayLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
+@Order(3)
 //@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class GatewayLinkConfiguration extends LinkConfiguration {
 

@@ -67,7 +67,9 @@ public class LookupBackendNameStep implements MessageProcessStep {
         String defaultBackendName = dcRoutingConfigManager.getDefaultBackendName(domibusConnectorMessage.getMessageLaneId());
         if (dcRoutingConfigManager.isBackendRoutingEnabled(domibusConnectorMessage.getMessageLaneId())) {
             LOGGER.debug("Backend routing is enabled");
-            Optional<String> first = dcRoutingConfigManager.getBackendRoutingRules(domibusConnectorMessage.getMessageLaneId()).stream()
+            Optional<String> first = dcRoutingConfigManager.getBackendRoutingRules(domibusConnectorMessage.getMessageLaneId())
+                    .values()
+                    .stream()
                     .filter(r -> r.getMatchClause().matches(domibusConnectorMessage))
                     .map(RoutingRule::getLinkName)
                     .findFirst();

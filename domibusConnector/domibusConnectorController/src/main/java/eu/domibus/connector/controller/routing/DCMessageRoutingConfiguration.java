@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 
-@ConditionalOnProperty(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX,
-        name = "enabled", havingValue = "true", matchIfMissing = true)
+//@ConditionalOnProperty(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX,
+//        name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration
+@EnableConfigurationProperties(DCMessageRoutingConfigurationProperties.class)
 public class DCMessageRoutingConfiguration {
 
     @Bean
