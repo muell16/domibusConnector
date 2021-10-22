@@ -1,11 +1,16 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TransportStepPersistenceService {
 
@@ -18,4 +23,13 @@ public interface TransportStepPersistenceService {
     List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     Optional<DomibusConnectorTransportStep> findStepById(TransportStateService.TransportId transportId);
+
+    /**
+     * Returns a list of transport states, where the last state is one of
+     * the provided states within the list
+     * @param states: the states which have be included in the search
+     * @param pageable: the paging parameters
+     * @return the Page
+     */
+    Page<DomibusConnectorTransportStep> findStepByLastState(TransportState[] states, Pageable pageable);
 }

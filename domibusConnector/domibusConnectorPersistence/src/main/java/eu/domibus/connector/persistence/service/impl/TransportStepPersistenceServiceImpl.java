@@ -14,6 +14,8 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -92,6 +95,13 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     public Optional<DomibusConnectorTransportStep> findStepById(TransportStateService.TransportId transportId) {
         Optional<PDomibusConnectorTransportStep> byTransportId = transportStepDao.findByTransportId(transportId);
         return byTransportId.map(this::mapTransportStepToDomain);
+    }
+
+    @Override
+    public Page<DomibusConnectorTransportStep> findStepByLastState(TransportState[] states, Pageable pageable) {
+        String[] stateStrings = Stream.of(states).map(s -> s.getDbName()).toArray(String[]::new);
+        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findStepByLastState(stateStrings, pageable);
+        return stepByLastState.map(this::mapTransportStepToDomain);
     }
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
