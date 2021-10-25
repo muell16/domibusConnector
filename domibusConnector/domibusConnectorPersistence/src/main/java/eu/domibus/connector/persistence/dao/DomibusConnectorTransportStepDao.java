@@ -40,8 +40,12 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
             "WHERE status.transportStateString IN ?1 AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
             "   SELECT CONCAT(MAX(s2.created), '_', s2.transportStep.id) " +
             "   FROM PDomibusConnectorTransportStepStatusUpdate s2" +
-            "   GROUP BY s2.transportStep.id)"
+            "   GROUP BY s2.transportStep.id) " +
+            "AND CONCAT(status.transportStep.attempt, '_', status.transportStep.connectorMessageId) IN (" +
+            "   SELECT CONCAT(MAX(s3.transportStep.attempt), '_', s3.transportStep.connectorMessageId) " +
+            "   FROM PDomibusConnectorTransportStepStatusUpdate s3 " +
+            "   GROUP BY s3.transportStep.connectorMessageId)"
     )
-    Page<PDomibusConnectorTransportStep> findStepByLastState(String[] states, Pageable pageable);
+    Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(String[] states, Pageable pageable);
 
 }

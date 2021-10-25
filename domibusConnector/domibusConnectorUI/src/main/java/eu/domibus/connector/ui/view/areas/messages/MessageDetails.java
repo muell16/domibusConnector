@@ -16,6 +16,7 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageEvidence;
@@ -157,6 +158,10 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 				messageEvidencesArea.setVisible(true);
 			}
 
+	}
+
+	public static void navigateTo(DomibusConnectorMessageId messageId) {
+		UI.getCurrent().navigate(MessageDetails.class, messageId.getConnectorMessageId());
 	}
 
 	public void show(WebMessage message) {

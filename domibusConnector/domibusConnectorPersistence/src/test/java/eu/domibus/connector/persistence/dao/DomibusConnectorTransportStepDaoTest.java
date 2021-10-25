@@ -7,14 +7,11 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
@@ -74,11 +71,11 @@ public class DomibusConnectorTransportStepDaoTest {
         Pageable pageable = Pageable.ofSize(20);
 
         Assertions.assertAll(
-                () -> assertThat(dao.findStepByLastState(new String[]{TransportState.FAILED.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.FAILED.getDbName()}, pageable)
                         .getTotalElements()).isEqualTo(2), //there should be 2 entries where the last updated state is failed
-                () -> assertThat(dao.findStepByLastState(new String[]{TransportState.PENDING.getDbName(), TransportState.FAILED.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.PENDING.getDbName(), TransportState.FAILED.getDbName()}, pageable)
                         .getTotalElements()).isEqualTo(3), //there should be 3 entries where the last updated state is failed OR pending
-                () -> assertThat(dao.findStepByLastState(new String[]{TransportState.PENDING.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.PENDING.getDbName()}, pageable)
                         .getTotalElements()).isEqualTo(1) //there should be 1 entry where the last updated state is pending
         );
 

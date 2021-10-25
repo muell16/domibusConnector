@@ -8,6 +8,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
@@ -45,7 +46,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getTransportedMessage() == null && transportStep.getTransportedMessage().getConnectorMessageId() != null) {
+        if (transportStep.getTransportedMessage() == null || transportStep.getTransportedMessage().getConnectorMessageId() == null) {
             throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
         }
 
@@ -98,10 +99,15 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     @Override
-    public Page<DomibusConnectorTransportStep> findStepByLastState(TransportState[] states, Pageable pageable) {
+    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(TransportState[] states, Pageable pageable) {
         String[] stateStrings = Stream.of(states).map(s -> s.getDbName()).toArray(String[]::new);
-        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findStepByLastState(stateStrings, pageable);
+        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateIsOneOf(stateStrings, pageable);
         return stepByLastState.map(this::mapTransportStepToDomain);
+    }
+
+    @Override
+    public List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId) {
+        return null;
     }
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {

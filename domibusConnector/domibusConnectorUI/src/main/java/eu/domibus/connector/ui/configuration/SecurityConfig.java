@@ -141,7 +141,8 @@ public class SecurityConfig {
                     // (development mode) H2 debugging console
                     "/h2-console/**",
                     //allow access to webservices
-                    "/services/**"
+                    "/services/**",
+                    "/static/**" //allow access to static content
 
                     );
         }

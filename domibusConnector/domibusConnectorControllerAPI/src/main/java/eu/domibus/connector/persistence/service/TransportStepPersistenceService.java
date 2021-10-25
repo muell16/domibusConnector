@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 
 import java.util.List;
@@ -27,9 +28,14 @@ public interface TransportStepPersistenceService {
     /**
      * Returns a list of transport states, where the last state is one of
      * the provided states within the list
+     * For multiple transport steps only the step with the highest attempt is returned,
+     * lower attempts are omitted!
      * @param states: the states which have be included in the search
      * @param pageable: the paging parameters
      * @return the Page
      */
-    Page<DomibusConnectorTransportStep> findStepByLastState(TransportState[] states, Pageable pageable);
+    Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(TransportState[] states, Pageable pageable);
+
+    List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId);
+
 }

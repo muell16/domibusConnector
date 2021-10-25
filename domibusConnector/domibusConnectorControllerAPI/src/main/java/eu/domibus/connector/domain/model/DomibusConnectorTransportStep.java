@@ -75,6 +75,14 @@ public class DomibusConnectorTransportStep {
         this.created = created;
     }
 
+    public void addStatusUpdate(DomibusConnectorTransportStepStatusUpdate u) {
+        this.statusUpdates.add(u);
+    }
+
+    public DomibusConnectorMessageId getConnectorMessageId() {
+        return this.transportedMessage.getConnectorMessageId();
+    }
+
     public List<DomibusConnectorTransportStepStatusUpdate> getStatusUpdates() {
         return new ArrayList<>(statusUpdates);
     }
@@ -132,7 +140,9 @@ public class DomibusConnectorTransportStep {
         return lastState != null && lastState.getTransportState() == state;
     }
 
-    public static class DomibusConnectorTransportStepStatusUpdate {
+
+
+    public static class DomibusConnectorTransportStepStatusUpdate implements Comparable<DomibusConnectorTransportStepStatusUpdate> {
 
         private TransportState transportState;
 
@@ -162,6 +172,19 @@ public class DomibusConnectorTransportStep {
 
         public void setText(java.lang.String text) {
             this.text = text;
+        }
+
+        @Override
+        public int compareTo(DomibusConnectorTransportStepStatusUpdate o) {
+            int p1 = 0;
+            if (this.transportState != null) {
+                p1 = this.transportState.getPriority();
+            }
+            int p2 = 0;
+            if (o != null && o.getTransportState() != null) {
+                p2 = o.transportState.getPriority();
+            }
+            return p1 - p2;
         }
     }
 
