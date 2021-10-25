@@ -99,8 +99,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     @Override
-    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(TransportState[] states, Pageable pageable) {
-        String[] stateStrings = Stream.of(states).map(s -> s.getDbName()).toArray(String[]::new);
+    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable) {
+        String[] stateStrings = states.stream().map(TransportState::getDbName).toArray(String[]::new);
         Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateIsOneOf(stateStrings, pageable);
         return stepByLastState.map(this::mapTransportStepToDomain);
     }

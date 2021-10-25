@@ -1,11 +1,21 @@
 package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -14,6 +24,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
@@ -31,10 +42,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.klaudeta.PaginatedGrid;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,8 +82,13 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     private Page<DomibusConnectorTransportStep> currentPage;
     private CallbackDataProvider<DomibusConnectorTransportStep, DomibusConnectorTransportStep> callbackDataProvider;
 
-    private Map<TransportState, Boolean> filterForState = Stream.of(TransportState.values())
-            .collect(Collectors.toMap(Function.identity(), f -> Boolean.TRUE));
+    private Set<TransportState> filterForState = Stream.of(TransportState.values())
+            .filter(s -> s != TransportState.ACCEPTED)
+            .collect(Collectors.toSet());
+    private Set<String> selectedLinkPartners = new HashSet<>();
+
+    private CheckboxGroup<TransportState> checkboxGroup = new CheckboxGroup<>();
+    private MultiselectComboBox<String> multiselectComboBox = new MultiselectComboBox<>();
 
     public TransportStateMonitoringView(DCTransportRetryService dcTransportRetryService,
                                         TransportStepPersistenceService transportStepPersistenceService,
@@ -86,27 +106,68 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
         callbackDataProvider = new CallbackDataProvider<>(this::fetchCallback, this::countCallback);
 
-        HorizontalLayout layout = new HorizontalLayout();
+        HorizontalLayout titleBar = new HorizontalLayout();
 
-        layout.add(new H2(TITLE));
-        layout.add(openHelpButtonFactory.createHelpButton(HELP_ID));
+        titleBar.add(new H2(new Text(TITLE), openHelpButtonFactory.createHelpButton(HELP_ID)));
+
+        HorizontalLayout buttonBar = new HorizontalLayout();
+        IntegerField pageSizeField = new IntegerField("Page Size");
+        pageSizeField.setValue(INITIAL_PAGE_SIZE);
+        pageSizeField.addValueChangeListener(e -> {
+           this.pageSize = e.getValue();
+           this.paginatedGrid.setPageSize(pageSize);
+           this.callbackDataProvider.refreshAll();
+        });
+        buttonBar.add(pageSizeField);
 
 
-        this.add(layout);
+        checkboxGroup.setLabel("Transport State");
+        checkboxGroup.setItems(TransportState.values());
+        checkboxGroup.setItemLabelGenerator(Enum::name);
+        checkboxGroup.addSelectionListener((selectEvent) -> {
+            this.filterForState = selectEvent.getAllSelectedItems();
+            this.callbackDataProvider.refreshAll();
+        });
+
+        buttonBar.add(checkboxGroup);
+
+
+        multiselectComboBox.setLabel("Link Partner");
+        multiselectComboBox.setAllowCustomValues(true);
+        multiselectComboBox.addSelectionListener((selectEvent) -> {
+            this.selectedLinkPartners = selectEvent.getAllSelectedItems();
+            this.callbackDataProvider.refreshAll();
+        });
+
+
+
+
+        this.add(titleBar);
+        this.add(buttonBar);
 
         paginatedGrid = new PaginatedGrid<>(DomibusConnectorTransportStep.class);
         paginatedGrid.setDataProvider(callbackDataProvider);
+        paginatedGrid.setPageSize(this.pageSize);
 
         paginatedGrid.setColumns(); //reset all columns...
 
         paginatedGrid.addComponentColumn(this::buttonProvider);
 
+
+        paginatedGrid
+                .addColumn("attempt");
+        paginatedGrid
+                .addColumn(s -> s.getLastStatusUpdate() == null ? "" : s.getLastStatusUpdate().getTransportState().name())
+                .setHeader("Last Transport State");
         paginatedGrid.addColumn(DomibusConnectorTransportStep::getConnectorMessageId)
                 .setSortable(true)
                 .setHeader("Connector Message Id");
-        paginatedGrid.addColumn("linkPartnerName").setSortable(true);
-        paginatedGrid.addColumn("created").setSortable(true);
-        paginatedGrid.addColumn("remoteMessageId").setSortable(true);
+        paginatedGrid.addColumn("linkPartnerName")
+                .setSortable(true);
+        paginatedGrid.addColumn("created")
+                .setSortable(true);
+        paginatedGrid.addColumn("remoteMessageId")
+                .setSortable(true);
         paginatedGrid.addColumn(s -> s.getTransportId().getTransportId())
                 .setSortable(true)
                 .setHeader("Transport Id");
@@ -148,6 +209,7 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
             //TODO: improve error message and User notification!
             Notification.show("ERROR while retrying message: " + exc.getMessage());
         }
+        this.callbackDataProvider.refreshItem(step);
     }
 
     private int countCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
@@ -158,8 +220,6 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
     private Stream<DomibusConnectorTransportStep> fetchCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
         int offset = tfQuery.getOffset();
-
-//        Sort sort = Sort.unsorted(); //TODO: implement sort order...
 
         List<Sort.Order> collect = paginatedGrid.getSortOrder()
                 .stream()
@@ -177,33 +237,27 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     }
 
     private Page<DomibusConnectorTransportStep> getDomibusConnectorTransportSteps(Pageable p) {
-        TransportState[] transportStates = filterForState.entrySet()
-                .stream().filter(e -> e.getValue() == Boolean.TRUE)
-                .map(Map.Entry::getKey)
-                .toArray(TransportState[]::new);
-        Page<DomibusConnectorTransportStep> stepByLastState = transportStepPersistenceService.findLastAttemptStepByLastStateIsOneOf(transportStates, p);
+//        TransportState[] transportStates = filterForState.toArray(new TransportState[0]);
+        Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartners = this.selectedLinkPartners.stream().map(l -> new DomibusConnectorLinkPartner.LinkPartnerName(l)).collect(Collectors.toSet());
+        Page<DomibusConnectorTransportStep> stepByLastState = transportStepPersistenceService.findLastAttemptStepByLastStateIsOneOf(filterForState, linkPartners, p);
         return stepByLastState;
     }
 
 
-//    private void handleSortEvent(SortEvent<Grid<DomibusConnectorTransportStep>, GridSortOrder<DomibusConnectorTransportStep>> gridGridSortOrderSortEvent) {
-//        gridGridSortOrderSortEvent.getSortOrder()
-//                .stream()
-//                .map(gridSortOrder -> {
-//                    SortDirection direction = gridSortOrder.getDirection();
-//                    return direction;
-//                });
-//    }
-
-
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-//        transportStepPersistenceService.getTransportStepByLastState(TransportState.PENDING_DOWNLOADED);
-//        transportStepPersistenceService.findStepByLastState(TransportState.PENDING_DOWNLOADED);
+        checkboxGroup.select(filterForState.toArray(new TransportState[0]));
+
+        String[] sel = dcLinkFacade.getAllLinks()
+                .stream()
+                .map(l -> l.getLinkPartnerName().getLinkName())
+                .toArray(String[]::new);
+        multiselectComboBox.setItems(sel);
+        multiselectComboBox.select(sel);
+
         this.callbackDataProvider.refreshAll();
 
+
     }
-
-
 
 }

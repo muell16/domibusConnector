@@ -140,6 +140,9 @@ public class DomibusConnectorTransportStep {
         return lastState != null && lastState.getTransportState() == state;
     }
 
+    public DomibusConnectorTransportStepStatusUpdate getLastStatusUpdate() {
+        return this.statusUpdates.peek();
+    }
 
 
     public static class DomibusConnectorTransportStepStatusUpdate implements Comparable<DomibusConnectorTransportStepStatusUpdate> {

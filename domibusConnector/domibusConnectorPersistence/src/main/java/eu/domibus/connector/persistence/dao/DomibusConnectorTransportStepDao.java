@@ -35,7 +35,22 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
     )
     List<PDomibusConnectorTransportStep> findByMsgLinkPartnerAndLastStateIs(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, String stateDbName);
 
-    @Query("SELECT status.transportStep " +
+//    @Query("SELECT status.transportStep " +
+//            "FROM PDomibusConnectorTransportStepStatusUpdate status " +
+//            "WHERE status.transportStateString IN ?1 AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
+//            "   SELECT CONCAT(MAX(s2.created), '_', s2.transportStep.id) " +
+//            "   FROM PDomibusConnectorTransportStepStatusUpdate s2" +
+//            "   GROUP BY s2.transportStep.id) " +
+//            "AND CONCAT(status.transportStep.attempt, '_', status.transportStep.connectorMessageId) IN (" +
+//            "   SELECT CONCAT(MAX(s3.transportStep.attempt), '_', s3.transportStep.connectorMessageId) " +
+//            "   FROM PDomibusConnectorTransportStepStatusUpdate s3 " +
+//            "   GROUP BY s3.transportStep.connectorMessageId)"
+//    )
+//    Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(String[] states, Pageable pageable);
+
+
+        @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.id IN ( " +
+                "SELECT status.transportStep.id " +
             "FROM PDomibusConnectorTransportStepStatusUpdate status " +
             "WHERE status.transportStateString IN ?1 AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
             "   SELECT CONCAT(MAX(s2.created), '_', s2.transportStep.id) " +
@@ -44,7 +59,7 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
             "AND CONCAT(status.transportStep.attempt, '_', status.transportStep.connectorMessageId) IN (" +
             "   SELECT CONCAT(MAX(s3.transportStep.attempt), '_', s3.transportStep.connectorMessageId) " +
             "   FROM PDomibusConnectorTransportStepStatusUpdate s3 " +
-            "   GROUP BY s3.transportStep.connectorMessageId)"
+            "   GROUP BY s3.transportStep.connectorMessageId))"
     )
     Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(String[] states, Pageable pageable);
 

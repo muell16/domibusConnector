@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public interface TransportStepPersistenceService {
      * @param pageable: the paging parameters
      * @return the Page
      */
-    Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(TransportState[] states, Pageable pageable);
+    Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable);
 
     List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId);
 
