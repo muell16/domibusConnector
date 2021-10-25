@@ -134,8 +134,7 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
             this.retryTransport(step);
         });
         layout.add(retryMessageButton);
-        layout.setEnabled(dcTransportRetryService.isRetryAble(step));
-//            retryMessageButton.setEnabled(!step.isInFinalState());
+        retryMessageButton.setEnabled(dcTransportRetryService.isRetryAble(step));
 
         return layout;
     }
