@@ -1,11 +1,14 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@MapNested
 public class RoutingRule {
 
     public static int HIGH_PRIORITY = -2000;
@@ -16,15 +19,17 @@ public class RoutingRule {
     @NotBlank
     private String linkName;
 
-    @NotBlank
+    @NotNull
     private RoutingRulePattern matchClause;
 
-    private String description;
+    private String description = "";
 
     /**
      * higher numbers mean higher priority
      */
     private int priority = 0;
+
+    private boolean deleted = false;
 
     private String routingRuleId = generateID();
 
@@ -78,6 +83,14 @@ public class RoutingRule {
 
     public void setRoutingRuleId(String routingRuleId) {
         this.routingRuleId = routingRuleId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

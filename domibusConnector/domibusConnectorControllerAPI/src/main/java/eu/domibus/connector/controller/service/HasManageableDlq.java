@@ -8,7 +8,6 @@ public interface HasManageableDlq extends PutOnQueue {
     Queue getDlq();
     List<Message> listAllMessages();
     List<Message> listAllMessagesInDlq();
-    void moveMsgFromDlqToQueue(String jmsId);
-    void deleteMsgFromDlq(String jmsId);
-    void deleteMsgFromQueue(String jmsId);
+    void moveMsgFromDlqToQueue(Message msg);
+    void deleteMsg(Message msg);
 }

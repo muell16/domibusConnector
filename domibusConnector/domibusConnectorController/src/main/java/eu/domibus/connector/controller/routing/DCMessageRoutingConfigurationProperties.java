@@ -1,14 +1,20 @@
 package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Component
+@BusinessDomainScoped
+//@Component
 @ConfigurationProperties(prefix = DCMessageRoutingConfigurationProperties.ROUTING_CONFIG_PREFIX)
 public class DCMessageRoutingConfigurationProperties {
 
@@ -16,9 +22,9 @@ public class DCMessageRoutingConfigurationProperties {
 
     private boolean enabled = true;
 
-    private List<RoutingRule> backendRules = new ArrayList<>();
+    private Map<String, RoutingRule> backendRules = new HashMap<>();
 
-    private List<RoutingRule> gatewayRules = new ArrayList<>();
+    private Map<String, RoutingRule> gatewayRules = new HashMap<>();
 
     @NotBlank
     private String defaultBackendName = DomibusConnectorDefaults.DEFAULT_BACKEND_NAME;
@@ -55,19 +61,19 @@ public class DCMessageRoutingConfigurationProperties {
         this.enabled = enabled;
     }
 
-    public List<RoutingRule> getBackendRules() {
+    public Map<String, RoutingRule> getBackendRules() {
         return backendRules;
     }
 
-    public void setBackendRules(List<RoutingRule> backendRules) {
+    public void setBackendRules(Map<String, RoutingRule> backendRules) {
         this.backendRules = backendRules;
     }
 
-    public List<RoutingRule> getGatewayRules() {
+    public Map<String, RoutingRule> getGatewayRules() {
         return gatewayRules;
     }
 
-    public void setGatewayRules(List<RoutingRule> gatewayRules) {
+    public void setGatewayRules(Map<String, RoutingRule> gatewayRules) {
         this.gatewayRules = gatewayRules;
     }
 
@@ -101,6 +107,13 @@ public class DCMessageRoutingConfigurationProperties {
 
     public void setConnectorGatewayName(String connectorGatewayName) {
         this.connectorGatewayName = connectorGatewayName;
+    }
+
+    @PostConstruct
+    public void afterPropertiesSet() {
+        //align routing rule id to key
+        backendRules.forEach((key, value) -> value.setRoutingRuleId(key));
+        gatewayRules.forEach((key, value) -> value.setRoutingRuleId(key));
     }
 
 }

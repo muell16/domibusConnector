@@ -34,6 +34,8 @@ import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
+
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
 @Route(value = BusinessDocumentValidationConfigPanel.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Business Document Verification", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
+@Order(5)
 public class BusinessDocumentValidationConfigPanel extends VerticalLayout implements AfterNavigationObserver {
 
     public static final String ROUTE = "businessDocumentValidation";

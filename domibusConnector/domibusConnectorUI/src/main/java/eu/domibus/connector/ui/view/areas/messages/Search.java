@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @UIScope
 @Route(value = Search.ROUTE, layout= MessageLayout.class)
-@Order(3)
+@Order(2)
 @TabMetadata(title = "Search", tabGroup = MessageLayout.TAB_GROUP_NAME)
 public class Search extends VerticalLayout {
 

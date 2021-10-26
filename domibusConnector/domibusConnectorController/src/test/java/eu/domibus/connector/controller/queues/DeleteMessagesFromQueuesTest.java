@@ -13,7 +13,7 @@ import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,27 +50,6 @@ public class DeleteMessagesFromQueuesTest {
         }
     }
 
-    private void purgeQueue(Destination destination) {
-        nonXaJmsTemplate.execute(session -> {
-            final MessageConsumer consumer = session.createConsumer(destination);
-            Message message = null;
-            try {
-                do {
-                    message = consumer.receiveNoWait();
-                    if (message != null) message.acknowledge();
-                } while (message != null);
-            } catch (JMSException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    consumer.close();
-                } catch (JMSException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        });
-    }
 
     public List<Message> receiveAllFromQueue(Destination destination) {
         return nonXaJmsTemplate.execute(session -> {
@@ -83,18 +62,6 @@ public class DeleteMessagesFromQueuesTest {
                 return messages;
             }
         }, true);
-    }
-
-
-    @BeforeEach
-    public void beforeEach() {
-        nonXaJmsTemplate = new JmsTemplate(nonXaConnectionFactory);
-        nonXaJmsTemplate.setMessageConverter(converter);
-//        purgeQueue(q1);
-//        purgeQueue(dlq1);
-        final List<Message> messages = receiveAllFromQueue(q1);
-        final List<Message> messages1 = receiveAllFromQueue(dlq1);
-//        Mockito.reset(toLinkPartnerListener, submitToLinkService);
     }
 
     @Autowired
@@ -162,6 +129,12 @@ public class DeleteMessagesFromQueuesTest {
     @Autowired
     MessageConverter converter;
 
+    @BeforeEach
+    public void beforeEach() {
+        nonXaJmsTemplate = new JmsTemplate(nonXaConnectionFactory);
+        nonXaJmsTemplate.setMessageConverter(converter);
+    }
+
     @Test
     public void it_is_possible_to_delete_specific_msgs_from_queues_and_dlqs() throws JMSException {
 
@@ -176,17 +149,17 @@ public class DeleteMessagesFromQueuesTest {
         nonXaJmsTemplate.setReceiveTimeout(1000L);
         final List<Message> queue = sut.listAllMessages();
         final List<Message> dlq = sut.listAllMessagesInDlq();
-        final String jmsIdQueue = queue.get(0).getJMSMessageID();
-        final String jmsIdDlq = dlq.get(0).getJMSMessageID();
+        final Message jmsMsgQueue = queue.get(0);
+        final Message jmsMsgDlq = dlq.get(0);
 
         // Assert Precondition
         assertThat(queue).isNotEmpty();
         assertThat(dlq).isNotEmpty();
 
         // Act
-        sut.deleteMsgFromQueue(jmsIdQueue);
-        sut.deleteMsgFromDlq(jmsIdDlq);
-        sut.deleteMsgFromDlq(jmsIdDlq); // tests that code works if you delete a msg that is not there, should be in another test, but no time
+        sut.deleteMsg(jmsMsgQueue);
+        sut.deleteMsg(jmsMsgDlq);
+        sut.deleteMsg(jmsMsgDlq); // tests that code works if you delete a msg that is not there, should be in another test, but no time
 
         // Assert
         assertThat(sut.listAllMessages()).isEmpty();

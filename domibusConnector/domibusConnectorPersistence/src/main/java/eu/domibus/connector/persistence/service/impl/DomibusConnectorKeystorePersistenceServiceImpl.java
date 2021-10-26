@@ -23,9 +23,6 @@ import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersiste
 @Service
 public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusConnectorKeystorePersistenceService {
 
-	//Entity manager is required to access LobCreator
-	@PersistenceContext
-	EntityManager entityManager;
 	
 	@Autowired
     DomibusConnectorKeystoreDao keystoreDao;
@@ -75,8 +72,7 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
 
 	@Override
 	public DomibusConnectorKeystore getKeystoreByUUID(String uuid) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Not implemented yet!?");
 	}
 
 
