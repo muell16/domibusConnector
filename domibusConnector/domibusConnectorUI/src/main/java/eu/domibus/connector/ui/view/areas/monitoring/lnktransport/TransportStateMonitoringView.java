@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -34,7 +35,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 import java.util.HashSet;
@@ -50,7 +50,7 @@ import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusin
 @Component
 @Order(2)
 @Route(value = TransportStateMonitoringView.ROUTE_PREFIX, layout = MonitoringLayout.class)
-@TabMetadata(title = "Link Msg", tabGroup = MonitoringLayout.TAB_GROUP_NAME)
+@TabMetadata(title = TransportStateMonitoringView.TITLE, tabGroup = MonitoringLayout.TAB_GROUP_NAME)
 public class TransportStateMonitoringView extends VerticalLayout implements AfterNavigationObserver {
 
     private final static Logger LOGGER = LogManager.getLogger(TransportStateMonitoringView.class);
@@ -68,16 +68,15 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
     private int pageSize = INITIAL_PAGE_SIZE;
     private PaginatedGrid<DomibusConnectorTransportStep> paginatedGrid;
-    private Page<DomibusConnectorTransportStep> currentPage;
     private CallbackDataProvider<DomibusConnectorTransportStep, DomibusConnectorTransportStep> callbackDataProvider;
 
     private Set<TransportState> filterForState = Stream.of(TransportState.values())
             .filter(s -> s != TransportState.ACCEPTED)
             .collect(Collectors.toSet());
-    private Set<String> selectedLinkPartners = new HashSet<>();
+    private Set<DomibusConnectorLinkPartner.LinkPartnerName> selectedLinkPartners = new HashSet<>();
 
     private CheckboxGroup<TransportState> checkboxGroup = new CheckboxGroup<>();
-    private MultiselectComboBox<String> multiselectLinkPartner = new MultiselectComboBox<>();
+    private MultiSelectListBox<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerSelectBox = new MultiSelectListBox<>();
 
     public TransportStateMonitoringView(DCTransportRetryService dcTransportRetryService,
                                         TransportStepPersistenceService transportStepPersistenceService,
@@ -121,13 +120,11 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
         buttonBar.add(checkboxGroup);
 
 
-        multiselectLinkPartner.setLabel("Link Partner");
-        multiselectLinkPartner.setAllowCustomValues(true);
-        multiselectLinkPartner.addSelectionListener((selectEvent) -> {
+        linkPartnerSelectBox.addSelectionListener((selectEvent) -> {
             this.selectedLinkPartners = selectEvent.getAllSelectedItems();
             this.callbackDataProvider.refreshAll();
         });
-        buttonBar.add(multiselectLinkPartner);
+        buttonBar.add(linkPartnerSelectBox);
 
 
 
@@ -221,14 +218,11 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
         PageRequest pageRequest = PageRequest.of(offset / paginatedGrid.getPageSize(), paginatedGrid.getPageSize(), sort);
         Page<DomibusConnectorTransportStep> domibusConnectorTransportSteps = getDomibusConnectorTransportSteps(pageRequest);
-        this.currentPage = domibusConnectorTransportSteps;
         return domibusConnectorTransportSteps.stream();
     }
 
     private Page<DomibusConnectorTransportStep> getDomibusConnectorTransportSteps(Pageable p) {
-//        TransportState[] transportStates = filterForState.toArray(new TransportState[0]);
-        Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartners = this.selectedLinkPartners.stream().map(l -> new DomibusConnectorLinkPartner.LinkPartnerName(l)).collect(Collectors.toSet());
-        Page<DomibusConnectorTransportStep> stepByLastState = transportStepPersistenceService.findLastAttemptStepByLastStateIsOneOf(filterForState, linkPartners, p);
+        Page<DomibusConnectorTransportStep> stepByLastState = transportStepPersistenceService.findLastAttemptStepByLastStateIsOneOf(filterForState, selectedLinkPartners, p);
         return stepByLastState;
     }
 
@@ -237,15 +231,12 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     public void afterNavigation(AfterNavigationEvent event) {
         checkboxGroup.select(filterForState.toArray(new TransportState[0]));
 
-//        String[] sel = dcLinkFacade.getAllLinks()
-//                .stream()
-//                .map(l -> l.getLinkPartnerName().getLinkName())
-//                .toArray(String[]::new);
-//        multiselectLinkPartner.setItems(sel);
-//        multiselectLinkPartner.select(sel);
+        List<DomibusConnectorLinkPartner.LinkPartnerName> allLinkPartners = transportStepPersistenceService.findAllLinkPartners();
+        linkPartnerSelectBox.setItems(allLinkPartners);
+        this.selectedLinkPartners.addAll(allLinkPartners);
+        linkPartnerSelectBox.setValue(this.selectedLinkPartners);
 
         this.callbackDataProvider.refreshAll();
-
 
     }
 

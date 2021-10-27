@@ -42,7 +42,7 @@ to address the link partner. It is also used within the backend routing.
 
 
 //image::plantuml/link_architecture.png[ClassDiagram]
-[plantuml, queues, png]
+[plantuml, link config, png]
 ----
 @startuml
 

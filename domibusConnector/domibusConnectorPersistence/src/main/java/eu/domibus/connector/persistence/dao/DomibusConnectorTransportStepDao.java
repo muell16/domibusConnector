@@ -49,7 +49,9 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
 //    Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(String[] states, Pageable pageable);
 
 
-        @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.id IN ( " +
+        @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE " +
+                "step.linkPartnerName IN ?2 AND " +
+                "step.id IN ( " +
                 "SELECT status.transportStep.id " +
             "FROM PDomibusConnectorTransportStepStatusUpdate status " +
             "WHERE status.transportStateString IN ?1 AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
@@ -61,6 +63,12 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
             "   FROM PDomibusConnectorTransportStepStatusUpdate s3 " +
             "   GROUP BY s3.transportStep.connectorMessageId))"
     )
-    Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(String[] states, Pageable pageable);
+    Page<PDomibusConnectorTransportStep> findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(String[] states, DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerStrings, Pageable pageable);
+
+    @Query("SELECT step.linkPartnerName FROM PDomibusConnectorTransportStep step GROUP BY step.linkPartnerName")
+    List<DomibusConnectorLinkPartner.LinkPartnerName> findAllLinkPartnerNames();
+
+    @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.connectorMessageId = ?1")
+    List<PDomibusConnectorTransportStep> findByConnectorMessageId(String connectorMessageId);
 
 }

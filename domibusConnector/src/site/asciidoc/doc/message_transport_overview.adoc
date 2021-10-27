@@ -6,9 +6,9 @@
 
 = Message Transport to Link Partners
 
-The domibus connector communicates with different other components (gateway, connector-client) this is done over the link module. But sometimes the messages are failing during this transport. A overview of this transports is provided by the link:./monitoring/linktransport[Monitoring - Message Transport] UI.
+The domibus connector communicates with different other components (gateway, connector-client) this is done over the link module. But sometimes the messages are failing during this transport. A overview of this transports is provided by the link:/monitoring/linktransport[Monitoring - Message Transport] UI.
 
-For details see link:../architecture/link_partners.adoc
+For details see link:../architecture/link_partners.adoc[Link Module Architecture Doc]
 
 == Overview
 

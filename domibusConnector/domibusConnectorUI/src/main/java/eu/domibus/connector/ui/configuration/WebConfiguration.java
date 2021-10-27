@@ -11,9 +11,10 @@ import eu.domibus.connector.ui.persistence.dao.WebPersistenceDaoPackage;
  * Web module specific configuration
  */
 @Configuration
-@PropertySource({"classpath:/eu/domibus/connector/web/spring/web-default-configuration.properties", "classpath:/build-info.properties"})
+@PropertySource({
+        "classpath:/eu/domibus/connector/web/spring/web-default-configuration.properties",
+        "classpath:/build-info.properties"
+})
 public class WebConfiguration {
-
-
 
 }

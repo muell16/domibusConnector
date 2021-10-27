@@ -71,11 +71,20 @@ public class DomibusConnectorTransportStepDaoTest {
         Pageable pageable = Pageable.ofSize(20);
 
         Assertions.assertAll(
-                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.FAILED.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                        new String[]{TransportState.FAILED.getDbName()},
+                        new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                pageable)
                         .getTotalElements()).isEqualTo(2), //there should be 2 entries where the last updated state is failed
-                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.PENDING.getDbName(), TransportState.FAILED.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                        new String[]{TransportState.PENDING.getDbName(), TransportState.FAILED.getDbName()},
+                                new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                pageable)
                         .getTotalElements()).isEqualTo(3), //there should be 3 entries where the last updated state is failed OR pending
-                () -> assertThat(dao.findLastAttemptStepByLastStateIsOneOf(new String[]{TransportState.PENDING.getDbName()}, pageable)
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                        new String[]{TransportState.PENDING.getDbName()},
+                                new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                pageable)
                         .getTotalElements()).isEqualTo(1) //there should be 1 entry where the last updated state is pending
         );
 

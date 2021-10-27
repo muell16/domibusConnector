@@ -39,4 +39,9 @@ public interface TransportStepPersistenceService {
 
     List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId);
 
+    /**
+     * @return a list of all LinkPartnerNames used in the transport
+     */
+    List<DomibusConnectorLinkPartner.LinkPartnerName> findAllLinkPartners();
+
 }

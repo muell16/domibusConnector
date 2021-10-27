@@ -19,13 +19,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -101,13 +102,29 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     @Override
     public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable) {
         String[] stateStrings = states.stream().map(TransportState::getDbName).toArray(String[]::new);
-        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateIsOneOf(stateStrings, pageable);
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray;
+        if (linkPartnerNames.size() == 0) {
+            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
+        } else {
+            linkPartnerArray = linkPartnerNames.toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
+        }
+        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(stateStrings, linkPartnerArray, pageable);
         return stepByLastState.map(this::mapTransportStepToDomain);
     }
 
+
     @Override
     public List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId) {
-        return null;
+        return transportStepDao.findByConnectorMessageId(messageId.getConnectorMessageId())
+                .stream()
+                .map(this::mapTransportStepToDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DomibusConnectorLinkPartner.LinkPartnerName> findAllLinkPartners() {
+        List<DomibusConnectorLinkPartner.LinkPartnerName> allLinkPartnerNames = transportStepDao.findAllLinkPartnerNames();
+        return allLinkPartnerNames; //.stream().map(DomibusConnectorLinkPartner.LinkPartnerName::new).collect(Collectors.toList());
     }
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
