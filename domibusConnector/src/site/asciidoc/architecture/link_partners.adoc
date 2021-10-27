@@ -6,7 +6,7 @@
 
 = Link Partners
 
-Also see link:../doc/link_doc.adoc[Link Configuration Manual]
+Also see link:../doc/link_doc.html[Link Configuration Manual]
 
 == Message Flow
 
