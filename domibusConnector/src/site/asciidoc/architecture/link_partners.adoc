@@ -1,0 +1,16 @@
+:description: Description of how the Link Partners does work
+:library: Asciidoctor
+
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Link Partners
+
+Also see link:../doc/link_doc.adoc[Link Configuration Manual]
+
+== Message Flow
+
+Any message to the Link Module is submitted by the SubmitToLink interface. For decoupling the connector controller puts the message into a queue. Messages from this queue are taken by the ToLinkQueueListener out of the queue and sent to the link module.
+
+== Different Links
+
