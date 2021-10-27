@@ -94,7 +94,9 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
         Map<String, String> properties = messageLane.getProperties();
         Set<String> routingRuleIds = properties.keySet()
                 .stream()
+                .filter(k -> k.length() > PREFIX.length())
                 .map(k -> k.substring(PREFIX.length()))
+                .filter(k -> k.contains("]"))
                 .map(k -> k.substring(0, k.indexOf("]")))
                 .collect(Collectors.toSet());
 

@@ -2,26 +2,18 @@ package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -42,15 +34,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,7 +77,7 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     private Set<String> selectedLinkPartners = new HashSet<>();
 
     private CheckboxGroup<TransportState> checkboxGroup = new CheckboxGroup<>();
-    private MultiselectComboBox<String> multiselectComboBox = new MultiselectComboBox<>();
+    private MultiselectComboBox<String> multiselectLinkPartner = new MultiselectComboBox<>();
 
     public TransportStateMonitoringView(DCTransportRetryService dcTransportRetryService,
                                         TransportStepPersistenceService transportStepPersistenceService,
@@ -132,13 +121,13 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
         buttonBar.add(checkboxGroup);
 
 
-        multiselectComboBox.setLabel("Link Partner");
-        multiselectComboBox.setAllowCustomValues(true);
-        multiselectComboBox.addSelectionListener((selectEvent) -> {
+        multiselectLinkPartner.setLabel("Link Partner");
+        multiselectLinkPartner.setAllowCustomValues(true);
+        multiselectLinkPartner.addSelectionListener((selectEvent) -> {
             this.selectedLinkPartners = selectEvent.getAllSelectedItems();
             this.callbackDataProvider.refreshAll();
         });
-
+        buttonBar.add(multiselectLinkPartner);
 
 
 
@@ -248,12 +237,12 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     public void afterNavigation(AfterNavigationEvent event) {
         checkboxGroup.select(filterForState.toArray(new TransportState[0]));
 
-        String[] sel = dcLinkFacade.getAllLinks()
-                .stream()
-                .map(l -> l.getLinkPartnerName().getLinkName())
-                .toArray(String[]::new);
-        multiselectComboBox.setItems(sel);
-        multiselectComboBox.select(sel);
+//        String[] sel = dcLinkFacade.getAllLinks()
+//                .stream()
+//                .map(l -> l.getLinkPartnerName().getLinkName())
+//                .toArray(String[]::new);
+//        multiselectLinkPartner.setItems(sel);
+//        multiselectLinkPartner.select(sel);
 
         this.callbackDataProvider.refreshAll();
 
