@@ -69,40 +69,28 @@ public class DomibusConnectorTransportStepDaoTest {
     @Test
     public void testFindStepByLastState() {
         Pageable pageable = Pageable.ofSize(20);
+        DomibusConnectorLinkPartner.LinkPartnerName[] lp = {new DomibusConnectorLinkPartner.LinkPartnerName("partner1")};
 
         Assertions.assertAll(
                 () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
                         new String[]{TransportState.FAILED.getDbName()},
-                        new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                lp,
                                 pageable)
                         .getTotalElements()).isEqualTo(2), //there should be 2 entries where the last updated state is failed
                 () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
                         new String[]{TransportState.PENDING.getDbName(), TransportState.FAILED.getDbName()},
-                                new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                lp,
                                 pageable)
                         .getTotalElements()).isEqualTo(3), //there should be 3 entries where the last updated state is failed OR pending
                 () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
                         new String[]{TransportState.PENDING.getDbName()},
-                                new DomibusConnectorLinkPartner.LinkPartnerName[0],
+                                lp,
                                 pageable)
                         .getTotalElements()).isEqualTo(1) //there should be 1 entry where the last updated state is pending
         );
 
     }
 
-//    @Test
-//    public void testQ() {
-//        List<String> q = dao.testQ();
-//        List<String> z = dao.testZ(new String[]{TransportState.FAILED.getDbName()});
-//        System.out.println("####_t");
-//        for (String s: q) {
-//            System.out.println(s);
-//        }
-//        System.out.println("####_Z");
-//        for (String s: z) {
-//            System.out.println(s);
-//        }
-//    }
 
 
 }
