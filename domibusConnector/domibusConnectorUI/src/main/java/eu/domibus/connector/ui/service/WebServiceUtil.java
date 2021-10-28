@@ -9,11 +9,7 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 public class WebServiceUtil {
 
@@ -58,41 +54,41 @@ public class WebServiceUtil {
 
         CellStyle style;
         Font headerFont = wb.createFont();
-        headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        headerFont.setBold(true);
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setAlignment(HorizontalAlignment.CENTER);
         style.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(headerFont);
         styles.put("header", style);
 
         Font font1 = wb.createFont();
-        font1.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font1.setBold(true);
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_LEFT);
+        style.setAlignment(HorizontalAlignment.LEFT);
         style.setFont(font1);
         styles.put("cell_b", style);
 
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_RIGHT);
+        style.setAlignment(HorizontalAlignment.RIGHT);
         style.setFont(font1);
         styles.put("cell_b_right", style);
 
         Font font2 = wb.createFont();
         font2.setColor(IndexedColors.BLUE.getIndex());
-        font2.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font2.setBold(true);
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_LEFT);
+        style.setAlignment(HorizontalAlignment.LEFT);
         style.setFont(font2);
         styles.put("cell_bb", style);
 
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setAlignment(HorizontalAlignment.CENTER);
         style.setFont(font2);
         styles.put("cell_bb_center", style);
 
         style = createBorderedStyle(wb);
-        style.setAlignment(CellStyle.ALIGN_RIGHT);
+        style.setAlignment(HorizontalAlignment.RIGHT);
         style.setFont(font2);
         styles.put("cell_bb_right", style);
 
@@ -101,13 +97,13 @@ public class WebServiceUtil {
 
     private static CellStyle createBorderedStyle(Workbook wb) {
         CellStyle style = wb.createCellStyle();
-        style.setBorderRight(CellStyle.BORDER_THIN);
+        style.setBorderRight(BorderStyle.THIN);
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderLeft(BorderStyle.THIN);
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderTop(BorderStyle.THIN);
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         return style;
     }
