@@ -32,11 +32,11 @@ public class ConnectorTestConfigurationProperties {
 
 
     @Valid
-    private EvidenceActionServiceConfigurationProperties.AS4Service service = null;
+    private EvidenceActionServiceConfigurationProperties.AS4Service service = new EvidenceActionServiceConfigurationProperties.AS4Service("Connector-TEST", "urn:e-codex:services:");
 
     @Valid
     @NotNull
-    private EvidenceActionServiceConfigurationProperties.AS4Action action = new EvidenceActionServiceConfigurationProperties.AS4Action("Connector-TEST");
+    private EvidenceActionServiceConfigurationProperties.AS4Action action = new EvidenceActionServiceConfigurationProperties.AS4Action("ConTest_Form");
 
     public EvidenceActionServiceConfigurationProperties.AS4Service getService() {
         return service;

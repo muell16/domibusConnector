@@ -17,6 +17,7 @@ import eu.domibus.connector.ui.view.areas.info.Info;
 import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
 import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
 import eu.domibus.connector.ui.view.areas.pmodes.PmodeOverview;
+import eu.domibus.connector.ui.view.areas.testing.ConnectorTestsOverview;
 import eu.domibus.connector.ui.view.areas.users.UserOverview;
 
 @UIScope
@@ -66,6 +67,12 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .withLabel("Users")
                 .withIcon(new Icon(VaadinIcon.USERS))
                 .addForComponent(UserOverview.class);
+        
+        tabManager
+        		.createTab()
+        		.withLabel("Connector Tests")
+        		.withIcon(new Icon(VaadinIcon.MAILBOX))
+        		.addForComponent(ConnectorTestsOverview.class);
 
         tabManager
                 .createTab()

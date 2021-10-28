@@ -20,12 +20,12 @@ public class DCEcodexContainerProperties {
     @Valid
     @NotNull
     @NestedConfigurationProperty
-    private SignatureConfigurationProperties signature;
+    private SignatureConfigurationProperties signature = new SignatureConfigurationProperties();
 
     @Valid
     @NotNull
     @NestedConfigurationProperty
-    private SignatureValidationConfigurationProperties signatureValidation;
+    private SignatureValidationConfigurationProperties signatureValidation= new SignatureValidationConfigurationProperties();
 
 
     public SignatureValidationConfigurationProperties getSignatureValidation() {

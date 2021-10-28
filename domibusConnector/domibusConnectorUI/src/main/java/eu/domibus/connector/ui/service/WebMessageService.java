@@ -52,6 +52,10 @@ public class WebMessageService {
 	public LinkedList<WebMessage> getMessagesByConversationId(String conversationId){
 		return messagePersistenceService.findMessagesByConversationId(conversationId);
 	}
+	
+	public LinkedList<WebMessage> getConnectorTestMessages(String c2cTestBackendName){
+		return messagePersistenceService.findConnectorTestMessages(c2cTestBackendName);
+	}
 
 	public InputStream generateExcel(LinkedList<WebMessage> messages) {
 		String sheetName = "Messages List";

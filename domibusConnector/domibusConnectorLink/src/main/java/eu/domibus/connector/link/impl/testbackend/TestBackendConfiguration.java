@@ -109,18 +109,24 @@ public class TestBackendConfiguration {
                         rule = concatAnd(rule, String.format("equals(ServiceName, '%s')", c2cTestProperties.getService().getName()));
                     }
                     if (StringUtils.hasText(c2cTestProperties.getService().getServiceType())) {
-                        rule = concatAnd(rule, String.format("equals(ServiceType, '%s'", c2cTestProperties.getService().getServiceType()));
+                        rule = concatAnd(rule, String.format("equals(ServiceType, '%s')", c2cTestProperties.getService().getServiceType()));
                     }
                 }
                 if (!StringUtils.hasText(rule)) {
                     String error = String.format("Cannot create RoutingRule for ConnectorTests. Check Config of BusinessDomain %s", laneId);
                     throw new IllegalArgumentException(error);
                 }
-                RoutingRulePattern routingRulePattern = new RoutingRulePattern(rule);
-                routingRule.setDescription("Automatically by Connector2Connector Test created routing rule. To route connector tests messages to testbackend");
-                routingRule.setMatchClause(routingRulePattern);
-                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Adding the routing rule {} to backend routing rules for testbackend on business domain [{}]", routingRule, laneId);
-                routingRulesManager.addBackendRoutingRule(laneId, routingRule);
+                try {
+                    RoutingRulePattern routingRulePattern = new RoutingRulePattern(rule);
+                    routingRule.setDescription("Automatically by Connector2Connector Test created routing rule. To route connector tests messages to testbackend");
+                    routingRule.setMatchClause(routingRulePattern);
+                    LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Adding the routing rule {} to backend routing rules for testbackend on business domain [{}]", routingRule, laneId);
+                    routingRulesManager.addBackendRoutingRule(laneId, routingRule);
+                } catch (Exception e) {
+                    String error = String.format("Cannot create RoutingRule for ConnectorTests. The routing rule %s is illegal. Check Config of BusinessDomain %s", rule, laneId);
+                    throw new IllegalArgumentException(error);
+                }
+
             }
         }
         return enabled;
