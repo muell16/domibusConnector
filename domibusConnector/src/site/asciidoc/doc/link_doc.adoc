@@ -1,7 +1,7 @@
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}
-
+:mvnbasedir: ../../../../
 
 
 = Connector Link Plugins Manual
@@ -42,7 +42,7 @@ to address the link partner. It is also used within the backend routing.
 
 
 //image::plantuml/link_architecture.png[ClassDiagram]
-[plantuml, queues, png]
+[plantuml, link config, png]
 ----
 @startuml
 
@@ -107,7 +107,7 @@ to entered within the link-partner-name property and has to be: **default_gatewa
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-gwwspullplugin-test.properties[]
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-gwwspullplugin-test.properties[]
 ----
 
 ==== Setting up example for Gateway Push Link:
@@ -119,7 +119,7 @@ to entered within the link-partner-name property and has to be: **default_gatewa
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-gwwspushplugin-test.properties[]
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-gwwspushplugin-test.properties[]
 ----
 
 
@@ -133,7 +133,7 @@ the link-partner-name property is used! This property also has to be **unique**!
 
 [source,properties]
 ----
-include::../../../../domibusConnectorLinkCommon/src/test/resources/application-wsbackendplugin-test.properties[]
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-wsbackendplugin-test.properties[]
 ----
 
 

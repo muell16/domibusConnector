@@ -8,16 +8,21 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +47,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getTransportedMessage() == null && transportStep.getTransportedMessage().getConnectorMessageId() != null) {
+        if (transportStep.getTransportedMessage() == null || transportStep.getTransportedMessage().getConnectorMessageId() == null) {
             throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
         }
 
@@ -86,6 +91,40 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
                 .stream()
                 .map(this::mapTransportStepToDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<DomibusConnectorTransportStep> findStepById(TransportStateService.TransportId transportId) {
+        Optional<PDomibusConnectorTransportStep> byTransportId = transportStepDao.findByTransportId(transportId);
+        return byTransportId.map(this::mapTransportStepToDomain);
+    }
+
+    @Override
+    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable) {
+        String[] stateStrings = states.stream().map(TransportState::getDbName).toArray(String[]::new);
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray;
+        if (linkPartnerNames.size() == 0) {
+            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
+        } else {
+            linkPartnerArray = linkPartnerNames.toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
+        }
+        Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(stateStrings, linkPartnerArray, pageable);
+        return stepByLastState.map(this::mapTransportStepToDomain);
+    }
+
+
+    @Override
+    public List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId) {
+        return transportStepDao.findByConnectorMessageId(messageId.getConnectorMessageId())
+                .stream()
+                .map(this::mapTransportStepToDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DomibusConnectorLinkPartner.LinkPartnerName> findAllLinkPartners() {
+        List<DomibusConnectorLinkPartner.LinkPartnerName> allLinkPartnerNames = transportStepDao.findAllLinkPartnerNames();
+        return allLinkPartnerNames; //.stream().map(DomibusConnectorLinkPartner.LinkPartnerName::new).collect(Collectors.toList());
     }
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {

@@ -4,9 +4,8 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DomibusConnectorTransportStep {
 
@@ -17,7 +16,7 @@ public class DomibusConnectorTransportStep {
     private java.lang.String transportSystemMessageId;
     private java.lang.String remoteMessageId;
     private LocalDateTime created;
-    private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
+    private PriorityQueue<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new PriorityQueue<>(new TransportStepComparator());
     private LocalDateTime finalStateReached;
 
     public DomibusConnectorMessage getTransportedMessage() {
@@ -76,12 +75,20 @@ public class DomibusConnectorTransportStep {
         this.created = created;
     }
 
+    public void addStatusUpdate(DomibusConnectorTransportStepStatusUpdate u) {
+        this.statusUpdates.add(u);
+    }
+
+    public DomibusConnectorMessageId getConnectorMessageId() {
+        return this.transportedMessage.getConnectorMessageId();
+    }
+
     public List<DomibusConnectorTransportStepStatusUpdate> getStatusUpdates() {
-        return statusUpdates;
+        return new ArrayList<>(statusUpdates);
     }
 
     public void setStatusUpdates(List<DomibusConnectorTransportStepStatusUpdate> statusUpdates) {
-        this.statusUpdates = statusUpdates;
+        this.statusUpdates.addAll(statusUpdates);
     }
 
     public void addTransportStatus(DomibusConnectorTransportStepStatusUpdate stepStatusUpdate) {
@@ -89,19 +96,18 @@ public class DomibusConnectorTransportStep {
             this.finalStateReached = LocalDateTime.now();
         }
 
-        int max = this.statusUpdates.stream()
-                .map(DomibusConnectorTransportStepStatusUpdate::getTransportState)
-                .map(TransportState::getPriority)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-
-        if (stepStatusUpdate.getTransportState().getPriority() > max) {
-            this.statusUpdates.add(stepStatusUpdate);
-        } else {
-            java.lang.String error = java.lang.String.format("Cannot add stepStatusUpdate with state [%s] because there is already a state with higher or equal priority of [%s]!", stepStatusUpdate.getTransportState(), max);
-            throw new IllegalArgumentException(error);
+        int lastPriority = Integer.MIN_VALUE;
+        DomibusConnectorTransportStepStatusUpdate peek = this.statusUpdates.peek();
+        if (peek != null) {
+            lastPriority = peek.getTransportState().getPriority();
         }
 
+        if (stepStatusUpdate.getTransportState().getPriority() > lastPriority) {
+            this.statusUpdates.add(stepStatusUpdate);
+        } else {
+            java.lang.String error = java.lang.String.format("Cannot add stepStatusUpdate with state [%s] because there is already a state with higher or equal priority of [%s]!", stepStatusUpdate.getTransportState(), lastPriority);
+            throw new IllegalArgumentException(error);
+        }
 
     }
 
@@ -111,6 +117,46 @@ public class DomibusConnectorTransportStep {
 
     public void setFinalStateReached(LocalDateTime setFinalStateReached) {
         this.finalStateReached = setFinalStateReached;
+    }
+
+    public boolean isInPendingState() {
+        TransportState state = TransportState.PENDING;
+        return isInState(state);
+    }
+
+    public boolean isInPendingDownloadedState() {
+        TransportState state = TransportState.PENDING_DOWNLOADED;
+        return isInState(state);
+    }
+
+    public boolean isInAcceptedState() {
+        TransportState state = TransportState.ACCEPTED;
+        return isInState(state);
+    }
+
+    private boolean isInState(TransportState state) {
+        DomibusConnectorTransportStepStatusUpdate lastState = this.statusUpdates.peek();
+        return lastState != null && lastState.getTransportState() == state;
+    }
+
+    public DomibusConnectorTransportStepStatusUpdate getLastStatusUpdate() {
+        return this.statusUpdates.peek();
+    }
+
+    private static class TransportStepComparator implements Comparator<DomibusConnectorTransportStepStatusUpdate> {
+
+        @Override
+        public int compare(DomibusConnectorTransportStepStatusUpdate o1, DomibusConnectorTransportStepStatusUpdate o2) {
+            LocalDateTime time1 = LocalDateTime.MIN;
+            if (o1.getCreated() != null) {
+                time1 = o1.getCreated();
+            }
+            LocalDateTime time2 = LocalDateTime.MIN;
+            if (o2.getCreated() != null) {
+                time2 = o2.getCreated();
+            }
+            return time2.compareTo(time1);
+        }
     }
 
     public static class DomibusConnectorTransportStepStatusUpdate {
@@ -144,6 +190,7 @@ public class DomibusConnectorTransportStep {
         public void setText(java.lang.String text) {
             this.text = text;
         }
+
     }
 
 }

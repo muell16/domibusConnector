@@ -902,6 +902,51 @@
                 </configuration>
             </plugin>
             <plugin>
+                <inherited>false</inherited>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>convert-to-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/site/asciidoc</sourceDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/site/resources/</directory>
+                                </resource>
+                            </resources>
+                            <preserveDirectories>true</preserveDirectories>
+                            <requires>
+                                <require>asciidoctor-diagram</require>
+                            </requires>
+                            <!-- TODO: make artifact here and reference it as dependency !!! -->
+<!--                            <outputDirectory>${project.build.directory}/domibusConnectorUI/target/classes/static</outputDirectory>-->
+                            <outputDirectory>${project.basedir}/domibusConnectorUI/target/classes/static/documentation</outputDirectory>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+<!--                                <data-uri/>-->
+                                <mvnbasedir>${project.basedir}</mvnbasedir>
+                                <imgdir>./images</imgdir>
+                                <toc>left</toc>
+                                <icons>font</icons>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram</artifactId>
+                        <version>2.2.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.8.2</version>
@@ -909,12 +954,12 @@
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>2.1.0</version>
+                        <version>2.2.1</version>
                     </dependency>
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctorj-diagram</artifactId>
-                        <version>2.0.5</version>
+                        <version>2.2.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>

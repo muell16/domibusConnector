@@ -38,6 +38,12 @@ public class DomibusConnectorDomainMessageTransformerService {
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDomainMessageTransformerService.class);
     private final LargeFilePersistenceProvider largeFilePersistenceProvider;
 
+    public List<DomibusConnectorMessageError> transformTransitionToDomain(List<DomibusConnectorMessageErrorType> messageErrors) {
+        return messageErrors.stream()
+                .map(this::transformMessageErrorTransitionToDomain)
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * This exception is thrown when the provided

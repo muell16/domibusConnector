@@ -1,6 +1,7 @@
 
 :imgdir: ../resources/images/
 :imagesdir: ../{imgdir}
+:mvnbasedir: ../../../../
 
 = Backend message routing
 
@@ -31,14 +32,14 @@ Example of routing rules:
 
 [source,properties]
 ----
-include::../../../../domibusConnectorController/src/test/resources-filtered/config/application-routing-rule-test.properties[]
+include::{mvnbasedir}/domibusConnectorController/src/test/resources-filtered/config/application-routing-rule-test.properties[]
 ----
 
 ==== Routing Rule Expression
 
 [source]
 ----
-include::../../../../domibusConnectorController/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
+include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
 ----
 
 

@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkPartner;
@@ -33,9 +34,7 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +64,9 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Autowired
     DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    @Autowired
+    WsActiveLinkPartnerManager wsActiveLinkPartnerManager;
 
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
@@ -152,21 +154,76 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Override
     public ListPendingMessageIdsResponse listPendingMessageIds(EmptyRequestType listPendingMessageIdsRequest) {
-        throw new RuntimeException("Not Implemented yet!");
+        ListPendingMessageIdsResponse listPendingMessageIdsResponse = new ListPendingMessageIdsResponse();
+        try {
+            Optional<DomibusConnectorLinkPartner> backendClientInfoByName = checkBackendClient();
+            if (backendClientInfoByName.isPresent()) {
+                List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner = transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
+
+                List<String> pendingIds = pendingTransportsForLinkPartner.stream()
+                        .map(DomibusConnectorTransportStep::getTransportId)
+                        .map(TransportStateService.TransportId::getTransportId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+
+                listPendingMessageIdsResponse.getMessageTransportIds().addAll(pendingIds);
+
+            } else {
+                LOGGER.warn("No backend found, returning empty DomibusConnectorMessagesType!");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception", e);
+        }
+        LOGGER.debug("#listPendingMessageIds returns pending message ids: [{}]", listPendingMessageIdsResponse.getMessageTransportIds().size());
+        return listPendingMessageIdsResponse;
     }
 
     @Override
     public DomibusConnectorMessageType getMessageById(GetMessageByIdRequest getMessageByIdRequest) {
-        throw new RuntimeException("Not Implemented yet!");
+        String messageTransportId = getMessageByIdRequest.getMessageTransportId();
+        TransportStateService.TransportId transportId = new TransportStateService.TransportId(messageTransportId);
+        Optional<DomibusConnectorTransportStep> transportStepById = transportStateService.getTransportStepById(transportId);
+
+        if (transportStepById.isPresent()) {
+            DomibusConnectorTransportStep domibusConnectorTransportStep = transportStepById.get();
+            if (domibusConnectorTransportStep.isInPendingState()) {
+                DomibusConnectorMessage msg = domibusConnectorTransportStep.getTransportedMessage();
+
+                //add post invoke message processor
+                MessageContext mContext = webServiceContext.getMessageContext();
+                WrappedMessageContext wmc = (WrappedMessageContext)mContext;
+                ProcessMessageAfterDownloaded interceptor = new ProcessMessageAfterDownloaded(transportId);
+                wmc.getWrappedMessage().getInterceptorChain().add(interceptor);
+
+                return transformerService.transformDomainToTransition(msg);
+            } else {
+                throw new IllegalArgumentException("The message is not in pending state!");
+            }
+
+        } else {
+            throw new IllegalArgumentException("The provided transport id is not available!");
+        }
+
     }
 
     @Override
-    public EmptyRequestType submitMessageResult(SubmitMessageResultRequest submitMessageResultRequest) {
-        throw new RuntimeException("Not Implemented yet!");
+    public EmptyRequestType acknowledgeMessage(DomibusConnectorMessageResponseType ack) {
+        TransportStateService.TransportId transportId = new TransportStateService.TransportId(ack.getResponseForMessageId());
+
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+        if (ack.isResult()) {
+            transportState.setStatus(TransportState.ACCEPTED);
+        } else {
+            transportState.setStatus(TransportState.FAILED);
+        }
+        transformerService.transformTransitionToDomain(ack.getMessageErrors());
+        transportState.setRemoteMessageId(ack.getAssignedMessageId());
+        transportState.setText(ack.getResultMessage());
+
+        transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
+        return new EmptyRequestType();
     }
 
-    @Autowired
-    WsActiveLinkPartnerManager wsActiveLinkPartnerManager;
 
     private Optional<DomibusConnectorLinkPartner> checkBackendClient() throws DomibusConnectorBackendDeliveryException {
         if (this.webServiceContext == null) {
@@ -189,6 +246,22 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     }
 
+    private class ProcessMessageAfterDownloaded extends AbstractPhaseInterceptor<Message> {
+        private final TransportStateService.TransportId transportId;
+
+        ProcessMessageAfterDownloaded(TransportStateService.TransportId transport) {
+            super(Phase.POST_INVOKE);
+            this.transportId = transport;
+        }
+
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            LOGGER.trace("ProcessMessageAfterDownloaded: handleMessage: invoking backendSubmissionService.processMessageAfterDownloaded setting transport set to " + TransportState.PENDING_DOWNLOADED);
+            TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+            transportState.setStatus(TransportState.PENDING_DOWNLOADED);
+            transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
+        }
+    }
 
     private class ProcessMessageAfterDeliveredToBackendInterceptor extends AbstractPhaseInterceptor<Message> {
 
