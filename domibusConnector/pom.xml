@@ -88,7 +88,7 @@
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
         <vaadin.version>14.5.3</vaadin.version>
         <dss.tools.version>5.8</dss.tools.version>
-        <org.bouncycastl.version>1.64</org.bouncycastl.version>
+        <org.bouncycastl.version>1.66</org.bouncycastl.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -390,7 +390,7 @@
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
-                <version>2.1.5</version>
+                <version>2.1.7</version>
             </dependency>
             <!-- handle not matching dependencies in apache cxf package -->
             <!--            <dependency>-->
@@ -445,7 +445,7 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2</version>
+                <version>3.2.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -505,7 +505,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.20</version>
+                <version>1.21</version>
             </dependency>
             <!-- MANAGED TEST DEPENDENCIES -->
             <!--            <dependency>-->
@@ -517,7 +517,7 @@
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>3.7</version>
+                <version>3.17</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -561,7 +561,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>28.2-jre</version>
+                <version>30.0-jre</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
