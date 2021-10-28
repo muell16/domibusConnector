@@ -28,7 +28,7 @@ public class DCConnector2ConnectorTestServiceImpl implements DCConnector2Connect
 	}
 	
 	@Override
-	public AS4Service getTestSerice(BusinessDomainId laneId) {
+	public AS4Service getTestService(BusinessDomainId laneId) {
 		ConnectorTestConfigurationProperties c2cTestProperties = configurationPropertyLoaderService.loadConfiguration(laneId, ConnectorTestConfigurationProperties.class);
 		return c2cTestProperties.getService();
 	}

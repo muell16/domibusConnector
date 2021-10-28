@@ -164,7 +164,7 @@ public class SendC2CTestMessage extends VerticalLayout implements AfterNavigatio
 		WebMessageDetail.Action action = new WebMessageDetail.Action(testAction.getAction());
 		msg.getMessageInfo().setAction(action);
 		
-		AS4Service testService = c2cTestService.getTestSerice(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+		AS4Service testService = c2cTestService.getTestService(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 		WebMessageDetail.Service service = new WebMessageDetail.Service(testService.getName(), testService.getServiceType());
 		msg.getMessageInfo().setService(service);
 		

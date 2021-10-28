@@ -24,7 +24,7 @@ public interface DCConnector2ConnectorTestService {
     	return DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
     }
 
-	AS4Service getTestSerice(BusinessDomainId laneId);
+	AS4Service getTestService(BusinessDomainId laneId);
 
 	AS4Action getTestAction(BusinessDomainId laneId);
 
