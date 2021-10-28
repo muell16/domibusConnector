@@ -15,6 +15,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsB
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
-@Profile("plugin-" + TestbackendPlugin.IMPL_NAME)
+@ConditionalOnBean(TestBackendConfiguration.class)
 @Component
 public class SubmitToTestLink implements SubmitToLinkPartner {
 
