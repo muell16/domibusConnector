@@ -104,6 +104,12 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
 
 	}
+	
+	@Override
+	public LinkedList<WebMessage> findConnectorTestMessages(String connectorTestBackendName){
+		List<PDomibusConnectorMessage> dbMessages = messageDao.findByBackendName(connectorTestBackendName);
+        return mapDbMessagesToWebMessages(dbMessages);
+	}
 
 
 	private Example<PDomibusConnectorMessage> getpDomibusConnectorMessageExample(Example<WebMessage> example) {

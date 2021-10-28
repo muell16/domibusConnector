@@ -38,6 +38,8 @@ public interface DomibusConnectorMessageDao extends JpaRepository<PDomibusConnec
 
     public List<PDomibusConnectorMessage> findByConversationId(String conversationId);
     
+    public List<PDomibusConnectorMessage> findByBackendName(String backendName);
+    
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null ")
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         

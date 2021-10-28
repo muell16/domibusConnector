@@ -25,7 +25,7 @@ public class WebMessageDetail {
 		}
 		@Override
 		public String toString() {
-			return "Party [partyId=" + partyId + ", partyIdType=" + partyIdType + "]";
+			return partyId+"("+partyIdType+")";
 		}
 		public String getPartyId() {
 			return partyId;
@@ -41,6 +41,15 @@ public class WebMessageDetail {
 		}
 		public String getPartyString() {
 			return partyId+"("+partyIdType+")";
+		}
+		public void setPartyString(String partyString) {
+			if(partyString.indexOf("(")>0 && partyString.indexOf(")")>0) {
+			this.partyId = partyString.substring(0, partyString.indexOf("("));
+			this.partyIdType = partyString.substring(partyString.indexOf("(")+1, partyString.indexOf(")"));
+			}else {
+				this.partyId = partyString;
+			}
+			
 		}
 	}
 	
@@ -80,7 +89,7 @@ public class WebMessageDetail {
 			this.serviceType = serviceType;
 		}
 		public String getServiceString() {
-			return service+"("+serviceType+")";
+			return serviceType!=null?service+"("+serviceType+")":service;
 		}
 		
 	}

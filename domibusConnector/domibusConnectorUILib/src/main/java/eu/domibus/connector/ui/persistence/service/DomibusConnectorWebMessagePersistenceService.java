@@ -25,5 +25,6 @@ public interface DomibusConnectorWebMessagePersistenceService {
 	long count(Example<WebMessage> example);
 	Optional<WebMessage> getOutgoingMessageByBackendMessageId(String backendMessageId);
 	Optional<WebMessage> getIncomingMessageByEbmsMessageId(String ebmsMessageId);
+	LinkedList<WebMessage> findConnectorTestMessages(String connectorTestBackendName);
 
 }

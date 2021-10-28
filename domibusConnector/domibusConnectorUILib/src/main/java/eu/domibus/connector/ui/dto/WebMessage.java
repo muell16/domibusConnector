@@ -29,6 +29,7 @@ public class WebMessage {
 	private ZonedDateTime rejected;
 	private WebMessageDetail messageInfo = new WebMessageDetail();
 	private LinkedList<WebMessageEvidence> evidences = new LinkedList<WebMessageEvidence>();
+	private LinkedList<WebMessageFile> files = new LinkedList<WebMessageFile>();
 	
 		
 	public String getConnectorMessageId() {
@@ -206,6 +207,11 @@ public class WebMessage {
 	public LinkedList<WebMessageEvidence> getEvidences() {
 		return evidences;
 	}
+
+	public LinkedList<WebMessageFile> getFiles() {
+		return files;
+	}
+
 
 	public String getDirection() {
 		if(!StringUtils.isEmpty(getDirectionSource()) && !StringUtils.isEmpty(getDirectionTarget()))
