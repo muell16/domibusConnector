@@ -5,17 +5,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = QueuesConfigurationProperties.PREFIX)
 public class QueuesConfigurationProperties {
 
-    public static final String PREFIX = "connector.queues";
-    // must match up with queuePrefix attribute of <individualDeadLetterStrategy> configured in activemq.xml
+    public static final String PREFIX = ""; //connector.queues.
     public static final String DLQ_PREFIX = "DLQ.";
 
-    private String toConnectorControllerQueue = "toConnectorControllerQueue";
+    private String toConnectorControllerQueue = PREFIX + "toConnectorControllerQueue";
     private String toConnectorControllerDeadLetterQueue = DLQ_PREFIX + toConnectorControllerQueue;
 
-    private String toLinkQueue = "submitToLinkQueue";
+    private String toLinkQueue = PREFIX + "submitToLinkQueue";
     private String toLinkDeadLetterQueue = DLQ_PREFIX + toLinkQueue;
 
-    private String cleanupQueue = "cleanUpQueue";
+    private String cleanupQueue = PREFIX + "cleanUpQueue";
     private String cleanupDeadLetterQueue = DLQ_PREFIX + cleanupQueue;
 
     public String getToConnectorControllerQueue() {

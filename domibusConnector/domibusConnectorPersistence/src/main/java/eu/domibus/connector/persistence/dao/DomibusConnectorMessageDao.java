@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -63,7 +64,13 @@ public interface DomibusConnectorMessageDao extends JpaRepository<PDomibusConnec
     @Query("SELECT case when (count(m) > 0) then true else false end "
             + "FROM PDomibusConnectorMessage m "
             + "WHERE m.id = ?1 AND (m.confirmed is not null OR m.rejected is not null)")
-    public boolean checkMessageConfirmedOrRejected(Long messageId);    
+    public boolean checkMessageConfirmedOrRejected(Long messageId);
+
+    // if DB fields confirmed OR rejected are NOT NULL -> then true
+    @Query("SELECT case when (count(m) > 0) then true else false end "
+            + "FROM PDomibusConnectorMessage m "
+            + "WHERE m.connectorMessageId = ?1 AND (m.confirmed is not null OR m.rejected is not null)")
+    public boolean checkMessageConfirmedOrRejected(String messageId);
 
     // if DB field rejected is NOT NULL -> then true
     @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")

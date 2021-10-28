@@ -18,7 +18,11 @@ public interface DCMessagePersistenceService {
 
     boolean checkMessageConfirmed(DomibusConnectorMessage message);
 
-    boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message);
+    default boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
+        return checkMessageConfirmedOrRejected(message.getConnectorMessageId());
+    }
+
+    boolean checkMessageConfirmedOrRejected(DomibusConnectorMessageId message);
 
     boolean checkMessageRejected(DomibusConnectorMessage message);
 

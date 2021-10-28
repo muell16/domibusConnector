@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsTemplate;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
@@ -60,25 +59,36 @@ public class QueueHelper implements HasManageableDlq {
         });
     }
 
-    @Override
-    public void moveMsgFromDlqToQueue(String jmsId) {
-        final DomibusConnectorMessage c = (DomibusConnectorMessage) jmsTemplate.receiveSelectedAndConvert(dlq, "JMSMessageID = '" + jmsId + "'");
-        putOnQueue(c);
-    }
-
-    @Override
-    public void deleteMsgFromDlq(String jmsId) {
-        deleteMsg(jmsId, dlq);
-    }
-
-    @Override
-    public void deleteMsgFromQueue(String jmsId) {
-        deleteMsg(jmsId, destination);
-    }
-
-    private void deleteMsg(String jmsId, Destination destination) {
-        final Message m = jmsTemplate.receiveSelected(destination, "JMSMessageID = '" + jmsId + "'");
+    // TODO this is a replacement for the method below, this method does not depend on a destination. It can restore any dlq message to the queue where it failed processing.
+    private void moveAnyDlqMessageBackToItsOrigQueue(Message msg) {
         try {
+            final Message message = jmsTemplate.receiveSelected(msg.getJMSDestination(), "JMSMessageID = '" + msg.getJMSMessageID() + "'");
+            jmsTemplate.send(msg.getJMSDestination().toString().replace("DLQ.", ""), session -> msg);
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // TODO this is not working, throws:
+//      XA resource 'jmsConnectionFactory': commit for XID 'bla.bla' raised -4: the supplied XID is invalid for this XA resource
+    @Override
+    public void moveMsgFromDlqToQueue(Message msg) {
+        try {
+            final DomibusConnectorMessage c = (DomibusConnectorMessage) jmsTemplate.receiveSelectedAndConvert(msg.getJMSDestination(), "JMSMessageID = '" + msg.getJMSMessageID() + "'");
+            putOnQueue(c);
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteMsg(Message msg) {
+        try {
+            final Message m =
+                    jmsTemplate.receiveSelected(
+                            msg.getJMSDestination(),
+                            "JMSMessageID = '" + msg.getJMSMessageID() + "'");
+
             if (m != null) {
                 m.acknowledge();
             }

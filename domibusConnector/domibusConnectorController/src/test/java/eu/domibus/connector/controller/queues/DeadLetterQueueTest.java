@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = {DeadLetterQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
-class DeadLetterQueueTest {
+public class DeadLetterQueueTest {
 
     @SpringBootApplication
     public static class MyTestContext {
@@ -132,7 +132,7 @@ class DeadLetterQueueTest {
     }
 
     @Test
-    public void when_message_handling_in_transition_from_gateway_to_backend_fails_the_message_should_end_up_in_the_dead_letter_queue_configured_for_connector_to_link_queue() {
+    public void when_message_handling_in_transition_from_gateway_to_backend_fails_the_message_should_end_up_in_the_dead_letter_queue_configured_for_connector_to_link_queue() throws InterruptedException {
 
         // Arrange
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(submitToLinkService).submitToLink(any());
@@ -145,11 +145,13 @@ class DeadLetterQueueTest {
         // Act
         txTemplate.executeWithoutResult(tx -> toLinkQueueProducer.putOnQueue(message));
 
+//        Thread.sleep(300000000);
+
         // Assert
         Assertions.assertAll("Should return Message from DLQ",
                 () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
                     nonXaJmsTemplate.setReceiveTimeout(20000);
-                    nonXaJmsTemplate.setSessionTransacted(false);
+//                    nonXaJmsTemplate.setSessionTransacted(false);
                     domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkDeadLetterQueue());
                     domibusConnectorMessage[1] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkQueue());
                 }),

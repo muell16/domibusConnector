@@ -42,17 +42,12 @@ public abstract class ManageableQueue implements HasManageableDlq {
     }
 
     @Override
-    public void moveMsgFromDlqToQueue(String jmsId) {
-        queueHelper.moveMsgFromDlqToQueue(jmsId);
+    public void moveMsgFromDlqToQueue(Message msg) {
+        queueHelper.moveMsgFromDlqToQueue(msg);
     }
 
     @Override
-    public void deleteMsgFromDlq(String jmsId) {
-        queueHelper.deleteMsgFromDlq(jmsId);
-    }
-
-    @Override
-    public void deleteMsgFromQueue(String jmsId) {
-        queueHelper.deleteMsgFromQueue(jmsId);
+    public void deleteMsg(Message msg) {
+        queueHelper.deleteMsg(msg);
     }
 }

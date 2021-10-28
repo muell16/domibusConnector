@@ -2,21 +2,25 @@ package eu.domibus.connector.controller.queues;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
-import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.activemq.artemis.api.core.QueueConfiguration;
+import org.apache.activemq.artemis.api.core.RoutingType;
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.jms.artemis.ArtemisConfigurationCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.util.ErrorHandler;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.validation.Validator;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @EnableJms
 @Configuration
@@ -91,5 +95,36 @@ public class JmsConfiguration {
         return activeMQQueue;
     }
 
+
+    @Bean
+    ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
+        return configuration -> {
+            AddressSettings addressSettings = basicAddressConfig();
+            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getToLinkQueue(), addressSettings);
+
+            addressSettings = basicAddressConfig();
+            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToConnectorControllerDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getToConnectorControllerQueue(), addressSettings);
+
+            addressSettings = basicAddressConfig();
+            addressSettings.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getCleanupQueue(), addressSettings);
+        };
+    }
+
+    private AddressSettings basicAddressConfig() {
+        AddressSettings addressSettings = new AddressSettings();
+        addressSettings.setAutoCreateQueues(true);
+        addressSettings.setAutoCreateDeadLetterResources(true);
+        addressSettings.setAutoCreateAddresses(true);
+        addressSettings.setAutoCreateExpiryResources(true);
+        addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
+        addressSettings.setMaxDeliveryAttempts(3);
+        return addressSettings;
+    }
 
 }

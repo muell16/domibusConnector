@@ -67,9 +67,8 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     }
 
     @Override
-    public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
-        return this.messageDao.checkMessageConfirmedOrRejected(dbMessage.getId());        
+    public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessageId messageId) {
+        return messageDao.checkMessageConfirmedOrRejected(messageId.getConnectorMessageId());
     }
 
     @Override

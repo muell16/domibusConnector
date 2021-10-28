@@ -32,11 +32,6 @@ class TransportStepPersistenceServiceImplITCase {
     @Autowired
     TransportStepPersistenceService transportStepPersistenceService;
 
-    @Autowired
-    DCMessagePersistenceService messagePersistenceService;
-
-    @Autowired
-    DomibusConnectorMessageDao msgDao;
 
     @Test
     void createNewTransportStep() {
@@ -70,7 +65,7 @@ class TransportStepPersistenceServiceImplITCase {
         step.setTransportId(new TransportStateService.TransportId("msg3_link2_1"));
         step.setAttempt(1);
         step.setLinkPartnerName(lp);
-        step.getStatusUpdates().add(statusUpdate);
+        step.addStatusUpdate(statusUpdate);
 
         transportStepPersistenceService.createNewTransportStep(step);
 

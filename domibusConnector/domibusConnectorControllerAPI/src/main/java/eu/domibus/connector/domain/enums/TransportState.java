@@ -9,6 +9,7 @@ public enum TransportState {
 
     ACCEPTED("accepted", 10),
     PENDING("pending", 1),
+    PENDING_DOWNLOADED("pend_down", 2),
     FAILED("failed", 10);
 
     private TransportState(String dbName, int priority) {
