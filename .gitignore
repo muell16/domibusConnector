@@ -161,3 +161,4 @@ node_modules
 /domibusConnector/domibusConnectorWeb/package-lock.json
 /domibusConnector/domibusConnectorLauncher/domibusConnectorStandaloneLauncher/package-lock.json
 /domibusConnector/domibusConnectorWeb/transaction-logs/*.log
+.idea
