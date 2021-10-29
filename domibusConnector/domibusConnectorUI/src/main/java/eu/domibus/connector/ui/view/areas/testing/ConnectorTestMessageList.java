@@ -1,28 +1,24 @@
 package eu.domibus.connector.ui.view.areas.testing;
 
+import java.util.Optional;
+
 import javax.annotation.PostConstruct;
 
-import org.apache.tomcat.util.buf.C2BConverter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
-import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
-import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
-
-import java.util.Optional;
 
 @Component
 @UIScope
@@ -41,12 +37,12 @@ public class ConnectorTestMessageList extends VerticalLayout implements AfterNav
 	
 	WebMessagesGrid grid;
 	
-	public ConnectorTestMessageList(Optional<WebMessageService> messageService,
+	public ConnectorTestMessageList(WebMessageService messageService,
 									MessageDetails details,
-									WebConnectorTestService testService) {
-		this.messageService = messageService.orElse(null);
+									Optional<WebConnectorTestService> testService) {
+		this.messageService = messageService;
 		this.details = details;
-		this.testService = testService;
+		this.testService = testService.orElse(null);
 	}
 
 	@PostConstruct
