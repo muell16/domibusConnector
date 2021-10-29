@@ -22,6 +22,8 @@ import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
 
+import java.util.Optional;
+
 @Component
 @UIScope
 @Route(value = ConnectorTestMessageList.ROUTE, layout = ConnectorTestsLayout.class)
@@ -31,16 +33,18 @@ public class ConnectorTestMessageList extends VerticalLayout implements AfterNav
 
 	public static final String ROUTE = "c2cmessages";
 	
-	private MessageDetails details;
-	private WebMessageService messageService;
-	private WebConnectorTestService testService;
+	private final MessageDetails details;
+	private final WebMessageService messageService;
+	private final WebConnectorTestService testService;
 	
 	private String connectorTestBackendName = DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
 	
 	WebMessagesGrid grid;
 	
-	public ConnectorTestMessageList(WebMessageService messageService, MessageDetails details, WebConnectorTestService testService) {
-		this.messageService = messageService;
+	public ConnectorTestMessageList(Optional<WebMessageService> messageService,
+									MessageDetails details,
+									WebConnectorTestService testService) {
+		this.messageService = messageService.orElse(null);
 		this.details = details;
 		this.testService = testService;
 	}
