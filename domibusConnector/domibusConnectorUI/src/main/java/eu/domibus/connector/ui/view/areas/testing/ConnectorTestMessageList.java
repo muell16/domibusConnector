@@ -13,12 +13,16 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
 import eu.domibus.connector.ui.dto.WebMessage;
+import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
+
+import java.util.Optional;
 
 @Component
 @UIScope
@@ -29,14 +33,18 @@ public class ConnectorTestMessageList extends VerticalLayout implements AfterNav
 
 	public static final String ROUTE = "c2cmessages";
 	
-	private MessageDetails details;
-	private WebMessageService messageService;
-	private DCConnector2ConnectorTestService testService;
+	private final MessageDetails details;
+	private final WebMessageService messageService;
+	private final WebConnectorTestService testService;
+	
+	private String connectorTestBackendName = DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
 	
 	WebMessagesGrid grid;
 	
-	public ConnectorTestMessageList(WebMessageService messageService, MessageDetails details, DCConnector2ConnectorTestService testService) {
-		this.messageService = messageService;
+	public ConnectorTestMessageList(Optional<WebMessageService> messageService,
+									MessageDetails details,
+									WebConnectorTestService testService) {
+		this.messageService = messageService.orElse(null);
 		this.details = details;
 		this.testService = testService;
 	}
@@ -45,9 +53,6 @@ public class ConnectorTestMessageList extends VerticalLayout implements AfterNav
 	void init() {
 		grid = new WebMessagesGrid(details);
 		
-//		grid.setItems(messages);
-//		grid.setItemDetailsRenderer(createDetailsRenderer());
-		
 		grid.setVisible(true);
 		
 		add(grid);
@@ -55,13 +60,11 @@ public class ConnectorTestMessageList extends VerticalLayout implements AfterNav
 	
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
-		grid.setItems(messageService.getConnectorTestMessages(testService.getTestBackendName()));
+		if(testService != null)
+			connectorTestBackendName = testService.getConnectorTestBackendName();
+		grid.setItems(messageService.getConnectorTestMessages(connectorTestBackendName));
 		
 	}
 	
-//	private ComponentRenderer<MessageDetails, WebMessage> createDetailsRenderer() {
-//        return new ComponentRenderer<>(() -> new MessageDetails(messageService),
-//        		MessageDetails::loadMessageDetails);
-//    }
 
 }
