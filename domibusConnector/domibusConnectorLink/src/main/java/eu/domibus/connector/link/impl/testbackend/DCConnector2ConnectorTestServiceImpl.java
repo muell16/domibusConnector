@@ -44,6 +44,7 @@ public class DCConnector2ConnectorTestServiceImpl implements DCConnector2Connect
 	@Override
 	public void submitTestMessage(DomibusConnectorMessageType testMessage) {
 		DomibusConnectorMessage domibusConnectorMessage = transformerService.transformTransitionToDomain(testMessage, messageIdGenerator.generateDomibusConnectorMessageId());
+		domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(getTestBackendName());
 		submitToConnector.submitToConnector(domibusConnectorMessage, new DomibusConnectorLinkPartner.LinkPartnerName(DomibusConnectorDefaults.DEFAULT_TEST_BACKEND), LinkType.BACKEND);
 	}
 	
