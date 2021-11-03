@@ -14,6 +14,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -24,7 +26,7 @@ import org.springframework.context.ApplicationContext;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-public abstract class LinkConfiguration extends VerticalLayout {
+public abstract class LinkConfiguration extends VerticalLayout implements AfterNavigationObserver {
 
 
     private final DCLinkFacade dcLinkFacade;
@@ -32,7 +34,8 @@ public abstract class LinkConfiguration extends VerticalLayout {
     private final LinkType linkType;
 
     private Grid<DomibusConnectorLinkPartner> linkGrid = new Grid<>();
-    private Button addLinkButton = new Button("Add Link");
+    protected Button addLinkButton = new Button("Add Link");
+    protected HorizontalLayout buttonBar = new HorizontalLayout();
 
     protected LinkConfiguration(DCLinkFacade dcLinkFacade, ApplicationContext applicationContext, LinkType linkType) {
         this.dcLinkFacade = dcLinkFacade;
@@ -48,7 +51,8 @@ public abstract class LinkConfiguration extends VerticalLayout {
     private void initUI() {
         this.setSizeFull();
 
-        addAndExpand(addLinkButton);
+        addAndExpand(buttonBar);
+        buttonBar.add(addLinkButton);
         addLinkButton.addClickListener(this::addLinkButtonClicked);
 //        addLinkButton.setEnabled(false);
 
@@ -101,14 +105,10 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
                 Button startLinkButton = new Button(new Icon(VaadinIcon.PLAY));
                 startLinkButton.addClickListener(event -> startLinkButtonClicked(event, linkPartner));
-//                Optional<ActiveLinkPartnerManager> activeLinkPartner = linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName());
-//                boolean linkPartnerPresent = activeLinkPartner.isPresent();
-//                startLinkButton.setEnabled(!linkPartnerPresent);
                 hl.add(startLinkButton);
 
                 Button stopLinkButton = new Button(new Icon(VaadinIcon.STOP));
                 stopLinkButton.addClickListener(event -> stopLinkButtonClicked(event, linkPartner));
-//                stopLinkButton.setEnabled(linkPartnerPresent);
                 hl.add(stopLinkButton);
 
                 return hl;
@@ -196,7 +196,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     }
 
-    protected void onAttach(AttachEvent attachEvent) {
+    public void afterNavigation(AfterNavigationEvent event) {
         refreshList();
     }
 

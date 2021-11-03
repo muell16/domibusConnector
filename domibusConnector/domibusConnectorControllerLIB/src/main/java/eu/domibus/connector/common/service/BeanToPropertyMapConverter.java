@@ -20,6 +20,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Converts a Bean to a map of String properties
+ * in a way so the properties can be loaded again
+ * into the Bean as configuration properties
+ */
 @Component
 public class BeanToPropertyMapConverter {
 

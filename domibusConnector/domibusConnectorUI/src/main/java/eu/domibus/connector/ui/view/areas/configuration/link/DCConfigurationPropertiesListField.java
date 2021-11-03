@@ -194,11 +194,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
     }
 
-//    @Override
-//    public boolean isReadOnly() {
-//        return this.readOnly;
-//    }
-
     @Override
     protected Map<String, String> generateModelValue() {
         propertiesBinder.writeBeanAsDraft(properties, true);
@@ -211,14 +206,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         propertiesBinder.setBean(value);
     }
 
-//    @Override
-//    public void setValue(Map<String, String> value) {
-//
-//    }
-//
-//    public Map<String, String> getValue() {
-//        return this.properties;
-//    }
 
 }
 
