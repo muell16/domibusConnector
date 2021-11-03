@@ -153,12 +153,13 @@ public class DCLinkConfigPanel extends VerticalLayout
         if (value != null) {
             configurationClasses = value.getPluginConfigurationProperties();
         }
+        if (configurationClasses != null) {
+            List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
+                    .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
+                    .flatMap(Function.identity()).collect(Collectors.toList());
 
-        List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
-                .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-                .flatMap(Function.identity()).collect(Collectors.toList());
-
-        configPropsList.setConfigurationProperties(configurationProperties);
+            configPropsList.setConfigurationProperties(configurationProperties);
+        }
     }
 
     public void writeBean(DomibusConnectorLinkConfiguration lnkConfig) throws ValidationException {
@@ -187,6 +188,7 @@ public class DCLinkConfigPanel extends VerticalLayout
     @Override
     public void setReadOnly(boolean readOnly) {
         linkConfigurationBinder.setReadOnly(readOnly);
+        this.implChooser.setReadOnly(readOnly);
         this.readOnly = readOnly;
         updateUI();
     }
