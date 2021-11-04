@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.4.0-alpha1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -116,7 +115,6 @@
                 <artifactId>spring-property-configuration-manager</artifactId>
                 <version>${ecodex.dependencies.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.github.librepdf</groupId>
                 <artifactId>openpdf</artifactId>
@@ -138,25 +136,21 @@
                 <artifactId>dss-service</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-tsl-jaxb</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-tsl-validation</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-asic-xades</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-pades</artifactId>
@@ -520,8 +514,8 @@
                 <version>3.17</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.apache.commons</groupId>
                         <artifactId>commons-collections4</artifactId>
+                        <groupId>org.apache.commons</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -908,7 +902,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <inherited>false</inherited>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>2.2.1</version>
@@ -931,11 +924,11 @@
                                 <require>asciidoctor-diagram</require>
                             </requires>
                             <!-- TODO: make artifact here and reference it as dependency !!! -->
-<!--                            <outputDirectory>${project.build.directory}/domibusConnectorUI/target/classes/static</outputDirectory>-->
+                            <!--                            <outputDirectory>${project.build.directory}/domibusConnectorUI/target/classes/static</outputDirectory>-->
                             <outputDirectory>${project.basedir}/domibusConnectorUI/target/classes/static/documentation</outputDirectory>
                             <attributes>
                                 <source-highlighter>coderay</source-highlighter>
-<!--                                <data-uri/>-->
+                                <!--                                <data-uri/>-->
                                 <mvnbasedir>${project.basedir}</mvnbasedir>
                                 <imgdir>./images</imgdir>
                                 <toc>left</toc>
@@ -951,6 +944,7 @@
                         <version>2.2.1</version>
                     </dependency>
                 </dependencies>
+                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
