@@ -1,0 +1,2 @@
+= Domibus Connector Documentation {project-version}
+
