@@ -151,7 +151,7 @@ public class WebPModeService {
                 .get();
 
         HomePartyConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), HomePartyConfigurationProperties.class);
-        homePartyConfigurationProperties.setName(homeParty.getName());
+        homePartyConfigurationProperties.setName(homeParty.getIdentifier().get(0).getPartyId());
         homePartyConfigurationProperties.setEndpointAddress(homeParty.getEndpoint());
 
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), homePartyConfigurationProperties);
