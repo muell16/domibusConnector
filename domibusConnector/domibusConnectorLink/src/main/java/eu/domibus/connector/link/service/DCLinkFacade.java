@@ -60,14 +60,18 @@ public class DCLinkFacade {
                 .filter(Objects::nonNull)
                 .flatMap(b -> mapCnfg(b, LinkType.BACKEND)).collect(Collectors.toList()));
         allLinks.addAll(mapCnfg(lnkConfig.getGateway(), LinkType.GATEWAY).collect(Collectors.toList()));
-
         return allLinks;
     }
 
     private Stream<DomibusConnectorLinkPartner> mapCnfg(DCLinkPluginConfigurationProperties.DCLnkPropertyConfig b, LinkType linkType) {
+        if (b == null) {
+            return Stream.empty();
+        }
         DomibusConnectorLinkConfiguration linkConfig = new DomibusConnectorLinkConfiguration();
-        BeanUtils.copyProperties(b.getLinkConfig(), linkConfig);
-        linkConfig.setProperties(mapKebabCaseToCamelCase(b.getLinkConfig().getProperties()));
+        if (b.getLinkConfig() != null) {
+            BeanUtils.copyProperties(b.getLinkConfig(), linkConfig);
+            linkConfig.setProperties(mapKebabCaseToCamelCase(b.getLinkConfig().getProperties()));
+        }
         linkConfig.setConfigurationSource(ConfigurationSource.ENV);
         return b.getLinkPartners().stream().map(p -> {
             DomibusConnectorLinkPartner p1 = new DomibusConnectorLinkPartner();
