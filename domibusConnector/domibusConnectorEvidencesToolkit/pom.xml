@@ -4,38 +4,38 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.4.0-alpha2-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorEvidencesToolkit</artifactId>
     <name>${project.artifactId}</name>
     <description>The evidence toolkit contains the evidence releated services. It is is responsibly for creating the evidences.</description>
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>eu.ecodex.evidences</groupId>-->
-<!--            <artifactId>EvidenceBuilder</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jaxb-impl</artifactId>-->
-<!--                    <groupId>com.sun.xml.bind</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jaxb-api</artifactId>-->
-<!--                    <groupId>javax.xml.bind</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jaxb-xjc</artifactId>-->
-<!--                    <groupId>com.sun.xml.bind</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>bcmail-jdk15on</artifactId>-->
-<!--                    <groupId>org.bouncycastle</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>bcprov-jdk15on</artifactId>-->
-<!--                    <groupId>org.bouncycastle</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>eu.ecodex.evidences</groupId>-->
+        <!--            <artifactId>EvidenceBuilder</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jaxb-impl</artifactId>-->
+        <!--                    <groupId>com.sun.xml.bind</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jaxb-api</artifactId>-->
+        <!--                    <groupId>javax.xml.bind</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jaxb-xjc</artifactId>-->
+        <!--                    <groupId>com.sun.xml.bind</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcmail-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcprov-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
@@ -141,7 +141,6 @@
             <artifactId>dss-utils-apache-commons</artifactId>
             <version>${dss.tools.version}</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>
