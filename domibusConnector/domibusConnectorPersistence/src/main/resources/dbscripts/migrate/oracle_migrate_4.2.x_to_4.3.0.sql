@@ -37,19 +37,19 @@ alter table DC_TRANSPORT_STEP modify       ("CONNECTOR_MESSAGE_ID" not null);
 
 -- FK_MESSAGESTEP_MESSAGE is very likely already deleted, because the connector does not work, if it still exists.
 -- To prevent errors I wrapped the deletion in a psql try catch
-DECLARE
-    DC_TRANSPORT_STEP       VARCHAR2(250):= 'DC_TRANSPORT_STEP';
-    FK_MESSAGESTEP_MESSAGE           VARCHAR2(250):= 'FK_MESSAGESTEP_MESSAGE';
-BEGIN
-    EXECUTE IMMEDIATE 'alter table ' || DC_TRANSPORT_STEP || ' drop constraint ' || FK_MESSAGESTEP_MESSAGE;
-EXCEPTION
-    WHEN OTHERS THEN
-        -- "ORA-02443: Cannot drop constraint  - nonexistent constraint"
-        -- exceptions are ignored, anything else is raised
-        IF SQLCODE != -2443 THEN
-            RAISE;
-        END IF;
-END;
+-- DECLARE
+--     DC_TRANSPORT_STEP       VARCHAR2(250):= 'DC_TRANSPORT_STEP';
+--     FK_MESSAGESTEP_MESSAGE           VARCHAR2(250):= 'FK_MESSAGESTEP_MESSAGE';
+-- BEGIN
+--     EXECUTE IMMEDIATE 'alter table ' || DC_TRANSPORT_STEP || ' drop constraint ' || FK_MESSAGESTEP_MESSAGE;
+-- EXCEPTION
+--     WHEN OTHERS THEN
+--         -- "ORA-02443: Cannot drop constraint  - nonexistent constraint"
+--         -- exceptions are ignored, anything else is raised
+--         IF SQLCODE != -2443 THEN
+--             RAISE;
+--         END IF;
+-- END;
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
