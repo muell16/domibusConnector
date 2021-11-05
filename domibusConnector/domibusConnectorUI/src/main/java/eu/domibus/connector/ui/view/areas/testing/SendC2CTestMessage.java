@@ -2,6 +2,8 @@ package eu.domibus.connector.ui.view.areas.testing;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
@@ -163,23 +167,108 @@ public class SendC2CTestMessage extends VerticalLayout implements AfterNavigatio
 		
 		WebMessage msg = new WebMessage();
 
-		DomibusConnectorParty pParty = pModeService.getHomeParty();
-
-		WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType());
-		msg.getMessageInfo().setFrom(homeParty);
-
-		WebMessageDetail.Action action = webTestService.getTestAction();
-		msg.getMessageInfo().setAction(action);
-
-		WebMessageDetail.Service service = webTestService.getTestService();
-		msg.getMessageInfo().setService(service);
-
-		messageForm.setMessage(msg);
 		
-		uploadFileButton.setEnabled(true);
-		submitMessageButton.setEnabled(true);
+		resultArea.removeAll();
 
-		refreshPage(null);
+
+		boolean actionSet = loadAndValidateTestAction(msg);
+		
+		boolean serviceSet = loadAndValidateTestService(msg);
+		
+		boolean fromPartySet = loadAndValidateFromParty(msg);
+		
+		if(!actionSet || !serviceSet || !fromPartySet) {
+			resultArea.setVisible(true);
+			uploadFileButton.setEnabled(false);
+			submitMessageButton.setEnabled(false);
+
+		}else {
+			resultArea.setVisible(false);
+			uploadFileButton.setEnabled(true);
+			submitMessageButton.setEnabled(true);
+			messageForm.setMessage(msg);
+			
+			refreshPage(null);
+		}
+
+	}
+	
+	private boolean loadAndValidateFromParty(WebMessage msg) {
+		DomibusConnectorParty pParty = pModeService.getHomeParty();
+		if(pParty != null) {
+			WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType());
+			msg.getMessageInfo().setFrom(homeParty);
+			return true;
+		}else {
+			LumoLabel resultLabel = new LumoLabel();
+			resultLabel.setText("FromParty could not be set! \n"
+					+ "Please check property 'gateway.name' and if the Party with the given PartyID and RoleType INITIATOR is part of the current active PMode Set. \n"
+					+ "Alternatively re-import the current PMode Set.");
+			resultLabel.getStyle().set("color", "red");
+			
+			resultArea.add(resultLabel);
+			resultArea.setVisible(true);
+			
+		}
+		return false;
+	}
+	
+	private boolean loadAndValidateTestAction(WebMessage msg) {
+		List<DomibusConnectorAction> actionList = pModeService.getActionList();
+		if(actionList!=null && !actionList.isEmpty()) {
+			WebMessageDetail.Action action = webTestService.getTestAction();
+			Optional<DomibusConnectorAction> testAction = actionList.stream()
+    				.filter(p -> (p.getAction().equals(action.getAction())))
+        			.findFirst();
+			if(testAction.isPresent()) {
+				msg.getMessageInfo().setAction(action);
+				return true;
+			}else {
+				LumoLabel resultLabel = new LumoLabel();
+				resultLabel.setText("Active PMode Set not valid. Connector test Action "+action.getAction()+" not in active PMode Set!");
+				resultLabel.getStyle().set("color", "red");
+				
+				resultArea.add(resultLabel);
+				resultArea.setVisible(true);
+			}
+		}else {
+			LumoLabel resultLabel = new LumoLabel();
+			resultLabel.setText("No active PMode Set imported or active PMode Set not valid. No Actions available!");
+			resultLabel.getStyle().set("color", "red");
+			
+			resultArea.add(resultLabel);
+			resultArea.setVisible(true);
+		}
+		return false;
+	}
+	
+	private boolean loadAndValidateTestService(WebMessage msg) {
+		List<DomibusConnectorService> serviceList = pModeService.getServiceList();
+		if(serviceList!=null && !serviceList.isEmpty()) {
+			WebMessageDetail.Service service = webTestService.getTestService();
+			Optional<DomibusConnectorService> testService = serviceList.stream()
+    				.filter(p -> (p.getService().equals(service.getService())))
+        			.findFirst();
+			if(testService.isPresent()) {
+				msg.getMessageInfo().setService(service);
+				return true;
+			}else {
+				LumoLabel resultLabel = new LumoLabel();
+				resultLabel.setText("Active PMode Set not valid. Connector test Service "+service.getService()+" not in active PMode Set!");
+				resultLabel.getStyle().set("color", "red");
+				
+				resultArea.add(resultLabel);
+				resultArea.setVisible(true);
+			}
+		}else {
+			LumoLabel resultLabel = new LumoLabel();
+			resultLabel.setText("No active PMode Set imported or active PMode Set not valid. No Services available!");
+			resultLabel.getStyle().set("color", "red");
+			
+			resultArea.add(resultLabel);
+			resultArea.setVisible(true);
+		}
+		return false;
 	}
 
 	private String checkFileValid(String fileName, WebMessageFileType fileType) {
