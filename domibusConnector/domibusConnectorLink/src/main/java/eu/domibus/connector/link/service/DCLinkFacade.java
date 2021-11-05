@@ -14,10 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,7 +56,9 @@ public class DCLinkFacade {
         List<DomibusConnectorLinkPartner> allLinks = new ArrayList<>();
 
         allLinks.addAll(dcLinkPersistenceService.getAllLinks());
-        allLinks.addAll(lnkConfig.getBackend().stream().flatMap(b -> mapCnfg(b, LinkType.BACKEND)).collect(Collectors.toList()));
+        allLinks.addAll(lnkConfig.getBackend().stream()
+                .filter(Objects::nonNull)
+                .flatMap(b -> mapCnfg(b, LinkType.BACKEND)).collect(Collectors.toList()));
         allLinks.addAll(mapCnfg(lnkConfig.getGateway(), LinkType.GATEWAY).collect(Collectors.toList()));
 
         return allLinks;
