@@ -1,0 +1,70 @@
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Connector Internal Message Flow
+
+== Queues Processor Overview
+
+[plantuml,queues,png]
+----
+@startuml
+
+
+top to bottom direction
+skinparam monochrome false
+skinparam linetype ortho
+
+ legend
+ |= |= Notes |
+ |<back:#FF0000>   </back>| The queues are named after their actual destination string |
+ |<back:yellow>   </back>| Components are named as in the source code |
+ |<back:white>   </back>| White boxes illustrate a transaction |
+ endlegend
+
+interface gw_link_partner
+interface backend_link_partner
+
+queue toConnectorControllerQueue
+queue DLQ.toConnectorControllerQueue
+
+queue submitToLinkQueue
+queue DLQ.submitToLinkQueue
+
+queue cleanUpQueue
+queue DLQ.cleanUpQueue
+
+
+package JTATransaction_Connector {
+    component ToConnectorControllerListener
+    component EvidenceMessageProcessor
+    component BackendToGatewayMessageProcessor
+    component GatewayToBackendMessageProcessor
+}
+package JTATransaction_ToLink {
+  component ToLinkPartnerListener
+  component SubmitToLinkService
+}
+package JTATransaction_CleanUp {
+  component ToCleanUpListener
+  component CleanupMessageProcessor
+
+}
+gw_link_partner --> toConnectorControllerQueue
+backend_link_partner --> toConnectorControllerQueue
+toConnectorControllerQueue --> ToConnectorControllerListener
+ToConnectorControllerListener --> EvidenceMessageProcessor : For any evidence message
+JTATransaction_Connector --> cleanUpQueue : on successful evidence processing
+ToConnectorControllerListener --> GatewayToBackendMessageProcessor : For a business message from gateway to backend
+ToConnectorControllerListener --> BackendToGatewayMessageProcessor : For a business message from backend to gateway
+JTATransaction_Connector -d-> submitToLinkQueue : messages, evidences
+JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on error (Dead Letter Queue)
+submitToLinkQueue -d-> ToLinkPartnerListener
+ToLinkPartnerListener -d-> SubmitToLinkService
+JTATransaction_ToLink -d-> DLQ.submitToLinkQueue: on error (Dead Letter Queue)
+JTATransaction_ToLink -d-> cleanUpQueue : no errors
+cleanUpQueue -d-> ToCleanUpListener
+JTATransaction_CleanUp -d-> DLQ.cleanUpQueue : on error (Dead Letter Queue)
+ToCleanUpListener -d-> CleanupMessageProcessor
+CleanupMessageProcessor -d-> exit
+@enduml
+----

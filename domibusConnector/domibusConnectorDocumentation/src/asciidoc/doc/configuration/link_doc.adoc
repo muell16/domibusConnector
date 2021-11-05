@@ -1,0 +1,232 @@
+
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+:mvnbasedir: ../../../../../../../
+
+
+= Connector Link Plugins Manual
+
+
+Since 4.3.0 the connector comes with different link plugins
+
+== The available plugins
+
+* WS Gateway Push Plugins
+* WS Gateway Pull Plugin
+* WS Backend Plugin
+
+
+=== Configuration Model
+
+The Links are known to the connectorController only by
+DomibusConnectorLinkPartner. Only the LinkPartner name is stored
+to the message processing. So how/who the LinkPartner is is completly
+transparent to the message processing flow.
+
+The configuration itself is read into the DomibusConnectorLink and
+DomibusConnectorLinkPartner classes. Afterwards when the LinkPartner and Link is
+activated during startup the ActiveLinkConfiguration and ActiveLInkPartner
+is created.
+
+==== Configuration Sources
+
+The configuration can be read from the environment (spring properties). This configuration cannot be changed via the UI. It is also supported to
+load the configuration from the DB. This configuration can be changed via the UI.
+
+===== The link-partner-name
+
+For every link partner a link-partner-name must be stated. This name
+has to be **unique** over all configuration sources. This name is used
+to address the link partner. It is also used within the backend routing.
+
+
+
+//image::plantuml/link_architecture.png[ClassDiagram]
+[plantuml, link config, png]
+----
+@startuml
+
+
+package "Config" {
+  class DomibusConnectorLinkConfiguration {
+    Properties properties
+    String linkImpl
+    LinkConfigName configName
+  }
+
+
+  class DomibusConnectorLinkPartner {
+    LinkPartnerName linkPartnerName
+    LinkMode linkMode
+    LinkType linkType
+    Properties properties
+  }
+}
+
+package Active {
+
+  class ActiveLink {
+    LinkPlugin linkPlugin
+    ConfigurableApplicationContext childContext
+    SubmitToLink submitToLink
+  }
+
+  class ActiveLinkPartner {
+    LinkPlugin linkPlugin
+    ConfigurableApplicationContext childContext
+    SubmitToLink submitToLink
+  }
+
+}
+
+
+DomibusConnectorLinkConfiguration "*" <-- "1" DomibusConnectorLinkPartner
+
+ActiveLink "1" --> "*" ActiveLinkPartner
+
+ActiveLink "1" --> "*" DomibusConnectorLinkConfiguration
+ActiveLinkPartner "1" --> "*" DomibusConnectorLinkPartner
+
+
+
+@enduml
+----
+
+=== Configuration via Property File
+
+Or configuration via the environment. With this approach the configured
+link partners are read from the spring environment. The spring environment
+is usually constructed from the connector.properties file.
+
+==== Setting up example for Gateway Pull Link:
+
+The gateway link is configured under the properties prefix 'connector.link.gateway'
+
+Currently only one gateway is supported. The name of the used gateway has
+to entered within the link-partner-name property and has to be: **default_gateway**
+
+[source,properties]
+----
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-gwwspullplugin-test.properties[]
+----
+
+==== Setting up example for Gateway Push Link:
+
+The gateway link is configured under the properties prefix 'connector.link.gateway'
+
+Currently only one gateway is supported. The name of the used gateway has
+to entered within the link-partner-name property and has to be: **default_gateway**
+
+[source,properties]
+----
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-gwwspushplugin-test.properties[]
+----
+
+
+==== Setting up example for backend Ws Link:
+
+The backend link(s) are configured under the properties prefix 'connector.link.backend[0-99]'.
+On the backend side the connector supports multiple backends and backend partners.
+
+CAUTION: The different backends are addressed by the backend routing. For backend routing
+the link-partner-name property is used! This property also has to be **unique**!
+
+[source,properties]
+----
+include::{mvnbasedir}/domibusConnectorLink/src/test/resources/application-wsbackendplugin-test.properties[]
+----
+
+
+=== Configuration via UI
+
+The backend and gateway configuration is seperated into 2 tabs.
+
+* Backend Configuration
+* Gateway Configuration
+
+Both views are representing the link table, where all available
+link partners are listed.
+
+
+==== Link Table
+
+The link table has the following columns:
+
+|===
+| Column name | Description
+
+| Edit Link Config
+| Click here to edit the link configuration (a link configuration might have multiple link partners)
+
+| Edit Link Partner
+| Click here to edit the link partner configuration
+
+| Remove
+| Click here to remove the link partner from the database
+
+| Link Partner Name
+| The link partner name, this name has to be unique. **The uniqueness is currently not enforced!**
+
+| Init on startup
+| Should the link partner be started on connector startup
+
+| Configured via
+| Shows the configuration source: DB, ENV (only if the source is DB, the configuration can be removed, edited)
+
+| Config Name
+| Name of the Link Configuration, a Link configuration can have multiple
+link partners
+
+| Current link state
+| Shows the current link state. Shows the state of the timer job for pulling messages. If the plugin does not use pulling, the running or stopped state will have no effect. The play and stop button also might work, but it depends on the plugin if they are supported. A change might
+require a restart of the connector.
+
+|===
+
+
+[#img-backend-config]
+.Screenshot Backend Configuration
+image:screenshot_backend_config.png[Screenshot Backend Configuration]
+
+
+=== Add Link Button
+
+On the top left the 'Add Link' button will start the process for adding a new link partner to the database configuration source.
+
+This will open a dialog with the following fields:
+
+You can choose to use a existing link configuration and just add a new
+link partner to it. Or create a new link configuration.
+
+==== New Link Configuration
+
+When a new link configuration is added.
+
+1. A 'Link Configuration Name' must be set. This name has to be unique.
+
+2. A 'Link Implementation' must be chosen. The link implementation depends on the communication partners capabilities.
+
+3. Every 'Link Implementation' comes with its own set of properties. The following table contains these properties. Currently, there is only a very limited validation in place. So pay attention when you are entering your settings here. Also consult the manual for the specific implementation.
+
+4. With the button 'Next' you will find yourself with the link partner configuration.
+
+[#img-add-link-screenshot1]
+.Screenshot adding link configuration
+image:screenshot_add_link_wizard_1.png[]
+
+==== New Link Partner
+
+1. A 'Link Partner Name' is required. This name has to be unique. The uniqueness is currently not enforced!
+
+2. A 'Sender Mode' must be chosen. A LinkPlugin might support different sending modes (PUSH, PASSIVE). PUSH means that a message is pushed by the connector to the remote location. If passive is chosen, the other side has to pull the message.
+
+3. A 'Receiver Mode must' be chosen. A LinkPlugin might support different receiver modes (PULL, PASSIVE). If PULL is chosen the connector pulls the other side for new messages. If passive is chosen, the connector just waits for new messages to arrive.
+
+4. The link partner also can have multiple implementation specific properties. The following table contains these properties. Currently, there is only a very limited validation in place. So pay attention when you are entering your settings here. Also consult the manual for the specific implementation.
+
+
+[#img-add-link-screenshot2]
+.Screenshot adding link partner
+image:screenshot_add_link_wizard_2.png[]
+
+

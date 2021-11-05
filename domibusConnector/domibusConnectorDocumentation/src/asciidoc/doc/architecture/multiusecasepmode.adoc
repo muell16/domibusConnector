@@ -1,0 +1,176 @@
+:imgdir: ../resources/images/
+:imagesdir: ../{imgdir}
+
+= Multiusecase/Multitenancy
+
+== Definitions
+
+For better understanding the following definitions are introduced.
+
+=== Components
+
+The eCodex Access Point contains in its default installation the following
+components:
+
+|===
+| Component | Default Implementation | Protocol | Responsible for
+
+| Webserver | Apache | HTTPS/TLS | TLS-Termination, TLS-Client Authentication
+
+| AS4-Gateway | Domibus | eDelivery | AS4 message creation, signing AS4-Message, fullfilling eDelivery Policy
+
+| eCodexConnector | DomibusConnector | eCodex | ASIC-S container creation and validation, ETSI-REM evidence generation
+
+|===
+
+=== P-Mode Set
+
+The p-Mode set contains a configuration with
+
+* Certificates of all Access Points
+* Access-Point Addresses (URL)
+* Parties
+* Services
+* ServiceLegs
+* Actions
+
+== Multi Backend / AS4 Service based Routing [already implemented]
+
+* Every UseCase is within the same P-Mode set
+* Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name]
+
+
+[plantuml]
+----
+@startuml
+
+rectangle pmode as "P Mode Set" {
+  component AS4_Gateway as "AS4-Gateway"
+
+  component connector as "Connector"
+
+  component backend1
+
+  component backend2
+}
+
+AS4_Gateway -down-> connector
+
+connector -down-> backend1
+
+connector -down-> backend2
+
+backend2 -[hidden]- backend1
+
+
+@enduml
+----
+
+== Multi Backend / FinalRecipient based Routing [not implemented!]
+
+* Every Routable Use Case is within the same P-Mode set
+* Interferes with the national addressing attributes originalSender, finalRecipient
+** The OriginalSender, FinalRecipient has to follow a pattern eg.: {{appid}::{{nationalpart}
+** This address must be published into Authority Database (CCDB,CDB,...)
+
+
+[plantuml]
+----
+@startuml
+
+rectangle pmode as "P Mode Set" {
+
+  component AS4_Gateway as "AS4-Gateway"
+
+  component connector as "Connector"
+
+  component backend1
+
+  component backend2
+}
+
+AS4_Gateway -down-> connector
+
+connector -down-> backend1
+
+connector -down-> backend2
+
+backend2 -[hidden]- backend1
+
+
+@enduml
+----
+
+
+
+== Multi Tenancy Based Routing [implementation in progress]
+
+* Different p-Mode sets
+* Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
+
+
+[plantuml]
+----
+@startuml
+
+component AS4_Gateway as "AS4-Gateway" {
+  rectangle pmode_set1
+  rectangle pmode_set2
+}
+
+component connector as "Connector"
+
+component backend1
+
+component backend2
+
+AS4_Gateway -down-> connector
+
+connector -down-> backend1
+
+connector -down-> backend2
+
+backend2 -[hidden]- backend1
+
+
+@enduml
+----
+
+
+== Multi Tenancy, Multiple Connectors [not implemented]
+
+* Different p-Mode sets
+* Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
+
+
+[plantuml]
+----
+@startuml
+
+component AS4_Gateway as "AS4-Gateway" {
+  rectangle pmode_set1 as "P-Mode Set 1"
+  rectangle pmode_set2 as "P-Mode Set 2"
+}
+
+component connector1 as "Connector1" {
+  rectangle pmode_set1_ as "P-Mode Set 1"
+}
+component connector2 as "Connector2" {
+  rectangle pmode_set2_ as "P-Mode Set 2"
+}
+
+component backend1
+
+component backend2
+
+AS4_Gateway -down-> connector1
+AS4_Gateway -down-> connector2
+
+connector1 -down-> backend1
+
+connector2 -down-> backend2
+
+
+
+@enduml
+----
