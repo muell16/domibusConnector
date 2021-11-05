@@ -110,6 +110,7 @@ public class ConnectorTestMessageForm extends FormLayout {
 	public void setParties(List<DomibusConnectorParty> parties) {
 		
 		toParty.setItems(parties.stream()
+				.filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
 								.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType())));
 	}
 	
