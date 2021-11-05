@@ -947,34 +947,6 @@
                 <inherited>false</inherited>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.8.2</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj-diagram</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <asciidoc>
-                        <requires>
-                            <require>asciidoctor-diagram</require>
-                        </requires>
-                        <attributes>
-                            <project-version>${project.version}</project-version>
-                            <imgdir>images</imgdir>
-                        </attributes>
-                    </asciidoc>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.github.jeluard</groupId>
                 <artifactId>plantuml-maven-plugin</artifactId>
                 <version>1.2</version>
@@ -1022,25 +994,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <copy overwrite="true" todir="target/site/resources/doc-resources">
-                                    <fileset dir="domibusConnectorDocumentation/src/main/resources/"></fileset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
-            </plugin>
-            <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
                 <artifactId>sortpom-maven-plugin</artifactId>
                 <version>2.11.0</version>
@@ -1070,109 +1023,6 @@
             <!--            </plugin>-->
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <!-- select reports -->
-                            <report>index</report>
-                            <report>modules</report>
-                            <report>scm</report>
-                            <report>cim</report>
-                            <report>summary</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <skipSurefireReport>true</skipSurefireReport>
-                    <reportsDirectories>
-                        <directory>${project.build.directory}/ittest-reports</directory>
-                        <directory>${project.build.directory}/dbunit-reports</directory>
-                        <directory>${project.build.directory}/unittest-reports</directory>
-                    </reportsDirectories>
-                    <outputName>test-result-report</outputName>
-                </configuration>
-            </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>findbugs-maven-plugin</artifactId>-->
-            <!--<version>3.0.5</version>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <!-- by default, id = "default" -->
-                        <reports>
-                            <!-- select non-aggregate reports -->
-                            <report>javadoc</report>
-                            <report>test-javadoc</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <!-- aggregate reportSet, to define in poms having modules -->
-                        <id>aggregate</id>
-                        <!-- don't run aggregate in child modules -->
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                        <inherited>false</inherited>
-                    </reportSet>
-                </reportSets>
-                <configuration>
-                    <!-- fix error javax.interceptor.InterceptorBinding not found -->
-                    <additionalDependencies>
-                        <additionalDependency>
-                            <groupId>javax.interceptor</groupId>
-                            <artifactId>javax.interceptor-api</artifactId>
-                            <version>1.2.2</version>
-                        </additionalDependency>
-                    </additionalDependencies>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
-                <artifactId>spring-properties-reporting-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <id>default</id>
-                        <reports>
-                            <report>spring-properties-report</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-                <configuration>
-                    <linkJavadoc>true</linkJavadoc>
-                    <includedDependencies>
-                        <includedDependency>
-                            <groupId>^org.springframework</groupId>
-                        </includedDependency>
-                        <includedDependency>
-                            <groupId>^eu.domibus</groupId>
-                        </includedDependency>
-                    </includedDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
     <profiles>
         <profile>
             <id>javadoc</id>
