@@ -746,7 +746,7 @@
                                 <version>1.2.2</version>
                             </additionalDependency>
                         </additionalDependencies>
-                        <doclet>org.asciidoctor.Asciidoclet</doclet>
+                        <!-- <doclet>org.asciidoctor.Asciidoclet</doclet>
                         <docletArtifact>
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoclet</artifactId>
@@ -754,11 +754,11 @@
                         </docletArtifact>
                         <overview>src/main/java/overview.adoc</overview>
                         <additionalparam>
-                            --base-dir ${project.basedir}
-                            --attribute "name=${project.name}"
-                            --attribute "version=${project.version}"
-                            --attribute "title-link=https://example.com[${project.name} ${project.version}]"
-                        </additionalparam>
+                            - -base-dir ${project.basedir}
+                            - -attribute "name=${project.name}"
+                            - -attribute "version=${project.version}"
+                            - -attribute "title-link=https://example.com[${project.name} ${project.version}]"
+                        </additionalparam> -->
                     </configuration>
                 </plugin>
                 <plugin>
