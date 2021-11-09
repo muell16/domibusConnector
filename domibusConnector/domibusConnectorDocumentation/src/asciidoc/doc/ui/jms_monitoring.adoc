@@ -1,0 +1,11 @@
+include::../header.adoc[]
+
+== JMS Monitoring
+
+=== Use the UI to monitor jms messages
+
+TODO this needs screenshots
+
+=== Permanently delete a message from the error queue
+
+TODO this also needs screenshots
