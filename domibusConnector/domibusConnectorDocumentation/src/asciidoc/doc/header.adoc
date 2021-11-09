@@ -1,2 +1,2 @@
 = Domibus Connector Documentation {project-version}
-
+:toc: left
