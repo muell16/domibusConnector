@@ -1,2 +1,4 @@
 = Domibus Connector Documentation {project-version}
 :toc: left
+:toc-title: Table of Content
+:toclevels: 4
