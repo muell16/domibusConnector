@@ -2,3 +2,4 @@
 :toc: left
 :toc-title: Table of Content
 :toclevels: 4
+:sectnums:
