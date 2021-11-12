@@ -121,7 +121,7 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
 
         linkPartnerSelectBox.addSelectionListener((selectEvent) -> {
-            this.selectedLinkPartners = selectEvent.getAllSelectedItems();
+            this.selectedLinkPartners = new HashSet<>(selectEvent.getAllSelectedItems());
             this.callbackDataProvider.refreshAll();
         });
         buttonBar.add(linkPartnerSelectBox);

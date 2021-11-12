@@ -83,6 +83,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             //submit message to GW
             submitMessageToLinkStep.submitMessage(message);
             //submit evidence message to BACKEND
+            //TODO: do this after submitMessage was successfull!
             submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
 

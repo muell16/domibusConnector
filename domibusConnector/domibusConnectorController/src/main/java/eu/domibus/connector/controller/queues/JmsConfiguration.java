@@ -21,6 +21,9 @@ import javax.jms.Queue;
 import javax.validation.Validator;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @EnableJms
 @Configuration
@@ -96,23 +99,52 @@ public class JmsConfiguration {
     }
 
 
+    /**
+     * Configure embedded artemis Broker
+     * @param prop
+     * @return
+     */
     @Bean
     ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
         return configuration -> {
-            AddressSettings addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
-            configuration.getAddressesSettings()
-                    .put(prop.getToLinkQueue(), addressSettings);
 
-            addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToConnectorControllerDeadLetterQueue()));
-            configuration.getAddressesSettings()
-                    .put(prop.getToConnectorControllerQueue(), addressSettings);
+            //Create Queues
+            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+                    .addRoutingType(RoutingType.ANYCAST)
+                    .setName(prop.getToConnectorControllerQueue()));
 
-            addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
+            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+                    .addRoutingType(RoutingType.ANYCAST)
+                    .setName(prop.getToLinkQueue()));
+
+            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+                    .addRoutingType(RoutingType.ANYCAST)
+                    .setName(prop.getCleanupQueue()));
+
+
+
+//            AddressSettings generalSettings = new AddressSettings();
+//            generalSettings.setAutoCreateAddresses(true)
+//                    .setAutoCreateQueues(true);
+//            configuration.getAddressesSettings()
+//                    .put("#", generalSettings);
+
+            //Configure Queue Settings, DLQ, Expiry, ...
+            AddressSettings addressSettings1 = basicAddressConfig();
+            addressSettings1.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
             configuration.getAddressesSettings()
-                    .put(prop.getCleanupQueue(), addressSettings);
+                    .put(prop.getToLinkQueue(), addressSettings1);
+
+            AddressSettings addressSettings2 = basicAddressConfig();
+            addressSettings2.setDeadLetterAddress(new SimpleString(prop.getToConnectorControllerDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getToConnectorControllerQueue(), addressSettings2);
+
+            AddressSettings addressSettings3 = basicAddressConfig();
+            addressSettings3.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getCleanupQueue(), addressSettings3);
+
         };
     }
 
@@ -123,6 +155,7 @@ public class JmsConfiguration {
         addressSettings.setAutoCreateAddresses(true);
         addressSettings.setAutoCreateExpiryResources(true);
         addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
+        addressSettings.setExpiryAddress(new SimpleString("expiry"));
         addressSettings.setMaxDeliveryAttempts(3);
         return addressSettings;
     }
