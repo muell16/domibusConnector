@@ -27,7 +27,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.ui.component.LumoLabel;
@@ -58,13 +60,15 @@ public class SendC2CTestMessage extends VerticalLayout implements AfterNavigatio
 
 	private WebPModeService pModeService;
 	private WebConnectorTestService webTestService;
+	private DomibusConnectorMessageIdGenerator messageIdGenerator;
 	
 	boolean filesEnabled = false;
 
-	public SendC2CTestMessage(@Autowired WebPModeService pModeService, @Autowired WebConnectorTestService webTestService) {
+	public SendC2CTestMessage(@Autowired WebPModeService pModeService, @Autowired WebConnectorTestService webTestService, @Autowired DomibusConnectorMessageIdGenerator messageIdGenerator) {
 		this.messageForm = new ConnectorTestMessageForm();
 		this.webTestService = webTestService;
 		this.pModeService = pModeService;
+		this.messageIdGenerator = messageIdGenerator;
 		this.messageForm.setParties(pModeService.getPartyList());
 
 		VerticalLayout messageDetailsArea = new VerticalLayout(); 
@@ -170,6 +174,8 @@ public class SendC2CTestMessage extends VerticalLayout implements AfterNavigatio
 		
 		resultArea.removeAll();
 
+		DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+		msg.setBackendMessageId(domibusConnectorMessageId.getConnectorMessageId());
 
 		boolean actionSet = loadAndValidateTestAction(msg);
 		

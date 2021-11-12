@@ -19,7 +19,9 @@ import eu.domibus.connector.ui.dto.WebMessageDetail.Service;
 
 public class ConnectorTestMessageForm extends FormLayout {
 	
+	
 	private TextField conversationId = FormsUtil.getFormattedTextField();
+	private TextField backendMessageId = FormsUtil.getFormattedRequiredTextField();
 	private TextField originalSender = FormsUtil.getFormattedRequiredTextField();
 	private TextField finalRecipient = FormsUtil.getFormattedRequiredTextField();
 	private ComboBox<WebMessageDetail.Party> toParty = (ComboBox<WebMessageDetail.Party>) FormsUtil.getRequiredCombobox();
@@ -37,6 +39,20 @@ public class ConnectorTestMessageForm extends FormLayout {
 		binder.bindInstanceFields(this);
 		
 		addFormItem(conversationId, "Conversation ID");
+		
+		binder.forField(backendMessageId).withValidator((Validator<String>) (value, context) -> {
+			if (value.length() < 1) {
+                return ValidationResult
+                        .error("Backend Message ID must not be empty!");
+            }
+			return ValidationResult.ok();
+		}).bind(
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getBackendMessageId():"",
+				(webMessage,backendMessageId) -> {
+					webMessage.setBackendMessageId(backendMessageId);
+				});
+		addFormItem(backendMessageId, "Backend Message ID"); 
+		
 		binder.forField(originalSender).withValidator((Validator<String>) (value, context) -> {
 			if (value.length() < 1) {
                 return ValidationResult
