@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-alpha5-SNAPSHOT</version>
+        <version>4.4.0-alpha5</version>
     </parent>
     <artifactId>domibusConnectorControllerLIB</artifactId>
     <description>Contains common code of all connector modules, like property configuration checkers, helper, ...</description>
