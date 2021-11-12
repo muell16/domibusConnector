@@ -1,0 +1,436 @@
+include::../header.adoc[]
+
+:imgdir: ../../resources/images/
+:imagesdir: {imgdir}
+
+== Installation Guide
+=== Introduction
+==== Scope and Objective of this document
+This document is a technical guide to install and configure the domibusConnector {project-version}. It can be used as a “go-through” installation guide. Readers should be able to install and configure the domibusConnector in their own environments without previously built know-how about the software.
+
+The target audience of this document are technical personal or administrators that have experience in network environments and widely known software components like web servers or application servers.
+
+A detailed knowledge of the own network structures and environment is a precondition.
+
+The structure of this guide is built so that every step can be taken as listed in the document. That means all preconditions for a chapter should be given by the previous chapters.
+
+As an InstallationGuide this document does not focus on features and functionalities on the usage of the domibusConnector. For more details on the usage please read the “domibusConnector_Technical-documentation-and-UserGuide” distributed together with the domibusConnector-4.0-RELEASE.
+
+==== The domibusConnector as a web application
+Starting with version 4.0-RELEASE, the domibusConnector is on the technical basis of a web application.
+
+This means, that the domibusConnector itself is a “ready-to-use” software component that only needs to be configured, set-up and deployed in a web container.
+
+Once installed and configured properly, the domibusConnector should run on its own.
+
+==== The domibusConnectorClient
+The domibusConnector web application offers different interfaces that can be used to approach the functionalities. Those interfaces can be used directly, if intended.
+
+To close the missing link between your own implementation and the provided web service of the domibusConnector, a domibusConnectorClient was implemented to support the connection to the domibusConnector.
+
+The domibusConnectorClients and all its variants and usage are described in the document “domibusConnectorClient_Guide”.
+
+==== The gateway
+To establish a successful connection to e-CODEX network partners, it is necessary to have a gateway component for transmission of messages.
+
+To be able to connect with e-CODEX partners the ebms3 standard of OASIS must be respected by the gateway. Additionally, there are different profiles on how the structure of ebms3 messages can be transmitted. In e-CODEX all partners agreed on using the e-SENS-AS4 pattern.
+
+During the e-CODEX project an own gateway component was implemented as a building block that fulfils all mentioned requirements. This is the DOMIBUS Gateway.
+
+Today the development and maintenance of the DOMIBUS Gateway lies at the CEF program of the European Commission.
+
+Further details on the DOMIBUS gateway can be found at the CEF homepage:
+https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/Domibus
+
+==== The domibus-connector-plugin
+To have a connection between the domibusConnector and the Domibus Gateway, a plugin has been developed that can easily be installed on the gateway.
+
+This plugin implements all interfaces that enable message transmission between the connector and the gateway. It is also available as a distribution package of e-CODEX on the Nexus repository server: https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibus-connector-plugin/
+
+Details on how to install the plugin on the Domibus Gateway can be found in the documentation of the respective Domibus Gateway and as an Installation-Guide with the domibus-connector-plugin distribution.
+
+=== Preconditions and technical requirements
+This chapter describes what has to be in place prior to install the domibusConnector.It also lists some technical specifications of the domibusConnector to give a more detailed insight.
+
+==== Supported operating systems
+The domibusConnector is a software that has been completely implemented using the JAVA programming language.
+
+As JAVA is by definition a platform independent environment, every operating system with a proper JAVA installation should fit the needs of setting up the domibusConnector.
+
+During implementation and testing phase of the domibusConnector, it was installend and tested on the following environments:
+
+* Microsoft Windows 7
+* Linux
+* IBM AIX
+
+==== Java Runtime
+As the domibusConnector is a JAVA application, it also requires a proper installation of a Java Runtime to be able to run the software.
+The recent version {project-version} of the domibusConnector has been implemented and compiled with an Oracle JDK jdk-8u161. So at least this version or higher should be in place to avoid incompatibilities.
+
+==== Database
+The domibusConnector needs an underlying database to store information. Currently the following DBMS are supported:
+
+* MariaDB Server 10.3 and higher
+* MySQL 5.6.6 and higher
+* MySQL 8 and higher
+* PostgresSQL 13.2 and higher
+* Oracle 12g and higher
+
+The domibusConnector distribution package offers SQL scripts that are meant to either set up a completely new database for the connector, or to migrate an existing domibusConnector database to its current version.
+
+Be aware that most web-servers need to have proper JDBC drivers installed to be able to set the connection to the database.
+
+Details on the installation of the database can be found in the chapter Database Installation.
+
+xref:_database_installation[Database installation]
+
+==== Web container
+Since the domibusConnector in its current version {project-version} is a web application built as a WAR deployable, it needs a web-server or application server that it can be deployed at.
+
+This can be any JAVA compliant product which supports at least Servlet 3.0 API level.
+During implementation and testing of the domibusConnector the following web-servers were used:
+
+* Apache Tomcat 8
+* Oracle Bea WebLogic 12c
+
+Be aware that those are neither requirements nor recommendations, but only listed for information.
+
+This installation guide does not focus on specifics of web-server technologies in detail.
+Details on how to deploy the domibusConnector on that web server products can be found in chapter Deployment.
+
+==== Internet connection
+As the domibusConnector needs some sources from the internet for the security library features, also an internet connection from the installation point must be given.To be able to configure your environment the domibusConnector gives the opportunity to configure proxy settings in the connector properties described in chapter xref:_configuration_properties[Configuration properties].
+
+==== Technical specifications
+The main frameworks and technologies the domibusConnector was implemented with is listed here for your information:
+
+* Java 8 (Oracle jdk-8u161)
+* Spring-boot 2.5.4
+* Hibernate 5.4.32.FINAL
+* Apache CXF 3.3.11
+* Apache Maven 3.6.3
+
+==== The domibusConnector distribution package
+To get started, you first need to have downloaded and extracted the distribution package.
+The domibusConnector provides different distribution packages all placed on the e-CODEX Nexus repository server at:
+https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibusConnectorDistribution/{project-version}/
+
+* domibusConnectorDistribution-{project-version}.zip
+
+Once downloaded and extracted it has the following structure:
+
+[cols="1,1"]
+|===
+|File/directory |Description
+
+|Webapp (directory)
+|This directory contains the application itself distributed as "domibusConnector-{project-version}.war"
+
+|Documentation/database-scripts (directory)
+|This directory contains all necessary database scripts to set up the database for the domibusConnector. The scripts are prepared for the database vendors MySQL and Oracle.
+For more details see chapter xref:_database_installation[Database Installation].
+
+
+|Documentation/databaseInitializer (directory)
+|Contains the “domibusConnectorDatabaseInitializer.jar” which is a helper application to set up the database.
+For more details see chapter xref:_database_installation[Database Installation].
+
+
+|Documentation/properties (directory)
+|The “properties” folder contains example properties that show how to configure the domibusConnector. The log4j configuration is also contained as an example.
+
+|domibusConnector_Monitoring_Interfaces.pdf
+|A document that describes what monitoring interfaces the domibusConnector offers and how to approach them.
+
+|domibusConnector_AdministrationGuide.pdf
+|This document merges the documentation for the domibusConnector for administrators and users.
+
+|===
+// end of table
+
+[#_database_installation]
+=== Database installation
+
+The “domibusConnectorDistribution-4.1.0-RELEASE.zip” deliverable package contains database scripts to either create a new database or upgrade an existing database from any domibusConnector version of 3.5.x or higher to the current {project-version} version.
+
+As a precondition a DBMS already needs to be in place.We recommend to create an own schema/user for the domibusConnector database.
+
+==== Supported database vendors
+
+You can find list of supported database in the previous section xref:_database[Database].
+
+==== New Database / Fresh Installation
+Starting with a new installation and therefore have an empty schema/user on the database system created, one has just to execute the provided scripts or use liquibase.
+
+===== Using the scripts
+The documentation contains a folder database-scripts/initial. This folder contains the following DDL/SQL scripts:
+
+* "mariadb_4.4.0_initial.sql" for MariaDB
+* "mariadb_4.4.0_initial-data.sql" for MariaDB
+* "mysql_4.4.0_initial.sql" for MySQL
+* "mysql_4.4.0_initial-data.sql" for MySQL
+* "postgres_4.4.0_initial.sql" for Postgres
+* "postgres_4.4.0_initial-data.sql" for Postgres
+* "oracle_4.4.0_initial.sql" for Oracle
+* "oracle_4.4.0_initial-data.sql" for Oracle
+
+Since domibusConnector-4.4-RELEASE these scripts *must be executed in the order*:
+
+1. initial.sql
+2. initial-data.sql
+
+First the schemas must be created for the data to be inserted.
+
+Anyway once those scripts are executed on the dedicated schema, the database setup for domibusConnector is complete.
+
+===== Using liquibase
+It is also possible to let liquibase create your database tables. See xref:_migrate_with_liquibase[Migrate with Liquibase] in the "Migration" section down below.
+
+==== Database Migration 3.5 to {project-version}
+
+Migration scripts for migrating from a specific version to the next are provided. If you decide to run them yourself you must ensure to start with the script matching your current domibusConnector schema version. If you upgrade multiple times, you must execute in order. E.g. if you want to upgrade from 4.1.0 to 4.4.0 you must execute the scripts in the order 4.1.0 -> 4.2.0 then 4.2.0 -> 4.3.0 then 4.3.0 -> 4.4.0.
+
+Migrating an existing domibusConnector database for prior releases 3.5 or 3.5.1 is possible, but we strongly recommend creating a backup of the existing database schema.
+
+You can choose to upgrade your database schema by executing the scripts manually or let liquibase perform the migration.
+
+Both methods are assuming that there were no structural changes made (e.g. additional constraints, indexes added)
+after the original connector setup.
+
+===== Using the script
+1. Create a backup of your current database schema
+2. Drop/deactivate all foreign-key constraints (the script will create them again!)
+3. Execute the upgrade script which is located in the folder database-scripts/migration. Use the script that matches your dbms and connector schema version.
+4. Repeat until you have migrated to the latest version.
+
+===== Using liquibase
+See next section xref:_migrate_with_liquibase[Migrate with Liquibase].
+
+[#_migrate_with_liquibase]
+==== Migrate with Liquibase
+It is also possibly to let liquibase upgrade or create your database.Liquibase is a tool which splits the database creation/upgrade into multiple changesets.In the future it will allow semi automatic database upgrades.You can also use liquibase to use unsupported databases like postgresql.
+
+Liquibase is packaged into the jar named domibusConnectorDatabaseInitializer.jar which includes all the necessary database scripts:
+
+* Database Migrate 3.5 to 4.0 DB ChangeLog: “db/changelog/v004/upgrade-3to4.xml”
+* Database Create 4.1 DB ChangeLog: “db/changelog/install/initial-4.1.xml”
+You can execute the scripts in your database by executing the jar:
+
+image:screenshot_liquibase_command.png[command_to_run_liquibase_migration]
+
+You have to provide the following parameters:
+
+* “--driver=” the jdbc driver name.
+o com.mysql.jdbc.Driver for MySQL
+o oracle.jdbc.OracleDriver for Oracle
+* “--url=” the jdbc url to access the database (consult the documentation of your jdbc driver)
+o Example: “jdbc: mysql://localhost/domibusconnector” for connecting to a local MySql database named domibusconnector.
+* “--username=” the username to access the database.The database user needs the permission to make schema modifications.
+* “--password=” the password of the database user.
+* “--classpath=” the path to an additional jar which contains the jdbc driver (the package already contains the mysql jdbc driver, so this parameter is only needed to provide the oracle jdbc driver jar)
+* “--changeLogFile=” the change log liquibase should run against the database
+* “–help” will show the liquibase help
+
+=== Certificate, Key-Stores and Trust-Stores
+
+To ensure the highest reasonable level of security, the domibusConnector uses several certificates for different purposes:
+
+* Signing and Encrypting SOAP messages between the backend client and the Connector.
+* Establishing Transport Security (TLS) between the backend client and the Connector.
+* Singing and Encrypting SOAP messages between the Connector and the Gateway.
+* Establishing Transport Security (TLS) between the Connector and the Gateway.
+* Validating the signature of the main document (mostly a PDF) of the message (if configured).
+* Validating the signature of the secure container (ASIC-S) received with incoming messages.
+* Signing the secure container (ASIC-S) that is created by the Connector.
+* Signing the ETSI-REM evidences.
+
+In most of those cases the same certificate can be used, though we do not recommend that. For higher security it is more efficient to use different certificates.
+The keys and stores, for the backend client(s) for example, are explained in more detail in the document “e-Codex_key_trust_stores.pdf”.
+
+
+[#_configuration_properties]
+=== Configuration Properties
+In order to give the domibusConnector the missing links about your environment, some properties have to be set in a property file.Usually this is called “connector.properties”.
+
+There is also the possibility to adopt the logging configuration.This gives the opportunity to control where logs are written to and what to log.
+
+Example properties and an empty property file, as well as an example for logging configuration can be found in the distribution package at “documentation/properties”.
+
+The properties in those file are all well described on what is expected there.
+The connector properties must be given as an environment variable with name “connector.config.file” on the web server.
+
+The logging configuration must be given as an environment variable with name “connector.logging.config” on the web server.
+
+The variants on how to set those environment variables on your web server environment is dependent on what product you have in place.
+For the web server products Apache Tomcat and BEA Weblogic this is described exemplarily in the Chapter xref:_deployment[Deployment].
+
+[#_deployment]
+=== Deployment
+This chapter describes the steps to be taken to deploy the domibusConnector application on a web server. The e-CODEX community can provide more detailed information for the web server products Apache Tomcat and BEA Weblogic. Other Web Servers have not been subject to any tests.
+
+It is not a requirement that one of the listed web server products must be used.
+
+==== Deploy on Apache Tomcat
+===== Tested Tomcat Version
+The deployment has been tested with the following versions:
+
+* Apache Tomcat 8.5.23 on Windows 7
+
+===== Deployment steps
+* Copy the adopted “connector.properties” and “log4j.properties” file into “<path_to_tomcat>/conf/domibusConnector”.
+* Copy the “domibusConnector.war” into “<path_to_tomcat>/webapps”.
+* Create or edit a “setenv” file at “<path_to_tomcat>/bin”.
+* Optionally copy your database driver JAR into “<path_to_tomcat>/lib”.
+
+The “setenv” file should be called at startup by the tomcat and should include the following parameters:
+
+image:screenshot_tomcat_setenv_file.png[screenshot_setenv_file]
+
+Finally start/restart your Apache Tomcat. The application should be deployed automatically.
+
+==== Deploy on BEA Weblogic
+The connector application is a spring boot application which should run on a weblogic application
+server.
+
+In its default configuration it expects a jndi DataSource configured with the name
+“domibusWebConnectorDS”. Please configure a datasource with this name and deploy the application to your weblogic server. You should also set the “connector.config.file” parameter to your “connector.properties” so the spring boot application can load the configured settings.
+For that purpose you need to create a custom deployment descriptor.
+
+
+=== The Domibus Connector Administration UI
+Once the domibusConnector is successfully deployed in a web container and running, the pages of the domibusConnector – the domibusConnector Administration UI - can be reached at
+http://<yourServer>:<configuredPort>/domibusConnector/admin/.
+
+image:screenshot_admin_ui.png[Admin UI]
+
+The default login already stored in the database for the web user interface is “admin” with the password “admin”. As this is a very unsecure authentication, the “admin” password is automatically expired and needs to be changed for the first login.
+
+The following chapters only describe the installation parts necessary to run the domibusConnector. Other functionalities of the domibusConnector Administration UI are described in the “domibusConnector-Technical-documentation-and-UserGuide.pdf” distributed with the domibusConnector package.
+
+=== Import of P-Modes
+The “p-modes” that are distributed by the configuration management for the DOMIBUS gateway can also be used for the domibusConnector database to have necessary data to support business use cases in your domibusConnector database.
+
+If the installed domibusConnector is not a completely new one but a migrated one from a previous version, this step should not be necessary.
+
+==== Import of a p-mode file with the domibusConnector Administration UI
+Once logged in at the Administration UI, the requested functionality is reachable via menu option “PModes”.
+
+image:screenshot_pmode_import.png[Admin UI: PModes > Import]
+
+The p-mode file from the configuration management can be selected here and will be uploaded into the database of the domibusConnector.
+
+Every ACTION, PARTY and SERVICE that is found in the p-modes and which do not exist in the database already, will be created. The domibusConnector will neither change any existing database items (service, action or party), nor will it delete any of those. If the p-mode-file cannot be processed an error message will appear.
+
+=== Backend Configuration
+The domibusConnector can be accessed by multiple clients. It does not matter, if the clients use the distributed domibusConnectorClient (either one of the libraries for integration, or the standalone client), as long as the backend interfaces of the domibusConnector are implemented properly and the security needs can be met.
+
+This guide focuses on the configuration needed to add new backend clients to connect to the domibusConnector. Details on configuration steps needed on the client side can be found in the domibusConnectorClient documentation.
+
+This chapter follows an example in which 2 new backend clients should be configured in the domibusConnector:
+
+* Alice
+* Bob
+
+==== Backend types
+Whereas it is given in version 4.1.0-RELEASE of the domibusConnector that the backend interfaces only can be reached via SOAP web services, it can be configured if the backend client supports to be called as an active service.
+
+===== Push/pull backend
+This type of backend client does not support an active web service itself. It can only be seen as a passive client. The domibusConnector can receive messages from this type of client at any time, but cannot actively send messages to the client.
+
+That means that the client itself has to call the web service of the domibusConnector to receive messages that are stored inside the connector until the client calls them.
+
+Mostly this is done by having time triggered jobs running on the client side that connector to the domibusConnector to receive its messages.
+
+The domibusConnectorClient Standalone variant is of that kind.
+
+===== Push/push backend
+This type of backend client does support an active web service. This web service must run in a web container itself and must implement the delivery web service of the domibusConnector. In that case the domibusConnector does not need to wait until the clients connects, but can push messages to the client by itself.
+
+==== Adding the backend client keys to the Connector Backend Key Store
+Every new backend client needs its own certificate.
+The certificate of a backend client has the following purpose:
+
+* Identifies the backend client when it connects to the domibusConnector
+* Encrypts/Decrypts messages between the backend client and the Connector.
+
+So let’s assume, following the example of “alice” and “bob”, that there are 2 certificates. What we need to configure the backend clients properly, are the public keys of those certificates.
+
+Those 2 public keys need to be added to the “Connector Key Store” described and configured in chapter 5.1. To keep it transparent the public keys are imported into the store with the alias names “alice” and “bob”.
+
+==== Configuring the backend with the domibusConnector Administration UI
+Within the Administration UI, go to menu “Configuration” and further on “Backend Configuration”
+
+image:screenshot_backend_configuration.png[Screenshot Backend Configuration UI]
+
+On this page, the section “Configured Backend(s)” is of interest for this step
+
+image:screenshot_configured_backend.png[Screenshot Configured Backend]
+
+==== Configuring the backend at the database
+For the domibusConnector-4.1.0-RELEASE the adding of the backend must be done manually by accessing the domibusConnector database. The backend information must be stored in two database tables:
+
+===== DOMIBUS_CONNECTOR_BACKEND_INFO
+
+[cols="1,1"]
+|===
+|Name |Description
+
+|ID
+|a unique technical id
+
+|BACKEND_KEY_ALIAS
+|The name of the backend *this name most match the common name (CN)* field of the assigned certificate.
+
+|BACKEND_KEY_PASS
+|The key alias in the connector backend keystore for the certificate to use to encrypt messages for the connectorClient.
+
+|BACKEND_SERVICE_TYPE
+|Not used yet, will later define the type of the backend, is it push/pull, push/push over webservices, push/push over jms.
+
+
+|BACKEND_ENABLED
+|Is the backend enabled, must be true if the connector should send messages to this backend.
+
+
+|BACKEND_DEFAULT
+|The default will receive all messages which aren't delivered to another backend first.
+
+|BACKEND_DESCRIPTION
+|A description of the backend, can be used by the admin to store information.
+
+|BACKEND_PUSH_ADDRESS
+|If the backend is a push backend, the push address must be defined here.
+
+|===
+// end of table
+
+===== DOMIBUS_CONNECTOR_BACK_2_S
+Contains the routing information, which backend will receive the message. The routing decision is
+
+based on the name of the business use case, which is called SERVICE in e-CODEX.
+The table contains the following fields:
+
+[cols="1,1"]
+|===
+
+|DOMIBUS_CONNECTOR_SERVICE_ID
+|References the service
+
+|DOMIBUS_CONNECTOR_BACKEND_ID
+|References the backend
+
+|===
+// end of table
+
+===== Example scripts
+Now we will have a look back to our example, where we want to add “alice” and “bob” as our new backend clients.
+
+The following SQL statement will add an connectorClient named bob with the key alias bob and expects that the common name of the certificate is bob. Bob will also be the default backend!
+
+The following statement will add “alice” to the backend configuration:
+
+image::inser_alice_backend_configuration.png[]
+
+This statement will assign the epo messages to the connectorClient with the id 12 in the database. In this case this will be the connectorClient alice.
+
+image::insert_epo_messages.png[]
