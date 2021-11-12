@@ -71,6 +71,9 @@ public class WebConnectorTestService {
 		if(!StringUtils.isEmpty(webMsg.getConversationId()))
 			details.setConversationId(webMsg.getConversationId());
 		
+		if(!StringUtils.isEmpty(webMsg.getBackendMessageId()))
+			details.setBackendMessageId(webMsg.getBackendMessageId());
+		
 		connectorMsg.setMessageDetails(details);
 		
 		DomibusConnectorMessageContentType content = mapContent(webMsg);

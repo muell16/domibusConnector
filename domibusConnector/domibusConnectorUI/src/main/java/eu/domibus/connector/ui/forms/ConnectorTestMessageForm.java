@@ -47,7 +47,7 @@ public class ConnectorTestMessageForm extends FormLayout {
             }
 			return ValidationResult.ok();
 		}).bind(
-				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getBackendMessageId():"",
+				webMessage -> webMessage.getBackendMessageId()!=null?webMessage.getBackendMessageId():"",
 				(webMessage,backendMessageId) -> {
 					webMessage.setBackendMessageId(backendMessageId);
 				});
@@ -95,7 +95,7 @@ public class ConnectorTestMessageForm extends FormLayout {
 		addFormItem(toParty, "ToParty");
 
 		binder.forField(service).bind(
-				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getService().getServiceString():"",
+				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getService().getService():"",
 				(webMessage,service) -> {
 					webMessage.getMessageInfo().getService().setService(service);
 				});
