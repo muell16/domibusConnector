@@ -1,6 +1,6 @@
-include::header.adoc[]
+include::../header.adoc[]
 
-= Testing Matrix
+== Testing Matrix
 
 
 == The Connector has been tested on
