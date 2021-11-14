@@ -222,21 +222,21 @@ public class MsgContentPersistenceServiceTest {
 //        //assertThat(mapFromMsgCont.getDocument().getDocument()).isEqualTo("documentContent".getBytes());
 //    }
     
-    @Test
-    public void testMapContentMessageAttachment_withNotSerializeableDataReference(){
-        DomibusConnectorMessageId messageId = new DomibusConnectorMessageId("abc21");
-        
-        NotSerializableBigDataReference dataRef = new NotSerializableBigDataReference();
-        dataRef.setInputStream(new ByteArrayInputStream("documentContent".getBytes()));        
-        dataRef.setStorageIdReference(UUID.randomUUID().toString());
-                
-        DomibusConnectorMessageAttachment attachment = DomibusConnectorMessageAttachmentBuilder.createBuilder()
-                .setAttachment(dataRef)
-                .setIdentifier("ASIC-S")
-                .build();
-                
-        this.msgContService.mapAttachment(messageId, attachment);
-    }
+//    @Test
+//    public void testMapContentMessageAttachment_withNotSerializeableDataReference(){
+//        DomibusConnectorMessageId messageId = new DomibusConnectorMessageId("abc21");
+//
+//        NotSerializableBigDataReference dataRef = new NotSerializableBigDataReference();
+//        dataRef.setInputStream(new ByteArrayInputStream("documentContent".getBytes()));
+//        dataRef.setStorageIdReference(UUID.randomUUID().toString());
+//
+//        DomibusConnectorMessageAttachment attachment = DomibusConnectorMessageAttachmentBuilder.createBuilder()
+//                .setAttachment(dataRef)
+//                .setIdentifier("ASIC-S")
+//                .build();
+//
+//        this.msgContService.mapAttachment(messageId, attachment);
+//    }
     
     
     private static class NotSerializableBigDataReference extends LargeFileReference {
