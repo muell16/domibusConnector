@@ -149,15 +149,14 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         return largeFileReference;
     }
 
-
-    @Override
+    @Deprecated
     public void saveMessagePayloads(@Nonnull DomibusConnectorMessage message) throws PersistenceException {
         DomibusConnectorMessageId connectorMessageId = message.getConnectorMessageId();
         Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId.getConnectorMessageId());
         if (dbMessage.isPresent()) {
             saveMessagePayloads(message, dbMessage.get());
         } else {
-            throw new RuntimeException("No message in db found with connector message id " + connectorMessageId);
+            throw new IllegalArgumentException("No message in db found with connector message id " + connectorMessageId);
         }
     }
 
@@ -288,7 +287,8 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         try (InputStream is = ref.getInputStream(); OutputStream os = newRef.getOutputStream()) {
             StreamUtils.copy(is, os);
         } catch (IOException e) {
-            throw new RuntimeException("Copying from unsupported LargeFileReference to default LargeFileReference failed due", e);
+            String error = String.format("Copying from unsupported LargeFileReference [%s] to default LargeFileReference failed due", ref);
+            throw new RuntimeException(error, e);
         }
         //also set storage name and provider for the "old" large file reference
         ref.setStorageProviderName(newRef.getStorageProviderName());

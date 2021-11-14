@@ -32,7 +32,7 @@ public class LargeFilePersistenceServicePassthroughImpl implements LargeFilePers
 		try {
 			if(bigDataReference2.getInputStream()==null) {
 				ByteArrayOutputStream out = (ByteArrayOutputStream) bigDataReference2.getOutputStream();
-				bigDataReference2.setInputStream(new ByteArrayInputStream(out.toByteArray()));
+//				bigDataReference2.setInputStream(new ByteArrayInputStream(out.toByteArray()));
 				return bigDataReference2;
 			}
 			return bigDataReference2;
@@ -45,14 +45,13 @@ public class LargeFilePersistenceServicePassthroughImpl implements LargeFilePers
 	public LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
                                                                      String documentContentType) {
 		LargeFileReferenceGetSetBased dataRef = new LargeFileReferenceGetSetBased();
-		dataRef.setOutputStream(new ByteArrayOutputStream());
+
 		return dataRef;
 	}
 
 	@Override
 	public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
 		LargeFileReferenceGetSetBased dataRef = new LargeFileReferenceGetSetBased();
-		dataRef.setOutputStream(new ByteArrayOutputStream());
 		return dataRef;
 	}
 

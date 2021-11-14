@@ -123,7 +123,7 @@ public class DomainEntityCreator {
         
         reference.setBytes(input.getBytes());
         reference.setReadable(true);
-        reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
+//        reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
         
         return reference;
     }
@@ -135,7 +135,7 @@ public class DomainEntityCreator {
 
         reference.setBytes(StreamUtils.copyToByteArray(input.getInputStream()));
         reference.setReadable(true);
-        reference.setInputStream(input.getInputStream());
+//        reference.setInputStream(input.getInputStream());
 
         return reference;
     }

@@ -2,35 +2,44 @@ package eu.domibus.connector.domain.testutil;
 
 
 import eu.domibus.connector.domain.model.LargeFileReference;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 
 /**
- *
+ * A memory based impl for handling files
+ *  this impl is intended to be used only within tests!
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public class LargeFileReferenceGetSetBased extends LargeFileReference {
 
     byte[] bytes;
-    
-    transient InputStream inputStream;
-
-    transient OutputStream outputStream;
-    
     boolean readable;
-    
     boolean writeable;
+
+    public LargeFileReferenceGetSetBased() {
+        this.setStorageProviderName(LargeFileProviderMemoryImpl.PROVIDER_NAME);
+    }
+
+    public LargeFileReferenceGetSetBased(LargeFileReference ref) {
+        super(ref);
+        this.setStorageProviderName(LargeFileProviderMemoryImpl.PROVIDER_NAME);
+        this.bytes = Base64.getDecoder().decode(ref.getText());
+    }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return this.inputStream;
+        return new ByteArrayInputStream(bytes);
     }
 
     @Override
     public OutputStream getOutputStream() throws IOException {
-        return this.outputStream;
+        ByteArrayOutputStream b = new OnClassCallbackByteArrayOutputStream(this);
+        return b;
     }
 
     @Override
@@ -41,14 +50,6 @@ public class LargeFileReferenceGetSetBased extends LargeFileReference {
     @Override
     public boolean isWriteable() {
         return writeable;
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    public void setOutputStream(OutputStream outputStream) {
-        this.outputStream = outputStream;
     }
 
     public void setReadable(boolean readable) {
@@ -65,6 +66,28 @@ public class LargeFileReferenceGetSetBased extends LargeFileReference {
 
     public void setBytes(byte[] bytes) {
         this.bytes = bytes;
+        this.setText(Base64.getEncoder().encodeToString(bytes));
+        this.setSize((long) bytes.length);
+    }
+
+    private static class OnClassCallbackByteArrayOutputStream extends ByteArrayOutputStream {
+
+        private LargeFileReferenceGetSetBased ref;
+
+        public OnClassCallbackByteArrayOutputStream(LargeFileReferenceGetSetBased ref) {
+            this.ref = ref;
+        }
+
+        @Override
+        public void close() {
+            flush();
+        }
+
+        @Override
+        public void flush() {
+            ref.setBytes(this.toByteArray());
+        }
+
     }
 
 }
