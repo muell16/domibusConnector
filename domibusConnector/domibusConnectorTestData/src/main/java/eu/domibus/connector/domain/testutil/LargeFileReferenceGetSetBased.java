@@ -3,11 +3,13 @@ package eu.domibus.connector.domain.testutil;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.UUID;
 
 
 /**
@@ -23,12 +25,16 @@ public class LargeFileReferenceGetSetBased extends LargeFileReference {
 
     public LargeFileReferenceGetSetBased() {
         this.setStorageProviderName(LargeFileProviderMemoryImpl.PROVIDER_NAME);
+        this.setStorageIdReference(UUID.randomUUID().toString());
     }
 
     public LargeFileReferenceGetSetBased(LargeFileReference ref) {
         super(ref);
         this.setStorageProviderName(LargeFileProviderMemoryImpl.PROVIDER_NAME);
         this.bytes = Base64.getDecoder().decode(ref.getText());
+        if (!StringUtils.hasText(this.getStorageIdReference())) {
+            this.setStorageIdReference(UUID.randomUUID().toString());
+        }
     }
 
     @Override
