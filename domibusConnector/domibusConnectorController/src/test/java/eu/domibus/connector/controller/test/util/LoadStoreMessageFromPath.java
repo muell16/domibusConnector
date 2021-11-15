@@ -7,6 +7,7 @@ package eu.domibus.connector.controller.test.util;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
+import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +228,7 @@ public class LoadStoreMessageFromPath {
                 String docName = messageProperties.getProperty("message.content.document.name");
                 documentBuilder.setName(docName);
 
-                //TODO: load signature
+                //load signature
                 String signatureFileName = messageProperties.getProperty("message.content.document.signature.file");
                 if (signatureFileName != null) {
 
@@ -341,8 +342,8 @@ public class LoadStoreMessageFromPath {
         try {
             InputStream inputStream = resource.getInputStream();
 
-            LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
-            inMemory.setInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)));
+            LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
+            inMemory.setBytes(StreamUtils.copyToByteArray(inputStream));
             inMemory.setReadable(true);
             inMemory.setStorageIdReference(UUID.randomUUID().toString());
             return inMemory;

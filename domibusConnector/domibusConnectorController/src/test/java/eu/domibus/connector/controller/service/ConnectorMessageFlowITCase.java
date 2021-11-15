@@ -16,7 +16,6 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsB
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
@@ -95,9 +94,6 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     DomibusConnectorMessageIdGenerator messageIdGenerator;
-
-    @Autowired
-    DCMessageContentManager dcMessageContentManager;
 
     @Autowired
     ITCaseTestContext.DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor;
@@ -1404,7 +1400,6 @@ public class ConnectorMessageFlowITCase {
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
             message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
         }
-        dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
         testLink.setLinkType(LinkType.BACKEND);
@@ -1420,7 +1415,6 @@ public class ConnectorMessageFlowITCase {
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
             message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
         }
-        dcMessageContentManager.saveMessagePayloads(message);
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));
         testLink.setLinkType(LinkType.GATEWAY);

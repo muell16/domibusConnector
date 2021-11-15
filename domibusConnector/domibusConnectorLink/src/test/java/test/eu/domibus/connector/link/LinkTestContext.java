@@ -17,8 +17,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.DomibusConnectorKeystorePersistenceServiceImpl;
-import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.*;
@@ -77,8 +75,8 @@ public class LinkTestContext {
 
     @Bean
     @ConditionalOnMissingBean
-    public LargeFilePersistenceServiceMemoryImpl largeFilePersistenceServiceMemoryImpl() {
-        return new LargeFilePersistenceServiceMemoryImpl();
+    public LargeFileProviderMemoryImpl largeFilePersistenceServiceMemoryImpl() {
+        return new LargeFileProviderMemoryImpl();
     }
 
     @Bean

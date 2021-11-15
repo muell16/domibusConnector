@@ -134,6 +134,7 @@ public class LargeFileReference implements DataSource, Serializable {
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("storageReference", this.getStorageIdReference());
+        builder.append("provider", this.getStorageProviderName());
         return builder.toString();        
     }
 
