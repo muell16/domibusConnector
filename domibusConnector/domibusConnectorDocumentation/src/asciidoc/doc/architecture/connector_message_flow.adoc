@@ -68,3 +68,24 @@ ToCleanUpListener -d-> CleanupMessageProcessor
 CleanupMessageProcessor -d-> exit
 @enduml
 ----
+
+This diagram is a technical description of how messages flow through the connector and where they are kept in case delivery fails repeatedly.
+
+A pipe like cylinder signifies a queues. There are queues before and after every white frame. The queues with an arrow going into a white frame signifies a queue where messages wait to be processed. The queues with arrows coming from a white frame mean post-transaction outcomes.
+
+The white frames named, JTATransaction_Connector, JTATransaction_ToLink and JTATransaction_CleanUp are transaction contexts. If certain failures occur, redelivery is attempted, if redelivery still fails, a given message is put on the error queue that is associated with this transaction context (the technical name is "dead letter queue" abbreviated as DLQ).
+
+The yellow components are named like the source code. The developer can look for problems in those components in case of unexpected behavior. As you can see a transaction may involve multiple components and steps, but a message only transitions from a pre-transaction context queue to a post transaction queue, if:
+
+* the message was processed without error all the way inside the transaction context
+* the message processing failed multiple times inside the transaction context.
+
+Re-delivery means, that after an error occurs, there is a short delay after which the message is put back onto the pre-transaction context queue awaiting to be processed once more.
+
+In case everything is working the queues are almost always empty because:
+
+* the message volume for our application is low and thus the message handler takes the messages faster off the queue than new messages arrive
+* this also is the case if messages are re-delivered
+* if nothing failed, no messages end up in an error queue.
+
+Therefore, the only queue where an administrator should expect to see any messages accumulate and persist (for longer than a brief second) are the three error queues.
