@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
+import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 
 import java.io.ByteArrayInputStream;
 
@@ -65,9 +66,9 @@ public class ConnectorControllerTestDomainCreator {
     }
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("attachment".getBytes());
-        LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
-        inMemory.setInputStream(inputStream);
+
+        LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
+        inMemory.setBytes("attachment".getBytes());
         
         DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(inMemory, "identifier");       
         attachment.setName("name");
@@ -98,11 +99,9 @@ public class ConnectorControllerTestDomainCreator {
         messageContent.setXmlContent("xmlContent".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
-                
-        
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("documentbytes".getBytes());
-        LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
-        inMemory.setInputStream(inputStream);
+
+        LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
+        inMemory.setBytes("documentbytes".getBytes());
         inMemory.setReadable(true);
                
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(inMemory, "Document1.pdf", detachedSignature);

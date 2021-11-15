@@ -79,6 +79,10 @@ public class PDomibusConnectorMsgCont {
     @Column(name = "CONNECTOR_MESSAGE_ID")
     private String connectorMessageId;
 
+    @ManyToOne
+    @JoinColumn(name = "MESSAGE_ID", referencedColumnName = "ID")
+    private PDomibusConnectorMessage message;
+
     @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "DETACHED_SIGNATURE_ID", referencedColumnName = "ID")
     private PDomibusConnectorDetachedSignature detachedSignature;
@@ -207,11 +211,18 @@ public class PDomibusConnectorMsgCont {
         this.connectorMessageId = messageId;
     }
 
+    public PDomibusConnectorMessage getMessage() {
+        return message;
+    }
+
+    public void setMessage(PDomibusConnectorMessage message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
-        toString.append("messageId", this.getConnectorMessageId());
         return toString.build();
     }
 
