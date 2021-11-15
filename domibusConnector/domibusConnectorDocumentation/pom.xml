@@ -82,8 +82,10 @@
                             -->
                             <attributes>
                                 <source-highlighter>coderay</source-highlighter>
-                                <imagesdir>./images</imagesdir>
+                                <imagesdir>../images</imagesdir>
                                 <toc>left</toc>
+                                <toclevels>4</toclevels>
+                                <sectnums></sectnums>
                                 <icons>font</icons>
                                 <sectanchors>true</sectanchors>
                                 <!-- set the idprefix to blank -->
@@ -114,7 +116,10 @@
                                 <source-highlighter>coderay</source-highlighter>
                                 <icons>font</icons>
                                 <pagenums></pagenums>
-                                <toc></toc>
+                                <imagesdir>../resources/images</imagesdir>
+                                <toc>auto</toc>
+                                <toclevels>4</toclevels>
+                                <sectnums></sectnums>
                                 <idprefix></idprefix>
                                 <idseparator>-</idseparator>
                             </attributes>
@@ -157,7 +162,6 @@
                         <!--                                <data-uri/>-->
                         <mvnbasedir>${project.basedir}/../</mvnbasedir>
                         <imgdir>./images</imgdir>
-                        <toc>left</toc>
                         <icons>font</icons>
                     </attributes>
                     <preserveDirectories>true</preserveDirectories>

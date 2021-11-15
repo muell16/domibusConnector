@@ -67,8 +67,9 @@ During implementation and testing phase of the domibusConnector, it was installe
 As the domibusConnector is a JAVA application, it also requires a proper installation of a Java Runtime to be able to run the software.
 The recent version {project-version} of the domibusConnector has been implemented and compiled with an Oracle JDK jdk-8u161. So at least this version or higher should be in place to avoid incompatibilities.
 
+[#_database]
 ==== Database
-The domibusConnector needs an underlying database to store information. Currently the following DBMS are supported:
+The domibusConnector needs an underlying database to store information.Currently the following DBMS are supported:
 
 * MariaDB Server 10.3 and higher
 * MySQL 5.6.6 and higher
