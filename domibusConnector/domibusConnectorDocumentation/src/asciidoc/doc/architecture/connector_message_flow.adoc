@@ -4,8 +4,8 @@
 = Connector Internal Message Flow
 
 == Queues Processor Overview
-
-[plantuml,queues,png]
+[#_message_flow_diagram]
+[plantuml,queues,format=svg]
 ----
 @startuml
 
