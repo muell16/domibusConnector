@@ -108,7 +108,7 @@ public class QueueController {
             toConnectorWebQueue.setMsgsOnQueue(connectorMsgs.size());
             final List<Message> connectorDlqMsgs = toConnectorQueue.listAllMessagesInDlq();
             toConnectorWebQueue.setDlqMessages(connectorDlqMsgs);
-            toConnectorWebQueue.setMsgsOnQueue(connectorDlqMsgs.size());
+            toConnectorWebQueue.setMsgsOnDlq(connectorDlqMsgs.size());
 
             toCleanupWebQueue.setName(toCleanupQueue.getQueue().getQueueName());
             final List<Message> cleanupMsgs = toCleanupQueue.listAllMessages();
