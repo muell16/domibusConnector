@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,36 +52,41 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        if (DomainModelHelper.isBusinessMessage(message)) {
 
-        if (this.enabled) {
-            String ebmsMessageId = message.getMessageDetails().getEbmsMessageId();
+            if (this.enabled) {
+                String ebmsMessageId = message.getMessageDetails().getEbmsMessageId();
 
-            DomibusConnectorMessage deliveryConfirmation = DomibusConnectorMessageBuilder.createBuilder()
-                    .setMessageDetails(
-                            DomibusConnectorMessageDetailsBuilder.create()
-                                    .withRefToMessageId(ebmsMessageId)                                              //set ref to message id to ebms id
-                                    .build()
-                    )
-                    .setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
-                    .setMessageLaneId(message.getMessageLaneId())
-                    .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()     //append evidence trigger of type DELIVERY
-                            .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-                            .setEvidence(new byte[0])
-                            .build())
-                    .build();
+                DomibusConnectorMessage deliveryConfirmation = DomibusConnectorMessageBuilder.createBuilder()
+                        .setMessageDetails(
+                                DomibusConnectorMessageDetailsBuilder.create()
+                                        .withRefToMessageId(ebmsMessageId)                                              //set ref to message id to ebms id
+                                        .build()
+                        )
+                        .setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
+                        .setMessageLaneId(message.getMessageLaneId())
+                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()     //append evidence trigger of type DELIVERY
+                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+                                .setEvidence(new byte[0])
+                                .build())
+                        .build();
 
-            submitToConnector.submitToConnector(deliveryConfirmation, linkPartnerName, LinkType.BACKEND);       //submit trigger message to connector
-            TransportStateService.TransportId transportFor = transportStateService.createTransportFor(message, linkPartnerName);
-            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-            state.setConnectorTransportId(transportFor);
-            state.setLinkPartner(linkPartner);
-            state.setRemoteMessageId("Testbackend_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-            state.setStatus(TransportState.ACCEPTED);
-            transportStateService.updateTransportStatus(state);
-            LOGGER.info("Generated Delivery evidence trigger message for connector test message with EBMS ID [{}]", message.getConnectorMessageId());
+                submitToConnector.submitToConnector(deliveryConfirmation, linkPartnerName, LinkType.BACKEND);       //submit trigger message to connector
+
+                LOGGER.info("Generated Delivery evidence trigger message for connector test message with EBMS ID [{}]", message.getConnectorMessageId());
+            } else {
+                LOGGER.warn("Test message received, but test backend is not enabled! No response will be sent!");
+            }
         } else {
-            LOGGER.warn("Test message received, but test backend is not enabled! No response will be sent!");
+            //ignore evidence messages...
         }
+        TransportStateService.TransportId transportFor = transportStateService.createTransportFor(message, linkPartnerName);
+        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
+        state.setConnectorTransportId(transportFor);
+        state.setLinkPartner(linkPartner);
+        state.setRemoteMessageId("Testbackend_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        state.setStatus(TransportState.ACCEPTED);
+        transportStateService.updateTransportStatus(state);
 
     }
 
