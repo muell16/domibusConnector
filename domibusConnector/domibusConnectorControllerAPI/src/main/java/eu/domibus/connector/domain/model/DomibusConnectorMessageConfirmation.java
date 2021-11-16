@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import java.io.Serializable;
+import java.util.Arrays;
+
 import org.springframework.core.style.ToStringCreator;
 
 import org.springframework.lang.Nullable;
@@ -88,5 +90,19 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
         builder.append("evidenceType", this.evidenceType);
         return builder.toString();        
     }
-    
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof DomibusConnectorMessageConfirmation)) return false;
+
+		DomibusConnectorMessageConfirmation that = (DomibusConnectorMessageConfirmation) o;
+
+		return Arrays.equals(evidence, that.evidence);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(evidence);
+	}
 }
