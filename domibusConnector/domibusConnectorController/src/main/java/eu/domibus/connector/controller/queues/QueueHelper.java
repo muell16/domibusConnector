@@ -12,6 +12,7 @@ import org.springframework.jms.core.JmsTemplate;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -97,6 +98,36 @@ public class QueueHelper implements HasManageableDlq {
         }
     }
 
+    @Override
+    public String getName() {
+        try {
+            return destination.getQueueName();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String getMessageAsText(Message msg) {
+        if (msg instanceof TextMessage) {
+            TextMessage textMessage = (TextMessage) msg;
+            try {
+                return ((TextMessage) msg).getText();
+            } catch (JMSException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new IllegalArgumentException("The provided message is not a text message!");
+    }
+
+    @Override
+    public String getDlqName() {
+        try {
+            return dlq.getQueueName();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public Queue getQueue() {

@@ -169,6 +169,8 @@ public class JmsConfiguration {
         addressSettings.setAutoCreateDeadLetterResources(true);
         addressSettings.setAutoCreateAddresses(true);
         addressSettings.setAutoCreateExpiryResources(true);
+        addressSettings.setAutoDeleteQueues(false);
+        addressSettings.setAutoDeleteAddresses(false);
         addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
         addressSettings.setExpiryAddress(new SimpleString("expiry"));
         addressSettings.setMaxDeliveryAttempts(3);
