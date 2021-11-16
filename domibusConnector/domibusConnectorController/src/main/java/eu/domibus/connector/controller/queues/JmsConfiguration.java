@@ -108,41 +108,6 @@ public class JmsConfiguration {
     ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
         return configuration -> {
 
-//            //Create Queues
-//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getToConnectorControllerQueue())
-//                    .setDurable(true)
-//                    .setAutoCreated(true)
-//                    .setAddress(prop.getToConnectorControllerQueue())
-//            );
-//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getToLinkQueue())
-//                    .setDurable(true)
-//                    .setAutoCreated(true)
-//                    .setAddress(prop.getToLinkQueue())
-//            );
-//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getCleanupQueue())
-//                    .setDurable(true)
-//                    .setAutoCreated(true)
-//                    .setAddress(prop.getCleanupQueue())
-//            );
-
-//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-//                    .addRoutingType(RoutingType.ANYCAST)
-//                    .setName(prop.getToConnectorControllerQueue()));
-//
-//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-//                    .addRoutingType(RoutingType.ANYCAST)
-//                    .setName(prop.getToLinkQueue()));
-//
-//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-//                    .addRoutingType(RoutingType.ANYCAST)
-//                    .setName(prop.getCleanupQueue()));
-
-//            AddressSettings generalSettings = new AddressSettings();
-//            generalSettings.setAutoCreateAddresses(true)
-//                    .setAutoCreateQueues(true);
-//            configuration.getAddressesSettings()
-//                    .put("#", generalSettings);
-
             //Configure Queue Settings, DLQ, Expiry, ...
             AddressSettings addressSettings1 = basicAddressConfig();
             addressSettings1.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
@@ -158,6 +123,15 @@ public class JmsConfiguration {
             addressSettings3.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
             configuration.getAddressesSettings()
                     .put(prop.getCleanupQueue(), addressSettings3);
+
+            //set config for DLQ.# addresses
+            AddressSettings dlqAdressSettings = new AddressSettings();
+            dlqAdressSettings.setAutoDeleteAddresses(false);
+            dlqAdressSettings.setAutoDeleteCreatedQueues(false);
+            dlqAdressSettings.setAutoCreateAddresses(true);
+            configuration.getAddressesSettings()
+                    .put(QueuesConfigurationProperties.DLQ_PREFIX + "#", dlqAdressSettings);
+
 
         };
     }

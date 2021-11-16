@@ -112,9 +112,13 @@ public class QueueController {
             final List<Message> cleanupMsgs = manageableQueue.listAllMessages();
             webQueue.setMessages(cleanupMsgs);
             webQueue.setMsgsOnQueue(cleanupMsgs.size());
-            final List<Message> cleanupDlqMsgs = manageableQueue.listAllMessagesInDlq();
-            webQueue.setDlqMessages(cleanupDlqMsgs);
-            webQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
+            try {
+                final List<Message> cleanupDlqMsgs = manageableQueue.listAllMessagesInDlq();
+                webQueue.setDlqMessages(cleanupDlqMsgs);
+                webQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
+            } catch (Exception e) {
+                LOGGER.warn("Error occured while reading from DLQ", e);
+            }
 
             return webQueue;
         } catch (Exception e) {
