@@ -3,6 +3,8 @@ package eu.domibus.connector.config.c2ctests;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -30,6 +32,11 @@ public class ConnectorTestConfigurationProperties {
      */
     private boolean respondWithDeliveryEvidence = true;
 
+    @NotNull
+    private Resource defaultBusinessXml = new ClassPathResource("/eu/domibus/connector/config/c2ctests/testbusinessxml.xml");
+
+    @NotNull
+    private Resource defaultBusinessPdf = new ClassPathResource("/eu/domibus/connector/config/c2ctests/testbusinesspdf.pdf");;
 
     @Valid
     private EvidenceActionServiceConfigurationProperties.AS4Service service = new EvidenceActionServiceConfigurationProperties.AS4Service("Connector-TEST", "urn:e-codex:services:");
@@ -68,5 +75,21 @@ public class ConnectorTestConfigurationProperties {
 
     public void setRespondWithDeliveryEvidence(boolean respondWithDeliveryEvidence) {
         this.respondWithDeliveryEvidence = respondWithDeliveryEvidence;
+    }
+
+    public Resource getDefaultBusinessXml() {
+        return defaultBusinessXml;
+    }
+
+    public void setDefaultBusinessXml(Resource defaultBusinessXml) {
+        this.defaultBusinessXml = defaultBusinessXml;
+    }
+
+    public Resource getDefaultBusinessPdf() {
+        return defaultBusinessPdf;
+    }
+
+    public void setDefaultBusinessPdf(Resource defaultBusinessPdf) {
+        this.defaultBusinessPdf = defaultBusinessPdf;
     }
 }

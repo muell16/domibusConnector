@@ -1,5 +1,9 @@
 package eu.domibus.connector.ui.controller;
 
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import eu.domibus.connector.controller.queues.QueuesConfigurationProperties;
 import eu.domibus.connector.controller.queues.producer.ManageableQueue;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
 import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
@@ -7,6 +11,9 @@ import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.ui.dto.WebQueue;
 import lombok.Getter;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -16,115 +23,115 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.jms.Queue;
+import javax.tools.Diagnostic;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class QueueController {
 
-    private final ToLinkQueue toLinkQueue;
-    private final ToConnectorQueue toConnectorQueue;
-    private final ToCleanupQueue toCleanupQueue;
+    private static final Logger LOGGER = LogManager.getLogger(QueueController.class);
+
     @Getter
     private final MessageConverter converter;
 
     @Getter
     private final Map<String, ManageableQueue> queueMap;
+    private final Map<String, ManageableQueue> errorQueueMap;
 
-    public QueueController(ToLinkQueue toLinkQueue, ToConnectorQueue toConnectorQueue, ToCleanupQueue toCleanupQueue, MessageConverter converter) {
-        this.toLinkQueue = toLinkQueue;
-        this.toConnectorQueue = toConnectorQueue;
-        this.toCleanupQueue = toCleanupQueue;
-        this.converter = converter;
-        this.queueMap = new HashMap<>();
-    }
-
-    @EventListener
-    public void loadList(ApplicationReadyEvent event) {
-        try {
-            queueMap.put(toLinkQueue.getDlq().getQueueName(), toLinkQueue);
-            queueMap.put(toLinkQueue.getQueue().getQueueName(), toLinkQueue);
-            queueMap.put(toConnectorQueue.getQueue().getQueueName(), toConnectorQueue);
-            queueMap.put(toConnectorQueue.getDlq().getQueueName(), toConnectorQueue);
-            queueMap.put(toCleanupQueue.getQueue().getQueueName(), toCleanupQueue);
-            queueMap.put(toCleanupQueue.getDlq().getQueueName(), toCleanupQueue);
-        } catch (JMSException e) {
-            e.printStackTrace();
+    public QueueController(@Autowired(required = false) List<ManageableQueue> queues, MessageConverter converter) {
+        if (queues == null) {
+            this.queueMap = new HashMap<>();
+            this.errorQueueMap = new HashMap<>();
+        } else {
+            this.queueMap = queues.stream().collect(Collectors.toMap(ManageableQueue::getName, q -> q));
+            this.errorQueueMap = queues.stream().collect(Collectors.toMap(ManageableQueue::getDlqName, q -> q));
         }
+        this.converter = converter;
     }
 
     @Transactional
     public void deleteMsg(Message msg) {
         // can be any queue
-        toLinkQueue.deleteMsg(msg);
+        queueMap.values().stream().findFirst().ifPresent(q -> q.deleteMsg(msg));
+    }
+
+    public String getMsgText(Message msg) {
+        // can be any queue
+        return queueMap.values().stream().findFirst().map(q -> q.getMessageAsText(msg)).orElse("[none]");
     }
 
     @Transactional
     public void moveMsgFromDlqToQueue(Message msg) {
-        Destination jmsDestination = null;
-        String linkQueueName = null;
-        String conncetorQueueName = null;
-        String cleanupQueueName = null;
+        String jmsDestination = null;
         try {
-            jmsDestination = msg.getJMSDestination();
-            linkQueueName = toLinkQueue.getDlq().getQueueName();
-            conncetorQueueName = toConnectorQueue.getDlq().getQueueName();
-            cleanupQueueName = toCleanupQueue.getDlq().getQueueName();
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-        if (jmsDestination != null) {
-            final String dlqName = ((ActiveMQQueue) jmsDestination).getQueueName();
-            if (dlqName.equals(cleanupQueueName)) {
-                toCleanupQueue.moveMsgFromDlqToQueue(msg);
-            } else if (dlqName.equals(linkQueueName)) {
-                toLinkQueue.moveMsgFromDlqToQueue(msg);
-            } else if (dlqName.equals(conncetorQueueName)) {
-                toConnectorQueue.moveMsgFromDlqToQueue(msg);
+            if (msg.getJMSDestination() instanceof javax.jms.Queue) {
+                jmsDestination = ((Queue) msg.getJMSDestination()).getQueueName();
+            } else {
+                String error = "Illegal destination: [" + msg.getJMSDestination() + "] Other destinations then queues are not supported!";
+                LOGGER.warn(error);
+                Notification.show(error);
             }
+            if (jmsDestination != null) {
+                ManageableQueue manageableQueue = errorQueueMap.get(jmsDestination);
+                if (manageableQueue == null) {
+                    throw new IllegalArgumentException(String.format("DLQ with name [%s] was not found! Available are: [%s]",
+                            jmsDestination,
+                            errorQueueMap.keySet().stream().collect(Collectors.joining(","))
+                    ));
+                }
+                manageableQueue.moveMsgFromDlqToQueue(msg);
+            } else {
+                String error = "Illegal destination: null";
+                Notification.show(error);
+                LOGGER.warn(error);
+            }
+        } catch (JMSException e) {
+            String error = "An exception occured while moving message from DLQ to queue";
+            LOGGER.warn(error, e);
+           Notification.show(error);
         }
     }
 
     @Transactional
     public List<WebQueue> getQueues() {
-        List<WebQueue> result = new ArrayList<>();
-        final WebQueue toLinkWebQueue = new WebQueue();
-        final WebQueue toConnectorWebQueue = new WebQueue();
-        final WebQueue toCleanupWebQueue = new WebQueue();
-        try {
-            toLinkWebQueue.setName(toLinkQueue.getQueue().getQueueName());
-            final List<Message> linkMsgs = toLinkQueue.listAllMessages();
-            toLinkWebQueue.setMessages(linkMsgs);
-            toLinkWebQueue.setMsgsOnQueue(linkMsgs.size());
-            final List<Message> linkDlqMessages = toLinkQueue.listAllMessagesInDlq();
-            toLinkWebQueue.setDlqMessages(linkDlqMessages);
-            toLinkWebQueue.setMsgsOnDlq(linkDlqMessages.size());
+        List<WebQueue> result = queueMap.values().stream()
+                .map(this::mapQueueToWebQueue)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-            toConnectorWebQueue.setName(toConnectorQueue.getQueue().getQueueName());
-            final List<Message> connectorMsgs = toConnectorQueue.listAllMessages();
-            toConnectorWebQueue.setMessages(connectorMsgs);
-            toConnectorWebQueue.setMsgsOnQueue(connectorMsgs.size());
-            final List<Message> connectorDlqMsgs = toConnectorQueue.listAllMessagesInDlq();
-            toConnectorWebQueue.setDlqMessages(connectorDlqMsgs);
-            toConnectorWebQueue.setMsgsOnQueue(connectorDlqMsgs.size());
-
-            toCleanupWebQueue.setName(toCleanupQueue.getQueue().getQueueName());
-            final List<Message> cleanupMsgs = toCleanupQueue.listAllMessages();
-            toCleanupWebQueue.setMessages(cleanupMsgs);
-            toCleanupWebQueue.setMsgsOnQueue(cleanupMsgs.size());
-            final List<Message> cleanupDlqMsgs = toCleanupQueue.listAllMessagesInDlq();
-            toCleanupWebQueue.setDlqMessages(cleanupDlqMsgs);
-            toCleanupWebQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
-
-            result.add(toLinkWebQueue);
-            result.add(toConnectorWebQueue);
-            result.add(toCleanupWebQueue);
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
         return result;
     }
 
+    private WebQueue mapQueueToWebQueue(ManageableQueue manageableQueue) {
+        try {
+            WebQueue webQueue = new WebQueue();
+
+            webQueue.setName(manageableQueue.getName());
+            final List<Message> cleanupMsgs = manageableQueue.listAllMessages();
+            webQueue.setMessages(cleanupMsgs);
+            webQueue.setMsgsOnQueue(cleanupMsgs.size());
+            try {
+                final List<Message> cleanupDlqMsgs = manageableQueue.listAllMessagesInDlq();
+                webQueue.setDlqMessages(cleanupDlqMsgs);
+                webQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
+            } catch (Exception e) {
+                LOGGER.warn("Error occured while reading from DLQ", e);
+            }
+
+            return webQueue;
+        } catch (Exception e) {
+            LOGGER.warn("Error occured", e);
+            return null;
+        }
+    }
+
+    public void showMessage(Message message) {
+        String messageText = this.getMsgText(message);
+        Dialog d = new Dialog();
+        d.add(new Label(messageText));
+        d.open();
+        d.setSizeFull();
+    }
 }
