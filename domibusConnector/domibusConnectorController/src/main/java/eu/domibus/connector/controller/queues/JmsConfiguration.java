@@ -108,20 +108,34 @@ public class JmsConfiguration {
     ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
         return configuration -> {
 
-            //Create Queues
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getToConnectorControllerQueue()));
+//            //Create Queues
+//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getToConnectorControllerQueue())
+//                    .setDurable(true)
+//                    .setAutoCreated(true)
+//                    .setAddress(prop.getToConnectorControllerQueue())
+//            );
+//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getToLinkQueue())
+//                    .setDurable(true)
+//                    .setAutoCreated(true)
+//                    .setAddress(prop.getToLinkQueue())
+//            );
+//            configuration.addQueueConfiguration(new QueueConfiguration(prop.getCleanupQueue())
+//                    .setDurable(true)
+//                    .setAutoCreated(true)
+//                    .setAddress(prop.getCleanupQueue())
+//            );
 
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getToLinkQueue()));
-
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getCleanupQueue()));
-
-
+//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+//                    .addRoutingType(RoutingType.ANYCAST)
+//                    .setName(prop.getToConnectorControllerQueue()));
+//
+//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+//                    .addRoutingType(RoutingType.ANYCAST)
+//                    .setName(prop.getToLinkQueue()));
+//
+//            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
+//                    .addRoutingType(RoutingType.ANYCAST)
+//                    .setName(prop.getCleanupQueue()));
 
 //            AddressSettings generalSettings = new AddressSettings();
 //            generalSettings.setAutoCreateAddresses(true)
@@ -151,6 +165,7 @@ public class JmsConfiguration {
     private AddressSettings basicAddressConfig() {
         AddressSettings addressSettings = new AddressSettings();
         addressSettings.setAutoCreateQueues(true);
+        addressSettings.setDefaultAddressRoutingType(RoutingType.ANYCAST);
         addressSettings.setAutoCreateDeadLetterResources(true);
         addressSettings.setAutoCreateAddresses(true);
         addressSettings.setAutoCreateExpiryResources(true);
