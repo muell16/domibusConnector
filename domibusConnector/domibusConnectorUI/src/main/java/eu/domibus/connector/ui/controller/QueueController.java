@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.jms.InvalidDestinationException;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,8 +117,10 @@ public class QueueController {
                 final List<Message> cleanupDlqMsgs = manageableQueue.listAllMessagesInDlq();
                 webQueue.setDlqMessages(cleanupDlqMsgs);
                 webQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
+            } catch (InvalidDestinationException ide) {
+                LOGGER.debug("Error occured while reading from DLQ [" + manageableQueue.getDlqName() + "]", ide);
             } catch (Exception e) {
-                LOGGER.warn("Error occured while reading from DLQ", e);
+                LOGGER.warn("Error occured while reading from DLQ [" + manageableQueue.getDlqName() + "]", e);
             }
 
             return webQueue;
