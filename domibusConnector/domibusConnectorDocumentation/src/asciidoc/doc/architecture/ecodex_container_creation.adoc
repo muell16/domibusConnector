@@ -1,0 +1,30 @@
+= e-Codex Container Creation
+
+== e-Codex Container Format
+
+The e-Codex container is basically a zip container following the link:https://en.wikipedia.org/wiki/Associated_Signature_Containers[ASIC-S] standard (Currently the use of ASIC-E within e-Codex is not standardized. The e-Codex container holds the
+
+* Business Document as PDF
+* TrustOK Token as PDF
+* Any additional attachments of any file type
+
+NOTE: The container itself is signed by the sending connector with the provided key. The TrustTokenXML, BusinessDocumentXML is not put into the ASIC-S container.
+
+== Limitations
+
+Depending on the underlying zip implementation of the JVM the maximum file limit of the e-Codex Container / ASIC-S container is between 2 and 4 GB. The next limit would be 4 GB for the link:https://en.wikipedia.org/wiki/ZIP_(file_format)[zip format] itself (zip64 could be a solution).
+
+== Creation Workflow
+
+. The business document is validated
+.. The existence of a business document is validated
+.. Depending on the authentication System (AUTHENTICATION_BASED, SIGNATURE_BASED) the signature of the document is validated
+.. Dependent on the checkes a Trust Token is created both in PDF Form (human readable) and strucutered as XML. Both documents are signed by the connector
+. The BusinessDocumentPDF, TrustTokenPDF and all attachments are put into the  ASIC-S container
+
+The message now contains the ASIC-S container, the BusinessDocumentXML and the TrustTokenXML.
+
+
+
+
+

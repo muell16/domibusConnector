@@ -1,0 +1,6 @@
+:toc: top
+:toc-title: Table of Content
+:toclevels: 4
+
+include::../doc/ui/business_document_verification.adoc[tags=!header]
+

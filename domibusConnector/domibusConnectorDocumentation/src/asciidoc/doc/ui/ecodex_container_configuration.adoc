@@ -1,0 +1,58 @@
+//# tag::header[]
+include::../header.adoc[]
+//# end::header[]
+
+
+== ECodex Container Configuration
+
+The eCodexContainer is build by the connector. The build container will also be signed by the connector.
+
+Any received eCodexContainer is verified by the connector. The used certificates, private keys and settings are here.
+
+.ECodex Container Signature Validation Config Properties
+|===
+| property | description
+
+| Location of EtsiValidationPolicyXml
+| The location of EtsiValidationPolicyXml. This policy describes which encryption and signature algorithms and formats are valid for the ASIC-S container.
+
+| Use Trust Store
+| Use the configured Trust Store as trust source
+
+| Trust Store Configuration
+| The Trust Store Configuration. A KeyStore configuration with location, password and key store type. Usually this configuration is changed by uploading a connector trust store via the p-Mode upload. This TrustStore holds all trusted cerficates from the associated e-Codex communication partners.
+
+| Use Ignore Store
+| Should the ingore Store be used. Any certificate in here would be consideder as not trusted!
+
+| Ignore Store configuration
+| A KeyStore configuration with location, password and key store type.
+
+| Set the trusted list source
+| The trusted list source. This should remain empty in most of the e-Codex use cases because trust is established via the distributed keystore which holds the certificates for all trusted communication partners.
+
+| Should OCSP be used on certificate verification
+| Should OCSP be used on certificate verification. For this the checked certificate must provide a OCSP source address and the connector itself must be able to reach the OCSP source.
+
+| Should CRL be used on certificate verification
+| Should CRL be used on certificate verification. For this the checked certificate must provide a CRL URL and the connector itself must be able to reach the provided CRL URL.
+
+|===
+
+.ECodex Container Signature Configuration Properties
+|===
+| property | description
+
+| Encryption Algorithm
+| Which Encryption Algorithm should be used for signatures
+
+| Digest Algorithm
+| Which Digest Algorithm should be used for digests during signature creation.
+
+| Key Store Configuration
+| A KeyStore configuration with location, password and key store type.
+
+| Private Key Configuration
+| Private key configuration with key alias (must exist within the keystore) and a key password to open the private key. This key is used to sign the ASIC-S container, TrustTokenPDF, TrustTokenXML. The public key of this keypair must be shared with your communication partners.
+
+|===
