@@ -13,7 +13,9 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
@@ -82,11 +84,15 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
                                         TransportStepPersistenceService transportStepPersistenceService,
                                         DCLinkFacade dcLinkFacade,
                                         OpenHelpButtonFactory openHelpButtonFactory) {
-        this.dcTransportRetryService = dcTransportRetryService;
-        this.transportStepPersistenceService = transportStepPersistenceService;
-        this.dcLinkFacade = dcLinkFacade;
-        this.openHelpButtonFactory = openHelpButtonFactory;
-        initUI();
+            this.dcTransportRetryService = dcTransportRetryService;
+            this.transportStepPersistenceService = transportStepPersistenceService;
+            this.dcLinkFacade = dcLinkFacade;
+            this.openHelpButtonFactory = openHelpButtonFactory;
+        try {
+            initUI();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     private void initUI() {
@@ -200,25 +206,33 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
     private int countCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
         //TODO: introduce own count call on DB so not ALL items are read from DB or check if Pageable.ofSize(0) avoids fetching items
-        Page<DomibusConnectorTransportStep> stepByLastState = getDomibusConnectorTransportSteps(Pageable.ofSize(1));
-        return (int) stepByLastState.getTotalElements();
+        try {
+            Page<DomibusConnectorTransportStep> stepByLastState = getDomibusConnectorTransportSteps(Pageable.ofSize(1));
+            return (int) stepByLastState.getTotalElements();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return 0;
+        }
     }
 
     private Stream<DomibusConnectorTransportStep> fetchCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
         int offset = tfQuery.getOffset();
+        try {
+            List<Sort.Order> collect = paginatedGrid.getSortOrder()
+                    .stream()
+                    .filter(sortOrder -> sortOrder.getSorted().getKey() != null)
+                    .map(sortOrder ->
+                            sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
+                    .collect(Collectors.toList());
+            Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
 
-        List<Sort.Order> collect = paginatedGrid.getSortOrder()
-                .stream()
-                .filter(sortOrder -> sortOrder.getSorted().getKey() != null)
-                .map(sortOrder ->
-                        sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
-                .collect(Collectors.toList());
-        Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
-
-
-        PageRequest pageRequest = PageRequest.of(offset / paginatedGrid.getPageSize(), paginatedGrid.getPageSize(), sort);
-        Page<DomibusConnectorTransportStep> domibusConnectorTransportSteps = getDomibusConnectorTransportSteps(pageRequest);
-        return domibusConnectorTransportSteps.stream();
+            PageRequest pageRequest = PageRequest.of(offset / paginatedGrid.getPageSize(), paginatedGrid.getPageSize(), sort);
+            Page<DomibusConnectorTransportStep> domibusConnectorTransportSteps = getDomibusConnectorTransportSteps(pageRequest);
+            return domibusConnectorTransportSteps.stream();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Stream.empty();
+        }
     }
 
     private Page<DomibusConnectorTransportStep> getDomibusConnectorTransportSteps(Pageable p) {
