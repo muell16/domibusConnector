@@ -1,10 +1,12 @@
 package eu.domibus.connector.ui.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import javax.activation.DataHandler;
 import javax.xml.transform.Source;
 
+import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import eu.domibus.connector.ui.dto.WebMessageDetail.Party;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.europa.esig.dss.model.MimeType;
+import org.springframework.util.StreamUtils;
 
 
 @ConditionalOnBean(DCConnector2ConnectorTestService.class) 	//it might be possible, if the testbackend plugin is not enabled, that the service DCConnector2ConnectorTestService is not available!, in this case do not create WebConnectorTestService bean.
@@ -36,9 +39,13 @@ import eu.europa.esig.dss.model.MimeType;
 public class WebConnectorTestService {
 
 	private final DCConnector2ConnectorTestService connectorTestService;
+	private final ConnectorTestConfigurationProperties config;
 
-	public WebConnectorTestService(DCConnector2ConnectorTestService connectorTestService) {
+	public WebConnectorTestService(DCConnector2ConnectorTestService connectorTestService,
+								   ConnectorTestConfigurationProperties config
+	) {
 		this.connectorTestService = connectorTestService;
+		this.config = config;
 	}
 	
 	public void submitTestMessage(WebMessage testMsg) {
@@ -46,7 +53,23 @@ public class WebConnectorTestService {
 		
 		connectorTestService.submitTestMessage(connectorMsg);
 	}
-	
+
+	public byte[] getDefaultTestBusinessPdf() {
+		try {
+			return StreamUtils.copyToByteArray(config.getDefaultBusinessPdf().getInputStream());
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	public byte[] getDefaultBusinessXml() {
+		try {
+			return StreamUtils.copyToByteArray(config.getDefaultBusinessXml().getInputStream());
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
 	public WebMessageDetail.Service getTestService() {
 		AS4Service testService = connectorTestService.getTestService(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 		WebMessageDetail.Service service = new WebMessageDetail.Service(testService.getName(), testService.getServiceType());
