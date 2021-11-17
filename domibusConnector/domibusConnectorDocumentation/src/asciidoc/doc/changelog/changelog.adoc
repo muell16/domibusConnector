@@ -1,0 +1,22 @@
+:toc: left
+:toc-title: Table of Content
+:toclevels: 4
+//disable section numbers in changelog
+:sectnums!:
+
+= Changelog
+
+
+include::changelog-4.0.x.adoc[]
+
+include::changelog-4.1.x.adoc[]
+
+include::changelog-4.2.x.adoc[]
+
+include::changelog-4.3.x.adoc[]
+
+include::changelog-4.4.x.adoc[]
+
+
+
+
