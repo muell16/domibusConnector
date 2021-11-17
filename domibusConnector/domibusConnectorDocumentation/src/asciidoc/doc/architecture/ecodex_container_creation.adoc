@@ -1,3 +1,14 @@
+
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
 = e-Codex Container Creation
 
 == e-Codex Container Format

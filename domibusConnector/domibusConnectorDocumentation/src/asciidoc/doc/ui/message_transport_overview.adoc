@@ -1,8 +1,12 @@
-:description: Message Transport to Link Partners Overview Manual
-:library: Asciidoctor
+:path: ../../
 
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Message Transport to Link Partners
 

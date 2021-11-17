@@ -1,8 +1,14 @@
 :description: The connector architecture overview
-:library: Asciidoctor
-:stylesheet: asciidoc.css
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Connector Architecture Module Responsibilities
 

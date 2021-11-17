@@ -1,7 +1,14 @@
-include::../header.adoc[]
+:path: ../../
 
-== Testing Matrix
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
 
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Testing Matrix
 
 == The Connector has been tested on
 

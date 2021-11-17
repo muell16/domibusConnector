@@ -1,9 +1,14 @@
-//# tag::header[]
-include::../header.adoc[]
-//# end::header[]
+:path: ../../
 
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
 
-== ECodex Container Configuration
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= ECodex Container Configuration
 
 The eCodexContainer is build by the connector. The build container will also be signed by the connector.
 

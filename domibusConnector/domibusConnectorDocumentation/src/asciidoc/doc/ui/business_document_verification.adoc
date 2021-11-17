@@ -1,7 +1,15 @@
-//# tag::header[]
-include::../header.adoc[]
-//# end::header[]
+:path: ../../
 
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+
+= Business document verification configuration
 
 == Business document verification configuration properties
 

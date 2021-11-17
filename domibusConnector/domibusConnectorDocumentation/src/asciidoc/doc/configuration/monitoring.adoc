@@ -1,8 +1,17 @@
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
-:description: Monitoring manual
-:library: Asciidoctor
-:stylesheet: asciidoc.css
+
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
 
 = Monitoring
 

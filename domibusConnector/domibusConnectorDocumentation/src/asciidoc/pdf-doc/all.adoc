@@ -1,6 +1,12 @@
+:doctype: book
 :toc: top
 :toc-title: Table of Content
 :toclevels: 4
+:sectnums:
 
-include::../doc/ui/business_document_verification.adoc[tags=!header]
 
+//ifndef::rootpath[]
+//:rootpath: ../
+//endif::rootpath[]
+
+include::../doc/single.adoc[]

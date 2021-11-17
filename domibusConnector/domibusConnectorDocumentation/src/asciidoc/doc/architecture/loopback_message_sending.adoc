@@ -1,7 +1,15 @@
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
 
-= Loopback message sending
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Loopback Message Sending
 
 With connector version 4.2 the connector supports loopback sending of messages.
 This means that a connector can handle a message going from backend to gateway

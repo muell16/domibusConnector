@@ -1,8 +1,14 @@
-:description: Description of how the Link Partners does work
-:library: Asciidoctor
 
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Link Partners
 
