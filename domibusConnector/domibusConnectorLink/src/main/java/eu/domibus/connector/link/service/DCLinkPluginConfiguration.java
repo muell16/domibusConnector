@@ -40,14 +40,6 @@ public class DCLinkPluginConfiguration {
         return new WsGatewayPlugin();
     }
 
-//  TestBackend has seperate configuration...
-//    @Bean
-//    @ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + TestbackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
-//    @ConditionalOnBean(ConfigurationPropertyManagerService.class)
-//    public TestbackendPlugin testbackendPlugin() {
-//        return new TestbackendPlugin();
-//    }
-
     @Bean
     @ConditionalOnProperty(prefix = DCLinkPluginConfigurationProperties.PREFIX + ".plugin-" + WsBackendPlugin.IMPL_NAME,
             value = "enabled",
