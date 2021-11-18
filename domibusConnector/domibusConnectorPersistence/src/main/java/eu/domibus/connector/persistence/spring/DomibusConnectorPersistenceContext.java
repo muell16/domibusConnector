@@ -31,17 +31,16 @@ public class DomibusConnectorPersistenceContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceContext.class);
 
-
-    @Bean
-    @Profile(STORAGE_FS_PROFILE_NAME)
-    public LargeFilePersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
-        return new LargeFilePersistenceServiceFilesystemImpl();
-    }
-
-    @Bean
-    @Profile(STORAGE_DB_PROFILE_NAME)
-    public LargeFilePersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
-        return new LargeFilePersistenceServiceJpaImpl();
-    }
+//    @Bean
+//    @Profile(STORAGE_FS_PROFILE_NAME)
+//    public LargeFilePersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
+//        return new LargeFilePersistenceServiceFilesystemImpl();
+//    }
+//
+//    @Bean
+//    @Profile(STORAGE_DB_PROFILE_NAME)
+//    public LargeFilePersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
+//        return new LargeFilePersistenceServiceJpaImpl();
+//    }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.*;
 
+import java.net.BindException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,7 +99,11 @@ public class LinkPluginUtils {
                     "\n\tprofiles [{}]", props, profiles
             );
 
-            return builder.run(args);
+            try {
+                return builder.run(args);
+            } catch (Exception e) {
+                throw new LinkPluginException("cannot start link plugin context", e);
+            }
         }
 
     }

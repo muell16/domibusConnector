@@ -5,18 +5,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
-import eu.domibus.connector.link.impl.gwwspushplugin.childctx.WsGatewayPluginConfigurationProperties;
-import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
-import org.springframework.boot.actuate.endpoint.web.Link;
+import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPluginConfigurationProperties;
+import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginConfigurationProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,8 +106,7 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
     public List<DomibusConnectorLinkPartner> loadBackendsFromDb(JdbcTemplate jdbcTemplate) {
 
         List<DomibusConnectorLinkPartner> query = jdbcTemplate.query(
-                "-- noinspection SqlResolveForFile @ table/"DOMIBUS_CONNECTOR_BACKEND_INFO"
- Select BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_PUSH_ADDRESS, BACKEND_DEFAULT, BACKEND_ENABLED, BACKEND_DESCRIPTION " +
+                "Select BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_PUSH_ADDRESS, BACKEND_DEFAULT, BACKEND_ENABLED, BACKEND_DESCRIPTION " +
                 " FROM DOMIBUS_CONNECTOR_BACKEND_INFO", (RowMapper<DomibusConnectorLinkPartner>) (rs, rowNum) -> {
 
             DomibusConnectorLinkPartner p = new DomibusConnectorLinkPartner();

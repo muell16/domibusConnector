@@ -17,6 +17,8 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,16 +75,22 @@ public class LinkTestContext {
         return Mockito.mock(DCMessagePersistenceService.class);
     }
 
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public LargeFileProviderMemoryImpl largeFilePersistenceServiceMemoryImpl() {
+//        return new LargeFileProviderMemoryImpl();
+//    }
+
     @Bean
     @ConditionalOnMissingBean
-    public LargeFileProviderMemoryImpl largeFilePersistenceServiceMemoryImpl() {
-        return new LargeFileProviderMemoryImpl();
+    public LargeFilePersistenceService largeFilePersistenceServicePassthroughImpl() {
+        return new LargeFilePersistenceServicePassthroughImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorDomainMessageTransformerService transformerService() {
-        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceServiceMemoryImpl());
+    public DomibusConnectorDomainMessageTransformerService transformerService(LargeFilePersistenceService largeFilePersistenceService) {
+        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceService);
     }
 
     @Bean

@@ -6,9 +6,7 @@ import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -63,9 +61,13 @@ public interface LinkPlugin {
      * which represents the plugin properties
      *
      */
-    List<Class> getPluginConfigurationProperties();
+    default List<Class> getPluginConfigurationProperties() {
+        return Collections.emptyList();
+    }
 
-    List<Class> getPartnerConfigurationProperties();
+    default List<Class> getPartnerConfigurationProperties() {
+        return Collections.emptyList();
+    }
 
 
     default Optional<PullFromLinkPartner> getPullFromLink(ActiveLinkPartner activeLinkPartner) { return Optional.empty();}
