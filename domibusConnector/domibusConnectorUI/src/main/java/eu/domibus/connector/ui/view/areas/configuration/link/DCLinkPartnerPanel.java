@@ -114,9 +114,9 @@ public class DCLinkPartnerPanel extends VerticalLayout
             List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
                     .stream()
                     .map(feature -> {
-                        if (PluginFeature.RCV_PULL_MODE == feature) {
-                            return LinkMode.PULL;
-                        } else if (PluginFeature.RCV_PASSIVE_MODE == feature) {
+                        if (PluginFeature.SEND_PUSH_MODE == feature) {
+                            return LinkMode.PUSH;
+                        } else if (PluginFeature.SEND_PASSIVE_MODE == feature) {
                             return LinkMode.PASSIVE;
                         } else {
                             return null;
@@ -137,9 +137,9 @@ public class DCLinkPartnerPanel extends VerticalLayout
             List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
                     .stream()
                     .map(feature -> {
-                        if (PluginFeature.SEND_PUSH_MODE == feature) {
-                            return LinkMode.PUSH;
-                        } else if (PluginFeature.SEND_PASSIVE_MODE == feature) {
+                        if (PluginFeature.RCV_PULL_MODE == feature) {
+                            return LinkMode.PULL;
+                        } else if (PluginFeature.RCV_PASSIVE_MODE == feature) {
                             return LinkMode.PASSIVE;
                         } else {
                             return null;
