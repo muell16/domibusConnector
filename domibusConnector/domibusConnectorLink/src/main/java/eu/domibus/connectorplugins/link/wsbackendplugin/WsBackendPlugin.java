@@ -66,13 +66,14 @@ public class WsBackendPlugin implements LinkPlugin {
         activeLink.setLinkConfiguration(linkConfiguration);
         activeLink.setChildContext(childCtx);
 
-
         return activeLink;
     }
 
     @Override
     public void shutdownConfiguration(ActiveLink activeLink) {
-        throw new RuntimeException("Not supported!");
+        if (activeLink.getChildContext() != null) {
+            activeLink.getChildContext().close();
+        }
     }
 
 
@@ -117,7 +118,19 @@ public class WsBackendPlugin implements LinkPlugin {
 
     @Override
     public void shutdownActiveLinkPartner(ActiveLinkPartner linkPartner) {
-        throw new RuntimeException("Not supported!");
+        if (linkPartner instanceof WsBackendPluginActiveLinkPartner) {
+            WsBackendPluginActiveLinkPartner lp = (WsBackendPluginActiveLinkPartner) linkPartner;
+            if (linkPartner.getChildContext().isPresent()) {
+                ConfigurableApplicationContext ctx = linkPartner.getChildContext().get();
+                WsActiveLinkPartnerManager bean = ctx.getBean(WsActiveLinkPartnerManager.class);
+                bean.deregister(lp);
+            } else {
+                throw new RuntimeException("Error no context found!");
+            }
+        } else {
+            throw new IllegalArgumentException("The provided link partner is not of type " + WsBackendPluginActiveLinkPartner.class);
+        }
+
     }
 
     @Override
