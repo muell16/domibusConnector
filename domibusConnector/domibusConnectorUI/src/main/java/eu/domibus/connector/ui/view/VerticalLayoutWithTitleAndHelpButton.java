@@ -12,7 +12,7 @@ import com.vaadin.flow.router.RouteConfiguration;
 public class VerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 
 	public final String HELP_PAGE_PATH;
-	public static final String DOC_PREFIX = "documentation/html/ui/";
+	public static final String DOC_PREFIX = "documentation/ui/";
 
 	public final String pageTitle;
 
@@ -38,7 +38,7 @@ public class VerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 		helpBar.expand(title);
 		helpBar.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.END);
 		helpBar.setWidth("95%");
-		helpBar.setHeight("30px");
+		helpBar.setHeight("50px");
 
 		add(helpBar);
 	}
