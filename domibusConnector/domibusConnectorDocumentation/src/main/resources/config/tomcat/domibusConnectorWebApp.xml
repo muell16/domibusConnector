@@ -15,12 +15,14 @@
     <JarScanner>
         <JarScanFilter pluggabilitySkip="jaxb-api-2.3.0.jar"/>
     </JarScanner>
-    <!-- name of the container datasource -->
-    <Parameter name="spring.datasource.jndi-name" value="jdbc/domibusWebConnectorDS" override="false"/>
+
     <!-- location of the connector configuration -->
-    <Parameter name="config.location" value="file:///${CATALINA_HOME}/conf/connector/connector.properties" override="false"/>
+    <Parameter name="spring.config.location" value="file:///${CATALINA_HOME}/conf/connector/connector.properties" override="false"/>
     <!-- location of the log4j2 logging configuration -->
     <Parameter name="logging.config" value="file:///${CATALINA_HOME}/conf/connector/log4j2.xml"/>
+
+    <!-- name of the container datasource -->
+    <!--    <Parameter name="spring.datasource.jndi-name" value="jdbc/domibusWebConnectorDS" override="false"/>-->
     <!-- definition of the container datasource -->
-    <Resource name="jdbc/domibusWebConnectorDS" auth="Container" type="javax.sql.DataSource" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost/testwebconnector" username="testwebconnector" password="testwebconnector" maxActive="20" maxIdle="10" maxWait="-1"/>
+    <!--    <Resource name="jdbc/domibusWebConnectorDS" auth="Container" type="javax.sql.DataSource" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost/testwebconnector" username="testwebconnector" password="testwebconnector" maxActive="20" maxIdle="10" maxWait="-1"/>-->
 </Context>
