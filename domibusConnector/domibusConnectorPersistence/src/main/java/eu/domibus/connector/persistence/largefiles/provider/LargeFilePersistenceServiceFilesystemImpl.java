@@ -6,10 +6,13 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionExce
 import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
+import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 
@@ -29,10 +32,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//initialized by DomibusConnectorPersistenceContext.class
+@ConditionalOnProperty(prefix = DomibusConnectorPersistenceProperties.PREFIX,
+        value = "provider-" + LargeFilePersistenceServiceFilesystemImpl.PROVIDER_NAME,
+        havingValue = "true", matchIfMissing = true)
+@Service
 public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
 
-    public static final String PROVIDER_NAME = "FSProvider";
+    public static final String PROVIDER_NAME = "filesystem";
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceFilesystemImpl.class);
 
     @Autowired

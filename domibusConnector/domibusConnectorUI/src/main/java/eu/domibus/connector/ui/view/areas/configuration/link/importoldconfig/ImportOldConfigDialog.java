@@ -1,30 +1,17 @@
 package eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.link.impl.gwwspushplugin.WsGatewayPlugin;
-import eu.domibus.connector.link.impl.gwwspushplugin.childctx.WsGatewayPluginConfigurationProperties;
-import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPlugin;
-import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigPanel;
-import org.apache.commons.collections.BagUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;

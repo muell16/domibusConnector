@@ -1,7 +1,13 @@
 package test.eu.domibus.connector.link;
 
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
+import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
+import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
@@ -17,6 +23,8 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +42,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, })
-@Import({LinkTestContext.LinkServiceContext.class, HelperMethods.class, DCKeyStoreService.class})
+@Import({LinkTestContext.LinkServiceContext.class,
+        HelperMethods.class,
+        DCKeyStoreService.class,
+        ConfigurationPropertyLoaderServiceImpl.class,
+        DCBusinessDomainManagerImpl.class,
+        ConnectorConfigurationProperties.class
+})
+@ComponentScan(basePackages = "eu.domibus.connector.common")
 public class LinkTestContext {
 
     private static final Logger LOGGER = LogManager.getLogger(LinkTestContext.class);
@@ -47,6 +62,11 @@ public class LinkTestContext {
     @MockBean
     DomibusConnectorLinkPartnerDao dao;
 
+    @MockBean
+    DomibusConnectorBusinessDomainDao domainDao;
+
+    @MockBean
+    DCRoutingRulesManager rulesManager;
 
     @Configuration
     @ComponentScan(basePackageClasses = DCLinkPluginConfiguration.class)
@@ -73,16 +93,22 @@ public class LinkTestContext {
         return Mockito.mock(DCMessagePersistenceService.class);
     }
 
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public LargeFileProviderMemoryImpl largeFilePersistenceServiceMemoryImpl() {
+//        return new LargeFileProviderMemoryImpl();
+//    }
+
     @Bean
     @ConditionalOnMissingBean
-    public LargeFileProviderMemoryImpl largeFilePersistenceServiceMemoryImpl() {
-        return new LargeFileProviderMemoryImpl();
+    public LargeFilePersistenceService largeFilePersistenceServicePassthroughImpl() {
+        return new LargeFilePersistenceServicePassthroughImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorDomainMessageTransformerService transformerService() {
-        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceServiceMemoryImpl());
+    public DomibusConnectorDomainMessageTransformerService transformerService(LargeFilePersistenceService largeFilePersistenceService) {
+        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceService);
     }
 
     @Bean

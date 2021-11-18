@@ -15,11 +15,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
@@ -37,13 +40,16 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
  * to an byte array (ByteArrayInputStream / ByteArrayOutputStream)
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-//initialized by DomibusConnectorPersistenceContext.class
+@ConditionalOnProperty(prefix = DomibusConnectorPersistenceProperties.PREFIX,
+        value = "provider-" + LargeFilePersistenceServiceJpaImpl.PROVIDER_NAME,
+        havingValue = "true", matchIfMissing = true)
+@Service
 @Transactional
 public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceJpaImpl.class);
 
-    public static final String PROVIDER_NAME = "JPA";
+    public static final String PROVIDER_NAME = "jpa";
 
     @Autowired
     private DomibusConnectorBigDataDao bigDataDao;

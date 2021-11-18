@@ -27,7 +27,7 @@ public class DCLinkPluginConfigurationProperties {
     /**
      * switch if link config should be read from database
      */
-    private boolean loadDbConfig = false;
+    private boolean loadDbConfig = true;
 
     /**
      * start the connector if any link plugin init

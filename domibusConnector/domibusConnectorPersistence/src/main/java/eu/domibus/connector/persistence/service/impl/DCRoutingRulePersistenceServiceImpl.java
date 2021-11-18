@@ -4,7 +4,7 @@ import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.persistence.dao.DomibusConnectorBusinessDomainDao;
+import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
 import eu.domibus.connector.persistence.service.DCRoutingRulePersistenceService;
 import org.apache.logging.log4j.LogManager;

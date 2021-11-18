@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public class DomibusConnectorDomainMessageTransformerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDomainMessageTransformerService.class);
-    private final LargeFilePersistenceProvider largeFilePersistenceProvider;
+    private final LargeFilePersistenceService largeFilePersistenceService;
 
     public List<DomibusConnectorMessageError> transformTransitionToDomain(List<DomibusConnectorMessageErrorType> messageErrors) {
         return messageErrors.stream()
@@ -63,8 +64,8 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
     @Autowired
-    public DomibusConnectorDomainMessageTransformerService(LargeFilePersistenceProvider largeFilePersistenceProvider) {
-        this.largeFilePersistenceProvider = largeFilePersistenceProvider;
+    public DomibusConnectorDomainMessageTransformerService(LargeFilePersistenceService largeFilePersistenceService) {
+        this.largeFilePersistenceService = largeFilePersistenceService;
     }
 
     /**
@@ -260,7 +261,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         if (mimeType == null) {
             mimeType = "application/octet-stream";
         }
-        LargeFileReference readableDataSource = this.largeFilePersistenceProvider.getReadableDataSource(largeFileReference);
+        LargeFileReference readableDataSource = this.largeFilePersistenceService.getReadableDataSource(largeFileReference);
         DataHandler dataHandler = new DataHandler(readableDataSource);
         return dataHandler;
     }
@@ -506,7 +507,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 //        bigDataReference.setDataHandler(dataHandler);
 //        return bigDataReference;
         DomibusConnectorMessageId domibusConnectorMessageId = messageIdThreadLocal.get();
-        LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceProvider.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
+        LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceService.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
         try (InputStream is = dataHandler.getInputStream();
             OutputStream os = domibusConnectorBigDataReference.getOutputStream() ) {
             StreamUtils.copy(is, os);
