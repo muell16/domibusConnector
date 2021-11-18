@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  eu.domibus.connectorplugins.link.testbackend.TestBackendAutoConfiguration,\
-  eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginAutoConfiguration
+  eu.domibus.connectorplugins.link.testbackend.TestBackendAutoConfiguration
 

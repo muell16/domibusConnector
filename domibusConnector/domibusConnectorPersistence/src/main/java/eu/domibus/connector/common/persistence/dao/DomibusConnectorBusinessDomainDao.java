@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.dao;
+package eu.domibus.connector.common.persistence.dao;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;

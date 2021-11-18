@@ -17,6 +17,9 @@ import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +35,7 @@ import java.util.List;
 @Configuration
 @ComponentScan(basePackageClasses = TestBackendAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + TestbackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnBean(ConfigurationPropertyManagerService.class)
 public class TestBackendAutoConfiguration {
 
     private static final Logger LOGGER = LogManager.getLogger(TestBackendAutoConfiguration.class);

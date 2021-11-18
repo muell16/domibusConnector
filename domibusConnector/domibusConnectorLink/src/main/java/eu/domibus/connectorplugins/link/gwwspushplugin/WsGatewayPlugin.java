@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.plugins;
+package eu.domibus.connectorplugins.link.gwwspushplugin;
 
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;

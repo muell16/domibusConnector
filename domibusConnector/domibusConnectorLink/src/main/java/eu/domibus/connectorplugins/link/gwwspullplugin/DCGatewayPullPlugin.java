@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.plugins;
+package eu.domibus.connectorplugins.link.gwwspullplugin;
 
 import eu.domibus.connector.link.service.PullFromLinkPartner;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
@@ -6,15 +6,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.*;
 
-import eu.domibus.connectorplugins.link.gwwspullplugin.DCGatewayPullPluginConfiguration;
-import eu.domibus.connectorplugins.link.gwwspullplugin.DCGatewayPullPluginConfigurationProperties;
 import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
+
 public class DCGatewayPullPlugin implements LinkPlugin {
 
     private final static Logger LOGGER = LogManager.getLogger(DCGatewayPullPlugin.class);

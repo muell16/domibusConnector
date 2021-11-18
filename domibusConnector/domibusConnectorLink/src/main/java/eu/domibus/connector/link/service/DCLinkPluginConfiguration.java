@@ -1,9 +1,19 @@
 package eu.domibus.connector.link.service;
 
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connectorplugins.link.gwwspullplugin.DCGatewayPullPlugin;
+import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
+import eu.domibus.connectorplugins.link.testbackend.TestbackendPlugin;
+import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPlugin;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.validation.Validator;
 
 @Configuration
 @EnableConfigurationProperties(DCLinkPluginConfigurationProperties.class)
@@ -12,38 +22,40 @@ public class DCLinkPluginConfiguration {
 
     public static final String LINK_PLUGIN_PROFILE_NAME = "linkplugins";
 
+
+    @Bean
+    @ConditionalOnProperty(prefix = DCLinkPluginConfigurationProperties.PREFIX +
+            ".plugin-" + DCGatewayPullPlugin.IMPL_NAME,
+            value = "enabled", havingValue = "true", matchIfMissing = true)
+    public DCGatewayPullPlugin dcGatewayPullPlugin() {
+        return new DCGatewayPullPlugin();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = DCLinkPluginConfigurationProperties.PREFIX + ".plugin-" + WsGatewayPlugin.IMPL_NAME,
+            value = "enabled",
+            havingValue = "true",
+            matchIfMissing = true)
+    public WsGatewayPlugin wsGatewayPlugin() {
+        return new WsGatewayPlugin();
+    }
+
+//  TestBackend has seperate configuration...
 //    @Bean
-//    public DCPluginBasedGatewaySubmissionService dcPluginBasedGatewaySubmissionService() {
-//        return new DCPluginBasedGatewaySubmissionService();
-//    }
-//
-//    @Bean
-//    public DCPluginBasedBackendDeliveryService dcPluginBasedBackendDeliveryService() {
-//        return new DCPluginBasedBackendDeliveryService();
+//    @ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + TestbackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
+//    @ConditionalOnBean(ConfigurationPropertyManagerService.class)
+//    public TestbackendPlugin testbackendPlugin() {
+//        return new TestbackendPlugin();
 //    }
 
-//    @Bean
-//    @Profile("plugin-" + DCGatewayPullPlugin.IMPL_NAME)
-//    public DCGatewayPullPlugin dcGatewayPullPlugin() {
-//        return new DCGatewayPullPlugin();
-//    }
-//
-//    @Bean
-//    @Profile("plugin-" + WsBackendPlugin.IMPL_NAME)
-//    public WsBackendPlugin DCWsBackendPlugin() {
-//        return new WsBackendPlugin();
-//    }
-//
-//    @Bean
-//    @Profile("plugin-" + WsGatewayPlugin.IMPL_NAME)
-//    public WsGatewayPlugin wsGatewayPlugin() {
-//        return new WsGatewayPlugin();
-//    }
+    @Bean
+    @ConditionalOnProperty(prefix = DCLinkPluginConfigurationProperties.PREFIX + ".plugin-" + WsBackendPlugin.IMPL_NAME,
+            value = "enabled",
+            havingValue = "true",
+            matchIfMissing = true)
+    public WsBackendPlugin wsBackendPlugin(ConfigurableApplicationContext applicationContext, Validator validator) {
+        return new WsBackendPlugin(applicationContext, validator);
+    }
 
-//    @Bean
-//    @Profile("plugin-" + DomibusGwWsPlugin.IMPL_NAME)
-//    public DomibusGwWsPlugin domibusGwWsPlugin() {
-//        return new DomibusGwWsPlugin();
-//    }
 
 }

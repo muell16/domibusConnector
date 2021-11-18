@@ -15,14 +15,12 @@ import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPlugin
 import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.validation.ValidationBindHandler;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.Validator;
 
 import java.util.List;
@@ -33,17 +31,15 @@ import java.util.stream.Stream;
 import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
 
-@Configuration
-@ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + WsBackendPluginAutoConfiguration.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
-public class WsBackendPluginAutoConfiguration implements LinkPlugin {
+public class WsBackendPlugin implements LinkPlugin {
 
-    private static final Logger LOGGER = LogManager.getLogger(WsBackendPluginAutoConfiguration.class);
+    private static final Logger LOGGER = LogManager.getLogger(WsBackendPlugin.class);
     public static final String IMPL_NAME = "wsbackendplugin";
 
     private final ConfigurableApplicationContext applicationContext;
     private final Validator validator;
 
-    public WsBackendPluginAutoConfiguration(ConfigurableApplicationContext applicationContext, Validator validator) {
+    public WsBackendPlugin(ConfigurableApplicationContext applicationContext, Validator validator) {
         this.applicationContext = applicationContext;
         this.validator = validator;
     }
