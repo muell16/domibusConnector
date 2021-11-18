@@ -1,9 +1,18 @@
 :description: The architecture overview
 
-:imgdir: ../../resources/images/
-:imagesdir: {imgdir}
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Architectural Overview
+
+This document gives a brief overview.
 
 == Overall ECodex Architecture
 

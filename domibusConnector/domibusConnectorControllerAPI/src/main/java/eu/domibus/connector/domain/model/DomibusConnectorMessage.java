@@ -198,7 +198,11 @@ public class DomibusConnectorMessage implements Serializable {
 	 * @param confirmation    confirmation
 	 */
 	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
-	   	return this.transportedMessageConfirmations.add(confirmation);
+		if (!this.transportedMessageConfirmations.contains(confirmation)) {
+			return this.transportedMessageConfirmations.add(confirmation);
+		} else {
+			return false; //duplicate
+		}
 	}
 
 	public DCMessageProcessSettings getDcMessageProcessSettings() {

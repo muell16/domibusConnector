@@ -1,1 +1,12 @@
+
+ifndef::rootpath[]
+:rootpath: ../
+endif::rootpath[]
+
+//ifndef::imagesdir[]
+//:imagesdir: {rootpath}/resources/images/
+//endif::imagesdir[]
+
+:title: Installation Guide
+
 include::../doc/installation/installation_guide.adoc[]

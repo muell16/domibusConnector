@@ -108,27 +108,6 @@ public class JmsConfiguration {
     ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
         return configuration -> {
 
-            //Create Queues
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getToConnectorControllerQueue()));
-
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getToLinkQueue()));
-
-            configuration.getAddressConfigurations().add(new CoreAddressConfiguration()
-                    .addRoutingType(RoutingType.ANYCAST)
-                    .setName(prop.getCleanupQueue()));
-
-
-
-//            AddressSettings generalSettings = new AddressSettings();
-//            generalSettings.setAutoCreateAddresses(true)
-//                    .setAutoCreateQueues(true);
-//            configuration.getAddressesSettings()
-//                    .put("#", generalSettings);
-
             //Configure Queue Settings, DLQ, Expiry, ...
             AddressSettings addressSettings1 = basicAddressConfig();
             addressSettings1.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
@@ -145,15 +124,27 @@ public class JmsConfiguration {
             configuration.getAddressesSettings()
                     .put(prop.getCleanupQueue(), addressSettings3);
 
+            //set config for DLQ.# addresses
+            AddressSettings dlqAdressSettings = new AddressSettings();
+            dlqAdressSettings.setAutoDeleteAddresses(false);
+            dlqAdressSettings.setAutoDeleteCreatedQueues(false);
+            dlqAdressSettings.setAutoCreateAddresses(true);
+            configuration.getAddressesSettings()
+                    .put(QueuesConfigurationProperties.DLQ_PREFIX + "#", dlqAdressSettings);
+
+
         };
     }
 
     private AddressSettings basicAddressConfig() {
         AddressSettings addressSettings = new AddressSettings();
         addressSettings.setAutoCreateQueues(true);
+        addressSettings.setDefaultAddressRoutingType(RoutingType.ANYCAST);
         addressSettings.setAutoCreateDeadLetterResources(true);
         addressSettings.setAutoCreateAddresses(true);
         addressSettings.setAutoCreateExpiryResources(true);
+        addressSettings.setAutoDeleteQueues(false);
+        addressSettings.setAutoDeleteAddresses(false);
         addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
         addressSettings.setExpiryAddress(new SimpleString("expiry"));
         addressSettings.setMaxDeliveryAttempts(3);

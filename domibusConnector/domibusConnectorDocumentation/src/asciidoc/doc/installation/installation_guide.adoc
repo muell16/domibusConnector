@@ -1,7 +1,12 @@
-include::../header.adoc[]
+:path: ../../
 
-:imgdir: ../../resources/images/
-:imagesdir: {imgdir}
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 == Installation Guide
 === Introduction
@@ -321,117 +326,117 @@ image:screenshot_pmode_import.png[Admin UI: PModes > Import]
 The p-mode file from the configuration management can be selected here and will be uploaded into the database of the domibusConnector.
 
 Every ACTION, PARTY and SERVICE that is found in the p-modes and which do not exist in the database already, will be created. The domibusConnector will neither change any existing database items (service, action or party), nor will it delete any of those. If the p-mode-file cannot be processed an error message will appear.
-
-=== Backend Configuration
-The domibusConnector can be accessed by multiple clients. It does not matter, if the clients use the distributed domibusConnectorClient (either one of the libraries for integration, or the standalone client), as long as the backend interfaces of the domibusConnector are implemented properly and the security needs can be met.
-
-This guide focuses on the configuration needed to add new backend clients to connect to the domibusConnector. Details on configuration steps needed on the client side can be found in the domibusConnectorClient documentation.
-
-This chapter follows an example in which 2 new backend clients should be configured in the domibusConnector:
-
-* Alice
-* Bob
-
-==== Backend types
-Whereas it is given in version 4.1.0-RELEASE of the domibusConnector that the backend interfaces only can be reached via SOAP web services, it can be configured if the backend client supports to be called as an active service.
-
-===== Push/pull backend
-This type of backend client does not support an active web service itself. It can only be seen as a passive client. The domibusConnector can receive messages from this type of client at any time, but cannot actively send messages to the client.
-
-That means that the client itself has to call the web service of the domibusConnector to receive messages that are stored inside the connector until the client calls them.
-
-Mostly this is done by having time triggered jobs running on the client side that connector to the domibusConnector to receive its messages.
-
-The domibusConnectorClient Standalone variant is of that kind.
-
-===== Push/push backend
-This type of backend client does support an active web service. This web service must run in a web container itself and must implement the delivery web service of the domibusConnector. In that case the domibusConnector does not need to wait until the clients connects, but can push messages to the client by itself.
-
-==== Adding the backend client keys to the Connector Backend Key Store
-Every new backend client needs its own certificate.
-The certificate of a backend client has the following purpose:
-
-* Identifies the backend client when it connects to the domibusConnector
-* Encrypts/Decrypts messages between the backend client and the Connector.
-
-So let’s assume, following the example of “alice” and “bob”, that there are 2 certificates. What we need to configure the backend clients properly, are the public keys of those certificates.
-
-Those 2 public keys need to be added to the “Connector Key Store” described and configured in chapter 5.1. To keep it transparent the public keys are imported into the store with the alias names “alice” and “bob”.
-
-==== Configuring the backend with the domibusConnector Administration UI
-Within the Administration UI, go to menu “Configuration” and further on “Backend Configuration”
-
-image:screenshot_backend_configuration.png[Screenshot Backend Configuration UI]
-
-On this page, the section “Configured Backend(s)” is of interest for this step
-
-image:screenshot_configured_backend.png[Screenshot Configured Backend]
-
-==== Configuring the backend at the database
-For the domibusConnector-4.1.0-RELEASE the adding of the backend must be done manually by accessing the domibusConnector database. The backend information must be stored in two database tables:
-
-===== DOMIBUS_CONNECTOR_BACKEND_INFO
-
-[cols="1,1"]
-|===
-|Name |Description
-
-|ID
-|a unique technical id
-
-|BACKEND_KEY_ALIAS
-|The name of the backend *this name most match the common name (CN)* field of the assigned certificate.
-
-|BACKEND_KEY_PASS
-|The key alias in the connector backend keystore for the certificate to use to encrypt messages for the connectorClient.
-
-|BACKEND_SERVICE_TYPE
-|Not used yet, will later define the type of the backend, is it push/pull, push/push over webservices, push/push over jms.
-
-
-|BACKEND_ENABLED
-|Is the backend enabled, must be true if the connector should send messages to this backend.
-
-
-|BACKEND_DEFAULT
-|The default will receive all messages which aren't delivered to another backend first.
-
-|BACKEND_DESCRIPTION
-|A description of the backend, can be used by the admin to store information.
-
-|BACKEND_PUSH_ADDRESS
-|If the backend is a push backend, the push address must be defined here.
-
-|===
-// end of table
-
-===== DOMIBUS_CONNECTOR_BACK_2_S
-Contains the routing information, which backend will receive the message. The routing decision is
-
-based on the name of the business use case, which is called SERVICE in e-CODEX.
-The table contains the following fields:
-
-[cols="1,1"]
-|===
-
-|DOMIBUS_CONNECTOR_SERVICE_ID
-|References the service
-
-|DOMIBUS_CONNECTOR_BACKEND_ID
-|References the backend
-
-|===
-// end of table
-
-===== Example scripts
-Now we will have a look back to our example, where we want to add “alice” and “bob” as our new backend clients.
-
-The following SQL statement will add an connectorClient named bob with the key alias bob and expects that the common name of the certificate is bob. Bob will also be the default backend!
-
-The following statement will add “alice” to the backend configuration:
-
-image::inser_alice_backend_configuration.png[]
-
-This statement will assign the epo messages to the connectorClient with the id 12 in the database. In this case this will be the connectorClient alice.
-
-image::insert_epo_messages.png[]
+//
+//=== Backend Configuration
+//The domibusConnector can be accessed by multiple clients. It does not matter, if the clients use the distributed domibusConnectorClient (either one of the libraries for integration, or the standalone client), as long as the backend interfaces of the domibusConnector are implemented properly and the security needs can be met.
+//
+//This guide focuses on the configuration needed to add new backend clients to connect to the domibusConnector. Details on configuration steps needed on the client side can be found in the domibusConnectorClient documentation.
+//
+//This chapter follows an example in which 2 new backend clients should be configured in the domibusConnector:
+//
+//* Alice
+//* Bob
+//
+//==== Backend types
+//Whereas it is given in version 4.1.0-RELEASE of the domibusConnector that the backend interfaces only can be reached via SOAP web services, it can be configured if the backend client supports to be called as an active service.
+//
+//===== Push/pull backend
+//This type of backend client does not support an active web service itself. It can only be seen as a passive client. The domibusConnector can receive messages from this type of client at any time, but cannot actively send messages to the client.
+//
+//That means that the client itself has to call the web service of the domibusConnector to receive messages that are stored inside the connector until the client calls them.
+//
+//Mostly this is done by having time triggered jobs running on the client side that connector to the domibusConnector to receive its messages.
+//
+//The domibusConnectorClient Standalone variant is of that kind.
+//
+//===== Push/push backend
+//This type of backend client does support an active web service. This web service must run in a web container itself and must implement the delivery web service of the domibusConnector. In that case the domibusConnector does not need to wait until the clients connects, but can push messages to the client by itself.
+//
+//==== Adding the backend client keys to the Connector Backend Key Store
+//Every new backend client needs its own certificate.
+//The certificate of a backend client has the following purpose:
+//
+//* Identifies the backend client when it connects to the domibusConnector
+//* Encrypts/Decrypts messages between the backend client and the Connector.
+//
+//So let’s assume, following the example of “alice” and “bob”, that there are 2 certificates. What we need to configure the backend clients properly, are the public keys of those certificates.
+//
+//Those 2 public keys need to be added to the “Connector Key Store” described and configured in chapter 5.1. To keep it transparent the public keys are imported into the store with the alias names “alice” and “bob”.
+//
+//==== Configuring the backend with the domibusConnector Administration UI
+//Within the Administration UI, go to menu “Configuration” and further on “Backend Configuration”
+//
+//image:screenshot_backend_configuration.png[Screenshot Backend Configuration UI]
+//
+//On this page, the section “Configured Backend(s)” is of interest for this step
+//
+//image:screenshot_configured_backend.png[Screenshot Configured Backend]
+//
+//==== Configuring the backend at the database
+//For the domibusConnector-4.1.0-RELEASE the adding of the backend must be done manually by accessing the domibusConnector database. The backend information must be stored in two database tables:
+//
+//===== DOMIBUS_CONNECTOR_BACKEND_INFO
+//
+//[cols="1,1"]
+//|===
+//|Name |Description
+//
+//|ID
+//|a unique technical id
+//
+//|BACKEND_KEY_ALIAS
+//|The name of the backend *this name most match the common name (CN)* field of the assigned certificate.
+//
+//|BACKEND_KEY_PASS
+//|The key alias in the connector backend keystore for the certificate to use to encrypt messages for the connectorClient.
+//
+//|BACKEND_SERVICE_TYPE
+//|Not used yet, will later define the type of the backend, is it push/pull, push/push over webservices, push/push over jms.
+//
+//
+//|BACKEND_ENABLED
+//|Is the backend enabled, must be true if the connector should send messages to this backend.
+//
+//
+//|BACKEND_DEFAULT
+//|The default will receive all messages which aren't delivered to another backend first.
+//
+//|BACKEND_DESCRIPTION
+//|A description of the backend, can be used by the admin to store information.
+//
+//|BACKEND_PUSH_ADDRESS
+//|If the backend is a push backend, the push address must be defined here.
+//
+//|===
+//// end of table
+//
+//===== DOMIBUS_CONNECTOR_BACK_2_S
+//Contains the routing information, which backend will receive the message. The routing decision is
+//
+//based on the name of the business use case, which is called SERVICE in e-CODEX.
+//The table contains the following fields:
+//
+//[cols="1,1"]
+//|===
+//
+//|DOMIBUS_CONNECTOR_SERVICE_ID
+//|References the service
+//
+//|DOMIBUS_CONNECTOR_BACKEND_ID
+//|References the backend
+//
+//|===
+//// end of table
+//
+//===== Example scripts
+//Now we will have a look back to our example, where we want to add “alice” and “bob” as our new backend clients.
+//
+//The following SQL statement will add an connectorClient named bob with the key alias bob and expects that the common name of the certificate is bob. Bob will also be the default backend!
+//
+//The following statement will add “alice” to the backend configuration:
+//
+//image::inser_alice_backend_configuration.png[]
+//
+//This statement will assign the epo messages to the connectorClient with the id 12 in the database. In this case this will be the connectorClient alice.
+//
+//image::insert_epo_messages.png[]

@@ -1,32 +1,13 @@
 package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.listbox.MultiSelectListBox;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
-import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.router.*;
-import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.controller.transport.DCTransportRetryService;
-import eu.domibus.connector.domain.enums.TransportState;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
-import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
-import eu.domibus.connector.link.service.DCLinkFacade;
-import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
-import eu.domibus.connector.ui.component.OpenHelpButtonFactory;
-import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
-import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
+import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.Order;
@@ -37,13 +18,34 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.vaadin.klaudeta.PaginatedGrid;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
 
-import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
+import eu.domibus.connector.controller.transport.DCTransportRetryService;
+import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
+import eu.domibus.connector.link.service.DCLinkFacade;
+import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
+import eu.domibus.connector.ui.component.OpenHelpButtonFactory;
+import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
+import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
+import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
 
 
 @UIScope
@@ -51,7 +53,7 @@ import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusin
 @Order(2)
 @Route(value = TransportStateMonitoringView.ROUTE_PREFIX, layout = MonitoringLayout.class)
 @TabMetadata(title = TransportStateMonitoringView.TITLE, tabGroup = MonitoringLayout.TAB_GROUP_NAME)
-public class TransportStateMonitoringView extends VerticalLayout implements AfterNavigationObserver {
+public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private final static Logger LOGGER = LogManager.getLogger(TransportStateMonitoringView.class);
 
@@ -59,12 +61,11 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
     public static final String ROUTE_PREFIX = "linktransport";
     public static final int INITIAL_PAGE_SIZE = 20;
     //TODO: add compile check, that this file exists within dependencies! Maybe with java annotation processor?
-    public static final String HELP_ID = "doc/message_transport_overview.html";
+    public static final String HELP_ID = "message_transport_overview.html";
 
     private final DCTransportRetryService dcTransportRetryService;
     private final TransportStepPersistenceService transportStepPersistenceService;
     private final DCLinkFacade dcLinkFacade;
-    private final OpenHelpButtonFactory openHelpButtonFactory;
 
     private int pageSize = INITIAL_PAGE_SIZE;
     private PaginatedGrid<DomibusConnectorTransportStep> paginatedGrid;
@@ -82,21 +83,21 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
                                         TransportStepPersistenceService transportStepPersistenceService,
                                         DCLinkFacade dcLinkFacade,
                                         OpenHelpButtonFactory openHelpButtonFactory) {
-        this.dcTransportRetryService = dcTransportRetryService;
-        this.transportStepPersistenceService = transportStepPersistenceService;
-        this.dcLinkFacade = dcLinkFacade;
-        this.openHelpButtonFactory = openHelpButtonFactory;
-        initUI();
+    	super(HELP_ID, TITLE);
+            this.dcTransportRetryService = dcTransportRetryService;
+            this.transportStepPersistenceService = transportStepPersistenceService;
+            this.dcLinkFacade = dcLinkFacade;
+        try {
+            initUI();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     private void initUI() {
 
 
         callbackDataProvider = new CallbackDataProvider<>(this::fetchCallback, this::countCallback);
-
-        HorizontalLayout titleBar = new HorizontalLayout();
-
-        titleBar.add(new H2(new Text(TITLE), openHelpButtonFactory.createHelpButton(HELP_ID)));
 
         HorizontalLayout buttonBar = new HorizontalLayout();
         IntegerField pageSizeField = new IntegerField("Page Size");
@@ -128,7 +129,6 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
 
 
-        this.add(titleBar);
         this.add(buttonBar);
 
         paginatedGrid = new PaginatedGrid<>(DomibusConnectorTransportStep.class);
@@ -200,25 +200,33 @@ public class TransportStateMonitoringView extends VerticalLayout implements Afte
 
     private int countCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
         //TODO: introduce own count call on DB so not ALL items are read from DB or check if Pageable.ofSize(0) avoids fetching items
-        Page<DomibusConnectorTransportStep> stepByLastState = getDomibusConnectorTransportSteps(Pageable.ofSize(1));
-        return (int) stepByLastState.getTotalElements();
+        try {
+            Page<DomibusConnectorTransportStep> stepByLastState = getDomibusConnectorTransportSteps(Pageable.ofSize(1));
+            return (int) stepByLastState.getTotalElements();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return 0;
+        }
     }
 
     private Stream<DomibusConnectorTransportStep> fetchCallback(Query<DomibusConnectorTransportStep, DomibusConnectorTransportStep> tfQuery) {
         int offset = tfQuery.getOffset();
+        try {
+            List<Sort.Order> collect = paginatedGrid.getSortOrder()
+                    .stream()
+                    .filter(sortOrder -> sortOrder.getSorted().getKey() != null)
+                    .map(sortOrder ->
+                            sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
+                    .collect(Collectors.toList());
+            Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
 
-        List<Sort.Order> collect = paginatedGrid.getSortOrder()
-                .stream()
-                .filter(sortOrder -> sortOrder.getSorted().getKey() != null)
-                .map(sortOrder ->
-                        sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
-                .collect(Collectors.toList());
-        Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
-
-
-        PageRequest pageRequest = PageRequest.of(offset / paginatedGrid.getPageSize(), paginatedGrid.getPageSize(), sort);
-        Page<DomibusConnectorTransportStep> domibusConnectorTransportSteps = getDomibusConnectorTransportSteps(pageRequest);
-        return domibusConnectorTransportSteps.stream();
+            PageRequest pageRequest = PageRequest.of(offset / paginatedGrid.getPageSize(), paginatedGrid.getPageSize(), sort);
+            Page<DomibusConnectorTransportStep> domibusConnectorTransportSteps = getDomibusConnectorTransportSteps(pageRequest);
+            return domibusConnectorTransportSteps.stream();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Stream.empty();
+        }
     }
 
     private Page<DomibusConnectorTransportStep> getDomibusConnectorTransportSteps(Pageable p) {

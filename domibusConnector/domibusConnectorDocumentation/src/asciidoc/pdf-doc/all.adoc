@@ -1,0 +1,12 @@
+:doctype: book
+:toc: top
+:toc-title: Table of Content
+:toclevels: 4
+:sectnums:
+
+
+//ifndef::rootpath[]
+//:rootpath: ../
+//endif::rootpath[]
+
+include::../doc/single.adoc[]

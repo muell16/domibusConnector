@@ -11,13 +11,13 @@ public class QueuesConfigurationProperties {
     public static final String DLQ_PREFIX = "DLQ.";
 
     private String toConnectorControllerQueue = QUEUE_PREFIX + "toConnectorControllerQueue";
-    private String toConnectorControllerDeadLetterQueue = QUEUE_PREFIX + toConnectorControllerQueue;
+    private String toConnectorControllerDeadLetterQueue = DLQ_PREFIX + toConnectorControllerQueue;
 
     private String toLinkQueue = QUEUE_PREFIX + "submitToLinkQueue";
-    private String toLinkDeadLetterQueue = QUEUE_PREFIX + toLinkQueue;
+    private String toLinkDeadLetterQueue = DLQ_PREFIX + toLinkQueue;
 
     private String cleanupQueue = QUEUE_PREFIX + "cleanUpQueue";
-    private String cleanupDeadLetterQueue = QUEUE_PREFIX + cleanupQueue;
+    private String cleanupDeadLetterQueue = DLQ_PREFIX + cleanupQueue;
 
     public String getToConnectorControllerQueue() {
         return toConnectorControllerQueue;

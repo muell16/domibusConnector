@@ -1,9 +1,20 @@
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Connector Internal Message Flow
 
-== Queues Processor Overview
+Overview of the internal flow of messages
+
+== Queues Processor Overview Diagram
+
 [#_message_flow_diagram]
 [plantuml,queues,format=svg]
 ----

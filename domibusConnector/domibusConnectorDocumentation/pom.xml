@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-alpha8-SNAPSHOT</version>
+        <version>4.4.0-alpha9-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorDocumentation</artifactId>
     <name>domibusConnectorDocumentation</name>
@@ -13,6 +13,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <!--  This needs to be set to be able to call the sites from the UI! -->
+        <html.docu.output.directory>${project.basedir}/src/main/resources/META-INF/resources/documentation</html.docu.output.directory>
     </properties>
     <build>
         <defaultGoal>process-resources</defaultGoal>
@@ -29,70 +31,8 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/target/classes/static/documentation</outputDirectory>
+                            <outputDirectory>${html.docu.output.directory}</outputDirectory>
                             <backend>html5</backend>
-                            <!--
-                            Scenarios for linking vs embedding assets:
-
-                            Link to both stylesheets and images::
-
-                              - don't set embedAssets option
-                              - set linkcss attribute to true
-                              - set imagesdir attribute to path relative to AsciiDoc source file
-
-                              <attributes>
-                                  <linkcss>true</linkcss>
-                                  <imagesdir>./images</imagesdir>
-                              </attributes>
-
-                            Embed stylesheets and images::
-
-                              - set embedAssets option to true
-                              - don't set linkcss attribute
-                              - set imagesdir attribute to path relative to project root
-
-                              <embedAssets>true</embedAssets>
-                              <attributes>
-                                  <imagesdir>src/docs/asciidoc/images</imagesdir>
-                              </attributes>
-
-                            Link to stylesheets but embed images::
-
-                              - set embedAssets option to true
-                              - set linkcss attribute to true
-                              - set imagesdir attribute to path relative to project root
-
-                              <embedAssets>true</embedAssets>
-                              <attributes>
-                                  <linkcss>true</linkcss>
-                                  <imagesdir>src/docs/asciidoc/images</imagesdir>
-                              </attributes>
-
-                            Embed stylesheets but link images (default)::
-
-                              - don't set embedAssets option
-                              - don't set linkcss attribute
-                              - set imagesdir attribute to path relative to AsciiDoc source file
-
-                              <attributes>
-                                  <imagesdir>./images</imagesdir>
-                              </attributes>
-
-                            IMPORTANT: When you enable image embedding, you must qualify the path the the imagesdir, as shown above.
-                            -->
-                            <attributes>
-                                <source-highlighter>coderay</source-highlighter>
-                                <imagesdir>../images</imagesdir>
-                                <toc>left</toc>
-                                <toclevels>4</toclevels>
-                                <sectnums></sectnums>
-                                <icons>font</icons>
-                                <sectanchors>true</sectanchors>
-                                <!-- set the idprefix to blank -->
-                                <idprefix></idprefix>
-                                <idseparator>-</idseparator>
-                                <docinfo1>true</docinfo1>
-                            </attributes>
                         </configuration>
                     </execution>
                     <execution>
@@ -105,23 +45,8 @@
                             <sourceDirectory>src/asciidoc/pdf-doc</sourceDirectory>
                             <outputDirectory>target/generated-pdfs</outputDirectory>
                             <backend>pdf</backend>
-                            <!-- Since 1.5.0-alpha.9 PDF back-end can use 'rouge' as well as 'coderay'
-                            for source highlighting -->
-                            <!-- Due to a known issue on windows, it is recommended to use 'coderay' until an new version of 'rouge' is released.
-                                    see discussions: https://github.com/asciidoctor/asciidoctor-maven-examples/pull/58
-                                                     https://github.com/asciidoctor/asciidoctorj-pdf/issues/3
-                                                     https://github.com/jneen/rouge/issues/661
-                            -->
                             <attributes>
-                                <source-highlighter>coderay</source-highlighter>
-                                <icons>font</icons>
-                                <pagenums></pagenums>
-                                <imagesdir>../resources/images</imagesdir>
-                                <toc>auto</toc>
-                                <toclevels>4</toclevels>
-                                <sectnums></sectnums>
-                                <idprefix></idprefix>
-                                <idseparator>-</idseparator>
+                                <imagesdir>${project.basedir}/src/asciidoc/resources/images</imagesdir>
                             </attributes>
                         </configuration>
                     </execution>
@@ -145,23 +70,15 @@
                 </dependencies>
                 <configuration>
                     <sourceDirectory>src/asciidoc/doc</sourceDirectory>
-                    <resources>
-                        <resource>
-                            <directory>src/asciidoc/resources</directory>
-                        </resource>
-                    </resources>
-                    <!-- If you set baseDir to ${project.basedir}, top-level includes are resolved relative to the project root -->
-                    <!--
-                    <baseDir>${project.basedir}</baseDir>
-                    -->
-                    <!-- Attributes common to all output formats -->
                     <attributes>
                         <!--                            <sourcedir>${project.build.sourceDirectory}</sourcedir>-->
                         <project-version>${project.version}</project-version>
                         <source-highlighter>coderay</source-highlighter>
                         <!--                                <data-uri/>-->
                         <mvnbasedir>${project.basedir}/../</mvnbasedir>
-                        <imgdir>./images</imgdir>
+                        <basepath>${project.basedir}/src/asciidoc/</basepath>
+                        <webimagedir>./images</webimagedir>
+<!--                        <imagesdir>../images</imagesdir>-->
                         <icons>font</icons>
                     </attributes>
                     <preserveDirectories>true</preserveDirectories>
@@ -170,10 +87,8 @@
                     </requires>
                 </configuration>
             </plugin>
-            <!--
-            NOTE: Use the maven-resources-plugin if there are assets outside the AsciiDoc source folder
-                  that need to be copied to the generated-docs. The Maven plugin automatically copies
-                  non-AsciiDoc files in the AsciiDoc source folder to generated-docs.
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -188,19 +103,20 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>src/docs/resources</directory>
+                                    <directory>src/asciidoc/resources</directory>
                                     <includes>
                                         <include>**/*.jpg</include>
                                         <include>**/*.png</include>
+                                        <include>**/*.gif</include>
                                     </includes>
                                 </resource>
                             </resources>
-                            <outputDirectory>target/generated-docs</outputDirectory>
+                            <outputDirectory>${html.docu.output.directory}/../</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            -->
+
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>

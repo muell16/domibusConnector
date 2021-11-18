@@ -1,9 +1,12 @@
-:description: The connector backend configuration manual
-:library: Asciidoctor
+:path: ../../
 
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
 
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 = Standalone Deployment
 
 

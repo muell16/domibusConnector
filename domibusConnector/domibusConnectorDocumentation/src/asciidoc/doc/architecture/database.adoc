@@ -1,9 +1,13 @@
-:description: Database
-:library: Asciidoctor
-:stylesheet: asciidoc.css
 
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
 
 = Database
 

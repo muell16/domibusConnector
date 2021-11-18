@@ -1,7 +1,17 @@
 
-:imgdir: ../resources/images/
-:imagesdir: ../{imgdir}
-:mvnbasedir: ../../../../../../../
+:path: ../../
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
 
 
 = Connector Link Plugins Manual

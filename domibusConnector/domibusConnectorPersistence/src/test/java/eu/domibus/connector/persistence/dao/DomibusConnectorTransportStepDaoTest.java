@@ -6,13 +6,17 @@ import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,6 +91,22 @@ public class DomibusConnectorTransportStepDaoTest {
                                 lp,
                                 pageable)
                         .getTotalElements()).isEqualTo(1) //there should be 1 entry where the last updated state is pending
+        );
+
+    }
+
+    @Test
+    @Sql(statements = {"DELETE FROM DC_TRANSPORT_STEP_STATUS;", "DELETE FROM DC_TRANSPORT_STEP;"})
+    public void testFindLastAttemptStepByLastStateAndLinkPartnerIsOneOf_withEmptyDB() {
+
+        Page<PDomibusConnectorTransportStep> hallo = dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                Stream.of(TransportState.values()).map(Enum::toString).toArray(String[]::new),
+                Arrays.array(new DomibusConnectorLinkPartner.LinkPartnerName("hallo")), Pageable.ofSize(20)
+        );
+
+        dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                new String[]{},
+                Arrays.array(new DomibusConnectorLinkPartner.LinkPartnerName("hallo")), Pageable.ofSize(20)
         );
 
     }

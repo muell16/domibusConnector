@@ -1,0 +1,27 @@
+:doctype: book
+ifndef::toc[]
+:toc: left
+endif::toc[]
+:toc-title: Table of Content
+:toclevels: 4
+:sectnums:
+
+:title: Domibus Connector Single Page Documentation {project-version}
+
+:path: ../
+
+ifndef::basepath[]
+:basepath: {path}
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+
+//TODO: add all documentation to single adoc file
+
+include::{basepath}/doc/architecture/architecture_overview.adoc[leveloffset=+1]
+//
+include::{basepath}/doc/ui/business_document_verification.adoc[leveloffset=+1]
+
