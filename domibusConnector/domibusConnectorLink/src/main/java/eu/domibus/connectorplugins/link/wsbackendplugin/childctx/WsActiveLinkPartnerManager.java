@@ -1,6 +1,7 @@
-package eu.domibus.connectorplugins.link.wsbackendplugin;
+package eu.domibus.connectorplugins.link.wsbackendplugin.childctx;
 
 
+import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginActiveLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;

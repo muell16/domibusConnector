@@ -34,8 +34,6 @@ import eu.europa.esig.dss.model.MimeType;
 import org.springframework.util.StreamUtils;
 
 
-@ConditionalOnBean(DCConnector2ConnectorTestService.class) 	//it might be possible, if the testbackend plugin is not enabled, that the service DCConnector2ConnectorTestService is not available!, in this case do not create WebConnectorTestService bean.
-@Service("webConnectorTestService")
 public class WebConnectorTestService {
 
 	private final DCConnector2ConnectorTestService connectorTestService;

@@ -1,4 +1,4 @@
-package eu.domibus.connectorplugins.link.wsbackendplugin;
+package eu.domibus.connectorplugins.link.wsbackendplugin.childctx;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
@@ -13,6 +13,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
+import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginActiveLinkPartner;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

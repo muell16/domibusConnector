@@ -13,13 +13,13 @@ import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.link.plugins.TestbackendPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -30,10 +30,11 @@ import java.util.List;
  */
 //@Profile("plugin-" + TestbackendPlugin.IMPL_NAME)
 @Configuration
-@Import({DCConnector2ConnectorTestServiceImpl.class, SubmitToTestLink.class})
-public class TestBackendConfiguration {
+@ComponentScan(basePackageClasses = TestBackendAutoConfiguration.class)
+@ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + TestbackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
+public class TestBackendAutoConfiguration {
 
-    private static final Logger LOGGER = LogManager.getLogger(TestBackendConfiguration.class);
+    private static final Logger LOGGER = LogManager.getLogger(TestBackendAutoConfiguration.class);
 
     public static final String IMPL_NAME = "testbackendplugin";
 
@@ -45,10 +46,10 @@ public class TestBackendConfiguration {
 
 //    private final ConnectorTestConfigurationProperties testConfigurationProperties;
 
-    public TestBackendConfiguration(DCActiveLinkManagerService dcActiveLinkManagerService,
-                                    DCRoutingRulesManager routingRulesManager,
-                                    DCBusinessDomainManager businessDomainManager,
-                                    ConfigurationPropertyManagerService configurationPropertyLoaderService) {
+    public TestBackendAutoConfiguration(DCActiveLinkManagerService dcActiveLinkManagerService,
+                                        DCRoutingRulesManager routingRulesManager,
+                                        DCBusinessDomainManager businessDomainManager,
+                                        ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.dcActiveLinkManagerService = dcActiveLinkManagerService;
 //        this.testConfigurationProperties = testConfigurationProperties;
         this.routingRulesManager = routingRulesManager;

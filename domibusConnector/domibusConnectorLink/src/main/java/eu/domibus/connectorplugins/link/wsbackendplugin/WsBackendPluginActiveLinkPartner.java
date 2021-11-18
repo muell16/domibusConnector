@@ -1,6 +1,7 @@
 package eu.domibus.connectorplugins.link.wsbackendplugin;
 
 import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
 
 public class WsBackendPluginActiveLinkPartner extends ActiveLinkPartner {
 

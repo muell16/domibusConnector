@@ -1,4 +1,4 @@
-package eu.domibus.connectorplugins.link.wsbackendplugin;
+package eu.domibus.connectorplugins.link.wsbackendplugin.childctx;
 
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;

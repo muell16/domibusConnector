@@ -1,4 +1,4 @@
-package eu.domibus.connectorplugins.link.wsbackendplugin;
+package eu.domibus.connectorplugins.link.wsbackendplugin.childctx;
 
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;

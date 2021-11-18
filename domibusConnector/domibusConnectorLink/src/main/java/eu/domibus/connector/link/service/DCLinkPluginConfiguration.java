@@ -1,16 +1,9 @@
 package eu.domibus.connector.link.service;
 
 
-import eu.domibus.connector.link.plugins.DCGatewayPullPlugin;
-import eu.domibus.connector.link.plugins.WsGatewayPlugin;
-import eu.domibus.connector.link.plugins.WsBackendPlugin;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
-
-import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
 @Configuration
 @EnableConfigurationProperties(DCLinkPluginConfigurationProperties.class)

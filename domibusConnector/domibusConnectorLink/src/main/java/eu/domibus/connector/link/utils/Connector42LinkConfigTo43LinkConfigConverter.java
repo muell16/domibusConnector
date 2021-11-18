@@ -6,7 +6,7 @@ import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurati
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPluginConfigurationProperties;
-import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginConfigurationProperties;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;

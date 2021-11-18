@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@ConditionalOnBean(TestBackendConfiguration.class)
 @Component
 public class SubmitToTestLink implements SubmitToLinkPartner {
 

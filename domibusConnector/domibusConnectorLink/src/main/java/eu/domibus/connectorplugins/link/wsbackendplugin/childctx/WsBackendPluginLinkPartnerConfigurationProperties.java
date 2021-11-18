@@ -1,4 +1,4 @@
-package eu.domibus.connectorplugins.link.wsbackendplugin;
+package eu.domibus.connectorplugins.link.wsbackendplugin.childctx;
 
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;

@@ -20,7 +20,6 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
 
 @Service
-@ConditionalOnBean(TestBackendConfiguration.class)
 public class DCConnector2ConnectorTestServiceImpl implements DCConnector2ConnectorTestService {
 
 	private static final Logger LOGGER = LogManager.getLogger(DCConnector2ConnectorTestServiceImpl.class);

@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.plugins;
+package eu.domibus.connectorplugins.link.wsbackendplugin;
 
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
@@ -9,10 +9,12 @@ import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.link.utils.LinkPluginUtils;
-import eu.domibus.connectorplugins.link.wsbackendplugin.*;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsActiveLinkPartnerManager;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfiguration;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -20,8 +22,7 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.validation.ValidationBindHandler;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.Validator;
 
 import java.util.List;
@@ -32,16 +33,20 @@ import java.util.stream.Stream;
 import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
 
-@Component
-@ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + WsBackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
-@Import(WsBackendPluginConfiguration.class)
-public class WsBackendPlugin implements LinkPlugin {
+@Configuration
+@ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + WsBackendPluginAutoConfiguration.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
+public class WsBackendPluginAutoConfiguration implements LinkPlugin {
 
-    private static final Logger LOGGER = LogManager.getLogger(WsBackendPlugin.class);
+    private static final Logger LOGGER = LogManager.getLogger(WsBackendPluginAutoConfiguration.class);
     public static final String IMPL_NAME = "wsbackendplugin";
 
-    @Autowired
-    ConfigurableApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
+    private final Validator validator;
+
+    public WsBackendPluginAutoConfiguration(ConfigurableApplicationContext applicationContext, Validator validator) {
+        this.applicationContext = applicationContext;
+        this.validator = validator;
+    }
 
     @Override
     public String getPluginName() {
@@ -74,8 +79,7 @@ public class WsBackendPlugin implements LinkPlugin {
         throw new RuntimeException("Not supported!");
     }
 
-    @Autowired
-    Validator validator;
+
 
     @Override
     public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink) {

@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.plugins;
+package eu.domibus.connectorplugins.link.testbackend;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -6,9 +6,7 @@ import eu.domibus.connector.link.api.ActiveLink;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
-import eu.domibus.connectorplugins.link.testbackend.SubmitToTestLink;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
-import eu.domibus.connectorplugins.link.testbackend.TestBackendConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,8 +26,6 @@ import java.util.stream.Stream;
  */
 //@Profile("plugin-" + TestbackendPlugin.IMPL_NAME)
 @Component
-@Import(TestBackendConfiguration.class)
-@ConditionalOnProperty(prefix = "connector.link.plugins." + "plugin-" + TestbackendPlugin.IMPL_NAME, value = "enabled", havingValue = "true", matchIfMissing = true)
 public class TestbackendPlugin implements LinkPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(TestbackendPlugin.class);
