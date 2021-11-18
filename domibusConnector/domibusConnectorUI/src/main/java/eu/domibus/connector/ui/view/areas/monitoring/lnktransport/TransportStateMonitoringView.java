@@ -61,7 +61,7 @@ public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelp
     public static final String ROUTE_PREFIX = "linktransport";
     public static final int INITIAL_PAGE_SIZE = 20;
     //TODO: add compile check, that this file exists within dependencies! Maybe with java annotation processor?
-    public static final String HELP_ID = "message_transport_overview.html";
+    public static final String HELP_ID = "ui/message_transport_overview.html";
 
     private final DCTransportRetryService dcTransportRetryService;
     private final TransportStepPersistenceService transportStepPersistenceService;
