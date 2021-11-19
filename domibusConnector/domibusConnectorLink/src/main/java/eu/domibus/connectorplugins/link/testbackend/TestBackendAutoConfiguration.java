@@ -4,7 +4,7 @@ import eu.domibus.connector.common.DomibusConnectorDefaults;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
-import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
@@ -18,8 +18,6 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

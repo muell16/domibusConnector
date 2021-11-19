@@ -6,10 +6,8 @@ import java.util.Optional;
 import javax.activation.DataHandler;
 import javax.xml.transform.Source;
 
-import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;

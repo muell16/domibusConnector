@@ -1,8 +1,7 @@
-package eu.domibus.connector.config.c2ctests;
+package eu.domibus.connector.c2ctests.config;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package eu.domibus.connector.ui.service;
 
-import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;

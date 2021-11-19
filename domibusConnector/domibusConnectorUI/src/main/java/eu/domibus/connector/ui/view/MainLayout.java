@@ -28,12 +28,12 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
     private Tabs tabs;
     private DCTabHandler tabManager = new DCTabHandler();
 
-    public MainLayout() {
+    public MainLayout(DomibusConnectorAdminHeader header) {
 
         setPrimarySection(Section.DRAWER);
 
         VerticalLayout topBar = new VerticalLayout();
-        topBar.add(new DomibusConnectorAdminHeader());
+        topBar.add(header);
         addToNavbar(topBar);
 
         tabManager.setTabFontSize("bigger");
