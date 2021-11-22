@@ -32,7 +32,6 @@ public class MessageGrid extends Grid<Message> {
         addColumn(this::getJMSMessageID).setHeader("Message ID (JMS ID)").setWidth("35%");
         addColumn(this::getConnectorId).setHeader("Connector ID").setWidth("35%");
         addComponentColumn(this::viewMessageButton).setHeader("View Message").setWidth("10%");
-        // TODO the backend functionality is not working for restore
         addComponentColumn(this::restoreButton).setHeader("Restore Message and try to reprocess").setWidth("10%");
         addComponentColumn(this::deleteButton).setHeader("Delete Message forever").setWidth("10%");
     }

@@ -1,13 +1,12 @@
 package eu.domibus.connector.firststartup;
 
+import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
-
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.Optional;

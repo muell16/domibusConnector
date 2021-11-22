@@ -4,22 +4,24 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.configuration.SecurityUtils;
+import org.springframework.stereotype.Component;
 
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
-//@UIScope
-//@org.springframework.stereotype.Component
+
+@Component
+@UIScope
 public class DomibusConnectorAdminHeader extends HorizontalLayout implements BeforeEnterObserver {
 
 	LumoLabel currentUser = new LumoLabel();
 
-	public DomibusConnectorAdminHeader() {
+	public DomibusConnectorAdminHeader(ConnectorConfigurationProperties config) {
 		Div ecodexLogo = new Div();
 		Image ecodex = new Image("frontend/images/logo_ecodex_0.png", "eCodex");
 		ecodex.setHeight("70px");
@@ -32,10 +34,16 @@ public class DomibusConnectorAdminHeader extends HorizontalLayout implements Bef
 		dC.getStyle().set("font-size", "30px");
 		dC.getStyle().set("font-style", "italic");
 		dC.getStyle().set("color", "grey");
+		dC.getStyle().set("display", "block");
+		LumoLabel stage = new LumoLabel("Stage: [" + config.getStage().getName() + "] Instance: [" + config.getInstanceName() + "]");
+		stage.getStyle().set("font-size", "10pt");
+		stage.getStyle().set("font-style", "normal");
+		stage.getStyle().set("display", "block");
+
 		domibusConnector.add(dC);
+		domibusConnector.add(stage);
 		domibusConnector.getStyle().set("text-align", "center");
-		
-		
+
 		Div europaLogo = new Div();
 		Image europa = new Image("frontend/images/europa-logo.jpg", "europe");
 		europa.setHeight("50px");

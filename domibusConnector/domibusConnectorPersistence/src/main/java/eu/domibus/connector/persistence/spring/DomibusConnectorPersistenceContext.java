@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.spring;
 
+import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceJpaImpl;
@@ -24,24 +25,11 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
  */
 @Configuration
 @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
-@EnableJpaRepositories(basePackageClasses = {PackageDomibusConnectorRepositories.class} )
+@EnableJpaRepositories(basePackageClasses = {PackageDomibusConnectorRepositories.class, DomibusConnectorBusinessDomainDao.class} )
 @EnableTransactionManagement
 @PropertySource("classpath:/eu/domibus/connector/persistence/config/default-persistence-config.properties")
 public class DomibusConnectorPersistenceContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceContext.class);
-
-
-    @Bean
-    @Profile(STORAGE_FS_PROFILE_NAME)
-    public LargeFilePersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
-        return new LargeFilePersistenceServiceFilesystemImpl();
-    }
-
-    @Bean
-    @Profile(STORAGE_DB_PROFILE_NAME)
-    public LargeFilePersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
-        return new LargeFilePersistenceServiceJpaImpl();
-    }
-
+    
 }

@@ -27,7 +27,13 @@ public class DCLinkPluginConfigurationProperties {
     /**
      * switch if link config should be read from database
      */
-    private boolean loadDbConfig = false;
+    private boolean loadDbConfig = true;
+
+
+    /**
+     * switch if link config should be read from spring environment
+     */
+    private boolean loadEnvConfig = true;
 
     /**
      * start the connector if any link plugin init

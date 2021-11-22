@@ -27,6 +27,10 @@ public class ConnectorConfigurationProperties {
     private String instanceName = UUID.randomUUID().toString().substring(0,6);
 
     @NotNull
+    @Valid
+    private StageConfigurationProperties stage = new StageConfigurationProperties();
+
+    @NotNull
     DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 
     /**
@@ -104,5 +108,13 @@ public class ConnectorConfigurationProperties {
 
     public void setLoadBusinessDomainsFromDb(boolean loadBusinessDomainsFromDb) {
         this.loadBusinessDomainsFromDb = loadBusinessDomainsFromDb;
+    }
+
+    public StageConfigurationProperties getStage() {
+        return stage;
+    }
+
+    public void setStage(StageConfigurationProperties stage) {
+        this.stage = stage;
     }
 }

@@ -87,7 +87,7 @@ Apply the provided migration scripts
 
 === P-Modes
 
-* Reupload p-Modes an trusted connectors keystore.
+* Reupload p-Modes and trusted connectors keystore.
 
 
 

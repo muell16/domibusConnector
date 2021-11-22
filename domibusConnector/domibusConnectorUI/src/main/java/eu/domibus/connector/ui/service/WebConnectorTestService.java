@@ -6,10 +6,8 @@ import java.util.Optional;
 import javax.activation.DataHandler;
 import javax.xml.transform.Source;
 
-import eu.domibus.connector.config.c2ctests.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;
@@ -34,8 +32,6 @@ import eu.europa.esig.dss.model.MimeType;
 import org.springframework.util.StreamUtils;
 
 
-@ConditionalOnBean(DCConnector2ConnectorTestService.class) 	//it might be possible, if the testbackend plugin is not enabled, that the service DCConnector2ConnectorTestService is not available!, in this case do not create WebConnectorTestService bean.
-@Service("webConnectorTestService")
 public class WebConnectorTestService {
 
 	private final DCConnector2ConnectorTestService connectorTestService;

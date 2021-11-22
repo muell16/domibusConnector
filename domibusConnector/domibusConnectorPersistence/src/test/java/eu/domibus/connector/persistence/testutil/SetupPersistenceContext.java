@@ -22,7 +22,7 @@ import java.util.*;
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 
 
-@SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
+@SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence", "eu.domibus.connector.common.persistence"})
 @EnableConfigurationProperties(ConnectorConfigurationProperties.class)
 @Import({ConfigurationPropertyLoaderServiceImpl.class,
         DCBusinessDomainManagerImpl.class,

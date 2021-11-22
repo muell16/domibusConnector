@@ -69,7 +69,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
 
 	public LoginView(
 			@Autowired WebUserService userService,
-//			@Autowired DomibusConnectorAdminHeader header,
+			@Autowired DomibusConnectorAdminHeader header,
 			@Autowired AuthenticationManager authenticationManager
 	) {
 		this.authenticationManager = authenticationManager;
@@ -79,7 +79,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         getElement().appendChild(login.getElement()); 
 
 
-		add(new DomibusConnectorAdminHeader());
+		add(header);
 		
 		HorizontalLayout login = new HorizontalLayout();
 		VerticalLayout loginArea = new VerticalLayout();

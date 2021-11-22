@@ -6,10 +6,13 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionExce
 import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
+import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 
@@ -22,17 +25,25 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.*;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//initialized by DomibusConnectorPersistenceContext.class
+@ConditionalOnProperty(prefix = DomibusConnectorPersistenceProperties.PREFIX,
+        value = "provider-" + LargeFilePersistenceServiceFilesystemImpl.PROVIDER_NAME,
+        havingValue = "true", matchIfMissing = true)
+@Service
 public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
 
-    public static final String PROVIDER_NAME = "FSProvider";
+    public static final String PROVIDER_NAME = "filesystem";
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceFilesystemImpl.class);
 
     @Autowired
@@ -85,6 +96,9 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         return createDomibusConnectorBigDataReference(null, connectorMessageId, documentName, documentContentType);
     }
 
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+
+
     @Override
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName, String documentContentType) {
         FileBasedLargeFileReference bigDataReference = new FileBasedLargeFileReference(this);
@@ -105,7 +119,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             throw new RuntimeException(String.format("Cannot create directory [%s]", messageFolder), e);
         }
 
-        String storageFileName = UUID.randomUUID().toString();
+        String storageFileName = simpleDateFormat.format(new Date()) + UUID.randomUUID().toString();
         String storageFileRelativPathName = createReferenceName(messageFolderName, storageFileName);
         bigDataReference.setStorageIdReference(storageFileRelativPathName);
 

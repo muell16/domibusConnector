@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-alpha9-SNAPSHOT</version>
+        <version>4.4.0-alpha10-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorDocumentation</artifactId>
     <name>domibusConnectorDocumentation</name>
@@ -78,7 +78,7 @@
                         <mvnbasedir>${project.basedir}/../</mvnbasedir>
                         <basepath>${project.basedir}/src/asciidoc/</basepath>
                         <webimagedir>./images</webimagedir>
-<!--                        <imagesdir>../images</imagesdir>-->
+                        <!--                        <imagesdir>../images</imagesdir>-->
                         <icons>font</icons>
                     </attributes>
                     <preserveDirectories>true</preserveDirectories>
@@ -87,8 +87,6 @@
                     </requires>
                 </configuration>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -116,7 +114,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>

@@ -70,7 +70,7 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     @Override
-    public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+    public LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType) {
         return defaultLargeFilePersistenceProvider.createDomibusConnectorBigDataReference(connectorMessageId, documentName, documentContentType);
     }
 

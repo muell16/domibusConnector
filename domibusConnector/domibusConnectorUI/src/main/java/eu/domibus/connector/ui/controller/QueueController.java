@@ -3,30 +3,24 @@ package eu.domibus.connector.ui.controller;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
-import eu.domibus.connector.controller.queues.QueuesConfigurationProperties;
 import eu.domibus.connector.controller.queues.producer.ManageableQueue;
-import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
-import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
-import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.ui.dto.WebQueue;
 import lombok.Getter;
-import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.jms.InvalidDestinationException;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
-import javax.tools.Diagnostic;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -118,7 +112,7 @@ public class QueueController {
                 webQueue.setDlqMessages(cleanupDlqMsgs);
                 webQueue.setMsgsOnDlq(cleanupDlqMsgs.size());
             } catch (InvalidDestinationException ide) {
-                LOGGER.debug("Error occured while reading from DLQ [" + manageableQueue.getDlqName() + "]", ide);
+                LOGGER.trace("Error occured while reading from DLQ [" + manageableQueue.getDlqName() + "] (maybe the queue has not been created yet)", ide);
             } catch (Exception e) {
                 LOGGER.warn("Error occured while reading from DLQ [" + manageableQueue.getDlqName() + "]", e);
             }

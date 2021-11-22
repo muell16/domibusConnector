@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
             "spring.liquibase.enabled=true"
     }
 )
-@ActiveProfiles({PersistenceProfiles.STORAGE_DB_PROFILE_NAME, "test"})
+@ActiveProfiles({"test"})
 @Disabled("Fails at local build")
 public class WebPModeServiceTest {
 

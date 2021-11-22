@@ -1,11 +1,18 @@
 package eu.domibus.connector.link.utils;
 
+import eu.domibus.connector.domain.enums.LinkMode;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
-import eu.domibus.connector.link.impl.gwwspushplugin.childctx.WsGatewayPluginConfigurationProperties;
-import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
+import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPluginConfigurationProperties;
+import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -82,7 +89,6 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
         trustStore.setPath(getOldRequiredProperty(BACKEND_TRUST_STORE_PATH_OLD_PROP_NAME));
         trustStore.setType("JKS");
 
-
         StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
         cxfProps.setKeyStore(keyStore);
         keyStore.setType("JKS");
@@ -95,6 +101,38 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
         privateKeyConfig.setAlias(getOldRequiredProperty(BACKEND_PRIVATE_KEY_ALIAS_OLD_PROP_NAME));
 
         return wsBackendPluginConfigurationProperties;
+    }
+
+    public List<DomibusConnectorLinkPartner> loadBackendsFromDb(JdbcTemplate jdbcTemplate) {
+
+        List<DomibusConnectorLinkPartner> query = jdbcTemplate.query(
+                "Select BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_PUSH_ADDRESS, BACKEND_DEFAULT, BACKEND_ENABLED, BACKEND_DESCRIPTION " +
+                " FROM DOMIBUS_CONNECTOR_BACKEND_INFO", (RowMapper<DomibusConnectorLinkPartner>) (rs, rowNum) -> {
+
+            DomibusConnectorLinkPartner p = new DomibusConnectorLinkPartner();
+            p.setDescription(rs.getString("BACKEND_DESCRIPTION"));
+            p.setEnabled(rs.getBoolean("BACKEND_ENABLED"));
+            p.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(rs.getString("BACKEND_NAME")));
+            p.setRcvLinkMode(LinkMode.PASSIVE);
+
+            Map<String, String> props = new HashMap<>();
+            p.setProperties(props);
+
+            props.put("encryption-alias", rs.getString("BACKEND_KEY_ALIAS"));
+            props.put("certificate-dn", rs.getString("BACKEND_NAME"));
+
+            String pushAddress = rs.getString("BACKEND_PUSH_ADDRESS");
+            if (StringUtils.hasText(pushAddress)) {
+                p.setSendLinkMode(LinkMode.PUSH);
+                props.put("push-address", pushAddress);
+            } else {
+                p.setSendLinkMode(LinkMode.PULL);
+            }
+
+            return p;
+        });
+
+        return query;
     }
 
     private String getOldRequiredProperty(String oldPropName) {
