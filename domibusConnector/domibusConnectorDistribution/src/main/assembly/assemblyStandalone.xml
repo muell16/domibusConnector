@@ -46,5 +46,12 @@
             </includes>
             <outputDirectory>/config/keystores</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/documentation</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+<!--            <outputDirectory>/outputDirectory>-->
+        </fileSet>
     </fileSets>
 </assembly>

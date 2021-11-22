@@ -122,6 +122,28 @@
                             <overWriteReleases>true</overWriteReleases>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>get-documentation</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>domibusConnectorDocumentation</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>documentation</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/documentation</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>*/**</includes>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteReleases>true</overWriteReleases>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
