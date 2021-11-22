@@ -8,35 +8,35 @@
     <fileSets>
         <fileSet>
             <includes>
-                <include>*</include>
+                <include>**</include>
             </includes>
             <directory>${html.docu.output.directory}</directory>
             <outputDirectory>webdocu/documentation</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
-                <include>*</include>
+                <include>**</include>
             </includes>
             <directory>${html.docu.output.directory}/../images</directory>
             <outputDirectory>webdocu/images</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
-                <include>*</include>
+                <include>**</include>
             </includes>
             <directory>${project.basedir}/src/main/docs</directory>
             <outputDirectory>docs/old</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
-                <include>*</include>
+                <include>**</include>
             </includes>
             <directory>${project.basedir}/src/main/config</directory>
             <outputDirectory>config</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
-                <include>*</include>
+                <include>**</include>
             </includes>
             <directory>${project.basedir}/target/generated-pdfs</directory>
             <outputDirectory>docs/</outputDirectory>
