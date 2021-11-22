@@ -4,10 +4,12 @@ import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusin
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.Order;
@@ -164,8 +166,8 @@ public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelp
     private HorizontalLayout buttonProvider(DomibusConnectorTransportStep step) {
         HorizontalLayout layout = new HorizontalLayout();
 
-        DomibusConnectorMessage msg = step.getTransportedMessage();
-        DomibusConnectorMessageId connectorMessageId = msg.getConnectorMessageId();
+        Optional<DomibusConnectorMessage> msg = step.getTransportedMessage();
+        DomibusConnectorMessageId connectorMessageId = step.getConnectorMessageId();
 
         //goto business message button
         Button gotoBusinessMessageButton = new Button(VaadinIcon.ENVELOPE.create());
@@ -173,7 +175,7 @@ public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelp
             MessageDetails.navigateTo(connectorMessageId);
         });
         layout.add(gotoBusinessMessageButton);
-        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && isBusinessMessage(msg));
+        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DomainModelHelper::isBusinessMessage).orElse(false));
 
         //retry message
         Button retryMessageButton = new Button(VaadinIcon.ROTATE_LEFT.create());

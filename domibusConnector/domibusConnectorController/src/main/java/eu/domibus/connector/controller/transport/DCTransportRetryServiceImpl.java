@@ -22,17 +22,20 @@ public class DCTransportRetryServiceImpl implements DCTransportRetryService {
 
     @Override
     public void retryTransport(DomibusConnectorTransportStep step) {
-        DomibusConnectorMessage transportedMessage = step.getTransportedMessage();
-        submitToLinkService.submitToLink(transportedMessage);
+        step.getTransportedMessage().ifPresent(submitToLinkService::submitToLink);
     }
 
 
     @Override
     public boolean isRetryAble(DomibusConnectorTransportStep step) {
         boolean retryPossible = true;
-        DomibusConnectorMessage msg = step.getTransportedMessage();
-        if (DomainModelHelper.isBusinessMessage(msg)) {
-            retryPossible = !messagePersistenceService.checkMessageConfirmedOrRejected(msg);
+        if (step.getTransportedMessage().isPresent()) {
+            DomibusConnectorMessage msg = step.getTransportedMessage().get();
+            if (DomainModelHelper.isBusinessMessage(msg)) {
+                retryPossible = !messagePersistenceService.checkMessageConfirmedOrRejected(msg);
+            }
+        } else {
+            retryPossible = false;
         }
         return retryPossible;
     }

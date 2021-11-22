@@ -101,7 +101,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         transportStepPersistenceService.update(transportStep);
 
 
-        DomibusConnectorMessage message = transportStep.getTransportedMessage();
+        DomibusConnectorMessage message = transportStep.getTransportedMessage().orElse(null);
 
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have

@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.model;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 
+import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 public class DomibusConnectorTransportStep {
 
     private TransportStateService.TransportId transportId;
+    @Nullable
     private DomibusConnectorMessage transportedMessage;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
@@ -19,8 +21,8 @@ public class DomibusConnectorTransportStep {
     private PriorityQueue<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new PriorityQueue<>(new TransportStepComparator());
     private LocalDateTime finalStateReached;
 
-    public DomibusConnectorMessage getTransportedMessage() {
-        return transportedMessage;
+    public Optional<DomibusConnectorMessage> getTransportedMessage() {
+        return Optional.ofNullable(transportedMessage);
     }
 
     public void setTransportedMessage(DomibusConnectorMessage transportedMessage) {

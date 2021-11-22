@@ -15,6 +15,8 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class TransportStepPersistenceServiceImpl implements TransportStepPersistenceService {
 
+    private static final Logger LOGGER = LogManager.getLogger(TransportStepPersistenceServiceImpl.class);
+
     private final DomibusConnectorTransportStepDao transportStepDao;
     private final ObjectMapper objectMapper;
 
@@ -47,11 +51,11 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getTransportedMessage() == null || transportStep.getTransportedMessage().getConnectorMessageId() == null) {
+        if (transportStep.getTransportedMessage().map(msg -> msg.getConnectorMessageId() != null).orElse(false)) {
             throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
         }
 
-        java.lang.String msgId = transportStep.getTransportedMessage().getConnectorMessageId().toString();
+        java.lang.String msgId = transportStep.getTransportedMessage().get().getConnectorMessageId().toString();
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = transportStep.getLinkPartnerName();
 
         Optional<Integer> nAttempt = transportStepDao.getHighestAttemptBy(msgId, linkPartnerName);
@@ -130,30 +134,33 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
+        step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
+        step.setTransportId(dbTransportStep.getTransportId());
+        step.setAttempt(dbTransportStep.getAttempt());
+        step.setCreated(dbTransportStep.getCreated());
+        step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
+        step.setFinalStateReached(dbTransportStep.getFinalStateReached());
+        step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
+
+        List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
+                .getStatusUpdates()
+                .stream()
+                .map(this::mapTransportStepState)
+                .collect(Collectors.toList());
+
+        step.setStatusUpdates(statusUpdates);
+
+        /*
+            read message from db as json
+            the message can be null if the format is not compatible to current connector version (old data)
+         */
         try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())){
             DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
             step.setTransportedMessage(domibusConnectorMessage);
-            step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
-            step.setTransportId(dbTransportStep.getTransportId());
-            step.setAttempt(dbTransportStep.getAttempt());
-            step.setCreated(dbTransportStep.getCreated());
-            step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
-            step.setFinalStateReached(dbTransportStep.getFinalStateReached());
-            step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
-
-            List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
-                    .getStatusUpdates()
-                    .stream()
-                    .map(this::mapTransportStepState)
-                    .collect(Collectors.toList());
-
-            step.setStatusUpdates(statusUpdates);
-
-            return step;
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
         }
+        return step;
     }
 
     private DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate mapTransportStepState(PDomibusConnectorTransportStepStatusUpdate dbTransportUpdate) {
@@ -167,7 +174,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     private PDomibusConnectorTransportStep mapTransportStepToDb(DomibusConnectorTransportStep transportStep) {
 
-        java.lang.String msgId = transportStep.getTransportedMessage().getConnectorMessageId().toString();
+
+        java.lang.String msgId = transportStep.getConnectorMessageId().toString();
         DomibusConnectorLinkPartner.LinkPartnerName partnerName= transportStep.getLinkPartnerName();
 
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());

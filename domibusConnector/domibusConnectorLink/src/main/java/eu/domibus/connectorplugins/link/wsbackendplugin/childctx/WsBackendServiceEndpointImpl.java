@@ -35,6 +35,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +83,9 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                 List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner = transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
                 List<DomibusConnectorMessageType> collect = pendingTransportsForLinkPartner.stream()
                         .map(DomibusConnectorTransportStep::getTransportedMessage)
-                        .filter(Objects::nonNull)
+                        //java9 should handle this better: Optional::streamOf
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
                         .map(msg -> transformerService.transformDomainToTransition(msg))
                         .collect(Collectors.toList());
                 getMessagesResponse.getMessages().addAll(collect);
@@ -187,15 +190,19 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         if (transportStepById.isPresent()) {
             DomibusConnectorTransportStep domibusConnectorTransportStep = transportStepById.get();
             if (domibusConnectorTransportStep.isInPendingState()) {
-                DomibusConnectorMessage msg = domibusConnectorTransportStep.getTransportedMessage();
+                if (domibusConnectorTransportStep.getTransportedMessage().isPresent()) {
+                    DomibusConnectorMessage msg = domibusConnectorTransportStep.getTransportedMessage().get();
 
-                //add post invoke message processor
-                MessageContext mContext = webServiceContext.getMessageContext();
-                WrappedMessageContext wmc = (WrappedMessageContext)mContext;
-                ProcessMessageAfterDownloaded interceptor = new ProcessMessageAfterDownloaded(transportId);
-                wmc.getWrappedMessage().getInterceptorChain().add(interceptor);
+                    //add post invoke message processor
+                    MessageContext mContext = webServiceContext.getMessageContext();
+                    WrappedMessageContext wmc = (WrappedMessageContext) mContext;
+                    ProcessMessageAfterDownloaded interceptor = new ProcessMessageAfterDownloaded(transportId);
+                    wmc.getWrappedMessage().getInterceptorChain().add(interceptor);
 
-                return transformerService.transformDomainToTransition(msg);
+                    return transformerService.transformDomainToTransition(msg);
+                } else {
+                    throw new IllegalStateException("The message is not readable anymore");
+                }
             } else {
                 throw new IllegalArgumentException("The message is not in pending state!");
             }
