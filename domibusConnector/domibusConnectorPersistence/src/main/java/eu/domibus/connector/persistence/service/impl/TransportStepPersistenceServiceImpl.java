@@ -51,7 +51,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getTransportedMessage().map(msg -> msg.getConnectorMessageId() != null).orElse(false)) {
+        if (transportStep.getTransportedMessage().map(msg -> msg.getConnectorMessageId() == null).orElse(true)) {
             throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
         }
 

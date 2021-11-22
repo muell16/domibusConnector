@@ -13,6 +13,7 @@ public class DomibusConnectorTransportStep {
     private TransportStateService.TransportId transportId;
     @Nullable
     private DomibusConnectorMessage transportedMessage;
+    private DomibusConnectorMessageId transportedMessageConnectorMessageId;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
     private java.lang.String transportSystemMessageId;
@@ -27,6 +28,9 @@ public class DomibusConnectorTransportStep {
 
     public void setTransportedMessage(DomibusConnectorMessage transportedMessage) {
         this.transportedMessage = transportedMessage;
+        if (transportedMessage != null) {
+            this.transportedMessageConnectorMessageId = transportedMessage.getConnectorMessageId();
+        }
     }
 
     public TransportStateService.TransportId getTransportId() {
@@ -82,7 +86,7 @@ public class DomibusConnectorTransportStep {
     }
 
     public DomibusConnectorMessageId getConnectorMessageId() {
-        return this.transportedMessage.getConnectorMessageId();
+        return this.transportedMessageConnectorMessageId;
     }
 
     public List<DomibusConnectorTransportStepStatusUpdate> getStatusUpdates() {
@@ -143,6 +147,13 @@ public class DomibusConnectorTransportStep {
 
     public DomibusConnectorTransportStepStatusUpdate getLastStatusUpdate() {
         return this.statusUpdates.peek();
+    }
+
+    public void setConnectorMessageId(DomibusConnectorMessageId transportedMessageConnectorMessageId) {
+        this.transportedMessageConnectorMessageId = transportedMessageConnectorMessageId;
+        if (this.transportedMessage != null && this.transportedMessage.getConnectorMessageId() != transportedMessageConnectorMessageId) {
+            throw new IllegalArgumentException("Cannot set a different connector message id here!");
+        }
     }
 
     private static class TransportStepComparator implements Comparator<DomibusConnectorTransportStepStatusUpdate> {
