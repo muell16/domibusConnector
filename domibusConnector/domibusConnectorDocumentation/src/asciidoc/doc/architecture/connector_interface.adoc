@@ -10,38 +10,178 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-= Interface Description
+= domibusConnectorAPI
 
-The domibusConnectorAPI module contains classes and wsdls for communicating with the domibusConnector.
+The domibusConnectorAPI module defines via *WSDL webservice definitions* the external interfaces for communicating with the domibusConnector.
 
-== Interfaces
+It also contains an *XSD schema* defining the contents transported via the webservices. This is the *transition model* of the domibusConnector.
 
-.Interface Description
+The WSDL and XSD definitions are generated into *JAVA stubs* for better implementation convenience.
+
+== Webservice Interfaces
+
+.Webservice Interface Description
 |===
-| Name | Description | Methods
+| Name | Description | since version
 
-| DomibusConnectorBackendWebService
+| <<DomibusConnectorBackendWebService,DomibusConnectorBackendWebService>>
 | Is provided by the connector and is meant for the clients/connector backends to to retrieve and push messages.
-a| * submitMessage
-* requestMessages
+| 4.0
 
-| DomibusConnectorBackendDeliveryWebService
-| Must be implemented by the connector client. If push is enabled then the connector will push messages
+| <<DomibusConnectorBackendDeliveryWebService,DomibusConnectorBackendDeliveryWebService>>
+| Must be provided by the client/backend. If push is enabled then the connector will push messages
 to this web interface.
-a| * deliverMessage
+| 4.0
 
-| DomibusConnectorGatewayDeliveryWebService
-| Is implemented by the connector so the gateway plugin can deliver messages to the connector.
-a| * deliverMessage
+| <<DomibusConnectorGatewayDeliveryWebService,DomibusConnectorGatewayDeliveryWebService>>
+| Is provided by the connector so the gateway can push messages to the connector.
+| 4.0
 
-| DomibusConnectorGatewaySubmissionWebService
-| It is implemented by the AS4 Gateway (for domibus this is provided by the domibusConnectordomibusPlugin).
-a| * submitMessage
+| <<DomibusConnectorGatewaySubmissionWebService,DomibusConnectorGatewaySubmissionWebService>>
+| Must be provided by the AS4 Gateway (for domibus this is provided by the domibus-connector-plugin).
+| 4.0
+
+| <<DomibusConnectorGatewayWebService,DomibusConnectorGatewayWebService>>
+| Is provided by the AS4 Gateway (for domibus this is provided by the domibus-connector-plugin). This interface is an alternative to the interfaces DomibusConnectorGatewayDeliveryWebService and 
+DomibusConnectorGatewaySubmissionWebService. If a connector to gateway connection should only be single direction (from the connector to the gateway),
+this interface can be used.
+| 4.3
 
 |===
 
 For the message push in direction to the backend the verb deliver is used. For the opposite direction
 submit is used.
+
+=== Details on Webservice Interfaces
+==== DomibusConnectorBackendWebService
+
+.DomibusConnectorBackendWebService
+|===
+| Method Name | Input Parameter Type | Return Type | Description | since version
+
+|submitMessage
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>> 
+|<<DomibsConnectorAcknowledgementType,DomibsConnectorAcknowledgementType>>
+|submits a message to the domibusConnector
+|4.0
+
+|requestMessages
+|<<EmptyRequestType,EmptyRequestType>>
+|<<DomibusConnectorMessagesType,DomibusConnectorMessagesType>>
+|loads all pending messages for client and returns them in one request.
+|4.0
+
+|listPendingMessageIds
+|<<EmptyRequestType,EmptyRequestType>>
+|<<ListPendingMessageIdsResponse,ListPendingMessageIdsResponse>>
+|return the connector internal message transport ids of messages pending for requesting client/backend.
+|4.4
+
+|getMessageById
+|<<GetMessageByIdRequest,GetMessageByIdRequest>>
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>>
+|Given the connector internal message transport id, this request returns the message object.
+|4.4
+
+|acknowledgeMessage
+|<<DomibusConnectorMessageResponseType,DomibusConnectorMessageResponseType>>
+|<<EmptyRequestType,EmptyRequestType>>
+|Technically acknowledges message at the connector causing the message to be finished.
+|4.4
+
+|===
+
+===== Namespace Types
+
+====== EmptyRequestType
+Wrapping object containing literally nothing.
+
+====== GetMessageByIdRequest
+Wrapping object containing the message transport ID.
+
+====== ListPendingMessageIdsResponse
+Wrapping object containing a list of message transport ids pending for the requesting client/backend at the connector.
+
+
+==== DomibusConnectorBackendDeliveryWebService
+
+.DomibusConnectorBackendWebService
+|===
+| Method Name | Input Parameter Type | Return Type | Description | since version
+
+|deliverMessage
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>> 
+|<<DomibsConnectorAcknowledgementType,DomibsConnectorAcknowledgementType>>
+|used by the connector to push messages to the client/backend
+|4.0
+
+|===
+
+==== DomibusConnectorGatewayDeliveryWebService
+
+.DomibusConnectorGatewayDeliveryWebService
+|===
+| Method Name | Input Parameter Type | Return Type | Description | since version
+
+|deliverMessage
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>> 
+|<<DomibsConnectorAcknowledgementType,DomibsConnectorAcknowledgementType>>
+|used by the gateway to push messages to the connector
+|4.0
+
+|===
+
+==== DomibusConnectorGatewaySubmissionWebService
+
+.DomibusConnectorGatewaySubmissionWebService
+|===
+| Method Name | Input Parameter Type | Return Type | Description | since version
+
+|submitMessage
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>> 
+|<<DomibsConnectorAcknowledgementType,DomibsConnectorAcknowledgementType>>
+|used by the connector to push messages to the gateway
+|4.0
+
+|===
+
+==== DomibusConnectorGatewayWebService
+
+.DomibusConnectorGatewayWebService
+|===
+| Method Name | Input Parameter Type | Return Type | Description | since version
+
+|submitMessage
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>> 
+|<<DomibsConnectorAcknowledgementType,DomibsConnectorAcknowledgementType>>
+|submits a message from the domibusConnector to the gateway.
+|4.3
+
+|listPendingMessageIds
+|<<ListPendingMessageIdsRequest,ListPendingMessageIdsRequest>>
+|<<ListPendingMessageIdsResponse,ListPendingMessageIdsResponse>>
+|return the connector internal message transport ids of messages pending at the gateway.
+|4.3
+
+|getMessageById
+|<<GetMessageByIdRequest,GetMessageByIdRequest>>
+|<<DomibusConnectorMessageType,DomibusConnectorMessageType>>
+|Given the connector internal message transport id, this request returns the message object.
+|4.3
+
+|===
+
+===== Namespace Types
+
+====== ListPendingMessageIdsRequest
+Wrapping object containing literally nothing.
+
+====== ListPendingMessageIdsResponse
+Wrapping object containing a list of message transport ids pending for the requesting client/backend at the connector.
+
+====== GetMessageByIdRequest
+Wrapping object containing the message transport ID.
+
 
 == WS-Security
 
@@ -58,6 +198,15 @@ link:http://coheigea.blogspot.com/2017/02/ws-security-with-mtom-support-in-apach
 link:https://ws.apache.org/wss4j/attachments.html
 
 == XML Types / Message Type
+
+=== DomibusConnectorMessagesType
+
+|===
+| field | type | description
+
+| messages | List<<<DomibusConnectorMessageType>>> | A List of messages.
+
+|===
 
 === DomibusConnectorMessageType
 
