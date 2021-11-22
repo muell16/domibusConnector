@@ -30,7 +30,7 @@ More details are available here:
 
 * token.issuer.country => connector.business-document-sent.country
 * token.issuer.service-provider => connector.business-document-sent.service-provider
-* token.issuer.advanced-electronic-system-type => connector.business-document-sent.default-advancedSystem-type
+* token.issuer.advanced-electronic-system-type => connector.business-document-sent.default-advanced-system-type
 * token.issuer.identity-provider => connector.business-document-sent.authentication-validation.identity-provider
 * connector.security.keystore.path => connector.connector.ecodex-container.signature.key-store.path
 * connector.security.keystore.password => connector.connector.ecodex-container.signature.key-store.password
