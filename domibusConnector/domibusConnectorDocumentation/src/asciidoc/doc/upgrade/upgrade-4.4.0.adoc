@@ -32,20 +32,20 @@ More details are available here:
 * token.issuer.service-provider => connector.business-document-sent.service-provider
 * token.issuer.advanced-electronic-system-type => connector.business-document-sent.default-advanced-system-type
 * token.issuer.identity-provider => connector.business-document-sent.authentication-validation.identity-provider
-* connector.security.keystore.path => connector.connector.ecodex-container.signature.key-store.path
-* connector.security.keystore.password => connector.connector.ecodex-container.signature.key-store.password
-* connector.security.private-key.alias => connector.connector.ecodex-container.signature.private-key.alias
-* connector.security.private-key.password => connector.connector.ecodex-container.signature.private-key.password
+* connector.security.keystore.path => connector.ecodex-container.signature.key-store.path
+* connector.security.keystore.password => connector.ecodex-container.signature.key-store.password
+* connector.security.private-key.alias => connector.ecodex-container.signature.private-key.alias
+* connector.security.private-key.password => connector.ecodex-container.signature.private-key.password
 
 ===== Rename and duplicate the following properties:
 
 * connector.security.trust-store.path =>
 ** connector.business-document-sent.signature-validation.trust-store.path
-** connector.connector.ecodex-container.signature-validation.trust-store.path
+** connector.ecodex-container.signature-validation.trust-store.path
 
 * connector.security.trust-store.password =>
 ** connector.business-document-sent.signature-validation.trust-store.password
-** connector.connector.ecodex-container.signature-validation.trust-store.password
+** connector.ecodex-container.signature-validation.trust-store.password
 
 
 
