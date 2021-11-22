@@ -91,7 +91,7 @@
         <spring.boot.version>2.5.4</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
-        <vaadin.version>14.5.3</vaadin.version>
+        <vaadin.version>14.6.5</vaadin.version>
         <dss.tools.version>5.8</dss.tools.version>
         <org.bouncycastl.version>1.67</org.bouncycastl.version>
     </properties>
