@@ -133,6 +133,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         transportStep.setLinkPartnerName(linkPartnerName);
         transportStep.setCreated(LocalDateTime.now());
         transportStep.setTransportedMessage(message);
+        transportStep.setConnectorMessageId(message.getConnectorMessageId());
 
         transportStep = transportStepPersistenceService.createNewTransportStep(transportStep);
         LOGGER.debug("#createTransportFor:: created new transport step within database with id [{}]", transportStep.getTransportId());
