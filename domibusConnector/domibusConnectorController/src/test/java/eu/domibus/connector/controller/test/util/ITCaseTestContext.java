@@ -123,6 +123,9 @@ public class ITCaseTestContext {
 
         @Override
         public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
+            if (message.getConnectorMessageId() == null) {
+                throw new IllegalArgumentException("connectorMessageId is null!");
+            }
             try {
                 MessageTargetSource target = message.getMessageDetails().getDirection().getTarget();
                 if (target == MessageTargetSource.GATEWAY) {

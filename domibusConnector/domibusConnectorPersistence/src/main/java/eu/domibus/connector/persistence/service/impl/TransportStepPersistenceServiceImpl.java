@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.validation.Validator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +52,11 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (transportStep.getLinkPartnerName() == null || StringUtils.isEmpty(transportStep.getLinkPartnerName().toString())) {
             throw new IllegalArgumentException("LinkPartner name must be set!");
         }
-        if (transportStep.getTransportedMessage().map(msg -> msg.getConnectorMessageId() != null).orElse(false)) {
-            throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId must be set!");
+        if (transportStep.getTransportedMessage().map(msg -> msg.getConnectorMessageId() == null).orElse(true)) {
+            throw new IllegalArgumentException("TransportedMessage and ConnectorMessageId of message must be set!");
+        }
+        if (transportStep.getConnectorMessageId() == null) {
+            throw new IllegalArgumentException("The connectorMessageId on DomibusConnectorTransportStep is not allowed to be null!");
         }
 
         java.lang.String msgId = transportStep.getTransportedMessage().get().getConnectorMessageId().toString();
@@ -61,7 +65,6 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         Optional<Integer> nAttempt = transportStepDao.getHighestAttemptBy(msgId, linkPartnerName);
         int nextAttempt = nAttempt.orElse(0) + 1;
         transportStep.setAttempt(nextAttempt);
-
         transportStep.setTransportId(new TransportStateService.TransportId(msgId + "_" + linkPartnerName + "_" + nextAttempt));
 
         PDomibusConnectorTransportStep dbStep = mapTransportStepToDb(transportStep);
@@ -134,6 +137,17 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
+        /*
+            read message from db as json
+            the message can be null if the format is not compatible to current connector version (old data)
+         */
+        try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())) {
+            DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
+            step.setTransportedMessage(domibusConnectorMessage);
+        } catch (IOException e) {
+            LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
+        }
+
         step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
         step.setTransportId(dbTransportStep.getTransportId());
         step.setAttempt(dbTransportStep.getAttempt());
@@ -141,6 +155,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
         step.setFinalStateReached(dbTransportStep.getFinalStateReached());
         step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
+        step.setConnectorMessageId(new DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
 
         List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
                 .getStatusUpdates()
@@ -150,16 +165,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
         step.setStatusUpdates(statusUpdates);
 
-        /*
-            read message from db as json
-            the message can be null if the format is not compatible to current connector version (old data)
-         */
-        try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())){
-            DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
-            step.setTransportedMessage(domibusConnectorMessage);
-        } catch (IOException e) {
-            LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
-        }
+
         return step;
     }
 
@@ -173,13 +179,16 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     private PDomibusConnectorTransportStep mapTransportStepToDb(DomibusConnectorTransportStep transportStep) {
+        if (transportStep.getConnectorMessageId() == null) {
+            throw new IllegalArgumentException("The provided connector message id is not allowed to be null!");
+        }
 
 
         java.lang.String msgId = transportStep.getConnectorMessageId().toString();
-        DomibusConnectorLinkPartner.LinkPartnerName partnerName= transportStep.getLinkPartnerName();
+        DomibusConnectorLinkPartner.LinkPartnerName partnerName = transportStep.getLinkPartnerName();
 
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());
-        PDomibusConnectorTransportStep dbStep = foundStep.orElseGet(  () -> {
+        PDomibusConnectorTransportStep dbStep = foundStep.orElseGet(() -> {
             PDomibusConnectorTransportStep s = new PDomibusConnectorTransportStep();
             s.setConnectorMessageId(msgId);
             s.setLinkPartnerName(partnerName);
@@ -187,11 +196,14 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
             return s;
         });
 
-        try {
-            dbStep.setTransportedMessage(objectMapper.writeValueAsString(transportStep.getTransportedMessage()));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        transportStep.getTransportedMessage().ifPresent(msg -> {
+
+            try {
+                dbStep.setTransportedMessage(objectMapper.writeValueAsString(msg));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         dbStep.setFinalStateReached(transportStep.getFinalStateReached());
         dbStep.setAttempt(transportStep.getAttempt());

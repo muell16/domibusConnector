@@ -6,13 +6,13 @@ import eu.domibus.connector.domain.enums.TransportState;
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DomibusConnectorTransportStep {
 
     private TransportStateService.TransportId transportId;
     @Nullable
-    private DomibusConnectorMessage transportedMessage;
+    private DomibusConnectorMessage transportedMessage = null;
+    private DomibusConnectorMessageId connectorMessageIdOfTransportedMsg;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
     private java.lang.String transportSystemMessageId;
@@ -26,7 +26,15 @@ public class DomibusConnectorTransportStep {
     }
 
     public void setTransportedMessage(DomibusConnectorMessage transportedMessage) {
+        if (transportedMessage == null) {
+            throw new IllegalArgumentException("The transported message is not allowed to be null");
+        }
+        if (transportedMessage.getConnectorMessageId() == null) {
+            throw new IllegalArgumentException("The connectorMessageId of the transported message must not be null!");
+        }
         this.transportedMessage = transportedMessage;
+        this.connectorMessageIdOfTransportedMsg = transportedMessage.getConnectorMessageId();
+
     }
 
     public TransportStateService.TransportId getTransportId() {
@@ -82,7 +90,7 @@ public class DomibusConnectorTransportStep {
     }
 
     public DomibusConnectorMessageId getConnectorMessageId() {
-        return this.transportedMessage.getConnectorMessageId();
+        return this.connectorMessageIdOfTransportedMsg;
     }
 
     public List<DomibusConnectorTransportStepStatusUpdate> getStatusUpdates() {
@@ -143,6 +151,15 @@ public class DomibusConnectorTransportStep {
 
     public DomibusConnectorTransportStepStatusUpdate getLastStatusUpdate() {
         return this.statusUpdates.peek();
+    }
+
+    public void setConnectorMessageId(DomibusConnectorMessageId transportedMessageConnectorMessageId) {
+        this.connectorMessageIdOfTransportedMsg = transportedMessageConnectorMessageId;
+        if (this.transportedMessage != null
+                && this.transportedMessage.getConnectorMessageId() != null
+                && !this.transportedMessage.getConnectorMessageId().equals(transportedMessageConnectorMessageId)) {
+            throw new IllegalArgumentException("Cannot set a different connector message id here!");
+        }
     }
 
     private static class TransportStepComparator implements Comparator<DomibusConnectorTransportStepStatusUpdate> {
