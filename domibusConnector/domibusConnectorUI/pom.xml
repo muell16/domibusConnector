@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-alpha10-SNAPSHOT</version>
+        <version>4.4.0-alpha11-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorUI</artifactId>
     <packaging>jar</packaging>
@@ -42,8 +42,8 @@
             <version>2.0.10</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.vaadin</groupId>
                     <artifactId>vaadin</artifactId>
+                    <groupId>com.vaadin</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

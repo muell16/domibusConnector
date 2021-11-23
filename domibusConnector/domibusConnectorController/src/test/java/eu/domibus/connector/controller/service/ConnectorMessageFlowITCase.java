@@ -80,7 +80,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 //                "spring.jta.enabled=true"
 //                "logging.level.eu.domibus=TRACE"
 
-})
+}
+)
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
