@@ -13,6 +13,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.ui.login.LogoutView;
 import eu.domibus.connector.ui.utils.DCTabHandler;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
+import eu.domibus.connector.ui.view.areas.documentation.ArchitectureDocumentationView;
 import eu.domibus.connector.ui.view.areas.info.Info;
 import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
 import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
@@ -79,6 +80,12 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .withLabel("Info")
                 .withIcon(VaadinIcon.INFO_CIRCLE_O)
                 .addForComponent(Info.class);
+
+        tabManager
+                .createTab()
+                .withLabel("Documentation")
+                .withIcon(VaadinIcon.LIGHTBULB)
+                .addForComponent(ArchitectureDocumentationView.class);
 
         tabManager
                 .createTab()
