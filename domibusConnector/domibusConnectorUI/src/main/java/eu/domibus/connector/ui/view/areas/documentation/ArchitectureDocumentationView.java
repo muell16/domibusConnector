@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @UIScope
 @Route(value = ArchitectureDocumentationView.ROUTE, layout = DocumentationLayout.class)
-@Order(3)
+@Order(1)
 @TabMetadata(title = "Architecture", tabGroup = DocumentationLayout.TAB_GROUP_NAME)
 public class ArchitectureDocumentationView extends StaticContentView {
     public static final String ROUTE = "architecture";
