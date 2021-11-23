@@ -17,8 +17,14 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import org.apache.activemq.artemis.api.core.client.ClientSession;
+import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
+import org.apache.activemq.artemis.api.core.client.ServerLocator;
 import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
+import org.apache.activemq.artemis.api.core.management.ResourceNames;
+import org.apache.activemq.artemis.core.management.impl.ActiveMQServerControlImpl;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
@@ -121,17 +127,31 @@ public class ConnectorMessageFlowITCase {
     ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService fromConnectorToBackendDeliveryService;
 
     @Autowired
-    ActiveMQConnectionFactory activeMQConnectionFactory;
+    EmbeddedActiveMQ embeddedActiveMQ;
 
     private String testDir;
 
     @AfterEach
     public void clearAfterTest(TestInfo testInfo) throws Exception {
-//        fromConnectorToBackendDeliveryService.clearQueue();
-//        fromConnectorToGwSubmissionService.clearQueue();
-//        qControl.removeAllMessages();
-//        activeMQConnectionFactory a;
-        ActiveMQServerControl a;
+
+        ActiveMQServerControlImpl activeMQServerControl = embeddedActiveMQ.getActiveMQServer()
+                .getActiveMQServerControl();
+
+        String[] qNames = activeMQServerControl.getQueueNames();
+        for (String qName : qNames) {
+            QueueControl qc = (QueueControl) embeddedActiveMQ.getActiveMQServer().getManagementService()
+                    .getResource(ResourceNames.QUEUE + qName);
+            qc.removeAllMessages();
+            System.out.println("Removed all messages from artemis queue " + qName);
+        }
+
+//        QueueControl[] queueControls = (QueueControl[]) embeddedActiveMQ.getActiveMQServer().getManagementService()
+//                .getResources(QueueControl.class);
+//        for (QueueControl q : queueControls) {
+//            //TODO: should i fail test if a message is still in queue?
+//            q.removeAllMessages();
+//            System.out.println("Removed all messages from artemis queue " + q.getName());
+//        }
 
     }
 
