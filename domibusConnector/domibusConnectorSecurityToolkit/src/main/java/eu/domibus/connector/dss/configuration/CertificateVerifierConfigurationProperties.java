@@ -1,5 +1,6 @@
 package eu.domibus.connector.dss.configuration;
 
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@MapNested
 public class CertificateVerifierConfigurationProperties {
 
     @NotBlank
@@ -26,6 +28,7 @@ public class CertificateVerifierConfigurationProperties {
     @NestedConfigurationProperty
     @ConfigurationLabel("Trust Store")
     @ConfigurationDescription("This store holds all valid certificates for validation")
+    @MapNested
     private StoreConfigurationProperties trustStore; // = new StoreConfigurationProperties();
 
     private boolean ignoreStoreEnabled = false;
@@ -36,6 +39,7 @@ public class CertificateVerifierConfigurationProperties {
      */
     //TODO: add not null validation if trustStoreEnabled = true
     @Valid
+    @MapNested
     @NestedConfigurationProperty
     @ConfigurationLabel("Ignore Store")
     @ConfigurationDescription("This store holds all ignored certificates for validation.\n" +

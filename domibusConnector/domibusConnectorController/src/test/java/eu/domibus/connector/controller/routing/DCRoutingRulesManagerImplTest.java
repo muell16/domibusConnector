@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.test.util.ITCaseTestAnnotation;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
@@ -43,14 +44,17 @@ public class DCRoutingRulesManagerImplTest {
     }
 
     @Test
+    @Disabled("not implemented yet")
     void getBackendRoutingRules() {
     }
 
     @Test
+    @Disabled("not implemented yet")
     void getDefaultBackendName() {
     }
 
     @Test
+    @Disabled("not implemented yet")
     void isBackendRoutingEnabled() {
     }
 

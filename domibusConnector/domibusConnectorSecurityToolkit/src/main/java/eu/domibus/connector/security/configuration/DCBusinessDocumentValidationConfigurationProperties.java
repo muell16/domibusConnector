@@ -1,6 +1,7 @@
 package eu.domibus.connector.security.configuration;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 @BusinessDomainScoped
 @Component
 @CheckAllowedAdvancedElectronicSystemType
+@MapNested
 public class DCBusinessDocumentValidationConfigurationProperties {
 
     public static final String PREFIX = "connector.business-document-sent";
@@ -79,10 +81,12 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      */
     @Valid
     @NestedConfigurationProperty
+    @MapNested
     private SignatureValidationConfigurationProperties signatureValidation;
 
     @Valid
     @NestedConfigurationProperty
+    @MapNested
     private DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties authenticationValidation;
 
     public Set<AdvancedElectronicSystemType> getAllowedAdvancedSystemTypes() {

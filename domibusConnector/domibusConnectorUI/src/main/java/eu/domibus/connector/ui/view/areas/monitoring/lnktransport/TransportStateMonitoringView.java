@@ -241,7 +241,7 @@ public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelp
     public void afterNavigation(AfterNavigationEvent event) {
         checkboxGroup.select(filterForState.toArray(new TransportState[0]));
 
-        List<DomibusConnectorLinkPartner.LinkPartnerName> allLinkPartners = transportStepPersistenceService.findAllLinkPartners();
+        HashSet<DomibusConnectorLinkPartner.LinkPartnerName> allLinkPartners = new HashSet<>(transportStepPersistenceService.findAllLinkPartners());
         linkPartnerSelectBox.setItems(allLinkPartners);
         this.selectedLinkPartners.addAll(allLinkPartners);
         linkPartnerSelectBox.setValue(this.selectedLinkPartners);
