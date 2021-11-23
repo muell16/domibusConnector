@@ -17,9 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
         classes = {BeanToPropertyMapConverterTest.TestContext.class},
-        properties = {
-        "debug=true"
-})
+)
 class BeanToPropertyMapConverterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BeanToPropertyMapConverterTest.class);

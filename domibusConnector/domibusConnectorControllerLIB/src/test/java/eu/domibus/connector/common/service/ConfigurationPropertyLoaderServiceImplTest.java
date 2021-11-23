@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(properties = {
-        "debug=true",
         "connector.confirmation-messages.retrieval.service.service-type=serviceType",
         "connector.confirmation-messages.retrieval.service.name=aService",
         "connector.confirmation-messages.retrieval.action=retrievalAction",
