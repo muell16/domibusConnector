@@ -7,11 +7,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
-import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigPanel;
+import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,8 +1,7 @@
-package eu.domibus.connector.ui.ui.binder;
+package eu.domibus.connector.ui.utils.binder;
 
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.ValueContext;
-import com.vaadin.flow.data.validator.BeanValidator;
 import com.vaadin.flow.internal.BeanUtil;
 import com.vaadin.flow.data.binder.Validator;
 

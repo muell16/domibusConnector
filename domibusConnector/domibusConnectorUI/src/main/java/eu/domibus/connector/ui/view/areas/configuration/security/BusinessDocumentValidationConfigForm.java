@@ -7,7 +7,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
-import eu.domibus.connector.ui.ui.fields.SignatureValidationConfigurationField;
+import eu.domibus.connector.ui.fields.SignatureValidationConfigurationField;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

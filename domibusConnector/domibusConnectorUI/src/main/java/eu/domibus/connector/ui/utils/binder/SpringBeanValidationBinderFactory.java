@@ -1,4 +1,4 @@
-package eu.domibus.connector.ui.ui.binder;
+package eu.domibus.connector.ui.utils.binder;
 
 import com.vaadin.flow.data.binder.ErrorLevel;
 import com.vaadin.flow.data.binder.ValidationResult;

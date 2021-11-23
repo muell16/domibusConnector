@@ -1,11 +1,11 @@
 package eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig;
 
-import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;

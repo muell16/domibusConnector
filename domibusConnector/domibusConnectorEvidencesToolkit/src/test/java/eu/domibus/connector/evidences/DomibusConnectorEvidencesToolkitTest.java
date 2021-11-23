@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.eq;
 public class DomibusConnectorEvidencesToolkitTest {
 
     @SpringBootApplication(
-            scanBasePackages = {"eu.domibus.connector.evidences", "eu.domibus.connector.common"}
+            scanBasePackages = {"eu.domibus.connector.evidences", "eu.domibus.connector.common", "eu.domibus.connector.utils"}
     )
     public static class TestContext {}
 

@@ -1,4 +1,4 @@
-package eu.domibus.connector.ui.ui.fields;
+package eu.domibus.connector.ui.fields;
 
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -6,9 +6,8 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
-import eu.domibus.connector.ui.ui.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

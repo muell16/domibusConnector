@@ -7,6 +7,7 @@ import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationPr
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
 import eu.domibus.connector.security.aes.OriginalSenderBasedAESAuthenticationServiceFactory;
 import eu.domibus.connector.security.configuration.validation.CheckAllowedAdvancedElectronicSystemType;
+import org.apache.commons.collections4.set.ListOrderedSet;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
@@ -67,7 +68,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      *  only a allowed system type can be 5
      */
     @NotNull
-    private Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = Stream.of(AdvancedElectronicSystemType.values()).collect(Collectors.toSet());
+    private ListOrderedSet<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = ListOrderedSet.listOrderedSet(Arrays.asList(AdvancedElectronicSystemType.values()));
 
     /**
      *  If true the client can override the for the specific message used system type
@@ -94,7 +95,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
     }
 
     public void setAllowedAdvancedSystemTypes(Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes) {
-        this.allowedAdvancedSystemTypes = allowedAdvancedSystemTypes;
+        this.allowedAdvancedSystemTypes = ListOrderedSet.listOrderedSet(allowedAdvancedSystemTypes);
     }
 
     public boolean isAllowSystemTypeOverrideByClient() {

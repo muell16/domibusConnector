@@ -1,9 +1,9 @@
 package eu.domibus.connector.persistence.testutil;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
+import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.springframework.boot.WebApplicationType;

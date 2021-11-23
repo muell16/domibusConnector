@@ -1,34 +1,24 @@
-package eu.domibus.connector.ui.ui.fields;
+package eu.domibus.connector.ui.fields;
 
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.DataProviderListener;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.shared.Registration;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.dss.service.DSSTrustedListsManager;
-import eu.domibus.connector.ui.ui.binder.SpringBeanValidationBinder;
-import eu.domibus.connector.ui.ui.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 

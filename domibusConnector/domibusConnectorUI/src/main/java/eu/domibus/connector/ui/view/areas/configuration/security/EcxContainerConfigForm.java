@@ -3,8 +3,8 @@ package eu.domibus.connector.ui.view.areas.configuration.security;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.data.binder.Binder;
 
-import eu.domibus.connector.ui.ui.fields.SignatureConfigurationField;
-import eu.domibus.connector.ui.ui.fields.SignatureValidationConfigurationField;
+import eu.domibus.connector.ui.fields.SignatureConfigurationField;
+import eu.domibus.connector.ui.fields.SignatureValidationConfigurationField;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
