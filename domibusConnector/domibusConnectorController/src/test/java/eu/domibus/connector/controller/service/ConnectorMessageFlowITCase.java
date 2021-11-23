@@ -149,13 +149,6 @@ public class ConnectorMessageFlowITCase {
         this.toGwDeliveredMessages.clear();
         this.toBackendDeliveredMessages.clear();
 
-//        QueueControl[] queueControls = (QueueControl[]) embeddedActiveMQ.getActiveMQServer().getManagementService()
-//                .getResources(QueueControl.class);
-//        for (QueueControl q : queueControls) {
-//            //TODO: should i fail test if a message is still in queue?
-//            q.removeAllMessages();
-//            System.out.println("Removed all messages from artemis queue " + q.getName());
-//        }
 
     }
 
