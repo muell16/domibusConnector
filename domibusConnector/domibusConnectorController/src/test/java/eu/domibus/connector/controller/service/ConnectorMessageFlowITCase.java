@@ -17,6 +17,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl;
+import org.apache.activemq.artemis.api.core.management.QueueControl;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -68,14 +71,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {ITCaseTestContext.class},
         properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
                 "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
-                "spring.jta.enabled=false"
+                "spring.jta.enabled=true"
 //                "logging.level.eu.domibus=TRACE"
 
 }
 )
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
@@ -117,13 +120,19 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService fromConnectorToBackendDeliveryService;
 
+    @Autowired
+    ActiveMQConnectionFactory activeMQConnectionFactory;
 
     private String testDir;
 
     @AfterEach
-    public void clearAfterTest(TestInfo testInfo) {
+    public void clearAfterTest(TestInfo testInfo) throws Exception {
 //        fromConnectorToBackendDeliveryService.clearQueue();
 //        fromConnectorToGwSubmissionService.clearQueue();
+//        qControl.removeAllMessages();
+//        activeMQConnectionFactory a;
+        ActiveMQServerControl a;
+
     }
 
     @BeforeEach
