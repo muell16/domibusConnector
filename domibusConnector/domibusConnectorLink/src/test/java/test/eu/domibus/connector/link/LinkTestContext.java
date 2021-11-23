@@ -49,7 +49,7 @@ import java.util.concurrent.LinkedBlockingDeque;
         DCBusinessDomainManagerImpl.class,
         ConnectorConfigurationProperties.class
 })
-@ComponentScan(basePackages = "eu.domibus.connector.common")
+@ComponentScan(basePackages = {"eu.domibus.connector.common", "eu.domibus.connector.utils"})
 public class LinkTestContext {
 
     private static final Logger LOGGER = LogManager.getLogger(LinkTestContext.class);

@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
-        classes = {BeanToPropertyMapConverterTest.TestContext.class},
+        classes = {BeanToPropertyMapConverterTest.TestContext.class}
 )
 class BeanToPropertyMapConverterTest {
 
