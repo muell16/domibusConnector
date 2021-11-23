@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.domibus.connector.utils.service;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.annotations.MapNested;
@@ -29,6 +29,7 @@ public class MyTestProperties {
 
     private Map<String, @MapNested NestedProp> nestedPropMap = new HashMap<>();
 
+    @MapNested
     public static class NestedProp {
         private String abc;
         private Duration duration;

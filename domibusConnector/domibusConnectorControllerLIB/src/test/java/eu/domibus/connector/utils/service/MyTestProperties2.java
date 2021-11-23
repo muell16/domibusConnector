@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.domibus.connector.utils.service;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.springframework.boot.context.properties.ConfigurationProperties;

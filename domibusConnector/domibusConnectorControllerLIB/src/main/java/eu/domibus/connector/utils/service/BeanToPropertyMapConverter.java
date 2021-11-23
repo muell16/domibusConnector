@@ -1,9 +1,11 @@
-package eu.domibus.connector.common.service;
+package eu.domibus.connector.utils.service;
 
 import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.common.annotations.MapNested;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -36,11 +38,11 @@ public class BeanToPropertyMapConverter {
         this.conversionService = conversionService;
     }
 
-    public Map<String, String> readBeanPropertiesToMap(Object configurationClazz, String prefix) {
+    public Map<String, String> readBeanPropertiesToMap(Object configurationBean, String prefix) {
         ToPropertyConverter converter = new ToPropertyConverter();
 
         ConfigurationPropertyName configurationPropertyName = ConfigurationPropertyName.of(prefix);
-        converter.convertToProperties(configurationClazz, configurationPropertyName);
+        converter.convertToProperties(configurationBean, configurationPropertyName);
         return converter.getProperties();
     }
 
@@ -88,27 +90,35 @@ public class BeanToPropertyMapConverter {
                 try {
                     boolean nested = false;
                     String propName = pd.getName();
-                    Field declaredField = clazz.getDeclaredField(propName);
-                    NestedConfigurationProperty annotation = declaredField.getAnnotation(NestedConfigurationProperty.class);
-                    nested = annotation != null;
-                    Object property = PropertyUtils.getProperty(bean, propName);
 
-                    AnnotatedType annotatedType = declaredField.getAnnotatedType();
-                    if (annotatedType instanceof AnnotatedParameterizedType) {
-                        AnnotatedParameterizedType apt = (AnnotatedParameterizedType) annotatedType;
-                        AnnotatedType[] annotatedActualTypeArguments = apt.getAnnotatedActualTypeArguments();
-                        for (AnnotatedType at : annotatedActualTypeArguments) {
-                            nested = nested || at.getAnnotation(MapNested.class) != null;
+
+                    Field declaredField = FieldUtils.getField(clazz, propName, true);
+                    if (declaredField != null) {
+                        NestedConfigurationProperty annotation = declaredField.getAnnotation(NestedConfigurationProperty.class);
+                        nested = annotation != null;
+
+                        AnnotatedType annotatedType = declaredField.getAnnotatedType();
+                        if (annotatedType instanceof AnnotatedParameterizedType) {
+                            AnnotatedParameterizedType apt = (AnnotatedParameterizedType) annotatedType;
+                            AnnotatedType[] annotatedActualTypeArguments = apt.getAnnotatedActualTypeArguments();
+                            for (AnnotatedType at : annotatedActualTypeArguments) {
+                                nested = nested || at.getAnnotation(MapNested.class) != null;
+                            }
                         }
+                    } else {
+                        //declared field is null?
+                        continue;
                     }
 
+                    Object property = PropertyUtils.getProperty(bean, propName);
+                    
                     String p = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, propName);
 
                     ConfigurationPropertyName newPrefix = prefix.append(p);
                     convertToProperties(property, newPrefix, nested);
 
-                } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    LOGGER.trace("Exception", e);
                 }
             }
         }

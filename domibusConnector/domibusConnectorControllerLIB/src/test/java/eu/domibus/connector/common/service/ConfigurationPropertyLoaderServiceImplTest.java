@@ -3,6 +3,9 @@ package eu.domibus.connector.common.service;
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.utils.service.MyTestProperties;
+import eu.domibus.connector.utils.service.MyTestProperties2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +15,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
@@ -36,11 +38,24 @@ import static org.mockito.ArgumentMatchers.eq;
         "test.example2.prop2=123",
         "test.example2.list[0]=abc",
         "test.example2.list[1]=def"
-})
-@EnableConfigurationProperties(ConnectorConfigurationProperties.class)
+},
+        classes = ConfigurationPropertyLoaderServiceImplTest.TestContext.class
+)
+
 public class ConfigurationPropertyLoaderServiceImplTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyLoaderServiceImplTest.class);
+
+
+    @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.utils", "eu.domibus.connector.common"})
+    public static class TestContext {
+
+        @Bean
+        public ApplicationListener<BusinessDomainConfigurationChange> eventListener() {
+            return (e) -> {lastChange = e;};
+        }
+    }
 
     @Autowired
     ConfigurationPropertyLoaderServiceImpl propertyLoaderService;
@@ -56,14 +71,7 @@ public class ConfigurationPropertyLoaderServiceImplTest {
 
     private static BusinessDomainConfigurationChange lastChange;
 
-    @SpringBootApplication(scanBasePackages = "eu.domibus.connector.common")
-    public static class TestContext {
 
-        @Bean
-        public ApplicationListener<BusinessDomainConfigurationChange> eventListener() {
-            return (e) -> {lastChange = e;};
-        }
-    }
 
     @BeforeEach
     public void beforeEach() {
