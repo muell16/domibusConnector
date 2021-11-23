@@ -165,3 +165,4 @@ node_modules
 /domibusConnector/domibusConnectorController/data/artemis/
 .idea
 diagram
+/domibusConnector/domibusConnectorDocumentation/.asciidoctorconfig.adoc
