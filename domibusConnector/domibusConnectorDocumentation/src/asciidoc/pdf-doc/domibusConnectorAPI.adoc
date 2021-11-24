@@ -1,0 +1,11 @@
+ifndef::rootpath[]
+:rootpath: ../
+endif::rootpath[]
+
+//ifndef::imagesdir[]
+//:imagesdir: {rootpath}/resources/images/
+//endif::imagesdir[]
+
+:title: domibusConnectorAPI
+
+include::../doc/architecture/domibusConnectorAPI.adoc[]
