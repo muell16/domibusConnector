@@ -1,0 +1,12 @@
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+include::{basepath}/doc/upgrade/upgrade-4.2.0.adoc[leveloffset=+1]
+include::{basepath}/doc/upgrade/upgrade-4.3.0.adoc[leveloffset=+1]
+include::{basepath}/doc/upgrade/upgrade-4.4.0.adoc[leveloffset=+1]

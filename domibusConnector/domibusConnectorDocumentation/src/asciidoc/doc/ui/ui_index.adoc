@@ -1,0 +1,15 @@
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+include::{basepath}/doc/ui/business_document_verification.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/ecodex_container_configuration.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/jms_monitoring.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/message_transport_overview.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/pmode_import.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/pmodeset_data.adoc[leveloffset=+1]
