@@ -91,11 +91,11 @@ public class TestbackendPlugin implements LinkPlugin {
         ).collect(Collectors.toList());
     }
 
-    public List<Class> getPluginConfigurationProperties() {
+    public List<Class<?>> getPluginConfigurationProperties() {
         return new ArrayList<>();
     }
 
-    public List<Class> getPartnerConfigurationProperties() {
+    public List<Class<?>> getPartnerConfigurationProperties() {
         return new ArrayList<>();
     }
 }

@@ -166,11 +166,12 @@ public class DCLinkPartnerPanel extends VerticalLayout
             Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkImplName);
 
             if (linkPluginByName.isPresent()) {
-                List<Class> configurationClasses = linkPluginByName.get().getPartnerConfigurationProperties();
+                List<Class<?>> configurationClasses = linkPluginByName.get().getPartnerConfigurationProperties();
                 List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
                         .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
                         .flatMap(Function.identity()).collect(Collectors.toList());
                 configPropsList.setConfigurationProperties(configurationProperties);
+                configPropsList.setConfigurationClasses(configurationClasses);
             } else {
                 LOGGER.warn("Did not find a linkimpl for [{}]", linkImplName);
             }

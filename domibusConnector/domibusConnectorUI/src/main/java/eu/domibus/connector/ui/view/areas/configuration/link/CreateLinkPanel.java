@@ -42,7 +42,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Scope(SCOPE_PROTOTYPE)
 @org.springframework.stereotype.Component
 @Route("createlink")
-@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class CreateLinkPanel extends VerticalLayout {
 
     private static final Logger LOGGER = LogManager.getLogger(CreateLinkPanel.class);

@@ -89,12 +89,12 @@ public class WsGatewayPlugin implements LinkPlugin {
     }
 
     @Override
-    public List<Class> getPluginConfigurationProperties() {
+    public List<Class<?>> getPluginConfigurationProperties() {
         return new ArrayList<>();
     }
 
     @Override
-    public List<Class> getPartnerConfigurationProperties() {
+    public List<Class<?>> getPartnerConfigurationProperties() {
         return new ArrayList<>();
     }
 

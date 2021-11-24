@@ -101,27 +101,9 @@ public abstract class ImportOldConfigDialog extends Dialog {
 
     protected abstract void saveLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration);
 
-
     protected abstract Map<String, String> getConfigurationProperties(Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter);
 
     protected abstract String getPluginName();
-
-
-//    private enum ConversionSource {
-//        BACKEND_42("4.2 Backend Configuration"),
-//        GW_42("4.2 Gateway Configuration");
-//
-//        private final String visibleName;
-//
-//        ConversionSource(String humanName) {
-//            this.visibleName = humanName;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return visibleName;
-//        }
-//    }
 
 
 }

@@ -61,11 +61,11 @@ public interface LinkPlugin {
      * which represents the plugin properties
      *
      */
-    default List<Class> getPluginConfigurationProperties() {
+    default List<Class<?>> getPluginConfigurationProperties() {
         return Collections.emptyList();
     }
 
-    default List<Class> getPartnerConfigurationProperties() {
+    default List<Class<?>> getPartnerConfigurationProperties() {
         return Collections.emptyList();
     }
 

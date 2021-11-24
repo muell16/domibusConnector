@@ -112,12 +112,12 @@ public class DCGatewayPullPlugin implements LinkPlugin {
     }
 
     @Override
-    public List<Class> getPluginConfigurationProperties() {
+    public List<Class<?>> getPluginConfigurationProperties() {
         return Stream.of(DCGatewayPullPluginConfigurationProperties.class).collect(Collectors.toList());
     }
 
     @Override
-    public List<Class> getPartnerConfigurationProperties() {
+    public List<Class<?>> getPartnerConfigurationProperties() {
         return Collections.emptyList();
     }
 

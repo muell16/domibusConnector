@@ -149,16 +149,17 @@ public class DCLinkConfigPanel extends VerticalLayout
     }
 
     private void updateConfigurationProperties(LinkPlugin value) {
-        List<Class> configurationClasses = new ArrayList<>();
+        List<Class<?>> configurationClasses = new ArrayList<>();
         if (value != null) {
             configurationClasses = value.getPluginConfigurationProperties();
         }
         if (configurationClasses != null) {
-            List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
-                    .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-                    .flatMap(Function.identity()).collect(Collectors.toList());
+            configPropsList.setConfigurationClasses(configurationClasses);
+//            List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
+//                    .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
+//                    .flatMap(Function.identity()).collect(Collectors.toList());
 
-            configPropsList.setConfigurationProperties(configurationProperties);
+//            configPropsList.setConfigurationProperties(configurationProperties);
         }
     }
 
