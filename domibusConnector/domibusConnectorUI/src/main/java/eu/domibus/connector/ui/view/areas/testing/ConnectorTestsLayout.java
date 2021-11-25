@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.ParentLayout;
@@ -39,6 +41,10 @@ public class ConnectorTestsLayout  extends VerticalLayout implements BeforeEnter
 	
 	@PostConstruct
     void init() {
+//		setAlignItems(Alignment.CENTER);
+//        setJustifyContentMode(JustifyContentMode.CENTER);
+        setSizeFull();
+		
         DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
         add(DCTabHandler.getTabs());
     }
