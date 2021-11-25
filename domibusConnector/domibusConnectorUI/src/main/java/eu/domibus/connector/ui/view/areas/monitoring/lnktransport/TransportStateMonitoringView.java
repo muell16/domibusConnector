@@ -44,7 +44,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import eu.domibus.connector.ui.component.OpenHelpButtonFactory;
-import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
@@ -55,7 +55,7 @@ import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
 @Order(2)
 @Route(value = TransportStateMonitoringView.ROUTE_PREFIX, layout = MonitoringLayout.class)
 @TabMetadata(title = TransportStateMonitoringView.TITLE, tabGroup = MonitoringLayout.TAB_GROUP_NAME)
-public class TransportStateMonitoringView extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
+public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private final static Logger LOGGER = LogManager.getLogger(TransportStateMonitoringView.class);
 

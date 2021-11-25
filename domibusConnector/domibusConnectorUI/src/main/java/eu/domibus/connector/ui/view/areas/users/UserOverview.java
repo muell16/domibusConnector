@@ -18,7 +18,7 @@ public class UserOverview extends VerticalLayout implements BeforeEnterObserver 
 
     // This class does not do much, it is just a redirect
     // maybe it's better to directly route to the default active tab in
-    // MainLayout
+    // DCMainLayout
 
     // UserLayout already has prefix "user"
     public static final String ROUTE = "";

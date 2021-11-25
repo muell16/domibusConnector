@@ -40,9 +40,9 @@ import eu.domibus.connector.ui.dto.WebMessageDetail;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.domibus.connector.ui.forms.ConnectorTestMessageForm;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebPModeService;
-import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import org.springframework.util.MimeType;
 
@@ -51,7 +51,7 @@ import org.springframework.util.MimeType;
 @Route(value = SendC2CTestMessage.ROUTE, layout = ConnectorTestsLayout.class)
 @Order(2)
 @TabMetadata(title = "Send Connector Test Message", tabGroup = ConnectorTestsLayout.TAB_GROUP_NAME)
-public class SendC2CTestMessage extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
+public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     public static final String ROUTE = "sendmessage";
     

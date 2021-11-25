@@ -14,9 +14,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebMessageService;
-import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
@@ -26,7 +26,7 @@ import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
 @Route(value = ConnectorTestMessageList.ROUTE, layout = ConnectorTestsLayout.class)
 @Order(1)
 @TabMetadata(title = "Connector Test Messages List", tabGroup = ConnectorTestsLayout.TAB_GROUP_NAME)
-public class ConnectorTestMessageList extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
+public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
 	public static final String ROUTE = "c2cmessages";
 	
