@@ -50,7 +50,7 @@ public class DCLinkFacade {
 
     public List<DomibusConnectorLinkPartner> getAllLinksOfType(LinkType linkType) {
         return getAllLinks().stream()
-                .filter(l -> l.getLinkType() == linkType)
+                .filter(l -> Objects.equals(l.getLinkType(), linkType) || linkType == null)
                 .collect(Collectors.toList());
     }
 
