@@ -10,10 +10,11 @@ import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
 public class StoreConfigurationField extends CustomField<StoreConfigurationProperties> {
 

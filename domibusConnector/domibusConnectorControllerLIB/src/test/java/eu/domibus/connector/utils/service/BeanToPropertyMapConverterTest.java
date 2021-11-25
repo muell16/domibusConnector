@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -76,6 +77,19 @@ class BeanToPropertyMapConverterTest {
         Map<String, String> expectedMap = new HashMap<>();
         expectedMap.put("prop1", "prop1");
         expectedMap.put("prop3", "prop3");
+
+        assertThat(propertyMap).containsExactlyInAnyOrderEntriesOf(expectedMap);
+    }
+
+    @Test
+    public void testMapOfResource() {
+        MyTestPropertiesWithResource r = new MyTestPropertiesWithResource();
+        r.setR(new ClassPathResource("/testfile"));
+
+        Map<String, String> propertyMap = beanToPropertyMapConverter.readBeanPropertiesToMap(r, "");
+
+        Map<String, String> expectedMap = new HashMap<>();
+        expectedMap.put("r", "classpath:testfile");
 
         assertThat(propertyMap).containsExactlyInAnyOrderEntriesOf(expectedMap);
     }

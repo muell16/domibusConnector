@@ -1,7 +1,6 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -159,7 +158,7 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
     private void editLinkConfiguration(ClickEvent<Button> event, DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
         DomibusConnectorLinkConfiguration linkConfiguration = domibusConnectorLinkPartner.getLinkConfiguration();
         String configName = linkConfiguration.getConfigName().toString();
-        getUI().ifPresent(ui -> ui.navigate(DCLinkConfigView.class, configName));
+        getUI().ifPresent(ui -> ui.navigate(DCLinkConfigurationView.class, configName));
     }
 
     private Dialog createDialog(Component bean) {

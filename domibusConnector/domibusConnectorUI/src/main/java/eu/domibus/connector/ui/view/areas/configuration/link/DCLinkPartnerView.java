@@ -35,7 +35,7 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
     public static final String TITLE_LABEL_TEXT = "Edit LinkPartner";
 
     private final DCLinkFacade dcLinkFacade;
-    private final DCLinkPartnerPanel dcLinkPartnerPanel;
+    private final DCLinkPartnerField dcLinkPartnerField;
 
     private Label titleLabel = new Label("Edit LinkPartner");
     private Button discardButton;
@@ -44,9 +44,9 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
     private LinkType linkType;
     private DomibusConnectorLinkPartner linkPartner;
 
-    public DCLinkPartnerView(DCLinkFacade dcLinkFacade, DCLinkPartnerPanel dcLinkPartnerPanel) {
+    public DCLinkPartnerView(DCLinkFacade dcLinkFacade, DCLinkPartnerField dcLinkPartnerField) {
         this.dcLinkFacade = dcLinkFacade;
-        this.dcLinkPartnerPanel = dcLinkPartnerPanel;
+        this.dcLinkPartnerField = dcLinkPartnerField;
 
         initUI();
     }
@@ -63,21 +63,21 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
 
         this.add(titleLabel);
         this.add(buttonBar);
-        this.add(dcLinkPartnerPanel);
+        this.add(dcLinkPartnerField);
     }
 
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        BinderValidationStatus<DomibusConnectorLinkPartner> validate = this.dcLinkPartnerPanel.validate();
-        if (validate.isOk()) {
-            try {
-                dcLinkPartnerPanel.writeBean(linkPartner);
-            } catch (ValidationException e) {
-                //TODO: show user...
-            }
-            dcLinkFacade.updateLinkPartner(linkPartner);
+//        BinderValidationStatus<DomibusConnectorLinkPartner> validate = this.dcLinkPartnerField.validate();
+//        if (validate.isOk()) {
+//            try {
+//                dcLinkPartnerField.writeBean(linkPartner);
+//            } catch (ValidationException e) {
+//                //TODO: show user...
+//            }
+//            dcLinkFacade.updateLinkPartner(linkPartner);
             //TODO: print success Notification
-            navgiateBack();
-        }
+//            navgiateBack();
+//        }
      }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
@@ -103,14 +103,14 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
         Optional<DomibusConnectorLinkPartner> optionalLinkPartner = dcLinkFacade.loadLinkPartner(lp);
         if (optionalLinkPartner.isPresent()) {
             linkPartner = optionalLinkPartner.get();
-            dcLinkPartnerPanel.setValue(linkPartner);
+            dcLinkPartnerField.setValue(linkPartner);
             linkType = linkPartner.getLinkType();
-            dcLinkPartnerPanel.setVisible(true);
+            dcLinkPartnerField.setVisible(true);
             titleLabel.setText(TITLE_LABEL_TEXT + " " + parameter);
             saveButton.setEnabled(linkPartner.getConfigurationSource() == ConfigurationSource.DB);
         } else {
             titleLabel.setText(TITLE_LABEL_TEXT + " [None]");
-            dcLinkPartnerPanel.setVisible(false);
+            dcLinkPartnerField.setVisible(false);
         }
 
     }

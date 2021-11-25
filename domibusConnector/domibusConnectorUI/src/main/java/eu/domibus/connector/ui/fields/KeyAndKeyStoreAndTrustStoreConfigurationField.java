@@ -6,11 +6,12 @@ import com.vaadin.flow.component.html.Label;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class KeyAndKeyStoreAndTrustStoreConfigurationField extends CustomField<KeyAndKeyStoreAndTrustStoreConfigurationProperties> {
 
     private final SpringBeanValidationBinderFactory validationBinderFactory;

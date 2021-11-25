@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.api;
 
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.link.service.PullFromLinkPartner;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.enums.LinkMode;
@@ -8,6 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Must be implemented by a link plugin
@@ -71,4 +73,9 @@ public interface LinkPlugin {
 
 
     default Optional<PullFromLinkPartner> getPullFromLink(ActiveLinkPartner activeLinkPartner) { return Optional.empty();}
+
+    default Set<LinkType> getSupportedLinkTypes() {
+        return Stream.of(LinkType.values()).collect(Collectors.toSet());
+    }
+
 }

@@ -1,16 +1,12 @@
 package eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig;
 
-import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.enums.LinkMode;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
-import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigPanel;
+import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
-import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPlugin;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,11 +14,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Lazy
 public class ImportOldBackendConfigDialog extends ImportOldConfigDialog {
 
-    public ImportOldBackendConfigDialog(DCLinkConfigPanel linkConfigPanel, BeanToPropertyMapConverter beanToPropertyMapConverter, DCLinkFacade dcLinkFacade) {
+    public ImportOldBackendConfigDialog(DCLinkConfigurationField linkConfigPanel,
+                                        BeanToPropertyMapConverter beanToPropertyMapConverter,
+                                        DCLinkFacade dcLinkFacade) {
         super(linkConfigPanel, beanToPropertyMapConverter, dcLinkFacade);
     }
 

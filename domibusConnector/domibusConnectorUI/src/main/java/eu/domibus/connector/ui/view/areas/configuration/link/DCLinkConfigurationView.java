@@ -25,9 +25,9 @@ import java.util.Optional;
 
 @Component
 @UIScope
-@Route(value = DCLinkConfigView.ROUTE, layout = ConfigurationLayout.class)
+@Route(value = DCLinkConfigurationView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<String> {
+public class DCLinkConfigurationView extends VerticalLayout implements HasUrlParameter<String> {
 
 
     public static final String ROUTE = "linkConfig";
@@ -35,7 +35,7 @@ public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<
     public static final String TITLE_LABEL_TEXT = "Edit LinkConfiguration";
 
     private final DCLinkFacade dcLinkFacade;
-    private final DCLinkConfigPanel linkConfigPanel;
+    private final DCLinkConfigurationField linkConfigPanel;
 
     private final Label titleLabel = new Label();
     private final Button discardButton = new Button("Discard");
@@ -45,7 +45,7 @@ public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<
     private DomibusConnectorLinkConfiguration linkConfig;
 
 
-    public DCLinkConfigView(DCLinkFacade dcLinkFacade, DCLinkConfigPanel linkConfigPanel) {
+    public DCLinkConfigurationView(DCLinkFacade dcLinkFacade, DCLinkConfigurationField linkConfigPanel) {
         this.dcLinkFacade = dcLinkFacade;
         this.linkConfigPanel = linkConfigPanel;
 
@@ -64,17 +64,17 @@ public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<
     }
 
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        BinderValidationStatus validate = linkConfigPanel.validate();
-        if (validate.isOk()) {
-            try {
-                linkConfigPanel.writeBean(linkConfig);
-            } catch (ValidationException e) {
-                //TODO: show user...
-            }
-            dcLinkFacade.updateLinkConfig(linkConfig);
-            //TODO: print success Notification
-            navgiateBack();
-        }
+//        BinderValidationStatus validate = linkConfigPanel.validate();
+//        if (validate.isOk()) {
+//            try {
+//                linkConfigPanel.writeBean(linkConfig);
+//            } catch (ValidationException e) {
+//                //TODO: show user...
+//            }
+//            dcLinkFacade.updateLinkConfig(linkConfig);
+//            //TODO: print success Notification
+//            navgiateBack();
+//        }
     }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
@@ -100,7 +100,7 @@ public class DCLinkConfigView extends VerticalLayout implements HasUrlParameter<
         Optional<DomibusConnectorLinkConfiguration> optionalConfig = dcLinkFacade.loadLinkConfig(configName);
         if (optionalConfig.isPresent()) {
             linkConfig = optionalConfig.get();
-            linkConfigPanel.setLinkConfiguration(linkConfig);
+            linkConfigPanel.setValue(linkConfig);
             linkConfigPanel.setImplChangeAble(false);
             linkConfigPanel.setVisible(true);
             titleLabel.setText(TITLE_LABEL_TEXT + " " + parameter);

@@ -9,7 +9,8 @@ import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
-import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigPanel;
+import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,12 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Lazy
 public class ImportOldGatewayConfigDialog extends ImportOldConfigDialog {
 
 
-    public ImportOldGatewayConfigDialog(DCLinkConfigPanel linkConfigPanel,
+    public ImportOldGatewayConfigDialog(DCLinkConfigurationField linkConfigPanel,
                                         BeanToPropertyMapConverter beanToPropertyMapConverter,
                                         DCLinkFacade dcLinkFacade) {
         super(linkConfigPanel, beanToPropertyMapConverter, dcLinkFacade);

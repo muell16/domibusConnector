@@ -12,10 +12,11 @@ import eu.domibus.connector.ui.fields.KeyAndKeyStoreAndTrustStoreConfigurationFi
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 @SpringComponent
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WsBackendLinkConfigurationField extends CustomField<WsBackendPluginLinkPartnerConfigurationProperties> implements AfterNavigationObserver {
 
     private final SpringBeanValidationBinder<WsBackendPluginLinkPartnerConfigurationProperties> binder;

@@ -7,10 +7,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.actuate.endpoint.web.Link;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
@@ -142,4 +144,25 @@ public class DCLinkFacade {
             dcLinkPersistenceService.updateLinkConfig(linkConfig);
         }
     }
+
+    public List<DomibusConnectorLinkConfiguration> getAllLinkConfigurations(LinkType linkType) {
+        return getAllLinksOfType(linkType)
+                .stream()
+                .map(DomibusConnectorLinkPartner::getLinkConfiguration)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<LinkPlugin> getAvailableLinkPlugins(LinkType linkType) {
+        return linkManager
+                .getAvailableLinkPlugins()
+                .stream()
+                .filter(p -> p.getSupportedLinkTypes().contains(linkType))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<LinkPlugin> getLinkPluginByName(String linkImpl) {
+        return linkManager.getLinkPluginByName(linkImpl);
+    }
+
 }
