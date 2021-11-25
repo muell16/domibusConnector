@@ -134,9 +134,10 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
         treeGrid.addComponentColumn((ValueProvider<WebLinkItem, Component>) webLinkItem -> {
             Button b = new Button(new Icon(VaadinIcon.EDIT));
             b.addClickListener( (event) -> editWebLinkItem(webLinkItem, event));
-            b.setEnabled(webLinkItem.getConfigurationSource() == ConfigurationSource.DB);
+//            b.setEnabled(webLinkItem.getConfigurationSource() == ConfigurationSource.DB);
             return b;
-        }).setWidth("4em").setHeader("Edit");
+        }).setWidth("4em")
+                .setHeader("Edit");
 
         treeGrid.addComponentColumn((ValueProvider<WebLinkItem, Component>) webLinkItem -> {
             Button b = new Button(new Icon(VaadinIcon.TRASH));

@@ -49,7 +49,6 @@ public abstract class ImportOldConfigDialog extends Dialog {
         this.dcLinkFacade = dcLinkFacade;
         initUi();
 
-
     }
 
     private void initUi() {
@@ -62,9 +61,9 @@ public abstract class ImportOldConfigDialog extends Dialog {
         wizardBuilder.addCancelListener((w, s)-> this.close()); //close dialog
         wizardBuilder.addFinishedListener((w, s) -> this.close()); //close dialog
 
-        WizardComponent wizard = wizardBuilder.build();
+        wizardComponent = wizardBuilder.build();
 
-        this.add(wizard);
+        this.add(wizardComponent);
 
 
     }

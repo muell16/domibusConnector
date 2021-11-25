@@ -92,7 +92,8 @@ public class WsGatewayPlugin implements LinkPlugin {
 
     @Override
     public List<Class<?>> getPluginConfigurationProperties() {
-        return new ArrayList<>();
+        return Stream.of(WsGatewayPluginConfigurationProperties.class)
+                .collect(Collectors.toList());
     }
 
     @Override
