@@ -30,8 +30,8 @@ public class DocumentationLayout extends VerticalLayout implements BeforeEnterOb
 
     @PostConstruct
     void init() {
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.CENTER);
+//        setAlignItems(Alignment.CENTER);
+//        setJustifyContentMode(JustifyContentMode.CENTER);
         setSizeFull();
 
         DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
