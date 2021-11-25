@@ -34,10 +34,10 @@ public class VerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 
 		helpBar.add(title, help);
 
-		helpBar.setAlignItems(Alignment.STRETCH);
-		helpBar.expand(title);
-		helpBar.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.END);
-		helpBar.setWidth("95%");
+//		helpBar.setAlignItems(Alignment.STRETCH);
+//		helpBar.expand(title);
+//		helpBar.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.END);
+//		helpBar.setWidth("95%");
 		helpBar.setHeight("70px");
 
 		add(helpBar);
