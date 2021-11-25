@@ -35,6 +35,9 @@ public class PmodeLayout extends VerticalLayout implements BeforeEnterObserver, 
 
     @PostConstruct
     void init() {
+    	
+    	setSizeFull();
+    	
         DCTabHandler.createTabs(applicationContext, TAB_GROUP_NAME);
         add(DCTabHandler.getTabs());
     }

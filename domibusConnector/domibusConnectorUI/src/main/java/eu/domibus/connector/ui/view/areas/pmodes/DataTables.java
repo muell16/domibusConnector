@@ -43,7 +43,7 @@ public class DataTables extends VerticalLayoutWithTitleAndHelpButton implements 
 	public static final String ROUTE = "pmodedata";
 	
 	public static final String TITLE = "PMode-Set Data";
-	public static final String HELP_ID = "ui/pmodeset_data.html";
+	public static final String HELP_ID = "ui/pmodes/pmodeset_data.html";
 
 	WebPModeService pmodeService;
 	ConfigurationUtil util;

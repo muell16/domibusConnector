@@ -41,7 +41,7 @@ public class Import extends VerticalLayoutWithTitleAndHelpButton implements Afte
 	public static final String ROUTE = "import";
 	
 	public static final String TITLE = "Import new active PMode-Set";
-	public static final String HELP_ID = "ui/pmode_import.html";
+	public static final String HELP_ID = "ui/pmodes/pmodeset_import.html";
 
 	WebPModeService pmodeService;
 	
