@@ -223,4 +223,9 @@ public class DCLinkPersistenceService {
         linkConfigurationDao.save(dbLinkConfig);
     }
 
+    public void addLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        PDomibusConnectorLinkConfiguration dbLinkConfiguration = mapToDbLinkConfiguration(linkConfiguration);
+        linkConfigurationDao.save(dbLinkConfiguration);
+    }
+
 }

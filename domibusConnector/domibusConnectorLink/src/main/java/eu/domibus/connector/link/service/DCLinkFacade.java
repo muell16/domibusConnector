@@ -165,4 +165,11 @@ public class DCLinkFacade {
         return linkManager.getLinkPluginByName(linkImpl);
     }
 
+    public void createNewLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        dcLinkPersistenceService.addLinkConfiguration(linkConfiguration);
+    }
+
+    public void createNewLinkPartner(DomibusConnectorLinkPartner value) {
+        dcLinkPersistenceService.addLinkPartner(value);
+    }
 }

@@ -9,7 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ui.component.WizardStep;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
-import eu.domibus.connector.ui.view.areas.configuration.link.ConfirmDialogBuilder;
+import eu.domibus.connector.ui.dialogs.ConfirmDialogBuilder;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.logging.log4j.LogManager;

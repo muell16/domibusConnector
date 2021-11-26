@@ -39,9 +39,10 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
     private TextField linkConfigName;
     private SpringBeanValidationBinder<DomibusConnectorLinkConfiguration> binder;
     private boolean readOnly = false;
-    private boolean implChangeAble = true;
+    private boolean implAndConfigNameReadOnly = true;
 
     private DomibusConnectorLinkConfiguration value;
+    private List<LinkPlugin> linkPlugins;
 
     public DCLinkConfigurationField(ApplicationContext applicationContext,
                                     DCActiveLinkManagerService linkManagerService,
@@ -62,17 +63,16 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
         VerticalLayout layout = new VerticalLayout();
         this.add(layout);
 
-        //read only
         linkConfigName = new TextField("Link Configuration Name");
-        linkConfigName.setReadOnly(true);
+        linkConfigName.setReadOnly(readOnly);
 
-        //read only
+
         implChooser.setItems(linkManagerService.getAvailableLinkPlugins());
         implChooser.setLabel("Link Implementation");
         implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
         implChooser.addValueChangeListener(this::choosenLinkImplChanged);
         implChooser.setMinWidth("10em");
-        implChooser.setReadOnly(true);
+        implChooser.setReadOnly(readOnly);
 
 
         binder
@@ -124,21 +124,37 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
 
 
     private void updateUI() {
-//        implChooser.setReadOnly(readOnly && !implChangeAble);
-//        linkConfigName.setReadOnly(readOnly);
+        implChooser.setReadOnly(readOnly || implAndConfigNameReadOnly);
+        linkConfigName.setReadOnly(readOnly || implAndConfigNameReadOnly);
         configPropsList.setReadOnly(readOnly);
     }
 
-    public void setImplChangeAble(boolean changeAble) {
-//        this.implChangeAble = changeAble;
-//        implChooser.setReadOnly(readOnly && !implChangeAble);
+    public void setEditMode(EditMode editMode) {
+        if (editMode == EditMode.EDIT) {
+            this.setReadOnly(false);
+            this.setImplAndConfigNameReadOnly(true);
+        } else if (editMode == EditMode.CREATE) {
+            this.setReadOnly(false);
+            this.setImplAndConfigNameReadOnly(false);
+        } else if (editMode == EditMode.VIEW || editMode == EditMode.DEL) {
+            this.setReadOnly(true);
+        }
     }
+
+    private void setImplAndConfigNameReadOnly(boolean implAndConfigNameReadOnly) {
+        this.implAndConfigNameReadOnly = implAndConfigNameReadOnly;
+        updateUI();
+    }
+
+//    public void setLinkPlugins(List<LinkPlugin> linkPlugins) {
+//        this.linkPlugins = linkPlugins;
+//        this.implChooser.setItems(linkPlugins);
+//    }
 
     private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
         LinkPlugin value = valueChangeEvent.getValue();
         updateConfigurationProperties(value);
         updateUI();
-
     }
 
     private void updateConfigurationProperties(LinkPlugin value) {
@@ -151,12 +167,9 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
         }
     }
 
-
-
     @Override
     public void setReadOnly(boolean readOnly) {
         binder.setReadOnly(readOnly);
-        this.implChooser.setReadOnly(readOnly);
         this.readOnly = readOnly;
         super.setReadOnly(readOnly);
         updateUI();
@@ -185,5 +198,6 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
         binder.readBean(linkConfig);
         updateUI();
     }
+
 
 }

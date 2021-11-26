@@ -17,6 +17,9 @@ public class FindFieldService {
     public <T> CustomField<T> findField(Class<T> clz) {
         ResolvableType resolvableType = ResolvableType.forClassWithGenerics(CustomField.class, clz);
         String[] beanNamesForType = applicationContext.getBeanNamesForType(resolvableType);
+        if (beanNamesForType.length == 0) {
+            throw new IllegalArgumentException("No field found for type " + clz);
+        }
         return (CustomField<T>) applicationContext.getBean(beanNamesForType[0]);
     }
 
