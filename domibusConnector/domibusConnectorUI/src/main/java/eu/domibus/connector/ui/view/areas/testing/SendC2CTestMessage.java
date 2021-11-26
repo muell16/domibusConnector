@@ -40,6 +40,7 @@ import eu.domibus.connector.ui.dto.WebMessageDetail;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.domibus.connector.ui.forms.ConnectorTestMessageForm;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
@@ -50,9 +51,12 @@ import org.springframework.util.MimeType;
 @Route(value = SendC2CTestMessage.ROUTE, layout = ConnectorTestsLayout.class)
 @Order(2)
 @TabMetadata(title = "Send Connector Test Message", tabGroup = ConnectorTestsLayout.TAB_GROUP_NAME)
-public class SendC2CTestMessage extends VerticalLayout implements AfterNavigationObserver {
+public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     public static final String ROUTE = "sendmessage";
+    
+    public static final String TITLE = "Send Connector Test Message";
+	public static final String HELP_ID = "ui/c2ctests/send_connector_test_message.html";
 
     private ConnectorTestMessageForm messageForm;
     private VerticalLayout messageFilesArea = new VerticalLayout();
@@ -71,6 +75,7 @@ public class SendC2CTestMessage extends VerticalLayout implements AfterNavigatio
     public SendC2CTestMessage(@Autowired WebPModeService pModeService,
                               @Autowired WebConnectorTestService webTestService,
                               @Autowired DomibusConnectorMessageIdGenerator messageIdGenerator) {
+    	super(HELP_ID, TITLE);
         this.messageForm = new ConnectorTestMessageForm();
         this.webTestService = webTestService;
         this.pModeService = pModeService;

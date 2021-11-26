@@ -4,13 +4,15 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.ui.layout.DCMainLayout;
+
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 
 @UIScope
-@Route(value = DashboardView.ROUTE, layout = MainLayout.class)
+@Route(value = DashboardView.ROUTE, layout = DCMainLayout.class)
 @PageTitle("domibusConnector - Administrator")
 public class DashboardView extends VerticalLayout
 {

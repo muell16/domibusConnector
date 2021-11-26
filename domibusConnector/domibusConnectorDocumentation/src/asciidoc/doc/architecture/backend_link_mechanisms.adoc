@@ -70,7 +70,7 @@ If configured, the domibusConnector expects the backend to provide an implementa
 The domibusConnector uses its web-service client implementation to call the configured backend.
 
 
-== Push/Pull connection prior to domibusConnector-4.4
+== Push/Pull connection without acknowledgement of pulled messages
 
 From version 4.0 on, the domibusConnector provides the possibility for backends to push message to the domibusConnector, but pull messages
 pending at the domibusConnector.
@@ -87,13 +87,21 @@ produce ETSI-REM evidences.
 
 The backend must have a web-service client  implementing the interface *DomibusConnectorBackendWebService*.
 The method "requestMessages" returns all messages pending for this backend at the domibusConnector at once.
+After the connection is closed by the client the messages are marked as "accepted by the client" and now the
+client is responsible for the messages.
 
-== Push/Pull connection since domibusConnector-4.4
+== Push/Pull connection with asynchronous acknowledgement of pulled messages
 
-In version 4.4 of domibusConnector, a new way of pulling messages from the connector to the backend is implemented.
-This new pulling mechanism allows the backend to decide the number of messages pulled from the connector. It also requires the backend 
-to acknowledge the pulled messages in a second, asynchronous step.
+Implemented in version 4.4 of domibusConnector.
+
+This pulling mechanism allows the backend to decide the number of messages pulled from the connector. It also requires the backend 
+to acknowledge the pulled messages in an additional asynchronous step.
 That way, the backend software may process the messages technically and if that fails, message can be re-pulled from the domibusConnector.
+
+IMPORTANT: If the domibusConnectorClient-Libraries are used by the backend and this way of pulling messages should be implemented, then an update of the domibusConnectorClient-Libraries to version 4.4 is also needed!
+
+TIP: This way of pulling messages is recommended. The risk of losing messages at the backend side is lower and the network traffic load can be managed more flexible by configuring a maximum of downloaded messages per session. 
+Also, every message is downloaded in a single web-service call instead of downloading all available messages in one call. 
 
 === Backend submitting messages to the domibusConnector
 
@@ -103,13 +111,14 @@ produce ETSI-REM evidences.
 
 === Backend pulling messages from the domibusConnector
 
-This step is now split into three seperate calls:
+Pulling a message is now split into three seperate web-service calls:
 
 * listPendingMessageIds	- it returns a list of message transport ids from the domibusConnector of message in state PENDING for this backend at the connector.
-* getMessageById		- each message must be downloaded seperately. The ids are received at the previous step. This allows the backend to control the number of messages pulling.
+* getMessageById		- each message must be downloaded seperately. The ids are received at the previous call. This allows the backend to control the number of pulled messages.
 This causes the downloaded message to get into state PENDING_DOWNLOADED at the domibusConnector. 
-* acknowledgeMessage 	- This method needs to be called for each message successfully downloaded after processing at the backend. Accoring to the result sent with this method call, the message
-changes state at the domibusConnector to either FINISHED (is success) or FAILED (otherwise).
+* acknowledgeMessage 	- This method needs to be called for each message successfully downloaded after processing at the backend. According to the result sent with this method call, the message
+changes state at the domibusConnector to either FINISHED (is success) or FAILED (otherwise). 
+It is possible to inform the connector about the assigned backend message id (success case) or about any occured errors (otherwise).
 
 === Monitor messages pulled by the backend
 

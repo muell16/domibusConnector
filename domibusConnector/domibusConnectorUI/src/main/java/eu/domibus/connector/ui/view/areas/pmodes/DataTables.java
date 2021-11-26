@@ -16,9 +16,9 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.service.WebKeystoreService.CertificateInfo;
-import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
@@ -38,12 +38,12 @@ import java.util.ArrayList;
 @Route(value = DataTables.ROUTE, layout = PmodeLayout.class)
 @Order(2)
 @TabMetadata(title = "PMode-Set Data", tabGroup = PmodeLayout.TAB_GROUP_NAME)
-public class DataTables extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
+public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
 	public static final String ROUTE = "pmodedata";
 	
 	public static final String TITLE = "PMode-Set Data";
-	public static final String HELP_ID = "ui/pmodeset_data.html";
+	public static final String HELP_ID = "ui/pmodes/pmodeset_data.html";
 
 	WebPModeService pmodeService;
 	ConfigurationUtil util;

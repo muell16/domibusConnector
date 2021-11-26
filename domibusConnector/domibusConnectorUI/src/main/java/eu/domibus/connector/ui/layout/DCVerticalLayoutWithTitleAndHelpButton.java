@@ -1,4 +1,4 @@
-package eu.domibus.connector.ui.view;
+package eu.domibus.connector.ui.layout;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
@@ -9,14 +9,16 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouteConfiguration;
 
-public class VerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
+import eu.domibus.connector.ui.view.DashboardView;
+
+public class DCVerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 
 	public final String HELP_PAGE_PATH;
 	public static final String DOC_PREFIX = "documentation/";
 
 	public final String pageTitle;
 
-	public VerticalLayoutWithTitleAndHelpButton(String helpPagePath, String pageTitle) {
+	public DCVerticalLayoutWithTitleAndHelpButton(String helpPagePath, String pageTitle) {
 		this.HELP_PAGE_PATH = helpPagePath;
 		this.pageTitle = pageTitle;
 		initUI();
@@ -34,10 +36,10 @@ public class VerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 
 		helpBar.add(title, help);
 
-		helpBar.setAlignItems(Alignment.STRETCH);
-		helpBar.expand(title);
-		helpBar.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.END);
-		helpBar.setWidth("95%");
+//		helpBar.setAlignItems(Alignment.STRETCH);
+//		helpBar.expand(title);
+//		helpBar.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.END);
+//		helpBar.setWidth("95%");
 		helpBar.setHeight("70px");
 
 		add(helpBar);

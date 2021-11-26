@@ -18,7 +18,7 @@ public class MessageOverview extends VerticalLayout implements BeforeEnterObserv
 
     // This class does not do much, it is just a redirect
     // maybe it's better to directly route to the default active tab in
-    // MainLayout
+    // DCMainLayout
 
     // Pmodelayout already has prefix "messages"
     public static final String ROUTE = "";

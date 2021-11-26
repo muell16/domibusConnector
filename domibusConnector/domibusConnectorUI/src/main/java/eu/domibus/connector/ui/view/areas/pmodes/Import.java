@@ -17,8 +17,8 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
-import eu.domibus.connector.ui.view.VerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 import io.micrometer.core.instrument.util.StringUtils;
@@ -36,12 +36,12 @@ import java.io.UnsupportedEncodingException;
 @Route(value = Import.ROUTE, layout = PmodeLayout.class)
 @Order(1)
 @TabMetadata(title = "Import PMode-Set", tabGroup = PmodeLayout.TAB_GROUP_NAME)
-public class Import extends VerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver{
+public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver{
 
 	public static final String ROUTE = "import";
 	
 	public static final String TITLE = "Import new active PMode-Set";
-	public static final String HELP_ID = "ui/pmode_import.html";
+	public static final String HELP_ID = "ui/pmodes/pmodeset_import.html";
 
 	WebPModeService pmodeService;
 	

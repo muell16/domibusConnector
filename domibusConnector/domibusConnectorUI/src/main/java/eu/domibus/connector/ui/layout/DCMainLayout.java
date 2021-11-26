@@ -1,4 +1,4 @@
-package eu.domibus.connector.ui.view;
+package eu.domibus.connector.ui.layout;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.icon.Icon;
@@ -12,7 +12,9 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.ui.login.LogoutView;
 import eu.domibus.connector.ui.utils.DCTabHandler;
+import eu.domibus.connector.ui.view.DomibusConnectorAdminHeader;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
+import eu.domibus.connector.ui.view.areas.documentation.ArchitectureDocumentationView;
 import eu.domibus.connector.ui.view.areas.info.Info;
 import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
 import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
@@ -23,12 +25,12 @@ import eu.domibus.connector.ui.view.areas.users.UserOverview;
 @UIScope
 @org.springframework.stereotype.Component
 @Push
-public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterObserver {
+public class DCMainLayout extends AppLayout implements RouterLayout, BeforeEnterObserver {
 
     private Tabs tabs;
     private DCTabHandler tabManager = new DCTabHandler();
 
-    public MainLayout(DomibusConnectorAdminHeader header) {
+    public DCMainLayout(DomibusConnectorAdminHeader header) {
 
         setPrimarySection(Section.DRAWER);
 
@@ -79,6 +81,12 @@ public class MainLayout extends AppLayout implements RouterLayout, BeforeEnterOb
                 .withLabel("Info")
                 .withIcon(VaadinIcon.INFO_CIRCLE_O)
                 .addForComponent(Info.class);
+
+        tabManager
+                .createTab()
+                .withLabel("Documentation")
+                .withIcon(VaadinIcon.LIGHTBULB)
+                .addForComponent(ArchitectureDocumentationView.class);
 
         tabManager
                 .createTab()
