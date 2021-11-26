@@ -118,13 +118,21 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
                     }
                     return ValidationResult.error(errorText.toString());
                 })
-                .withConverter(
-                        b -> beanToPropertyMapConverter.readBeanPropertiesToMap(b, ""),
-                        m -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(m, cls, ""),
-                        "Error converting failed"
-                )
                 .withStatusLabel(statusLabel)
-                .bind(m -> m, Map::putAll);
+                .bind(
+                    (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
+                    (Setter<Map<String, String>, T>) (o, o2) -> {
+                        Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
+                        o.putAll(stringStringMap);
+                    });
+
+//                .withConverter(
+//                        b -> beanToPropertyMapConverter.readBeanPropertiesToMap(b, ""),
+//                        m -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(m, cls, ""),
+//                        "Error converting failed"
+//                )
+//                .withStatusLabel(statusLabel)
+//                .bind(m -> m, Map::putAll);
 
 //                .withValidator(new Validator<T>() {
 //                    @Override

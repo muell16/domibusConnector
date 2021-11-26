@@ -5,6 +5,7 @@ import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
+import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -29,7 +30,7 @@ public class SpringResourceField extends CustomField<Resource> {
     Resource value;
 
     public SpringResourceField(ApplicationContext applicationContext,
-                               ConversionService conversionService) {
+                               @ConnectorConversationService ConversionService conversionService) {
         this.applicationContext = applicationContext;
         this.conversionService = conversionService;
         this.add(textField);

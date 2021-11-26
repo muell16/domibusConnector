@@ -42,7 +42,7 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
     private boolean implAndConfigNameReadOnly = true;
 
     private DomibusConnectorLinkConfiguration value;
-    private List<LinkPlugin> linkPlugins;
+//    private List<LinkPlugin> linkPlugins;
 
     public DCLinkConfigurationField(ApplicationContext applicationContext,
                                     DCActiveLinkManagerService linkManagerService,

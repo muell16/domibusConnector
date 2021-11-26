@@ -242,19 +242,7 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
         }
         refreshList();
     }
-
-//    private void editLinkPartner(ClickEvent<Button> event, DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
-//        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = domibusConnectorLinkPartner.getLinkPartnerName();
-//        String lp = linkPartnerName.getLinkName();
-//        getUI().ifPresent(ui -> ui.navigate(DCLinkPartnerView.class, lp));
-//
-//    }
-
-//    private void editWebLinkItem(ClickEvent<Button> event, DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
-//        DomibusConnectorLinkConfiguration linkConfiguration = domibusConnectorLinkPartner.getLinkConfiguration();
-//        String configName = linkConfiguration.getConfigName().toString();
-//        getUI().ifPresent(ui -> ui.navigate(DCLinkConfigurationView.class, configName));
-//    }
+    
 
     private Dialog createDialog(Component bean) {
         final Dialog dialog = new Dialog();

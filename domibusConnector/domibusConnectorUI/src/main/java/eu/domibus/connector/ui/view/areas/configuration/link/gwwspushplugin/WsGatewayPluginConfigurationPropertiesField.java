@@ -37,6 +37,7 @@ public class WsGatewayPluginConfigurationPropertiesField extends CustomField<WsG
                                                            CxfTrustKeyStoreConfigurationPropertiesField soap,
                                                            SpringResourceField wsPolicy) {
         binder = validationBinderFactory.create(WsGatewayPluginConfigurationProperties.class);
+        binder.setBean(value);
         this.soap = soap;
         this.wsPolicy = wsPolicy;
         initUI();
@@ -72,7 +73,8 @@ public class WsGatewayPluginConfigurationPropertiesField extends CustomField<WsG
 
     @Override
     protected void setPresentationValue(WsGatewayPluginConfigurationProperties value) {
-        binder.readBean(value);
+//        binder.readBean(value);
+        binder.setBean(value);
     }
 
 
