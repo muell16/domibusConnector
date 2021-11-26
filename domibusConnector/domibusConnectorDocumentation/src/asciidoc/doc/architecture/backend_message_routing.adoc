@@ -30,4 +30,4 @@ A routing rule contains a
 * Backend Name, this name will be used if the rule matches
 * A matching expression.
 
-For configuration see link:../configuration/backend_message_routing_configuration.adoc.html[Backend Message Routing Configuration Manual]
+//For configuration see link:../configuration/backend_message_routing_configuration.adoc.html[Backend Message Routing Configuration Manual]

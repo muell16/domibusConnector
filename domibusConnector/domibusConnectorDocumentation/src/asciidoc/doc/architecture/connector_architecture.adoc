@@ -10,14 +10,27 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-= Connector Architecture Module Responsibilities
+= domibusConnector architecture
 
-The connector is split up into multiple maven modules with different
-responsibilities.
-
-//image::project-modules-diagram.png[Project Modules]
+This page describes the architectural principles the domibusConnector is build upon.
 
 == Modules
+
+The domibusConnector is built as a Maven multi-module project.
+All the modules are connected via dependencies.
+
+.Overview domibusConnector module dependencies
+image:domibusConnector-module-dependencies.png[domibusConnector module dependencies]
+
+== Decoupled asynchronous workflow
+
+The processing of the domibusConnector works that way, that all external communication is
+decoupled from the processing modules.
+
+That means that between the module responsible for communication, the domibusConnectorLink,
+only exchanges messages with the domibusConnectorController over API. Between those components are 
+JMS message queues. 
+Messages arriving at the 
 
 === domibusConnectorLinkCommon
 
