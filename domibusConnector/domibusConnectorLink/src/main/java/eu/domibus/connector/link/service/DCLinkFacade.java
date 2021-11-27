@@ -172,4 +172,8 @@ public class DCLinkFacade {
     public void createNewLinkPartner(DomibusConnectorLinkPartner value) {
         dcLinkPersistenceService.addLinkPartner(value);
     }
+
+    public void deleteLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        dcLinkPersistenceService.deleteLinkConfiguration(linkConfiguration);
+    }
 }

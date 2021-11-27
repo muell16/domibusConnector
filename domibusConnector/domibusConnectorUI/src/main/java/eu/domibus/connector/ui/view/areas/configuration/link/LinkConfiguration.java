@@ -187,29 +187,53 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
 
     private void deleteWebLinkItem(WebLinkItem webLinkItem, ClickEvent<Button> buttonClickEvent) {
         //TODO: open delete dialog...
-
+        if (webLinkItem instanceof WebLinkItem.WebLinkPartnerItem) {
+            dcLinkFacade.deleteLinkPartner(webLinkItem.getLinkPartner());
+            refreshList();
+        } else if (webLinkItem instanceof WebLinkItem.WebLinkConfigurationItem) {
+            DomibusConnectorLinkConfiguration linkConfiguration = webLinkItem.getLinkConfiguration();
+            dcLinkFacade.deleteLinkConfiguration(linkConfiguration);
+//            String configName = linkConfiguration.getConfigName().toString();
+//
+//            String url = RouteConfiguration.forSessionScope()
+//                    .getUrl(DCLinkConfigurationView.class, configName);
+//
+//            QueryParameters queryParameters = QueryParameters.simple(s);
+//            getUI().ifPresent(ui -> ui.navigate(url, queryParameters));
+        }
     }
 
     private void addLinkPartner(WebLinkItem.WebLinkConfigurationItem webLinkItem, ClickEvent<Button> buttonClickEvent) {
-        //TODO: open add link partner dialog for configuration
-        DomibusConnectorLinkConfiguration linkConfiguration = webLinkItem.getLinkConfiguration();
 
-        DCLinkPartnerField linkPartnerField = applicationContext.getBean(DCLinkPartnerField.class);
+        String url = RouteConfiguration.forSessionScope()
+                .getUrl(DCLinkPartnerView.class
+                );
+        Map<String, String> s = new HashMap<>();
+        s.put(DCLinkConfigurationView.LINK_TYPE_QUERY_PARAM, linkType.name());
+        s.put(DCLinkConfigurationView.EDIT_MODE_TYPE_QUERY_PARAM, EditMode.CREATE.name());
+        s.put(DCLinkPartnerView.LINK_CONFIGURATION_NAME, webLinkItem.getLinkConfiguration().getConfigName().toString());
+        QueryParameters queryParameters = QueryParameters.simple(s);
+        getUI().ifPresent(ui -> ui.navigate(url, queryParameters));
 
-        DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
-        linkPartner.setLinkConfiguration(linkConfiguration);
-        linkPartnerField.setValue(linkPartner);
-
-        EditBeanDialogBuilder<DomibusConnectorLinkPartner> dialogBuilder = EditBeanDialogBuilder.getBuilder();
-        dialogBuilder.setOnValueCallback(value -> {
-            //save value / validation?
-            dcLinkFacade.createNewLinkPartner(value);
-            refreshList();
-            return true; //close dialog
-        });
-        dialogBuilder.setCloseOnEscape(true);
-        dialogBuilder.setField(linkPartnerField);
-        dialogBuilder.show();
+//        //TODO: open add link partner dialog for configuration
+//        DomibusConnectorLinkConfiguration linkConfiguration = webLinkItem.getLinkConfiguration();
+//
+//        DCLinkPartnerField linkPartnerField = applicationContext.getBean(DCLinkPartnerField.class);
+//
+//        DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
+//        linkPartner.setLinkConfiguration(linkConfiguration);
+//        linkPartnerField.setValue(linkPartner);
+//
+//        EditBeanDialogBuilder<DomibusConnectorLinkPartner> dialogBuilder = EditBeanDialogBuilder.getBuilder();
+//        dialogBuilder.setOnValueCallback(value -> {
+//            //save value / validation?
+//            dcLinkFacade.createNewLinkPartner(value);
+//            refreshList();
+//            return true; //close dialog
+//        });
+//        dialogBuilder.setCloseOnEscape(true);
+//        dialogBuilder.setField(linkPartnerField);
+//        dialogBuilder.show();
 
     }
 

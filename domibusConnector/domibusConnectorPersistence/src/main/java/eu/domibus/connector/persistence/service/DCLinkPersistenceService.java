@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -228,4 +225,12 @@ public class DCLinkPersistenceService {
         linkConfigurationDao.save(dbLinkConfiguration);
     }
 
+    public void deleteLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        getAllLinks()
+                .stream()
+                .filter(l -> Objects.equals(l.getLinkConfiguration(), linkConfiguration))
+                .forEach(this::deleteLinkPartner);
+        PDomibusConnectorLinkConfiguration pDomibusConnectorLinkConfiguration = mapToDbLinkConfiguration(linkConfiguration);
+        linkConfigurationDao.delete(pDomibusConnectorLinkConfiguration);
+    }
 }
