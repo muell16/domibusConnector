@@ -44,19 +44,33 @@ public class WsGatewayPluginConfigurationPropertiesField extends CustomField<WsG
     }
 
     private void initUI() {
-        binder.addValueChangeListener(this::valueChanged);
+
         this.add(statusLabel);
         this.add(formLayout);
 
         formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("5cm", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
         formLayout.addFormItem(gwDeliveryServicePublishAddress, "web service publish address");
+        binder.forField(gwDeliveryServicePublishAddress)
+                .bind(WsGatewayPluginConfigurationProperties::getGwDeliveryServicePublishAddress, WsGatewayPluginConfigurationProperties::setGwDeliveryServicePublishAddress);
+
         formLayout.addFormItem(gwAddress, "gwAddress");
+        binder.forField(gwAddress)
+                        .bind(WsGatewayPluginConfigurationProperties::getGwAddress, WsGatewayPluginConfigurationProperties::setGwAddress);
+
         formLayout.addFormItem(soap, "Soap");
+        binder.forField(soap)
+                        .bind(WsGatewayPluginConfigurationProperties::getSoap, WsGatewayPluginConfigurationProperties::setSoap);
+
         formLayout.addFormItem(wsPolicy, "WS Policy");
+        binder.forField(wsPolicy)
+                        .bind(WsGatewayPluginConfigurationProperties::getWsPolicy, WsGatewayPluginConfigurationProperties::setWsPolicy);
+
         formLayout.addFormItem(cxfLoggingEnabled, "cxfLoggingEnabled");
+        binder.forField(cxfLoggingEnabled)
+                        .bind(WsGatewayPluginConfigurationProperties::isCxfLoggingEnabled, WsGatewayPluginConfigurationProperties::setCxfLoggingEnabled);
 
         binder.setStatusLabel(statusLabel);
-        binder.bindInstanceFields(this);
+        binder.addValueChangeListener(this::valueChanged);
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
@@ -67,14 +81,23 @@ public class WsGatewayPluginConfigurationPropertiesField extends CustomField<WsG
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        gwDeliveryServicePublishAddress.setReadOnly(readOnly);
+        gwAddress.setReadOnly(readOnly);
+        cxfLoggingEnabled.setReadOnly(readOnly);
+        soap.setReadOnly(readOnly);
+        wsPolicy.setReadOnly(readOnly);
+    }
+
+    @Override
     protected WsGatewayPluginConfigurationProperties generateModelValue() {
         return value;
     }
 
     @Override
     protected void setPresentationValue(WsGatewayPluginConfigurationProperties value) {
-//        binder.readBean(value);
-        binder.setBean(value);
+        binder.readBean(value);
+//        binder.setBean(value);
     }
 
 

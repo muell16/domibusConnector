@@ -46,6 +46,12 @@ public class KeyConfigurationField extends CustomField<KeyConfigurationPropertie
         binder.setStatusLabel(statusLabel);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        alias.setReadOnly(readOnly);
+        password.setReadOnly(readOnly);
+    }
+
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
         KeyConfigurationProperties changedValue = new KeyConfigurationProperties();
         binder.writeBeanAsDraft(changedValue, true);

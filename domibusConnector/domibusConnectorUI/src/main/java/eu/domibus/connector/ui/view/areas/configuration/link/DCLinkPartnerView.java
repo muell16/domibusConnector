@@ -10,10 +10,12 @@ import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.utils.RoleRequired;
@@ -22,7 +24,13 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationView.EDIT_MODE_TYPE_QUERY_PARAM;
+import static eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationView.LINK_TYPE_QUERY_PARAM;
 
 @Component
 @UIScope
@@ -43,6 +51,7 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
 
     private LinkType linkType;
     private DomibusConnectorLinkPartner linkPartner;
+    private EditMode editMode;
 
     public DCLinkPartnerView(DCLinkFacade dcLinkFacade, DCLinkPartnerField dcLinkPartnerField) {
         this.dcLinkFacade = dcLinkFacade;
@@ -67,6 +76,14 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
     }
 
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        DomibusConnectorLinkPartner value = dcLinkPartnerField.getValue();
+        if (editMode == EditMode.EDIT) {
+            dcLinkFacade.updateLinkPartner(value);
+        } else if (editMode == EditMode.CREATE) {
+            dcLinkFacade.createNewLinkPartner(value);
+        }
+        navgiateBack();
+
 //        BinderValidationStatus<DomibusConnectorLinkPartner> validate = this.dcLinkPartnerField.validate();
 //        if (validate.isOk()) {
 //            try {
@@ -99,6 +116,13 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
 
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
+        Location location = event.getLocation();
+        Map<String, List<String>> parameters = location.getQueryParameters().getParameters();
+        this.editMode = parameters.getOrDefault(EDIT_MODE_TYPE_QUERY_PARAM, Collections.emptyList())
+                .stream().findFirst().map(EditMode::valueOf).orElse(EditMode.VIEW);
+        this.linkType = parameters.getOrDefault(LINK_TYPE_QUERY_PARAM, Collections.emptyList())
+                .stream().findFirst().map(LinkType::valueOf).orElse(null);
+
         DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName(parameter);
         Optional<DomibusConnectorLinkPartner> optionalLinkPartner = dcLinkFacade.loadLinkPartner(lp);
         if (optionalLinkPartner.isPresent()) {
@@ -112,7 +136,20 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
             titleLabel.setText(TITLE_LABEL_TEXT + " [None]");
             dcLinkPartnerField.setVisible(false);
         }
+        updateUI();
+    }
 
+    private void updateUI() {
+        if (editMode == EditMode.VIEW) {
+            saveButton.setEnabled(false);
+            dcLinkPartnerField.setReadOnly(true);
+        } else if (editMode == EditMode.EDIT) {
+            dcLinkPartnerField.setReadOnly(false);
+            saveButton.setEnabled(linkPartner.getConfigurationSource() == ConfigurationSource.DB);
+        } else if (editMode == EditMode.CREATE) {
+            dcLinkPartnerField.setReadOnly(false);
+            saveButton.setEnabled(linkPartner.getConfigurationSource() == ConfigurationSource.DB);
+        }
     }
 
 }

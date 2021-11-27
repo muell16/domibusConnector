@@ -45,6 +45,11 @@ public class SpringResourceField extends CustomField<Resource> {
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        textField.setReadOnly(readOnly);
+    }
+
+    @Override
     protected Resource generateModelValue() {
         return value;
     }

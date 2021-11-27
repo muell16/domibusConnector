@@ -93,6 +93,16 @@ implements AfterNavigationObserver {
         binder.setStatusLabel(statusLabel);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        validationConstraintsXml.setReadOnly(readOnly);
+        trustStoreEnabled.setReadOnly(readOnly);
+        trustStore.setReadOnly(readOnly);
+        trustedListSource.setReadOnly(readOnly);
+        ocspEnabled.setReadOnly(readOnly);
+        crlEnabled.setReadOnly(readOnly);
+    }
+
     private int countTrustedLists(Query<String, String> query) {
         return trustedListsManager.getAllSourceNames().size();
     }

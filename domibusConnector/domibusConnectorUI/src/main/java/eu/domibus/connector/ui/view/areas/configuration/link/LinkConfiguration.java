@@ -161,6 +161,7 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
         } else {
             s.put(DCLinkConfigurationView.EDIT_MODE_TYPE_QUERY_PARAM, EditMode.VIEW.name());
         }
+        s.put(DCLinkConfigurationView.LINK_TYPE_QUERY_PARAM, linkType.name());
         //navigate to edit view
         if (webLinkItem instanceof WebLinkItem.WebLinkPartnerItem) {
             DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = webLinkItem.getLinkPartner().getLinkPartnerName();
@@ -177,8 +178,6 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
 
             String url = RouteConfiguration.forSessionScope()
                     .getUrl(DCLinkConfigurationView.class, configName);
-
-            s.put(DCLinkConfigurationView.LINK_TYPE_QUERY_PARAM, linkType.name());
 
             QueryParameters queryParameters = QueryParameters.simple(s);
             getUI().ifPresent(ui -> ui.navigate(url, queryParameters));
@@ -242,7 +241,7 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
         }
         refreshList();
     }
-    
+
 
     private Dialog createDialog(Component bean) {
         final Dialog dialog = new Dialog();

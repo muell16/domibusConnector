@@ -17,6 +17,7 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 
 import org.springframework.stereotype.Component;
 
+import javax.management.Notification;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -66,17 +67,13 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
     }
 
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
-//        BinderValidationStatus validate = linkConfigPanel.validate();
-//        if (validate.isOk()) {
-//            try {
-//                linkConfigPanel.writeBean(linkConfig);
-//            } catch (ValidationException e) {
-//                //TODO: show user...
-//            }
-//            dcLinkFacade.updateLinkConfig(linkConfig);
-//            //TODO: print success Notification
-//            navgiateBack();
-//        }
+        DomibusConnectorLinkConfiguration value = linkConfigurationField.getValue();
+        if (editMode == EditMode.EDIT) {
+            dcLinkFacade.updateLinkConfig(value);
+        } else if (editMode == EditMode.CREATE) {
+            dcLinkFacade.createNewLinkConfiguration(value);
+        }
+        navgiateBack();
     }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
@@ -135,13 +132,14 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
     private void updateUI() {
         if (editMode == EditMode.VIEW) {
 //            linkConfigPanel.setReadOnly(true);
+//            linkConfigurationField.setReadOnly(true);
             saveButton.setEnabled(false);
         } else if (editMode == EditMode.EDIT) {
-            linkConfigurationField.setReadOnly(false);
+//            linkConfigurationField.setReadOnly(false);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         } else if (editMode == EditMode.CREATE) {
-            linkConfigurationField.setReadOnly(false);
+//            linkConfigurationField.setReadOnly(false);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         }

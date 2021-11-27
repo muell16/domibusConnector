@@ -42,6 +42,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
     private Binder<Map<String, String>> binder = new Binder<>();
     private Map<String, String> value;
     private Map<Class<?>, Component> fields = new HashMap<>();
+    private boolean readOnly;
 
     public DCConfigurationPropertiesListField(
             BeanToPropertyMapConverter beanToPropertyMapConverter,
@@ -83,6 +84,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
 
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
+        this.readOnly = readOnly;
         updateUI();
     }
 
@@ -91,11 +93,11 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         layout.removeAll();
         fields.clear();
         binder = new Binder<>();
-        binder.setReadOnly(this.isReadOnly());
+        binder.setReadOnly(readOnly);
         binder.addValueChangeListener(this::valueChanged);
         //generate fields
         configurationClasses.forEach(this::processConfigCls);
-
+        binder.readBean(value);
     }
 
     private <T> void processConfigCls(Class<T> cls) {
@@ -104,20 +106,20 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         fields.put(cls, field);
         layout.add(statusLabel);
         layout.add(field);
-        field.setReadOnly(this.isReadOnly());
+        field.setReadOnly(readOnly);
         binder.forField(field)
-                .withValidator((Validator<T>) (t, valueContext) -> {
-                    Set<ConstraintViolation<T>> validate = jsrValidator.validate(t);
-                    if (validate.isEmpty()) {
-                        return ValidationResult.ok();
-                    }
-                    StringBuilder errorText = new StringBuilder();
-                    errorText.append("Validation errors found");
-                    for (ConstraintViolation<T> v : validate) {
-                        errorText.append("\n\tValidation problem: " + v.getMessage());
-                    }
-                    return ValidationResult.error(errorText.toString());
-                })
+//                .withValidator((Validator<T>) (t, valueContext) -> {
+//                    Set<ConstraintViolation<T>> validate = jsrValidator.validate(t);
+//                    if (validate.isEmpty()) {
+//                        return ValidationResult.ok();
+//                    }
+//                    StringBuilder errorText = new StringBuilder();
+//                    errorText.append("Validation errors found");
+//                    for (ConstraintViolation<T> v : validate) {
+//                        errorText.append("\n\tValidation problem: " + v.getMessage());
+//                    }
+//                    return ValidationResult.error("error");
+//                })
                 .withStatusLabel(statusLabel)
                 .bind(
                     (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
@@ -166,7 +168,8 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
 
     @Override
     protected void setPresentationValue(Map<String, String> value) {
-        binder.readBean(value);
+        this.value = value;
+        updateUI();
     }
 
 }

@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class StoreConfigurationField extends CustomField<StoreConfigurationProperties> {
 
-    private final SpringBeanValidationBinderFactory validationBinderFactory;
-
     private Binder<StoreConfigurationProperties> binder;
 
     private Label statusLabel = new Label();
@@ -30,8 +28,6 @@ public class StoreConfigurationField extends CustomField<StoreConfigurationPrope
     private Select<String> type = new Select();
 
     public StoreConfigurationField(SpringBeanValidationBinderFactory validationBinderFactory) {
-        this.validationBinderFactory = validationBinderFactory;
-
 
         this.add(statusLabel);
         this.add(formLayout);
@@ -49,6 +45,13 @@ public class StoreConfigurationField extends CustomField<StoreConfigurationPrope
         binder.addValueChangeListener(this::valueChanged);
         binder.setStatusLabel(statusLabel);
 
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        path.setReadOnly(readOnly);
+        password.setReadOnly(readOnly);
+        type.setReadOnly(readOnly);
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {

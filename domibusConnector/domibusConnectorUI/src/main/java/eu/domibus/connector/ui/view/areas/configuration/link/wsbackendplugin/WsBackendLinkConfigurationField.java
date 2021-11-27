@@ -58,6 +58,12 @@ public class WsBackendLinkConfigurationField extends CustomField<WsBackendPlugin
         value = changedValue;
     }
 
+    public void setReadOnly(boolean readOnly) {
+        pushAddress.setReadOnly(readOnly);
+        encryptionAlias.setReadOnly(readOnly);
+        certificateDn.setReadOnly(readOnly);
+    }
+
     @Override
     protected WsBackendPluginLinkPartnerConfigurationProperties generateModelValue() {
         return value;

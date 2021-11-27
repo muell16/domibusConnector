@@ -42,7 +42,6 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
 
     private final ApplicationContext applicationContext;
     private final DCActiveLinkManagerService linkManagerService;
-    private final ConfigurationPropertyCollector configurationPropertyCollector;
 
     protected final SpringBeanValidationBinder<DomibusConnectorLinkPartner> binder;
 
@@ -60,7 +59,6 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
                               ConfigurationPropertyCollector configurationPropertyCollector) {
         this.applicationContext = applicationContext;
         this.linkManagerService = linkManagerService;
-        this.configurationPropertyCollector = configurationPropertyCollector;
 
         binder = springBeanValidationBinderFactory.create(DomibusConnectorLinkPartner.class);
 
@@ -170,7 +168,13 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     }
 
     private void updateUI() {
-//        updatePropertyTable();
+        boolean ro = isReadOnly();
+        configPropsList.setReadOnly(ro);
+        binder.setReadOnly(ro);
+        linkPartnerNameTextField.setReadOnly(ro);
+        descriptionTextField.setReadOnly(ro);
+        rcvLinkModeComboBox.setReadOnly(ro);
+        sendLinkModeComboBox.setReadOnly(ro);
     }
 
     private void updateConfigurationProperties(LinkPlugin linkPlugin) {
@@ -181,25 +185,10 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
         }
     }
 
-//    private void updatePropertyTable() {
-//        if (linkPartner != null
-//                && linkPartner.getLinkConfiguration() != null
-//                && linkPartner.getLinkConfiguration().getLinkImpl() != null) {
-//            String linkImplName = linkPartner.getLinkConfiguration().getLinkImpl();
-//            Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkImplName);
-//
-//            if (linkPluginByName.isPresent()) {
-//                List<Class<?>> configurationClasses = linkPluginByName.get().getPartnerConfigurationProperties();
-//                List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
-//                        .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-//                        .flatMap(Function.identity()).collect(Collectors.toList());
-//                configPropsList.setConfigurationProperties(configurationProperties);
-//                configPropsList.setConfigurationClasses(configurationClasses);
-//            } else {
-//                LOGGER.warn("Did not find a linkimpl for [{}]", linkImplName);
-//            }
-//        }
-//    }
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        updateUI();
+    }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
         DomibusConnectorLinkPartner changedValue = new DomibusConnectorLinkPartner();

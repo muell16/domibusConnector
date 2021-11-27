@@ -57,6 +57,14 @@ public class CxfTrustKeyStoreConfigurationPropertiesField extends CustomField<Cx
         binder.setStatusLabel(statusLabel);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        encryptAlias.setReadOnly(readOnly);
+        trustStore.setReadOnly(readOnly);
+        keyStore.setReadOnly(readOnly);
+        privateKey.setReadOnly(readOnly);
+    }
+
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
         CxfTrustKeyStoreConfigurationProperties changedValue = new CxfTrustKeyStoreConfigurationProperties();
         binder.writeBeanAsDraft(changedValue, true);

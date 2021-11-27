@@ -58,6 +58,14 @@ public class SignatureConfigurationField extends CustomField<SignatureConfigurat
         binder.setStatusLabel(statusLabel);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        encryptionAlgorithm.setReadOnly(readOnly);
+        digestAlgorithm.setReadOnly(readOnly);
+        keyStore.setReadOnly(readOnly);
+        privateKey.setReadOnly(readOnly);
+    }
+
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
         SignatureConfigurationProperties changedValue = new SignatureConfigurationProperties();
         binder.writeBeanAsDraft(changedValue, true);

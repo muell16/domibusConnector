@@ -61,7 +61,13 @@ public class KeyAndKeyStoreAndTrustStoreConfigurationField extends CustomField<K
         binder.writeBeanAsDraft(changedValue, true);
         setModelValue(changedValue, valueChangeEvent.isFromClient());
         value = changedValue;
+    }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        trustStore.setReadOnly(readOnly);
+        keyStore.setReadOnly(readOnly);
+        privateKey.setReadOnly(readOnly);
     }
 
     @Override
