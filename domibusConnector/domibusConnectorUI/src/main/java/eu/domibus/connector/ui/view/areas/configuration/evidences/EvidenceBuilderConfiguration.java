@@ -26,9 +26,11 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.security.BusinessDocumentValidationConfigForm;
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportOldEvidenceConfigDialog;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
@@ -42,27 +44,6 @@ import java.util.stream.Collectors;
 /**
  * @author riederb
  *
- * This class should handle the following parameters:
- * 
- * 	connector.controller.evidence.timeoutActive
- *	connector.controller.evidence.checkTimeout
-	connector.controller.evidence.relayREMMDTimeout
-	connector.controller.evidence.deliveryTimeout
-	connector.controller.evidence.retrievalTimeout
-
-	gateway.endpoint.address
-
-	gateway.name
-
-	postal.address.street
-	postal.address.locality
-	postal.address.zip-code
-	postal.address.country
-
-	connector.evidences.keyStore.path
-	connector.evidences.keyStore.password
-	connector.evidences.privateKey.alias
-	connector.evidences.privateKey.password
  * 
  */
 @Component
@@ -75,168 +56,19 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 
 	public static final String ROUTE = "evidencebuilder";
 
-	public EvidenceBuilderConfiguration(ConfigurationPanelFactory configurationPanelFactory, EvidencesToolkitConfigurationPropertiesForm form) {
+	public EvidenceBuilderConfiguration(ConfigurationPanelFactory configurationPanelFactory,
+										ObjectProvider<ImportOldEvidenceConfigDialog> importOldEvidenceConfigDialog,
+										EvidencesToolkitConfigurationPropertiesForm form) {
 		ConfigurationPanelFactory.ConfigurationPanel<EvidencesToolkitConfigurationProperties> configurationPanel
 				= configurationPanelFactory.createConfigurationPanel(form, EvidencesToolkitConfigurationProperties.class);
+
+		Button b = new Button("Import old config");
+		b.addClickListener(event -> {
+			importOldEvidenceConfigDialog.getIfAvailable().open();
+		});
+		this.add(b);
 		this.add(configurationPanel);
 	}
-
-
-//	/**
-//	 *
-//	 */
-//	private static final long serialVersionUID = 1L;
-//
-//	private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-//	private final ConfigurationUtil util;
-//	private final PostalAdressConfigurationProperties p;
-//
-//	LumoCheckbox useEvidenceTimeout = new LumoCheckbox();
-//	TextField checkIntervalField = FormsUtil.getFormattedTextField();
-//	TextField relayTimeoutField = FormsUtil.getFormattedTextField();
-//	TextField deliveryTimoutField = FormsUtil.getFormattedTextField();
-//	TextField retrievalTimeoutField = FormsUtil.getFormattedTextField();
-//
-//	TextField gatewayAddressField = FormsUtil.getFormattedTextField();
-//	TextField gatewayNameField = FormsUtil.getFormattedTextField();
-//	TextField addressStreetField = FormsUtil.getFormattedTextField();
-//	TextField addressLocalityField = FormsUtil.getFormattedTextField();
-//	TextField addressPostalCodeField = FormsUtil.getFormattedTextField();
-//	TextField addressCountryField = FormsUtil.getFormattedTextField();
-//
-//	TextField keyStorePathField = FormsUtil.getFormattedTextField();
-//	TextField keyStorePasswordField = FormsUtil.getFormattedTextField();
-//	TextField keyAliasField = FormsUtil.getFormattedTextField();
-//	TextField keyPasswordField = FormsUtil.getFormattedTextField();
-//
-//	private void saveButtonClicked(ClickEvent clickEvent) {
-//		EvidencesToolkitConfigurationProperties evidenceConfigBean = evidenceConfigBinder.getBean();
-//		Set<ConstraintViolation<EvidencesToolkitConfigurationProperties>> evidenceConfigViolations = configurationPropertyManagerService.validateConfiguration(getCurrentBusinessDomain(), evidenceConfigBean);
-//		if (!evidenceConfigViolations.isEmpty()) {
-//			Notification.show("There are validation errors! " + evidenceConfigViolations
-//					.stream()
-//					.map(e -> e.getMessage())
-//					.collect(Collectors.joining(",")), 10000, Notification.Position.MIDDLE);
-//		}
-//		configurationPropertyManagerService.updateConfiguration(getCurrentBusinessDomain(), evidenceConfigBean);
-//
-//
-//		PostalAdressConfigurationProperties postalAddressConfigBean = postAddrBinder.getBean();
-//		Set<ConstraintViolation<PostalAdressConfigurationProperties>> constraintViolations = configurationPropertyManagerService.validateConfiguration(getCurrentBusinessDomain(), postalAddressConfigBean);
-//		if (!constraintViolations.isEmpty()) {
-//			Notification.show("There are validation errors! " + constraintViolations
-//					.stream()
-//					.map(e -> e.getMessage())
-//					.collect(Collectors.joining(",")), 10000, Notification.Position.MIDDLE);
-//		}
-//		configurationPropertyManagerService.updateConfiguration(getCurrentBusinessDomain(), postalAddressConfigBean);
-//
-//	}
-//
-//	/**
-//	 * retrieves the currently edited business domain
-//	 * @return the currently edited/viewed business domain within this view/form
-//	 */
-//	private DomibusConnectorBusinessDomain.BusinessDomainId getCurrentBusinessDomain() {
-//		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
-//		return businessDomain;
-//	}
-//
-//	Binder<EvidencesToolkitConfigurationProperties> evidenceConfigBinder;
-//	Binder<PostalAdressConfigurationProperties> postAddrBinder;
-//
-//	public EvidenceBuilderConfiguration(ConfigurationUtil util,
-//										ConfigurationPropertyManagerService configurationPropertyManagerService,
-//										PostalAdressConfigurationProperties p,
-//										WebKeystoreService keystoreService) {
-//		this.p = p;
-//		this.configurationPropertyManagerService = configurationPropertyManagerService;
-//		this.util = util;
-//
-//		Button saveEvidenceConfigButton = new Button("Save Evidence Config");
-//		saveEvidenceConfigButton.addClickListener(this::saveButtonClicked);
-//		add(saveEvidenceConfigButton);
-//
-//
-//		postAddrBinder = new Binder<>(PostalAdressConfigurationProperties.class);
-//
-//		postAddrBinder.bind(addressCountryField, "country");
-//		postAddrBinder.bind(addressStreetField, "street");
-//		postAddrBinder.bind(addressLocalityField, "locality");
-//		postAddrBinder.bind(addressPostalCodeField, "zipCode");
-//
-//		evidenceConfigBinder = new Binder<>(EvidencesToolkitConfigurationProperties.class);
-//		evidenceConfigBinder.bind(keyStorePathField, "keyStore.path");
-//		evidenceConfigBinder.bind(keyStorePasswordField, "keyStore.password");
-//		evidenceConfigBinder.bind(keyAliasField, "privateKey.alias");
-//		evidenceConfigBinder.bind(keyPasswordField, "privateKey.password");
-//
-//		Button resetButton = new Button("Reload current config");
-//		resetButton.addClickListener((e) -> this.reinitBinder());
-//		add(resetButton);
-//
-//		add(new ConfigurationItemChapterDiv("Evidence timeout configuration:"));
-//
-//		useEvidenceTimeout.addValueChangeListener(e -> {
-//			checkIntervalField.setReadOnly(!e.getValue());
-//			relayTimeoutField.setReadOnly(!e.getValue());
-//			deliveryTimoutField.setReadOnly(!e.getValue());
-//			retrievalTimeoutField.setReadOnly(!e.getValue());
-//		});
-//
-//		add(util.createConfigurationItemCheckboxDiv(EvidenceBuilderConfigurationLabels.evidenceTimoutActiveLabels, useEvidenceTimeout));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.checkTimoutIntervalLabels, checkIntervalField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.relayTimoutLabels, relayTimeoutField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.deliveryTimoutLabels, deliveryTimoutField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.retrievalTimoutLabels, retrievalTimeoutField));
-//
-//		add(new ConfigurationItemChapterDiv("Data put into evidences:"));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.endpointAddressLabels, gatewayAddressField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.gatewayNameLabels, gatewayNameField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.postalAddressStreetLabels, addressStreetField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.postalAddressLocalityLabels, addressLocalityField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.postalAddressPostalCodeLabels, addressPostalCodeField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.postalAddressCountryLabels, addressCountryField));
-//
-//		add(new ConfigurationItemChapterDiv("Evidences keystore/key:"));
-//
-//		keyStorePathField.setWidth("900px");
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyStorePathLabels, keyStorePathField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyStorePasswordLabels, keyStorePasswordField));
-//
-////		add(util.createKeystoreInformationGrid(keyStorePathField, keyStorePasswordField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyAliasLabels, keyAliasField));
-//
-//		add(util.createConfigurationItemTextFieldDiv(EvidenceBuilderConfigurationLabels.evidencesKeyPasswordLabels, keyPasswordField));
-//	}
-//
-//	private void reinitBinder() {
-//		DomibusConnectorBusinessDomain.BusinessDomainId businessDomain = getCurrentBusinessDomain();
-//		EvidencesToolkitConfigurationProperties config = configurationPropertyManagerService.loadConfiguration(businessDomain, EvidencesToolkitConfigurationProperties.class);
-//		evidenceConfigBinder.setBean(config);
-//
-//		PostalAdressConfigurationProperties postalAdressConfigurationProperties = configurationPropertyManagerService.loadConfiguration(businessDomain, PostalAdressConfigurationProperties.class);
-////		CurrentBusinessDomain.setCurrentBusinessDomain(businessDomain);
-//		postAddrBinder.setBean(postalAdressConfigurationProperties);
-//
-//	}
-//
-//	@Override
-//	public void afterNavigation(AfterNavigationEvent event) {
-//		reinitBinder();
-//	}
 
 }
 

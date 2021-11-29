@@ -21,6 +21,9 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportBusinessDocConfig;
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportEcodexContainerConfig;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -36,10 +39,19 @@ public class EcxContainerConfigPanel extends VerticalLayout {
 
     public static final String ROUTE = "ecxContainer";
 
-    public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory, EcxContainerConfigForm form) {
+    public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
+                                   ObjectProvider<ImportEcodexContainerConfig> importEcodexContainerConfig,
+                                   EcxContainerConfigForm form) {
         ConfigurationPanelFactory.ConfigurationPanel<DCEcodexContainerProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, DCEcodexContainerProperties.class);
+
+        Button b = new Button("Import old config");
+        b.addClickListener(event -> {
+            importEcodexContainerConfig.getIfAvailable().open();
+        });
+        this.add(b);
         this.add(configurationPanel);
+
     }
 
 }
