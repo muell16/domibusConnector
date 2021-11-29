@@ -147,6 +147,7 @@ public class WsBackendPlugin implements LinkPlugin {
                         PluginFeature.SEND_PUSH_MODE,
                         PluginFeature.SEND_PASSIVE_MODE,
                         PluginFeature.SUPPORTS_LINK_PARTNER_SHUTDOWN,
+                        PluginFeature.BACKEND_PLUGIN,
                         PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
                 .collect(Collectors.toList());
     }

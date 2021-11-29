@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -133,8 +134,12 @@ public class DCLinkFacade {
     }
 
     private List<DomibusConnectorLinkConfiguration> getAllConfigurations() {
-        return getAllLinks().stream()
-                .map(DomibusConnectorLinkPartner::getLinkConfiguration)
+        List<DomibusConnectorLinkConfiguration> allLinkConfigurations =
+                dcLinkPersistenceService.getAllLinkConfigurations();
+
+        return Stream.of(getAllLinks().stream()
+                .map(DomibusConnectorLinkPartner::getLinkConfiguration), allLinkConfigurations.stream())
+                .flatMap(Function.identity())
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -146,11 +151,31 @@ public class DCLinkFacade {
     }
 
     public List<DomibusConnectorLinkConfiguration> getAllLinkConfigurations(LinkType linkType) {
-        return getAllLinksOfType(linkType)
+        //get all configurations wich support the linkType
+        Stream<DomibusConnectorLinkConfiguration> stream1 =
+                dcLinkPersistenceService.getAllLinkConfigurations().stream()
+                        .filter(c -> getLinkPluginByName(c.getLinkImpl())
+                                .map(p -> p.getFeatures()
+                                        .contains(getPluginFeatureFromLinkType(linkType))).orElse(false));
+        //get all configurations which have a link partner with this link type
+        Stream<DomibusConnectorLinkConfiguration> stream2 = getAllLinksOfType(linkType)
                 .stream()
-                .map(DomibusConnectorLinkPartner::getLinkConfiguration)
+                .map(DomibusConnectorLinkPartner::getLinkConfiguration);
+        //merge together
+        return Stream.of(stream1, stream2)
+                .flatMap(Function.identity())
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    private PluginFeature getPluginFeatureFromLinkType(LinkType linkType) {
+        PluginFeature pf = null;
+        if (linkType == LinkType.GATEWAY) {
+            pf = PluginFeature.GATEWAY_PLUGIN;
+        } else if (linkType == LinkType.BACKEND) {
+            pf = PluginFeature.BACKEND_PLUGIN;
+        }
+        return pf;
     }
 
     public List<LinkPlugin> getAvailableLinkPlugins(LinkType linkType) {

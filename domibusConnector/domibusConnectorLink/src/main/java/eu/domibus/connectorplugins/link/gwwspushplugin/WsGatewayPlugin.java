@@ -86,7 +86,9 @@ public class WsGatewayPlugin implements LinkPlugin {
     @Override
     public List<PluginFeature> getFeatures() {
         return Stream
-                .of(PluginFeature.RCV_PASSIVE_MODE, PluginFeature.SEND_PUSH_MODE)
+                .of(PluginFeature.RCV_PASSIVE_MODE,
+                        PluginFeature.GATEWAY_PLUGIN,
+                        PluginFeature.SEND_PUSH_MODE)
                 .collect(Collectors.toList());
     }
 
