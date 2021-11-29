@@ -1,6 +1,7 @@
 package eu.domibus.connector.evidences.spring;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.dss.configuration.SignatureConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
