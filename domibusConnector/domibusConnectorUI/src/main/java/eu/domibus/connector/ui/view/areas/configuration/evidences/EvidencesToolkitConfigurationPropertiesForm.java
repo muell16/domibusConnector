@@ -10,15 +10,15 @@ import eu.domibus.connector.ui.fields.SignatureConfigurationField;
 public class EvidencesToolkitConfigurationPropertiesForm extends FormLayout {
 
     private final SignatureConfigurationField signature;
-    private final EvidencesIssuerInfoField issuer;
+    private final EvidencesIssuerInfoField issuerInfo;
 
-    public EvidencesToolkitConfigurationPropertiesForm(SignatureConfigurationField signature, EvidencesIssuerInfoField issuer) {
+    public EvidencesToolkitConfigurationPropertiesForm(SignatureConfigurationField signature, EvidencesIssuerInfoField issuerInfo) {
         this.signature = signature;
-        this.issuer = issuer;
+        this.issuerInfo = issuerInfo;
 
         this.setResponsiveSteps(new ResponsiveStep("30cm", 1, ResponsiveStep.LabelsPosition.ASIDE));
         this.addFormItem(signature, "Signature");
-        this.addFormItem(this.issuer, "Issuer");
+        this.addFormItem(this.issuerInfo, "Issuer");
 
     }
 
