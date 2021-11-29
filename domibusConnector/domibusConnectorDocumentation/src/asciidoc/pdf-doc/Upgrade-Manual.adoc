@@ -8,5 +8,6 @@ endif::rootpath[]
 
 :doctype: book
 :title: domibusConnector - Upgrade Manual
+:title-logo-image: ../resources/images/logo_ecodex_0.png
 
 include::../doc/upgrade/upgrade_index.adoc[]
