@@ -109,9 +109,9 @@ public class SpringBeanValidator implements Validator<Object> {
      *
      * @return the validator factory to use
      */
-    protected static ValidatorFactory getJavaxBeanValidatorFactory() {
-        return SpringBeanValidator.LazyFactoryInitializer.FACTORY;
-    }
+//    protected static ValidatorFactory getJavaxBeanValidatorFactory() {
+//        return SpringBeanValidator.LazyFactoryInitializer.FACTORY;
+//    }
 
 
     /**
@@ -126,7 +126,8 @@ public class SpringBeanValidator implements Validator<Object> {
      */
     protected String getMessage(ConstraintViolation<?> violation,
                                 Locale locale) {
-        return getJavaxBeanValidatorFactory().getMessageInterpolator()
+        return javaxValidator.unwrap(ValidatorFactory.class)
+        .getMessageInterpolator()
                 .interpolate(violation.getMessageTemplate(),
                         createContext(violation), locale);
     }
@@ -143,15 +144,15 @@ public class SpringBeanValidator implements Validator<Object> {
         return new SpringBeanValidator.ContextImpl(violation);
     }
 
-    private static class LazyFactoryInitializer implements Serializable {
-        private static final ValidatorFactory FACTORY = getFactory();
-
-        private LazyFactoryInitializer() {
-        }
-
-        private static ValidatorFactory getFactory() {
-            return Validation.buildDefaultValidatorFactory();
-        }
-    }
+//    private static class LazyFactoryInitializer implements Serializable {
+//        private static final ValidatorFactory FACTORY = getFactory();
+//
+//        private LazyFactoryInitializer() {
+//        }
+//
+//        private static ValidatorFactory getFactory() {
+//            return Validation.buildDefaultValidatorFactory();
+//        }
+//    }
 
 }

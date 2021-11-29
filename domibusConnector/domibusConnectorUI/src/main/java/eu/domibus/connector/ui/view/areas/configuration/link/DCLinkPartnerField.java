@@ -2,47 +2,48 @@ package eu.domibus.connector.ui.view.areas.configuration.link;
 
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
-import com.vaadin.flow.shared.Registration;
 import eu.domibus.connector.domain.enums.LinkMode;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
+@Component(DCLinkPartnerField.BEAN_NAME)
+@Primary
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DCLinkPartnerPanel extends VerticalLayout
-        implements HasValue<HasValue.ValueChangeEvent<DomibusConnectorLinkPartner>, DomibusConnectorLinkPartner>,
-        HasValidator<DomibusConnectorLinkPartner>
-{
+public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner> {
 
-    private static final Logger LOGGER = LogManager.getLogger(DCLinkPartnerPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(DCLinkPartnerField.class);
+
+    public static final String BEAN_NAME = "DCLinkPartnerField";
 
     private final ApplicationContext applicationContext;
     private final DCActiveLinkManagerService linkManagerService;
-    private final ConfigurationPropertyCollector configurationPropertyCollector;
 
-    private DomibusConnectorLinkPartner linkPartner;
-    private boolean readOnly;
-
-    private Binder<DomibusConnectorLinkPartner> binder = new Binder<>();
+    protected final SpringBeanValidationBinder<DomibusConnectorLinkPartner> binder;
 
     private TextField linkPartnerNameTextField;
     private TextField descriptionTextField;
@@ -50,18 +51,25 @@ public class DCLinkPartnerPanel extends VerticalLayout
     private ComboBox<LinkMode> sendLinkModeComboBox;
     private DCConfigurationPropertiesListField configPropsList;
 
-    public DCLinkPartnerPanel(ApplicationContext applicationContext,
+    private DomibusConnectorLinkPartner linkPartner;
+
+    public DCLinkPartnerField(ApplicationContext applicationContext,
+                              SpringBeanValidationBinderFactory springBeanValidationBinderFactory,
                               DCActiveLinkManagerService linkManagerService,
                               ConfigurationPropertyCollector configurationPropertyCollector) {
         this.applicationContext = applicationContext;
         this.linkManagerService = linkManagerService;
-        this.configurationPropertyCollector = configurationPropertyCollector;
+
+        binder = springBeanValidationBinderFactory.create(DomibusConnectorLinkPartner.class);
 
         initUI();
     }
 
     private void initUI() {
+        VerticalLayout layout = new VerticalLayout();
+        this.add(layout);
 
+        binder.addValueChangeListener(this::valueChanged);
 
         linkPartnerNameTextField = new TextField("Link Partner Name");
         binder.forField(linkPartnerNameTextField)
@@ -75,12 +83,12 @@ public class DCLinkPartnerPanel extends VerticalLayout
                 .bind(p -> p.getLinkPartnerName() == null ? null : p.getLinkPartnerName().getLinkName(),
                         (DomibusConnectorLinkPartner p, String s) -> {
                             p.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(s));
-                });
-        add(linkPartnerNameTextField);
+                        });
+        layout.add(linkPartnerNameTextField);
 
         descriptionTextField = new TextField("Description");
         binder.bind(descriptionTextField, DomibusConnectorLinkPartner::getDescription, DomibusConnectorLinkPartner::setDescription);
-        add(descriptionTextField);
+        layout.add(descriptionTextField);
 
 
         sendLinkModeComboBox = new ComboBox<>("Sender Mode");
@@ -89,7 +97,7 @@ public class DCLinkPartnerPanel extends VerticalLayout
                 .asRequired()
                 .withValidator(this::validateSendLinkMode)
                 .bind(DomibusConnectorLinkPartner::getSendLinkMode, DomibusConnectorLinkPartner::setSendLinkMode);
-        add(sendLinkModeComboBox);
+        layout.add(sendLinkModeComboBox);
 
         rcvLinkModeComboBox = new ComboBox<>("Receiver Mode");
         rcvLinkModeComboBox.setItems(LinkMode.values());
@@ -97,12 +105,16 @@ public class DCLinkPartnerPanel extends VerticalLayout
                 .asRequired()
                 .withValidator(this::validateRcvLinkMode)
                 .bind(DomibusConnectorLinkPartner::getRcvLinkMode, DomibusConnectorLinkPartner::setRcvLinkMode);
-        add(rcvLinkModeComboBox);
+        layout.add(rcvLinkModeComboBox);
 
         configPropsList = applicationContext.getBean(DCConfigurationPropertiesListField.class);
-        binder.forField(configPropsList)
+        configPropsList.setLabel("Link Partner Properties");
+        configPropsList.setSizeFull();
+        binder
+                .forField(configPropsList)
                 .bind(DomibusConnectorLinkPartner::getProperties, DomibusConnectorLinkPartner::setProperties);
-        add(configPropsList);
+
+        layout.add(configPropsList);
         configPropsList.setSizeFull();
 
         updateUI();
@@ -127,7 +139,7 @@ public class DCLinkPartnerPanel extends VerticalLayout
             } else {
                 return ValidationResult.error(String.format("Only [%s] LinkModes  are supported", rcvItems.stream().map(LinkMode::toString).collect(Collectors.joining(","))));
             }
-        };
+        }
         return ValidationResult.ok();
     }
 
@@ -150,81 +162,59 @@ public class DCLinkPartnerPanel extends VerticalLayout
             } else {
                 return ValidationResult.error(String.format("Only [%s] LinkModes  are supported", rcvItems.stream().map(LinkMode::toString).collect(Collectors.joining(","))));
             }
-        };
+        }
+        ;
         return ValidationResult.ok();
     }
 
     private void updateUI() {
-        updatePropertyTable();
+        boolean ro = isReadOnly();
+        configPropsList.setReadOnly(ro);
+        binder.setReadOnly(ro);
+        linkPartnerNameTextField.setReadOnly(ro);
+        descriptionTextField.setReadOnly(ro);
+        rcvLinkModeComboBox.setReadOnly(ro);
+        sendLinkModeComboBox.setReadOnly(ro);
     }
 
-    private void updatePropertyTable() {
-        if (linkPartner != null
-                && linkPartner.getLinkConfiguration() != null
-                && linkPartner.getLinkConfiguration().getLinkImpl() != null) {
-            String linkImplName = linkPartner.getLinkConfiguration().getLinkImpl();
-            Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkImplName);
-
-            if (linkPluginByName.isPresent()) {
-                List<Class> configurationClasses = linkPluginByName.get().getPartnerConfigurationProperties();
-                List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
-                        .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-                        .flatMap(Function.identity()).collect(Collectors.toList());
-                configPropsList.setConfigurationProperties(configurationProperties);
-            } else {
-                LOGGER.warn("Did not find a linkimpl for [{}]", linkImplName);
-            }
+    private void updateConfigurationProperties(LinkPlugin linkPlugin) {
+        if (linkPlugin == null) {
+            configPropsList.setConfigurationClasses(new ArrayList<>());
+        } else {
+            configPropsList.setConfigurationClasses(linkPlugin.getPartnerConfigurationProperties());
         }
-
     }
 
-
-    @Override
-    public void setValue(DomibusConnectorLinkPartner value) {
-        this.linkPartner = value;
-        updateUI();
-        binder.setBean(value);
-    }
-
-    @Override
-    public DomibusConnectorLinkPartner getValue() {
-        return this.linkPartner;
-    }
-
-    @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<DomibusConnectorLinkPartner>> listener) {
-        return null;
-    }
-
-    @Override
     public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
+        super.setReadOnly(readOnly);
+        updateUI();
+    }
+
+    private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
+        DomibusConnectorLinkPartner changedValue = new DomibusConnectorLinkPartner();
+        binder.writeBeanAsDraft(changedValue, true);
+        setModelValue(changedValue, valueChangeEvent.isFromClient());
+        linkPartner = changedValue;
     }
 
     @Override
-    public boolean isReadOnly() {
-        return this.readOnly;
+    protected DomibusConnectorLinkPartner generateModelValue() {
+        return linkPartner;
     }
 
     @Override
-    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
-        //no support yet
+    protected void setPresentationValue(DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+        binder.readBean(domibusConnectorLinkPartner);
+
+        if (domibusConnectorLinkPartner != null && domibusConnectorLinkPartner.getLinkConfiguration() != null) {
+            linkManagerService.getLinkPluginByName(domibusConnectorLinkPartner.getLinkConfiguration().getLinkImpl())
+                    .ifPresent(this::updateConfigurationProperties);
+        } else {
+            this.updateConfigurationProperties(null);
+        }
+        updateUI();
     }
 
-    @Override
-    public boolean isRequiredIndicatorVisible() {
-        return false;
-    }
 
-    public BinderValidationStatus<DomibusConnectorLinkPartner> validate() {
-        return this.binder.validate();
-    }
 
-    public void writeBean(DomibusConnectorLinkPartner linkPartner) throws ValidationException {
-        this.binder.writeBean(linkPartner);
-    }
-
-    public void writeBeanAsDraft(DomibusConnectorLinkPartner linkPartner) {
-        this.binder.writeBeanAsDraft(linkPartner);
-    }
 }

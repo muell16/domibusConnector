@@ -9,11 +9,12 @@ import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 import eu.europa.esig.dss.enumerations.EncryptionAlgorithm;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SignatureConfigurationField extends CustomField<SignatureConfigurationProperties> {
 
     private final SpringBeanValidationBinderFactory validationBinderFactory;
@@ -55,6 +56,14 @@ public class SignatureConfigurationField extends CustomField<SignatureConfigurat
         binder.addValueChangeListener(this::valueChanged);
 
         binder.setStatusLabel(statusLabel);
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        encryptionAlgorithm.setReadOnly(readOnly);
+        digestAlgorithm.setReadOnly(readOnly);
+        keyStore.setReadOnly(readOnly);
+        privateKey.setReadOnly(readOnly);
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
