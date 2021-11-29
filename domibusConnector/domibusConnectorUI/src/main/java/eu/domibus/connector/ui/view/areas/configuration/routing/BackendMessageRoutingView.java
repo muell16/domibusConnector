@@ -99,7 +99,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         
         routingPriorities.add("1. refToMessageId", new LumoLabel("If the message contains a refToMessageId then the backend where the original message was sent from is chosen."));
         routingPriorities.add("2. conversationId", new LumoLabel("If the message is part of a conversation the backend where prior messages of the conversation was sent from is chosen."));
-        routingPriorities.add("3. routing Rules", new LumoLabel("This is the part configured on this page. \\nIf there is a rule that applies to the message, the backend configured within the rule is chosen."));
+        routingPriorities.add("3. routing Rules", new LumoLabel("This is the part configured on this page. \nIf there is a rule that applies to the message, the backend configured within the rule is chosen."));
         routingPriorities.add("4. default Backend", new LumoLabel("If none of the above is applicable, the default backend is chosen."));
         
         add(routingPriorities);
