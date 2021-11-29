@@ -8,9 +8,11 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-== Installation Guide
-=== Introduction
-==== Scope and Objective of this document
+= Installation Guide
+
+== Introduction
+
+=== Scope and Objective of this document
 This document is a technical guide to install and configure the domibusConnector {project-version}. It can be used as a “go-through” installation guide. Readers should be able to install and configure the domibusConnector in their own environments without previously built know-how about the software.
 
 The target audience of this document are technical personal or administrators that have experience in network environments and widely known software components like web servers or application servers.
@@ -21,21 +23,21 @@ The structure of this guide is built so that every step can be taken as listed i
 
 As an InstallationGuide this document does not focus on features and functionalities on the usage of the domibusConnector. For more details on the usage please read the “domibusConnector_Technical-documentation-and-UserGuide” distributed together with the domibusConnector-4.0-RELEASE.
 
-==== The domibusConnector as a web application
+=== The domibusConnector as a web application
 Starting with version 4.0-RELEASE, the domibusConnector is on the technical basis of a web application.
 
 This means, that the domibusConnector itself is a “ready-to-use” software component that only needs to be configured, set-up and deployed in a web container.
 
 Once installed and configured properly, the domibusConnector should run on its own.
 
-==== The domibusConnectorClient
+=== The domibusConnectorClient
 The domibusConnector web application offers different interfaces that can be used to approach the functionalities. Those interfaces can be used directly, if intended.
 
 To close the missing link between your own implementation and the provided web service of the domibusConnector, a domibusConnectorClient was implemented to support the connection to the domibusConnector.
 
 The domibusConnectorClients and all its variants and usage are described in the document “domibusConnectorClient_Guide”.
 
-==== The gateway
+=== The gateway
 To establish a successful connection to e-CODEX network partners, it is necessary to have a gateway component for transmission of messages.
 
 To be able to connect with e-CODEX partners the ebms3 standard of OASIS must be respected by the gateway. Additionally, there are different profiles on how the structure of ebms3 messages can be transmitted. In e-CODEX all partners agreed on using the e-SENS-AS4 pattern.
@@ -47,17 +49,17 @@ Today the development and maintenance of the DOMIBUS Gateway lies at the CEF pro
 Further details on the DOMIBUS gateway can be found at the CEF homepage:
 https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/Domibus
 
-==== The domibus-connector-plugin
+=== The domibus-connector-plugin
 To have a connection between the domibusConnector and the Domibus Gateway, a plugin has been developed that can easily be installed on the gateway.
 
 This plugin implements all interfaces that enable message transmission between the connector and the gateway. It is also available as a distribution package of e-CODEX on the Nexus repository server: https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibus-connector-plugin/
 
 Details on how to install the plugin on the Domibus Gateway can be found in the documentation of the respective Domibus Gateway and as an Installation-Guide with the domibus-connector-plugin distribution.
 
-=== Preconditions and technical requirements
+== Preconditions and technical requirements
 This chapter describes what has to be in place prior to install the domibusConnector.It also lists some technical specifications of the domibusConnector to give a more detailed insight.
 
-==== Supported operating systems
+=== Supported operating systems
 The domibusConnector is a software that has been completely implemented using the JAVA programming language.
 
 As JAVA is by definition a platform independent environment, every operating system with a proper JAVA installation should fit the needs of setting up the domibusConnector.
@@ -68,12 +70,12 @@ During implementation and testing phase of the domibusConnector, it was installe
 * Linux
 * IBM AIX
 
-==== Java Runtime
+=== Java Runtime
 As the domibusConnector is a JAVA application, it also requires a proper installation of a Java Runtime to be able to run the software.
 The recent version {project-version} of the domibusConnector has been implemented and compiled with an Oracle JDK jdk-8u161. So at least this version or higher should be in place to avoid incompatibilities.
 
 [#_database]
-==== Database
+=== Database
 The domibusConnector needs an underlying database to store information.Currently the following DBMS are supported:
 
 * MariaDB Server 10.3 and higher
@@ -90,7 +92,7 @@ Details on the installation of the database can be found in the chapter Database
 
 xref:_database_installation[Database installation]
 
-==== Web container
+=== Web container
 Since the domibusConnector in its current version {project-version} is a web application built as a WAR deployable, it needs a web-server or application server that it can be deployed at.
 
 This can be any JAVA compliant product which supports at least Servlet 3.0 API level.
@@ -104,10 +106,10 @@ Be aware that those are neither requirements nor recommendations, but only liste
 This installation guide does not focus on specifics of web-server technologies in detail.
 Details on how to deploy the domibusConnector on that web server products can be found in chapter Deployment.
 
-==== Internet connection
+=== Internet connection
 As the domibusConnector needs some sources from the internet for the security library features, also an internet connection from the installation point must be given.To be able to configure your environment the domibusConnector gives the opportunity to configure proxy settings in the connector properties described in chapter xref:_configuration_properties[Configuration properties].
 
-==== Technical specifications
+=== Technical specifications
 The main frameworks and technologies the domibusConnector was implemented with is listed here for your information:
 
 * Java 8 (Oracle jdk-8u161)
@@ -116,7 +118,7 @@ The main frameworks and technologies the domibusConnector was implemented with i
 * Apache CXF 3.3.11
 * Apache Maven 3.6.3
 
-==== The domibusConnector distribution package
+=== The domibusConnector distribution package
 To get started, you first need to have downloaded and extracted the distribution package.
 The domibusConnector provides different distribution packages all placed on the e-CODEX Nexus repository server at:
 https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibusConnectorDistribution/{project-version}/
@@ -155,20 +157,20 @@ For more details see chapter xref:_database_installation[Database Installation].
 // end of table
 
 [#_database_installation]
-=== Database installation
+== Database installation
 
 The “domibusConnectorDistribution-4.1.0-RELEASE.zip” deliverable package contains database scripts to either create a new database or upgrade an existing database from any domibusConnector version of 3.5.x or higher to the current {project-version} version.
 
 As a precondition a DBMS already needs to be in place.We recommend to create an own schema/user for the domibusConnector database.
 
-==== Supported database vendors
+=== Supported database vendors
 
 You can find list of supported database in the previous section xref:_database[Database].
 
-==== New Database / Fresh Installation
+=== New Database / Fresh Installation
 Starting with a new installation and therefore have an empty schema/user on the database system created, one has just to execute the provided scripts or use liquibase.
 
-===== Using the scripts
+==== Using the scripts
 The documentation contains a folder database-scripts/initial. This folder contains the following DDL/SQL scripts:
 
 * "mariadb_4.4.0_initial.sql" for MariaDB
@@ -189,10 +191,10 @@ First the schemas must be created for the data to be inserted.
 
 Anyway once those scripts are executed on the dedicated schema, the database setup for domibusConnector is complete.
 
-===== Using liquibase
+==== Using liquibase
 It is also possible to let liquibase create your database tables. See xref:_migrate_with_liquibase[Migrate with Liquibase] in the "Migration" section down below.
 
-==== Database Migration 3.5 to {project-version}
+=== Database Migration 3.5 to {project-version}
 
 Migration scripts for migrating from a specific version to the next are provided. If you decide to run them yourself you must ensure to start with the script matching your current domibusConnector schema version. If you upgrade multiple times, you must execute in order. E.g. if you want to upgrade from 4.1.0 to 4.4.0 you must execute the scripts in the order 4.1.0 -> 4.2.0 then 4.2.0 -> 4.3.0 then 4.3.0 -> 4.4.0.
 
@@ -203,17 +205,17 @@ You can choose to upgrade your database schema by executing the scripts manually
 Both methods are assuming that there were no structural changes made (e.g. additional constraints, indexes added)
 after the original connector setup.
 
-===== Using the script
+==== Using the script
 1. Create a backup of your current database schema
 2. Drop/deactivate all foreign-key constraints (the script will create them again!)
 3. Execute the upgrade script which is located in the folder database-scripts/migration. Use the script that matches your dbms and connector schema version.
 4. Repeat until you have migrated to the latest version.
 
-===== Using liquibase
+==== Using liquibase
 See next section xref:_migrate_with_liquibase[Migrate with Liquibase].
 
 [#_migrate_with_liquibase]
-==== Migrate with Liquibase
+=== Migrate with Liquibase
 It is also possibly to let liquibase upgrade or create your database.Liquibase is a tool which splits the database creation/upgrade into multiple changesets.In the future it will allow semi automatic database upgrades.You can also use liquibase to use unsupported databases like postgresql.
 
 Liquibase is packaged into the jar named domibusConnectorDatabaseInitializer.jar which includes all the necessary database scripts:
@@ -237,7 +239,7 @@ o Example: “jdbc: mysql://localhost/domibusconnector” for connecting to a lo
 * “--changeLogFile=” the change log liquibase should run against the database
 * “–help” will show the liquibase help
 
-=== Certificate, Key-Stores and Trust-Stores
+== Certificate, Key-Stores and Trust-Stores
 
 To ensure the highest reasonable level of security, the domibusConnector uses several certificates for different purposes:
 
@@ -255,7 +257,7 @@ The keys and stores, for the backend client(s) for example, are explained in mor
 
 
 [#_configuration_properties]
-=== Configuration Properties
+== Configuration Properties
 In order to give the domibusConnector the missing links about your environment, some properties have to be set in a property file.Usually this is called “connector.properties”.
 
 There is also the possibility to adopt the logging configuration.This gives the opportunity to control where logs are written to and what to log.
@@ -271,18 +273,18 @@ The variants on how to set those environment variables on your web server enviro
 For the web server products Apache Tomcat and BEA Weblogic this is described exemplarily in the Chapter xref:_deployment[Deployment].
 
 [#_deployment]
-=== Deployment
+== Deployment
 This chapter describes the steps to be taken to deploy the domibusConnector application on a web server. The e-CODEX community can provide more detailed information for the web server products Apache Tomcat and BEA Weblogic. Other Web Servers have not been subject to any tests.
 
 It is not a requirement that one of the listed web server products must be used.
 
-==== Deploy on Apache Tomcat
-===== Tested Tomcat Version
+=== Deploy on Apache Tomcat
+==== Tested Tomcat Version
 The deployment has been tested with the following versions:
 
 * Apache Tomcat 8.5.23 on Windows 7
 
-===== Deployment steps
+==== Deployment steps
 * Copy the adopted “connector.properties” and “log4j.properties” file into “<path_to_tomcat>/conf/domibusConnector”.
 * Copy the “domibusConnector.war” into “<path_to_tomcat>/webapps”.
 * Create or edit a “setenv” file at “<path_to_tomcat>/bin”.
@@ -294,7 +296,7 @@ image:screenshot_tomcat_setenv_file.png[screenshot_setenv_file]
 
 Finally start/restart your Apache Tomcat. The application should be deployed automatically.
 
-==== Deploy on BEA Weblogic
+=== Deploy on BEA Weblogic
 The connector application is a spring boot application which should run on a weblogic application
 server.
 
@@ -303,7 +305,7 @@ In its default configuration it expects a jndi DataSource configured with the na
 For that purpose you need to create a custom deployment descriptor.
 
 
-=== The Domibus Connector Administration UI
+== The Domibus Connector Administration UI
 Once the domibusConnector is successfully deployed in a web container and running, the pages of the domibusConnector – the domibusConnector Administration UI - can be reached at
 http://<yourServer>:<configuredPort>/domibusConnector/admin/.
 
@@ -313,12 +315,12 @@ The default login already stored in the database for the web user interface is �
 
 The following chapters only describe the installation parts necessary to run the domibusConnector. Other functionalities of the domibusConnector Administration UI are described in the “domibusConnector-Technical-documentation-and-UserGuide.pdf” distributed with the domibusConnector package.
 
-=== Import of P-Modes
+== Import of P-Modes
 The “p-modes” that are distributed by the configuration management for the DOMIBUS gateway can also be used for the domibusConnector database to have necessary data to support business use cases in your domibusConnector database.
 
 If the installed domibusConnector is not a completely new one but a migrated one from a previous version, this step should not be necessary.
 
-==== Import of a p-mode file with the domibusConnector Administration UI
+=== Import of a p-mode file with the domibusConnector Administration UI
 Once logged in at the Administration UI, the requested functionality is reachable via menu option “PModes”.
 
 image:screenshot_pmode_import.png[Admin UI: PModes > Import]

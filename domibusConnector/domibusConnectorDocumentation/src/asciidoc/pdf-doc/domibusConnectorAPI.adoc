@@ -6,6 +6,7 @@ endif::rootpath[]
 //:imagesdir: {rootpath}/resources/images/
 //endif::imagesdir[]
 
+:doctype: book
 :title: domibusConnectorAPI
 
 include::../doc/architecture/domibusConnectorAPI.adoc[]

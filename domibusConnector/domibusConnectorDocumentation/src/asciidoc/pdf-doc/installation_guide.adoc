@@ -1,4 +1,3 @@
-
 ifndef::rootpath[]
 :rootpath: ../
 endif::rootpath[]
@@ -7,6 +6,7 @@ endif::rootpath[]
 //:imagesdir: {rootpath}/resources/images/
 //endif::imagesdir[]
 
-:title: Installation Guide
+:doctype: book
+:title: domibusConnector - Installation Guide
 
 include::../doc/installation/installation_guide.adoc[]

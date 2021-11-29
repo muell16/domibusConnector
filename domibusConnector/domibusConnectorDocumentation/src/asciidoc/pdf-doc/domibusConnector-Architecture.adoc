@@ -7,5 +7,6 @@ endif::rootpath[]
 //endif::imagesdir[]
 
 :doctype: book
+:title: domibusConnector Architecture
 
 include::../doc/architecture/architecture_index.adoc[]

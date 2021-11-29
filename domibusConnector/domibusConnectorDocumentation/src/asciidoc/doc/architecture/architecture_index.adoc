@@ -8,6 +8,8 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
+= domibusConnector Architecture
+
 include::{basepath}/doc/architecture/architecture_overview.adoc[leveloffset=+1]
 include::{basepath}/doc/architecture/database.adoc[leveloffset=+1]
 include::{basepath}/doc/architecture/connector_architecture.adoc[leveloffset=+1]
