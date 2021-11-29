@@ -1,5 +1,0 @@
-tocTab[tocTab.length] = new Array("0.6:1", "", "domibusConnector-external interfaces", "EARoot/EA6/EA210.htm", "178.png", "59", "0", "", "Component diagram0","{03A3454C-BD8A-451e-81C5-5D9138C07ED1}");
-tocTab[tocTab.length] = new Array("0.6.1", "1", "domibus gateway", "EARoot/EA6/EA1/EA219.htm", "225.png", "", "", "{BA8572CB-BD68-4964-B70B-96A6E0F4D51B}", "Package");
-tocTab[tocTab.length] = new Array("0.6.2", "1", "domibusConnector", "EARoot/EA6/EA2/EA221.htm", "4.png", "", "", "{BEBA2CD8-0191-4cd9-BC39-152BA2193713}", "Package");
-tocTab[tocTab.length] = new Array("0.6.3", "1", "domibusConnectorClient", "EARoot/EA6/EA3/EA473.htm", "4.png", "", "", "{AE755817-1075-46a5-A9F8-7925090DF17F}", "Package");
-tocTab[tocTab.length] = new Array("0.6.4", "1", "domibusConnectorPlugin", "EARoot/EA6/EA4/EA490.htm", "4.png", "", "", "{9632B52A-AC34-473e-8115-68A80F9B1392}", "Package");

@@ -11,21 +11,14 @@
                 <include>**</include>
             </includes>
             <directory>${html.docu.output.directory}</directory>
-            <outputDirectory>webdocu/documentation</outputDirectory>
+            <outputDirectory>online-documentation/documentation</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
                 <include>**</include>
             </includes>
             <directory>${html.docu.output.directory}/../images</directory>
-            <outputDirectory>webdocu/images</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <includes>
-                <include>**</include>
-            </includes>
-            <directory>${project.basedir}/src/main/docs</directory>
-            <outputDirectory>docs/old</outputDirectory>
+            <outputDirectory>online-documentation/images</outputDirectory>
         </fileSet>
         <fileSet>
             <includes>
@@ -36,10 +29,10 @@
         </fileSet>
         <fileSet>
             <includes>
-                <include>**</include>
+                <include>*.pdf</include>
             </includes>
             <directory>${project.basedir}/target/generated-pdfs</directory>
-            <outputDirectory>docs/</outputDirectory>
+            <outputDirectory>pdf-documentation/</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
