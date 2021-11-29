@@ -166,7 +166,7 @@ public class DCTabHandler implements BeforeEnterObserver {
                 .forEach(c -> {
                     TabMetadata annotation = c.getClass().getAnnotation(TabMetadata.class);
 
-                    LOGGER.debug("Adding configuration tab [{}] with title [{}]", c, annotation.title());
+                    LOGGER.debug("Adding tab [{}] with title [{}] to group [{}]", c, annotation.title(), group);
                     this.createTab()
                             .withLabel(annotation.title())
                             .addForComponent(c.getClass());

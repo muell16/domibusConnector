@@ -27,11 +27,7 @@ public class EcxContainerConfigForm extends com.vaadin.flow.component.formlayout
 
         addFormItem(signatureValidation, "Signature Validation Config");
         addFormItem(signature, "Signature Configuration");
-
     }
 
-//    public void bindInstanceFields(Binder b) {
-//        b.bindInstanceFields(this);
-//    }
 
 }

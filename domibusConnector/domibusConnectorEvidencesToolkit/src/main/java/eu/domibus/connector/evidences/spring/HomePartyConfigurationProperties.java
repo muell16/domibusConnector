@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-@BusinessDomainScoped
-@Component
+
 @Valid
-@ConfigurationProperties(prefix = "gateway")
 public class HomePartyConfigurationProperties {
 
     @NotBlank

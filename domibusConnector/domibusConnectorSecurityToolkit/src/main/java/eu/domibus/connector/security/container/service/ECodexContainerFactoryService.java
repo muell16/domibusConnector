@@ -10,7 +10,7 @@ import eu.domibus.connector.lib.spring.configuration.StoreConfigurationPropertie
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
-import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
+import eu.domibus.connector.dss.configuration.SignatureConfigurationProperties;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.SignatureCheckers;
 import eu.ecodex.dss.model.SignatureParameters;
@@ -21,7 +21,6 @@ import eu.ecodex.dss.service.ECodexLegalValidationService;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.service.impl.dss.*;
 import eu.europa.esig.dss.policy.EtsiValidationPolicy;
-import eu.europa.esig.dss.policy.ValidationPolicy;
 import eu.europa.esig.dss.policy.ValidationPolicyFacade;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.CertificateSource;

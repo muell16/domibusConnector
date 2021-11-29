@@ -7,6 +7,7 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType;
+import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersistenceService;
@@ -151,20 +152,20 @@ public class WebPModeService {
                 .findFirst()
                 .get();
 
-        HomePartyConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), HomePartyConfigurationProperties.class);
-        homePartyConfigurationProperties.setName(homeParty.getIdentifier().get(0).getPartyId());
-        homePartyConfigurationProperties.setEndpointAddress(homeParty.getEndpoint());
+        EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), EvidencesToolkitConfigurationProperties.class);
+        homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setName(homeParty.getIdentifier().get(0).getPartyId());
+        homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setEndpointAddress(homeParty.getEndpoint());
 
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), homePartyConfigurationProperties);
     }
     
     public DomibusConnectorParty getHomeParty() {
-    	HomePartyConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), HomePartyConfigurationProperties.class);
+    	EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), EvidencesToolkitConfigurationProperties.class);
     	
     	return getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())
                 .map(DomibusConnectorPModeSet::getParties)
                 .flatMap(partiesList -> partiesList.stream()
-                        .filter(p -> (p.getPartyId().equals(homePartyConfigurationProperties.getName()) && p.getRoleType().equals(PartyRoleType.INITIATOR)))
+                        .filter(p -> (p.getPartyId().equals(homePartyConfigurationProperties.getIssuerInfo().getAs4Party().getName()) && p.getRoleType().equals(PartyRoleType.INITIATOR)))
                         .findAny()
                 ).orElse(null);
     }

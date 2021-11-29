@@ -3,52 +3,19 @@ package eu.domibus.connector.evidences;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 import org.apache.commons.codec.binary.Hex;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 public class HashValueBuilder {
 
-    public enum HashAlgorithm {
-
-        MD5("MD5"), SHA1("SHA-1"), SHA256("SHA-256"), SHA512("SHA-512");
-
-        private HashAlgorithm(String name) {
-            this.name = name;
-        }
-
-        private final String name;
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        private static HashAlgorithm getHashAlgorithm(String name) {
-            for (HashAlgorithm value : values()) {
-                if (value.toString().equals(name))
-                    return value;
-            }
-            throw new IllegalArgumentException(new NoSuchAlgorithmException(String.format("There is no such algorithm named [%s]", name)));
-        }
-
-    };
-
-    private final HashAlgorithm algorithm;
-
     private final MessageDigest digester;
 
-    public HashValueBuilder(HashAlgorithm algorithm) {
+    public HashValueBuilder(DigestAlgorithm digestAlgorithm) {
         try {
-            this.algorithm = algorithm;
-            digester = MessageDigest.getInstance(this.algorithm.toString());
+            digester = digestAlgorithm.getMessageDigest();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
-    }
-
-    public HashValueBuilder(String algorithm) {
-        this(HashAlgorithm.getHashAlgorithm(algorithm));
     }
 
     public String buildHashValueAsString(byte[] originalMessage) {
@@ -65,8 +32,8 @@ public class HashValueBuilder {
         return resultByte;
     }
 
-    public HashAlgorithm getAlgorithm() {
-        return algorithm;
+    public String getAlgorithm() {
+        return digester.getAlgorithm();
     }
 
 }
