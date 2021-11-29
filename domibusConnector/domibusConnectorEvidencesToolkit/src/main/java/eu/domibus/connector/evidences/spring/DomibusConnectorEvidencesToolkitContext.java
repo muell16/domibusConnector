@@ -36,10 +36,10 @@ public class DomibusConnectorEvidencesToolkitContext {
     @Bean
     @BusinessDomainScoped
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        Resource javaKeyStorePath = keyStoreService.loadKeyStoreAsResource(evidencesToolkitConfigurationProperties.getKeyStore());
-        String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
-        String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
-        String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();
+        Resource javaKeyStorePath = keyStoreService.loadKeyStoreAsResource(evidencesToolkitConfigurationProperties.getSignature().getKeyStore());
+        String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getSignature().getKeyStore().getPassword();
+        String keyAlias = evidencesToolkitConfigurationProperties.getSignature().getPrivateKey().getAlias();
+        String keyPassword = evidencesToolkitConfigurationProperties.getSignature().getPrivateKey().getPassword();
         LOGGER.debug("Creating ECodexEvidenceBuilder with keyStorePath [{}], keyStorePassword [{}], keyAlias [{}], keyPassword [password={}]",
                 javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);
         return new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);
@@ -48,7 +48,7 @@ public class DomibusConnectorEvidencesToolkitContext {
     @Bean
     @BusinessDomainScoped
     public HashValueBuilder hashValueBuilder() {
-        return new HashValueBuilder(evidencesToolkitConfigurationProperties.getHashAlgorithm());
+        return new HashValueBuilder(evidencesToolkitConfigurationProperties.getSignature().getDigestAlgorithm());
     }
 
 

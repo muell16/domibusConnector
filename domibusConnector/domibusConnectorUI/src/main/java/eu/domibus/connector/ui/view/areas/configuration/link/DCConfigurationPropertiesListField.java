@@ -1,7 +1,5 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
-import com.sun.xml.bind.v2.runtime.output.NamespaceContextImpl;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.html.Label;
@@ -9,8 +7,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
-import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
-import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.domibus.connector.ui.utils.field.FindFieldService;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.utils.service.PropertyMapToBeanConverter;
@@ -20,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
-import javax.validation.ConstraintViolation;
 import java.util.*;
 
 @org.springframework.stereotype.Component

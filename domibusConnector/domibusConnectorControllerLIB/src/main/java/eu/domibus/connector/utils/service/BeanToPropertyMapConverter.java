@@ -3,6 +3,7 @@ package eu.domibus.connector.utils.service;
 import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.common.annotations.MapNested;
+import eu.domibus.connector.common.annotations.UseConverter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -50,30 +51,29 @@ public class BeanToPropertyMapConverter {
         HashMap<String, String> properties = new HashMap<>();
 
         void convertToProperties(Object bean, ConfigurationPropertyName prefix) {
-            convertToProperties(bean, prefix, true);
+            convertToProperties(bean, prefix, true, false);
         }
 
-        void convertToProperties(Object bean, ConfigurationPropertyName prefix, boolean nested) {
+        void convertToProperties(Object bean, ConfigurationPropertyName prefix, boolean nested, boolean useConverter) {
             if (bean == null) {
                 return; //do nothing if null
             }
             Class<?> beanType = bean.getClass();
 
             nested = nested || beanType.getAnnotation(MapNested.class) != null;
-
-            if (Collection.class.isAssignableFrom(bean.getClass())) {
-                //is collection
-                convertCollectionToProperties((Collection<?>) bean, prefix, nested);
-            } else if (Map.class.isAssignableFrom(bean.getClass())) {
-                convertMapToProperties((Map<?, ?>) bean, prefix, nested);
-            } else if (!nested && conversionService.canConvert(beanType, String.class)) {
-
+            if (useConverter) {
+                LOGGER.debug("use converter is true, so using conversion service directly to convert bean to string");
                 properties.put(prefix.toString(), conversionService.convert(bean, String.class));
-
+            } else if (Collection.class.isAssignableFrom(bean.getClass())) {
+                //is collection
+                convertCollectionToProperties((Collection<?>) bean, prefix, nested, false);
+            } else if (Map.class.isAssignableFrom(bean.getClass())) {
+                convertMapToProperties((Map<?, ?>) bean, prefix, nested, false);
+            } else if (!nested && conversionService.canConvert(beanType, String.class)) {
+                properties.put(prefix.toString(), conversionService.convert(bean, String.class));
             } else if (!nested) {
                 //map basic types?
                 properties.put(prefix.toString(), bean.toString());
-
             } else {
                 //nested bean...
                 convertNestedToProperties(bean, prefix);
@@ -89,11 +89,13 @@ public class BeanToPropertyMapConverter {
             for (PropertyDescriptor pd : propertyDescriptors) {
                 try {
                     boolean nested = false;
+                    boolean useConverter = false;
                     String propName = pd.getName();
 
 
                     Field declaredField = FieldUtils.getField(clazz, propName, true);
                     if (declaredField != null) {
+                        useConverter = declaredField.getAnnotation(UseConverter.class) != null;
                         NestedConfigurationProperty annotation = declaredField.getAnnotation(NestedConfigurationProperty.class);
                         nested = annotation != null;
 
@@ -115,7 +117,7 @@ public class BeanToPropertyMapConverter {
                     String p = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, propName);
 
                     ConfigurationPropertyName newPrefix = prefix.append(p);
-                    convertToProperties(property, newPrefix, nested);
+                    convertToProperties(property, newPrefix, nested, useConverter);
 
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     LOGGER.trace("Exception", e);
@@ -124,20 +126,20 @@ public class BeanToPropertyMapConverter {
         }
 
 
-        private void convertCollectionToProperties(Collection<?> collection, ConfigurationPropertyName prefix, boolean nested) {
+        private void convertCollectionToProperties(Collection<?> collection, ConfigurationPropertyName prefix, boolean nested, boolean useConverter) {
 
             int i = 0;
             for (Object o : collection) {
-                convertToProperties(o, prefix.append("[" + i + "]"), nested);
+                convertToProperties(o, prefix.append("[" + i + "]"), nested, useConverter);
                 i++;
             }
 
         }
 
-        private void convertMapToProperties(Map<?, ?> map, ConfigurationPropertyName prefix, boolean nested) {
+        private void convertMapToProperties(Map<?, ?> map, ConfigurationPropertyName prefix, boolean nested, boolean useConverter) {
 
             map.forEach((key, value) -> {
-                convertToProperties(value, prefix.append("[" + key + "]"), nested);
+                convertToProperties(value, prefix.append("[" + key + "]"), nested, useConverter);
             });
 
         }

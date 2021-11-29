@@ -1,6 +1,7 @@
 package eu.domibus.connector.evidences;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
 import org.bouncycastle.util.encoders.Hex;
@@ -36,10 +37,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     private HashValueBuilder hashValueBuilder;
 
     @Autowired
-    PostalAdressConfigurationProperties postalAdressConfigurationProperties;
-
-    @Autowired
-    HomePartyConfigurationProperties homePartyConfigurationProperties;
+    EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
     @Override
     public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
@@ -378,6 +376,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
     private EDeliveryDetails buildEDeliveryDetails() {
         EDeliveryDetail detail = new EDeliveryDetail();
+        HomePartyConfigurationProperties homePartyConfigurationProperties = evidencesToolkitConfigurationProperties.getIssuerInfo().getAs4Party();
+        PostalAdressConfigurationProperties postalAdressConfigurationProperties = evidencesToolkitConfigurationProperties.getIssuerInfo().getPostalAddress();
 
         EDeliveryDetail.Server server = new EDeliveryDetail.Server();
         server.setGatewayName(homePartyConfigurationProperties.getName());
