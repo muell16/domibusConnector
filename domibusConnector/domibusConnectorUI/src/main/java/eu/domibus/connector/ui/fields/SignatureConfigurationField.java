@@ -45,6 +45,7 @@ public class SignatureConfigurationField extends CustomField<SignatureConfigurat
         encryptionAlgorithm = new Select<>(EncryptionAlgorithm.values());
         digestAlgorithm = new Select<>(DigestAlgorithm.values());
 
+        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("5cm", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
         formLayout.addFormItem(encryptionAlgorithm, "Encryption Algorithm");
         formLayout.addFormItem(digestAlgorithm, "Digest Algorithm");
         formLayout.addFormItem(keyStore, "Key Store Configuration");

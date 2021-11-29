@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @UIScope
 @Route(value = ToolsView.ROUTE, layout = ToolsLayout.class)
-@RoleRequired(role = "USER")
+@RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Tools", tabGroup = ToolsLayout.TAB_GROUP_NAME)
 public class ToolsView extends VerticalLayout {
 
