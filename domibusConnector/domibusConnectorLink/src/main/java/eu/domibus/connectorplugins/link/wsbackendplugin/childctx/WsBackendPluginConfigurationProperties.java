@@ -52,7 +52,6 @@ public class WsBackendPluginConfigurationProperties {
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties soap;
 
     @Valid
-    @NestedConfigurationProperty
     @NotNull
     @ConfigurationLabel("WS Policy for Backend <-> Connector")
     @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")

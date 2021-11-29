@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties(prefix = "")
 @Validated
-@Data
 public class DCGatewayPullPluginConfigurationProperties {
 
     @NotNull
@@ -43,7 +42,6 @@ public class DCGatewayPullPluginConfigurationProperties {
     private CxfTrustKeyStoreConfigurationProperties soap;
 
     @Valid
-    @NestedConfigurationProperty
     @NotNull
     @ConfigurationLabel("WS Policy for GW <-> Connector Link")
     @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway. \nDefault: /wsdl/backend.policy.xml")
@@ -54,5 +52,43 @@ public class DCGatewayPullPluginConfigurationProperties {
     @ConfigurationDescription("This Property is used to activate CXF logging interceptor, which will log the CXF requests. \nDefault: false")
     private boolean cxfLoggingEnabled = false;
 
+    public String getGwAddress() {
+        return gwAddress;
+    }
 
+    public void setGwAddress(String gwAddress) {
+        this.gwAddress = gwAddress;
+    }
+
+    public KeyAndKeyStoreAndTrustStoreConfigurationProperties getTls() {
+        return tls;
+    }
+
+    public void setTls(KeyAndKeyStoreAndTrustStoreConfigurationProperties tls) {
+        this.tls = tls;
+    }
+
+    public CxfTrustKeyStoreConfigurationProperties getSoap() {
+        return soap;
+    }
+
+    public void setSoap(CxfTrustKeyStoreConfigurationProperties soap) {
+        this.soap = soap;
+    }
+
+    public Resource getWsPolicy() {
+        return wsPolicy;
+    }
+
+    public void setWsPolicy(Resource wsPolicy) {
+        this.wsPolicy = wsPolicy;
+    }
+
+    public boolean isCxfLoggingEnabled() {
+        return cxfLoggingEnabled;
+    }
+
+    public void setCxfLoggingEnabled(boolean cxfLoggingEnabled) {
+        this.cxfLoggingEnabled = cxfLoggingEnabled;
+    }
 }

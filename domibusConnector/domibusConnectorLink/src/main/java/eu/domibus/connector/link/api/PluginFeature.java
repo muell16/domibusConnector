@@ -10,7 +10,9 @@ public enum PluginFeature {
     SEND_PUSH_MODE, //pushing messages to remote
     SUPPORTS_LINK_PARTNER_SHUTDOWN, //link partner can be shutdown/deactivated during runtime
     SUPPORTS_LINK_SHUTDOWN, //link can be shutdown during runtime
-    CAN_RETRY //the link plugin can handle a retry
+    CAN_RETRY, //the link plugin can handle a retry
+    GATEWAY_PLUGIN, //the plugin can handle GW connections
+    BACKEND_PLUGIN //the plugin can handle backend connections
     ;
 
 }

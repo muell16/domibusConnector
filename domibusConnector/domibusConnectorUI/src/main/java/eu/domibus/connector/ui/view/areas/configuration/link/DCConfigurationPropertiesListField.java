@@ -1,92 +1,66 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
+import com.sun.xml.bind.v2.runtime.output.NamespaceContextImpl;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.*;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
+import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.utils.field.FindFieldService;
+import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.utils.service.PropertyMapToBeanConverter;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyChecker;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormsFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
-import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.validation.FieldError;
 
+import javax.validation.ConstraintViolation;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DCConfigurationPropertiesListField extends CustomField<Map<String, String>>
-        // implements HasValue<HasValue.ValueChangeEvent<Map<String, String>>, Map<String, String>>, HasValidator<Map<String, String>>
 {
 
     private static final Logger LOGGER = LogManager.getLogger(eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent.class);
 
-    private final ConfigurationPropertyCollector configurationPropertyCollector;
-    private final ConfigurationPropertyChecker configurationPropertyChecker;
-    private final ConfigurationFormsFactory configurationFormFactory;
+    private final BeanToPropertyMapConverter beanToPropertyMapConverter;
+    private final PropertyMapToBeanConverter propertyMapToBeanConverter;
+    private final FindFieldService findFieldService;
+    private final javax.validation.Validator jsrValidator;
+//    private final SpringBeanValidationBinderFactory springBeanValidationBinderFactory;
 
-    private final Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
-    private final Label statusLabel = new Label();
+    private VerticalLayout layout = new VerticalLayout();
 
-    private Binder<Map<String, String>> propertiesBinder = new Binder<>();
-    private Map<String, String> properties = new HashMap<>();
+    private List<Class<?>> configurationClasses = new ArrayList<>();
+    private Binder<Map<String, String>> binder = new Binder<>();
+    private Map<String, String> value;
+    private Map<Class<?>, Component> fields = new HashMap<>();
+    private boolean readOnly;
 
-    private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
-    private Collection<AbstractField> propertyFields = new ArrayList<>();
-    private boolean readOnly = false;
-
-    public DCConfigurationPropertiesListField(ConfigurationPropertyCollector configurationPropertyCollector, ConfigurationPropertyChecker configurationPropertyChecker, ConfigurationFormsFactory configurationFormFactory) {
-        this.configurationPropertyCollector = configurationPropertyCollector;
-        this.configurationPropertyChecker = configurationPropertyChecker;
-        this.configurationFormFactory = configurationFormFactory;
+    public DCConfigurationPropertiesListField(
+            BeanToPropertyMapConverter beanToPropertyMapConverter,
+            PropertyMapToBeanConverter propertyMapToBeanConverter,
+            javax.validation.Validator jsrValidator,
+//            SpringBeanValidationBinderFactory springBeanValidationBinderFactory,
+            FindFieldService findFieldService) {
+        this.jsrValidator = jsrValidator;
+//        this.springBeanValidationBinderFactory = springBeanValidationBinderFactory;
+        this.beanToPropertyMapConverter = beanToPropertyMapConverter;
+        this.propertyMapToBeanConverter = propertyMapToBeanConverter;
+        this.findFieldService = findFieldService;
 
         initUI();
     }
 
     public void initUI() {
-
-        propertiesBinder.setBean(properties);
-
-        grid.addColumn("propertyName").setHeader("Property Path");
-        grid.addColumn("label").setHeader("Label");
-        grid.addColumn("type").setHeader("Type");
-        grid.addComponentColumn(new ValueProvider<ConfigurationProperty, Component>() {
-            @Override
-            public Component apply(ConfigurationProperty configurationProperty) {
-                AbstractField field = configurationFormFactory.createField(configurationProperty, propertiesBinder);
-                propertyFields.add(field);
-                return field;
-            }
-        });
-        grid.setDetailsVisibleOnClick(true);
-        grid.setItemDetailsRenderer(new ComponentRenderer<>(configProp -> {
-            VerticalLayout vl = new VerticalLayout();
-            vl.add(new Label("Description"));
-            vl.add(new Label(configProp.getDescription()));
-            return vl;
-        }));
-
-        grid.setItems(configurationProperties);
-
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.add(grid, statusLabel);
-        add(verticalLayout);
-
+        this.add(layout);
         updateUI();
     }
 
@@ -100,112 +74,103 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
     }
 
     public Collection<ConfigurationProperty> getConfigurationProperties() {
-        return configurationProperties;
+        return new ArrayList<>();
     }
 
-    public void setConfigurationProperties(Collection<ConfigurationProperty> configurationProperties) {
-        propertiesBinder = new Binder<>();
-        propertiesBinder.setBean(properties);
-
-        this.configurationProperties = configurationProperties;
-        this.grid.setItems(configurationProperties);
-
-        List<Class> configClasses = configurationProperties
-                .stream()
-                .map(prop -> prop.getParentClass())
-                .distinct()
-                .collect(Collectors.toList());
-
-        propertiesBinder.withValidator(new Validator<Map<String, String>>() {
-            @Override
-            public ValidationResult apply(Map<String, String> value, ValueContext context) {
-                ConfigurationPropertySource configSource = new MapConfigurationPropertySource(value);
-                List<ValidationErrors> validationErrors = configurationPropertyChecker.validateConfiguration(configSource, configClasses);
-                if (validationErrors.isEmpty()) {
-                    return ValidationResult.ok();
-                }
-                //TODO: improve error representation
-                String errString = validationErrors.stream().map(err -> err.getAllErrors().stream())
-                        .flatMap(Function.identity())
-                        .map(objectError -> {
-                            if (objectError instanceof FieldError) {
-                                FieldError fieldError = (FieldError) objectError;
-                                return fieldError.getObjectName() + "." + fieldError.getField() + ": " + fieldError.getDefaultMessage();
-                            }
-                            return objectError.getObjectName() + ": " + objectError.getDefaultMessage();
-                        })
-                        .collect(Collectors.joining("; "));
-                return ValidationResult.error(errString);
-            }
-        });
-
-
-
+    public void setConfigurationClasses(List<Class<?>> classes) {
+        this.configurationClasses = classes;
+        updateUI();
     }
 
-//    public Validator<Map<String, String>> getDefaultValidator() {
-//
-//    }
-
-    public List<ValidationResult> validate() {
-
-        BinderValidationStatus<Map<String, String>> validate = this.propertiesBinder.validate();
-        List<ValidationResult> beanValidationErrors = validate.getValidationErrors();
-        LOGGER.trace("BeanValidationErrors: [{}]", beanValidationErrors);
-//        String collect = beanValidationErrors.stream()
-//                .map(error -> error.getErrorMessage())
-//                .collect(Collectors.joining("\n\n"));
-//        this.statusLabel.setText(collect);
-        return beanValidationErrors;
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        this.readOnly = readOnly;
+        updateUI();
     }
 
-//    @Override
-//    public void setValue(Map<String, String> value) {
-//        //this.binder.setBean(value);
-////        this.properties = value;
-//        this.propertiesBinder.setBean(value);
-//    }
-
-//    public void writeBean() throws ValidationException {
-//        this.propertiesBinder.writeBean(this.properties);
-//    }
-
-//    @Override
-//    public Map<String, String> getValue() {
-//        propertiesBinder.writeBeanAsDraft(properties);
-//        return properties;
-//    }
-
-//    @Override
-//    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Map<String, String>>> listener) {
-//        Registration registration = this.propertiesBinder
-//                .addValueChangeListener(event -> listener.valueChanged((ValueChangeEvent<Map<String, String>>) event));
-//        return registration;
-//    }
-
-
-//    public void setReadOnly(boolean readOnly) {
-//        this.readOnly = readOnly;
-//        propertiesBinder.setReadOnly(readOnly);
-//        updateUI(readOnly);
-//    }
 
     private void updateUI() {
-        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
+        layout.removeAll();
+        fields.clear();
+        binder = new Binder<>();
+        binder.setReadOnly(readOnly);
+        binder.addValueChangeListener(this::valueChanged);
+        //generate fields
+        configurationClasses.forEach(this::processConfigCls);
+        binder.readBean(value);
+    }
+
+    private <T> void processConfigCls(Class<T> cls) {
+        CustomField<T> field = findFieldService.findField(cls);
+        Label statusLabel = new Label();
+        fields.put(cls, field);
+        layout.add(statusLabel);
+        layout.add(field);
+        field.setReadOnly(readOnly);
+        binder.forField(field)
+//                .withValidator((Validator<T>) (t, valueContext) -> {
+//                    Set<ConstraintViolation<T>> validate = jsrValidator.validate(t);
+//                    if (validate.isEmpty()) {
+//                        return ValidationResult.ok();
+//                    }
+//                    StringBuilder errorText = new StringBuilder();
+//                    errorText.append("Validation errors found");
+//                    for (ConstraintViolation<T> v : validate) {
+//                        errorText.append("\n\tValidation problem: " + v.getMessage());
+//                    }
+//                    return ValidationResult.error("error");
+//                })
+                .withStatusLabel(statusLabel)
+                .bind(
+                    (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
+                    (Setter<Map<String, String>, T>) (o, o2) -> {
+                        Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
+                        o.putAll(stringStringMap);
+                    });
+
+//                .withConverter(
+//                        b -> beanToPropertyMapConverter.readBeanPropertiesToMap(b, ""),
+//                        m -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(m, cls, ""),
+//                        "Error converting failed"
+//                )
+//                .withStatusLabel(statusLabel)
+//                .bind(m -> m, Map::putAll);
+
+//                .withValidator(new Validator<T>() {
+//                    @Override
+//                    public ValidationResult apply(T t, ValueContext valueContext) {
+//
+//                        return null;
+//                    }
+//                })
+//        .bind(
+//                (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
+//                (Setter<Map<String, String>, T>) (o, o2) -> {
+//                    Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
+//                    o.putAll(stringStringMap);
+//                });
+
+    }
+
+
+    private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
+        Map<String, String> changedValue = new HashMap<>();
+        binder.writeBeanAsDraft(changedValue, true);
+        setModelValue(changedValue, valueChangeEvent.isFromClient());
+        value = changedValue;
+
     }
 
     @Override
     protected Map<String, String> generateModelValue() {
-        propertiesBinder.writeBeanAsDraft(properties, true);
-        return properties;
+        return value;
     }
 
     @Override
     protected void setPresentationValue(Map<String, String> value) {
-        this.properties = value;
-        propertiesBinder.setBean(value);
+        this.value = value;
+        updateUI();
     }
-
 
 }
 

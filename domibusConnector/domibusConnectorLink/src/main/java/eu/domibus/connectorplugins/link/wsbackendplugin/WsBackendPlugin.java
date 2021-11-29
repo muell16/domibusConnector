@@ -1,5 +1,6 @@
 package eu.domibus.connectorplugins.link.wsbackendplugin;
 
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -25,6 +26,7 @@ import org.springframework.validation.Validator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -145,19 +147,26 @@ public class WsBackendPlugin implements LinkPlugin {
                         PluginFeature.SEND_PUSH_MODE,
                         PluginFeature.SEND_PASSIVE_MODE,
                         PluginFeature.SUPPORTS_LINK_PARTNER_SHUTDOWN,
+                        PluginFeature.BACKEND_PLUGIN,
                         PluginFeature.SUPPORTS_MULTIPLE_PARTNERS)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Class> getPluginConfigurationProperties() {
-        return Stream.of(WsBackendPluginConfigurationProperties.class).collect(Collectors.toList());
+    public List<Class<?>> getPluginConfigurationProperties() {
+        return Stream.of(WsBackendPluginConfigurationProperties.class)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Class> getPartnerConfigurationProperties() {
-        return Stream.of(WsBackendPluginLinkPartnerConfigurationProperties.class).collect(Collectors.toList());
+    public List<Class<?>> getPartnerConfigurationProperties() {
+        return Stream.of(WsBackendPluginLinkPartnerConfigurationProperties.class)
+                .collect(Collectors.toList());
     }
 
+    @Override
+    public Set<LinkType> getSupportedLinkTypes() {
+        return Stream.of(LinkType.BACKEND).collect(Collectors.toSet());
+    }
 
 }

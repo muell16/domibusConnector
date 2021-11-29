@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.utils.service.PropertyMapToBeanConverter;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -52,17 +53,20 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
     private final DCBusinessDomainManager businessDomainManager;
     private final Validator validator;
     private final BeanToPropertyMapConverter beanToPropertyMapConverter;
-
+    private final PropertyMapToBeanConverter propertyMapToBeanConverter;
 
 
     public ConfigurationPropertyLoaderServiceImpl(ApplicationContext ctx,
                                                   @ConnectorConversationService ConversionService conversionService,
                                                   DCBusinessDomainManager businessDomainManager,
-                                                  Validator validator, BeanToPropertyMapConverter beanToPropertyMapConverter) {
+                                                  PropertyMapToBeanConverter propertyMapToBeanConverter,
+                                                  Validator validator,
+                                                  BeanToPropertyMapConverter beanToPropertyMapConverter) {
         this.ctx = ctx;
         this.conversionService = conversionService;
         this.businessDomainManager = businessDomainManager;
         this.validator = validator;
+        this.propertyMapToBeanConverter = propertyMapToBeanConverter;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
     }
 
@@ -123,25 +127,7 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
 
     @Override
     public <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz, String prefix) {
-        if (clazz == null) {
-            throw new IllegalArgumentException("Clazz is not allowed to be null!");
-        }
-        if (!StringUtils.hasText(prefix)) {
-            throw new IllegalArgumentException("Prefix is not allowed to be null!");
-        }
-        LOGGER.debug("Loading property class [{}]", clazz);
-
-        MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(map);
-
-        List<ConfigurationPropertySource> configSources = new ArrayList<>();
-        configSources.add(mapConfigurationPropertySource);
-
-        Binder binder = new Binder(configSources, null, conversionService, null);
-
-        Bindable<T> bindable = Bindable.of(clazz);
-        T t = binder.bindOrCreate(prefix, bindable);
-
-        return t;
+        return propertyMapToBeanConverter.loadConfigurationOnlyFromMap(map, clazz, prefix);
     }
 
 

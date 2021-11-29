@@ -3,74 +3,82 @@ package eu.domibus.connector.ui.view.areas.configuration.link;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
-import com.vaadin.flow.shared.Registration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
-import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
+@Primary
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DCLinkConfigPanel extends VerticalLayout
-        implements HasValue<HasValue.ValueChangeEvent<DomibusConnectorLinkConfiguration>, DomibusConnectorLinkConfiguration>,
-        HasValidator<DomibusConnectorLinkConfiguration>
-{
+public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkConfiguration> {
 
-    private static final Logger LOGGER = LogManager.getLogger(DCLinkConfigPanel.class);
-
+    private static final Logger LOGGER = LogManager.getLogger(DCLinkConfigurationField.class);
 
     private final ApplicationContext applicationContext;
     private final DCActiveLinkManagerService linkManagerService;
-    private final ConfigurationPropertyCollector configurationPropertyCollector;
 
     private ComboBox<LinkPlugin> implChooser = new ComboBox<>();
     private DCConfigurationPropertiesListField configPropsList;
     private TextField linkConfigName;
-    private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
-    private DomibusConnectorLinkConfiguration linkConfiguration = new DomibusConnectorLinkConfiguration();
+    private SpringBeanValidationBinder<DomibusConnectorLinkConfiguration> binder;
     private boolean readOnly = false;
-    private boolean implChangeAble = true;
+    private boolean implAndConfigNameReadOnly = true;
 
-    public DCLinkConfigPanel(ApplicationContext applicationContext, DCActiveLinkManagerService linkManagerService, ConfigurationPropertyCollector configurationPropertyCollector) {
+    private DomibusConnectorLinkConfiguration value;
+//    private List<LinkPlugin> linkPlugins;
+
+    public DCLinkConfigurationField(ApplicationContext applicationContext,
+                                    DCActiveLinkManagerService linkManagerService,
+                                    SpringBeanValidationBinderFactory springBeanValidationBinderFactory
+                                    ) {
         this.applicationContext = applicationContext;
         this.linkManagerService = linkManagerService;
-        this.configurationPropertyCollector = configurationPropertyCollector;
+
+        binder = springBeanValidationBinderFactory.create(DomibusConnectorLinkConfiguration.class);
+        binder.addValueChangeListener(this::valueChanged);
+
         initUI();
     }
 
+
+
     private void initUI() {
-
-
+        VerticalLayout layout = new VerticalLayout();
+        this.add(layout);
 
         linkConfigName = new TextField("Link Configuration Name");
+        linkConfigName.setReadOnly(readOnly);
+
 
         implChooser.setItems(linkManagerService.getAvailableLinkPlugins());
         implChooser.setLabel("Link Implementation");
         implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
         implChooser.addValueChangeListener(this::choosenLinkImplChanged);
         implChooser.setMinWidth("10em");
+        implChooser.setReadOnly(readOnly);
 
 
-        linkConfigurationBinder
+        binder
                 .forField(linkConfigName)
                 .withValidator((Validator<String>) (value, context) -> {
-                    if (StringUtils.isEmpty(value)) {
+                    if (!StringUtils.hasText(value)) {
                         return ValidationResult.error("Must not be emtpy!");
                     }
                     return ValidationResult.ok();
@@ -80,7 +88,7 @@ public class DCLinkConfigPanel extends VerticalLayout
                         (Setter<DomibusConnectorLinkConfiguration, String>) (linkConfiguration, configName) -> linkConfiguration.setConfigName(configName == null ? new DomibusConnectorLinkConfiguration.LinkConfigName("") : new DomibusConnectorLinkConfiguration.LinkConfigName(configName))
                 );
 
-        linkConfigurationBinder
+        binder
                 .forField(implChooser)
                 .withValidator((Validator<? super LinkPlugin>) (value, context) -> {
                     if (value == null) {
@@ -104,112 +112,92 @@ public class DCLinkConfigPanel extends VerticalLayout
         configPropsList = applicationContext.getBean(DCConfigurationPropertiesListField.class);
         configPropsList.setLabel("Link Configuration Properties");
         configPropsList.setSizeFull();
-        linkConfigurationBinder
+        binder
             .forField(configPropsList)
-//            .withValidator((Validator<? super Map<String, String>>) (value, context) -> {
-//                List<ValidationResult> validate = configPropsList.validate();
-//                if (validate.isEmpty()) {
-//                    return ValidationResult.ok();
-//                } else {
-//                    return ValidationResult.error("Invalid Properties!");
-//                }
-//            })
             .bind(DomibusConnectorLinkConfiguration::getProperties, DomibusConnectorLinkConfiguration::setProperties);
 
-        add(linkConfigName, implChooser, configPropsList);
+        layout.add(linkConfigName, implChooser, configPropsList);
 
         updateUI();
 
     }
 
-    public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfig) {
-        linkConfiguration = linkConfig;
-//        linkConfigurationBinder.readBean(linkConfig);
-        linkManagerService.getLinkPluginByName(linkConfig.getLinkImpl()).ifPresent(this::updateConfigurationProperties);
-        linkConfigurationBinder.setBean(linkConfig);
-        updateUI();
-    }
 
     private void updateUI() {
-        implChooser.setReadOnly(readOnly && !implChangeAble);
-        linkConfigName.setReadOnly(readOnly);
+        implChooser.setReadOnly(readOnly || implAndConfigNameReadOnly);
+        linkConfigName.setReadOnly(readOnly || implAndConfigNameReadOnly);
         configPropsList.setReadOnly(readOnly);
     }
 
-    public void setImplChangeAble(boolean changeAble) {
-        this.implChangeAble = changeAble;
-        implChooser.setReadOnly(readOnly && !implChangeAble);
+    public void setEditMode(EditMode editMode) {
+        if (editMode == EditMode.EDIT) {
+            this.setReadOnly(false);
+            this.setImplAndConfigNameReadOnly(true);
+        } else if (editMode == EditMode.CREATE) {
+            this.setReadOnly(false);
+            this.setImplAndConfigNameReadOnly(false);
+        } else if (editMode == EditMode.VIEW || editMode == EditMode.DEL) {
+            this.setReadOnly(true);
+        }
     }
+
+    private void setImplAndConfigNameReadOnly(boolean implAndConfigNameReadOnly) {
+        this.implAndConfigNameReadOnly = implAndConfigNameReadOnly;
+        updateUI();
+    }
+
+//    public void setLinkPlugins(List<LinkPlugin> linkPlugins) {
+//        this.linkPlugins = linkPlugins;
+//        this.implChooser.setItems(linkPlugins);
+//    }
 
     private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
         LinkPlugin value = valueChangeEvent.getValue();
         updateConfigurationProperties(value);
         updateUI();
-
     }
 
     private void updateConfigurationProperties(LinkPlugin value) {
-        List<Class> configurationClasses = new ArrayList<>();
+        List<Class<?>> configurationClasses = new ArrayList<>();
         if (value != null) {
             configurationClasses = value.getPluginConfigurationProperties();
         }
         if (configurationClasses != null) {
-            List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
-                    .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-                    .flatMap(Function.identity()).collect(Collectors.toList());
-
-            configPropsList.setConfigurationProperties(configurationProperties);
+            configPropsList.setConfigurationClasses(configurationClasses);
         }
-    }
-
-    public void writeBean(DomibusConnectorLinkConfiguration lnkConfig) throws ValidationException {
-        this.linkConfigurationBinder.writeBean(lnkConfig);
-    }
-
-    public void writeBeanAsDraft(DomibusConnectorLinkConfiguration lnkConfig) {
-        this.linkConfigurationBinder.writeBeanAsDraft(lnkConfig);
-    }
-
-    @Override
-    public void setValue(DomibusConnectorLinkConfiguration value) {
-        this.setLinkConfiguration(value);
-    }
-
-    @Override
-    public DomibusConnectorLinkConfiguration getValue() {
-        return this.linkConfiguration;
-    }
-
-    @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<DomibusConnectorLinkConfiguration>> listener) {
-        return null;
     }
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        linkConfigurationBinder.setReadOnly(readOnly);
-        this.implChooser.setReadOnly(readOnly);
+        binder.setReadOnly(readOnly);
         this.readOnly = readOnly;
+        super.setReadOnly(readOnly);
         updateUI();
     }
 
-    @Override
-    public boolean isReadOnly() {
-        return this.readOnly;
+
+    private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
+        DomibusConnectorLinkConfiguration changedValue = new DomibusConnectorLinkConfiguration();
+        binder.writeBeanAsDraft(changedValue, true);
+        setModelValue(changedValue, valueChangeEvent.isFromClient());
+        value = changedValue;
     }
 
     @Override
-    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
-        //no indicator support
+    protected DomibusConnectorLinkConfiguration generateModelValue() {
+        return value;
     }
 
     @Override
-    public boolean isRequiredIndicatorVisible() {
-        return false;
+    protected void setPresentationValue(DomibusConnectorLinkConfiguration linkConfig) {
+        if (linkConfig != null) {
+            linkManagerService.getLinkPluginByName(linkConfig.getLinkImpl()).ifPresent(this::updateConfigurationProperties);
+        } else {
+            this.updateConfigurationProperties(null);
+        }
+        binder.readBean(linkConfig);
+        updateUI();
     }
 
-    public BinderValidationStatus<DomibusConnectorLinkConfiguration> validate() {
-        return linkConfigurationBinder.validate();
-    }
 
 }
