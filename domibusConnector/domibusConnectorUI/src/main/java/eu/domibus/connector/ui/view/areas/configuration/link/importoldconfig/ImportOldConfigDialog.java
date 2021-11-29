@@ -1,52 +1,60 @@
 package eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig;
 
-import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
-import eu.domibus.connector.ui.component.WizardComponent;
-import eu.domibus.connector.ui.component.WizardStep;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
+import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 
 
 public abstract class ImportOldConfigDialog extends Dialog {
 
-//    private final ApplicationContext context;
-    protected final DCLinkConfigurationField linkConfigPanel;
+    private static final Logger LOGGER = LogManager.getLogger(ImportOldConfigDialog.class);
+
+    protected final ObjectProvider<DCLinkConfigurationField> linkConfigurationFieldObjectProvider;
+    protected final ObjectProvider<DCLinkPartnerField> linkPartnerFieldObjectProvider;
     protected final BeanToPropertyMapConverter beanToPropertyMapConverter;
     protected final DCLinkFacade dcLinkFacade;
+    protected final JdbcTemplate jdbcTemplate;
 
+    TextField linkConfigName = new TextField();
 
-    private WizardComponent wizardComponent;
+    VerticalLayout layout = new VerticalLayout();
 
-//    TextField linkConfigName = new TextField();
-////    RadioButtonGroup<ConversionSource> chooseGwOrBackend = new RadioButtonGroup<>();
-//
-//
-//    //Upload
-//    MemoryBuffer buffer = new MemoryBuffer();
-//    Upload upload = new Upload(buffer);
-//    //upload result area
-//    VerticalLayout resultArea = new VerticalLayout();
+    //Upload
+    MemoryBuffer buffer = new MemoryBuffer();
+    Upload upload = new Upload(buffer);
+    //upload result area
+    VerticalLayout resultArea = new VerticalLayout();
 
-    public ImportOldConfigDialog(DCLinkConfigurationField linkConfigPanel,
+    public ImportOldConfigDialog(ObjectProvider<DCLinkConfigurationField> linkConfigurationFieldObjectProvider,
+                                 ObjectProvider<DCLinkPartnerField> linkPartnerFieldObjectProvider,
                                  BeanToPropertyMapConverter beanToPropertyMapConverter,
-                                 DCLinkFacade dcLinkFacade) {
-        this.linkConfigPanel = linkConfigPanel;
+                                 DCLinkFacade dcLinkFacade, JdbcTemplate jdbcTemplate) {
+        this.linkConfigurationFieldObjectProvider = linkConfigurationFieldObjectProvider;
+        this.linkPartnerFieldObjectProvider = linkPartnerFieldObjectProvider;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
         this.dcLinkFacade = dcLinkFacade;
+        this.jdbcTemplate = jdbcTemplate;
         initUi();
 
     }
@@ -55,89 +63,71 @@ public abstract class ImportOldConfigDialog extends Dialog {
         this.setWidth("80%");
         this.setHeightFull();
 
-        WizardComponent.WizardBuilder wizardBuilder = WizardComponent.getBuilder();
-        wizardBuilder.addStep(new UploadConfigFileStep());
+        add(layout);
 
-        wizardBuilder.addCancelListener((w, s)-> this.close()); //close dialog
-        wizardBuilder.addFinishedListener((w, s) -> this.close()); //close dialog
+        upload.addSucceededListener(this::uploadSecceeded);
+        linkConfigName.setLabel("Link Configuration Name");
 
-        wizardComponent = wizardBuilder.build();
+        linkConfigName.setValue("ImportedLinkConfig");
 
-        this.add(wizardComponent);
-
-
+        layout.add(linkConfigName, upload, resultArea);
     }
 
-    protected abstract void saveLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration);
+    private void uploadSecceeded(SucceededEvent succeededEvent) {
+        try {
+            InputStream inputStream = buffer.getInputStream();
 
-    protected abstract Map<String, String> getConfigurationProperties(Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter);
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter =
+                    new Connector42LinkConfigTo43LinkConfigConverter(beanToPropertyMapConverter, jdbcTemplate, properties);
 
-    protected abstract String getPluginName();
+            List<DomibusConnectorLinkPartner> linkPartners = getLinkPartners(connector42LinkConfigTo43LinkConfigConverter);
+            DomibusConnectorLinkConfiguration domibusConnectorLinkConfiguration = linkPartners.stream().findFirst().map(p -> p.getLinkConfiguration()).get();
 
+            DCLinkConfigurationField linkConfigPanel = linkConfigurationFieldObjectProvider.getIfAvailable();
+            linkConfigPanel.setReadOnly(true);
+            linkConfigPanel.setValue(domibusConnectorLinkConfiguration);
+            resultArea.add(linkConfigPanel);
 
-    public class UploadConfigFileStep extends VerticalLayout implements WizardStep {
-
-        private TextField linkConfigName = new TextField();
-        private MemoryBuffer buffer = new MemoryBuffer();
-        private Upload upload = new Upload(buffer);
-        private boolean nextEnabled = false;
-
-        public UploadConfigFileStep() {
-            initUI();
-        }
-
-        private void initUI() {
-            upload.addSucceededListener(this::uploadSecceeded);
-            linkConfigName.setLabel("Link Configuration Name");
-
-            this.add(linkConfigName, upload);
-            linkConfigName.setValue("ImportedLinkConfig");
-
-        }
-
-        private void uploadSecceeded(SucceededEvent succeededEvent) {
-            try {
-                InputStream inputStream = buffer.getInputStream();
-
-                Properties properties = new Properties();
-                properties.load(inputStream);
-                Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter =
-                        new Connector42LinkConfigTo43LinkConfigConverter(properties);
-
-                String configName = linkConfigName.getValue();
-
-                DomibusConnectorLinkConfiguration linkConfiguration = new DomibusConnectorLinkConfiguration();
-                linkConfiguration.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(configName));
-                linkConfiguration.setProperties(getConfigurationProperties(connector42LinkConfigTo43LinkConfigConverter));
-                linkConfiguration.setLinkImpl(getPluginName());
-
-                nextEnabled = true;
-                wizardComponent.sendWizardStepChangeEvent(new WizardStepStateChangeEvent(this));
-
-            } catch (IOException e) {
-                nextEnabled = false;
-                throw new RuntimeException("Unable to parse uploaded file", e);
+            //show partners....
+            for (DomibusConnectorLinkPartner lp : linkPartners) {
+                DCLinkPartnerField linkPartnerField = linkPartnerFieldObjectProvider.getIfAvailable();
+                linkPartnerField.setReadOnly(true);
+                linkPartnerField.setValue(lp);
+                resultArea.add(linkPartnerField);
             }
 
-        }
+
+            //TODO: add save button...
+            Button saveButton = new Button("Save Imported Config");
+            saveButton.addClickListener(event -> {
+//                this.saveLinkConfiguration(linkConfiguration);
+            });
+            resultArea.add(saveButton);
 
 
-        @Override
-        public Component getComponent() {
-            return this;
-        }
-
-        @Override
-        public boolean isNextSupported() {
-            return this.nextEnabled;
-        }
-
-        @Override
-        public String getStepTitle() {
-            return "Upload Config File";
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to parse uploaded file", e);
         }
 
     }
 
+    protected void save(List<DomibusConnectorLinkPartner> linkPartners, DomibusConnectorLinkConfiguration linkConfiguration) {
+        try {
+            dcLinkFacade.createNewLinkConfiguration(linkConfiguration);
+            for (DomibusConnectorLinkPartner linkPartner : linkPartners) {
+                dcLinkFacade.createNewLinkPartner(linkPartner);
+            }
+            Notification.show("Successfully imported old config");
+            this.close();
+        } catch (Exception e) {
+            LOGGER.warn("Exception occured while importing old config", e);
+            Notification.show("Error during import!");
+        }
+    }
+
+    //TODO: refactor this...
+    protected abstract List<DomibusConnectorLinkPartner> getLinkPartners(Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter);
 
 }
