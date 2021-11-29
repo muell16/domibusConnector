@@ -1,34 +1,24 @@
 
-:path: ../../
+:path: ../../../
 
 ifndef::basepath[]
-:basepath: ../../
+:basepath: ../../../
 endif::basepath[]
 
 ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-= domibusConnector Message Processing
+= Processing of an incoming connector test message
 
-This page describes how a business message is processed by the domibusConnector.
+This chapter shows the example of an incoming connector test message. That means, that a business message is delivered
+by the gateway which fulfills the requirements of a connector test message.
 
-It shows the example of an outgoing business message. That means, that a business message is sent
-from the backend to the gateway to be submitted to another e-CODEX partner.
-
-
-
-== Message transportation
-
-This chapter focuses on the technical transportation of the outgoing business message.
-It shows how the message is transported from the backend of the domibusConnector to the gateway link partner.
-For a better understanding the flow is simplyfied.
-
-=== Message from backend to the domibusConnectorController message queue
+== Message from gateway to the domibusConnectorController message queue
 
 The following diagram shows how a message that is sent to the domibusConnector is transported to the domibusConnectorController message queue.
 
-[plantuml,message_flow_1,format=svg]
+[plantuml,message_proc_in_business_1,format=svg]
 ----
 @startuml
 
@@ -40,12 +30,12 @@ skinparam linetype ortho
 
 
 package domibusConnectorAPI{
-	interface DomibusConnectorBackendWebService
 	interface DomibusConnectorGatewayDeliveryWebService
+	interface DomibusConnectorGatewayWebService
 }
 
 package domibusConnectorLink{
-	component WsBackendServiceEndpoint
+	component DCGatewayWebServiceClient
 	component WsGatewayPluginDeliveryServiceEndpoint
 	interface SubmitToConnector
 	
@@ -53,21 +43,21 @@ package domibusConnectorLink{
 
 queue toConnectorControllerQueue
 
-DomibusConnectorBackendWebService --> WsBackendServiceEndpoint
-WsBackendServiceEndpoint --> SubmitToConnector
+DomibusConnectorGatewayWebService --> DCGatewayWebServiceClient : link.gwwspullplugin profile
+DCGatewayWebServiceClient --> SubmitToConnector
 
-DomibusConnectorGatewayDeliveryWebService --> WsGatewayPluginDeliveryServiceEndpoint
+DomibusConnectorGatewayDeliveryWebService --> WsGatewayPluginDeliveryServiceEndpoint : link.wsgatewayplugin profile
 WsGatewayPluginDeliveryServiceEndpoint --> SubmitToConnector
 SubmitToConnector --> toConnectorControllerQueue
 
 @enduml
 ----
 
-=== Message processing in domibusConnectorController
+== Message processing in domibusConnectorController
 
 The following diagram shows how a message that is put on the toConnectorController queue is processed
 
-[plantuml,message_flow_2,format=svg]
+[plantuml,message_proc_in_c2ctest_2,format=svg]
 ----
 @startuml
 
@@ -84,35 +74,38 @@ queue DLQ.toConnectorControllerQueue
 
 queue submitToLinkQueue
 
-queue cleanUpQueue
-
 package domibusConnectorController {
 	package JTATransaction_Connector {
 	    component ToConnectorControllerListener
-	    component EvidenceMessageProcessor
-	    component ToGatewayBusinessMessageProcessor
 	    component ToBackendBusinessMessageProcessor
+	    component LookupBackendNameStep
+	    component MessageConfirmationStep
+	    component SubmitConfirmationAsEvidenceMessageStep
+	    component ResolveECodexContainerStep
+	    component SubmitMessageToLinkModuleQueueStep
 	}
 	
 }
 
 
 toConnectorControllerQueue --> ToConnectorControllerListener
-ToConnectorControllerListener --> EvidenceMessageProcessor : For any evidence message or trigger
 ToConnectorControllerListener --> ToBackendBusinessMessageProcessor : For a business message from gateway to backend
-ToConnectorControllerListener --> ToGatewayBusinessMessageProcessor : For a business message from backend to gateway
-EvidenceMessageProcessor --> cleanUpQueue : on successful evidence processing
-JTATransaction_Connector -d-> submitToLinkQueue : on success
+ToBackendBusinessMessageProcessor -d-> LookupBackendNameStep : identify test backend
+ToBackendBusinessMessageProcessor -d-> MessageConfirmationStep : create RELAY_REMMD evidence
+ToBackendBusinessMessageProcessor -d-> SubmitConfirmationAsEvidenceMessageStep : sent evidence back
+ToBackendBusinessMessageProcessor -d-> ResolveECodexContainerStep : resolve ASIC-S
+ToBackendBusinessMessageProcessor -d-> SubmitMessageToLinkModuleQueueStep : send to backend
+SubmitMessageToLinkModuleQueueStep -d-> submitToLinkQueue : on success
 JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on failure
 
 @enduml
 ----
 
-=== Message send from the domibusConnector to the gateway or a backend
+== Message send from the domibusConnector to the backend
 
 The following diagram shows how a message that is put on the submitToLink queue is processed
 
-[plantuml,message_flow_3,format=svg]
+[plantuml,message_proc_in_c2ctest_3,format=svg]
 ----
 @startuml
 
@@ -123,22 +116,14 @@ skinparam linetype ortho
 
 
 
-package domibusConnectorAPI{
-	interface DomibusConnectorBackendWebService
-	interface DomibusConnectorBackendDeliveryWebService
-	interface DomibusConnectorGatewaySubmissionWebService
-	interface DomibusConnectorGatewayWebService
-}
 
 package domibusConnectorLink{
 	
 	package JTATransaction_ToLink {
 	  component ToLinkPartnerListener
 	  component SubmitToLinkService
-		component DCGatewayWebServiceClient
-		component WSGatewayPluginWebServiceClient
-		component WsBackendSubmitTo
 		component SubmitToTestLink
+		interface SubmitToConnector
 	}
 }
 
@@ -146,21 +131,12 @@ package domibusConnectorLink{
 queue submitToLinkQueue
 queue DLQ.submitToLinkQueue
 
-queue cleanUpQueue
-
 
 JTATransaction_ToLink -d-> DLQ.submitToLinkQueue : on failure
 submitToLinkQueue -d-> ToLinkPartnerListener
 ToLinkPartnerListener -d-> SubmitToLinkService
-SubmitToLinkService --> DCGatewayWebServiceClient : to gateway, link.gwwspullplugin profile
-SubmitToLinkService --> WSGatewayPluginWebServiceClient : to gateway, link.wsgatewayplugin profile
-SubmitToLinkService --> WsBackendSubmitTo : to backend
-SubmitToLinkService --> SubmitToTestLink : connector test message
-JTATransaction_ToLink -d-> cleanUpQueue : on success
-DCGatewayWebServiceClient --> DomibusConnectorGatewaySubmissionWebService
-WSGatewayPluginWebServiceClient --> DomibusConnectorGatewayWebService
-WsBackendSubmitTo --> DomibusConnectorBackendDeliveryWebService : LinkMode.PUSH
-WsBackendSubmitTo -d-> exit : makeMessageReadyForPull
+SubmitToLinkService --> SubmitToTestLink : to test backend
+SubmitToTestLink -d-> SubmitToConnector : trigger DELIVERY evidence
 SubmitToTestLink -d-> exit
 
 @enduml

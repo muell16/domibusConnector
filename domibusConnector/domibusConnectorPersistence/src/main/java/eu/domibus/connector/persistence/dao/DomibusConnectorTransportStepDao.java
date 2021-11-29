@@ -50,11 +50,11 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
 
 
         @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE " +
-                "step.linkPartnerName IN ?2 AND " +
+                "step.linkPartnerName IN :linkPartnerStrings AND " +
                 "step.id IN ( " +
                 "SELECT status.transportStep.id " +
             "FROM PDomibusConnectorTransportStepStatusUpdate status " +
-            "WHERE status.transportStateString IN ?1 AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
+            "WHERE status.transportStateString IN :states AND CONCAT(status.created, '_', status.transportStep.id) IN (" +
             "   SELECT CONCAT(MAX(s2.created), '_', s2.transportStep.id) " +
             "   FROM PDomibusConnectorTransportStepStatusUpdate s2" +
             "   GROUP BY s2.transportStep.id) " +

@@ -11,19 +11,10 @@ endif::header[]
 
 = Processing of an outgoing evidence message
 
-This page describes how an outgoing evidence message is processed by the domibusConnector.
-
+This chapter describes how an outgoing evidence message is processed by the domibusConnector.
 Starting point is a trigger message from the backend to the domibusConnector. 
 
-
-
-== Message transportation
-
-This chapter focuses on the technical transportation of the outgoing message.
-It shows how the message is transported from the backend of the domibusConnector to the gateway link partner.
-For a better understanding the flow is simplyfied.
-
-=== Message from backend to the domibusConnectorController message queue
+== Message from backend to the domibusConnectorController message queue
 
 The following diagram shows how a message that is sent to the domibusConnector is transported to the domibusConnectorController message queue.
 
@@ -62,11 +53,10 @@ Within the domibusConnectorLink, the message is transformed from the transition 
 Also, a connector_message_id is generated with which the message is now identified.
 
 Diagram: domibusConnectorLink message transformation
-[#img-msg_transf_out_evidence_1]
-[link={path}images/msg_transf_out_evidence_1.png,window=_tab]
-image::../images/msg_transf_out_evidence_1.png[msg_transf_out_evidence_1,300,200]
 
-=== Message processing in domibusConnectorController
+image:msg_transf_out_evidence_1.png[msg_transf_out_evidence_1]
+
+== Message processing in domibusConnectorController
 
 The following diagram shows how a message that is put on the toConnectorController queue is processed
 
@@ -93,6 +83,11 @@ package domibusConnectorController {
 	package JTATransaction_Connector {
 	    component ToConnectorControllerListener
 	    component EvidenceMessageProcessor
+	    component EvidenceTriggerStep
+	    component FindBusinessMessageByMsgId
+	    component ValidateMessageConfirmationStep
+	    component MessageConfirmationStep
+	    component SubmitConfirmationAsEvidenceMessageStep
 	}
 	
 }
@@ -100,8 +95,15 @@ package domibusConnectorController {
 
 toConnectorControllerQueue --> ToConnectorControllerListener
 ToConnectorControllerListener --> EvidenceMessageProcessor : For any evidence message or trigger
+EvidenceMessageProcessor --> EvidenceTriggerStep : create triggered evidence
+EvidenceMessageProcessor --> FindBusinessMessageByMsgId : refToMessageId
+EvidenceMessageProcessor --> ValidateMessageConfirmationStep : all previous evidences
+EvidenceMessageProcessor --> MessageConfirmationStep : build evidence message
 EvidenceMessageProcessor --> cleanUpQueue : evidence type confirms/rejects business message
-EvidenceMessageProcessor -d-> submitToLinkQueue : on success
+EvidenceMessageProcessor --> SubmitConfirmationAsEvidenceMessageStep : send evidence back
+SubmitConfirmationAsEvidenceMessageStep -d-> submitToLinkQueue : back to backend
+EvidenceMessageProcessor --> SubmitConfirmationAsEvidenceMessageStep : send evidence msg
+SubmitConfirmationAsEvidenceMessageStep -d-> submitToLinkQueue : to gateway
 JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on failure
 
 @enduml
@@ -112,12 +114,11 @@ The ETSI-REM evidence is generated of type "ConfirmationType" and added to the m
 After the message is successfully put on the submitToLinkQueue, the evidence is sent back to the backend (can be deactivated by configuration).
 
 Diagram: EvidenceMessageProcessor process message
-[#img-msg_transf_out_evidence_2]
-[link={path}images/msg_transf_out_evidence_2.png,window=_tab]
-image::../images/msg_transf_out_evidence_2.png[msg_transf_out_evidence_2,300,200]
+
+image:msg_transf_out_evidence_2.png[msg_transf_out_evidence_2]
 
 
-=== Message send from the domibusConnector to the gateway
+== Message send from the domibusConnector to the gateway
 
 The following diagram shows how a message that is put on the submitToLink queue is processed
 
@@ -168,6 +169,5 @@ WSGatewayPluginWebServiceClient --> DomibusConnectorGatewayWebService : submitMe
 At the domibusConnectorLink, before the message is submitted to the gateway, it is transformed back to transition model of the API.
 
 Diagram: domibusConnectorLink message transformation
-[#img-msg_transf_out_evidence_3]
-[link={path}images/msg_transf_out_evidence_3.png,window=_tab]
-image::../images/msg_transf_out_evidence_3.png[msg_transf_out_evidence_3,300,200]
+
+image:msg_transf_out_evidence_3.png[msg_transf_out_evidence_3]

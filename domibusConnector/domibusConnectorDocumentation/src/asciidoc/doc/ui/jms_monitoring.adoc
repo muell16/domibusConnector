@@ -10,7 +10,9 @@ endif::header[]
 
 = JMS Monitoring
 
-include::{basepath}/doc/architecture/connector_message_flow.adoc[leveloffset=3]
+Monitoring the internal queues of the domibusConnector.
+
+A description on how the internal message queues are used, see the description of link:../architecture/message_processing/message_processing.html[message processing].
 
 == Use the UI to monitor jms messages
 

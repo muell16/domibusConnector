@@ -1,0 +1,11 @@
+ifndef::rootpath[]
+:rootpath: ../
+endif::rootpath[]
+
+//ifndef::imagesdir[]
+//:imagesdir: {rootpath}/resources/images/
+//endif::imagesdir[]
+
+:doctype: book
+
+include::../doc/upgrade/upgrade_index.adoc[]

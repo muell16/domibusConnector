@@ -1,8 +1,8 @@
 
-:path: ../../
+:path: ../../../
 
 ifndef::basepath[]
-:basepath: ../../
+:basepath: ../../../
 endif::basepath[]
 
 ifndef::header[]
@@ -11,20 +11,10 @@ endif::header[]
 
 = Processing of an incoming business message
 
-This page describes how an incoming business message is processed by the domibusConnector.
-
-It shows the example of an incoming business message. That means, that a business message is delivered
+This chapter shows the example of an incoming business message. That means, that a business message is delivered
 by the gateway.
 
-
-
-== Message transportation
-
-This chapter focuses on the technical transportation of the outgoing business message.
-It shows how the message is transported from the gateway of the domibusConnector to the backend link partner.
-For a better understanding the flow is simplyfied.
-
-=== Message from backend to the domibusConnectorController message queue
+== Message from gateway to the domibusConnectorController message queue
 
 The following diagram shows how a message that is sent to the domibusConnector is transported to the domibusConnectorController message queue.
 
@@ -63,7 +53,7 @@ SubmitToConnector --> toConnectorControllerQueue
 @enduml
 ----
 
-=== Message processing in domibusConnectorController
+== Message processing in domibusConnectorController
 
 The following diagram shows how a message that is put on the toConnectorController queue is processed
 
@@ -88,6 +78,11 @@ package domibusConnectorController {
 	package JTATransaction_Connector {
 	    component ToConnectorControllerListener
 	    component ToBackendBusinessMessageProcessor
+	    component LookupBackendNameStep
+	    component MessageConfirmationStep
+	    component SubmitConfirmationAsEvidenceMessageStep
+	    component ResolveECodexContainerStep
+	    component SubmitMessageToLinkModuleQueueStep
 	}
 	
 }
@@ -95,13 +90,18 @@ package domibusConnectorController {
 
 toConnectorControllerQueue --> ToConnectorControllerListener
 ToConnectorControllerListener --> ToBackendBusinessMessageProcessor : For a business message from gateway to backend
-ToBackendBusinessMessageProcessor -d-> submitToLinkQueue : on success
+ToBackendBusinessMessageProcessor -d-> LookupBackendNameStep : identify target backend
+ToBackendBusinessMessageProcessor -d-> MessageConfirmationStep : create RELAY_REMMD evidence
+ToBackendBusinessMessageProcessor -d-> SubmitConfirmationAsEvidenceMessageStep : sent evidence back
+ToBackendBusinessMessageProcessor -d-> ResolveECodexContainerStep : resolve ASIC-S
+ToBackendBusinessMessageProcessor -d-> SubmitMessageToLinkModuleQueueStep : send to backend
+SubmitMessageToLinkModuleQueueStep -d-> submitToLinkQueue : on success
 JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on failure
 
 @enduml
 ----
 
-=== Message send from the domibusConnector to the backend
+== Message send from the domibusConnector to the backend
 
 The following diagram shows how a message that is put on the submitToLink queue is processed
 

@@ -22,7 +22,7 @@ In the end, every e-CODEX partner participating in one or more business use-case
 side of the use-case. This can either be a generic domibusConnectorClient, a reference implementation for the use-case, or a specific software product implemented
 for that particular use-case at the e-CODEX partner.
 
-image:EXEC_architecture_overview.gif[e-CODEX technical infrastructure overview]
+image:e-CODEX_architecture_overview.png[e-CODEX technical infrastructure overview]
 
 == e-CODEX building blocks
 
