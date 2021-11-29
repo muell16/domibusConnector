@@ -12,7 +12,11 @@ endif::header[]
 
 = Link Partners
 
-Also see link:../configuration/link_doc.html[Link Configuration Manual]
+Also see:
+
+ * link:../configuration/link_doc.html[Link Configuration Manual]
+ * link:../ui/linkconfig/link_configuration.html[Link UI Configuration Manual]
+
 
 == Message Flow
 
