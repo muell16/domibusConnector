@@ -56,4 +56,7 @@ public interface ConfigurationPropertyManagerService {
     void updateConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationBean);
 
 
+    void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps);
+
+    Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId defaultMessageLaneId, Object boundConfigValue);
 }

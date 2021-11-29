@@ -28,6 +28,7 @@ public class BusinessDocumentValidationConfigForm extends FormLayout {
 
     private final MultiSelectListBox<AdvancedElectronicSystemType> allowedAdvancedSystemTypes;
 
+    //field must be a member to use bind instance fields!
     @SuppressWarnings("FieldCanBeLocal")
     private final SignatureValidationConfigurationField signatureValidation;
 
@@ -49,8 +50,8 @@ public class BusinessDocumentValidationConfigForm extends FormLayout {
         addFormItem(signatureValidation, "Signature Validation Config");
     }
 
-    public void bindInstanceFields(Binder b) {
-        b.bindInstanceFields(this);
-    }
+//    public void bindInstanceFields(Binder b) {
+//        b.bindInstanceFields(this);
+//    }
 
 }

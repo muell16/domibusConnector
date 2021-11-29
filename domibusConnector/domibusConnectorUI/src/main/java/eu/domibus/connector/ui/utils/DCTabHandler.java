@@ -157,6 +157,7 @@ public class DCTabHandler implements BeforeEnterObserver {
     }
 
     public void createTabs(ApplicationContext applicationContext, String group) {
+        //this breaks lazy loading...
         applicationContext.getBeansWithAnnotation(TabMetadata.class)
                 .values().stream()
                 .map(o -> (Component) o)
