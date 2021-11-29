@@ -8,5 +8,6 @@ endif::rootpath[]
 
 :doctype: book
 :title: domibusConnector - Installation Guide
+:title-logo-image: ../resources/images/logo_ecodex_0.png
 
 include::../doc/installation/installation_guide.adoc[]

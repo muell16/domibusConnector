@@ -13,13 +13,13 @@
                 <include>*/**</include>
             </includes>
         </fileSet>
-        <fileSet>
+      <!--   <fileSet>
             <includes>
                 <include>**/*</include>
             </includes>
             <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config</directory>
-            <outputDirectory>example-config</outputDirectory>
-        </fileSet>
+            <outputDirectory>documentation/example-config</outputDirectory>
+        </fileSet> -->
         <fileSet>
             <directory>${project.basedir}/src/main/resources/config</directory>
             <includes>
@@ -69,17 +69,9 @@
     <dependencySets>
         <dependencySet>
             <includes>
-                <include>${project.groupId}:domibusConnectorDocumentation:zip:enterprise-architect-export:${project.version}</include>
-            </includes>
-            <unpack>true</unpack>
-<!--            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>-->
-        </dependencySet>
-        <dependencySet>
-            <includes>
                 <include>${project.groupId}:domibusConnectorDocumentation:zip:documentation:${project.version}</include>
             </includes>
             <unpack>true</unpack>
-<!--            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>-->
             <outputDirectory>documentation</outputDirectory>
         </dependencySet>
     </dependencySets>

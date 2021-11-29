@@ -8,5 +8,6 @@ endif::rootpath[]
 
 :doctype: book
 :title: domibusConnectorAPI
+:title-logo-image: ../resources/images/logo_ecodex_0.png
 
 include::../doc/architecture/domibusConnectorAPI.adoc[]

@@ -125,9 +125,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/assembly-architecture.xml</descriptor>
                                 <descriptor>src/main/assembly/assembly-documentation.xml</descriptor>
-                                <descriptor>src/main/assembly/assembly-webdocu.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

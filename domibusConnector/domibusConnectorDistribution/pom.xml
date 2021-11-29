@@ -24,13 +24,6 @@
             <artifactId>domibusConnectorDocumentation</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-            <classifier>enterprise-architect-export</classifier>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorDocumentation</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
             <classifier>documentation</classifier>
         </dependency>
     </dependencies>
