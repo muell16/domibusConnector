@@ -74,13 +74,14 @@ backend2 -[hidden]- backend1
 @enduml
 ----
 
-== Multi Backend / FinalRecipient based Routing [not implemented!]
+== Multi Backend / FinalRecipient based Routing [already implemented]
 
 * Every Routable Use Case is within the same P-Mode set
 * Interferes with the national addressing attributes originalSender, finalRecipient
 ** The OriginalSender, FinalRecipient has to follow a pattern eg.: {{appid}::{{nationalpart}
 ** This address must be published into Authority Database (CCDB,CDB,...)
 
+This can be done by using the startswith match pattern within the backend routing rules (introduced with connector 4.4.x).
 
 [plantuml]
 ----
@@ -116,14 +117,19 @@ backend2 -[hidden]- backend1
 * Different p-Mode sets
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
 
+Currently the plugin has no support for this setup.
 
 [plantuml]
 ----
 @startuml
 
 component AS4_Gateway as "AS4-Gateway" {
-  rectangle pmode_set1
-  rectangle pmode_set2
+  rectangle AS4_Gateway_Tenant1 as "Tenant 1" {
+    rectangle pmode_set1
+  }
+  rectangle AS4_Gateway_Tenant2 as "Tenant 2" {
+    rectangle pmode_set2
+  }
 }
 
 component connector as "Connector"
@@ -132,7 +138,8 @@ component backend1
 
 component backend2
 
-AS4_Gateway -down-> connector
+AS4_Gateway_Tenant1 -down-> connector
+AS4_Gateway_Tenant2 -down-> connector
 
 connector -down-> backend1
 
@@ -144,8 +151,9 @@ backend2 -[hidden]- backend1
 @enduml
 ----
 
+WARNING: As all P-Modes have to be merged together into one set to import it into the connector. The used names within the different p-Mode sets must be unique. This can be achieved by encoding the service into the service type and party id type.
 
-== Multi Tenancy, Multiple Connectors [not implemented]
+== Multi Tenancy, Multiple Connectors
 
 * Different p-Mode sets
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
@@ -156,8 +164,12 @@ backend2 -[hidden]- backend1
 @startuml
 
 component AS4_Gateway as "AS4-Gateway" {
-  rectangle pmode_set1 as "P-Mode Set 1"
-  rectangle pmode_set2 as "P-Mode Set 2"
+  rectangle AS4_Gateway_Tenant1 as "Tenant 1" {
+    rectangle pmode_set1 as "P-Mode Set 1"
+  }
+  rectangle AS4_Gateway_Tenant2 as "Tenant 2" {
+    rectangle pmode_set2 as "P-Mode Set 2"
+  }
 }
 
 component connector1 as "Connector1" {
@@ -171,12 +183,77 @@ component backend1
 
 component backend2
 
-AS4_Gateway -down-> connector1
-AS4_Gateway -down-> connector2
+AS4_Gateway_Tenant1 -down-> connector1
+AS4_Gateway_Tenant2 -down-> connector2
 
 connector1 -down-> backend1
 
 connector2 -down-> backend2
+
+
+
+@enduml
+----
+
+
+== Multi Tenancy, Multi Use Case [not implemented yet]
+
+* Different p-Mode sets
+* The different GW tenants are sending the message to the same connector
+* The messages are split up into different Service Domains by a set of rules
+* Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
+* For every service domain a backend routing is in place
+* For outgoing messages also a router is in place which assigns the message to a service domain
+
+[plantuml]
+----
+@startuml
+
+component AS4_Gateway as "AS4-Gateway" {
+  rectangle AS4_Gateway_Tenant1 as "Tenant 1" {
+    rectangle pmode_set1 as "P-Mode Set 1"
+  }
+  rectangle AS4_Gateway_Tenant2 as "Tenant 2" {
+    rectangle pmode_set2 as "P-Mode Set 2"
+  }
+}
+
+component connector as "Connector" {
+  rectangle service_domain_router as "Incoming Router"
+
+  rectangle service_domain1 as "Service Domain 1" {
+    rectangle pmode_set1_ as "P-Mode Set 1"
+  }
+  rectangle service_domain2 as "Service Domain 2"{
+    rectangle pmode_set2_ as "P-Mode Set 2"
+  }
+'  rectangle service_domain_out_router as "Outgoing Router"
+}
+
+component backend1
+component backend2
+component backend3
+component backend4
+
+AS4_Gateway_Tenant1 -down-> service_domain_router
+AS4_Gateway_Tenant2 -down-> service_domain_router
+
+service_domain_router -down-> service_domain1
+service_domain_router -down-> service_domain2
+'service_domain1 -[hidden]d- service_domain_out_router
+
+
+service_domain1 -down-> backend1
+service_domain1 -down-> backend4
+
+service_domain2 -down-> backend2
+service_domain2 -down-> backend3
+service_domain2 -down-> backend4
+
+'backend1 -up-> service_domain_out_router
+'backend2 -up-> service_domain_out_router
+'backend3 -up-> service_domain_out_router
+'backend4 -up-> service_domain_out_router
 
 
 
