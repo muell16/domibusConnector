@@ -19,7 +19,6 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
-import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
@@ -30,14 +29,13 @@ import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Map;
 
 @Component
 @UIScope
@@ -76,6 +74,17 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     }
 
     private void initUI() {
+        Button createNewRoutingRule = new Button("Create new routing rule");
+        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
+
+        Button saveChangesButton = new Button("Save Changes");
+        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
+
+        final HorizontalLayout buttons = new HorizontalLayout();
+        buttons.add(saveChangesButton, createNewRoutingRule);
+
+        add(buttons);
+
         Label l = new Label("Here is the configuration where routing rules are configured that define how messages are routed to backend(s).");
         add(l);
 
@@ -108,13 +117,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         
         this.add(routingRuleGrid);
         
-        Button createNewRoutingRule = new Button("Create new roulting rule");
-        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
-        add(createNewRoutingRule);
 
-        Button saveChangesButton = new Button("Save Changes");
-        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
-        add(saveChangesButton);
 
     }
 
