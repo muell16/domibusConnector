@@ -87,19 +87,19 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         LumoLabel routingDescription = new LumoLabel();
         routingDescription.setText("General routing priorities:");
         routingDescription.getStyle().set("font-size", "20px");
-		
+
         routingDescription.getStyle().set("font-style", "italic");
         add(routingDescription);
 
         Accordion routingPriorities = new Accordion();
-        
+
         routingPriorities.add("1. refToMessageId", new LumoLabel("If the message contains a refToMessageId then the backend where the original message was sent from is chosen."));
         routingPriorities.add("2. conversationId", new LumoLabel("If the message is part of a conversation the backend where prior messages of the conversation was sent from is chosen."));
         routingPriorities.add("3. routing Rules", new LumoLabel("This is the part configured on this page. \nIf there is a rule that applies to the message, the backend configured within the rule is chosen."));
         routingPriorities.add("4. default Backend", new LumoLabel("If none of the above is applicable, the default backend is chosen."));
-        
+
         add(routingPriorities);
-        
+
         TextField defaultBackendNameTextField = new TextField();
         defaultBackendNameTextField.setReadOnly(true);
         defaultBackendNameTextField.setLabel("Configured default backend name");
@@ -109,10 +109,11 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
+        routingRuleGrid.getColumns().forEach(c -> c.setResizable(true));
 
-        
+
         this.add(routingRuleGrid);
-        
+
 
 
     }
@@ -198,7 +199,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         saveCancelButton.add(saveButton);
         saveCancelButton.add(cancelButton);
     }
-    
+
     private void editRoutingRule(RoutingRule r) {
         final Dialog d = new Dialog();
         d.setModal(true);
