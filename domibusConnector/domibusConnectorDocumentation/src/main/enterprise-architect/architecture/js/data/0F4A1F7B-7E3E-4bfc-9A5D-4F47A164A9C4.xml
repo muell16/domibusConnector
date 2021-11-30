@@ -1,4 +1,0 @@
-tocTab[tocTab.length] = new Array("0.6.2.1.6:1", "", "domibusConnectorEvidencesToolkit", "EARoot/EA6/EA2/EA1/EA6/EA372.htm", "175.png", "80", "0", "", "Logical diagram0","{1B83F237-7889-4f6e-88BA-F2C03B05742E}");
-tocTab[tocTab.length] = new Array("0.6.2.1.6:2", "", "Create/Check Evidence", "EARoot/EA6/EA2/EA1/EA6/EA375.htm", "7.png", "E950", "0", "", "UseCase0","{73E7E825-CE37-4bff-9B08-AD9493ADE1C4}");
-tocTab[tocTab.length] = new Array("0.6.2.1.6:3", "", "EvidenceBuilder", "EARoot/EA6/EA2/EA1/EA6/EA377.htm", "8.png", "E813", "0", "", "Interface0","{CF3CD9F4-CADE-48cf-9E11-34013B971BF3}");
-tocTab[tocTab.length] = new Array("0.6.2.1.6.1", "1", "eu.domibus.connector.evidences", "EARoot/EA6/EA2/EA1/EA6/EA1/EA378.htm", "4.png", "", "", "{57BB1DF8-D84B-4cba-A0BE-1D5BEE84B79B}", "Package");

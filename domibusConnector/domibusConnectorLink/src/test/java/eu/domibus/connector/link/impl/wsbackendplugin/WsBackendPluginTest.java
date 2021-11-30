@@ -48,7 +48,7 @@ import static test.eu.domibus.connector.link.LinkTestContext.SUBMIT_TO_CONNECTOR
 @SpringBootTest(classes = {LinkTestContext.class },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@ActiveProfiles({"wsbackendplugin-test", "test", LINK_PLUGIN_PROFILE_NAME, "plugin-wsbackendplugin"})
+@ActiveProfiles({"wsbackendplugin-test", "plugin-test", "test", LINK_PLUGIN_PROFILE_NAME})
 @Log4j2
 public class WsBackendPluginTest {
 

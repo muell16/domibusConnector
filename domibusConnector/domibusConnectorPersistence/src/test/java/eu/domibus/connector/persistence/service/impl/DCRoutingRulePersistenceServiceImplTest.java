@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;

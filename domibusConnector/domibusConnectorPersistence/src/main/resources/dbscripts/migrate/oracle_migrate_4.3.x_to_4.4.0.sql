@@ -40,9 +40,23 @@ ALTER TABLE  "DC_KEYSTORE"
  USING INDEX
 ;
 
+-- if not done with last upgrade 4.2.x to 4.3.x
+-- REMOVE FK and replace with CONNECTOR_MESSAGE_ID
+ALTER TABLE "DOMIBUS_CONNECTOR_BIGDATA"
+ADD "CONNECTOR_MESSAGE_ID" VARCHAR2(255 CHAR);
+
+ALTER TABLE "DOMIBUS_CONNECTOR_BIGDATA"
+    DROP COLUMN "MESSAGE_ID";
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
+-- Set rejected timestamp to all messages not rejected or confirmed and older than 5 days.
+-- Number of days may be changed if the 5 at the end of the query is changed.
+UPDATE DOMIBUS_CONNECTOR_MESSAGE SET REJECTED = sysdate WHERE REJECTED IS NULL AND CONFIRMED IS NULL AND CONNECTOR_MESSAGE_ID IS NULL 
+AND CREATED < sysdate - 5;
+
+-- Set a CONNECTOR_MESSAGE_ID to every message that does not have one yet by using the technical ID.
+UPDATE DOMIBUS_CONNECTOR_MESSAGE SET CONNECTOR_MESSAGE_ID=ID WHERE CONNECTOR_MESSAGE_ID is null;
 
 -- #################### 4/6 DELETE temporary tables, frees fk names ####################
 

@@ -41,6 +41,7 @@ class TransportStepPersistenceServiceImplITCase {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
         DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName("link2");
 
+        step.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
         step.setTransportedMessage(m);
         step.setTransportId(new TransportStateService.TransportId("msg2_link2_1"));
         step.setAttempt(1);

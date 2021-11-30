@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.view.areas.monitoring;
 
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -30,9 +31,19 @@ public class MessageGrid extends Grid<Message> {
 
         addColumn(this::getJMSMessageID).setHeader("Message ID (JMS ID)").setWidth("35%");
         addColumn(this::getConnectorId).setHeader("Connector ID").setWidth("35%");
-        // TODO the backend functionality is not working for restore
-//        addComponentColumn(this::restoreButton).setHeader("Restore Message and try to reprocess").setWidth("25%");
-        addComponentColumn(this::deleteButton).setHeader("Delete Message forever").setWidth("30%");
+        addComponentColumn(this::viewMessageButton).setHeader("View Message").setWidth("10%");
+        addComponentColumn(this::restoreButton).setHeader("Restore Message and try to reprocess").setWidth("10%");
+        addComponentColumn(this::deleteButton).setHeader("Delete Message forever").setWidth("10%");
+    }
+
+    private Button viewMessageButton(Message message) {
+        final Button viewMsg = new Button("View");
+        viewMsg.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        viewMsg.addClickListener(buttonClickEvent -> {
+            queueController.showMessage(message);
+            parentView.updateData(queue);
+        });
+        return viewMsg;
     }
 
     private Button restoreButton(Message message) {

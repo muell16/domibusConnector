@@ -55,8 +55,12 @@ public interface LargeFilePersistenceService {
      *      but closed INPUT stream
      *
      */
-    LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
+    LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType);
 
+    @Deprecated
+    default LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+        return createDomibusConnectorBigDataReference(new DomibusConnectorMessageId(connectorMessageId), documentName, documentContentType);
+    }
     
     /**
      * will delete the provided bigDataReference

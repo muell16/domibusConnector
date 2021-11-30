@@ -17,6 +17,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
@@ -35,9 +36,12 @@ import java.io.UnsupportedEncodingException;
 @Route(value = Import.ROUTE, layout = PmodeLayout.class)
 @Order(1)
 @TabMetadata(title = "Import PMode-Set", tabGroup = PmodeLayout.TAB_GROUP_NAME)
-public class Import extends VerticalLayout implements AfterNavigationObserver{
+public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver{
 
 	public static final String ROUTE = "import";
+	
+	public static final String TITLE = "Import new active PMode-Set";
+	public static final String HELP_ID = "ui/pmodes/pmodeset_import.html";
 
 	WebPModeService pmodeService;
 	
@@ -58,6 +62,8 @@ public class Import extends VerticalLayout implements AfterNavigationObserver{
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+		super(HELP_ID, TITLE);
+		
 		this.pmodeService = pmodeService;
 		
 		

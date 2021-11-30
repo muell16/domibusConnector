@@ -7,22 +7,26 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.ui.utils.RoleRequired;
+import eu.domibus.connector.ui.view.StaticContentView;
+import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.domibus.connector.ui.view.areas.testing.ConnectorTestsLayout;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @UIScope
 @Component
 @Route(value = PmodeOverview.ROUTE, layout = PmodeLayout.class)
 @RoleRequired(role = "ADMIN")
-public class PmodeOverview extends VerticalLayout implements BeforeEnterObserver {
+@Order(3)
+@TabMetadata(title = "Information on PMode-Sets", tabGroup = PmodeLayout.TAB_GROUP_NAME)
+public class PmodeOverview extends StaticContentView {
 
-    // Pmodelayout already has prefix "pmode"
-    public static final String ROUTE = "";
+	public static final String ROUTE = "information";
 
-    // Always redirect to Import
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-        event.forwardTo(Import.class);
-    }
+	public PmodeOverview() {
+		super("documentation/ui/pmodes/pmodes_overview.html");
+	}
+
 
 }

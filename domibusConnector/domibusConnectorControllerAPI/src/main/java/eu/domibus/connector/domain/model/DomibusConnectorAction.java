@@ -1,6 +1,8 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.core.style.ToStringCreator;
 
 

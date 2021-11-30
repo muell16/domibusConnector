@@ -1,5 +1,7 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -8,6 +10,7 @@ import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
+import eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig.ImportOldBackendConfigDialog;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,8 +26,22 @@ public class BackendLinkConfiguration extends LinkConfiguration {
 
     public static final String ROUTE = "backendlink";
 
-    public BackendLinkConfiguration(DCLinkFacade dcLinkFacade, ApplicationContext applicationContext) {
+    private final ImportOldBackendConfigDialog importOldBackendConfig;
+
+    private Button importOldConfigButton = new Button("Import Link Config From 4.2 Connector Properties");
+
+    public BackendLinkConfiguration(DCLinkFacade dcLinkFacade,
+                                    ImportOldBackendConfigDialog importOldGatewayConfigDialog,
+                                    ApplicationContext applicationContext) {
         super(dcLinkFacade, applicationContext, LinkType.BACKEND);
+        this.importOldBackendConfig = importOldGatewayConfigDialog;
+        importOldConfigButton.addClickListener(this::importOldConfig);
+        super.buttonBar.add(importOldConfigButton);
+
+    }
+
+    private void importOldConfig(ClickEvent<Button> buttonClickEvent) {
+        importOldBackendConfig.open();
     }
 
 }

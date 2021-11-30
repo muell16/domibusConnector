@@ -11,6 +11,7 @@
     <include file="upgrade-4_3-to-4_4-update_dc_pmode_set.xml" relativeToChangelogFile="true" />
     <include file="upgrade-4_3-to-4_4-update_action.xml" relativeToChangelogFile="true" />
     <include file="upgrade-4_3-to-4_4-update_party.xml" relativeToChangelogFile="true" />
+    <include file="upgrade-4_3-to-4_4-repair_issue_msg_cont_table.xml" relativeToChangelogFile="true" />
 
     <changeSet id="4.4_002_pre_setup_tag" author="BR" onValidationFail="MARK_RAN" failOnError="false">
         <insert tableName="DC_DB_VERSION">

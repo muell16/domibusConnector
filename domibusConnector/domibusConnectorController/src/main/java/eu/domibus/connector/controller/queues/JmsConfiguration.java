@@ -21,6 +21,9 @@ import javax.jms.Queue;
 import javax.validation.Validator;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @EnableJms
 @Configuration
@@ -96,33 +99,54 @@ public class JmsConfiguration {
     }
 
 
+    /**
+     * Configure embedded artemis Broker
+     * @param prop
+     * @return
+     */
     @Bean
     ArtemisConfigurationCustomizer artemisCustomizer(QueuesConfigurationProperties prop) {
         return configuration -> {
-            AddressSettings addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
-            configuration.getAddressesSettings()
-                    .put(prop.getToLinkQueue(), addressSettings);
 
-            addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getToConnectorControllerDeadLetterQueue()));
+            //Configure Queue Settings, DLQ, Expiry, ...
+            AddressSettings addressSettings1 = basicAddressConfig();
+            addressSettings1.setDeadLetterAddress(new SimpleString(prop.getToLinkDeadLetterQueue()));
             configuration.getAddressesSettings()
-                    .put(prop.getToConnectorControllerQueue(), addressSettings);
+                    .put(prop.getToLinkQueue(), addressSettings1);
 
-            addressSettings = basicAddressConfig();
-            addressSettings.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
+            AddressSettings addressSettings2 = basicAddressConfig();
+            addressSettings2.setDeadLetterAddress(new SimpleString(prop.getToConnectorControllerDeadLetterQueue()));
             configuration.getAddressesSettings()
-                    .put(prop.getCleanupQueue(), addressSettings);
+                    .put(prop.getToConnectorControllerQueue(), addressSettings2);
+
+            AddressSettings addressSettings3 = basicAddressConfig();
+            addressSettings3.setDeadLetterAddress(new SimpleString(prop.getCleanupDeadLetterQueue()));
+            configuration.getAddressesSettings()
+                    .put(prop.getCleanupQueue(), addressSettings3);
+
+            //set config for DLQ.# addresses
+            AddressSettings dlqAdressSettings = new AddressSettings();
+            dlqAdressSettings.setAutoDeleteAddresses(false);
+            dlqAdressSettings.setAutoDeleteCreatedQueues(false);
+            dlqAdressSettings.setAutoCreateAddresses(true);
+            configuration.getAddressesSettings()
+                    .put(QueuesConfigurationProperties.DLQ_PREFIX + "#", dlqAdressSettings);
+
+
         };
     }
 
     private AddressSettings basicAddressConfig() {
         AddressSettings addressSettings = new AddressSettings();
         addressSettings.setAutoCreateQueues(true);
+        addressSettings.setDefaultAddressRoutingType(RoutingType.ANYCAST);
         addressSettings.setAutoCreateDeadLetterResources(true);
         addressSettings.setAutoCreateAddresses(true);
         addressSettings.setAutoCreateExpiryResources(true);
+        addressSettings.setAutoDeleteQueues(false);
+        addressSettings.setAutoDeleteAddresses(false);
         addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
+        addressSettings.setExpiryAddress(new SimpleString("expiry"));
         addressSettings.setMaxDeliveryAttempts(3);
         return addressSettings;
     }

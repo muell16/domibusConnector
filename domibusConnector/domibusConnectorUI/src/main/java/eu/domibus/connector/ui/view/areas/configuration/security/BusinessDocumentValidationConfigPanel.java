@@ -2,9 +2,9 @@ package eu.domibus.connector.ui.view.areas.configuration.security;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -15,15 +15,13 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.common.spring.BusinessDomainScope;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
-import eu.domibus.connector.dss.service.CommonCertificateVerifierFactory;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
-import eu.domibus.connector.ui.ui.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
@@ -33,7 +31,6 @@ import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
-import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -42,7 +39,6 @@ import org.springframework.util.StreamUtils;
 import javax.validation.Validator;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.stream.Collectors;
 
 @Component
@@ -81,25 +77,9 @@ public class BusinessDocumentValidationConfigPanel extends VerticalLayout implem
 
     private void initUi() {
 
-        VerticalLayout configDiv = new VerticalLayout();
-
-        Button saveChanges = new Button("Save Changes");
-        saveChanges.addClickListener(this::saveChangesButtonClicked);
-        configDiv.add(saveChanges);
-
-        Button reset = new Button("Reset Changes");
-        reset.addClickListener(this::resetButtonClicked);
-        configDiv.add(reset);
-
-        configDiv.add(errorField);
-
         Class<DCBusinessDocumentValidationConfigurationProperties> configurationClazz = DCBusinessDocumentValidationConfigurationProperties.class;
 
-        binder = springBeanValidationBinderFactory.create(configurationClazz);
-        binder.setStatusLabel(errorField);
-
-        form.bindInstanceFields(binder);
-        configDiv.add(form);
+        VerticalLayout configDiv = createConfigArea(configurationClazz);
 
         add(configDiv);
 
@@ -170,6 +150,31 @@ public class BusinessDocumentValidationConfigPanel extends VerticalLayout implem
 
         add(tryDocumentDiv);
 
+    }
+
+    private VerticalLayout createConfigArea(Class<DCBusinessDocumentValidationConfigurationProperties> configurationClazz) {
+        VerticalLayout configDiv = new VerticalLayout();
+
+        HorizontalLayout updateBar = new HorizontalLayout();
+
+        Button saveChanges = new Button("Save Changes");
+        saveChanges.addClickListener(this::saveChangesButtonClicked);
+        updateBar.add(saveChanges);
+
+        Button reset = new Button("Reset Changes");
+        reset.addClickListener(this::resetButtonClicked);
+        updateBar.add(reset);
+
+        updateBar.add(errorField);
+
+        binder = springBeanValidationBinderFactory.create(configurationClazz);
+        binder.setStatusLabel(errorField);
+
+        configDiv.add(updateBar);
+
+        form.bindInstanceFields(binder);
+        configDiv.add(form);
+        return configDiv;
     }
 
 

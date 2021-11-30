@@ -115,6 +115,10 @@ public class WizardComponent extends VerticalLayout {
 
     }
 
+    public void sendWizardStepChangeEvent(WizardStep.WizardStepStateChangeEvent e) {
+        updateButtons(e.getStep());
+    }
+
     private void finishButtonClicked(ClickEvent<Button> buttonClickEvent) {
         //TODO: create finish code...
         if (getStepIndex(this.activeStep) != this.steps.size() - 1) {
@@ -162,6 +166,10 @@ public class WizardComponent extends VerticalLayout {
         this.activeStep = wizardStep;
         this.stepTitle.setText(wizardStep.getStepTitle());
 
+        updateButtons(wizardStep);
+    }
+
+    private void updateButtons(WizardStep wizardStep) {
         int i = getStepIndex(wizardStep);
         nextButton.setEnabled(
                 i + 1 < steps.size() && activeStep.isNextSupported()

@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.lib.logging.aspects.MDCSetterAspect;
 import eu.domibus.connector.lib.logging.aspects.MDCSetterAspectConfiguration;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 @SpringBootApplication(scanBasePackages = {
-        "eu.domibus.connector.controller",
-//        "eu.domibus.connector.lib",
-        "eu.domibus.connector.dss",
+        "eu.domibus.connector.controller",  //load controller
+        "eu.domibus.connector.dss",         //load dss
         "eu.domibus.connector.common",      //load common
         "eu.domibus.connector.persistence", //load persistence
         "eu.domibus.connector.evidences",   //load evidences toolkit
-        "eu.domibus.connector.security"     //load security toolkit,
+        "eu.domibus.connector.security"     //load security toolkit
 },
     excludeName = {"org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration"}
 )
@@ -79,17 +79,10 @@ public class ITCaseTestContext {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-//    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
-//
-//    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
+    @Bean
+    LargeFileProviderMemoryImpl largeFileProviderMemoryImpl() {
+        return new LargeFileProviderMemoryImpl();
+    }
 
     @Bean
     public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
@@ -130,6 +123,9 @@ public class ITCaseTestContext {
 
         @Override
         public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
+            if (message.getConnectorMessageId() == null) {
+                throw new IllegalArgumentException("connectorMessageId is null!");
+            }
             try {
                 MessageTargetSource target = message.getMessageDetails().getDirection().getTarget();
                 if (target == MessageTargetSource.GATEWAY) {

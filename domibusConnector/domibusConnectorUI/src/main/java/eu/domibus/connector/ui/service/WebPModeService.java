@@ -1,29 +1,18 @@
 package eu.domibus.connector.ui.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import eu.domibus.configuration.Configuration;
+import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
+import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
-import eu.domibus.connector.persistence.service.*;
-
+import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
-
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +22,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import eu.domibus.configuration.Configuration;
-import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
-import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -160,14 +161,12 @@ public class WebPModeService {
     public DomibusConnectorParty getHomeParty() {
     	HomePartyConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), HomePartyConfigurationProperties.class);
     	
-    	List<DomibusConnectorParty> parties = getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).get().getParties();
-    	
-    	Optional<DomibusConnectorParty> homeParty = parties.stream()
-    				.filter(p -> (p.getPartyId().equals(homePartyConfigurationProperties.getName()) && p.getRoleType().equals(PartyRoleType.INITIATOR)))
-        			.findFirst();
-        
-    	return homeParty.isPresent()?homeParty.get():null;
-    	
+    	return getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())
+                .map(DomibusConnectorPModeSet::getParties)
+                .flatMap(partiesList -> partiesList.stream()
+                        .filter(p -> (p.getPartyId().equals(homePartyConfigurationProperties.getName()) && p.getRoleType().equals(PartyRoleType.INITIATOR)))
+                        .findAny()
+                ).orElse(null);
     }
 
 

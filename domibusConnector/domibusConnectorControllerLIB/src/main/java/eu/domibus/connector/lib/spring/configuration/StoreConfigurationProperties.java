@@ -1,5 +1,6 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckResourceIsReadable;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoadable;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
 
 @Validated
 @CheckStoreIsLoadable
+@MapNested
 public class StoreConfigurationProperties {
 
     private static final Logger LOGGER = LogManager.getLogger(StoreConfigurationProperties.class);

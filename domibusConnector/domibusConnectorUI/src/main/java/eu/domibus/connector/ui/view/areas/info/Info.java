@@ -4,6 +4,7 @@ import com.vaadin.flow.router.Route;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -21,13 +22,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.ui.component.LumoLabel;
-import eu.domibus.connector.ui.view.MainLayout;
+import eu.domibus.connector.ui.layout.DCMainLayout;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = Info.ROUTE, layout = MainLayout.class)
+@Route(value = Info.ROUTE, layout = DCMainLayout.class)
 public class Info extends VerticalLayout implements InitializingBean {
 
 	public static final String ROUTE = "info";

@@ -9,10 +9,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.ui.configuration.SecurityUtils;
+import eu.domibus.connector.ui.layout.DCMainLayout;
 import eu.domibus.connector.ui.login.LoginView;
 
 @UIScope
-@Route(value = AccessDeniedView.ROUTE, layout = MainLayout.class)
+@Route(value = AccessDeniedView.ROUTE, layout = DCMainLayout.class)
 @PageTitle("domibusConnector - Administrator")
 public class AccessDeniedView extends VerticalLayout implements BeforeEnterObserver {
 

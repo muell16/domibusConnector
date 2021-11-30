@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.0-alpha3</version>
+    <version>4.4.0-RC1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -80,12 +80,18 @@
         <releases-repo.url></releases-repo.url>
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
+        <asciidoclet.version>1.5.6</asciidoclet.version>
+        <asciidoctorj.version>2.5.2</asciidoctorj.version>
+        <asciidoctorj.pdf.version>1.6.0</asciidoctorj.pdf.version>
+        <asciidoctorj.diagram.version>2.2.1</asciidoctorj.diagram.version>
+        <asciidoctorj.diagram.plantuml.version>1.2021.8</asciidoctorj.diagram.plantuml.version>
+        <asciidoctorj.maven.plugin.version>2.2.1</asciidoctorj.maven.plugin.version>
         <org.apache.cxf.version>3.3.11</org.apache.cxf.version>
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
         <spring.boot.version>2.5.4</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
-        <vaadin.version>14.5.3</vaadin.version>
+        <vaadin.version>14.7.5</vaadin.version>
         <dss.tools.version>5.8</dss.tools.version>
         <org.bouncycastl.version>1.67</org.bouncycastl.version>
     </properties>
@@ -97,6 +103,18 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-spring-boot-starter</artifactId>
+                <version>${vaadin.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.ecodex.utils</groupId>
@@ -211,14 +229,6 @@
                 <groupId>jakarta.xml.soap</groupId>
                 <artifactId>jakarta.xml.soap-api</artifactId>
                 <version>1.4.1</version>
-            </dependency>
-            <!-- MANAGED Spring dependencies -->
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>${vaadin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -672,23 +682,7 @@
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pdf-plugin</artifactId>
-                    <version>1.3</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.doxia</groupId>
-                            <artifactId>doxia-module-markdown</artifactId>
-                            <version>1.3</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.asciidoctor</groupId>
-                            <artifactId>asciidoctor-maven-plugin</artifactId>
-                            <version>1.5.6</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -756,6 +750,19 @@
                                 <version>1.2.2</version>
                             </additionalDependency>
                         </additionalDependencies>
+                        <!-- <doclet>org.asciidoctor.Asciidoclet</doclet>
+                        <docletArtifact>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoclet</artifactId>
+                            <version>${asciidoclet.version}</version>
+                        </docletArtifact>
+                        <overview>src/main/java/overview.adoc</overview>
+                        <additionalparam>
+                            - -base-dir ${project.basedir}
+                            - -attribute "name=${project.name}"
+                            - -attribute "version=${project.version}"
+                            - -attribute "title-link=https://example.com[${project.name} ${project.version}]"
+                        </additionalparam> -->
                     </configuration>
                 </plugin>
                 <plugin>
@@ -767,6 +774,14 @@
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
                     <version>1.7.0-MS3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.9.1</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -890,155 +905,19 @@
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>
-                                <!--                                <exclude>commons-logging:commons-logging</exclude>-->
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
                                 <exclude>log4j:log4j</exclude>
                                 <exclude>org.apache.tomcat:jasper-el</exclude>
                                 <exclude>org.apache.tomcat:el-api</exclude>
+                                <exclude>com.vaadin:vaadin</exclude>
                             </excludes>
+                            <includes>
+                                <include>com.vaadin:vaadin:${vaadin.version}</include>
+                            </includes>
                         </bannedDependencies>
                     </rules>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>convert-to-html</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/site/asciidoc</sourceDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/site/resources/</directory>
-                                </resource>
-                            </resources>
-                            <preserveDirectories>true</preserveDirectories>
-                            <requires>
-                                <require>asciidoctor-diagram</require>
-                            </requires>
-                            <!-- TODO: make artifact here and reference it as dependency !!! -->
-                            <!--                            <outputDirectory>${project.build.directory}/domibusConnectorUI/target/classes/static</outputDirectory>-->
-                            <outputDirectory>${project.basedir}/domibusConnectorUI/target/classes/static/documentation</outputDirectory>
-                            <attributes>
-                                <source-highlighter>coderay</source-highlighter>
-                                <!--                                <data-uri/>-->
-                                <mvnbasedir>${project.basedir}</mvnbasedir>
-                                <imgdir>./images</imgdir>
-                                <toc>left</toc>
-                                <icons>font</icons>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj-diagram</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                </dependencies>
-                <inherited>false</inherited>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.8.2</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj-diagram</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <asciidoc>
-                        <requires>
-                            <require>asciidoctor-diagram</require>
-                        </requires>
-                        <attributes>
-                            <project-version>${project.version}</project-version>
-                            <imgdir>images</imgdir>
-                        </attributes>
-                    </asciidoc>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.jeluard</groupId>
-                <artifactId>plantuml-maven-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.sourceforge.plantuml</groupId>
-                        <artifactId>plantuml</artifactId>
-                        <version>1.2021.0</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <outputDirectory>target/site/images/plantuml</outputDirectory>
-                    <sourceFiles>
-                        <directory>${basedir}/src/plantuml/</directory>
-                        <includes>
-                            <include>**</include>
-                        </includes>
-                    </sourceFiles>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.fusesource.mvnplugins</groupId>
-                <artifactId>maven-graph-plugin</artifactId>
-                <version>1.45</version>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>reactor</goal>
-                        </goals>
-                        <configuration>
-                            <hideExternal>true</hideExternal>
-                            <hideScopes>test</hideScopes>
-                            <target>target/site/images/project-modules-diagram.png</target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <copy overwrite="true" todir="target/site/resources/doc-resources">
-                                    <fileset dir="domibusConnectorDocumentation/src/main/resources/"></fileset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
@@ -1048,131 +927,8 @@
                     <nrOfIndentSpace>4</nrOfIndentSpace>
                 </configuration>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>au.com.acegi</groupId>-->
-            <!--                <artifactId>xml-format-maven-plugin</artifactId>-->
-            <!--                <version>3.1.1</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>xml-format</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>xml-format</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            &lt;!&ndash; configure your formatting preferences here (see link below) &ndash;&gt;-->
-            <!--                            <indentSize>4</indentSize>-->
-            <!--                            <excludes>-->
-            <!--                                <exclude>src/main/resources/architecture</exclude>-->
-            <!--                            </excludes>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <!-- select reports -->
-                            <report>index</report>
-                            <report>modules</report>
-                            <report>scm</report>
-                            <report>cim</report>
-                            <report>summary</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <skipSurefireReport>true</skipSurefireReport>
-                    <reportsDirectories>
-                        <directory>${project.build.directory}/ittest-reports</directory>
-                        <directory>${project.build.directory}/dbunit-reports</directory>
-                        <directory>${project.build.directory}/unittest-reports</directory>
-                    </reportsDirectories>
-                    <outputName>test-result-report</outputName>
-                </configuration>
-            </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>findbugs-maven-plugin</artifactId>-->
-            <!--<version>3.0.5</version>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <!-- by default, id = "default" -->
-                        <reports>
-                            <!-- select non-aggregate reports -->
-                            <report>javadoc</report>
-                            <report>test-javadoc</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <!-- aggregate reportSet, to define in poms having modules -->
-                        <id>aggregate</id>
-                        <!-- don't run aggregate in child modules -->
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                        <inherited>false</inherited>
-                    </reportSet>
-                </reportSets>
-                <configuration>
-                    <!-- fix error javax.interceptor.InterceptorBinding not found -->
-                    <additionalDependencies>
-                        <additionalDependency>
-                            <groupId>javax.interceptor</groupId>
-                            <artifactId>javax.interceptor-api</artifactId>
-                            <version>1.2.2</version>
-                        </additionalDependency>
-                    </additionalDependencies>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
-                <artifactId>spring-properties-reporting-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <id>default</id>
-                        <reports>
-                            <report>spring-properties-report</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-                <configuration>
-                    <linkJavadoc>true</linkJavadoc>
-                    <includedDependencies>
-                        <includedDependency>
-                            <groupId>^org.springframework</groupId>
-                        </includedDependency>
-                        <includedDependency>
-                            <groupId>^eu.domibus</groupId>
-                        </includedDependency>
-                    </includedDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
     <profiles>
         <profile>
             <id>javadoc</id>
@@ -1202,20 +958,6 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pdf-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>make-pdf</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>pdf</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <inherited>false</inherited>
-                    </plugin>
                     <plugin>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>jqassistant-maven-plugin</artifactId>
@@ -1362,28 +1104,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>report</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.ferstl</groupId>
-                        <artifactId>depgraph-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>pre-site</phase>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <graphFormat>puml</graphFormat>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

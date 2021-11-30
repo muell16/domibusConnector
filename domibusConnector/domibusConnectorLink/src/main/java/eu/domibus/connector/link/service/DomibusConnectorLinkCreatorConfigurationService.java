@@ -28,7 +28,6 @@ import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_P
  * to create the configured links
  */
 @Configuration
-@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class DomibusConnectorLinkCreatorConfigurationService {
 
     private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkCreatorConfigurationService.class);
@@ -44,16 +43,22 @@ public class DomibusConnectorLinkCreatorConfigurationService {
 
     @PostConstruct
     public void init() {
-        if (config.isAutostart() && config.isLoadDbConfig() && dcLinkPersistenceService != null) {
-            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart is enabled - loading config from DB");
-            dcLinkPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
-        } else if (config.isAutostart() && !config.isLoadDbConfig()) {
-            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart is enabled - loading config from Properties Environment");
-            loadConfigFromSpringEnvironment();
+        if (config.isAutostart()) {
+            if (config.isLoadDbConfig()) {
+                if (dcLinkPersistenceService == null) {
+                    LOGGER.warn(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart Error: DCLinkPersistenceService is not available! Skipping loading link config from DB");
+                } else {
+                    LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart is enabled - loading config from DB");
+                    dcLinkPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
+                }
+            }
+            if (config.isLoadEnvConfig()) {
+                LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart is enabled - loading config from Properties Environment");
+                loadConfigFromSpringEnvironment();
+            }
         } else {
             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Link Autostart is disabled - no links are going to be started during connector start");
         }
-
     }
 
     private void loadConfigFromSpringEnvironment() {

@@ -1,0 +1,19 @@
+
+ifndef::basepath[]
+:basepath: ../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+include::{basepath}/doc/ui/business_document_verification.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/ecodex_container_configuration.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/jms_monitoring.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/message_transport_overview.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/pmodes/pmodes_overview.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/pmodes/pmodeset_import.adoc[leveloffset=+2]
+include::{basepath}/doc/ui/pmodes/pmodeset_data.adoc[leveloffset=+2]
+include::{basepath}/doc/ui/c2ctests/connector_tests_overview.adoc[leveloffset=+1]
+include::{basepath}/doc/ui/c2ctests/connector_test_messages_list.adoc[leveloffset=+2]
+include::{basepath}/doc/ui/c2ctests/send_connector_test_message.adoc[leveloffset=+2]

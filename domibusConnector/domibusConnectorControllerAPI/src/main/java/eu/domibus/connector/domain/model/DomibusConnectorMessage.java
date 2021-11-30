@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
  * @author riederb
  * @version 1.0
  */
+@Validated
 public class DomibusConnectorMessage implements Serializable {
 
 	@NotNull
@@ -198,7 +200,11 @@ public class DomibusConnectorMessage implements Serializable {
 	 * @param confirmation    confirmation
 	 */
 	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
-	   	return this.transportedMessageConfirmations.add(confirmation);
+		if (!this.transportedMessageConfirmations.contains(confirmation)) {
+			return this.transportedMessageConfirmations.add(confirmation);
+		} else {
+			return false; //duplicate
+		}
 	}
 
 	public DCMessageProcessSettings getDcMessageProcessSettings() {

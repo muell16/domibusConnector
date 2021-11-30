@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
 import eu.domibus.connector.persistence.model.*;

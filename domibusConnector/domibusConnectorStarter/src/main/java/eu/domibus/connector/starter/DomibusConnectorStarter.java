@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-@PropertySource({"classpath:/build-info.properties", "classpath:/default.properties"})
+@PropertySource({"classpath:/config/build-info.properties", "classpath:/config/connector.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);

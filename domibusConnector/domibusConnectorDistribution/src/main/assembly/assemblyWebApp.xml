@@ -3,7 +3,6 @@
     <id>WebConnectorWithDocumentation</id>
     <formats>
         <format>zip</format>
-        <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
@@ -14,20 +13,13 @@
                 <include>*/**</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <includes>
-                <include>**/*</include>
-            </includes>
-            <directory>${project.basedir}/../target/staging</directory>
-            <outputDirectory>documentation-site/</outputDirectory>
-        </fileSet>
-        <fileSet>
+      <!--   <fileSet>
             <includes>
                 <include>**/*</include>
             </includes>
             <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config</directory>
-            <outputDirectory>example-config</outputDirectory>
-        </fileSet>
+            <outputDirectory>documentation/example-config</outputDirectory>
+        </fileSet> -->
         <fileSet>
             <directory>${project.basedir}/src/main/resources/config</directory>
             <includes>
@@ -77,10 +69,10 @@
     <dependencySets>
         <dependencySet>
             <includes>
-                <include>${project.groupId}:domibusConnectorDocumentation:zip:enterprise-architect-export:${project.version}</include>
+                <include>${project.groupId}:domibusConnectorDocumentation:zip:documentation:${project.version}</include>
             </includes>
             <unpack>true</unpack>
-            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
+            <outputDirectory>documentation</outputDirectory>
         </dependencySet>
     </dependencySets>
 </assembly>

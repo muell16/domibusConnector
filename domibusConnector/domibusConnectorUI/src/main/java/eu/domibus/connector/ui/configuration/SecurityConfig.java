@@ -2,14 +2,12 @@ package eu.domibus.connector.ui.configuration;
 
 import eu.domibus.connector.spring.WebUserAuthenticationProvider;
 import eu.domibus.connector.ui.login.LoginView;
-import liquibase.pro.packaged.A;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +139,9 @@ public class SecurityConfig {
                     "/h2-console/**",
                     //allow access to webservices
                     "/services/**",
-                    "/static/**" //allow access to static content
+                    "/static/**", //allow access to static content
+
+                    "/documentation/**" //allow access to documentation
 
                     );
         }

@@ -27,6 +27,16 @@ public abstract class ManageableQueue implements HasManageableDlq {
     }
 
     @Override
+    public String getName() {
+        return queueHelper.getName();
+    }
+
+    @Override
+    public String getMessageAsText(Message msg) {
+        return queueHelper.getMessageAsText(msg);
+    }
+
+    @Override
     public Queue getDlq() {
         return queueHelper.getDlq();
     }
@@ -50,4 +60,10 @@ public abstract class ManageableQueue implements HasManageableDlq {
     public void deleteMsg(Message msg) {
         queueHelper.deleteMsg(msg);
     }
+
+    @Override
+    public String getDlqName() {
+        return queueHelper.getDlqName();
+    }
+
 }

@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="connector_labenv02" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="domibusConnectorBuilderDeployable" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="eu.domibus.connector.starter.DomibusConnectorStarter" />
+    <option name="DEBUG_MODE" value="true" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../../ecodex-lab-box/labenv02/domibus-connector" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="CLASSPATH_FILE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

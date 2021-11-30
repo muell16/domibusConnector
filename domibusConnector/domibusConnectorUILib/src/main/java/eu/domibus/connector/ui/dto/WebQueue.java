@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.jms.Message;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -14,10 +15,10 @@ public class WebQueue {
     private String name;
     @Getter
     @Setter
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
     @Getter
     @Setter
-    private List<Message> dlqMessages;
+    private List<Message> dlqMessages = new ArrayList<>();
     @Getter
     @Setter
     private int msgsOnQueue;

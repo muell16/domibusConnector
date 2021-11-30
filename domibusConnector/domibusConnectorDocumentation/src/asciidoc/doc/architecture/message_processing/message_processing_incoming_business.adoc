@@ -1,0 +1,146 @@
+
+:path: ../../../
+
+ifndef::basepath[]
+:basepath: ../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Processing of an incoming business message
+
+This chapter shows the example of an incoming business message. That means, that a business message is delivered
+by the gateway.
+
+== Message from gateway to the domibusConnectorController message queue
+
+The following diagram shows how a message that is sent to the domibusConnector is transported to the domibusConnectorController message queue.
+
+[plantuml,message_proc_in_business_1,format=svg]
+----
+@startuml
+
+
+top to bottom direction
+skinparam monochrome false
+skinparam linetype ortho
+
+
+
+package domibusConnectorAPI{
+	interface DomibusConnectorGatewayDeliveryWebService
+	interface DomibusConnectorGatewayWebService
+}
+
+package domibusConnectorLink{
+	component DCGatewayWebServiceClient
+	component WsGatewayPluginDeliveryServiceEndpoint
+	interface SubmitToConnector
+	
+}
+
+queue toConnectorControllerQueue
+
+DomibusConnectorGatewayWebService --> DCGatewayWebServiceClient : link.gwwspullplugin profile
+DCGatewayWebServiceClient --> SubmitToConnector
+
+DomibusConnectorGatewayDeliveryWebService --> WsGatewayPluginDeliveryServiceEndpoint : link.wsgatewayplugin profile
+WsGatewayPluginDeliveryServiceEndpoint --> SubmitToConnector
+SubmitToConnector --> toConnectorControllerQueue
+
+@enduml
+----
+
+== Message processing in domibusConnectorController
+
+The following diagram shows how a message that is put on the toConnectorController queue is processed
+
+[plantuml,message_proc_in_business_2,format=svg]
+----
+@startuml
+
+
+top to bottom direction
+skinparam monochrome false
+skinparam linetype ortho
+
+
+
+
+queue toConnectorControllerQueue
+queue DLQ.toConnectorControllerQueue
+
+queue submitToLinkQueue
+
+package domibusConnectorController {
+	package JTATransaction_Connector {
+	    component ToConnectorControllerListener
+	    component ToBackendBusinessMessageProcessor
+	    component LookupBackendNameStep
+	    component MessageConfirmationStep
+	    component SubmitConfirmationAsEvidenceMessageStep
+	    component ResolveECodexContainerStep
+	    component SubmitMessageToLinkModuleQueueStep
+	}
+	
+}
+
+
+toConnectorControllerQueue --> ToConnectorControllerListener
+ToConnectorControllerListener --> ToBackendBusinessMessageProcessor : For a business message from gateway to backend
+ToBackendBusinessMessageProcessor -d-> LookupBackendNameStep : identify target backend
+ToBackendBusinessMessageProcessor -d-> MessageConfirmationStep : create RELAY_REMMD evidence
+ToBackendBusinessMessageProcessor -d-> SubmitConfirmationAsEvidenceMessageStep : sent evidence back
+ToBackendBusinessMessageProcessor -d-> ResolveECodexContainerStep : resolve ASIC-S
+ToBackendBusinessMessageProcessor -d-> SubmitMessageToLinkModuleQueueStep : send to backend
+SubmitMessageToLinkModuleQueueStep -d-> submitToLinkQueue : on success
+JTATransaction_Connector -d-> DLQ.toConnectorControllerQueue : on failure
+
+@enduml
+----
+
+== Message send from the domibusConnector to the backend
+
+The following diagram shows how a message that is put on the submitToLink queue is processed
+
+[plantuml,message_proc_in_business_3,format=svg]
+----
+@startuml
+
+
+top to bottom direction
+skinparam monochrome false
+skinparam linetype ortho
+
+
+
+package domibusConnectorAPI{
+	interface DomibusConnectorBackendDeliveryWebService
+}
+
+package domibusConnectorLink{
+	
+	package JTATransaction_ToLink {
+	  component ToLinkPartnerListener
+	  component SubmitToLinkService
+		component WsBackendSubmitTo
+	}
+}
+
+
+queue submitToLinkQueue
+queue DLQ.submitToLinkQueue
+
+
+JTATransaction_ToLink -d-> DLQ.submitToLinkQueue : on failure
+submitToLinkQueue -d-> ToLinkPartnerListener
+ToLinkPartnerListener -d-> SubmitToLinkService
+SubmitToLinkService --> WsBackendSubmitTo : to backend
+WsBackendSubmitTo --> DomibusConnectorBackendDeliveryWebService : LinkMode.PUSH
+WsBackendSubmitTo -d-> exit : makeMessageReadyForPull
+
+@enduml
+----
+

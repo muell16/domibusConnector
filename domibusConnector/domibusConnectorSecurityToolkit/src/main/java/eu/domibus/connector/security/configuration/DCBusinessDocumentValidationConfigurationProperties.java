@@ -1,11 +1,13 @@
 package eu.domibus.connector.security.configuration;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
+import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
 import eu.domibus.connector.security.aes.OriginalSenderBasedAESAuthenticationServiceFactory;
 import eu.domibus.connector.security.configuration.validation.CheckAllowedAdvancedElectronicSystemType;
+import org.apache.commons.collections4.set.ListOrderedSet;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
 @BusinessDomainScoped
 @Component
 @CheckAllowedAdvancedElectronicSystemType
+@MapNested
 public class DCBusinessDocumentValidationConfigurationProperties {
 
     public static final String PREFIX = "connector.business-document-sent";
@@ -65,7 +68,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      *  only a allowed system type can be 5
      */
     @NotNull
-    private Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = Stream.of(AdvancedElectronicSystemType.values()).collect(Collectors.toSet());
+    private ListOrderedSet<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = ListOrderedSet.listOrderedSet(Arrays.asList(AdvancedElectronicSystemType.values()));
 
     /**
      *  If true the client can override the for the specific message used system type
@@ -79,10 +82,12 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      */
     @Valid
     @NestedConfigurationProperty
+    @MapNested
     private SignatureValidationConfigurationProperties signatureValidation;
 
     @Valid
     @NestedConfigurationProperty
+    @MapNested
     private DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties authenticationValidation;
 
     public Set<AdvancedElectronicSystemType> getAllowedAdvancedSystemTypes() {
@@ -90,7 +95,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
     }
 
     public void setAllowedAdvancedSystemTypes(Set<AdvancedElectronicSystemType> allowedAdvancedSystemTypes) {
-        this.allowedAdvancedSystemTypes = allowedAdvancedSystemTypes;
+        this.allowedAdvancedSystemTypes = ListOrderedSet.listOrderedSet(allowedAdvancedSystemTypes);
     }
 
     public boolean isAllowSystemTypeOverrideByClient() {

@@ -7,14 +7,17 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.actuate.endpoint.web.Link;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,7 +51,7 @@ public class DCLinkFacade {
 
     public List<DomibusConnectorLinkPartner> getAllLinksOfType(LinkType linkType) {
         return getAllLinks().stream()
-                .filter(l -> l.getLinkType() == linkType)
+                .filter(l -> Objects.equals(l.getLinkType(), linkType) || linkType == null)
                 .collect(Collectors.toList());
     }
 
@@ -60,14 +63,18 @@ public class DCLinkFacade {
                 .filter(Objects::nonNull)
                 .flatMap(b -> mapCnfg(b, LinkType.BACKEND)).collect(Collectors.toList()));
         allLinks.addAll(mapCnfg(lnkConfig.getGateway(), LinkType.GATEWAY).collect(Collectors.toList()));
-
         return allLinks;
     }
 
     private Stream<DomibusConnectorLinkPartner> mapCnfg(DCLinkPluginConfigurationProperties.DCLnkPropertyConfig b, LinkType linkType) {
+        if (b == null) {
+            return Stream.empty();
+        }
         DomibusConnectorLinkConfiguration linkConfig = new DomibusConnectorLinkConfiguration();
-        BeanUtils.copyProperties(b.getLinkConfig(), linkConfig);
-        linkConfig.setProperties(mapKebabCaseToCamelCase(b.getLinkConfig().getProperties()));
+        if (b.getLinkConfig() != null) {
+            BeanUtils.copyProperties(b.getLinkConfig(), linkConfig);
+            linkConfig.setProperties(mapKebabCaseToCamelCase(b.getLinkConfig().getProperties()));
+        }
         linkConfig.setConfigurationSource(ConfigurationSource.ENV);
         return b.getLinkPartners().stream().map(p -> {
             DomibusConnectorLinkPartner p1 = new DomibusConnectorLinkPartner();
@@ -127,8 +134,12 @@ public class DCLinkFacade {
     }
 
     private List<DomibusConnectorLinkConfiguration> getAllConfigurations() {
-        return getAllLinks().stream()
-                .map(DomibusConnectorLinkPartner::getLinkConfiguration)
+        List<DomibusConnectorLinkConfiguration> allLinkConfigurations =
+                dcLinkPersistenceService.getAllLinkConfigurations();
+
+        return Stream.of(getAllLinks().stream()
+                .map(DomibusConnectorLinkPartner::getLinkConfiguration), allLinkConfigurations.stream())
+                .flatMap(Function.identity())
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -137,5 +148,57 @@ public class DCLinkFacade {
         if (linkConfig.getConfigurationSource() == ConfigurationSource.DB) {
             dcLinkPersistenceService.updateLinkConfig(linkConfig);
         }
+    }
+
+    public List<DomibusConnectorLinkConfiguration> getAllLinkConfigurations(LinkType linkType) {
+        //get all configurations wich support the linkType
+        Stream<DomibusConnectorLinkConfiguration> stream1 =
+                dcLinkPersistenceService.getAllLinkConfigurations().stream()
+                        .filter(c -> getLinkPluginByName(c.getLinkImpl())
+                                .map(p -> p.getFeatures()
+                                        .contains(getPluginFeatureFromLinkType(linkType))).orElse(false));
+        //get all configurations which have a link partner with this link type
+        Stream<DomibusConnectorLinkConfiguration> stream2 = getAllLinksOfType(linkType)
+                .stream()
+                .map(DomibusConnectorLinkPartner::getLinkConfiguration);
+        //merge together
+        return Stream.of(stream1, stream2)
+                .flatMap(Function.identity())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private PluginFeature getPluginFeatureFromLinkType(LinkType linkType) {
+        PluginFeature pf = null;
+        if (linkType == LinkType.GATEWAY) {
+            pf = PluginFeature.GATEWAY_PLUGIN;
+        } else if (linkType == LinkType.BACKEND) {
+            pf = PluginFeature.BACKEND_PLUGIN;
+        }
+        return pf;
+    }
+
+    public List<LinkPlugin> getAvailableLinkPlugins(LinkType linkType) {
+        return linkManager
+                .getAvailableLinkPlugins()
+                .stream()
+                .filter(p -> p.getSupportedLinkTypes().contains(linkType))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<LinkPlugin> getLinkPluginByName(String linkImpl) {
+        return linkManager.getLinkPluginByName(linkImpl);
+    }
+
+    public void createNewLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        dcLinkPersistenceService.addLinkConfiguration(linkConfiguration);
+    }
+
+    public void createNewLinkPartner(DomibusConnectorLinkPartner value) {
+        dcLinkPersistenceService.addLinkPartner(value);
+    }
+
+    public void deleteLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        dcLinkPersistenceService.deleteLinkConfiguration(linkConfiguration);
     }
 }

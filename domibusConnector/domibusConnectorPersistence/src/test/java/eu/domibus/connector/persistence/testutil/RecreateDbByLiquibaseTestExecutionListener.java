@@ -1,10 +1,14 @@
 package eu.domibus.connector.persistence.testutil;
 
+import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.exception.LiquibaseException;
 import liquibase.integration.spring.SpringLiquibase;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
+
+import javax.sql.DataSource;
 
 public class RecreateDbByLiquibaseTestExecutionListener extends AbstractTestExecutionListener {
 

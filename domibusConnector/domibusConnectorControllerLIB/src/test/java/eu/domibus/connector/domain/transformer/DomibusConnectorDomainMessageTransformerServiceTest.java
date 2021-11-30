@@ -6,8 +6,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService.CannotBeMappedToTransitionException;
 import eu.domibus.connector.domain.transition.*;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
-import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -34,11 +33,12 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
 
 
     DomibusConnectorDomainMessageTransformerService transformerService;
-    LargeFilePersistenceProvider mockedLargeFilePersistenceService;
+    LargeFilePersistenceServicePassthroughImpl mockedLargeFilePersistenceService;
 
     @BeforeEach
     public void init() {
-        mockedLargeFilePersistenceService = new LargeFileProviderMemoryImpl();
+        mockedLargeFilePersistenceService = new LargeFilePersistenceServicePassthroughImpl();
+
         transformerService = new DomibusConnectorDomainMessageTransformerService(mockedLargeFilePersistenceService);
         transformerService.messageIdThreadLocal.set(new DomibusConnectorMessageId("id1"));
     }

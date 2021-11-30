@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 public interface DCMessageContentManager {
 
 
-    void saveMessagePayloads(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
+//    void saveMessagePayloads(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
     /**
      * this method should remove all messages from storage which is related to this

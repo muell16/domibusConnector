@@ -73,8 +73,8 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	TextField persistenceFSStoragePathField = FormsUtil.getFormattedTextField();
 	LumoCheckbox persistenceFSStorageCreateDirBox = new LumoCheckbox();
 	
-	ComboBox<String> serviceBox = new ComboBox<String>();
-	ComboBox<String> actionBox = new ComboBox<String>();
+//	ComboBox<String> serviceBox = new ComboBox<String>();
+//	ComboBox<String> actionBox = new ComboBox<String>();
 	
 	LumoCheckbox useHttpProxyBox = new LumoCheckbox();
 	TextField httpProxyHostField = FormsUtil.getFormattedTextField();
@@ -101,11 +101,10 @@ public class EnvironmentConfiguration extends VerticalLayout{
 		
 		add(util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemCreateDirLabels, persistenceFSStorageCreateDirBox));
 		
-		
-		
-		createAndAddServiceComboBox(pmodeService);
-		
-		createAndAddActionComboBox(pmodeService);
+
+//		createAndAddServiceComboBox(pmodeService);
+//
+//		createAndAddActionComboBox(pmodeService);
 		
 		add(new ConfigurationItemChapterDiv("Proxy Configuration:"));
 		
@@ -172,17 +171,17 @@ public class EnvironmentConfiguration extends VerticalLayout{
 		
 	}
 
-	private void createAndAddActionComboBox(WebPModeService pmodeService) {
-		Collection<String> actionList = pmodeService.getActionListString();
-		add(this.util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionList));
-		
-	}
-
-	private void createAndAddServiceComboBox(WebPModeService pmodeService) {
-		List<String> serviceList = pmodeService.getServiceListString();
-		add(util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList));
-		
-	}
+//	private void createAndAddActionComboBox(WebPModeService pmodeService) {
+//		Collection<String> actionList = pmodeService.getActionListString();
+//		add(this.util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionList));
+//
+//	}
+//
+//	private void createAndAddServiceComboBox(WebPModeService pmodeService) {
+//		List<String> serviceList = pmodeService.getServiceListString();
+//		add(util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList));
+//
+//	}
 	
 	
 
