@@ -49,9 +49,11 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
 
 
     @Override
-    public void persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
+    public RoutingRule persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
         dcRoutingRulePersistenceService.createRoutingRule(businessDomainId, routingRule);
         addBackendRoutingRule(businessDomainId, routingRule);
+        routingRule.setConfigurationSource(ConfigurationSource.DB);
+        return routingRule;
     }
 
     @Override
@@ -82,6 +84,11 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     @Override
     public String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         return getMessageRoutingConfigurationProperties(businessDomainId).defaultBackendLink.getLinkName();
+    }
+
+    @Override
+    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+        dcRoutingRulePersistenceService.setDefaultBackendName(businessDomainId, backendName);
     }
 
     @Override

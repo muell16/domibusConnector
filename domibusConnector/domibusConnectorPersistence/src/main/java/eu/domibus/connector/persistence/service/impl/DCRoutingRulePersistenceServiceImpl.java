@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
@@ -45,6 +46,7 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
 
     @Override
     public void createRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule rr) {
+        rr.setConfigurationSource(ConfigurationSource.DB);
         PDomibusConnectorMessageLane pDomibusConnectorMessageLane = getMessageLane(businessDomainId);
         Map<String, String> properties = pDomibusConnectorMessageLane.getProperties();
         Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(rr, "");
@@ -105,10 +107,19 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
         for (String ruleId : routingRuleIds) {
             String routingRuleKey = getRoutingRuleKey(ruleId);
             RoutingRule routingRule = configurationPropertyManagerService.loadConfigurationOnlyFromMap(properties, RoutingRule.class, routingRuleKey);
+            routingRule.setConfigurationSource(ConfigurationSource.DB);
             routingRules.add(routingRule);
         }
 
         return new ArrayList<>(routingRules);
+    }
+
+    @Override
+    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+        PDomibusConnectorMessageLane pDomibusConnectorMessageLane = getMessageLane(businessDomainId);
+        Map<String, String> properties = pDomibusConnectorMessageLane.getProperties();
+        properties.put("connector.routing.default_backend_name", backendName);
+        businessDomainDao.save(pDomibusConnectorMessageLane);
     }
 
     public static final String PREFIX = "connector.routing.backend-rules[";
