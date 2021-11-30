@@ -5,6 +5,8 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.GridSortOrderBuilder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -110,6 +113,9 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
         routingRuleGrid.getColumns().forEach(c -> c.setResizable(true));
+
+        final List<GridSortOrder<RoutingRule>> sortByPriority = new GridSortOrderBuilder<RoutingRule>().thenDesc(routingRuleGrid.getColumnByKey("priority")).build();
+        routingRuleGrid.sort(sortByPriority);
 
 
         this.add(routingRuleGrid);
