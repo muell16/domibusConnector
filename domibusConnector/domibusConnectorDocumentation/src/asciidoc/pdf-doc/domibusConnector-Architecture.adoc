@@ -7,7 +7,7 @@ endif::rootpath[]
 //endif::imagesdir[]
 
 :doctype: book
-:title: domibusConnector Architecture
+:title: domibusConnector Architecture : domibusConnector-{project-version}
 :title-logo-image: ../resources/images/logo_ecodex_0.png
 
 include::../doc/architecture/architecture_index.adoc[]
