@@ -12,8 +12,6 @@ import com.vaadin.flow.component.grid.GridSortOrderBuilder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -30,6 +28,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebBusinessDomainService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
@@ -51,11 +50,14 @@ import java.util.stream.Collectors;
 @Route(value = BackendMessageRoutingView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @Order(4)
-public class BackendMessageRoutingView extends VerticalLayout implements AfterNavigationObserver {
+public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private static final Logger LOGGER = LogManager.getLogger(BackendMessageRoutingView.class);
 
     public static final String ROUTE = "backendrouting";
+
+    public static final String TITLE = "Manage Backend Routing Rules";
+    public static final String HELP_ID = "ui/configuration/backend_message_routing_ui.html";
 
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
     private final WebBusinessDomainService webBusinessDomainService;
@@ -71,6 +73,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
                                      ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
                                      WebBusinessDomainService webBusinessDomainService,
                                      DCLinkFacade dcLinkFacade) {
+        super(HELP_ID, TITLE);
         this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
         this.webBusinessDomainService = webBusinessDomainService;
@@ -79,10 +82,6 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     }
 
     private void initUI() {
-        Button createNewRoutingRule = new Button("Create new routing rule");
-        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
-
-        add(createNewRoutingRule);
 
         Label l = new Label("Here is the configuration where routing rules are configured that define how messages are routed to backend(s).");
         add(l);
@@ -122,6 +121,11 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         routingRuleGrid.sort(sortByPriority);
 
         this.add(routingRuleGrid);
+
+        Button createNewRoutingRule = new Button("Create new routing rule");
+        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
+
+        add(createNewRoutingRule);
 
     }
 
