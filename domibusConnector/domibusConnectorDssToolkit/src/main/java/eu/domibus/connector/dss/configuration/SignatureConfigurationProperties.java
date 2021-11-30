@@ -1,4 +1,4 @@
-package eu.domibus.connector.security.configuration;
+package eu.domibus.connector.dss.configuration;
 
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;

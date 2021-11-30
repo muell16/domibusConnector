@@ -7,7 +7,7 @@ endif::rootpath[]
 //endif::imagesdir[]
 
 :doctype: book
-:title: domibusConnector - Upgrade Manual
+:title: domibusConnector - Upgrade Manual : domibusConnector-{project-version}
 :title-logo-image: ../resources/images/logo_ecodex_0.png
 
 include::../doc/upgrade/upgrade_index.adoc[]

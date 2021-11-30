@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.0-alpha13-SNAPSHOT</version>
+    <version>4.4.0-RC3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -29,6 +29,7 @@
         <module>domibusConnectorBuilder</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorDssToolkit</module>
     </modules>
     <scm>
         <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>

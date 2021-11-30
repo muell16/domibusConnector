@@ -1,13 +1,14 @@
-= New connector release published
+= New domibusConnector release published
 
 Dear all,
 
-we are happy to inform you about a new major release of the
-domibus connector. The upgrade is not mandatory.
+we are happy to announce a new major release of the
+domibusConnector. The upgrade is not mandatory.
+Compatibility with other versions of domibusConnector of the same major version is given.
 
 == Version
 
-The new version is {project-version}.
+The new version is domibusConnector-{project-version}.
 
 == Download location
 
@@ -17,7 +18,9 @@ Username and password will by provided via e-mail request.
 
 == Changelog
 
-The changelog of this version is available within the zip folder under 'documentation-site/changelog.html'
+The changelog of this version is available within the zip folder under 'documentation/pdf-documentation/changelog.pdf'.
+
+Please also visit the domibusConnector roadmap on the e-Codex website link:https://www.e-codex.eu/node/45[here].
 
 Best regards,
 

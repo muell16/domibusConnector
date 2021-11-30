@@ -1,4 +1,4 @@
-== 4.1.x
+== Changelog for domibusConnector-4.1.x
 
 === 4.1.0-RELEASE
 

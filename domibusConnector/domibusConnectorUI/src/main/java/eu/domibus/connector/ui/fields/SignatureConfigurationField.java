@@ -4,7 +4,7 @@ import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.select.Select;
-import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
+import eu.domibus.connector.dss.configuration.SignatureConfigurationProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
@@ -45,6 +45,7 @@ public class SignatureConfigurationField extends CustomField<SignatureConfigurat
         encryptionAlgorithm = new Select<>(EncryptionAlgorithm.values());
         digestAlgorithm = new Select<>(DigestAlgorithm.values());
 
+        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("5cm", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
         formLayout.addFormItem(encryptionAlgorithm, "Encryption Algorithm");
         formLayout.addFormItem(digestAlgorithm, "Digest Algorithm");
         formLayout.addFormItem(keyStore, "Key Store Configuration");
