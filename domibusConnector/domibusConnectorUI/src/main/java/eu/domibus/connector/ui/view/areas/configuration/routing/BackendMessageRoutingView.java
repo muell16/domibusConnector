@@ -21,6 +21,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.component.LumoLabel;
@@ -76,14 +77,9 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     private void initUI() {
         Button createNewRoutingRule = new Button("Create new routing rule");
         createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
+        createNewRoutingRule.setEnabled(false);
 
-        Button saveChangesButton = new Button("Save Changes");
-        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
-
-        final HorizontalLayout buttons = new HorizontalLayout();
-        buttons.add(saveChangesButton, createNewRoutingRule);
-
-        add(buttons);
+        add(createNewRoutingRule);
 
         Label l = new Label("Here is the configuration where routing rules are configured that define how messages are routed to backend(s).");
         add(l);
@@ -121,28 +117,28 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
     }
 
-    private void saveChangesButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        this.saveChanges();
-    }
-
     private Renderer<RoutingRule> getButtonRenderer() {
         return new ComponentRenderer<>(
                 (RoutingRule routingRule) -> {
                     HorizontalLayout layout = new HorizontalLayout();
-                    //edit Button
-                    Button editButton = new Button();
-                    editButton.setIcon(VaadinIcon.WRENCH.create());
-                    editButton.addClickListener(clickEvent -> {
-                        editRoutingRule(routingRule);
-                    });
-                    layout.add(editButton);
-                    //delete button
-                    Button deleteButton = new Button();
-                    deleteButton.setIcon(VaadinIcon.TRASH.create());
-                    deleteButton.addClickListener(clickEvent -> {
-                        deleteRoutingRule(routingRule);
-                    });
-                    layout.add(deleteButton);
+                    if (routingRule.getConfigurationSource().equals(ConfigurationSource.DB)) {
+                        //edit Button
+                        Button editButton = new Button();
+
+                        editButton.setIcon(VaadinIcon.WRENCH.create());
+                        editButton.addClickListener(clickEvent -> {
+                            editRoutingRule(routingRule);
+                        });
+                        layout.add(editButton);
+                        //delete button
+                        Button deleteButton = new Button();
+                        deleteButton.setIcon(VaadinIcon.TRASH.create());
+                        deleteButton.addClickListener(clickEvent -> {
+                            deleteRoutingRule(routingRule);
+                            layout.add(deleteButton);
+                        });
+                    }
+
                     return layout;
                 });
 
@@ -201,8 +197,6 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         saveCancelButton.add(saveButton);
         saveCancelButton.add(cancelButton);
-
-        saveChanges();
     }
     
     private void editRoutingRule(RoutingRule r) {
@@ -257,8 +251,6 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         saveCancelButton.add(saveButton);
         saveCancelButton.add(cancelButton);
-
-        saveChanges();
     }
 
     private void updateAndSaveRoutingRule(RoutingRule rr) {
@@ -296,29 +288,8 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
             d.close();
         });
 
-//        saveChanges();
     }
 
-
-
-	private void saveChanges() {
-//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-//                DCMessageRoutingConfigurationProperties.class);
-//
-//        //update only routing rules from source environment
-//        Map<String, RoutingRule> newRoutingRules = currentRoutingRules.values()
-//                .stream()
-//                .filter(r -> r.getConfigurationSource() != ConfigurationSource.IMPL)
-//                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
-//        routingConfigurationProperties.setBackendRules(newRoutingRules);
-//        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
-    }
-
-    private void resetChanges() {
-//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(webBusinessDomainService.getCurrentBusinessDomain(),
-//                DCMessageRoutingConfigurationProperties.class);
-
-    }
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
