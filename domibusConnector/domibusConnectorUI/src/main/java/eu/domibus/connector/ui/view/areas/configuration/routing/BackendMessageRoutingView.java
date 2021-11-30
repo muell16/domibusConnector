@@ -1,8 +1,10 @@
 package eu.domibus.connector.ui.view.areas.configuration.routing;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
@@ -20,15 +22,15 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.service.WebBusinessDomainService;
-import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
@@ -40,6 +42,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @UIScope
@@ -54,33 +58,29 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     public static final String ROUTE = "backendrouting";
 
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
-    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final WebBusinessDomainService webBusinessDomainService;
-//    private final DCLinkFacade dcLinkFacade;
-//    private final WebPModeService webPModeService;
     private final ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory;
+    private final DCLinkFacade dcLinkFacade;
 
     private Grid<RoutingRule> routingRuleGrid;
+    private ComboBox<String> defaultBackendNameSelectField;
 
     private Map<String, RoutingRule> currentRoutingRules;
 
     public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl,
                                      ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
-                                     ConfigurationPropertyManagerService configurationPropertyManagerService,
-                                     DCLinkFacade dcLinkFacade,
-                                     WebPModeService webPModeService,
-                                     WebBusinessDomainService webBusinessDomainService) {
+                                     WebBusinessDomainService webBusinessDomainService,
+                                     DCLinkFacade dcLinkFacade) {
         this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
-        this.configurationPropertyManagerService = configurationPropertyManagerService;
         this.webBusinessDomainService = webBusinessDomainService;
+        this.dcLinkFacade = dcLinkFacade;
         initUI();
     }
 
     private void initUI() {
         Button createNewRoutingRule = new Button("Create new routing rule");
         createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
-//        createNewRoutingRule.setEnabled(false);
 
         add(createNewRoutingRule);
 
@@ -103,12 +103,16 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         add(routingPriorities);
 
-        TextField defaultBackendNameTextField = new TextField();
-        defaultBackendNameTextField.setReadOnly(true);
-        defaultBackendNameTextField.setLabel("Configured default backend name");
-        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()));
-
-        add(defaultBackendNameTextField);
+        //TextField defaultBackendNameTextField = new TextField();
+//        defaultBackendNameTextField.setReadOnly(true); //currently no way to update this over the UI!
+//        defaultBackendNameTextField.setLabel("Configured default backend name");
+//        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(getCurrentDomain()));
+//
+//        add(defaultBackendNameTextField);
+        defaultBackendNameSelectField = getBackendNameEditorComponent();
+        defaultBackendNameSelectField.setLabel("Configured default backend name");
+        defaultBackendNameSelectField.addValueChangeListener(this::defaultBackendChanged);
+        add(defaultBackendNameSelectField);
 
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
@@ -117,11 +121,36 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
         final List<GridSortOrder<RoutingRule>> sortByPriority = new GridSortOrderBuilder<RoutingRule>().thenDesc(routingRuleGrid.getColumnByKey("priority")).build();
         routingRuleGrid.sort(sortByPriority);
 
-
         this.add(routingRuleGrid);
 
+    }
 
+    private void defaultBackendChanged(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> comboBoxStringComponentValueChangeEvent) {
+        String newBackendName = comboBoxStringComponentValueChangeEvent.getValue();
+        dcRoutingRulesManagerImpl.setDefaultBackendName(getCurrentDomain(), newBackendName);
+    }
 
+    private void updateUI() {
+        defaultBackendNameSelectField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(getCurrentDomain()));
+        Map<String, RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(getCurrentDomain());
+        this.currentRoutingRules = backendRoutingRules;
+        routingRuleGrid.setItems(backendRoutingRules.values());
+    }
+
+    private ComboBox<String> getBackendNameEditorComponent() {
+        Set<String> collect = dcLinkFacade.getAllLinksOfType(LinkType.BACKEND)
+                .stream()
+                .map(DomibusConnectorLinkPartner::getLinkPartnerName)
+                .map(DomibusConnectorLinkPartner.LinkPartnerName::getLinkName)
+                .collect(Collectors.toSet());
+        ComboBox<String> comboBox = new ComboBox<>("LinkName");
+        comboBox.setItems(collect);
+        comboBox.setAllowCustomValue(true);
+        comboBox.addCustomValueSetListener(event -> {
+            comboBox.setValue(event.getDetail());
+        });
+
+        return comboBox;
     }
 
     private Renderer<RoutingRule> getButtonRenderer() {
@@ -298,13 +327,14 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     }
 
 
-	@Override
-	public void afterNavigation(AfterNavigationEvent arg0) {
+    @Override
+    public void afterNavigation(AfterNavigationEvent arg0) {
+        updateUI();
+    }
 
-        Map<String, RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-        this.currentRoutingRules = backendRoutingRules;
-        routingRuleGrid.setItems(backendRoutingRules.values());
-
+    private DomibusConnectorBusinessDomain.BusinessDomainId getCurrentDomain() {
+        //TODO: replace in multi tenancy model with service...
+        return DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
     }
 
     //TODO: for validation purpose check DCLinkFacade if backendName is a configured backend

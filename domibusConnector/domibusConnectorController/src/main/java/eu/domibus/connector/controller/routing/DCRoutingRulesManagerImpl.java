@@ -87,6 +87,11 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     @Override
+    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+        dcRoutingRulePersistenceService.setDefaultBackendName(businessDomainId, backendName);
+    }
+
+    @Override
     public boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         return true; //always true
     }

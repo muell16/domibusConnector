@@ -114,6 +114,14 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
         return new ArrayList<>(routingRules);
     }
 
+    @Override
+    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+        PDomibusConnectorMessageLane pDomibusConnectorMessageLane = getMessageLane(businessDomainId);
+        Map<String, String> properties = pDomibusConnectorMessageLane.getProperties();
+        properties.put("connector.routing.default_backend_name", backendName);
+        businessDomainDao.save(pDomibusConnectorMessageLane);
+    }
+
     public static final String PREFIX = "connector.routing.backend-rules[";
 
     private String getRoutingRuleKey(String ruleId) {

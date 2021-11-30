@@ -17,5 +17,7 @@ public interface DCRoutingRulesManager {
 
     String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 
+    void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName);
+
     boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
 }
