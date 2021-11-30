@@ -8,9 +8,14 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
+
+
 = Backend Message Routing View
 
-This view allows configuring how and which messages are routed to which of the available destinations ("backends").
+This view allows configuring how messages are routed to which of the available destinations ("backends").
 
 == Backend Routing Table
 
@@ -20,19 +25,23 @@ image:screenshot_routing_table.png[]
 
 The "Configuration Source" can have values (IMPL, ENV or DB), which describes where the rule configuration originates from.
 
-The "Priority" column states which rule
-
 |===
-|Value |Description
+|Value |Description |Editable |Deletable
 
 |IMP
 |This rule was configured automatically as a default for e.g. connector-to-connector tests.
+|false
+|false
 
 |ENV
 |The rule is in the configuration file.
+|false
+|false
 
 |DB
 |The rule is in the database.
+|true
+|true
 
 |===
 
@@ -41,3 +50,28 @@ The "Link Name" column contains the name of the backend to which a message is ro
 The "Match Clause" column contains the rule by which messages are selected for routing. Only matching messages are routed.
 
 The "Priority" column contains an integer value. Higher numbers take precedence over lower numbers e.g. 0 is of higher priority than -2000. If there would be more than one match, only the match of higher priority is executed and the message is only forwarded to that backend.
+
+IMPORTANT: If you want to override an ENV rule you can add a rule with the same match clause and backend, but with a higher priority.
+
+The last column contains two buttons.
+
+* Edit rule (wrench symbol)
+* Delete rule (trash can symbol)
+
+_Note: These buttons only show for rules that are stored in the database (DB)._
+
+WARNING: Both Actions take immediate effect.
+
+== Create new routing rule
+
+In order to create new rules, first click the button "Create new routing rule". In the dialog specify the match clause that enables filtering which messages to route and the backend to which the message should be routed. If you plan to use multiple rules, then there might be multiple matches. In this case you can use a priority to give precedence to the rules (see above).
+
+== Route Expressions
+
+The route expressions are built using a DSL similar to REGEX.
+
+
+[source]
+----
+include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
+----
