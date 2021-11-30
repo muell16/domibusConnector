@@ -1,0 +1,43 @@
+:path: ../../../
+
+ifndef::basepath[]
+:basepath: ../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Backend Message Routing View
+
+This view allows configuring how and which messages are routed to which of the available destinations ("backends").
+
+== Backend Routing Table
+
+Every row in the table shows a routing configuration.
+
+image:screenshot_routing_table.png[]
+
+The "Configuration Source" can have values (IMPL, ENV or DB), which describes where the rule configuration originates from.
+
+The "Priority" column states which rule
+
+|===
+|Value |Description
+
+|IMP
+|This rule was configured automatically as a default for e.g. connector-to-connector tests.
+
+|ENV
+|The rule is in the configuration file.
+
+|DB
+|The rule is in the database.
+
+|===
+
+The "Link Name" column contains the name of the backend to which a message is routed if is matched by the clause.
+
+The "Match Clause" column contains the rule by which messages are selected for routing. Only matching messages are routed.
+
+The "Priority" column contains an integer value. Higher numbers take precedence over lower numbers e.g. 0 is of higher priority than -2000. If there would be more than one match, only the match of higher priority is executed and the message is only forwarded to that backend.
