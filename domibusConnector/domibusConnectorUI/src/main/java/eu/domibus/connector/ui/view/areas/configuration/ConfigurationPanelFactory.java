@@ -39,6 +39,43 @@ public class ConfigurationPanelFactory {
         return new ConfigurationPanel<>(form, configurationClazz);
     }
 
+    public Dialog showChangedPropertiesDialog(Object boundConfigValue) {
+        Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
+                boundConfigValue);
+
+        final Dialog d = new Dialog();
+
+        Grid<Map.Entry<String, String>> g = new Grid<>();
+        g.setItems(updatedConfiguration.entrySet());
+        g.addColumn(Map.Entry::getKey).setHeader("key");
+        g.addColumn(Map.Entry::getValue).setHeader("value");
+
+        Button saveButton = new Button(VaadinIcon.CHECK.create());
+        saveButton.addClickListener(clickEvent -> saveUpdatedProperties(d, boundConfigValue.getClass(), updatedConfiguration));
+
+        Button discardButton = new Button(VaadinIcon.CLOSE.create());
+        discardButton.addClickListener(ev -> d.close());
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.add(saveButton, discardButton);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.add(horizontalLayout);
+        verticalLayout.add(g);
+
+        d.add(verticalLayout);
+        d.setCloseOnEsc(true);
+        d.setSizeFull();
+        d.open();
+        return d;
+    }
+
+    //save changed properties and close dialog
+    private void saveUpdatedProperties(Dialog d, Class<?> configurationClazz, Map<String, String> updatedConfiguration) {
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
+                configurationClazz, updatedConfiguration);
+        d.close();
+    }
+
     public class ConfigurationPanel<T> extends VerticalLayout implements AfterNavigationObserver {
 
         private final Label errorField;
@@ -104,32 +141,7 @@ public class ConfigurationPanelFactory {
                     throw new RuntimeException(e);
                 }
 
-                Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                        boundConfigValue);
-
-                final Dialog d = new Dialog();
-
-                Grid<Map.Entry<String, String>> g = new Grid<>();
-                g.setItems(updatedConfiguration.entrySet());
-                g.addColumn(Map.Entry::getKey).setHeader("key");
-                g.addColumn(Map.Entry::getValue).setHeader("value");
-
-                Button saveButton = new Button(VaadinIcon.CHECK.create());
-                saveButton.addClickListener(clickEvent -> saveUpdatedProperties(d, updatedConfiguration));
-
-                Button discardButton = new Button(VaadinIcon.CLOSE.create());
-                discardButton.addClickListener(ev -> d.close());
-
-                HorizontalLayout horizontalLayout = new HorizontalLayout();
-                horizontalLayout.add(saveButton, discardButton);
-                VerticalLayout verticalLayout = new VerticalLayout();
-                verticalLayout.add(horizontalLayout);
-                verticalLayout.add(g);
-
-                d.add(verticalLayout);
-                d.setCloseOnEsc(true);
-                d.setSizeFull();
-                d.open();
+                showChangedPropertiesDialog(boundConfigValue);
 
             } else {
                 Notification.show("Error, cannot save due:\n" + validate.getBeanValidationErrors()
@@ -141,12 +153,7 @@ public class ConfigurationPanelFactory {
 
         }
 
-        //save changed properties and close dialog
-        private void saveUpdatedProperties(Dialog d, Map<String, String> updatedConfiguration) {
-            configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                    configurationClazz, updatedConfiguration);
-            d.close();
-        }
+
 
         @Override
         public void afterNavigation(AfterNavigationEvent event) {

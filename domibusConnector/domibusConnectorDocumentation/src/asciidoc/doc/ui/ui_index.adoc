@@ -1,6 +1,7 @@
+:path: ../../
 
 ifndef::basepath[]
-:basepath: ../../
+:basepath: {path}
 endif::basepath[]
 
 ifndef::header[]
@@ -17,3 +18,4 @@ include::{basepath}/doc/ui/pmodes/pmodeset_data.adoc[leveloffset=+2]
 include::{basepath}/doc/ui/c2ctests/connector_tests_overview.adoc[leveloffset=+1]
 include::{basepath}/doc/ui/c2ctests/connector_test_messages_list.adoc[leveloffset=+2]
 include::{basepath}/doc/ui/c2ctests/send_connector_test_message.adoc[leveloffset=+2]
+include::{basepath}/doc/ui/tools/create_ecodex_container.adoc[leveloffset=+2]

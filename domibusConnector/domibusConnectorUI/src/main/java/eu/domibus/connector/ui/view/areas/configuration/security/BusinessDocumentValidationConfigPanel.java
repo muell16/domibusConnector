@@ -27,6 +27,7 @@ import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportBusinessDocConfig;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.service.ECodexContainerService;
@@ -34,6 +35,7 @@ import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -53,9 +55,17 @@ public class BusinessDocumentValidationConfigPanel extends VerticalLayout {
 
     public static final String ROUTE = "businessDocumentValidation";
 
-    public BusinessDocumentValidationConfigPanel(ConfigurationPanelFactory configurationPanelFactory, BusinessDocumentValidationConfigForm form) {
+    public BusinessDocumentValidationConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
+                                                 ObjectProvider<ImportBusinessDocConfig> importBusinessDocConfig,
+                                                 BusinessDocumentValidationConfigForm form) {
         ConfigurationPanelFactory.ConfigurationPanel<DCBusinessDocumentValidationConfigurationProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, DCBusinessDocumentValidationConfigurationProperties.class);
+
+        Button b = new Button("Import old config");
+        b.addClickListener(event -> {
+            importBusinessDocConfig.getIfAvailable().open();
+        });
+        this.add(b);
         this.add(configurationPanel);
     }
 
