@@ -1,16 +1,59 @@
-== 4.4.x
+== Changelog for domibusConnector-4.4.x
 
-=== Changes
+=== 4.4.0
 
-* Moving a message into a DLQ in case of an error for details see: link:../architecture/connector_message_flow.html[Queues Overview]
-* Integrated eCodex Library into Connector Sources
-* Integrated evidenceLibrary into Connector Sources
-* JavaKeyStore handling can now be done within database
-* Connector trust store is now seperated from document validation trust-store
+==== API changes
+
+* New API web-service methods to support backend pull mechanism with technical message acknowledgement.
+* The "role" of parties in message transition model is set to "optional".
+* Additional field to give backends the possibility to add the informaiton if the business document of one message is either SIGNATURE_BASED or AUTHENTICATION_BASED. 
+
+For further details see the following chapters of the domibusConnector-Architecture.pdf:
+
+* Chapter 6. Backend message routing
+* Chapter 4. domibusConnectorAPI
+
+If the domibusConnectorClient-Libraries are in place, those also need to be upgraded to version 4.4 if this feature should be used. 
+
+==== Backend implementations/features
+
+* Moving a message into a DLQ in case of an error.
+* Integrated eCodex security library into domibusConnector sources.
+* Integrated evidenceBuilder library into domibusConnector sources.
+* JavaKeyStore handling can now be done within database.
+* Connector trust store is now seperated from document validation trust-store.
 * Support for JTA transactions
+* Default backend plugin for connector test messages allows to receive and send connector test messages.
+* The ebMS property "role" as part of the ebMS party definition will be set by the connector. 
+* Flag PDF_REQUIRED in table DOMIBUS_CONNECTOR_ACTION removed as it is obsolete.
 
-* UI
-** P-Mode upload now supports upload of connector trust-store
-** UI Configuration support for Link Partners
-** UI support for retry messages to link partner
-** UI Support for JMS Monitoring
+For further details see the following chapters of the domibusConnector-Architecture.pdf:
+
+* Chapter 5. Message Processing
+
+
+==== UI implementations/features
+
+* New PMode-Set handling.
+* UI Configuration support for Link Partners
+* UI Configuration support for message routing to the backends.
+* UI support to retry messages to link partner.
+* UI Support for JMS Monitoring.
+* UI Support to see and send Connector Test Messages.
+
+For all new features in the UI online help pages are integrated.
+
+==== Documentation
+
+The maven-site documentation has been replaced by static html documentation.
+The documentation can be fully accessed via the UI of the domibusConnector.
+
+Also, some PDF files are generated with content from the static html documentation.
+Those PDF documents are shipped in the distribution package.
+They are:
+
+* installation_guide.pdf
+* Upgrade-Manual.pdf
+* domibusConnectorAPI.pdf
+* domibusConnector-Architecture.pdf
+* Changelog.pdf
