@@ -142,8 +142,8 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
                         deleteButton.setIcon(VaadinIcon.TRASH.create());
                         deleteButton.addClickListener(clickEvent -> {
                             deleteRoutingRule(routingRule);
-                            layout.add(deleteButton);
                         });
+                        layout.add(deleteButton);
                     }
 
                     return layout;
