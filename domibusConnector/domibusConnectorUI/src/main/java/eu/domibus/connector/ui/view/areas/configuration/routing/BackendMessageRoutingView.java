@@ -77,7 +77,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
     private void initUI() {
         Button createNewRoutingRule = new Button("Create new routing rule");
         createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
-        createNewRoutingRule.setEnabled(false);
+//        createNewRoutingRule.setEnabled(false);
 
         add(createNewRoutingRule);
 
@@ -255,7 +255,7 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
     private void updateAndSaveRoutingRule(RoutingRule rr) {
         dcRoutingRulesManagerImpl.deleteBackendRoutingRuleFromPersistence(webBusinessDomainService.getCurrentBusinessDomain(), rr.getRoutingRuleId());
-        dcRoutingRulesManagerImpl.addBackendRoutingRule(webBusinessDomainService.getCurrentBusinessDomain(), rr);
+        rr = dcRoutingRulesManagerImpl.persistBackendRoutingRule(webBusinessDomainService.getCurrentBusinessDomain(), rr);
         this.currentRoutingRules.remove(rr.getRoutingRuleId());
         this.currentRoutingRules.put(rr.getRoutingRuleId(), rr);
         this.routingRuleGrid.setItems(this.currentRoutingRules.values());
