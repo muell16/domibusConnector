@@ -16,7 +16,15 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 /**
- * This step looks up the correct backend name
+ * The routing occurs in the following order:
+ *
+ * 1. refToMessageId: If the transported message relates to an EBMS id of an already processed business message. The backend_name of this message is used.
+ *
+ * 2. ConversationId: If the transported message contains a conversationId where a business message has already been processed. The backend_name of this message is used.
+ *
+ * 3. Routing Rule: If the backend_name is still empty, the routing rules are processed.
+ *
+ * 4. Default Backend: If the backend_name is still empty the default backend will be used.
  *
  */
 @Component
