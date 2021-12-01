@@ -24,6 +24,13 @@ public class RoutingRuleEvaluationTest {
 
     }
 
+    private static Stream<Arguments> provideParameters() {
+        return Stream.of(
+                Arguments.of("&(equals(ServiceName, 'EPO_SERVICE'), |(equals(FromPartyId, 'gw01'), equals(FromPartyId, 'gw02')))", getMessage1()),
+                Arguments.of("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))", getMessage2())
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("provideNotMatchingParameters")
     public void testMatch_shouldNotMatch(String expression, DomibusConnectorMessage message) {
@@ -37,19 +44,12 @@ public class RoutingRuleEvaluationTest {
 
     private static Stream<Arguments> provideNotMatchingParameters() {
         return Stream.of(
-                Arguments.of("not(&(equals(ServiceName, 'Test'), |(equals(FromPartyId, 'gw01'), equals(FromPartyId, 'gw02'))))", getMessage1()),
+                Arguments.of("not(&(equals(ServiceName, 'EPO_SERVICE'), |(equals(FromPartyId, 'gw01'), equals(FromPartyId, 'gw02'))))", getMessage1()),
                 Arguments.of("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))", getMessage1())
 
         );
     }
 
-
-    private static Stream<Arguments> provideParameters() {
-        return Stream.of(
-                Arguments.of("&(equals(ServiceName, 'Test'), |(equals(FromPartyId, 'gw01'), equals(FromPartyId, 'gw02')))", getMessage1()),
-                Arguments.of("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))", getMessage2())
-        );
-    }
 
     private static DomibusConnectorMessage getMessage1() {
         DomibusConnectorMessage message = new DomibusConnectorMessage();
