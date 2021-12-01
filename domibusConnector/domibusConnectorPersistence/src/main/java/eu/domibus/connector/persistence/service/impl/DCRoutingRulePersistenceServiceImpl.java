@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCRoutingRulePersistenceServiceImpl.class);
+    //TODO: avoid this by using DCMessageRoutingConfigurationProperties
+    private static final String DEFAULT_BACKEND_NAME_PROPERTY_NAME = "connector.routing.default-backend-name";
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final DomibusConnectorBusinessDomainDao businessDomainDao;
@@ -118,7 +120,7 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
     public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
         PDomibusConnectorMessageLane pDomibusConnectorMessageLane = getMessageLane(businessDomainId);
         Map<String, String> properties = pDomibusConnectorMessageLane.getProperties();
-        properties.put("connector.routing.default_backend_name", backendName);
+        properties.put(DEFAULT_BACKEND_NAME_PROPERTY_NAME, backendName);
         businessDomainDao.save(pDomibusConnectorMessageLane);
     }
 
