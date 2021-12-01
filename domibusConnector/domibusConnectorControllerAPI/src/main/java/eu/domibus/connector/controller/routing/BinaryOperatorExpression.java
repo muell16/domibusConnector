@@ -18,7 +18,7 @@ public class BinaryOperatorExpression extends Expression {
         if (operand == TokenType.OR) {
             return exp1.evaluate(message) || exp2.evaluate(message);
         } else if (operand == TokenType.AND) {
-            return exp1.evaluate(message) || exp2.evaluate(message);
+            return exp1.evaluate(message) && exp2.evaluate(message);
         } else {
             throw new RuntimeException(String.format("Unsupported OPERAND %s", operand));
         }
