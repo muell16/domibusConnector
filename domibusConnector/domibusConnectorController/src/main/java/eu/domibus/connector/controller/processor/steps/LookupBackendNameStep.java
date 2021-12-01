@@ -27,14 +27,12 @@ public class LookupBackendNameStep implements MessageProcessStep {
 
     private final DCRoutingRulesManagerImpl dcRoutingConfigManager;
     private final DCMessagePersistenceService dcMessagePersistenceService;
-    private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
 
     public LookupBackendNameStep(DCRoutingRulesManagerImpl dcMessageRoutingConfigurationProperties,
                                  DCMessagePersistenceService dcMessagePersistenceService,
                                  ConfigurationPropertyManagerService configurationPropertyLoaderService) {
         this.dcRoutingConfigManager = dcMessageRoutingConfigurationProperties;
         this.dcMessagePersistenceService = dcMessagePersistenceService;
-        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
     }
 
     @Override
