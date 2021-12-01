@@ -57,6 +57,8 @@ public class LookupBackendNameStep implements MessageProcessStep {
         }
         if (backendName != null) {
             LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "ConversationId [{}] is used to set backend to [{}]", conversationId, backendName);
+            domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(backendName);
+            return true;
         }
 
 
