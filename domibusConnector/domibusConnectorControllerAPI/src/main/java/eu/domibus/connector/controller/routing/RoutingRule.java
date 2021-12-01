@@ -6,6 +6,7 @@ import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Comparator;
 import java.util.UUID;
 
 @MapNested
@@ -115,5 +116,10 @@ public class RoutingRule {
                 .append("priority", priority)
                 .append("rule", matchClause)
                 .toString();
+    }
+
+    // sorts by ascending priority, means 0 comes before -2000.
+    public static Comparator<RoutingRule> getComparator() {
+        return (r1, r2) -> Integer.compare(r2.priority, r1.priority);
     }
 }
