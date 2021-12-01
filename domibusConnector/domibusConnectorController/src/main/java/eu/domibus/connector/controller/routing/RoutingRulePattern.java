@@ -211,7 +211,7 @@ public class RoutingRulePattern {
             if (operand == Token.OR) {
                 return exp1.evaluate(message) || exp2.evaluate(message);
             } else if (operand == Token.AND) {
-                return exp1.evaluate(message) || exp2.evaluate(message);
+                return exp1.evaluate(message) && exp2.evaluate(message);
             } else {
                 throw new RuntimeException(String.format("Unsupported OPERAND %s", operand));
             }
