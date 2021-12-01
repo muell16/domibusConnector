@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>4.4.0-RC3-SNAPSHOT</version>
+        <version>4.4.1-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorBuilderDeployable</artifactId>
     <packaging>war</packaging>
