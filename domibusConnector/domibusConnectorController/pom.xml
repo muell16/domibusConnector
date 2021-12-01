@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.1-SNAPSHOT</version>
+        <version>4.4.0</version>
     </parent>
     <artifactId>domibusConnectorController</artifactId>
     <name>${project.artifactId}</name>
