@@ -70,9 +70,10 @@ public class LookupBackendNameStep implements MessageProcessStep {
                     dcRoutingConfigManager.getBackendRoutingRules(domibusConnectorMessage.getMessageLaneId())
                     .values()
                     .stream()
+                    .sorted(RoutingRule.getComparator())
                     .filter(r -> r.getMatchClause().matches(domibusConnectorMessage))
                     .map(RoutingRule::getLinkName)
-                    .findAny()
+                    .findFirst()
                     .map(bName -> {
                         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Looked up backend name [{}] for message", bName);
                         return bName;
