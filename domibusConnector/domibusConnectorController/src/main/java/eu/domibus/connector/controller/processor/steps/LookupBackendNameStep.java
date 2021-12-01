@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This step looks up the correct backend name
@@ -67,21 +66,22 @@ public class LookupBackendNameStep implements MessageProcessStep {
         String defaultBackendName = dcRoutingConfigManager.getDefaultBackendName(domibusConnectorMessage.getMessageLaneId());
         if (dcRoutingConfigManager.isBackendRoutingEnabled(domibusConnectorMessage.getMessageLaneId())) {
             LOGGER.debug("Backend routing is enabled");
-            Optional<String> first = dcRoutingConfigManager.getBackendRoutingRules(domibusConnectorMessage.getMessageLaneId())
+            domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(
+                    dcRoutingConfigManager.getBackendRoutingRules(domibusConnectorMessage.getMessageLaneId())
                     .values()
                     .stream()
                     .filter(r -> r.getMatchClause().matches(domibusConnectorMessage))
                     .map(RoutingRule::getLinkName)
-                    .findFirst();
-            if (first.isPresent()) {
-                backendName = first.get();
-                LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Looked up backend name [{}] for message", backendName);
-                domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(backendName);
-            } else {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "No backend rule pattern has matched! Applying default backend name [{}]!",
-                        defaultBackendName);
-                domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(defaultBackendName);
-            }
+                    .findAny()
+                    .map(bName -> {
+                        LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Looked up backend name [{}] for message", bName);
+                        return bName;
+                    })
+                    .orElseGet(() -> {
+                        LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "No backend rule pattern has matched! Applying default backend name [{}]!");
+                        return defaultBackendName;
+                    })
+            );
         } else {
             LOGGER.debug("Backend routing is disabled, applying default backend name [{}]!", dcRoutingConfigManager.getDefaultBackendName(domibusConnectorMessage.getMessageLaneId()));
             domibusConnectorMessage.getMessageDetails().setConnectorBackendClientName(defaultBackendName);
