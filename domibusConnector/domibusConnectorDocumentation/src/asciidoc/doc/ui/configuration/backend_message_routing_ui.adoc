@@ -68,8 +68,145 @@ In order to create new rules, first click the button "Create new routing rule". 
 
 == Route Expressions
 
+
+=== Token
+
+Each route expression consists of Token. Token are separated using a "," colon sign.
+
+A Token is build using a comparator expression and condition.
+
+The comparator could either be "startsWith", if the condition only needs to be fulfilled as first part of the value,
+or "equals". In that case the whole value needs to match the condition.
+
+A token is always build in the form
+
+[source]
+----
+comparisonType(contentType,value)
+----
+
+==== Comparison Types
+
+There are currently two comparison types supported:
+
+* startsWith: The values compared need to have the same beginning.
+* equals: The values compared must be identical.
+* not: The values compared must not match.
+
+==== Content Types
+
+This is the first part inside the brackets of a Token.
+The content type defines what is actually compared.
+
+The currently supported content types are:
+
+* ServiceName: The name of the AS4 Service of which the message is.
+* ServiceType: The type of the AS4 Service of which the message is.
+* Action: The AS4 Action of which the message is.
+* FromPartyId: The PartyId of the AS4 From Party. This is the sender gateway identification.
+* FromPartyIdType: The PartyIdType of the AS4 From Party.
+* FromPartyIdRole: The Role of the AS4 From Party.
+* FinalRecipient: The finalRecipient defined in the ebms header of the message.
+
+Most of the content types rely to the PMode-Set data. So the values can be taken from there.
+
+==== Values
+
+Values are strings that are compared. The are delimited by "*'*" symbols.
+
+Example:
+'someValue'
+
+The value could either be a simple expression identifying the actual content.
+
+But the value could also be a regular expression.
+
+==== Examples
+
+.Examples for Token
+|===
+|token|definition|matching|not matching
+
+|startsWith(FromPartyIdType,'urn:oasis:names:tc:ebcore:partyid-type:iso')
+|This Token defines that the FromParty of the message, more detailed the PartyIdType of the FromParty is compared to 'urn:oasis:names:tc:ebcore:partyid-type:iso'.
+If the PartyIdType starts with that value, then it is a match.
+|FromParty:
+PartyId = AT
+PartyIdType = urn:oasis:names:tc:ebcore:partyid-type:iso3166-1
+|FromParty:
+PartyId = AT
+PartyIdType = urn:oasis:names:tc:ebcore:partyid-type:unregistered
+
+|equals(FinalRecipient,'CourtABC')
+|This token defines that the finalRecipient of the message must be the value of the token.
+|'finalRecipient=CourtABC'
+|'finalRecipient=CourtABZ'
+
+|not(ServiceName,'EPO')
+|This token excludes messages of AS4 service 'EPO'.
+|Service:
+ServiceName='Mla'
+ServiceType='urn:e-codex:services:'
+|Service:
+ServiceName='EPO'
+ServiceType='urn:e-codex:services:'
+
+|===
+
+=== Combining Token
+
+Token can be combined hierarchically to form a route expression.
+
+In case of a combination of token with a condition, the token need to be within brackets after the condition, separated by a colon:
+
+[source]
+----
+condition(token1,token2)
+----
+
+==== Conditions
+
+To combine token, a combination condition needs to be set first.
+
+Supported conditions are:
+
+* AND: inclusive combination used with a "*&*" symbol. Both token need to match to fulfill the rule.
+* OR: combination used with a "*|*" symbol. Either one of the token combined need to match to fulfill the rule.
+
+IMPORTANT: Instead of combining token with an OR condition it is also possible to define more rules. This leads to simpler route expressions and is easier to maintain.
+
+==== Examples
+
+.Examples of combinations of token
+|===
+|route expression|explaination|matching message content | not matching message content
+
+|&(equals(ServiceName,'Mla'),startsWith(FinalRecipient,'Court'))
+|his route expression matches to all messages of AS4 Service 'EPO' which finalRecipient starts with 'Court'.
+|Service='Mla' and finalRecipient='CourtABC'
+|Service='Mla' and finalRecipient='ProsecutionOffice123'
+
+|\|(equals(ServiceName,'Mla'),equals(ServiceName,'Eio'))
+|This route expression matches to all messages of AS4 Service 'Mla' OR 'Eio'.
+|Service='Mla'
+|Service='EPO'
+
+|&(\|(equals(ServiceName,'Mla'),equals(ServiceName,'Eio')),startsWith(FinalRecipient,'ProsecutionOffice'))
+|This is a combination with a combination within.
+It says that a message must be of AS4 Service 'Mla' OR 'Eio', but to a finalRecipient that starts with 'ProsecutionOffice'.
+|Service='Mla' and finalRecipient='ProsecutionOffice123'.
+Service='Eio' and finalRecipient='ProsecutionOffice456'.
+|Service='Eio' and finalRecipient='CourtABC'.
+Service='Mla' and finalRecipient='ProsecutionOffice456'.
+Service='EPO' and finalRecipient='ProsecutionOffice123'.
+
+|===
+
+=== Syntax definition
+
 The route expressions are built using a DSL similar to REGEX.
 
+Syntax definition:
 
 [source]
 ----
