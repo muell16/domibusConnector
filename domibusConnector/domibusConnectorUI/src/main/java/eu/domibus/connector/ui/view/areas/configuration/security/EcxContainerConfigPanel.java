@@ -40,6 +40,9 @@ import java.util.stream.Collectors;
 public class EcxContainerConfigPanel extends VerticalLayout {
 
     public static final String ROUTE = "ecxContainer";
+    
+    public static final String TITLE = "ECodex Container Configuration";
+	public static final String HELP_ID = "ui/ecodex_container_configuration.html";
 
     public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
                                    ObjectProvider<ImportEcodexContainerConfig> importEcodexContainerConfig,
