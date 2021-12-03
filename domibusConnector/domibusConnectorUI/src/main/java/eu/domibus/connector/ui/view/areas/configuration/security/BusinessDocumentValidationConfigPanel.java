@@ -23,6 +23,7 @@ import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationC
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
@@ -51,16 +52,19 @@ import java.util.stream.Collectors;
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Business Document Verification", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Order(5)
-public class BusinessDocumentValidationConfigPanel extends VerticalLayout {
+public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
+	
+	public static final String TITLE = "ECodex Business Document Verification";
+	public static final String HELP_ID = "ui/business_document_verification.html";
 
     public static final String ROUTE = "businessDocumentValidation";
 
     public BusinessDocumentValidationConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
                                                  ObjectProvider<ImportBusinessDocConfig> importBusinessDocConfig,
                                                  BusinessDocumentValidationConfigForm form) {
+    	super(HELP_ID, TITLE);
         ConfigurationPanelFactory.ConfigurationPanel<DCBusinessDocumentValidationConfigurationProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, DCBusinessDocumentValidationConfigurationProperties.class);
-
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             importBusinessDocConfig.getIfAvailable().open();
