@@ -15,24 +15,33 @@ import java.util.Map;
 
 public class OldConfigMapper {
 
+	private static final String PATH = ".path";
+    private static final String PASSWORD = ".password";	
+    private static final String ALIAS = ".alias";
+    
+	
+	private static final String KEYSTORE_WITH_DASH = ".key-store";
+    private static final String KEYSTORE_WITH_CAMELCASE_LETTER = ".keyStore";
+    private static final String KEYSTORE = ".keystore";
+
+    private static final String TRUSTSTORE = ".truststore";
+	private static final String TRUSTSTORE_WITH_DASH = ".trust-store";
+    private static final String TRUSTSTORE_WITH_CAMELCASE_LETTER = ".trustStore";
+
+    
+    private static final String PRIVATE_KEY = ".privatekey";
+    private static final String PRIVATE_KEY_WITH_DASH = ".private-key";
+    private static final String PRIVATE_KEY_WITH_CAMELCASE_LETTER = ".privateKey";
+    
+    
     private static final String TOKEN_ISSUER_COUNTRY = "token.issuer.country";
     private static final String TOKEN_ISSUER_SERVICE_PROVIDER = "token.issuer.service-provider";
     private static final String TOKEN_ISSUER_IDENTITY_PROVIDER = "token.issuer.identity-provider";
     private static final String TOKEN_ISSUER_AES_TYPE = "token.issuer.advanced-electronic-system-type";
+ 
+    private static final String SECURITY = "connector.security";
 
-    private static final String SECURITY_TRUSTSTORE_PATH = "connector.security.trust-store.path";
-    private static final String SECURITY_TRUSTSTORE_PASSWORD = "connector.security.trust-store.password";
-
-
-    private static final String SECURITY_KEYSTORE_PATH = "connector.security.keystore.path";
-    private static final String SECURITY_KEYSTORE_PASSWORD = "connector.security.keystore.password";
-    private static final String SECURITY_PRIVATE_KEY_ALIAS = "connector.security.private-key.alias";
-    private static final String SECURITY_PRIVATE_KEY_PASSWORD = "connector.security.private-key.password";
-
-    private static final String EVIDENCE_KEYSTORE_PATH = "connector.evidences.key-store.path";
-    private static final String EVIDENCE_KEYSTORE_PASSWORD = "connector.evidences.key-store.password";
-    private static final String EVIDENCE_PRIVATE_KEY_ALIAS = "connector.evidences.private-key.alias";
-    private static final String EVIDENCE_PRIVATE_KEY_PASSWORD = "connector.evidences.private-key.password";
+    private static final String EVIDENCE = "connector.evidences";
 
     private static final String POSTAL_ADDR_STREET = "postal.address.street";
     private static final String POSTAL_ADDR_LOCALITY = "postal.address.locality";
@@ -58,10 +67,24 @@ public class OldConfigMapper {
 
         c.setSignatureValidation(new SignatureValidationConfigurationProperties());
         c.getSignatureValidation().setTrustStoreEnabled(true);
+        
         StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
         c.getSignatureValidation().setTrustStore(trustStore);
-        trustStore.setPath(oldProperties.get(SECURITY_TRUSTSTORE_PATH));
-        trustStore.setPassword(oldProperties.get(SECURITY_TRUSTSTORE_PASSWORD));
+        
+        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE+PATH));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PATH));
+        
+        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PASSWORD))
+        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
+        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD))
+    	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD));
+        
         trustStore.setType("JKS");
 
         return c;
@@ -73,21 +96,61 @@ public class OldConfigMapper {
         SignatureConfigurationProperties signature = new SignatureConfigurationProperties();
         c.setSignature(signature);
         StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
-        keyStore.setPassword(oldProperties.get(SECURITY_KEYSTORE_PASSWORD));
-        keyStore.setPath(oldProperties.get(SECURITY_KEYSTORE_PATH));
+       
+        if(oldProperties.containsKey(SECURITY+KEYSTORE+PATH))
+        	keyStore.setPath(oldProperties.get(SECURITY+KEYSTORE+PATH));
+        else if(oldProperties.containsKey(SECURITY+KEYSTORE_WITH_CAMELCASE_LETTER+PATH))
+        	keyStore.setPath(oldProperties.get(SECURITY+KEYSTORE_WITH_CAMELCASE_LETTER+PATH));
+        else if(oldProperties.containsKey(SECURITY+KEYSTORE_WITH_DASH+PATH))
+        	keyStore.setPath(oldProperties.get(SECURITY+KEYSTORE_WITH_DASH+PATH));
+    
+        if(oldProperties.containsKey(SECURITY+KEYSTORE+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(SECURITY+KEYSTORE+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+KEYSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(SECURITY+KEYSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+KEYSTORE_WITH_DASH+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(SECURITY+KEYSTORE_WITH_DASH+PASSWORD));
+        
         keyStore.setType("JKS");
         signature.setKeyStore(keyStore);
         KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
-        privateKey.setAlias(oldProperties.get(SECURITY_PRIVATE_KEY_ALIAS));
-        privateKey.setPassword(oldProperties.get(SECURITY_PRIVATE_KEY_PASSWORD));
+        
+        
+        if(oldProperties.containsKey(SECURITY+PRIVATE_KEY+ALIAS))
+        	privateKey.setAlias(oldProperties.get(SECURITY+PRIVATE_KEY+ALIAS));
+        else if(oldProperties.containsKey(SECURITY+PRIVATE_KEY_WITH_CAMELCASE_LETTER+ALIAS))
+        	privateKey.setAlias(oldProperties.get(SECURITY+PRIVATE_KEY_WITH_CAMELCASE_LETTER+ALIAS));
+        else if(oldProperties.containsKey(SECURITY+PRIVATE_KEY_WITH_DASH+ALIAS))
+        	privateKey.setAlias(oldProperties.get(SECURITY+PRIVATE_KEY_WITH_DASH+ALIAS));
+        
+        if(oldProperties.containsKey(SECURITY+PRIVATE_KEY+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(SECURITY+PRIVATE_KEY+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+PRIVATE_KEY_WITH_CAMELCASE_LETTER+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(SECURITY+PRIVATE_KEY_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+PRIVATE_KEY_WITH_DASH+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(SECURITY+PRIVATE_KEY_WITH_DASH+PASSWORD));
+        
         signature.setPrivateKey(privateKey);
 
         c.setSignatureValidation(new SignatureValidationConfigurationProperties());
         c.getSignatureValidation().setTrustStoreEnabled(true);
         StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
         c.getSignatureValidation().setTrustStore(trustStore);
-        trustStore.setPath(oldProperties.get(SECURITY_TRUSTSTORE_PATH));
-        trustStore.setPassword(oldProperties.get(SECURITY_TRUSTSTORE_PASSWORD));
+
+        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE+PATH));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PATH))
+        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PATH));
+        
+        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PASSWORD))
+        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
+        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD))
+    	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD));
+        
         trustStore.setType("JKS");
 
         return c;
@@ -99,13 +162,39 @@ public class OldConfigMapper {
         SignatureConfigurationProperties signature = new SignatureConfigurationProperties();
         c.setSignature(signature);
         StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
-        keyStore.setPassword(oldProperties.get(EVIDENCE_KEYSTORE_PASSWORD));
-        keyStore.setPath(oldProperties.get(EVIDENCE_KEYSTORE_PATH));
+       
+        if(oldProperties.containsKey(EVIDENCE+KEYSTORE+PATH))
+        	keyStore.setPath(oldProperties.get(EVIDENCE+KEYSTORE+PATH));
+        else if(oldProperties.containsKey(EVIDENCE+KEYSTORE_WITH_CAMELCASE_LETTER+PATH))
+        	keyStore.setPath(oldProperties.get(EVIDENCE+KEYSTORE_WITH_CAMELCASE_LETTER+PATH));
+        else if(oldProperties.containsKey(EVIDENCE+KEYSTORE_WITH_DASH+PATH))
+        	keyStore.setPath(oldProperties.get(EVIDENCE+KEYSTORE_WITH_DASH+PATH));
+    
+        if(oldProperties.containsKey(EVIDENCE+KEYSTORE+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(EVIDENCE+KEYSTORE+PASSWORD));
+        else if(oldProperties.containsKey(EVIDENCE+KEYSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(EVIDENCE+KEYSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(EVIDENCE+KEYSTORE_WITH_DASH+PASSWORD))
+        	keyStore.setPassword(oldProperties.get(EVIDENCE+KEYSTORE_WITH_DASH+PASSWORD));
+        
         keyStore.setType("JKS");
         signature.setKeyStore(keyStore);
         KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
-        privateKey.setAlias(oldProperties.get(EVIDENCE_PRIVATE_KEY_ALIAS));
-        privateKey.setPassword(oldProperties.get(EVIDENCE_PRIVATE_KEY_PASSWORD));
+        
+        if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY+ALIAS))
+        	privateKey.setAlias(oldProperties.get(EVIDENCE+PRIVATE_KEY+ALIAS));
+        else if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY_WITH_CAMELCASE_LETTER+ALIAS))
+        	privateKey.setAlias(oldProperties.get(EVIDENCE+PRIVATE_KEY_WITH_CAMELCASE_LETTER+ALIAS));
+        else if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY_WITH_DASH+ALIAS))
+        	privateKey.setAlias(oldProperties.get(EVIDENCE+PRIVATE_KEY_WITH_DASH+ALIAS));
+        
+        if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(EVIDENCE+PRIVATE_KEY+PASSWORD));
+        else if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY_WITH_CAMELCASE_LETTER+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(EVIDENCE+PRIVATE_KEY_WITH_CAMELCASE_LETTER+PASSWORD));
+        else if(oldProperties.containsKey(EVIDENCE+PRIVATE_KEY_WITH_DASH+PASSWORD))
+        	privateKey.setPassword(oldProperties.get(EVIDENCE+PRIVATE_KEY_WITH_DASH+PASSWORD));
+        
         signature.setPrivateKey(privateKey);
 
         EvidencesIssuerInfo evidencesIssuerInfo = new EvidencesIssuerInfo();
