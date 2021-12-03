@@ -336,6 +336,11 @@
             <!--                </exclusions>-->
             <!--            </dependency>-->
             <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-ri</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>7.1</version>
