@@ -1,7 +1,9 @@
 package eu.domibus.connector.ui.view.areas.configuration.security;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -47,7 +49,9 @@ public class EcxContainerConfigPanel extends VerticalLayout {
 
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
-            importEcodexContainerConfig.getIfAvailable().open();
+            ImportEcodexContainerConfig dialog = importEcodexContainerConfig.getObject();
+            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+            dialog.open();
         });
         this.add(b);
         this.add(configurationPanel);
