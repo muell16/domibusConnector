@@ -99,10 +99,9 @@ public abstract class ImportOldConfigDialog extends Dialog {
             }
 
 
-            //TODO: add save button...
             Button saveButton = new Button("Save Imported Config");
             saveButton.addClickListener(event -> {
-//                this.saveLinkConfiguration(linkConfiguration);
+                this.save(linkPartners, domibusConnectorLinkConfiguration);
             });
             resultArea.add(saveButton);
 
