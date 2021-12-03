@@ -18,14 +18,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class StoreConfigurationField extends CustomField<StoreConfigurationProperties> {
 
-    private Binder<StoreConfigurationProperties> binder;
-
     private Label statusLabel = new Label();
     private FormLayout formLayout = new FormLayout();
 
     private TextField path = new TextField();
     private PasswordField password = new PasswordField();
     private Select<String> type = new Select();
+
+    private Binder<StoreConfigurationProperties> binder;
+    private StoreConfigurationProperties value;
 
     public StoreConfigurationField(SpringBeanValidationBinderFactory validationBinderFactory) {
 
@@ -55,15 +56,16 @@ public class StoreConfigurationField extends CustomField<StoreConfigurationPrope
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
-        StoreConfigurationProperties newValue = new StoreConfigurationProperties();
-        binder.writeBeanAsDraft(newValue, true);
-        super.setModelValue(newValue, valueChangeEvent.isFromClient());
+        StoreConfigurationProperties changedValue = new StoreConfigurationProperties();
+        binder.writeBeanAsDraft(changedValue, true);
+        setModelValue(changedValue, valueChangeEvent.isFromClient());
+        value = changedValue;
     }
 
 
     @Override
     protected StoreConfigurationProperties generateModelValue() {
-        return binder.getBean();
+        return value;
     }
 
     @Override

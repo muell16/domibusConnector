@@ -3,6 +3,7 @@
     <module name="domibusConnectorBuilderDeployable" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="eu.domibus.connector.starter.DomibusConnectorStarter" />
     <option name="ENABLE_JMX_AGENT" value="false" />
+    <option name="VM_PARAMETERS" value="-Dsome.property=file:///$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector/config/keystores/connector-ecodex-keystore" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="CLASSPATH_FILE" />

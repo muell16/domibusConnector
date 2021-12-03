@@ -1,10 +1,7 @@
 package eu.domibus.connector.common.configuration;
 
 import eu.domibus.connector.common.annotations.ConnectorPropertyConverter;
-import eu.domibus.connector.common.converters.BusinessDomainIdConverter;
-import eu.domibus.connector.common.converters.ClasspathResourceToStringConverter;
-import eu.domibus.connector.common.converters.EvidenceActionConverter;
-import eu.domibus.connector.common.converters.FileResourceToStringConverter;
+import eu.domibus.connector.common.converters.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,5 +29,9 @@ public class ConnectorConverterAutoConfiguration {
     public FileResourceToStringConverter fileResourceToStringConverter() {
         return new FileResourceToStringConverter();
     }
+
+    @Bean
+    @ConnectorPropertyConverter
+    public ClassToStringConverter classToStringConverter() { return new ClassToStringConverter(); }
 
 }

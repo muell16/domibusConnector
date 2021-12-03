@@ -158,6 +158,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
         private String identityProvider;
 
         @NotNull
+        @UseConverter
         private Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass = OriginalSenderBasedAESAuthenticationServiceFactory.class;
 
         @NotNull
