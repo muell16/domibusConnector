@@ -71,7 +71,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			//process all with this business message transported confirmations
 			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
-			//Create relayREMMD
+			//Create relayREMMD //TODO: decide if this should maybe generated after msg successfully transported to backend link?
 			DomibusConnectorMessageConfirmation relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
 			//process created relayREMMD (save it to db and attach it to transported message)
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence);
@@ -84,8 +84,10 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
 
-
-			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed incomingMessage from GW to backend.");
+			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",
+					incomingMessage.getMessageDetails().getEbmsMessageId(),
+					incomingMessage.getMessageDetails().getConnectorBackendClientName()
+			);
 
 		} catch (DomibusConnectorSecurityException e) {
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
@@ -93,6 +95,10 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
 			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
+			LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
+					incomingMessage.getMessageDetails().getEbmsMessageId(),
+					incomingMessage.getMessageDetails().getConnectorBackendClientName()
+			);
 		}
 	}
 
