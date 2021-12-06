@@ -51,8 +51,13 @@ public class CommonCertificateVerifierFactory {
         CommonCertificateVerifier commonCertificateVerifier = new CommonCertificateVerifier();
         ListCertificateSource listCertificateSource = new ListCertificateSource();
 
-        commonCertificateVerifier.setDataLoader(dataLoader);
-
+        if (certificateVerifierConfig.isAiaEnabled()) {
+            LOGGER.debug("AIA loading is enabled");
+            commonCertificateVerifier.setDataLoader(dataLoader);
+        } else {
+            LOGGER.debug("AIA loading is NOT enabled");
+            commonCertificateVerifier.setDataLoader(null);
+        }
         if (certificateVerifierConfig.isOcspEnabled()) {
             commonCertificateVerifier.setOcspSource(onlineOCSPSource);
             LOGGER.debug("OCSP checking is enabled");
