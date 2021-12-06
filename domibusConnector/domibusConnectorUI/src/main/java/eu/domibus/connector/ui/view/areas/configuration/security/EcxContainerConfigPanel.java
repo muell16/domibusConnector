@@ -16,6 +16,7 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Container Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Order(6)
-public class EcxContainerConfigPanel extends VerticalLayout {
+public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 
     public static final String ROUTE = "ecxContainer";
     
@@ -45,6 +46,7 @@ public class EcxContainerConfigPanel extends VerticalLayout {
     public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
                                    ObjectProvider<ImportEcodexContainerConfig> importEcodexContainerConfig,
                                    EcxContainerConfigForm form) {
+    	super(HELP_ID, TITLE);
         ConfigurationPanelFactory.ConfigurationPanel<DCEcodexContainerProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, DCEcodexContainerProperties.class);
 
