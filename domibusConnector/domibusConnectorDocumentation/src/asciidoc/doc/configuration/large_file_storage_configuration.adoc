@@ -24,7 +24,7 @@ For more details about the payload handling see: link:../architecture/payload_ha
 The used large file persistence provider can be configured in the following way:
 
 For Filesystem Storage:
-[code, properties]
+[code, YAML]
 ----
 #is enabled by default
 #connector.persistence.provider-jpa.enabled=true

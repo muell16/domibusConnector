@@ -56,13 +56,20 @@ a| * set (true): the following properties deifine the TrustStore with certificat
 | For this the checked certificate must provide a OCSP source address and the connector itself must be able to reach the OCSP source.
 | Checkbox
 a| * set (true)
-* not set (false) 
+* not set (false)
 
 | Should CRL be used on certificate verification
 | For this the checked certificate must provide a CRL URL and the connector itself must be able to reach the provided CRL URL.
 | Checkbox
 a| * set (true)
-* not set (false) 
+* not set (false)
+
+| Should AIA Source be enabled on certificate verification
+| The AIA source is used to collect certificates from external resources (AIA). For more details see link:https://ec.europa.eu/cefdigital/DSS/webapp-demo/doc/dss-documentation.html#certificateVerifier[DSS certificateVerifier].
+If set to false a IgnoreSource will be used for AIA resolving. So no query at all is made.
+| Checkbox
+a| * set (true)
+* not set (false)
 
 |===
 

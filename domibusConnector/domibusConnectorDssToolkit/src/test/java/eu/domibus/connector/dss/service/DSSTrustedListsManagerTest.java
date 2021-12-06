@@ -29,7 +29,7 @@ class DSSTrustedListsManagerTest {
 
     @Test
     public void testStartup() {
-        Assertions.assertThat(dssTrustedListsManager.getAllSourceNames()).hasSize(1);
+        Assertions.assertThat(dssTrustedListsManager.getAllSourceNames()).hasSize(2);
         Assertions.assertThat(dssTrustedListsManager.getCertificateSource("list1")).isPresent();
     }
 

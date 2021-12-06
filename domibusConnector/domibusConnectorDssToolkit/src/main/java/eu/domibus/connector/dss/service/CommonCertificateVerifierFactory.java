@@ -6,6 +6,7 @@ import eu.europa.esig.dss.model.x509.revocation.crl.CRL;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.spi.client.http.DataLoader;
+import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
@@ -56,21 +57,21 @@ public class CommonCertificateVerifierFactory {
             commonCertificateVerifier.setDataLoader(dataLoader);
         } else {
             LOGGER.debug("AIA loading is NOT enabled");
-            commonCertificateVerifier.setDataLoader(null);
+            commonCertificateVerifier.setDataLoader(new IgnoreDataLoader());
         }
         if (certificateVerifierConfig.isOcspEnabled()) {
             commonCertificateVerifier.setOcspSource(onlineOCSPSource);
             LOGGER.debug("OCSP checking is enabled");
         } else {
             LOGGER.debug("OCSP checking is NOT enabled");
-            commonCertificateVerifier.setOcspSource(null);
+            commonCertificateVerifier.setOcspSource(new OnlineOCSPSource(new IgnoreDataLoader()));
         }
         if (certificateVerifierConfig.isCrlEnabled()) {
             LOGGER.debug("CRL checking is enabled");
             commonCertificateVerifier.setCrlSource(onlineCRLSource);
         } else {
             LOGGER.debug("CRL checking is NOT enabled");
-            commonCertificateVerifier.setCrlSource(null);
+            commonCertificateVerifier.setCrlSource(new OnlineCRLSource(new IgnoreDataLoader()));
         }
 
         String trustedListSourceName = certificateVerifierConfig.getTrustedListSource();
