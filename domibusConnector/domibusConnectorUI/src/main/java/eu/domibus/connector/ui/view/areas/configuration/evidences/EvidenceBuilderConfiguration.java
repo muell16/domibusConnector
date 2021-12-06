@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(7)
+@Order(6)
 public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndHelpButton {
 
 	public static final String ROUTE = "evidencebuilder";

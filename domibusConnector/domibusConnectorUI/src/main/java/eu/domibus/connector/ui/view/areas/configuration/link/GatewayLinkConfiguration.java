@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @TabMetadata(title = "Gateway Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = GatewayLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Order(3)
+@Order(2)
 //@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class GatewayLinkConfiguration extends LinkConfiguration {
 

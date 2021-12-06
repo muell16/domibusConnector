@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Route(value = EcxContainerConfigPanel.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Container Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(6)
+@Order(5)
 public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 
     public static final String ROUTE = "ecxContainer";

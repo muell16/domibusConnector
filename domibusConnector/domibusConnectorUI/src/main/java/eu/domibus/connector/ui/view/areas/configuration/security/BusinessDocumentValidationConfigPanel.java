@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 @Route(value = BusinessDocumentValidationConfigPanel.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Business Document Verification", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(5)
+@Order(4)
 public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 	
 	public static final String TITLE = "ECodex Business Document Verification";

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 @TabMetadata(title = "Backend Message Routing", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = BackendMessageRoutingView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Order(4)
+@Order(3)
 public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private static final Logger LOGGER = LogManager.getLogger(BackendMessageRoutingView.class);

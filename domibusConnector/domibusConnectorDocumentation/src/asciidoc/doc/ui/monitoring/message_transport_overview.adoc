@@ -12,7 +12,7 @@ endif::header[]
 
 The domibus connector communicates with different other components (gateway, connector-client) this is done over the link module. But sometimes the messages are failing during this transport. A overview of this transports is provided by the link:/monitoring/linktransport[Monitoring - Message Transport] UI.
 
-For details see link:../architecture/link_partners.html[Link Module Architecture Doc]
+For details see link:../../architecture/link_partners.html[Link Module Architecture Doc]
 
 == Overview
 

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @TabMetadata(title = "Backend Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = BackendLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Order(2)
+@Order(1)
 //@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class BackendLinkConfiguration extends LinkConfiguration {
 
