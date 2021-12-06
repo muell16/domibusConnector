@@ -103,6 +103,8 @@ public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpBu
 		
 		this.util = util;
 		
+		add(new ConfigurationItemChapterDiv("Message Storage Configuration:"));
+		
 		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePathLabels, persistenceFSStoragePathField));
 		
 		add(util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemCreateDirLabels, persistenceFSStorageCreateDirBox));
@@ -158,22 +160,24 @@ public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpBu
 		Div httpsProxyPassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
 		add(httpsProxyPassword);
 		
-		add(new ConfigurationItemChapterDiv("Database Connection Configuration:"));
+		// riederb: deactivated - db setting must come from container configuration!
 		
-		Div databaseUrl = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
-		add(databaseUrl);
-		
-		Div databaseUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
-		add(databaseUser);
-		
-		Div databasePassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
-		add(databasePassword);
-		
-		Div databaseDriver = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
-		add(databaseDriver);
-		
-		Div databaseDialect = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
-		add(databaseDialect);
+//		add(new ConfigurationItemChapterDiv("Database Connection Configuration:"));
+//		
+//		Div databaseUrl = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
+//		add(databaseUrl);
+//		
+//		Div databaseUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
+//		add(databaseUser);
+//		
+//		Div databasePassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
+//		add(databasePassword);
+//		
+//		Div databaseDriver = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
+//		add(databaseDriver);
+//		
+//		Div databaseDialect = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
+//		add(databaseDialect);
 		
 	}
 
