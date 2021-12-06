@@ -257,6 +257,8 @@ to put the PDF document and the detached Signature seperatly into the connector.
 
 See the following excerpt of the xsd:
 
+[code, xml]
+----
  <xs:complexType name="DomibusConnectorMessageDocumentType">
         <xs:sequence>
             <xs:element name="document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"
@@ -274,6 +276,7 @@ See the following excerpt of the xsd:
                         maxOccurs="1"/>
         </xs:sequence>
  </xs:complexType>
+----
 
 So basically the detached signature for the PDF should be put into the detachedSignature. With this approach
 ASIC-S based documents can be put into the connector.

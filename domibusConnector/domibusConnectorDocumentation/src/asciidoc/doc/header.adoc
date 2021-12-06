@@ -13,7 +13,6 @@ ifndef::header[]
 :toclevels: 4
 :sectnums:
 
-:source-highlighter: coderay
 
 :header: header
 

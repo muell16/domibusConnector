@@ -73,7 +73,8 @@
                     <attributes>
                         <!--                            <sourcedir>${project.build.sourceDirectory}</sourcedir>-->
                         <project-version>${project.version}</project-version>
-                        <source-highlighter>coderay</source-highlighter>
+                        <source-highlighter>rouge</source-highlighter>
+                        <rouge-style>github</rouge-style>
                         <!--                                <data-uri/>-->
                         <mvnbasedir>${project.basedir}/../</mvnbasedir>
                         <basepath>${project.basedir}/src/asciidoc/</basepath>

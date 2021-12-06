@@ -57,21 +57,21 @@ public class CommonCertificateVerifierFactory {
             commonCertificateVerifier.setDataLoader(dataLoader);
         } else {
             LOGGER.debug("AIA loading is NOT enabled");
-            commonCertificateVerifier.setDataLoader(new IgnoreDataLoader());
+            commonCertificateVerifier.setDataLoader(null);
         }
         if (certificateVerifierConfig.isOcspEnabled()) {
             commonCertificateVerifier.setOcspSource(onlineOCSPSource);
             LOGGER.debug("OCSP checking is enabled");
         } else {
             LOGGER.debug("OCSP checking is NOT enabled");
-            commonCertificateVerifier.setOcspSource(new OnlineOCSPSource(new IgnoreDataLoader()));
+            commonCertificateVerifier.setOcspSource(null);
         }
         if (certificateVerifierConfig.isCrlEnabled()) {
             LOGGER.debug("CRL checking is enabled");
             commonCertificateVerifier.setCrlSource(onlineCRLSource);
         } else {
             LOGGER.debug("CRL checking is NOT enabled");
-            commonCertificateVerifier.setCrlSource(new OnlineCRLSource(new IgnoreDataLoader()));
+            commonCertificateVerifier.setCrlSource(null);
         }
 
         String trustedListSourceName = certificateVerifierConfig.getTrustedListSource();
