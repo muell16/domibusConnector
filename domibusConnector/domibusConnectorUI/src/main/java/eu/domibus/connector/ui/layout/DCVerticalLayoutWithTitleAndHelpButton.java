@@ -52,7 +52,7 @@ public class DCVerticalLayoutWithTitleAndHelpButton extends VerticalLayout {
 				.getUrl(DashboardView.class);
 
 		Anchor helpLink = new Anchor();
-		helpLink.setHref(baseURL + htmlFile);
+		helpLink.setHref(baseURL + htmlFile+ "?param="+System.currentTimeMillis());
 		helpLink.setTarget("_blank");
 		helpLink.setTitle("Online help page for view "+pageTitle);
 		helpLink.add(new Button(VaadinIcon.QUESTION_CIRCLE_O.create()));
