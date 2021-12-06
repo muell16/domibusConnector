@@ -1,0 +1,12 @@
+:path: ../../../
+
+ifndef::basepath[]
+:basepath: {path}
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Evidence Builder Configuration
+

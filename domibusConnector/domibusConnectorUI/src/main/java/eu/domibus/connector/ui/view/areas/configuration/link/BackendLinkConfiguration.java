@@ -26,6 +26,8 @@ public class BackendLinkConfiguration extends LinkConfiguration {
 
     public static final String ROUTE = "backendlink";
 
+    public static final String TITLE = "Backend Configuration";
+    
     private final ImportOldBackendConfigDialog importOldBackendConfig;
 
     private Button importOldConfigButton = new Button("Import Link Config From 4.2 Connector Properties");
@@ -33,7 +35,7 @@ public class BackendLinkConfiguration extends LinkConfiguration {
     public BackendLinkConfiguration(DCLinkFacade dcLinkFacade,
                                     ImportOldBackendConfigDialog importOldGatewayConfigDialog,
                                     ApplicationContext applicationContext) {
-        super(dcLinkFacade, applicationContext, LinkType.BACKEND);
+        super(dcLinkFacade, applicationContext, LinkType.BACKEND, TITLE);
         this.importOldBackendConfig = importOldGatewayConfigDialog;
         importOldConfigButton.addClickListener(this::importOldConfig);
         super.buttonBar.add(importOldConfigButton);

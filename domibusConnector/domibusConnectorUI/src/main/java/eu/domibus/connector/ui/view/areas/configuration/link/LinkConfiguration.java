@@ -26,6 +26,8 @@ import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.ui.dialogs.EditBeanDialogBuilder;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
+
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
@@ -34,8 +36,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class LinkConfiguration extends VerticalLayout implements AfterNavigationObserver {
+public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
+	public static final String HELP_ID = "ui/configuration/link_configuration.html";
 
     private final DCLinkFacade dcLinkFacade;
     private final ApplicationContext applicationContext;
@@ -50,7 +53,8 @@ public abstract class LinkConfiguration extends VerticalLayout implements AfterN
 
     protected LinkConfiguration(DCLinkFacade dcLinkFacade,
                                 ApplicationContext applicationContext,
-                                LinkType linkType) {
+                                LinkType linkType, final String TITLE) {
+    	super(HELP_ID, TITLE);
         this.webLinkItemHierachicalDataProvider = new WebLinkItemHierachicalDataProvider(dcLinkFacade, linkType);
         this.dcLinkFacade = dcLinkFacade;
         this.applicationContext = applicationContext;

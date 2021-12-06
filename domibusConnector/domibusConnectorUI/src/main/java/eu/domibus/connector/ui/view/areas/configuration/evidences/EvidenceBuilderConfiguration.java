@@ -7,6 +7,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
+import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
+import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
+import eu.domibus.connector.ui.component.LumoCheckbox;
+import eu.domibus.connector.ui.forms.FormsUtil;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
+import eu.domibus.connector.ui.service.WebKeystoreService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
@@ -29,13 +35,17 @@ import org.springframework.stereotype.Component;
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Evidence Builder Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Order(7)
-public class EvidenceBuilderConfiguration  extends VerticalLayout {
+public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndHelpButton {
 
 	public static final String ROUTE = "evidencebuilder";
+
+	public static final String TITLE = "Evidence Builder Configuration";
+	public static final String HELP_ID = "ui/configuration/evidence_builder_configuration.html";
 
 	public EvidenceBuilderConfiguration(ConfigurationPanelFactory configurationPanelFactory,
 										ObjectProvider<ImportOldEvidenceConfigDialog> importOldEvidenceConfigDialog,
 										EvidencesToolkitConfigurationPropertiesForm form) {
+		super(HELP_ID, TITLE);
 		ConfigurationPanelFactory.ConfigurationPanel<EvidencesToolkitConfigurationProperties> configurationPanel
 				= configurationPanelFactory.createConfigurationPanel(form, EvidencesToolkitConfigurationProperties.class);
 
