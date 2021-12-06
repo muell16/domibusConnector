@@ -44,15 +44,24 @@ public class ConfigurationPanelFactory {
         return showChangedPropertiesDialog(boundConfigValue, null);
     }
 
-    public Dialog showChangedPropertiesDialog(Object boundConfigValue, ComponentEventListener<Dialog.DialogCloseActionEvent> closeActionEventComponentEventListener) {
+    public interface DialogCloseCallback {
+        public void dialogHasBeenClosed();
+    }
+
+    public Dialog showChangedPropertiesDialog(Object boundConfigValue, DialogCloseCallback dialogCloseCallback) {
         Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
                 boundConfigValue);
 
-        final Dialog d = new Dialog();
-        if (closeActionEventComponentEventListener != null) {
-            d.addDialogCloseActionListener(closeActionEventComponentEventListener);
-            d.addDialogCloseActionListener(closeEvent -> d.close());
-        }
+        //use custom callback with overwriting setOpened because, addDialogCloseActionListener does not work
+        final Dialog d = new Dialog() {
+            public void setOpened(boolean opened) {
+                super.setOpened(opened);
+                if (!opened) {
+                    dialogCloseCallback.dialogHasBeenClosed();
+                }
+            }
+        };
+
         Grid<Map.Entry<String, String>> g = new Grid<>();
         g.setItems(updatedConfiguration.entrySet());
         g.addColumn(Map.Entry::getKey).setHeader("key");

@@ -84,9 +84,7 @@ public abstract class AImportOldConfigDialog extends Dialog {
     protected abstract Object showImportedConfig(Div div, Map<String, String> p);
 
     protected void save(Object configClass) {
-        configurationPanelFactory.showChangedPropertiesDialog(configClass, closeEvent -> {
-            close();
-        });
+        configurationPanelFactory.showChangedPropertiesDialog(configClass, AImportOldConfigDialog.this::close);
     }
 
 }
