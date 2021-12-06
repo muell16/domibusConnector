@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 	
 	public static final String TITLE = "ECodex Business Document Verification";
-	public static final String HELP_ID = "ui/business_document_verification.html";
+	public static final String HELP_ID = "ui/configuration/business_document_verification.html";
 
     public static final String ROUTE = "businessDocumentValidation";
 

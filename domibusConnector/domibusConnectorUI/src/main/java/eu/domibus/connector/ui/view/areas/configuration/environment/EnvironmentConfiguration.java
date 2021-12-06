@@ -9,6 +9,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.ui.component.LumoCheckbox;
 import eu.domibus.connector.ui.forms.FormsUtil;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
@@ -59,7 +60,7 @@ import java.util.List;
 @TabMetadata(title = "Environment Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @RoleRequired(role = "ADMIN")
 @Order(1)
-public class EnvironmentConfiguration extends VerticalLayout{
+public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpButton{
 
 	public static final String ROUTE = "environment";
 
@@ -67,6 +68,9 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static final String TITLE = "Environment Configuration";
+	public static final String HELP_ID = "ui/configuration/environment_configuration.html";
 
 	ConfigurationUtil util;
 	
@@ -95,6 +99,8 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	TextField databaseDialectField = FormsUtil.getFormattedTextField();
 
 	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+		super(HELP_ID, TITLE);
+		
 		this.util = util;
 		
 		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePathLabels, persistenceFSStoragePathField));

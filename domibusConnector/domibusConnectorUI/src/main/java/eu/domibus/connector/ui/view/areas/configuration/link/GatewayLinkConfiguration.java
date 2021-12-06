@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
 public class GatewayLinkConfiguration extends LinkConfiguration {
 
     public static final String ROUTE = "gwlink";
+    
+    public static final String TITLE = "Gateway Configuration";
+    
     private final ImportOldGatewayConfigDialog importOldGatewayConfigDialog;
 
     private Button importOldConfigButton = new Button("Import Link Config From 4.2 Connector Properties");
@@ -32,7 +35,7 @@ public class GatewayLinkConfiguration extends LinkConfiguration {
     public GatewayLinkConfiguration(DCLinkFacade dcLinkFacade,
                                     ImportOldGatewayConfigDialog importOldGatewayConfigDialog,
                                     ApplicationContext applicationContext) {
-        super(dcLinkFacade, applicationContext, LinkType.GATEWAY);
+        super(dcLinkFacade, applicationContext, LinkType.GATEWAY, TITLE);
         this.importOldGatewayConfigDialog = importOldGatewayConfigDialog;
         importOldConfigButton.addClickListener(this::importOldConfig);
         super.buttonBar.add(importOldConfigButton);
