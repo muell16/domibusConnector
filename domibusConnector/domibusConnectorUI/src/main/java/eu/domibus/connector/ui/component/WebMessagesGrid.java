@@ -1,4 +1,4 @@
-package eu.domibus.connector.ui.view.areas.messages;
+package eu.domibus.connector.ui.component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,25 +27,27 @@ import com.vaadin.flow.function.ValueProvider;
 
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
+import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 
 public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 	// collect all hideable columns, to be iterated over later.
-	private Map<String,Column> hideableColumns = new HashMap<>();
+	private Map<String,Column<WebMessage>> hideableColumns = new HashMap<>();
 	
 	private final MessageDetails details;
 	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 	
-	WebMessage exampleWebMessage = new WebMessage();
+	WebMessage exampleWebMessage;
 	
 	Page<WebMessage> currentPage;
 	
 	CallbackDataProvider<WebMessage, WebMessage> callbackDataProvider;
 
-	public WebMessagesGrid(MessageDetails details, DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService) {
+	public WebMessagesGrid(MessageDetails details, DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService, WebMessage exampleWebMessage) {
 		super();
 		this.details = details;
 		this.dcMessagePersistenceService = dcMessagePersistenceService;
+		this.exampleWebMessage = exampleWebMessage;
 		addAllColumns();
 		
 		for(Column<WebMessage> col : getColumns()) {
@@ -66,14 +68,14 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		
 		addColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyString():"")
-				.setHeader("From Party").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
+				.setHeader("From Party").setWidth("70px").setKey("messageInfo.from.partyString").setSortable(true);
 		addColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyString():"")
-				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
+				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyString").setSortable(true);
 
-		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, false);
-		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false, true);
-		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false, true);
+		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, true);
+		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false, false);
+		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false, false);
 		addHideableColumn(WebMessage::getConversationId, "Conversation ID", "450px", "conversationId", false, false);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getOriginalSender():""
@@ -83,11 +85,11 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 				, "Final recipient", "300px", "messageInfo.finalRecipient", true, false);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getServiceString():""
-				, "Service", "150px", "messageInfo.service.service", true, true);
+				, "Service", "150px", "messageInfo.service.serviceString", true, true);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getAction()!=null?webMessage.getMessageInfo().getAction().getAction():""
 				, "Action", "150px", "messageInfo.action.action", true, true);
-		addHideableColumn(WebMessage::getBackendName, "backend name", "150px", "backendName", true, false);
+		addHideableColumn(WebMessage::getBackendName, "backend name", "150px", "backendName", true, true);
 		addHideableColumn(WebMessage::getDirection, "direction", "150px", "direction", false, false);
 		addHideableColumn(WebMessage::getDeliveredToNationalSystem, "delivered backend", "300px", "deiliveredToNationalSystem", true, false);
 		addHideableColumn(WebMessage::getDeliveredToGateway, "delivered gateway", "300px", "deliveredToGateway", true, false);
@@ -104,7 +106,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		hideableColumns.put(header, column);
 	}
 	
-	public Map<String, Column> getHideableColumns() {
+	public Map<String, Column<WebMessage>> getHideableColumns() {
 		return hideableColumns;
 	}
 	

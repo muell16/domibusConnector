@@ -1,39 +1,26 @@
 package eu.domibus.connector.ui.view.areas.messages;
 
-import com.vaadin.flow.component.UI;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.ui.component.WebMessagesGrid;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @UIScope
@@ -146,72 +133,61 @@ public class Search extends VerticalLayout {
 	private void addGridWithData(WebMessage example) {
 		main.removeAll();
 		
-		WebMessagesGrid grid = new WebMessagesGrid(details, dcMessagePersistenceService);
-		grid.setExampleWebMessage(example);
+		WebMessagesGrid grid = new WebMessagesGrid(details, dcMessagePersistenceService, example);
 		grid.reloadList();
-//		grid.setItems(messages);
 		
 		grid.setVisible(true);
 		
 		
 		main.add(grid);
-		
-//		HorizontalLayout downloadLayout = createDownloadLayout(messages);
-//		
-//		main.add(downloadLayout);
 		main.setAlignItems(Alignment.STRETCH);
-//		main.setHeight("400px");
 		main.setWidth("100vw");
-//		main.setSizeFull();
-//		main.setVisible(false);
-		
-//		add(main);
 	}
 	
-	private HorizontalLayout createDownloadLayout(LinkedList<WebMessage> messages) {
-		Div downloadExcel = new Div();
-		
-		Button download = new Button();
-		download.setIcon(new Image("frontend/images/xls.png", "XLS"));
-		
-		download.addClickListener(e -> {
-		
-			Element file = new Element("object");
-			Element dummy = new Element("object");
-			
-			Input oName = new Input();
-			
-			String name = "MessagesList.xls";
-			
-			StreamResource resource = new StreamResource(name,() -> getMessagesListExcel(messages));
-			
-			resource.setContentType("application/xls");
-			
-			file.setAttribute("data", resource);
-			
-			Anchor link = null;
-			link = new Anchor(file.getAttribute("data"), "Download Document");
-			
-			UI.getCurrent().getElement().appendChild(oName.getElement(), file,
-					dummy);
-			oName.setVisible(false);
-			file.setVisible(false);
-			this.getUI().get().getPage().executeJavaScript("window.open('"+link.getHref()+"');");
-		});
-		
-		downloadExcel.add(download);
-		
-		HorizontalLayout downloadLayout = new HorizontalLayout(
-				downloadExcel
-			    );
-		downloadLayout.setWidth("100vw");
-		
-		return downloadLayout;
-	}
+//	private HorizontalLayout createDownloadLayout(LinkedList<WebMessage> messages) {
+//		Div downloadExcel = new Div();
+//		
+//		Button download = new Button();
+//		download.setIcon(new Image("frontend/images/xls.png", "XLS"));
+//		
+//		download.addClickListener(e -> {
+//		
+//			Element file = new Element("object");
+//			Element dummy = new Element("object");
+//			
+//			Input oName = new Input();
+//			
+//			String name = "MessagesList.xls";
+//			
+//			StreamResource resource = new StreamResource(name,() -> getMessagesListExcel(messages));
+//			
+//			resource.setContentType("application/xls");
+//			
+//			file.setAttribute("data", resource);
+//			
+//			Anchor link = null;
+//			link = new Anchor(file.getAttribute("data"), "Download Document");
+//			
+//			UI.getCurrent().getElement().appendChild(oName.getElement(), file,
+//					dummy);
+//			oName.setVisible(false);
+//			file.setVisible(false);
+//			this.getUI().get().getPage().executeJavaScript("window.open('"+link.getHref()+"');");
+//		});
+//		
+//		downloadExcel.add(download);
+//		
+//		HorizontalLayout downloadLayout = new HorizontalLayout(
+//				downloadExcel
+//			    );
+//		downloadLayout.setWidth("100vw");
+//		
+//		return downloadLayout;
+//	}
 	
-	private InputStream getMessagesListExcel(LinkedList<WebMessage> messages) {
-		return messageService.generateExcel(messages);
-	}
+//	private InputStream getMessagesListExcel(LinkedList<WebMessage> messages) {
+//		return messageService.generateExcel(messages);
+//	}
 
 	private void searchByBackendMessageId(String backendMessageId) {
 		Optional<WebMessage> messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);

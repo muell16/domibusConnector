@@ -1,7 +1,5 @@
 package eu.domibus.connector.ui.layout;
 
-import javax.annotation.PostConstruct;
-
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -13,11 +11,11 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 
 import eu.domibus.connector.ui.component.LumoCheckbox;
 import eu.domibus.connector.ui.component.LumoLabel;
-import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
+import eu.domibus.connector.ui.component.WebMessagesGrid;
 
 public class DCVerticalLayoutWithWebMessageGrid extends VerticalLayout {
 	
-	public static final int INITIAL_PAGE_SIZE = 20;
+	public static final int INITIAL_PAGE_SIZE = 15;
 	
 	WebMessagesGrid grid;
 	
@@ -31,15 +29,6 @@ public class DCVerticalLayoutWithWebMessageGrid extends VerticalLayout {
 		grid.setPaginatorSize(5);
 
 		VerticalLayout gridControl = createGridControlLayout();
-
-//		VerticalLayout main = new VerticalLayout(gridControl,
-//				grid
-//		);
-//		main.setAlignItems(Alignment.STRETCH);
-//		main.setHeight("700px");
-//		add(main);
-//		setHeight("100vh");
-//		setWidth("100vw");
 		
 		add(gridControl);
 		add(grid);
@@ -47,29 +36,7 @@ public class DCVerticalLayoutWithWebMessageGrid extends VerticalLayout {
 		setSizeFull();
 	}
 
-//	@PostConstruct
-//	void init() {
-//		
-//		grid.setPageSize(pageSize);
-//		grid.setPaginatorSize(5);
-//
-//		VerticalLayout gridControl = createGridControlLayout();
-//
-////		VerticalLayout main = new VerticalLayout(gridControl,
-////				grid
-////		);
-////		main.setAlignItems(Alignment.STRETCH);
-////		main.setHeight("700px");
-////		add(main);
-////		setHeight("100vh");
-////		setWidth("100vw");
-//		
-//		add(gridControl);
-//		add(grid);
-//		
-//		setSizeFull();
-//
-//	}
+
 	
 	private VerticalLayout createGridControlLayout() {
 		VerticalLayout gridControl = new VerticalLayout();
