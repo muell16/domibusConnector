@@ -14,7 +14,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
+import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
@@ -36,6 +38,7 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	private final MessageDetails details;
 	private final WebMessageService messageService;
 	private final WebConnectorTestService testService;
+	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 	
 	private String connectorTestBackendName = DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
 	
@@ -43,16 +46,18 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	
 	public ConnectorTestMessageList(WebMessageService messageService,
 									MessageDetails details,
-									Optional<WebConnectorTestService> testService) {
+									Optional<WebConnectorTestService> testService,
+									DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService) {
 		super(HELP_ID, TITLE);
 		this.messageService = messageService;
 		this.details = details;
 		this.testService = testService.orElse(null);
+		this.dcMessagePersistenceService = dcMessagePersistenceService;
 	}
 
 	@PostConstruct
 	void init() {
-		grid = new WebMessagesGrid(details);
+		grid = new WebMessagesGrid(details, dcMessagePersistenceService);
 		
 		grid.setVisible(true);
 		
@@ -63,7 +68,11 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	public void afterNavigation(AfterNavigationEvent arg0) {
 		if(testService != null)
 			connectorTestBackendName = testService.getConnectorTestBackendName();
-		grid.setItems(messageService.getConnectorTestMessages(connectorTestBackendName));
+		WebMessage example = new WebMessage();
+		example.setBackendName(connectorTestBackendName);
+		grid.setExampleWebMessage(example);
+		grid.reloadList();
+//		grid.setItems(messageService.getConnectorTestMessages(connectorTestBackendName));
 		
 	}
 	

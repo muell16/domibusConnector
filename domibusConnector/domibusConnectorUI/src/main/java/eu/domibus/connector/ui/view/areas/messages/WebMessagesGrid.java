@@ -1,32 +1,51 @@
 package eu.domibus.connector.ui.view.areas.messages;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.vaadin.klaudeta.PaginatedGrid;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.event.SortEvent;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.function.ValueProvider;
 
 import eu.domibus.connector.ui.dto.WebMessage;
-
-import org.vaadin.klaudeta.PaginatedGrid;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 
 public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 	// collect all hideable columns, to be iterated over later.
 	private Map<String,Column> hideableColumns = new HashMap<>();
 	
-	private MessageDetails details;
+	private final MessageDetails details;
+	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
+	
+	WebMessage exampleWebMessage = new WebMessage();
+	
+	Page<WebMessage> currentPage;
+	
+	CallbackDataProvider<WebMessage, WebMessage> callbackDataProvider;
 
-	public WebMessagesGrid(MessageDetails details) {
+	public WebMessagesGrid(MessageDetails details, DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService) {
 		super();
 		this.details = details;
+		this.dcMessagePersistenceService = dcMessagePersistenceService;
 		addAllColumns();
 		
 		for(Column<WebMessage> col : getColumns()) {
@@ -36,6 +55,10 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		setMultiSort(false);
 		setWidth("100%");
 		addSortListener(this::handleSortEvent);
+		
+		callbackDataProvider
+			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
+		setDataProvider(callbackDataProvider);
 	}
 
 	private void addAllColumns(){
@@ -102,5 +125,44 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 					return direction;
 
 				});
+	}
+	
+	private Example<WebMessage> createExample() {
+		return Example.of(exampleWebMessage, ExampleMatcher.matchingAny()
+				.withIgnoreCase()
+				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
+	}
+	
+	private int countCallback(Query<WebMessage, WebMessage> webMessageWebMessageQuery) {
+		return (int) dcMessagePersistenceService.count(createExample());
+	}
+
+	private Stream<WebMessage> fetchCallback(Query<WebMessage, WebMessage> webMessageWebMessageQuery) {
+
+		int offset = webMessageWebMessageQuery.getOffset();
+		
+		List<Sort.Order> collect = getSortOrder()
+				.stream()
+				.filter(sortOrder -> sortOrder.getSorted().getKey() != null)
+				.map(sortOrder ->
+						sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
+				.collect(Collectors.toList());
+		Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
+
+		//creating page request with sort order and offset
+		PageRequest pageRequest = PageRequest.of(offset / getPageSize(), getPageSize(), sort);
+		Page<WebMessage> all = dcMessagePersistenceService.findAll(createExample(), pageRequest);
+		
+		this.currentPage = all;
+
+		return all.stream();
+	}
+	
+	public void reloadList() {
+		callbackDataProvider.refreshAll();
+	}
+	
+	public void setExampleWebMessage(WebMessage example) {
+		this.exampleWebMessage = example;
 	}
 }
