@@ -82,6 +82,11 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
                 //send generated evidence back...this would be the same direction as the business message...with new messageid
                 submitConfirmationAsEvidenceMessageStep.submitSameDirection(null, businessMsg, transportedConfirmation);
             }
+
+            LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully processed evidence [{}] in direction [{}] for business message [{}]",
+                    transportedConfirmation.getEvidenceType(),
+                    message.getMessageDetails().getDirection(),
+                    businessMsg.getConnectorMessageId());
         } catch (DCEvidenceNotRelevantException dcEvidenceNotRelevantException) {
             LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, dcEvidenceNotRelevantException.getMessage());
             LOGGER.debug(dcEvidenceNotRelevantException.getMessage(), dcEvidenceNotRelevantException);
