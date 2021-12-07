@@ -66,7 +66,7 @@ class SigningUtil {
 		params.setCertificateChain(signingParameters.getPrivateKey().getCertificateChain());
 		params.setSigningCertificate(signingParameters.getPrivateKey().getCertificate());
 		
-		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier();
+		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier(); //TODO: replace with FACTORY!!
 		final DocumentSignatureService<ASiCWithXAdESSignatureParameters, XAdESTimestampParameters> signatureService = new ASiCWithXAdESService(certificateVerifier);
 		
 		ToBeSigned bytesToSign = signatureService.getDataToSign(document, params);
@@ -97,7 +97,7 @@ class SigningUtil {
 	 */
 	static DSSDocument signPAdES(final SignatureParameters signingParameters, final DSSDocument document) throws Exception {
 
-		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier(true);
+		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier(true); //TODO: replace with FACTORY!!
 		final DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService = new PAdESService(certificateVerifier);
 
 		final EncryptionAlgorithm encryptionAlgorithm = signingParameters.getEncryptionAlgorithm();
@@ -142,7 +142,7 @@ class SigningUtil {
 	 */
 	static DSSDocument signXAdES(final SignatureParameters signingParameters, final DSSDocument document, final SignaturePackaging signaturePackaging) throws Exception {
 
-		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier();
+		final CertificateVerifier certificateVerifier = new CommonCertificateVerifier(); //TODO: replace with FACTORY!!
 		final XAdESService signatureService = new XAdESService(certificateVerifier);
 
 //		final String encryptionAlgorithm_ = signingParameters.getEncryptionAlgorithm();
