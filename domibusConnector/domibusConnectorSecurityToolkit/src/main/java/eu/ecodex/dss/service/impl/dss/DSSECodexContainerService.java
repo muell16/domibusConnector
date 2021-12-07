@@ -595,7 +595,7 @@ public class DSSECodexContainerService implements ECodexContainerService {
 			signedContentZip.close();
 
 			// create asic-s container
-			final DSSDocument toBeSigned = new InMemoryDocument(signedContentBytes.toByteArray(), ContainerFileDefinitions.SIGNED_CONTENT_REF, MimeType.BINARY);
+			final DSSDocument toBeSigned = new InMemoryDocument(signedContentBytes.toByteArray(), ContainerFileDefinitions.SIGNED_CONTENT_REF, MimeType.BINARY); //TODO: replace InMemoryDocument with Streaming Document
 			return SigningUtil.signASiC(signingParameters, toBeSigned);
 
 		} finally {
