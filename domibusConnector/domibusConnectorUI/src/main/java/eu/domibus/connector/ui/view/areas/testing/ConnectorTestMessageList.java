@@ -15,6 +15,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.ui.dto.WebMessage;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithWebMessageGrid;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
@@ -42,6 +43,8 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	
 	private String connectorTestBackendName = DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
 	
+	DCVerticalLayoutWithWebMessageGrid gridLayout;
+	
 	WebMessagesGrid grid;
 	
 	public ConnectorTestMessageList(WebMessageService messageService,
@@ -59,9 +62,19 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	void init() {
 		grid = new WebMessagesGrid(details, dcMessagePersistenceService);
 		
-		grid.setVisible(true);
+//		if(testService != null)
+//			connectorTestBackendName = testService.getConnectorTestBackendName();
+//		WebMessage example = new WebMessage();
+//		example.setBackendName(connectorTestBackendName);
+//		grid.setExampleWebMessage(example);
+//		grid.reloadList();
 		
-		add(grid);
+		gridLayout = new DCVerticalLayoutWithWebMessageGrid(grid);
+		
+		gridLayout.setVisible(true);
+		gridLayout.setHeight("100vh");
+		add(gridLayout);
+		setSizeFull();
 	}
 	
 	@Override

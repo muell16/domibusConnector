@@ -13,6 +13,7 @@ import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePer
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Example;
@@ -118,10 +119,11 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		}
 //    	LOGGER.debug("Probe: {}", example.getProbe());
 
-		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
-
-		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
-		return exampleDbMsg;
+    	PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
+           BeanUtils.copyProperties(example.getProbe(),dbMsg);
+        //TODO: map properties which have not the same name...
+        Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
+        return exampleDbMsg;
 	}
 
 

@@ -26,7 +26,7 @@ import eu.domibus.connector.ui.component.LumoCheckbox;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
-import eu.domibus.connector.ui.layout.DCVerticalLayoutWithPaginatedGrid;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithWebMessageGrid;
 import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
@@ -52,7 +52,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 	public static final String ROUTE = "messagelist";
 	
-	DCVerticalLayoutWithPaginatedGrid gridLayout;
+	DCVerticalLayoutWithWebMessageGrid gridLayout;
 	private WebMessagesGrid grid;
 	
 	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
@@ -70,7 +70,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 		grid = new WebMessagesGrid(details, dcMessagePersistenceService);
 		
-		gridLayout = new DCVerticalLayoutWithPaginatedGrid(grid);
+		gridLayout = new DCVerticalLayoutWithWebMessageGrid(grid);
 		
 		gridLayout.setVisible(true);
 		gridLayout.setHeight("100vh");

@@ -15,7 +15,7 @@ import eu.domibus.connector.ui.component.LumoCheckbox;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
 
-public class DCVerticalLayoutWithPaginatedGrid extends VerticalLayout {
+public class DCVerticalLayoutWithWebMessageGrid extends VerticalLayout {
 	
 	public static final int INITIAL_PAGE_SIZE = 20;
 	
@@ -25,13 +25,8 @@ public class DCVerticalLayoutWithPaginatedGrid extends VerticalLayout {
 	
 	int pageSize = INITIAL_PAGE_SIZE;
 	
-	public DCVerticalLayoutWithPaginatedGrid(WebMessagesGrid grid) {
+	public DCVerticalLayoutWithWebMessageGrid(WebMessagesGrid grid) {
 		this.grid = grid;
-	}
-
-	@PostConstruct
-	void init() {
-		
 		grid.setPageSize(pageSize);
 		grid.setPaginatorSize(5);
 
@@ -50,8 +45,31 @@ public class DCVerticalLayoutWithPaginatedGrid extends VerticalLayout {
 		add(grid);
 		
 		setSizeFull();
-
 	}
+
+//	@PostConstruct
+//	void init() {
+//		
+//		grid.setPageSize(pageSize);
+//		grid.setPaginatorSize(5);
+//
+//		VerticalLayout gridControl = createGridControlLayout();
+//
+////		VerticalLayout main = new VerticalLayout(gridControl,
+////				grid
+////		);
+////		main.setAlignItems(Alignment.STRETCH);
+////		main.setHeight("700px");
+////		add(main);
+////		setHeight("100vh");
+////		setWidth("100vw");
+//		
+//		add(gridControl);
+//		add(grid);
+//		
+//		setSizeFull();
+//
+//	}
 	
 	private VerticalLayout createGridControlLayout() {
 		VerticalLayout gridControl = new VerticalLayout();
@@ -104,6 +122,7 @@ public class DCVerticalLayoutWithPaginatedGrid extends VerticalLayout {
 	private void pageSizeChanged(AbstractField.ComponentValueChangeEvent<IntegerField, Integer> integerFieldIntegerComponentValueChangeEvent) {
 		this.pageSize = integerFieldIntegerComponentValueChangeEvent.getValue();
 		this.grid.setPageSize(pageSize);
+		this.grid.reloadList();
 	}
 	
 
