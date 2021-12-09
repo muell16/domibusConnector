@@ -75,10 +75,10 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 		
 		addColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?webMessage.getMessageInfo().getFrom().getPartyString():"")
-				.setHeader("From Party").setWidth("70px").setKey("messageInfo.from.partyString").setSortable(true);
+				.setHeader("From Party").setWidth("70px").setKey("messageInfo.from.partyId").setSortable(true);
 		addColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?webMessage.getMessageInfo().getTo().getPartyString():"")
-				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyString").setSortable(true);
+				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
 
 		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, true);
 		addHideableColumn(WebMessage::getEbmsMessageId, "ebMS Message ID", "450px", "ebmsMessageId", false, false);
@@ -92,7 +92,7 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 				, "Final recipient", "300px", "messageInfo.finalRecipient", true, false);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getService()!=null?webMessage.getMessageInfo().getService().getServiceString():""
-				, "Service", "150px", "messageInfo.service.serviceString", true, true);
+				, "Service", "150px", "messageInfo.service.service", true, true);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getAction()!=null?webMessage.getMessageInfo().getAction().getAction():""
 				, "Action", "150px", "messageInfo.action.action", true, true);

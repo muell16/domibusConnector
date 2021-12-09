@@ -132,23 +132,23 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
     	
         BeanUtils.copyProperties(example.getProbe(),dbMsg);
         //TODO: map properties which have not the same name...
+        dbMsg.setMessageInfo(new PDomibusConnectorMessageInfo());
+        dbMsg.getMessageInfo().setAction(new PDomibusConnectorAction());
+        dbMsg.getMessageInfo().setService(new PDomibusConnectorService());
+        dbMsg.getMessageInfo().setFrom(new PDomibusConnectorParty());
+        dbMsg.getMessageInfo().setTo(new PDomibusConnectorParty());
         if(example.getProbe().getMessageInfo()!=null) {
-        	dbMsg.setMessageInfo(new PDomibusConnectorMessageInfo());
         	BeanUtils.copyProperties(example.getProbe().getMessageInfo(), dbMsg.getMessageInfo());
         	if(example.getProbe().getMessageInfo().getAction()!=null) {
-        		dbMsg.getMessageInfo().setAction(new PDomibusConnectorAction());
         		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getAction(), dbMsg.getMessageInfo().getAction());
         	}
         	if(example.getProbe().getMessageInfo().getService()!=null) {
-        		dbMsg.getMessageInfo().setService(new PDomibusConnectorService());
         		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getService(), dbMsg.getMessageInfo().getService());
         	}
         	if(example.getProbe().getMessageInfo().getFrom()!=null) {
-        		dbMsg.getMessageInfo().setFrom(new PDomibusConnectorParty());
         		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getFrom(), dbMsg.getMessageInfo().getFrom());
         	}
         	if(example.getProbe().getMessageInfo().getTo()!=null) {
-        		dbMsg.getMessageInfo().setTo(new PDomibusConnectorParty());
         		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getTo(), dbMsg.getMessageInfo().getTo());
         	}
         }
