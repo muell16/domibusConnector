@@ -54,12 +54,12 @@ import java.util.List;
 	spring.jpa.properties.hibernate.dialect
 
  */
-@Component
-@UIScope
-@Route(value = EnvironmentConfiguration.ROUTE, layout = ConfigurationLayout.class)
-@TabMetadata(title = "Environment Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@RoleRequired(role = "ADMIN")
-@Order(1)
+//@Component
+//@UIScope
+//@Route(value = EnvironmentConfiguration.ROUTE, layout = ConfigurationLayout.class)
+//@TabMetadata(title = "Environment Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
+//@RoleRequired(role = "ADMIN")
+//@Order(1)
 public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpButton{
 
 	public static final String ROUTE = "environment";
@@ -74,8 +74,8 @@ public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpBu
 
 	ConfigurationUtil util;
 	
-	TextField persistenceFSStoragePathField = FormsUtil.getFormattedTextField();
-	LumoCheckbox persistenceFSStorageCreateDirBox = new LumoCheckbox();
+//	TextField persistenceFSStoragePathField = FormsUtil.getFormattedTextField();
+//	LumoCheckbox persistenceFSStorageCreateDirBox = new LumoCheckbox();
 	
 //	ComboBox<String> serviceBox = new ComboBox<String>();
 //	ComboBox<String> actionBox = new ComboBox<String>();
@@ -92,20 +92,22 @@ public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpBu
 	TextField httpsProxyUserField = FormsUtil.getFormattedTextField();
 	TextField httpsProxyPasswordField = FormsUtil.getFormattedTextField();
 	
-	TextField databaseConnectionStringField = FormsUtil.getFormattedTextField();
-	TextField databaseUserField = FormsUtil.getFormattedTextField();
-	TextField databasePasswordField = FormsUtil.getFormattedTextField();
-	TextField databaseDriverClassField = FormsUtil.getFormattedTextField();
-	TextField databaseDialectField = FormsUtil.getFormattedTextField();
+//	TextField databaseConnectionStringField = FormsUtil.getFormattedTextField();
+//	TextField databaseUserField = FormsUtil.getFormattedTextField();
+//	TextField databasePasswordField = FormsUtil.getFormattedTextField();
+//	TextField databaseDriverClassField = FormsUtil.getFormattedTextField();
+//	TextField databaseDialectField = FormsUtil.getFormattedTextField();
 
-	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+	public EnvironmentConfiguration(@Autowired ConfigurationUtil util) {
 		super(HELP_ID, TITLE);
 		
 		this.util = util;
 		
-		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePathLabels, persistenceFSStoragePathField));
-		
-		add(util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemCreateDirLabels, persistenceFSStorageCreateDirBox));
+//		add(new ConfigurationItemChapterDiv("Message Storage Configuration:"));
+//		
+//		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePathLabels, persistenceFSStoragePathField));
+//		
+//		add(util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemCreateDirLabels, persistenceFSStorageCreateDirBox));
 		
 
 //		createAndAddServiceComboBox(pmodeService);
@@ -158,22 +160,24 @@ public class EnvironmentConfiguration extends DCVerticalLayoutWithTitleAndHelpBu
 		Div httpsProxyPassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
 		add(httpsProxyPassword);
 		
-		add(new ConfigurationItemChapterDiv("Database Connection Configuration:"));
+		// riederb: deactivated - db setting must come from container configuration!
 		
-		Div databaseUrl = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
-		add(databaseUrl);
-		
-		Div databaseUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
-		add(databaseUser);
-		
-		Div databasePassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
-		add(databasePassword);
-		
-		Div databaseDriver = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
-		add(databaseDriver);
-		
-		Div databaseDialect = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
-		add(databaseDialect);
+//		add(new ConfigurationItemChapterDiv("Database Connection Configuration:"));
+//		
+//		Div databaseUrl = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
+//		add(databaseUrl);
+//		
+//		Div databaseUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
+//		add(databaseUser);
+//		
+//		Div databasePassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
+//		add(databasePassword);
+//		
+//		Div databaseDriver = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
+//		add(databaseDriver);
+//		
+//		Div databaseDialect = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
+//		add(databaseDialect);
 		
 	}
 

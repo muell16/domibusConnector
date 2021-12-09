@@ -324,17 +324,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>net.shibboleth.utilities</groupId>-->
-            <!--                <artifactId>java-support</artifactId>-->
-            <!--                <version>7.3.0</version>-->
-            <!--                <exclusions>-->
-            <!--                    <exclusion>-->
-            <!--                        <groupId>com.google.guava</groupId>-->
-            <!--                        <artifactId>guava</artifactId>-->
-            <!--                    </exclusion>-->
-            <!--                </exclusions>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
@@ -588,7 +577,7 @@
             <dependency>
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc8</artifactId>
-                <version>12.2.0.1</version>
+                <version>19.3.0.0.0</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>

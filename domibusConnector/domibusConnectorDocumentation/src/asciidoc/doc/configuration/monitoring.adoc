@@ -46,9 +46,9 @@ available. It is a war deployable which can be deployed next to the domibusGatew
 certificates and activeMQ queues over a spring actuator interface.
 
 
-=== Internal Active MQ Monitoring
+=== Internal JMS Monitoring
 
-The connector uses an internal activeMQ message broker. Currently this can only be monitored
+The connector uses an internal jms message broker. This can be monitored
 by using JMX. So the java application should be started with enabled jmx. See link:https://docs.oracle.com/javase/8/docs/technotes/guides/management/agent.html[]
 
 JMX has also to be enabled within the connector.properties.
@@ -57,4 +57,4 @@ JMX has also to be enabled within the connector.properties.
 spring.jmx.enabled=true
 ----
 
-For the activemq JMX Beans see: link:https://activemq.apache.org/jmx[]
+For the Artemis JMX Beans see: link:https://activemq.apache.org/components/artemis/documentation/latest/management.html[]

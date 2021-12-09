@@ -1,5 +1,6 @@
 package eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -24,13 +25,15 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     private final ConfigurationPanelFactory configurationPanelFactory;
 
-    VerticalLayout layout = new VerticalLayout();
+    private ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback;
 
-    //Upload
-    MemoryBuffer buffer = new MemoryBuffer();
-    Upload upload = new Upload(buffer);
+    private VerticalLayout layout = new VerticalLayout();
     //upload result area
-    VerticalLayout resultArea = new VerticalLayout();
+    private VerticalLayout resultArea = new VerticalLayout();
+    //Upload
+    private MemoryBuffer buffer = new MemoryBuffer();
+    private Upload upload = new Upload(buffer);
+
 
     public AImportOldConfigDialog(ConfigurationPanelFactory configurationPanelFactory) {
         this.configurationPanelFactory = configurationPanelFactory;
@@ -46,6 +49,10 @@ public abstract class AImportOldConfigDialog extends Dialog {
         upload.addSucceededListener(this::uploadSecceeded);
 
         layout.add(upload, resultArea);
+
+        this.setCloseOnEsc(true);
+        this.setCloseOnOutsideClick(true);
+        this.addDialogCloseActionListener(event -> this.close());
     }
 
     private void uploadSecceeded(SucceededEvent succeededEvent) {
@@ -79,8 +86,18 @@ public abstract class AImportOldConfigDialog extends Dialog {
     protected abstract Object showImportedConfig(Div div, Map<String, String> p);
 
     protected void save(Object configClass) {
-        Dialog d = configurationPanelFactory.showChangedPropertiesDialog(configClass);
-        d.addDialogCloseActionListener(closeEvent -> this.close());
+        configurationPanelFactory.showChangedPropertiesDialog(configClass, AImportOldConfigDialog.this::close);
+    }
+
+    public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {
+        this.dialogCloseCallback = dialogCloseCallback;
+    }
+
+    public void setOpened(boolean opened) {
+        super.setOpened(opened);
+        if (!opened && dialogCloseCallback != null) {
+            dialogCloseCallback.dialogHasBeenClosed();
+        }
     }
 
 }

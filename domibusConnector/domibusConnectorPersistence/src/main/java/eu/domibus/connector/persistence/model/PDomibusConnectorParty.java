@@ -41,7 +41,7 @@ public class PDomibusConnectorParty {
 //    @Enumerated(EnumType.STRING)
     private DomibusConnectorParty.PartyRoleType roleType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
     private PDomibusConnectorPModeSet pModeSet;
 

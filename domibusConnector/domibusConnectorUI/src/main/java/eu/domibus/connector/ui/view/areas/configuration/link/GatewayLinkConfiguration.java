@@ -10,7 +10,9 @@ import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
+import eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig.ImportOldBackendConfigDialog;
 import eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig.ImportOldGatewayConfigDialog;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Component;
 @TabMetadata(title = "Gateway Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = GatewayLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Order(3)
+@Order(2)
 //@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class GatewayLinkConfiguration extends LinkConfiguration {
 
@@ -28,12 +30,12 @@ public class GatewayLinkConfiguration extends LinkConfiguration {
     
     public static final String TITLE = "Gateway Configuration";
     
-    private final ImportOldGatewayConfigDialog importOldGatewayConfigDialog;
+    private final ObjectProvider<ImportOldGatewayConfigDialog> importOldGatewayConfigDialog;
 
     private Button importOldConfigButton = new Button("Import Link Config From 4.2 Connector Properties");
 
     public GatewayLinkConfiguration(DCLinkFacade dcLinkFacade,
-                                    ImportOldGatewayConfigDialog importOldGatewayConfigDialog,
+                                    ObjectProvider<ImportOldGatewayConfigDialog> importOldGatewayConfigDialog,
                                     ApplicationContext applicationContext) {
         super(dcLinkFacade, applicationContext, LinkType.GATEWAY, TITLE);
         this.importOldGatewayConfigDialog = importOldGatewayConfigDialog;
@@ -43,8 +45,9 @@ public class GatewayLinkConfiguration extends LinkConfiguration {
     }
 
     private void importOldConfig(ClickEvent<Button> buttonClickEvent) {
-        importOldGatewayConfigDialog.open();
+        ImportOldGatewayConfigDialog dialog = importOldGatewayConfigDialog.getObject();
+        dialog.setDialogCloseCallback(this::refreshList);
+        dialog.open();
     }
-
 
 }

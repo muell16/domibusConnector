@@ -1,7 +1,10 @@
 package eu.domibus.connector.ui.view.areas.configuration.security;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -51,7 +54,7 @@ import java.util.stream.Collectors;
 @Route(value = BusinessDocumentValidationConfigPanel.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Business Document Verification", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(5)
+@Order(4)
 public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 	
 	public static final String TITLE = "ECodex Business Document Verification";
@@ -67,7 +70,11 @@ public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithT
                 = configurationPanelFactory.createConfigurationPanel(form, DCBusinessDocumentValidationConfigurationProperties.class);
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
-            importBusinessDocConfig.getIfAvailable().open();
+            ImportBusinessDocConfig dialog = importBusinessDocConfig.getObject();
+//          due some reason dialogCloseActionListener does not work
+//            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+            dialog.setDialogCloseCallback(configurationPanel::refreshUI);
+            dialog.open();
         });
         this.add(b);
         this.add(configurationPanel);

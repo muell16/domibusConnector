@@ -2,6 +2,7 @@ package eu.domibus.connector.dss.configuration;
 
 import eu.europa.esig.dss.service.http.proxy.ProxyProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -19,7 +20,10 @@ public class BasicDssConfigurationProperties {
 
     public static final String PREFIX = "connector.dss";
 
+    @NestedConfigurationProperty
     private ProxyProperties httpsProxy;
+
+    @NestedConfigurationProperty
     private ProxyProperties httpProxy;
 
     private Map<String, @Valid Tsp> timeStampServers = new HashMap<>();

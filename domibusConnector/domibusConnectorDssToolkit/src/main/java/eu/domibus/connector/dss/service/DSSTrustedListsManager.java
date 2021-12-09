@@ -125,12 +125,12 @@ public class DSSTrustedListsManager {
             TLSource tlSource = new TLSource();
             tlSource.setUrl(tlConfig.getTlUrl());
 
-            CommonTrustedCertificateSource trustedCertSource = getCommonTrustedCertificateSource(tlConfig.getSigningCerts());
-
-            tlSource.setCertificateSource(trustedCertSource);
+            if (tlConfig.getSigningCerts() != null) {
+                CommonTrustedCertificateSource trustedCertSource = getCommonTrustedCertificateSource(tlConfig.getSigningCerts());
+                tlSource.setCertificateSource(trustedCertSource);
+            }
 
             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Configured TL source [{}]", tlConfig);
-
             return tlSource;
 
         } catch (IOException ioe) {

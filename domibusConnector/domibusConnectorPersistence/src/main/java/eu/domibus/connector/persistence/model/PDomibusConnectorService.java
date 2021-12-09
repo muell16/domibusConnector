@@ -28,7 +28,7 @@ public class PDomibusConnectorService {
     @Column(name = "SERVICE_TYPE")
     private String serviceType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
     private PDomibusConnectorPModeSet pModeSet;
 

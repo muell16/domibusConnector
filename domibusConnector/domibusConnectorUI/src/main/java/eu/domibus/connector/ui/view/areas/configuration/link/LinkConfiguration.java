@@ -193,18 +193,11 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         //TODO: open delete dialog...
         if (webLinkItem instanceof WebLinkItem.WebLinkPartnerItem) {
             dcLinkFacade.deleteLinkPartner(webLinkItem.getLinkPartner());
-            refreshList();
         } else if (webLinkItem instanceof WebLinkItem.WebLinkConfigurationItem) {
             DomibusConnectorLinkConfiguration linkConfiguration = webLinkItem.getLinkConfiguration();
             dcLinkFacade.deleteLinkConfiguration(linkConfiguration);
-//            String configName = linkConfiguration.getConfigName().toString();
-//
-//            String url = RouteConfiguration.forSessionScope()
-//                    .getUrl(DCLinkConfigurationView.class, configName);
-//
-//            QueryParameters queryParameters = QueryParameters.simple(s);
-//            getUI().ifPresent(ui -> ui.navigate(url, queryParameters));
         }
+        refreshList();
     }
 
     private void addLinkPartner(WebLinkItem.WebLinkConfigurationItem webLinkItem, ClickEvent<Button> buttonClickEvent) {
@@ -219,37 +212,9 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         QueryParameters queryParameters = QueryParameters.simple(s);
         getUI().ifPresent(ui -> ui.navigate(url, queryParameters));
 
-//        //TODO: open add link partner dialog for configuration
-//        DomibusConnectorLinkConfiguration linkConfiguration = webLinkItem.getLinkConfiguration();
-//
-//        DCLinkPartnerField linkPartnerField = applicationContext.getBean(DCLinkPartnerField.class);
-//
-//        DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
-//        linkPartner.setLinkConfiguration(linkConfiguration);
-//        linkPartnerField.setValue(linkPartner);
-//
-//        EditBeanDialogBuilder<DomibusConnectorLinkPartner> dialogBuilder = EditBeanDialogBuilder.getBuilder();
-//        dialogBuilder.setOnValueCallback(value -> {
-//            //save value / validation?
-//            dcLinkFacade.createNewLinkPartner(value);
-//            refreshList();
-//            return true; //close dialog
-//        });
-//        dialogBuilder.setCloseOnEscape(true);
-//        dialogBuilder.setField(linkPartnerField);
-//        dialogBuilder.show();
 
     }
 
-//    private void deleteClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
-//        try {
-//            //TODO: if not deleteable....
-//            dcLinkFacade.deleteLinkPartner(linkPartner);
-//            Notification.show("Link " + linkPartner.getLinkPartnerName() +" removed from config");
-//        } finally {
-//            refreshList();
-//        }
-//    }
 
     private void stopLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
         try {
@@ -271,14 +236,14 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
     }
 
 
-    private Dialog createDialog(Component bean) {
-        final Dialog dialog = new Dialog();
-        dialog.setWidth("100%");
-        dialog.addDialogCloseActionListener((e) -> refreshList());
-        dialog.add(bean);
-        dialog.setCloseOnEsc(true);
-        return dialog;
-    }
+//    private Dialog createDialog(Component bean) {
+//        final Dialog dialog = new Dialog();
+//        dialog.setWidth("100%");
+//        dialog.addDialogCloseActionListener((e) -> refreshList());
+//        dialog.add(bean);
+//        dialog.setCloseOnEsc(true);
+//        return dialog;
+//    }
 
 
 
@@ -299,11 +264,7 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         refreshList();
     }
 
-    private void refreshList() {
-//        List<DomibusConnectorLinkPartner> gwLinks = dcLinkFacade.getAllLinksOfType(getLinkType());
-//        ListDataProvider<DomibusConnectorLinkPartner> linkPartners = new ListDataProvider<DomibusConnectorLinkPartner>(gwLinks);
-//        linkGrid.setDataProvider(linkPartners);
-//        linkPartners.refreshAll();
+    protected void refreshList() {
 
         webLinkItemHierachicalDataProvider.refreshAll();
         treeGrid.expand(webLinkItemHierachicalDataProvider

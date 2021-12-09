@@ -10,3 +10,49 @@ endif::header[]
 
 = Evidence Builder Configuration
 
+Here the configuration for the building of ETSI-REM evidences can be set.
+
+The ETSI-REM evidences created by the domibusConnector are electronically signed.
+Also, there is general information on the issuer of the ETSI-REM evidences.
+
+.ETSI-REM Evidences Signature Configuration Properties
+|===
+| property | description | field type | example values
+
+| Encryption Algorithm
+| Which Encryption Algorithm should be used for signatures.
+| Single-Select-Box
+| Any supported algorithm.
+
+| Digest Algorithm
+| Which Digest Algorithm should be used for digests during signature creation.
+| Single-Select-Box
+| Any supported algorithm.
+
+| Key Store Configuration
+| The configuration of the keyStore holding the private key for signing.
+| Multiple fields
+| Path or database reference of the keyStore, its password and type.
+
+| Private Key Configuration
+| Private key configuration with key alias (must exist within the keystore) and a key password to open the private key. This key is used to sign the ASIC-S container, TrustTokenPDF, TrustTokenXML. The public key of this keypair must be shared with your communication partners.
+| Multiple fields
+| The alias and the password.
+
+|===
+
+.Issuer Configuration Properties
+|===
+| property | description | field type | example values
+
+| postal address
+| The address of the issuer is mandatory for the building process of ETSI-REM evidences.
+| Multiple fields
+| Any values
+
+| AS4 Party Info
+| Information of the gateway over which the ETSI-REM evidences are sent. This is the "Home Party" configuration in the PModes.
+| Multiple fields
+| Values taken from the PMode-Set Import.
+
+|===

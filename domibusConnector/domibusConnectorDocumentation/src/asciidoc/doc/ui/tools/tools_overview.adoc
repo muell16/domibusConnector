@@ -8,7 +8,6 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-
 = Tools
 
 This tab offers the connector user some tools

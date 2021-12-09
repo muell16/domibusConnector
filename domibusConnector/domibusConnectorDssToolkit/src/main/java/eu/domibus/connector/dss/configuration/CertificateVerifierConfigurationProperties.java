@@ -65,6 +65,11 @@ public class CertificateVerifierConfigurationProperties {
      */
     private boolean crlEnabled = true;
 
+    /**
+     * should AIA be used
+     */
+    private boolean aiaEnabled = true;
+
     public @CheckForNull String getCertificateVerifierName() {
         return certificateVerifierName;
     }
@@ -127,5 +132,13 @@ public class CertificateVerifierConfigurationProperties {
 
     public void setIgnoreStoreEnabled(boolean ignoreStoreEnabled) {
         this.ignoreStoreEnabled = ignoreStoreEnabled;
+    }
+
+    public boolean isAiaEnabled() {
+        return aiaEnabled;
+    }
+
+    public void setAiaEnabled(boolean aiaEnabled) {
+        this.aiaEnabled = aiaEnabled;
     }
 }

@@ -49,6 +49,7 @@ class DCBusinessDocumentValidationConfigurationPropertiesTest {
         expected.put("connector.business-document-sent.signature-validation.crl-enabled", "false");
         expected.put("connector.business-document-sent.signature-validation.trust-store-enabled", "true");
         expected.put("connector.business-document-sent.signature-validation.ignore-store-enabled", "false");
+        expected.put("connector.business-document-sent.signature-validation.aia-enabled", "true");
         expected.put("connector.business-document-sent.signature-validation.certificate-verifier-name", "default");
 
         assertThat(stringStringMap).containsExactlyInAnyOrderEntriesOf(expected);

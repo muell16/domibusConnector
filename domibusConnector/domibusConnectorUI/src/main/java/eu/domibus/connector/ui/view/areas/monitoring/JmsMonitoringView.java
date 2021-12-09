@@ -22,7 +22,7 @@ public class JmsMonitoringView extends DCVerticalLayoutWithTitleAndHelpButton im
     public static final String ROUTE = "queues";
 
     public static final String HELP_ID = "ui/monitoring/jms_monitoring.html";
-    public static final String TITLE = "Jms Queue Monitoring";
+    public static final String TITLE = "Jms Queues";
     
     private final QueueController queueController;
     private QueueGrid queueGrid;

@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.view.areas.configuration;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -40,10 +41,26 @@ public class ConfigurationPanelFactory {
     }
 
     public Dialog showChangedPropertiesDialog(Object boundConfigValue) {
+        return showChangedPropertiesDialog(boundConfigValue, null);
+    }
+
+    public interface DialogCloseCallback {
+        public void dialogHasBeenClosed();
+    }
+
+    public Dialog showChangedPropertiesDialog(Object boundConfigValue, DialogCloseCallback dialogCloseCallback) {
         Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
                 boundConfigValue);
 
-        final Dialog d = new Dialog();
+        //use custom callback with overwriting setOpened because, addDialogCloseActionListener does not work
+        final Dialog d = new Dialog() {
+            public void setOpened(boolean opened) {
+                super.setOpened(opened);
+                if (!opened && dialogCloseCallback != null) {
+                    dialogCloseCallback.dialogHasBeenClosed();
+                }
+            }
+        };
 
         Grid<Map.Entry<String, String>> g = new Grid<>();
         g.setItems(updatedConfiguration.entrySet());
@@ -157,10 +174,13 @@ public class ConfigurationPanelFactory {
 
         @Override
         public void afterNavigation(AfterNavigationEvent event) {
+            refreshUI();
+        }
+
+        public void refreshUI() {
             this.boundConfigValue = readConfigFromPropertyService();
             binder.setBean(boundConfigValue); //bind bean
         }
-
     }
 
 

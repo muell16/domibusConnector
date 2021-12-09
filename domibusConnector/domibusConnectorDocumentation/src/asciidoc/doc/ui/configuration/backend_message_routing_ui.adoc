@@ -210,5 +210,13 @@ Syntax definition:
 
 [source]
 ----
-include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
+<ROUTING_RULE_PATTERN> ::= <BOOLEAN_EXPRESSION> | <COMPARE_EXPRESSION> | <NOT_EXPRESSION>
+<BOOLEAN_EXPRESSION> ::= <OPERAND>(<ROUTING_RULE_PATTERN>, <ROUTING_RULE_PATTERN>)
+<COMPARE_EXPRESSION> ::= equals(<AS4_TYPE>, '<VALUE>') | startswith(<AS4_TYPE>, '<VALUE>')
+<NOT_EXPRESSION> ::= not(<ROUTING_RULE_PATTERN>)
+<OPERAND> ::= "&" | "|"
+<AS4_TYPE> ::= ServiceType | ServiceName | FinalRecipient | Action | FromPartyId | FromPartyRole | FromPartyIdType
+<VALUE> ::= <VALUE><LETTER> | <LETTER>
+<LETTER> can be every letter [a-z][A-Z][0-9] other printable characters might work, but they untested! ['\|&)( will definitiv not work!]
+
 ----
