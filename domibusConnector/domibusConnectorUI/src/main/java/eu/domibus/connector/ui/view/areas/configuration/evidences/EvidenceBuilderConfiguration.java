@@ -52,7 +52,9 @@ public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndH
 		Button b = new Button("Import old config");
 		b.addClickListener(event -> {
 			ImportOldEvidenceConfigDialog dialog = importOldEvidenceConfigDialog.getObject();
-			dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+			//          due some reason dialogCloseActionListener does not work
+//            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+			dialog.setDialogCloseCallback(configurationPanel::refreshUI);
 			dialog.open();
 		});
 		this.add(b);

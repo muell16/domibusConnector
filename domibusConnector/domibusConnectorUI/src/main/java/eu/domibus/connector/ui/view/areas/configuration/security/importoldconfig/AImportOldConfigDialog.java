@@ -25,13 +25,15 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     private final ConfigurationPanelFactory configurationPanelFactory;
 
-    VerticalLayout layout = new VerticalLayout();
+    private ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback;
 
-    //Upload
-    MemoryBuffer buffer = new MemoryBuffer();
-    Upload upload = new Upload(buffer);
+    private VerticalLayout layout = new VerticalLayout();
     //upload result area
-    VerticalLayout resultArea = new VerticalLayout();
+    private VerticalLayout resultArea = new VerticalLayout();
+    //Upload
+    private MemoryBuffer buffer = new MemoryBuffer();
+    private Upload upload = new Upload(buffer);
+
 
     public AImportOldConfigDialog(ConfigurationPanelFactory configurationPanelFactory) {
         this.configurationPanelFactory = configurationPanelFactory;
@@ -85,6 +87,17 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     protected void save(Object configClass) {
         configurationPanelFactory.showChangedPropertiesDialog(configClass, AImportOldConfigDialog.this::close);
+    }
+
+    public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {
+        this.dialogCloseCallback = dialogCloseCallback;
+    }
+
+    public void setOpened(boolean opened) {
+        super.setOpened(opened);
+        if (!opened && dialogCloseCallback != null) {
+            dialogCloseCallback.dialogHasBeenClosed();
+        }
     }
 
 }
