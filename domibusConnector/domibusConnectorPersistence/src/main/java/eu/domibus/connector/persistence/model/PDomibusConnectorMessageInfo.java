@@ -24,7 +24,7 @@ public class PDomibusConnectorMessageInfo {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
     private PDomibusConnectorMessage message;
 
