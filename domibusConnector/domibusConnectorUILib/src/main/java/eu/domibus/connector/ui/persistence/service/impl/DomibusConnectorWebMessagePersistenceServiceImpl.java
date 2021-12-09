@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 @org.springframework.stereotype.Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
@@ -100,11 +102,15 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 
 		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
 		
-//		LOGGER.debug("Returned {} results.", all.getSize());
+		
+		
+		LOGGER.debug("Returned {} results.", all.getSize());
 
 		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
 
 	}
+	
+	
 	
 	@Override
 	public LinkedList<WebMessage> findConnectorTestMessages(String connectorTestBackendName){

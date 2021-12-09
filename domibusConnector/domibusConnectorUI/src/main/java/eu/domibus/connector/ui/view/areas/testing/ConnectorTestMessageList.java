@@ -67,7 +67,7 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
-		grid.reloadList();
+//		grid.reloadList();
 		
 	}
 	

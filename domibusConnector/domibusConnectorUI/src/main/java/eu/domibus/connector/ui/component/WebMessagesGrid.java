@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -24,13 +26,18 @@ import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
+import eu.domibus.connector.ui.persistence.service.impl.DomibusConnectorWebMessagePersistenceServiceImpl;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 
-public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
+public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterNavigationObserver {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebMessagesGrid.class);
+	
 	// collect all hideable columns, to be iterated over later.
 	private Map<String,Column<WebMessage>> hideableColumns = new HashMap<>();
 	
@@ -58,9 +65,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 		setWidth("100%");
 		addSortListener(this::handleSortEvent);
 		
-		callbackDataProvider
-			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
-		setDataProvider(callbackDataProvider);
+//		callbackDataProvider
+//			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
+//		setDataProvider(callbackDataProvider);
 	}
 
 	private void addAllColumns(){
@@ -140,9 +147,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	}
 
 	private Stream<WebMessage> fetchCallback(Query<WebMessage, WebMessage> webMessageWebMessageQuery) {
-
+		LOGGER.debug("Call fetchCallback");
 		int offset = webMessageWebMessageQuery.getOffset();
-		
+		LOGGER.debug("Offset: "+offset);
 		List<Sort.Order> collect = getSortOrder()
 				.stream()
 				.filter(sortOrder -> sortOrder.getSorted().getKey() != null)
@@ -153,7 +160,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 
 		//creating page request with sort order and offset
 		PageRequest pageRequest = PageRequest.of(offset / getPageSize(), getPageSize(), sort);
+		LOGGER.debug("PageRequest: "+pageRequest.toString());
 		Page<WebMessage> all = dcMessagePersistenceService.findAll(createExample(), pageRequest);
+		LOGGER.debug("Page requested size: "+all.getSize());
 		
 		this.currentPage = all;
 
@@ -161,10 +170,20 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> {
 	}
 	
 	public void reloadList() {
+		LOGGER.debug("Call reloadList");
 		callbackDataProvider.refreshAll();
 	}
 	
 	public void setExampleWebMessage(WebMessage example) {
 		this.exampleWebMessage = example;
+	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent event) {
+		LOGGER.debug("Create and set callbackDataProvider");
+		callbackDataProvider
+			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
+		setDataProvider(callbackDataProvider);
+		
 	}
 }

@@ -50,7 +50,7 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		grid.reloadList();
+//		grid.reloadList();
 	}
 
 
