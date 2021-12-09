@@ -120,8 +120,12 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 //    	LOGGER.debug("Probe: {}", example.getProbe());
 
     	PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
-           BeanUtils.copyProperties(example.getProbe(),dbMsg);
+    	
+        BeanUtils.copyProperties(example.getProbe(),dbMsg);
         //TODO: map properties which have not the same name...
+        if(example.getProbe().getMessageInfo()!=null)
+        	dbMsg.setMessageInfo(new PDomibusConnectorMessageInfo());
+        	BeanUtils.copyProperties(example.getProbe().getMessageInfo(), dbMsg.getMessageInfo());
         Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
         return exampleDbMsg;
 	}
