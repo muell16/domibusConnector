@@ -3,9 +3,12 @@ package eu.domibus.connector.ui.persistence.service.impl;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
 import eu.domibus.connector.ui.dto.WebMessageEvidence;
@@ -129,9 +132,26 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
     	
         BeanUtils.copyProperties(example.getProbe(),dbMsg);
         //TODO: map properties which have not the same name...
-        if(example.getProbe().getMessageInfo()!=null)
+        if(example.getProbe().getMessageInfo()!=null) {
         	dbMsg.setMessageInfo(new PDomibusConnectorMessageInfo());
         	BeanUtils.copyProperties(example.getProbe().getMessageInfo(), dbMsg.getMessageInfo());
+        	if(example.getProbe().getMessageInfo().getAction()!=null) {
+        		dbMsg.getMessageInfo().setAction(new PDomibusConnectorAction());
+        		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getAction(), dbMsg.getMessageInfo().getAction());
+        	}
+        	if(example.getProbe().getMessageInfo().getService()!=null) {
+        		dbMsg.getMessageInfo().setService(new PDomibusConnectorService());
+        		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getService(), dbMsg.getMessageInfo().getService());
+        	}
+        	if(example.getProbe().getMessageInfo().getFrom()!=null) {
+        		dbMsg.getMessageInfo().setFrom(new PDomibusConnectorParty());
+        		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getFrom(), dbMsg.getMessageInfo().getFrom());
+        	}
+        	if(example.getProbe().getMessageInfo().getTo()!=null) {
+        		dbMsg.getMessageInfo().setTo(new PDomibusConnectorParty());
+        		BeanUtils.copyProperties(example.getProbe().getMessageInfo().getTo(), dbMsg.getMessageInfo().getTo());
+        	}
+        }
         Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher().withIgnoreNullValues());
         return exampleDbMsg;
 	}
