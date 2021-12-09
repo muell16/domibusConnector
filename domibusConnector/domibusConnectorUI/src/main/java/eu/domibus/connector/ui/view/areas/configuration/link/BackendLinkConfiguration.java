@@ -45,7 +45,7 @@ public class BackendLinkConfiguration extends LinkConfiguration {
 
     private void importOldConfig(ClickEvent<Button> buttonClickEvent) {
         ImportOldBackendConfigDialog dialog = importOldBackendConfig.getObject();
-        dialog.addDialogCloseActionListener(event -> this.refreshList());
+        dialog.setDialogCloseCallback(this::refreshList);
         dialog.open();
     }
 

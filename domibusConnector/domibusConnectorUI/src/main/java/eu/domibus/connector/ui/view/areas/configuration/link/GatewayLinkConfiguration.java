@@ -46,7 +46,7 @@ public class GatewayLinkConfiguration extends LinkConfiguration {
 
     private void importOldConfig(ClickEvent<Button> buttonClickEvent) {
         ImportOldGatewayConfigDialog dialog = importOldGatewayConfigDialog.getObject();
-        dialog.addDialogCloseActionListener(event -> this.refreshList());
+        dialog.setDialogCloseCallback(this::refreshList);
         dialog.open();
     }
 
