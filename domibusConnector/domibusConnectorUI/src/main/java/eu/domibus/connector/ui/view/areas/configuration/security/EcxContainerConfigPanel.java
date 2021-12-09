@@ -55,7 +55,9 @@ public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpBut
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             ImportEcodexContainerConfig dialog = importEcodexContainerConfig.getObject();
-            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+//          due some reason dialogCloseActionListener does not work
+//            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+            dialog.setDialogCloseCallback(configurationPanel::refreshUI);
             dialog.open();
         });
         this.add(b);
