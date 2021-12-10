@@ -29,7 +29,7 @@ public class PDomibusConnectorAction implements Serializable {
 //    @Column(name = "PDF_REQUIRED")
 //    private boolean documentRequired;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
     private PDomibusConnectorPModeSet pModeSet;
 

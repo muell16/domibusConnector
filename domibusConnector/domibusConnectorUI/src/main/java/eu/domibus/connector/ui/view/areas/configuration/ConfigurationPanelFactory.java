@@ -56,7 +56,7 @@ public class ConfigurationPanelFactory {
         final Dialog d = new Dialog() {
             public void setOpened(boolean opened) {
                 super.setOpened(opened);
-                if (!opened) {
+                if (!opened && dialogCloseCallback != null) {
                     dialogCloseCallback.dialogHasBeenClosed();
                 }
             }

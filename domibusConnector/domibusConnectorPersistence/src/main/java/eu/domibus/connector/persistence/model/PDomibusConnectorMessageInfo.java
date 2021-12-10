@@ -24,23 +24,16 @@ public class PDomibusConnectorMessageInfo {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
     private PDomibusConnectorMessage message;
 
     @ManyToOne
     @JoinColumn(name = "FK_FROM_PARTY_ID", referencedColumnName = "ID")
-//    @JoinColumns(value = {
-//        @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
-//        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true)
-//    })
     private PDomibusConnectorParty from;
 
     @ManyToOne
     @JoinColumn(name = "FK_TO_PARTY_ID", referencedColumnName = "ID")
-//    @JoinColumns(value = {
-//        @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
-//        @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
     private PDomibusConnectorParty to;
 
     @Column(name = "ORIGINAL_SENDER")

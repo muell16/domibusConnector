@@ -7,19 +7,20 @@ import javax.annotation.PostConstruct;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
+import eu.domibus.connector.ui.component.WebMessagesGrid;
+import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithWebMessageGrid;
+import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
-import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
-import eu.domibus.connector.ui.view.areas.messages.WebMessagesGrid;
 
 @Component
 @UIScope
@@ -33,37 +34,40 @@ public class ConnectorTestMessageList extends DCVerticalLayoutWithTitleAndHelpBu
 	public static final String TITLE = "Connector Test Messages";
 	public static final String HELP_ID = "ui/c2ctests/connector_test_messages_list.html";
 	
-	private final MessageDetails details;
-	private final WebMessageService messageService;
-	private final WebConnectorTestService testService;
+//	private final MessageDetails details;
+//	private final WebConnectorTestService testService;
+//	private final DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService;
 	
 	private String connectorTestBackendName = DomibusConnectorDefaults.DEFAULT_TEST_BACKEND;
 	
 	WebMessagesGrid grid;
 	
-	public ConnectorTestMessageList(WebMessageService messageService,
-									MessageDetails details,
-									Optional<WebConnectorTestService> testService) {
+	public ConnectorTestMessageList(MessageDetails details,
+									Optional<WebConnectorTestService> testService,
+									DomibusConnectorWebMessagePersistenceService dcMessagePersistenceService) {
 		super(HELP_ID, TITLE);
-		this.messageService = messageService;
-		this.details = details;
-		this.testService = testService.orElse(null);
-	}
+//		this.details = details;
+//		this.testService = testService.orElse(null);
+//		this.dcMessagePersistenceService = dcMessagePersistenceService;
 
-	@PostConstruct
-	void init() {
-		grid = new WebMessagesGrid(details);
+		if(testService.isPresent())
+			connectorTestBackendName = testService.get().getConnectorTestBackendName();
+		WebMessage example = new WebMessage();
+		example.setBackendName(connectorTestBackendName);
 		
-		grid.setVisible(true);
+		grid = new WebMessagesGrid(details, dcMessagePersistenceService, example);
 		
-		add(grid);
+		DCVerticalLayoutWithWebMessageGrid gridLayout = new DCVerticalLayoutWithWebMessageGrid(grid);
+		
+		gridLayout.setVisible(true);
+		gridLayout.setHeight("100vh");
+		add(gridLayout);
+		setSizeFull();
 	}
 	
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
-		if(testService != null)
-			connectorTestBackendName = testService.getConnectorTestBackendName();
-		grid.setItems(messageService.getConnectorTestMessages(connectorTestBackendName));
+//		grid.reloadList();
 		
 	}
 	

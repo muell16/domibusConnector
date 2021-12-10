@@ -71,7 +71,9 @@ public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithT
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             ImportBusinessDocConfig dialog = importBusinessDocConfig.getObject();
-            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+//          due some reason dialogCloseActionListener does not work
+//            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+            dialog.setDialogCloseCallback(configurationPanel::refreshUI);
             dialog.open();
         });
         this.add(b);
