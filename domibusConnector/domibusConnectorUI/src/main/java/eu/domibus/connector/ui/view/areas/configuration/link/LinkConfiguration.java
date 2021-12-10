@@ -41,7 +41,7 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
 
 	public static final String HELP_ID = "ui/configuration/link_configuration.html";
 
-    private static final String WARNING_LABEL_TEXT = "Warning multiple link partners with same name detected!";
+//    private static final String WARNING_LABEL_TEXT = "Warning multiple link partners with same name detected!";
 
     private final DCLinkFacade dcLinkFacade;
     private final LinkType linkType;
@@ -52,7 +52,7 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
     protected Button addLinkButton = new Button("Add Link");
     protected HorizontalLayout buttonBar = new HorizontalLayout();
 
-    protected Label warningLabel = new Label(WARNING_LABEL_TEXT);
+//    protected Label warningLabel = new Label(WARNING_LABEL_TEXT);
 
     protected LinkConfiguration(DCLinkFacade dcLinkFacade,
                                 LinkType linkType, final String TITLE) {
@@ -71,8 +71,8 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         buttonBar.add(addLinkButton);
         addLinkButton.addClickListener(this::addLinkConfigurationButtonClicked);
 
-        this.add(warningLabel);
-        warningLabel.setVisible(false);
+//        this.add(warningLabel);
+//        warningLabel.setVisible(false);
 
         treeGrid.setDataProvider(webLinkItemHierachicalDataProvider);
 
@@ -275,6 +275,7 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
                 .fetchChildren(new HierarchicalQuery<>(new WebLinkItemFilter(), null))
                 .collect(Collectors.toSet())); //expand root items..
 
+        //TODO: show warning label, if more than one link or configuration with same name detected!
 
     }
 
