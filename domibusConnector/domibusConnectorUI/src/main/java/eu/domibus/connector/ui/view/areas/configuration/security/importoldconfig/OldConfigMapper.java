@@ -132,26 +132,27 @@ public class OldConfigMapper {
         
         signature.setPrivateKey(privateKey);
 
-        c.setSignatureValidation(new SignatureValidationConfigurationProperties());
-        c.getSignatureValidation().setTrustStoreEnabled(true);
-        StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
-        c.getSignatureValidation().setTrustStore(trustStore);
-
-        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PATH))
-        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE+PATH));
-        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH))
-        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH));
-        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PATH))
-        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PATH));
-        
-        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PASSWORD))
-        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE+PASSWORD));
-        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
-        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
-        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD))
-    	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD));
-        
-        trustStore.setType("JKS");
+        // riederb: since truststore should always be part of PMode-Set import, this must not be imported
+//        c.setSignatureValidation(new SignatureValidationConfigurationProperties());
+//        c.getSignatureValidation().setTrustStoreEnabled(true);
+//        StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
+//        c.getSignatureValidation().setTrustStore(trustStore);
+//
+//        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PATH))
+//        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE+PATH));
+//        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH))
+//        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PATH));
+//        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PATH))
+//        	trustStore.setPath(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PATH));
+//        
+//        if(oldProperties.containsKey(SECURITY+TRUSTSTORE+PASSWORD))
+//        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE+PASSWORD));
+//        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD))
+//        	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_CAMELCASE_LETTER+PASSWORD));
+//        else if(oldProperties.containsKey(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD))
+//    	trustStore.setPassword(oldProperties.get(SECURITY+TRUSTSTORE_WITH_DASH+PASSWORD));
+//        
+//        trustStore.setType("JKS");
 
         return c;
     }
