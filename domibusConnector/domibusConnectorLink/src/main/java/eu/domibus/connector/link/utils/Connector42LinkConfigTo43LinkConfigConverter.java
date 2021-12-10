@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.utils;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -65,7 +66,7 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
         DomibusConnectorLinkConfiguration lnkConfig = getGwLinkConfiguration();
         DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
         linkPartner.setLinkConfiguration(lnkConfig);
-        linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("imported_gw"));
+        linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(DomibusConnectorDefaults.DEFAULT_GATEWAY_NAME));
         linkPartner.setSendLinkMode(LinkMode.PUSH);
         linkPartner.setRcvLinkMode(LinkMode.PASSIVE);
         linkPartner.setLinkType(LinkType.GATEWAY);
