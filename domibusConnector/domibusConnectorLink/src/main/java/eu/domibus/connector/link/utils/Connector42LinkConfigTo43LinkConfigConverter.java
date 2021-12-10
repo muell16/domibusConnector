@@ -1,5 +1,7 @@
 package eu.domibus.connector.link.utils;
 
+import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -13,6 +15,8 @@ import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPluginConfigurationProperties;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPlugin;
 import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
@@ -28,6 +32,8 @@ import java.util.stream.Stream;
  *
  */
 public class Connector42LinkConfigTo43LinkConfigConverter {
+
+    private static final Logger LOGGER = LogManager.getLogger(Connector42LinkConfigTo43LinkConfigConverter.class);
 
     public static final String GWL_GW_ADDRESS_OLD_PROP_NAME = "connector.gatewaylink.ws.submissionEndpointAddress";
     public static final String GWL_ENCRYPT_ALIAS_OLD_PROP_NAME = "connector.gatewaylink.ws.encrypt-alias";
