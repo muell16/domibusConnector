@@ -12,6 +12,7 @@ import com.vaadin.flow.component.grid.GridSortOrderBuilder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -27,6 +28,8 @@ import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
+import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
+import eu.domibus.connector.link.utils.Connector42RoutingRulesTo43RoutingRulesConfigConverter;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebBusinessDomainService;
@@ -35,8 +38,10 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -63,6 +68,7 @@ public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpB
     private final WebBusinessDomainService webBusinessDomainService;
     private final ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory;
     private final DCLinkFacade dcLinkFacade;
+    private final ObjectFactory<Connector42RoutingRulesTo43RoutingRulesConfigConverter> importOldConfigRoutingRulesConverterObjectFactory;
 
     private Grid<RoutingRule> routingRuleGrid;
     private ComboBox<String> defaultBackendNameSelectField;
@@ -72,12 +78,14 @@ public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpB
     public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl,
                                      ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
                                      WebBusinessDomainService webBusinessDomainService,
-                                     DCLinkFacade dcLinkFacade) {
+                                     DCLinkFacade dcLinkFacade,
+                                     ObjectFactory<Connector42RoutingRulesTo43RoutingRulesConfigConverter> importOldConfigRoutingRulesConverterObjectFactory) {
         super(HELP_ID, TITLE);
         this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
         this.webBusinessDomainService = webBusinessDomainService;
         this.dcLinkFacade = dcLinkFacade;
+        this.importOldConfigRoutingRulesConverterObjectFactory = importOldConfigRoutingRulesConverterObjectFactory;
         initUI();
     }
 
@@ -122,10 +130,48 @@ public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpB
 
         this.add(routingRuleGrid);
 
-        Button createNewRoutingRule = new Button("Create new routing rule");
-        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
+        HorizontalLayout buttonBar = new HorizontalLayout();
 
-        add(createNewRoutingRule);
+        Button createNewRoutingRuleButton = new Button("Create new routing rule");
+        createNewRoutingRuleButton.addClickListener(this::createNewRoutingRuleClicked);
+
+        Button importOldRulesButton = new Button("Import old config");
+        importOldRulesButton.addClickListener(this::importOldRulesButtonClicked);
+
+        buttonBar.add(createNewRoutingRuleButton, importOldRulesButton);
+        add(buttonBar);
+
+    }
+
+    private void importOldRulesButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        Connector42RoutingRulesTo43RoutingRulesConfigConverter connector42LinkConfigTo43LinkConfigConverter = importOldConfigRoutingRulesConverterObjectFactory.getObject();
+        List<RoutingRule> routingRules = connector42LinkConfigTo43LinkConfigConverter.getRoutingRules();
+
+
+        final Dialog d = new Dialog();
+        VerticalLayout layout = new VerticalLayout();
+        d.add(layout);
+        d.setWidth("80%");
+        d.setHeight("80%");
+
+        Grid<RoutingRule> importedRulesGrid = new Grid<>(RoutingRule.class);
+        importedRulesGrid.getColumns().forEach(c -> c.setResizable(true));
+        importedRulesGrid.setItems(routingRules);
+
+        HorizontalLayout buttonBar = new HorizontalLayout();
+        Button ok = new Button(VaadinIcon.CHECK.create());
+        ok.addClickListener(event -> {
+            routingRules.forEach(r -> updateAndSaveRoutingRule(r));
+            d.close();
+        });
+        Button cancel = new Button(VaadinIcon.CLOSE.create());
+        cancel.addClickListener(event -> d.close());
+        buttonBar.add(ok, cancel);
+
+        Label l = new Label("The following rules will be imported");
+        layout.add(buttonBar, l, importedRulesGrid);
+
+        d.open();
 
     }
 
