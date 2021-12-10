@@ -17,7 +17,6 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 
 import org.springframework.stereotype.Component;
 
-import javax.management.Notification;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -73,14 +72,14 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
         } else if (editMode == EditMode.CREATE) {
             dcLinkFacade.createNewLinkConfiguration(value);
         }
-        navgiateBack();
+        navigateBack();
     }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        navgiateBack();
+        navigateBack();
     }
 
-    private void navgiateBack() {
+    private void navigateBack() {
         getUI().ifPresent(ui -> {
             if (linkType == LinkType.GATEWAY) {
                 ui.navigate(GatewayLinkConfiguration.class);
@@ -131,16 +130,10 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
 
     private void updateUI() {
         if (editMode == EditMode.VIEW) {
-//            linkConfigPanel.setReadOnly(true);
-//            linkConfigurationField.setReadOnly(true);
             saveButton.setEnabled(false);
         } else if (editMode == EditMode.EDIT) {
-//            linkConfigurationField.setReadOnly(false);
-//            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         } else if (editMode == EditMode.CREATE) {
-//            linkConfigurationField.setReadOnly(false);
-//            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         }
     }
