@@ -70,7 +70,7 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
         linkPartner.setSendLinkMode(LinkMode.PUSH);
         linkPartner.setRcvLinkMode(LinkMode.PASSIVE);
         linkPartner.setLinkType(LinkType.GATEWAY);
-        linkPartner.setEnabled(false);
+        linkPartner.setEnabled(true);
         linkPartner.setDescription("Imported GW Link Partner Config");
         return Stream.of(linkPartner).collect(Collectors.toList());
     }
