@@ -99,6 +99,11 @@ implements AfterNavigationObserver {
     public void setReadOnly(boolean readOnly) {
         binder.setReadOnly(readOnly);
     }
+    
+    public void setTruststoreReadOnly(boolean readOnly) {
+    	this.trustStore.setReadOnly(readOnly);
+    	this.trustStoreEnabled.setReadOnly(readOnly);
+    }
 
     private int countTrustedLists(Query<String, String> query) {
         return trustedListsManager.getAllSourceNames().size();

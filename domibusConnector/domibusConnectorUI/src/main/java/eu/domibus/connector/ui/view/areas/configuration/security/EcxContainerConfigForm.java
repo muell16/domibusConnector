@@ -24,7 +24,8 @@ public class EcxContainerConfigForm extends com.vaadin.flow.component.formlayout
         this.signature = signature;
 
         this.setResponsiveSteps(new ResponsiveStep("15cm", 1, ResponsiveStep.LabelsPosition.ASIDE));
-
+        signatureValidation.setTruststoreReadOnly(true);
+        this.signatureValidation.setTruststoreReadOnly(true);
         addFormItem(signatureValidation, "Signature Validation Config");
         addFormItem(signature, "Signature Configuration");
     }
