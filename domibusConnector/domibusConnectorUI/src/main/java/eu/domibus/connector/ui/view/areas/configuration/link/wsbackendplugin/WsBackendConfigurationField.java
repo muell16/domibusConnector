@@ -60,9 +60,7 @@ public class WsBackendConfigurationField extends CustomField<WsBackendPluginConf
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        backendPublishAddress.setReadOnly(readOnly);
-        cxfLoggingEnabled.setReadOnly(readOnly);
-        soap.setReadOnly(readOnly);
+        binder.setReadOnly(readOnly);
     }
 
     @Override
