@@ -103,18 +103,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         layout.add(field);
         field.setReadOnly(readOnly);
         binder.forField(field)
-//                .withValidator((Validator<T>) (t, valueContext) -> {
-//                    Set<ConstraintViolation<T>> validate = jsrValidator.validate(t);
-//                    if (validate.isEmpty()) {
-//                        return ValidationResult.ok();
-//                    }
-//                    StringBuilder errorText = new StringBuilder();
-//                    errorText.append("Validation errors found");
-//                    for (ConstraintViolation<T> v : validate) {
-//                        errorText.append("\n\tValidation problem: " + v.getMessage());
-//                    }
-//                    return ValidationResult.error("error");
-//                })
                 .withStatusLabel(statusLabel)
                 .bind(
                     (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
@@ -122,28 +110,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
                         Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
                         o.putAll(stringStringMap);
                     });
-
-//                .withConverter(
-//                        b -> beanToPropertyMapConverter.readBeanPropertiesToMap(b, ""),
-//                        m -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(m, cls, ""),
-//                        "Error converting failed"
-//                )
-//                .withStatusLabel(statusLabel)
-//                .bind(m -> m, Map::putAll);
-
-//                .withValidator(new Validator<T>() {
-//                    @Override
-//                    public ValidationResult apply(T t, ValueContext valueContext) {
-//
-//                        return null;
-//                    }
-//                })
-//        .bind(
-//                (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
-//                (Setter<Map<String, String>, T>) (o, o2) -> {
-//                    Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
-//                    o.putAll(stringStringMap);
-//                });
 
     }
 
@@ -153,7 +119,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         binder.writeBeanAsDraft(changedValue, true);
         setModelValue(changedValue, valueChangeEvent.isFromClient());
         value = changedValue;
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -47,6 +48,7 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
 
     private TextField linkPartnerNameTextField;
     private TextField descriptionTextField;
+    private Checkbox startOnConnectorStart;
     private ComboBox<LinkMode> rcvLinkModeComboBox;
     private ComboBox<LinkMode> sendLinkModeComboBox;
     private DCConfigurationPropertiesListField configPropsList;
@@ -90,6 +92,9 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
         binder.bind(descriptionTextField, DomibusConnectorLinkPartner::getDescription, DomibusConnectorLinkPartner::setDescription);
         layout.add(descriptionTextField);
 
+        startOnConnectorStart = new Checkbox("Start with connector start");
+        binder.bind(startOnConnectorStart, DomibusConnectorLinkPartner::isEnabled, DomibusConnectorLinkPartner::setEnabled);
+        layout.add(startOnConnectorStart);
 
         sendLinkModeComboBox = new ComboBox<>("Sender Mode");
         sendLinkModeComboBox.setItems(LinkMode.values());
@@ -121,7 +126,7 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     }
 
     private ValidationResult validateSendLinkMode(LinkMode linkMode, ValueContext valueContext) {
-    	Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
+        Optional<LinkPlugin> linkPluginByName = getLinkPlugin();
         if (linkPluginByName.isPresent()) {
             List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
                     .stream()
@@ -144,7 +149,7 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     }
 
     private ValidationResult validateRcvLinkMode(LinkMode linkMode, ValueContext valueContext) {
-        Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
+        Optional<LinkPlugin> linkPluginByName = getLinkPlugin();
         if (linkPluginByName.isPresent()) {
             List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
                     .stream()
@@ -167,14 +172,17 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
         return ValidationResult.ok();
     }
 
+    private Optional<LinkPlugin> getLinkPlugin() {
+        Optional<LinkPlugin> linkPluginByName = Optional.empty();
+        if (linkPartner != null && linkPartner.getLinkConfiguration() != null) {
+            linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
+        }
+        return linkPluginByName;
+    }
+
     private void updateUI() {
         boolean ro = isReadOnly();
-        configPropsList.setReadOnly(ro);
         binder.setReadOnly(ro);
-        linkPartnerNameTextField.setReadOnly(ro);
-        descriptionTextField.setReadOnly(ro);
-        rcvLinkModeComboBox.setReadOnly(ro);
-        sendLinkModeComboBox.setReadOnly(ro);
     }
 
     private void updateConfigurationProperties(LinkPlugin linkPlugin) {
