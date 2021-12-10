@@ -7,6 +7,7 @@ import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -196,11 +197,6 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
         updateUI();
-    }
-    
-    public void setValue(DomibusConnectorLinkPartner linkPartner) {
-    	super.setValue(linkPartner);
-    	this.linkPartner = linkPartner;
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {

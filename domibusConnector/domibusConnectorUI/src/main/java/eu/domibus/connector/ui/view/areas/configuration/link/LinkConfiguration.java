@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -40,24 +41,24 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
 
 	public static final String HELP_ID = "ui/configuration/link_configuration.html";
 
+    private static final String WARNING_LABEL_TEXT = "Warning multiple link partners with same name detected!";
+
     private final DCLinkFacade dcLinkFacade;
-    private final ApplicationContext applicationContext;
     private final LinkType linkType;
     private final WebLinkItemHierachicalDataProvider webLinkItemHierachicalDataProvider;
 
     private TreeGrid<WebLinkItem> treeGrid = new TreeGrid<>();
 
-    private Grid<DomibusConnectorLinkPartner> linkGrid = new Grid<>();
     protected Button addLinkButton = new Button("Add Link");
     protected HorizontalLayout buttonBar = new HorizontalLayout();
 
+    protected Label warningLabel = new Label(WARNING_LABEL_TEXT);
+
     protected LinkConfiguration(DCLinkFacade dcLinkFacade,
-                                ApplicationContext applicationContext,
                                 LinkType linkType, final String TITLE) {
     	super(HELP_ID, TITLE);
         this.webLinkItemHierachicalDataProvider = new WebLinkItemHierachicalDataProvider(dcLinkFacade, linkType);
         this.dcLinkFacade = dcLinkFacade;
-        this.applicationContext = applicationContext;
         this.linkType = linkType;
     }
 
@@ -69,6 +70,9 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         addAndExpand(buttonBar);
         buttonBar.add(addLinkButton);
         addLinkButton.addClickListener(this::addLinkConfigurationButtonClicked);
+
+        this.add(warningLabel);
+        warningLabel.setVisible(false);
 
         treeGrid.setDataProvider(webLinkItemHierachicalDataProvider);
 
@@ -270,6 +274,8 @@ public abstract class LinkConfiguration extends DCVerticalLayoutWithTitleAndHelp
         treeGrid.expand(webLinkItemHierachicalDataProvider
                 .fetchChildren(new HierarchicalQuery<>(new WebLinkItemFilter(), null))
                 .collect(Collectors.toSet())); //expand root items..
+
+
     }
 
 

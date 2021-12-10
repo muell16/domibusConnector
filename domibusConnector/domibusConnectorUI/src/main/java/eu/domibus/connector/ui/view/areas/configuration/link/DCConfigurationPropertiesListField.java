@@ -38,15 +38,15 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
     private Map<String, String> value;
     private Map<Class<?>, Component> fields = new HashMap<>();
     private boolean readOnly;
+    private Map<String, String> presentationValue;
 
     public DCConfigurationPropertiesListField(
             BeanToPropertyMapConverter beanToPropertyMapConverter,
             PropertyMapToBeanConverter propertyMapToBeanConverter,
             javax.validation.Validator jsrValidator,
-//            SpringBeanValidationBinderFactory springBeanValidationBinderFactory,
             FindFieldService findFieldService) {
+
         this.jsrValidator = jsrValidator;
-//        this.springBeanValidationBinderFactory = springBeanValidationBinderFactory;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
         this.propertyMapToBeanConverter = propertyMapToBeanConverter;
         this.findFieldService = findFieldService;
@@ -88,11 +88,14 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         layout.removeAll();
         fields.clear();
         binder = new Binder<>();
-        binder.setReadOnly(readOnly);
+
         binder.addValueChangeListener(this::valueChanged);
         //generate fields
         configurationClasses.forEach(this::processConfigCls);
-        binder.readBean(value);
+
+        binder.readBean(presentationValue);
+
+        binder.setReadOnly(readOnly);
     }
 
     private <T> void processConfigCls(Class<T> cls) {
@@ -101,7 +104,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         fields.put(cls, field);
         layout.add(statusLabel);
         layout.add(field);
-        field.setReadOnly(readOnly);
+
         binder.forField(field)
                 .withStatusLabel(statusLabel)
                 .bind(
@@ -128,7 +131,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
 
     @Override
     protected void setPresentationValue(Map<String, String> value) {
-        this.value = value;
+        presentationValue = value;
         updateUI();
     }
 

@@ -68,8 +68,10 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
         DomibusConnectorLinkConfiguration value = linkConfigurationField.getValue();
         if (editMode == EditMode.EDIT) {
+            value.setConfigurationSource(ConfigurationSource.DB);
             dcLinkFacade.updateLinkConfig(value);
         } else if (editMode == EditMode.CREATE) {
+            value.setConfigurationSource(ConfigurationSource.DB);
             dcLinkFacade.createNewLinkConfiguration(value);
         }
         navigateBack();
@@ -106,18 +108,21 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
         DomibusConnectorLinkConfiguration.LinkConfigName configName = new DomibusConnectorLinkConfiguration.LinkConfigName((parameter));
         Optional<DomibusConnectorLinkConfiguration> optionalConfig = dcLinkFacade.loadLinkConfig(configName);
         if (optionalConfig.isPresent()) {
-            linkConfig = optionalConfig.get();
+            DomibusConnectorLinkConfiguration linkConfig = optionalConfig.get();
+            linkConfigurationField.setValue(linkConfigurationField.getEmptyValue()); //force value change event
             linkConfigurationField.setValue(linkConfig);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(true);
             linkConfigurationField.setVisible(true);
+            this.linkConfig = linkConfig;
             titleLabel.setText(TITLE_LABEL_TEXT + " " + parameter);
         } else if (editMode == EditMode.CREATE) {
-            linkConfig = new DomibusConnectorLinkConfiguration();
+            DomibusConnectorLinkConfiguration linkConfig = new DomibusConnectorLinkConfiguration();
             linkConfig.setConfigurationSource(ConfigurationSource.DB);
             linkConfig.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName("New Link Config"));
             linkConfigurationField.setValue(linkConfig);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             linkConfigurationField.setVisible(true);
+            this.linkConfig = linkConfig;
             titleLabel.setText(TITLE_LABEL_TEXT + " new config");
         } else {
             titleLabel.setText(TITLE_LABEL_TEXT + " [None]");
