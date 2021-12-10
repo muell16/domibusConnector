@@ -121,6 +121,8 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     }
 
     private ValidationResult validateSendLinkMode(LinkMode linkMode, ValueContext valueContext) {
+    	LOGGER.debug("linkManagerService is: "+linkManagerService.toString());
+    	LOGGER.debug("linkPartner is: "+linkPartner.toString());
         Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkPartner.getLinkConfiguration().getLinkImpl());
         if (linkPluginByName.isPresent()) {
             List<LinkMode> rcvItems = linkPluginByName.get().getFeatures()
@@ -188,6 +190,12 @@ public class DCLinkPartnerField extends CustomField<DomibusConnectorLinkPartner>
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
         updateUI();
+    }
+    
+    public void setValue(DomibusConnectorLinkPartner linkPartner) {
+    	super.setValue(linkPartner);
+    	LOGGER.debug("Setting linkPartner");
+    	this.linkPartner = linkPartner;
     }
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {

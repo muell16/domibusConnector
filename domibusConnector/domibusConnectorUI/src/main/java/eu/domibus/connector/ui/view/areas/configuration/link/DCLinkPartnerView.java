@@ -140,8 +140,9 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
             linkPartner = new DomibusConnectorLinkPartner();
             linkPartner.setConfigurationSource(ConfigurationSource.DB);
             linkPartner.setLinkConfiguration(this.lnkConfig);
+            dcLinkPartnerField.setValue(linkPartner);
             dcLinkPartnerField.setVisible(true);
-            titleLabel.setText(CREATE_TITLE_LABEL_TEXT + " " + parameter);
+            titleLabel.setText(CREATE_TITLE_LABEL_TEXT);
             saveButton.setEnabled(true);
         } else {
             titleLabel.setText(EDIT_TITLE_LABEL_TEXT + " [None]");
