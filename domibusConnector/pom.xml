@@ -919,8 +919,8 @@
 						<bannedDependencies>
 							<excludes>
 								<exclude>log4j</exclude>
-								<exclude>org.apache.logging.log4j:log4j-core:,2.15.0]</exclude>
-								<exclude>org.apache.logging.log4j:log4j-api:,2.15.0]</exclude>
+								<exclude>org.apache.logging.log4j:log4j-core:(,2.15.0)</exclude>
+								<exclude>org.apache.logging.log4j:log4j-api:(,2.15.0)</exclude>
 								<exclude>ch.qos.logback:logback-classic</exclude>
 								<exclude>ch.qos.logback:logback-core</exclude>
 								<exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
