@@ -36,7 +36,7 @@ public class BackendLinkConfiguration extends LinkConfiguration {
     public BackendLinkConfiguration(DCLinkFacade dcLinkFacade,
                                     ObjectProvider<ImportOldBackendConfigDialog> importOldGatewayConfigDialog,
                                     ApplicationContext applicationContext) {
-        super(dcLinkFacade, applicationContext, LinkType.BACKEND, TITLE);
+        super(dcLinkFacade, LinkType.BACKEND, TITLE);
         this.importOldBackendConfig = importOldGatewayConfigDialog;
         importOldConfigButton.addClickListener(this::importOldConfig);
         super.buttonBar.add(importOldConfigButton);

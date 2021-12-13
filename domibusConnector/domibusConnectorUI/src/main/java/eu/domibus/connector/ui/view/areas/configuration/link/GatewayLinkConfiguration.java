@@ -37,7 +37,7 @@ public class GatewayLinkConfiguration extends LinkConfiguration {
     public GatewayLinkConfiguration(DCLinkFacade dcLinkFacade,
                                     ObjectProvider<ImportOldGatewayConfigDialog> importOldGatewayConfigDialog,
                                     ApplicationContext applicationContext) {
-        super(dcLinkFacade, applicationContext, LinkType.GATEWAY, TITLE);
+        super(dcLinkFacade, LinkType.GATEWAY, TITLE);
         this.importOldGatewayConfigDialog = importOldGatewayConfigDialog;
         importOldConfigButton.addClickListener(this::importOldConfig);
         super.buttonBar.add(importOldConfigButton);
