@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.0-RC1</version>
+    <version>4.4.1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -29,6 +29,7 @@
         <module>domibusConnectorBuilder</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorDssToolkit</module>
     </modules>
     <scm>
         <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
@@ -69,7 +70,8 @@
         <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
         <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
-        <!-- if a proxy is used during build or test configure this properties by overwriting them in your settings.xml file -->
+        <!-- if a proxy is used during build or test configure this properties 
+			by overwriting them in your settings.xml file -->
         <https.proxy.enabled>false</https.proxy.enabled>
         <http.proxy.enabled>false</http.proxy.enabled>
         <!-- keep this empty properties! -->
@@ -94,6 +96,7 @@
         <vaadin.version>14.7.5</vaadin.version>
         <dss.tools.version>5.8</dss.tools.version>
         <org.bouncycastl.version>1.67</org.bouncycastl.version>
+        <org.apache.log4j2.version>2.15.0</org.apache.log4j2.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -253,11 +256,11 @@
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${org.junit.jupiter.version}</version>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.junit.jupiter</groupId>-->
-            <!--                <artifactId>junit-jupiter-engine</artifactId>-->
-            <!--                <version>${org.junit.jupiter.version}</version>-->
-            <!--            </dependency>-->
+            <!-- <dependency> -->
+            <!-- <groupId>org.junit.jupiter</groupId> -->
+            <!-- <artifactId>junit-jupiter-engine</artifactId> -->
+            <!-- <version>${org.junit.jupiter.version}</version> -->
+            <!-- </dependency> -->
             <dependency>
                 <groupId>org.apiguardian</groupId>
                 <artifactId>apiguardian-api</artifactId>
@@ -285,13 +288,6 @@
                 <version>1.15.2</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>2.10.0</version>
-                <classifier>tests</classifier>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -323,21 +319,48 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>net.shibboleth.utilities</groupId>-->
-            <!--                <artifactId>java-support</artifactId>-->
-            <!--                <version>7.3.0</version>-->
-            <!--                <exclusions>-->
-            <!--                    <exclusion>-->
-            <!--                        <groupId>com.google.guava</groupId>-->
-            <!--                        <artifactId>guava</artifactId>-->
-            <!--                    </exclusion>-->
-            <!--                </exclusions>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>7.1</version>
+            </dependency>
+            <!-- Apache log4j2 dependencies -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jul</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
             </dependency>
             <!-- Apache CXF dependencies -->
             <dependency>
@@ -397,14 +420,15 @@
                 <version>2.1.7</version>
             </dependency>
             <!-- handle not matching dependencies in apache cxf package -->
-            <!--            <dependency>-->
+            <!-- <dependency> -->
             <!-- overwrite dependency version in org.apache.neethi:neethi and org.apache.cxf:cxf-core -->
-            <!--                <groupId>org.codehaus.woodstox</groupId>-->
-            <!--                <artifactId>woodstox-core-asl</artifactId>-->
-            <!--                <version>4.4.1</version>-->
-            <!--            </dependency>-->
+            <!-- <groupId>org.codehaus.woodstox</groupId> -->
+            <!-- <artifactId>woodstox-core-asl</artifactId> -->
+            <!-- <version>4.4.1</version> -->
+            <!-- </dependency> -->
             <dependency>
-                <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and org.apache.santuario:xmlsec -->
+                <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and 
+					org.apache.santuario:xmlsec -->
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-policy</artifactId>
                 <version>${org.apache.cxf.version}</version>
@@ -512,12 +536,12 @@
                 <version>1.21</version>
             </dependency>
             <!-- MANAGED TEST DEPENDENCIES -->
-            <!--            <dependency>-->
-            <!--                <groupId>junit</groupId>-->
-            <!--                <artifactId>junit</artifactId>-->
-            <!--                <version>4.12</version>-->
-            <!--                <scope>test</scope>-->
-            <!--            </dependency>-->
+            <!-- <dependency> -->
+            <!-- <groupId>junit</groupId> -->
+            <!-- <artifactId>junit</artifactId> -->
+            <!-- <version>4.12</version> -->
+            <!-- <scope>test</scope> -->
+            <!-- </dependency> -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -587,7 +611,7 @@
             <dependency>
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc8</artifactId>
-                <version>12.2.0.1</version>
+                <version>19.3.0.0.0</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -682,7 +706,6 @@
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -750,19 +773,12 @@
                                 <version>1.2.2</version>
                             </additionalDependency>
                         </additionalDependencies>
-                        <!-- <doclet>org.asciidoctor.Asciidoclet</doclet>
-                        <docletArtifact>
-                            <groupId>org.asciidoctor</groupId>
-                            <artifactId>asciidoclet</artifactId>
-                            <version>${asciidoclet.version}</version>
-                        </docletArtifact>
-                        <overview>src/main/java/overview.adoc</overview>
-                        <additionalparam>
-                            - -base-dir ${project.basedir}
-                            - -attribute "name=${project.name}"
-                            - -attribute "version=${project.version}"
-                            - -attribute "title-link=https://example.com[${project.name} ${project.version}]"
-                        </additionalparam> -->
+                        <!-- <doclet>org.asciidoctor.Asciidoclet</doclet> <docletArtifact> 
+							<groupId>org.asciidoctor</groupId> <artifactId>asciidoclet</artifactId> <version>${asciidoclet.version}</version> 
+							</docletArtifact> <overview>src/main/java/overview.adoc</overview> <additionalparam> 
+							- -base-dir ${project.basedir} - -attribute "name=${project.name}" - -attribute 
+							"version=${project.version}" - -attribute "title-link=https://example.com[${project.name} 
+							${project.version}]" </additionalparam> -->
                     </configuration>
                 </plugin>
                 <plugin>
@@ -837,8 +853,8 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
-                    <!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info
-                                                  to be passed to the JVM hosting the code being tested. -->
+                    <!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info 
+						to be passed to the JVM hosting the code being tested. -->
                     <execution>
                         <id>prepare-ut-agent</id>
                         <phase>process-test-classes</phase>
@@ -851,12 +867,13 @@
                             <append>true</append>
                         </configuration>
                     </execution>
-                    <!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the info
-                                                  to be passed to the JVM hosting the code being tested. –>-->
+                    <!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the 
+						info to be passed to the JVM hosting the code being tested. –> -->
                     <execution>
                         <id>prepare-it-agent</id>
-                        <!--<!– moved to package phase to be sure all pre-integration test have
-                                                            it already set to bring up environments with jacoco agent as JVM params –>-->
+                        <!--<!– moved to package phase to be sure all pre-integration test 
+							have it already set to bring up environments with jacoco agent as JVM params 
+							–> -->
                         <phase>package</phase>
                         <goals>
                             <goal>prepare-agent-integration</goal>
@@ -908,6 +925,8 @@
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
                                 <exclude>log4j:log4j</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-core:(,2.15.0)</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-api:(,2.15.0)</exclude>
                                 <exclude>org.apache.tomcat:jasper-el</exclude>
                                 <exclude>org.apache.tomcat:el-api</exclude>
                                 <exclude>com.vaadin:vaadin</exclude>
@@ -991,7 +1010,7 @@
             </distributionManagement>
         </profile>
         <profile>
-            <!--  activates long running integration tests -->
+            <!-- activates long running integration tests -->
             <id>unit-testing-with-failsafe</id>
             <build>
                 <plugins>
@@ -1033,7 +1052,7 @@
             </build>
         </profile>
         <profile>
-            <!--  activates long running integration tests -->
+            <!-- activates long running integration tests -->
             <id>integration-testing</id>
             <build>
                 <plugins>
@@ -1068,7 +1087,7 @@
             </build>
         </profile>
         <profile>
-            <!--  starts during integration-test phase long running database tests -->
+            <!-- starts during integration-test phase long running database tests -->
             <id>dbunit-testing</id>
             <build>
                 <plugins>

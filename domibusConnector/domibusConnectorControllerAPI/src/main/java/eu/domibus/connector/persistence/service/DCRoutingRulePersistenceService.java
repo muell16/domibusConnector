@@ -14,4 +14,6 @@ public interface DCRoutingRulePersistenceService {
     public void updateRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule ruleId);
 
     public List<RoutingRule> getAllRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
+
+    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName);
 }

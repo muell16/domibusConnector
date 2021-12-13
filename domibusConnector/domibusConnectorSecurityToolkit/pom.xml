@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.0-RC1</version>
+        <version>4.4.1</version>
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -14,6 +14,11 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorDssToolkit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -41,6 +41,7 @@ public class SpringResourceField extends CustomField<Resource> {
     private void valueChanged(ComponentValueChangeEvent<TextField, String> valueChangeEvent) {
         String value = valueChangeEvent.getValue();
         Resource changedValue = applicationContext.getResource(value);
+        this.value = changedValue;
        setModelValue(changedValue, valueChangeEvent.isFromClient());
     }
 
@@ -52,6 +53,11 @@ public class SpringResourceField extends CustomField<Resource> {
     @Override
     protected Resource generateModelValue() {
         return value;
+    }
+    
+    @Override
+    public Resource getValue() {
+    	return value;
     }
 
     @Override

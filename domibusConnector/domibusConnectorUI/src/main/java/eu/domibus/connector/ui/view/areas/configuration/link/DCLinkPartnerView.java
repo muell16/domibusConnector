@@ -75,6 +75,7 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
         this.add(dcLinkPartnerField);
 
         dcLinkPartnerField.addValueChangeListener(this::dcLinkPartnerFieldValueChanged);
+        dcLinkPartnerField.setValue(dcLinkPartnerField.getEmptyValue());
     }
 
     private void dcLinkPartnerFieldValueChanged(AbstractField.ComponentValueChangeEvent<CustomField<DomibusConnectorLinkPartner>, DomibusConnectorLinkPartner> customFieldDomibusConnectorLinkPartnerComponentValueChangeEvent) {
@@ -82,22 +83,25 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
     }
 
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        DomibusConnectorLinkPartner value = linkPartner;
+        DomibusConnectorLinkPartner value = this.linkPartner;
+        if (editMode == EditMode.EDIT || editMode == EditMode.CREATE) {
+            value.setConfigurationSource(ConfigurationSource.DB);
+            value.setLinkConfiguration(this.lnkConfig);
+            value.setLinkType(this.linkType);
+        }
         if (editMode == EditMode.EDIT) {
             dcLinkFacade.updateLinkPartner(value);
         } else if (editMode == EditMode.CREATE) {
-            value.setLinkConfiguration(this.lnkConfig);
-            value.setLinkType(this.linkType);
             dcLinkFacade.createNewLinkPartner(value);
         }
-        navgiateBack();
+        navigateBack();
      }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        navgiateBack();
+        navigateBack();
     }
 
-    private void navgiateBack() {
+    private void navigateBack() {
         getUI().ifPresent(ui -> {
             if (linkType == LinkType.GATEWAY) {
                 ui.navigate(GatewayLinkConfiguration.class);
@@ -125,7 +129,9 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
         DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName(parameter);
         Optional<DomibusConnectorLinkPartner> optionalLinkPartner = dcLinkFacade.loadLinkPartner(lp);
         if (optionalLinkPartner.isPresent()) {
-            linkPartner = optionalLinkPartner.get();
+            DomibusConnectorLinkPartner linkPartner = optionalLinkPartner.get();
+            this.lnkConfig = linkPartner.getLinkConfiguration();
+            dcLinkPartnerField.setValue(dcLinkPartnerField.getEmptyValue()); //force update event
             dcLinkPartnerField.setValue(linkPartner);
             linkType = linkPartner.getLinkType();
             dcLinkPartnerField.setVisible(true);
@@ -137,11 +143,12 @@ public class DCLinkPartnerView extends VerticalLayout implements HasUrlParameter
                 throw new IllegalArgumentException("Illegal parameter supplied");
             }
             this.lnkConfig = domibusConnectorLinkConfiguration.get();
-            linkPartner = new DomibusConnectorLinkPartner();
+            DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
             linkPartner.setConfigurationSource(ConfigurationSource.DB);
             linkPartner.setLinkConfiguration(this.lnkConfig);
+            dcLinkPartnerField.setValue(linkPartner);
             dcLinkPartnerField.setVisible(true);
-            titleLabel.setText(CREATE_TITLE_LABEL_TEXT + " " + parameter);
+            titleLabel.setText(CREATE_TITLE_LABEL_TEXT);
             saveButton.setEnabled(true);
         } else {
             titleLabel.setText(EDIT_TITLE_LABEL_TEXT + " [None]");

@@ -1,15 +1,18 @@
 package eu.domibus.connector.ui.view.areas.configuration.routing;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.GridSortOrderBuilder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -18,128 +21,210 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
-import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
+import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
+import eu.domibus.connector.link.utils.Connector42RoutingRulesTo43RoutingRulesConfigConverter;
 import eu.domibus.connector.ui.component.LumoLabel;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebBusinessDomainService;
-import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @UIScope
 @TabMetadata(title = "Backend Message Routing", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
 @Route(value = BackendMessageRoutingView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Order(4)
-public class BackendMessageRoutingView extends VerticalLayout implements AfterNavigationObserver {
+@Order(3)
+public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private static final Logger LOGGER = LogManager.getLogger(BackendMessageRoutingView.class);
 
     public static final String ROUTE = "backendrouting";
 
+    public static final String TITLE = "Manage Backend Routing Rules";
+    public static final String HELP_ID = "ui/configuration/backend_message_routing_ui.html";
+
     private final DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl;
-    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final WebBusinessDomainService webBusinessDomainService;
-//    private final DCLinkFacade dcLinkFacade;
-//    private final WebPModeService webPModeService;
     private final ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory;
+    private final DCLinkFacade dcLinkFacade;
+    private final ObjectFactory<Connector42RoutingRulesTo43RoutingRulesConfigConverter> importOldConfigRoutingRulesConverterObjectFactory;
 
     private Grid<RoutingRule> routingRuleGrid;
+    private ComboBox<String> defaultBackendNameSelectField;
 
     private Map<String, RoutingRule> currentRoutingRules;
 
     public BackendMessageRoutingView(DCRoutingRulesManagerImpl dcRoutingRulesManagerImpl,
                                      ObjectFactory<RoutingRuleForm> routingRuleFormObjectFactory,
-                                     ConfigurationPropertyManagerService configurationPropertyManagerService,
+                                     WebBusinessDomainService webBusinessDomainService,
                                      DCLinkFacade dcLinkFacade,
-                                     WebPModeService webPModeService,
-                                     WebBusinessDomainService webBusinessDomainService) {
+                                     ObjectFactory<Connector42RoutingRulesTo43RoutingRulesConfigConverter> importOldConfigRoutingRulesConverterObjectFactory) {
+        super(HELP_ID, TITLE);
         this.routingRuleFormObjectFactory = routingRuleFormObjectFactory;
         this.dcRoutingRulesManagerImpl = dcRoutingRulesManagerImpl;
-        this.configurationPropertyManagerService = configurationPropertyManagerService;
         this.webBusinessDomainService = webBusinessDomainService;
+        this.dcLinkFacade = dcLinkFacade;
+        this.importOldConfigRoutingRulesConverterObjectFactory = importOldConfigRoutingRulesConverterObjectFactory;
         initUI();
     }
 
     private void initUI() {
+
         Label l = new Label("Here is the configuration where routing rules are configured that define how messages are routed to backend(s).");
         add(l);
 
         LumoLabel routingDescription = new LumoLabel();
         routingDescription.setText("General routing priorities:");
         routingDescription.getStyle().set("font-size", "20px");
-		
+
         routingDescription.getStyle().set("font-style", "italic");
         add(routingDescription);
 
         Accordion routingPriorities = new Accordion();
-        
+
         routingPriorities.add("1. refToMessageId", new LumoLabel("If the message contains a refToMessageId then the backend where the original message was sent from is chosen."));
         routingPriorities.add("2. conversationId", new LumoLabel("If the message is part of a conversation the backend where prior messages of the conversation was sent from is chosen."));
-        routingPriorities.add("3. routing Rules", new LumoLabel("This is the part configured on this page. \\nIf there is a rule that applies to the message, the backend configured within the rule is chosen."));
+        routingPriorities.add("3. routing Rules", new LumoLabel("This is the part configured on this page. \nIf there is a rule that applies to the message, the backend configured within the rule is chosen."));
         routingPriorities.add("4. default Backend", new LumoLabel("If none of the above is applicable, the default backend is chosen."));
-        
-        add(routingPriorities);
-        
-        TextField defaultBackendNameTextField = new TextField();
-        defaultBackendNameTextField.setReadOnly(true);
-        defaultBackendNameTextField.setLabel("Configured default backend name");
-        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()));
 
-        add(defaultBackendNameTextField);
+        add(routingPriorities);
+
+        //TextField defaultBackendNameTextField = new TextField();
+//        defaultBackendNameTextField.setReadOnly(true); //currently no way to update this over the UI!
+//        defaultBackendNameTextField.setLabel("Configured default backend name");
+//        defaultBackendNameTextField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(getCurrentDomain()));
+//
+//        add(defaultBackendNameTextField);
+        defaultBackendNameSelectField = getBackendNameEditorComponent();
+        defaultBackendNameSelectField.setLabel("Configured default backend name");
+        defaultBackendNameSelectField.addValueChangeListener(this::defaultBackendChanged);
+        add(defaultBackendNameSelectField);
 
         routingRuleGrid = new Grid<>(RoutingRule.class);
         routingRuleGrid.addColumn(getButtonRenderer());
+        routingRuleGrid.getColumns().forEach(c -> c.setResizable(true));
 
-        
+        final List<GridSortOrder<RoutingRule>> sortByPriority = new GridSortOrderBuilder<RoutingRule>().thenDesc(routingRuleGrid.getColumnByKey("priority")).build();
+        routingRuleGrid.sort(sortByPriority);
+
         this.add(routingRuleGrid);
-        
-        Button createNewRoutingRule = new Button("Create new roulting rule");
-        createNewRoutingRule.addClickListener(this::createNewRoutingRuleClicked);
-        add(createNewRoutingRule);
 
-        Button saveChangesButton = new Button("Save Changes");
-        saveChangesButton.addClickListener(this::saveChangesButtonClicked);
-        add(saveChangesButton);
+        HorizontalLayout buttonBar = new HorizontalLayout();
+
+        Button createNewRoutingRuleButton = new Button("Create new routing rule");
+        createNewRoutingRuleButton.addClickListener(this::createNewRoutingRuleClicked);
+
+        Button importOldRulesButton = new Button("Import old config");
+        importOldRulesButton.addClickListener(this::importOldRulesButtonClicked);
+
+        buttonBar.add(createNewRoutingRuleButton, importOldRulesButton);
+        add(buttonBar);
 
     }
 
-    private void saveChangesButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        this.saveChanges();
+    private void importOldRulesButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        Connector42RoutingRulesTo43RoutingRulesConfigConverter connector42LinkConfigTo43LinkConfigConverter = importOldConfigRoutingRulesConverterObjectFactory.getObject();
+        List<RoutingRule> routingRules = connector42LinkConfigTo43LinkConfigConverter.getRoutingRules();
+
+
+        final Dialog d = new Dialog();
+        VerticalLayout layout = new VerticalLayout();
+        d.add(layout);
+        d.setWidth("80%");
+        d.setHeight("80%");
+
+        Grid<RoutingRule> importedRulesGrid = new Grid<>(RoutingRule.class);
+        importedRulesGrid.getColumns().forEach(c -> c.setResizable(true));
+        importedRulesGrid.setItems(routingRules);
+
+        HorizontalLayout buttonBar = new HorizontalLayout();
+        Button ok = new Button(VaadinIcon.CHECK.create());
+        ok.addClickListener(event -> {
+            routingRules.forEach(r -> updateAndSaveRoutingRule(r));
+            d.close();
+        });
+        Button cancel = new Button(VaadinIcon.CLOSE.create());
+        cancel.addClickListener(event -> d.close());
+        buttonBar.add(ok, cancel);
+
+        Label l = new Label("The following rules will be imported");
+        layout.add(buttonBar, l, importedRulesGrid);
+
+        d.open();
+
+    }
+
+    private void defaultBackendChanged(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> comboBoxStringComponentValueChangeEvent) {
+        String newBackendName = comboBoxStringComponentValueChangeEvent.getValue();
+        dcRoutingRulesManagerImpl.setDefaultBackendName(getCurrentDomain(), newBackendName);
+    }
+
+    private void updateUI() {
+        defaultBackendNameSelectField.setValue(dcRoutingRulesManagerImpl.getDefaultBackendName(getCurrentDomain()));
+        Map<String, RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(getCurrentDomain());
+        this.currentRoutingRules = backendRoutingRules;
+        routingRuleGrid.setItems(backendRoutingRules.values());
+    }
+
+    private ComboBox<String> getBackendNameEditorComponent() {
+        Set<String> collect = dcLinkFacade.getAllLinksOfType(LinkType.BACKEND)
+                .stream()
+                .map(DomibusConnectorLinkPartner::getLinkPartnerName)
+                .map(DomibusConnectorLinkPartner.LinkPartnerName::getLinkName)
+                .collect(Collectors.toSet());
+        ComboBox<String> comboBox = new ComboBox<>("LinkName");
+        comboBox.setItems(collect);
+        comboBox.setAllowCustomValue(true);
+        comboBox.addCustomValueSetListener(event -> {
+            comboBox.setValue(event.getDetail());
+        });
+
+        return comboBox;
     }
 
     private Renderer<RoutingRule> getButtonRenderer() {
         return new ComponentRenderer<>(
                 (RoutingRule routingRule) -> {
                     HorizontalLayout layout = new HorizontalLayout();
-                    //edit Button
-                    Button editButton = new Button();
-                    editButton.setIcon(VaadinIcon.WRENCH.create());
-                    editButton.addClickListener(clickEvent -> {
-                        editRoutingRule(routingRule);
-                    });
-                    layout.add(editButton);
-                    //delete button
-                    Button deleteButton = new Button();
-                    deleteButton.setIcon(VaadinIcon.TRASH.create());
-                    deleteButton.addClickListener(clickEvent -> {
-                        deleteRoutingRule(routingRule);
-                    });
-                    layout.add(deleteButton);
+                    if (routingRule.getConfigurationSource().equals(ConfigurationSource.DB)) {
+                        //edit Button
+                        Button editButton = new Button();
+
+                        editButton.setIcon(VaadinIcon.WRENCH.create());
+                        editButton.addClickListener(clickEvent -> {
+                            editRoutingRule(routingRule);
+                        });
+                        layout.add(editButton);
+                        //delete button
+                        Button deleteButton = new Button();
+                        deleteButton.setIcon(VaadinIcon.TRASH.create());
+                        deleteButton.addClickListener(clickEvent -> {
+                            deleteRoutingRule(routingRule);
+                        });
+                        layout.add(deleteButton);
+                    }
+
                     return layout;
                 });
 
@@ -198,10 +283,8 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         saveCancelButton.add(saveButton);
         saveCancelButton.add(cancelButton);
-
-        saveChanges();
     }
-    
+
     private void editRoutingRule(RoutingRule r) {
         final Dialog d = new Dialog();
         d.setModal(true);
@@ -254,13 +337,11 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
 
         saveCancelButton.add(saveButton);
         saveCancelButton.add(cancelButton);
-
-        saveChanges();
     }
 
     private void updateAndSaveRoutingRule(RoutingRule rr) {
         dcRoutingRulesManagerImpl.deleteBackendRoutingRuleFromPersistence(webBusinessDomainService.getCurrentBusinessDomain(), rr.getRoutingRuleId());
-        dcRoutingRulesManagerImpl.addBackendRoutingRule(webBusinessDomainService.getCurrentBusinessDomain(), rr);
+        rr = dcRoutingRulesManagerImpl.persistBackendRoutingRule(webBusinessDomainService.getCurrentBusinessDomain(), rr);
         this.currentRoutingRules.remove(rr.getRoutingRuleId());
         this.currentRoutingRules.put(rr.getRoutingRuleId(), rr);
         this.routingRuleGrid.setItems(this.currentRoutingRules.values());
@@ -293,37 +374,17 @@ public class BackendMessageRoutingView extends VerticalLayout implements AfterNa
             d.close();
         });
 
-//        saveChanges();
     }
 
 
-
-	private void saveChanges() {
-//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-//                DCMessageRoutingConfigurationProperties.class);
-//
-//        //update only routing rules from source environment
-//        Map<String, RoutingRule> newRoutingRules = currentRoutingRules.values()
-//                .stream()
-//                .filter(r -> r.getConfigurationSource() != ConfigurationSource.IMPL)
-//                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
-//        routingConfigurationProperties.setBackendRules(newRoutingRules);
-//        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), routingConfigurationProperties);
+    @Override
+    public void afterNavigation(AfterNavigationEvent arg0) {
+        updateUI();
     }
 
-    private void resetChanges() {
-//        DCMessageRoutingConfigurationProperties routingConfigurationProperties = configurationPropertyManagerService.loadConfiguration(webBusinessDomainService.getCurrentBusinessDomain(),
-//                DCMessageRoutingConfigurationProperties.class);
-
-    }
-
-	@Override
-	public void afterNavigation(AfterNavigationEvent arg0) {
-
-        Map<String, RoutingRule> backendRoutingRules = dcRoutingRulesManagerImpl.getBackendRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-        this.currentRoutingRules = backendRoutingRules;
-        routingRuleGrid.setItems(backendRoutingRules.values());
-
+    private DomibusConnectorBusinessDomain.BusinessDomainId getCurrentDomain() {
+        //TODO: replace in multi tenancy model with service...
+        return DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
     }
 
     //TODO: for validation purpose check DCLinkFacade if backendName is a configured backend

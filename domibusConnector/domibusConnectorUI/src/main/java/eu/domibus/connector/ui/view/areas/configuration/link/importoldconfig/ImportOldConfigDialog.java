@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
+import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
@@ -45,6 +46,7 @@ public abstract class ImportOldConfigDialog extends Dialog {
     Upload upload = new Upload(buffer);
     //upload result area
     VerticalLayout resultArea = new VerticalLayout();
+    private ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback;
 
     public ImportOldConfigDialog(ObjectProvider<DCLinkConfigurationField> linkConfigurationFieldObjectProvider,
                                  ObjectProvider<DCLinkPartnerField> linkPartnerFieldObjectProvider,
@@ -99,10 +101,9 @@ public abstract class ImportOldConfigDialog extends Dialog {
             }
 
 
-            //TODO: add save button...
             Button saveButton = new Button("Save Imported Config");
             saveButton.addClickListener(event -> {
-//                this.saveLinkConfiguration(linkConfiguration);
+                this.save(linkPartners, domibusConnectorLinkConfiguration);
             });
             resultArea.add(saveButton);
 
@@ -127,7 +128,18 @@ public abstract class ImportOldConfigDialog extends Dialog {
         }
     }
 
-    //TODO: refactor this...
+    public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {
+        this.dialogCloseCallback = dialogCloseCallback;
+    }
+
+    public void setOpened(boolean opened) {
+        super.setOpened(opened);
+        if (!opened && dialogCloseCallback != null) {
+            dialogCloseCallback.dialogHasBeenClosed();
+        }
+    }
+
+            //TODO: refactor this...
     protected abstract List<DomibusConnectorLinkPartner> getLinkPartners(Connector42LinkConfigTo43LinkConfigConverter connector42LinkConfigTo43LinkConfigConverter);
 
 }

@@ -38,6 +38,7 @@ implements AfterNavigationObserver {
     private Select<String> trustedListSource;
     private Checkbox ocspEnabled = new Checkbox();
     private Checkbox crlEnabled = new Checkbox();
+    private Checkbox aiaEnabled = new Checkbox();
     private StoreConfigurationField trustStore;
     private StoreConfigurationField ignoreStore;
     private Checkbox ignoreStoreEnabled = new Checkbox();
@@ -82,6 +83,7 @@ implements AfterNavigationObserver {
 
         formLayout.addFormItem(ocspEnabled, "Should OCSP be used on certificate verification");
         formLayout.addFormItem(crlEnabled, "Should CRL be used on certificate verification");
+        formLayout.addFormItem(aiaEnabled, "Should AIA be used");
 
         this.add(statusLabel);
         this.add(formLayout);
@@ -95,12 +97,12 @@ implements AfterNavigationObserver {
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        validationConstraintsXml.setReadOnly(readOnly);
-        trustStoreEnabled.setReadOnly(readOnly);
-        trustStore.setReadOnly(readOnly);
-        trustedListSource.setReadOnly(readOnly);
-        ocspEnabled.setReadOnly(readOnly);
-        crlEnabled.setReadOnly(readOnly);
+        binder.setReadOnly(readOnly);
+    }
+    
+    public void setTruststoreReadOnly(boolean readOnly) {
+    	this.trustStore.setReadOnly(readOnly);
+    	this.trustStoreEnabled.setReadOnly(readOnly);
     }
 
     private int countTrustedLists(Query<String, String> query) {
@@ -113,14 +115,11 @@ implements AfterNavigationObserver {
 
 
     private void valueChanged(ValueChangeEvent<?> valueChangeEvent) {
-
         SignatureValidationConfigurationProperties changedValue = new SignatureValidationConfigurationProperties();
         binder.writeBeanAsDraft(changedValue, true);
         setModelValue(changedValue, valueChangeEvent.isFromClient());
         value = changedValue;
-
     }
-
 
     @Override
     protected void setPresentationValue(SignatureValidationConfigurationProperties newPresentationValue) {

@@ -40,8 +40,7 @@ class DCBusinessDocumentValidationConfigurationPropertiesTest {
         Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(conf, "connector.business-document-sent");
 
         Map<String, String> expected = new HashMap<>();
-        expected.put("connector.business-document-sent.allowed-advanced-system-types[1]", "AUTHENTICATION_BASED");
-        expected.put("connector.business-document-sent.allowed-advanced-system-types[0]", "SIGNATURE_BASED");
+        expected.put("connector.business-document-sent.allowed-advanced-system-types", "SIGNATURE_BASED,AUTHENTICATION_BASED");
         expected.put("connector.business-document-sent.signature-validation.validation-constraints-xml", "classpath:/102853/constraint.xml");
         expected.put("connector.business-document-sent.country", "");
         expected.put("connector.business-document-sent.service-provider", "");
@@ -50,6 +49,7 @@ class DCBusinessDocumentValidationConfigurationPropertiesTest {
         expected.put("connector.business-document-sent.signature-validation.crl-enabled", "false");
         expected.put("connector.business-document-sent.signature-validation.trust-store-enabled", "true");
         expected.put("connector.business-document-sent.signature-validation.ignore-store-enabled", "false");
+        expected.put("connector.business-document-sent.signature-validation.aia-enabled", "true");
         expected.put("connector.business-document-sent.signature-validation.certificate-verifier-name", "default");
 
         assertThat(stringStringMap).containsExactlyInAnyOrderEntriesOf(expected);

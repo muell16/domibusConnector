@@ -66,6 +66,9 @@ public class WebLinkItemHierachicalDataProvider extends AbstractHierarchicalData
     }
 
     private LinkPlugin getPlugin(DomibusConnectorLinkConfiguration config) {
+        if (config == null) {
+            return null;
+        }
         return dcLinkFacade.getLinkPluginByName(config.getLinkImpl()).orElse(null);
     }
 

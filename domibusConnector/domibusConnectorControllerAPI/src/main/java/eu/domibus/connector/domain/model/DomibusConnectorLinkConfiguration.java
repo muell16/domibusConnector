@@ -93,7 +93,7 @@ public class DomibusConnectorLinkConfiguration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DomibusConnectorLinkConfiguration that = (DomibusConnectorLinkConfiguration) o;
-        return configName.equals(that.configName);
+        return Objects.equals(configName, that.configName);
     }
 
     @Override

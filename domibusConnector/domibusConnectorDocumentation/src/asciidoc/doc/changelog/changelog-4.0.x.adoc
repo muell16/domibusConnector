@@ -1,5 +1,5 @@
 
-== 4.0.x
+== Changelog for domibusConnector-4.0.x
 
 === 4.0.1
 Bugfix: Reading and respecting of property "connector.backend.ws.trust.store.path" to correctly address the backend's truststore.

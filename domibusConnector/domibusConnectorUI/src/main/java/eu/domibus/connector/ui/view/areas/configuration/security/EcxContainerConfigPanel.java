@@ -1,7 +1,9 @@
 package eu.domibus.connector.ui.view.areas.configuration.security;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,10 +18,15 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportBusinessDocConfig;
+import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportEcodexContainerConfig;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -30,96 +37,32 @@ import java.util.stream.Collectors;
 @Route(value = EcxContainerConfigPanel.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "ECodex Container Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(6)
-public class EcxContainerConfigPanel extends VerticalLayout implements AfterNavigationObserver {
+@Order(5)
+public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpButton {
 
     public static final String ROUTE = "ecxContainer";
+    
+    public static final String TITLE = "ECodex Container Configuration";
+	public static final String HELP_ID = "ui/configuration/ecodex_container_configuration.html";
 
-    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-    private final SpringBeanValidationBinderFactory springBeanValidationBinderFactory;
+    public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
+                                   ObjectProvider<ImportEcodexContainerConfig> importEcodexContainerConfig,
+                                   EcxContainerConfigForm form) {
+    	super(HELP_ID, TITLE);
+        ConfigurationPanelFactory.ConfigurationPanel<DCEcodexContainerProperties> configurationPanel
+                = configurationPanelFactory.createConfigurationPanel(form, DCEcodexContainerProperties.class);
 
-    private final Label errorField;
-    private final EcxContainerConfigForm ecxContainerConfigForm;
-    private Binder<DCEcodexContainerProperties> binder;
-    private DCEcodexContainerProperties boundConfigValue;
+        Button b = new Button("Import old config");
+        b.addClickListener(event -> {
+            ImportEcodexContainerConfig dialog = importEcodexContainerConfig.getObject();
+//          due some reason dialogCloseActionListener does not work
+//            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
+            dialog.setDialogCloseCallback(configurationPanel::refreshUI);
+            dialog.open();
+        });
+        this.add(b);
+        this.add(configurationPanel);
 
-
-    public EcxContainerConfigPanel(ConfigurationPropertyManagerService configurationPropertyManagerService,
-                                   SpringBeanValidationBinderFactory springBeanValidationBinderFactory,
-                                   EcxContainerConfigForm ecxContainerConfigForm) {
-        this.configurationPropertyManagerService = configurationPropertyManagerService;
-        this.springBeanValidationBinderFactory = springBeanValidationBinderFactory;
-        this.ecxContainerConfigForm = ecxContainerConfigForm;
-
-        this.errorField = new Label("");
-
-        initUI();
-    }
-
-    private void initUI() {
-
-        VerticalLayout configDiv = new VerticalLayout();
-
-        Button saveChanges = new Button("Save Changes");
-        saveChanges.addClickListener(this::saveChangesButtonClicked);
-        configDiv.add(saveChanges);
-
-        Button reset = new Button("Reset Changes");
-        reset.addClickListener(this::resetButtonClicked);
-        configDiv.add(reset);
-
-        configDiv.add(errorField);
-
-        Class<DCEcodexContainerProperties> configurationClazz = DCEcodexContainerProperties.class;
-
-        binder = springBeanValidationBinderFactory.create(configurationClazz);
-        binder.setStatusLabel(errorField);
-
-        ecxContainerConfigForm.bindInstanceFields(binder);
-        configDiv.add(ecxContainerConfigForm);
-
-        add(configDiv);
-    }
-
-    private void resetButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        DCEcodexContainerProperties currentConfig = readConfigFromPropertyService();
-        binder.readBean(currentConfig); //reset config
-    }
-
-    private DCEcodexContainerProperties readConfigFromPropertyService() {
-        return configurationPropertyManagerService.loadConfiguration(
-                DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                DCEcodexContainerProperties.class);
-    }
-
-    private void saveChangesButtonClicked(ClickEvent<Button> buttonClickEvent) {
-
-        BinderValidationStatus<DCEcodexContainerProperties> validate = binder.validate();
-        if (validate.isOk()) {
-            try {
-                binder.writeBean(this.boundConfigValue);
-            } catch (ValidationException e) {
-                //should not occur since validate.isOk()
-                throw new RuntimeException(e);
-            }
-            //write config update...
-            configurationPropertyManagerService.updateConfiguration(
-                    DomibusConnectorBusinessDomain.getDefaultMessageLaneId(),
-                    boundConfigValue);
-        } else {
-            Notification.show("Error, cannot save due:\n" + validate.getBeanValidationErrors()
-                    .stream()
-                    .map(vr -> vr.getErrorMessage())
-                    .collect(Collectors.joining("\n"))
-            );
-        }
-
-    }
-
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        this.boundConfigValue = readConfigFromPropertyService();
-        binder.setBean(boundConfigValue); //bind bean
     }
 
 }

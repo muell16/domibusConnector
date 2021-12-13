@@ -1,6 +1,8 @@
 package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.security.cert.CertificateException;
 @Service
 public class DCKeyStoreService {
 
+    private static final Logger LOGGER = LogManager.getLogger(DCKeyStoreService.class);
+
     private final ApplicationContext ctx;
 
     public DCKeyStoreService(ApplicationContext ctx) {
@@ -37,7 +41,10 @@ public class DCKeyStoreService {
     }
 
     public Resource loadKeyStoreAsResource(StoreConfigurationProperties storeConfigurationProperties) {
-        return ctx.getResource(storeConfigurationProperties.getPath());
+        String path = storeConfigurationProperties.getPath();
+        String resolvedPath = ctx.getEnvironment().resolvePlaceholders(path);
+        LOGGER.debug("loadKeyStoreAsResource# Resolved path [{}] to [{}]", path, resolvedPath);
+        return ctx.getResource(resolvedPath);
     }
 
     public KeyStore loadKeyStore(StoreConfigurationProperties storeConfigurationProperties) {

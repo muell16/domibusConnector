@@ -20,6 +20,8 @@ import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
 import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
 import eu.domibus.connector.ui.view.areas.pmodes.PmodeOverview;
 import eu.domibus.connector.ui.view.areas.testing.ConnectorTestsOverview;
+import eu.domibus.connector.ui.view.areas.tools.ToolsLayout;
+import eu.domibus.connector.ui.view.areas.tools.ToolsView;
 import eu.domibus.connector.ui.view.areas.users.UserOverview;
 
 @UIScope
@@ -84,6 +86,12 @@ public class DCMainLayout extends AppLayout implements RouterLayout, BeforeEnter
 
         tabManager
                 .createTab()
+                .withLabel("Tools")
+                .withIcon(VaadinIcon.PLAY)
+                .addForComponent(ToolsView.class);
+
+        tabManager
+                .createTab()
                 .withLabel("Documentation")
                 .withIcon(VaadinIcon.LIGHTBULB)
                 .addForComponent(ArchitectureDocumentationView.class);
@@ -103,7 +111,6 @@ public class DCMainLayout extends AppLayout implements RouterLayout, BeforeEnter
     }
 
     public void beforeEnter(BeforeEnterEvent event) {
-//        currentlyLoggedInUser.setText("User: " + SecurityUtils.getUsername());
         tabManager.beforeEnter(event);
     }
 }

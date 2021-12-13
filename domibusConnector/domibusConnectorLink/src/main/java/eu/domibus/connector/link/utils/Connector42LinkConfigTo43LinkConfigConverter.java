@@ -1,7 +1,9 @@
 package eu.domibus.connector.link.utils;
 
+import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
@@ -64,10 +66,11 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
         DomibusConnectorLinkConfiguration lnkConfig = getGwLinkConfiguration();
         DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
         linkPartner.setLinkConfiguration(lnkConfig);
-        linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("imported_gw"));
+        linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(DomibusConnectorDefaults.DEFAULT_GATEWAY_NAME));
         linkPartner.setSendLinkMode(LinkMode.PUSH);
         linkPartner.setRcvLinkMode(LinkMode.PASSIVE);
-        linkPartner.setEnabled(false);
+        linkPartner.setLinkType(LinkType.GATEWAY);
+        linkPartner.setEnabled(true);
         linkPartner.setDescription("Imported GW Link Partner Config");
         return Stream.of(linkPartner).collect(Collectors.toList());
     }
@@ -168,6 +171,7 @@ public class Connector42LinkConfigTo43LinkConfigConverter {
             p.setEnabled(rs.getBoolean("BACKEND_ENABLED"));
             p.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(rs.getString("BACKEND_NAME")));
             p.setRcvLinkMode(LinkMode.PASSIVE);
+            p.setLinkType(LinkType.BACKEND);
 
             Map<String, String> props = new HashMap<>();
             p.setProperties(props);

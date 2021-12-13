@@ -1,7 +1,5 @@
 package eu.domibus.connector.ui.view.areas.configuration.link;
 
-import com.sun.xml.bind.v2.runtime.output.NamespaceContextImpl;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.html.Label;
@@ -9,8 +7,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
-import eu.domibus.connector.security.configuration.SignatureConfigurationProperties;
-import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.domibus.connector.ui.utils.field.FindFieldService;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.utils.service.PropertyMapToBeanConverter;
@@ -20,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
-import javax.validation.ConstraintViolation;
 import java.util.*;
 
 @org.springframework.stereotype.Component
@@ -43,15 +38,15 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
     private Map<String, String> value;
     private Map<Class<?>, Component> fields = new HashMap<>();
     private boolean readOnly;
+    private Map<String, String> presentationValue;
 
     public DCConfigurationPropertiesListField(
             BeanToPropertyMapConverter beanToPropertyMapConverter,
             PropertyMapToBeanConverter propertyMapToBeanConverter,
             javax.validation.Validator jsrValidator,
-//            SpringBeanValidationBinderFactory springBeanValidationBinderFactory,
             FindFieldService findFieldService) {
+
         this.jsrValidator = jsrValidator;
-//        this.springBeanValidationBinderFactory = springBeanValidationBinderFactory;
         this.beanToPropertyMapConverter = beanToPropertyMapConverter;
         this.propertyMapToBeanConverter = propertyMapToBeanConverter;
         this.findFieldService = findFieldService;
@@ -93,11 +88,14 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         layout.removeAll();
         fields.clear();
         binder = new Binder<>();
-        binder.setReadOnly(readOnly);
+
         binder.addValueChangeListener(this::valueChanged);
         //generate fields
         configurationClasses.forEach(this::processConfigCls);
-        binder.readBean(value);
+
+        binder.readBean(presentationValue);
+
+        binder.setReadOnly(readOnly);
     }
 
     private <T> void processConfigCls(Class<T> cls) {
@@ -106,20 +104,8 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         fields.put(cls, field);
         layout.add(statusLabel);
         layout.add(field);
-        field.setReadOnly(readOnly);
+
         binder.forField(field)
-//                .withValidator((Validator<T>) (t, valueContext) -> {
-//                    Set<ConstraintViolation<T>> validate = jsrValidator.validate(t);
-//                    if (validate.isEmpty()) {
-//                        return ValidationResult.ok();
-//                    }
-//                    StringBuilder errorText = new StringBuilder();
-//                    errorText.append("Validation errors found");
-//                    for (ConstraintViolation<T> v : validate) {
-//                        errorText.append("\n\tValidation problem: " + v.getMessage());
-//                    }
-//                    return ValidationResult.error("error");
-//                })
                 .withStatusLabel(statusLabel)
                 .bind(
                     (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
@@ -127,28 +113,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
                         Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
                         o.putAll(stringStringMap);
                     });
-
-//                .withConverter(
-//                        b -> beanToPropertyMapConverter.readBeanPropertiesToMap(b, ""),
-//                        m -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(m, cls, ""),
-//                        "Error converting failed"
-//                )
-//                .withStatusLabel(statusLabel)
-//                .bind(m -> m, Map::putAll);
-
-//                .withValidator(new Validator<T>() {
-//                    @Override
-//                    public ValidationResult apply(T t, ValueContext valueContext) {
-//
-//                        return null;
-//                    }
-//                })
-//        .bind(
-//                (ValueProvider<Map<String, String>, T>) stringStringMap -> propertyMapToBeanConverter.loadConfigurationOnlyFromMap(stringStringMap, cls, ""),
-//                (Setter<Map<String, String>, T>) (o, o2) -> {
-//                    Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(o2, "");
-//                    o.putAll(stringStringMap);
-//                });
 
     }
 
@@ -158,7 +122,6 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
         binder.writeBeanAsDraft(changedValue, true);
         setModelValue(changedValue, valueChangeEvent.isFromClient());
         value = changedValue;
-
     }
 
     @Override
@@ -168,7 +131,7 @@ public class DCConfigurationPropertiesListField extends CustomField<Map<String, 
 
     @Override
     protected void setPresentationValue(Map<String, String> value) {
-        this.value = value;
+        presentationValue = value;
         updateUI();
     }
 

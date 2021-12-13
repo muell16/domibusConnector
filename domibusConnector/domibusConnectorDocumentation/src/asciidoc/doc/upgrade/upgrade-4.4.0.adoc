@@ -14,6 +14,26 @@ endif::header[]
 
 === Configuration Properties
 
+==== Evidences Toolkit Configuration
+
+===== Rename the following properties:
+
+* connector.evidences.key-store.path => connector.evidences.signature.key-store.path
+* connector.evidences.key-store.password => connector.evidences.key-store.password
+* connector.evidences.private-key.alias => connector.evidences.signature.private-key.alias
+* connector.evidences.private-key.password => connector.evidences.signature.private-key.password
+
+* postal.address.street => connector.evidences.issuer-info.postal-address.street
+* postal.address.locality => connector.evidences.issuer-info.postal-address.locality
+* postal.address.zip-code => connector.evidences.issuer-info.postal-address.zip-code
+* postal.address.country => connector.evidences.issuer-info.postal-address.country
+
+==== Remove the following properties
+
+* connector.evidences.hash-algorithm (is replaced by connector.evidences.signature.digest-algorithm default value SHA512)
+* gateway.endpoint.address (replaced by connector.evidences.issuer.as4-party.endpoint-address will be updated by p-Mode import)
+* gateway.name (replaced by connector.evidences.issuer.as4-party.name, will be updated by p-Mode import)
+
 ==== Security Configuration
 
 As the security lib configuration has been splitted into the eCodexContainer and BusinessDocumentVerification configuration the following properties have changed:

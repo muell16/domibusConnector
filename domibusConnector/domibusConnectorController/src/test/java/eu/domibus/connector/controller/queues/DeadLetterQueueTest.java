@@ -15,6 +15,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = {DeadLetterQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
+@Disabled
 public class DeadLetterQueueTest {
 
     @SpringBootApplication

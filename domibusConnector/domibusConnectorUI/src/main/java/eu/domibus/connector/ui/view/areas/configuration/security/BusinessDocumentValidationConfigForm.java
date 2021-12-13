@@ -7,6 +7,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
+import eu.domibus.connector.ui.fields.AuthenticationValidationConfigurationField;
 import eu.domibus.connector.ui.fields.SignatureValidationConfigurationField;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -28,16 +29,20 @@ public class BusinessDocumentValidationConfigForm extends FormLayout {
 
     private final MultiSelectListBox<AdvancedElectronicSystemType> allowedAdvancedSystemTypes;
 
+    //field must be a member to use bind instance fields!
     @SuppressWarnings("FieldCanBeLocal")
     private final SignatureValidationConfigurationField signatureValidation;
+    private final AuthenticationValidationConfigurationField authenticationValidation;
 
-    public BusinessDocumentValidationConfigForm(SignatureValidationConfigurationField signatureValidation) {
+    public BusinessDocumentValidationConfigForm(SignatureValidationConfigurationField signatureValidation,
+                                                AuthenticationValidationConfigurationField authenticationValidation) {
         allowedAdvancedSystemTypes = new MultiSelectListBox<>();
         allowedAdvancedSystemTypes.setItems(Stream.of(AdvancedElectronicSystemType.values()).collect(Collectors.toSet()));
         allowedAdvancedSystemTypes.setWidth("100%");
 
         defaultAdvancedSystemType.setItems(AdvancedElectronicSystemType.values());
 
+        this.authenticationValidation = authenticationValidation;
         this.signatureValidation = signatureValidation;
         this.setResponsiveSteps(new ResponsiveStep("30cm", 1, ResponsiveStep.LabelsPosition.ASIDE));
 
@@ -46,11 +51,9 @@ public class BusinessDocumentValidationConfigForm extends FormLayout {
         addFormItem(allowedAdvancedSystemTypes, "Allowed AdvancedSystemTypes");
         addFormItem(defaultAdvancedSystemType, "Default AdvancedSystemType");
         addFormItem(allowSystemTypeOverrideByClient, "Allow client to set AdvancedSystemType on message");
-        addFormItem(signatureValidation, "Signature Validation Config");
+        addFormItem(this.authenticationValidation, "Authentication Based Config");
+        addFormItem(this.signatureValidation, "Signature Validation Config");
     }
 
-    public void bindInstanceFields(Binder b) {
-        b.bindInstanceFields(this);
-    }
 
 }

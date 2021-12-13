@@ -48,7 +48,7 @@ The p-Mode set contains a configuration with
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name]
 
 
-[plantuml]
+[plantuml,multiusecase_1]
 ----
 @startuml
 
@@ -83,7 +83,7 @@ backend2 -[hidden]- backend1
 
 This can be done by using the startswith match pattern within the backend routing rules (introduced with connector 4.4.x).
 
-[plantuml]
+[plantuml,multiusecase_2]
 ----
 @startuml
 
@@ -119,7 +119,7 @@ backend2 -[hidden]- backend1
 
 Currently the plugin has no support for this setup.
 
-[plantuml]
+[plantuml,multiusecase_3]
 ----
 @startuml
 
@@ -159,7 +159,7 @@ WARNING: As all P-Modes have to be merged together into one set to import it int
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
 
 
-[plantuml]
+[plantuml,multiusecase_4]
 ----
 @startuml
 
@@ -205,7 +205,7 @@ connector2 -down-> backend2
 * For every service domain a backend routing is in place
 * For outgoing messages also a router is in place which assigns the message to a service domain
 
-[plantuml]
+[plantuml,multiusecase_5]
 ----
 @startuml
 

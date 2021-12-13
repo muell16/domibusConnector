@@ -8,6 +8,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.ui.controller.QueueController;
 import eu.domibus.connector.ui.dto.WebQueue;
+import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -17,13 +18,17 @@ import org.springframework.stereotype.Component;
 @Route(value = JmsMonitoringView.ROUTE, layout = MonitoringLayout.class)
 @Order(1)
 @TabMetadata(title = "Jms Queues", tabGroup = MonitoringLayout.TAB_GROUP_NAME)
-public class JmsMonitoringView extends VerticalLayout implements AfterNavigationObserver {
+public class JmsMonitoringView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
     public static final String ROUTE = "queues";
 
+    public static final String HELP_ID = "ui/monitoring/jms_monitoring.html";
+    public static final String TITLE = "Jms Queues";
+    
     private final QueueController queueController;
     private QueueGrid queueGrid;
 
     public JmsMonitoringView(QueueController queueController) {
+    	super(HELP_ID, TITLE);
         this.queueController = queueController;
         queueGrid = new QueueGrid();
         queueGrid.setItemDetailsRenderer(createDetailsRenderer());

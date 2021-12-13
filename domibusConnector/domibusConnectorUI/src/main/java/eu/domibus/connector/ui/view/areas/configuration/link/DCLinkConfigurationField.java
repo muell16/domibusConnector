@@ -187,6 +187,11 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
     protected DomibusConnectorLinkConfiguration generateModelValue() {
         return value;
     }
+    
+    @Override
+    public DomibusConnectorLinkConfiguration getValue() {
+        return value;
+    }
 
     @Override
     protected void setPresentationValue(DomibusConnectorLinkConfiguration linkConfig) {

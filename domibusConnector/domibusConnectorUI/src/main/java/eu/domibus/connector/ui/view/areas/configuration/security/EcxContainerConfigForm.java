@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EcxContainerConfigForm extends FormLayout {
+public class EcxContainerConfigForm extends com.vaadin.flow.component.formlayout.FormLayout {
 
+    //is bound by binder
     private final SignatureValidationConfigurationField signatureValidation;
     private final SignatureConfigurationField signature;
 
@@ -23,14 +24,11 @@ public class EcxContainerConfigForm extends FormLayout {
         this.signature = signature;
 
         this.setResponsiveSteps(new ResponsiveStep("15cm", 1, ResponsiveStep.LabelsPosition.ASIDE));
-
+        signatureValidation.setTruststoreReadOnly(true);
+        this.signatureValidation.setTruststoreReadOnly(true);
         addFormItem(signatureValidation, "Signature Validation Config");
         addFormItem(signature, "Signature Configuration");
-
     }
 
-    public void bindInstanceFields(Binder b) {
-        b.bindInstanceFields(this);
-    }
 
 }

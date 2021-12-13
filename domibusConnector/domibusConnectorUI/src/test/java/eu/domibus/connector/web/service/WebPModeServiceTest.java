@@ -6,6 +6,7 @@ import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
@@ -53,7 +54,7 @@ public class WebPModeServiceTest {
     SubmitToLinkService submitToLinkService;
 
     @Autowired
-    HomePartyConfigurationProperties homePartyConfigurationProperties;
+    EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
     @Autowired
     DCEcodexContainerProperties dcEcodexContainerProperties;
@@ -93,9 +94,9 @@ public class WebPModeServiceTest {
             assertThat(securityToolkitConfigurationProperties.getSignatureValidation().getTrustStore().getPassword()).isEqualTo("pw");
 
             Assertions.assertAll(
-                    () -> assertThat(homePartyConfigurationProperties.getEndpointAddress())
+                    () -> assertThat(evidencesToolkitConfigurationProperties.getIssuerInfo().getAs4Party().getEndpointAddress())
                             .isEqualTo("https://ctpo.example.com/domibus/services/msh"),
-                    () -> assertThat(homePartyConfigurationProperties.getName())
+                    () -> assertThat(evidencesToolkitConfigurationProperties.getIssuerInfo().getAs4Party().getName())
                             .isEqualTo("service_ctp"),
 //TODO: check why this is not working...
                     () -> assertThat(dcEcodexContainerProperties.getSignatureValidation().getTrustStore().getPassword())

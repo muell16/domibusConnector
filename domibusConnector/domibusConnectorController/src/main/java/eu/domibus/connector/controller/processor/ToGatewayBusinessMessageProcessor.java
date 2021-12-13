@@ -83,11 +83,12 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             //submit message to GW
             submitMessageToLinkStep.submitMessage(message);
             //submit evidence message to BACKEND
-            //TODO: do this after submitMessage was successfull!
+            //TODO: do this after submitMessage was successfull! offload into extra queue
             submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
-
-            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully processed message with backendId [{}] to Link", message.getMessageDetails().getBackendMessageId());
+            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put message with backendId [{}] to Gateway Link [{}] on toLink Queue.",
+                    message.getMessageDetails().getBackendMessageId(),
+                    message.getMessageDetails().getGatewayName());
 
         } catch (DomibusConnectorEvidencesToolkitException ete) {
             LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);

@@ -2,6 +2,7 @@ package eu.domibus.connector.security.configuration;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.annotations.MapNested;
+import eu.domibus.connector.common.annotations.UseConverter;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.security.aes.DCAuthenticationBasedTechnicalValidationServiceFactory;
@@ -10,6 +11,7 @@ import eu.domibus.connector.security.configuration.validation.CheckAllowedAdvanc
 import org.apache.commons.collections4.set.ListOrderedSet;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -68,6 +70,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
      *  only a allowed system type can be 5
      */
     @NotNull
+    @UseConverter
     private ListOrderedSet<AdvancedElectronicSystemType> allowedAdvancedSystemTypes = ListOrderedSet.listOrderedSet(Arrays.asList(AdvancedElectronicSystemType.values()));
 
     /**
@@ -155,6 +158,7 @@ public class DCBusinessDocumentValidationConfigurationProperties {
         private String identityProvider;
 
         @NotNull
+        @UseConverter
         private Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass = OriginalSenderBasedAESAuthenticationServiceFactory.class;
 
         @NotNull

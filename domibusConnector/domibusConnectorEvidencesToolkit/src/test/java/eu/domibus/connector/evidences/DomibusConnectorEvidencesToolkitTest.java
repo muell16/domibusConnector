@@ -5,12 +5,9 @@ import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
-import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
@@ -39,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 public class DomibusConnectorEvidencesToolkitTest {
 
     @SpringBootApplication(
-            scanBasePackages = {"eu.domibus.connector.evidences", "eu.domibus.connector.common", "eu.domibus.connector.utils"}
+            scanBasePackages = {"eu.domibus.connector.evidences", "eu.domibus.connector.common", "eu.domibus.connector.utils", "eu.domibus.connector.lib"}
     )
     public static class TestContext {}
 

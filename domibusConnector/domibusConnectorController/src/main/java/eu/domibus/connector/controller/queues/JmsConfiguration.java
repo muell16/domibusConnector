@@ -147,7 +147,9 @@ public class JmsConfiguration {
         addressSettings.setAutoDeleteAddresses(false);
         addressSettings.setDeadLetterAddress(new SimpleString("DLA"));
         addressSettings.setExpiryAddress(new SimpleString("expiry"));
-        addressSettings.setMaxDeliveryAttempts(3);
+        addressSettings.setMaxDeliveryAttempts(5);
+        addressSettings.setRedeliveryDelay(60000); //set 60s redelivery delay
+        addressSettings.setRedeliveryMultiplier(2);
         return addressSettings;
     }
 

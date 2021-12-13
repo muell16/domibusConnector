@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 @Service
 public class DCLinkPersistenceService {
 
@@ -167,7 +169,13 @@ public class DCLinkPersistenceService {
         PDomibusConnectorLinkConfiguration dbLinkConfig = oneByConfigName.orElse(new PDomibusConnectorLinkConfiguration());
         dbLinkConfig.setConfigName(configName);
         dbLinkConfig.setLinkImpl(linkConfiguration.getLinkImpl());
-        dbLinkConfig.setProperties(linkConfiguration.getProperties());
+    
+        Map<String, String> collect = linkConfiguration.getProperties().entrySet()
+                .stream().filter(e -> StringUtils.hasText(e.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        
+        dbLinkConfig.setProperties(collect);
+
         return dbLinkConfig;
     }
 
@@ -176,6 +184,7 @@ public class DCLinkPersistenceService {
             return new HashMap<>();
         }
         Map<String, String> map = properties.entrySet().stream()
+                .filter(e -> StringUtils.hasText(e.getValue()))
                 .collect(Collectors.toMap(e -> CONFIG_PROPERTY_PREFIX + e.getKey(), Map.Entry::getValue));
         return map;
     }
@@ -215,8 +224,9 @@ public class DCLinkPersistenceService {
         linkPartnerDao.save(dbLinkPartner);
     }
 
+    @Transactional
     public void updateLinkConfig(DomibusConnectorLinkConfiguration linkConfig) {
-        PDomibusConnectorLinkConfiguration dbLinkConfig = mapToDbLinkConfiguration(linkConfig);
+    	PDomibusConnectorLinkConfiguration dbLinkConfig = mapToDbLinkConfiguration(linkConfig);
         linkConfigurationDao.save(dbLinkConfig);
     }
 

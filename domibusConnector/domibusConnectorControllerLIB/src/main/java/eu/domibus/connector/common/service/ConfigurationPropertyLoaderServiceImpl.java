@@ -164,6 +164,20 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
      */
     @Override
     public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
+        Map<String, String> diffProps = getUpdatedConfiguration(laneId, updatedConfigClazz);
+        updateConfiguration(laneId, updatedConfigClazz.getClass(), diffProps);
+    }
+
+    @Override
+    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps) {
+        LOGGER.debug("Updating of [{}] the following properties [{}]", updatedConfigClazz, diffProps);
+
+        businessDomainManager.updateConfig(laneId, diffProps);
+        ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
+    }
+
+    @Override
+    public Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
         if (laneId == null) {
             throw new IllegalArgumentException("LaneId is not allowed to be null!");
         }
@@ -177,11 +191,7 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         props.entrySet().stream()
                 .filter(entry -> !Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
                 .forEach(e -> diffProps.put(e.getKey().toString(), e.getValue()));
-
-        LOGGER.debug("Updating of [{}] the following properties [{}]", updatedConfigClazz.getClass(), diffProps);
-
-        businessDomainManager.updateConfig(laneId, diffProps);
-        ctx.publishEvent(new BusinessDomainConfigurationChange(this, laneId, diffProps));
+        return diffProps;
     }
 
     Map<String, String> createPropertyMap(Object configurationClazz) {
