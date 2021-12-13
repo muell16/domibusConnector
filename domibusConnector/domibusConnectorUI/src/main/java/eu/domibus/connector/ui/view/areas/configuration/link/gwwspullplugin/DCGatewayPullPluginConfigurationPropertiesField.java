@@ -65,10 +65,7 @@ public class DCGatewayPullPluginConfigurationPropertiesField extends CustomField
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        gwAddress.setReadOnly(readOnly);
-        cxfLoggingEnabled.setReadOnly(readOnly);
-        soap.setReadOnly(readOnly);
-        wsPolicy.setReadOnly(readOnly);
+        binder.setReadOnly(readOnly);
     }
 
     @Override

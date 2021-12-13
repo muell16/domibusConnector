@@ -59,9 +59,7 @@ public class WsBackendLinkConfigurationField extends CustomField<WsBackendPlugin
     }
 
     public void setReadOnly(boolean readOnly) {
-        pushAddress.setReadOnly(readOnly);
-        encryptionAlias.setReadOnly(readOnly);
-        certificateDn.setReadOnly(readOnly);
+        binder.setReadOnly(readOnly);
     }
 
     @Override

@@ -46,8 +46,6 @@ public class HomePartyConfigurationPropertiesField extends CustomField<HomeParty
 
     @Override
     public void setReadOnly(boolean readOnly) {
-//        name.setReadOnly(readOnly);
-//        endpointAddress.setReadOnly(readOnly);
         binder.setReadOnly(readOnly);
     }
 

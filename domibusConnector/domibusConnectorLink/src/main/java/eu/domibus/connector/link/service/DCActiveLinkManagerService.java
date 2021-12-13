@@ -124,10 +124,12 @@ public class DCActiveLinkManagerService {
                 LOGGER.warn("Link partner could not be activated", e);
             }
 
-
-
             return Optional.ofNullable(activeLinkPartner);
+        } catch (Exception e) {
+            String error = String.format("Error while activating Link Partner [%s]", linkInfo.getLinkPartnerName());
+            throw new LinkPluginException(error, e);
         }
+
     }
 
 
