@@ -167,7 +167,12 @@ public class DCLinkPersistenceService {
         PDomibusConnectorLinkConfiguration dbLinkConfig = oneByConfigName.orElse(new PDomibusConnectorLinkConfiguration());
         dbLinkConfig.setConfigName(configName);
         dbLinkConfig.setLinkImpl(linkConfiguration.getLinkImpl());
-        dbLinkConfig.setProperties(linkConfiguration.getProperties());
+
+        Map<String, String> collect = linkConfiguration.getProperties().entrySet()
+                .stream().filter(e -> StringUtils.hasText(e.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        dbLinkConfig.setProperties(collect);
+
         return dbLinkConfig;
     }
 
