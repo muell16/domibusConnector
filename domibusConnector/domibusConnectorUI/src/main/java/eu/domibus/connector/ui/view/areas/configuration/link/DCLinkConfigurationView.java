@@ -15,6 +15,8 @@ import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -28,6 +30,7 @@ import java.util.Optional;
 @RoleRequired(role = "ADMIN")
 public class DCLinkConfigurationView extends VerticalLayout implements HasUrlParameter<String> {
 
+	private static final Logger LOGGER = LogManager.getLogger(DCLinkConfigurationView.class);
 
     public static final String ROUTE = "linkConfig";
     public static final String LINK_TYPE_QUERY_PARAM = "linkType";

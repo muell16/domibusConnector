@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 @Service
 public class DCLinkPersistenceService {
 
@@ -167,10 +169,11 @@ public class DCLinkPersistenceService {
         PDomibusConnectorLinkConfiguration dbLinkConfig = oneByConfigName.orElse(new PDomibusConnectorLinkConfiguration());
         dbLinkConfig.setConfigName(configName);
         dbLinkConfig.setLinkImpl(linkConfiguration.getLinkImpl());
-
+    
         Map<String, String> collect = linkConfiguration.getProperties().entrySet()
                 .stream().filter(e -> StringUtils.hasText(e.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        
         dbLinkConfig.setProperties(collect);
 
         return dbLinkConfig;
@@ -221,8 +224,9 @@ public class DCLinkPersistenceService {
         linkPartnerDao.save(dbLinkPartner);
     }
 
+    @Transactional
     public void updateLinkConfig(DomibusConnectorLinkConfiguration linkConfig) {
-        PDomibusConnectorLinkConfiguration dbLinkConfig = mapToDbLinkConfiguration(linkConfig);
+    	PDomibusConnectorLinkConfiguration dbLinkConfig = mapToDbLinkConfiguration(linkConfig);
         linkConfigurationDao.save(dbLinkConfig);
     }
 
