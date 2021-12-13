@@ -181,6 +181,7 @@ public class DCLinkPersistenceService {
             return new HashMap<>();
         }
         Map<String, String> map = properties.entrySet().stream()
+                .filter(e -> StringUtils.hasText(e.getValue()))
                 .collect(Collectors.toMap(e -> CONFIG_PROPERTY_PREFIX + e.getKey(), Map.Entry::getValue));
         return map;
     }
