@@ -17,7 +17,6 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 
 import org.springframework.stereotype.Component;
 
-import javax.management.Notification;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,18 +68,20 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
     private void saveButtonClicked(ClickEvent<Button> buttonClickEvent) {
         DomibusConnectorLinkConfiguration value = linkConfigurationField.getValue();
         if (editMode == EditMode.EDIT) {
+            value.setConfigurationSource(ConfigurationSource.DB);
             dcLinkFacade.updateLinkConfig(value);
         } else if (editMode == EditMode.CREATE) {
+            value.setConfigurationSource(ConfigurationSource.DB);
             dcLinkFacade.createNewLinkConfiguration(value);
         }
-        navgiateBack();
+        navigateBack();
     }
 
     private void discardButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        navgiateBack();
+        navigateBack();
     }
 
-    private void navgiateBack() {
+    private void navigateBack() {
         getUI().ifPresent(ui -> {
             if (linkType == LinkType.GATEWAY) {
                 ui.navigate(GatewayLinkConfiguration.class);
@@ -107,18 +108,21 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
         DomibusConnectorLinkConfiguration.LinkConfigName configName = new DomibusConnectorLinkConfiguration.LinkConfigName((parameter));
         Optional<DomibusConnectorLinkConfiguration> optionalConfig = dcLinkFacade.loadLinkConfig(configName);
         if (optionalConfig.isPresent()) {
-            linkConfig = optionalConfig.get();
+            DomibusConnectorLinkConfiguration linkConfig = optionalConfig.get();
+            linkConfigurationField.setValue(linkConfigurationField.getEmptyValue()); //force value change event
             linkConfigurationField.setValue(linkConfig);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(true);
             linkConfigurationField.setVisible(true);
+            this.linkConfig = linkConfig;
             titleLabel.setText(TITLE_LABEL_TEXT + " " + parameter);
         } else if (editMode == EditMode.CREATE) {
-            linkConfig = new DomibusConnectorLinkConfiguration();
+            DomibusConnectorLinkConfiguration linkConfig = new DomibusConnectorLinkConfiguration();
             linkConfig.setConfigurationSource(ConfigurationSource.DB);
             linkConfig.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName("New Link Config"));
             linkConfigurationField.setValue(linkConfig);
 //            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             linkConfigurationField.setVisible(true);
+            this.linkConfig = linkConfig;
             titleLabel.setText(TITLE_LABEL_TEXT + " new config");
         } else {
             titleLabel.setText(TITLE_LABEL_TEXT + " [None]");
@@ -131,16 +135,10 @@ public class DCLinkConfigurationView extends VerticalLayout implements HasUrlPar
 
     private void updateUI() {
         if (editMode == EditMode.VIEW) {
-//            linkConfigPanel.setReadOnly(true);
-//            linkConfigurationField.setReadOnly(true);
             saveButton.setEnabled(false);
         } else if (editMode == EditMode.EDIT) {
-//            linkConfigurationField.setReadOnly(false);
-//            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         } else if (editMode == EditMode.CREATE) {
-//            linkConfigurationField.setReadOnly(false);
-//            linkConfigPanel.setImplAndConfigNameReadOnly(false);
             saveButton.setEnabled(linkConfig.getConfigurationSource() == ConfigurationSource.DB);
         }
     }
