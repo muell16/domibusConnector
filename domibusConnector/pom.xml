@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.3.5-SNAPSHOT</version>
+    <version>4.3.5</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -343,46 +343,44 @@
                 <artifactId>asm</artifactId>
                 <version>7.1</version>
             </dependency>
-            
             <!-- Apache log4j2 dependencies -->
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-1.2-api</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-web</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-jul</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${org.apache.log4j2.version}</version>
-				<classifier>tests</classifier>
-				<scope>test</scope>
-			</dependency>
-            
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jul</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${org.apache.log4j2.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
             <!-- Apache CXF dependencies -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -907,35 +905,35 @@
                 </executions>
             </plugin>
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M2</version>
-				<configuration>
-					<rules>
-						<banDuplicatePomDependencyVersions></banDuplicatePomDependencyVersions>
-						<bannedDependencies>
-							<excludes>
-								<exclude>log4j</exclude>
-								<exclude>org.apache.logging.log4j:log4j-core:(,2.15.0)</exclude>
-								<exclude>org.apache.logging.log4j:log4j-api:(,2.15.0)</exclude>
-								<exclude>ch.qos.logback:logback-classic</exclude>
-								<exclude>ch.qos.logback:logback-core</exclude>
-								<exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
-								<exclude>com.ibatis:ibatis</exclude>
-								<exclude>com.ibm:j2ee</exclude>
-							</excludes>
-						</bannedDependencies>
-					</rules>
-				</configuration>
-				<executions>
-					<execution>
-						<id>enforce-versions</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <rules>
+                        <banDuplicatePomDependencyVersions></banDuplicatePomDependencyVersions>
+                        <bannedDependencies>
+                            <excludes>
+                                <exclude>log4j</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-core:(,2.15.0)</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-api:(,2.15.0)</exclude>
+                                <exclude>ch.qos.logback:logback-classic</exclude>
+                                <exclude>ch.qos.logback:logback-core</exclude>
+                                <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
+                                <exclude>com.ibatis:ibatis</exclude>
+                                <exclude>com.ibm:j2ee</exclude>
+                            </excludes>
+                        </bannedDependencies>
+                    </rules>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
