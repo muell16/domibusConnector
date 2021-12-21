@@ -96,7 +96,7 @@
         <vaadin.version>14.7.5</vaadin.version>
         <dss.tools.version>5.8</dss.tools.version>
         <org.bouncycastl.version>1.67</org.bouncycastl.version>
-        <org.apache.log4j2.version>2.16.0</org.apache.log4j2.version>
+        <org.apache.log4j2.version>2.17.0</org.apache.log4j2.version>
     </properties>
     <dependencyManagement>
         <dependencies>
