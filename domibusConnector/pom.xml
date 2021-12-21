@@ -89,7 +89,7 @@
         <vaadin.version>14.5.3</vaadin.version>
         <dss.tools.version>5.4</dss.tools.version>
         <org.bouncycastl.version>1.64</org.bouncycastl.version>
-        <org.apache.log4j2.version>2.16.0</org.apache.log4j2.version>
+        <org.apache.log4j2.version>2.17.0</org.apache.log4j2.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -922,8 +922,8 @@
                         <bannedDependencies>
                             <excludes>
                                 <exclude>log4j</exclude>
-                                <exclude>org.apache.logging.log4j:log4j-core:(,2.16.0)</exclude>
-                                <exclude>org.apache.logging.log4j:log4j-api:(,2.16.0)</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-core:(,${org.apache.log4j2.version})</exclude>
+                                <exclude>org.apache.logging.log4j:log4j-api:(,${org.apache.log4j2.version})</exclude>
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>ch.qos.logback:logback-core</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
