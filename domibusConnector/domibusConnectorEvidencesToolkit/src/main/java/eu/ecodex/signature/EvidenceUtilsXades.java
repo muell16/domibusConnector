@@ -134,7 +134,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 
         // Verification
         SignedDocumentValidator val = SignedDocumentValidator.fromDocument(signedDocument);
-        CommonCertificateVerifier certVeri = new CommonCertificateVerifier();
+        CommonCertificateVerifier certVeri = new CommonCertificateVerifier(true);
         val.setCertificateVerifier(certVeri);
 
         Reports test = val.validateDocument();
@@ -243,7 +243,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     }
 
     protected CertificateVerifier getCompleteCertificateVerifier() {
-        CertificateVerifier cv = new CommonCertificateVerifier();
+        CertificateVerifier cv = new CommonCertificateVerifier(true); //TODO: use certificate Verifier Factory
         cv.setDataLoader(getFileCacheDataLoader());
         //cv.setCrlSource(onlineCrlSource());
         //cv.setOcspSource(onlineOcspSource());
