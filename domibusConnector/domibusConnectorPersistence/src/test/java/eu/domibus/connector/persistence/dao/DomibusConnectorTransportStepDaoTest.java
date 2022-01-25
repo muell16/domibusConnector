@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
 @DataSet(value = "/database/testdata/dbunit/DomibusConnectorTransportStep.xml", strategy = CLEAN_INSERT)
-//@Disabled("Test JVM is randomly crashing on CI and via mvn")
 public class DomibusConnectorTransportStepDaoTest {
 
     @Autowired
@@ -93,6 +92,21 @@ public class DomibusConnectorTransportStepDaoTest {
                         .getTotalElements()).isEqualTo(1) //there should be 1 entry where the last updated state is pending
         );
 
+    }
+
+
+    @Test
+    public void testFindStepByLastState_Pending() {
+        Pageable pageable = Pageable.ofSize(20);
+        DomibusConnectorLinkPartner.LinkPartnerName[] lp = {new DomibusConnectorLinkPartner.LinkPartnerName("partner2")};
+
+        Assertions.assertAll(
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                                new String[]{TransportState.PENDING.getDbName()},
+                                lp,
+                                pageable)
+                        .getTotalElements()).isEqualTo(1) //there should be 1 entry with last state of pending
+        );
     }
 
     @Test

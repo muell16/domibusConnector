@@ -94,9 +94,11 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     @Override
     public List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        String stateDbName = TransportState.PENDING.getDbName();
-        return transportStepDao.findByMsgLinkPartnerAndLastStateIs(linkPartnerName, stateDbName)
-                .stream()
+
+        String[] states = new String[]{TransportState.PENDING.getDbName()};
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkNames = new DomibusConnectorLinkPartner.LinkPartnerName[] {linkPartnerName};
+        Pageable p = Pageable.unpaged();
+        return transportStepDao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(states, linkNames, p).stream()
                 .map(this::mapTransportStepToDomain)
                 .collect(Collectors.toList());
     }

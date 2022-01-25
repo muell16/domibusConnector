@@ -6,7 +6,7 @@
     <option name="VM_PARAMETERS" value="-Dsome.property=file:///$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector/config/keystores/connector-ecodex-keystore" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="SHORTEN_COMMAND_LINE" value="CLASSPATH_FILE" />
+    <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
