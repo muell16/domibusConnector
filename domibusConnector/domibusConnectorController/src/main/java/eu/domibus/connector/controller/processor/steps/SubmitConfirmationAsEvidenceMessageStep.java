@@ -83,7 +83,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
     public void submitOppositeDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
         validateParameters(businessMessage);
-        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
+//        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
         DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
         submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
     }

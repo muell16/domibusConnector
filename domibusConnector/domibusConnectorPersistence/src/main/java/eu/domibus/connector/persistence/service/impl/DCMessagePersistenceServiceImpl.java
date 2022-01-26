@@ -118,7 +118,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         }
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
-        this.msgContentService.saveMessagePayloads(message);
+        this.msgContentService.saveMessagePayloads(message, dbMessage);
     }
 
 
@@ -158,7 +158,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
             throw new PersistenceException(error, cve);
         }
 
-        this.msgContentService.saveMessagePayloads(message);
+        this.msgContentService.saveMessagePayloads(message, dbMessage);
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
 
@@ -223,7 +223,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 //            messageInfoDao.save(messageInfo);
         }
 
-        this.msgContentService.saveMessagePayloads(message);
+        this.msgContentService.saveMessagePayloads(message, dbMessage);
         mapRelatedConfirmations(dbMessage, message);
         
         this.messageDao.save(dbMessage);
