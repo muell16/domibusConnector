@@ -1,0 +1,19 @@
+= Incoming Confirmation Message
+
+== Trigger
+This workflow is triggered by the process
+link:../process/receive_request_from_gateway.html[receive request from gateway].
+
+
+== Process
+This workflow consists of the following processes:
+
+|===
+| process | precondition | outcome
+
+|link:../process/receive_confirmation_message_from_gateway.html[receive confirmation message from gateway]
+|message successfully received by process link:../process/receive_request_from_gateway.html[receive request from gateway]
+|confirmation message is on toConnector queue.
+
+
+

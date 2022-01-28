@@ -1,0 +1,33 @@
+= receive request from gateway
+
+Process is triggered by an incoming request through WS-endpoint
+
+== process-steps
+
+|===
+| step | description | parameters | returns | on success | on fail | module responsibility
+
+|Receive Request
+|The WS Endpoint receives a request from the gateway
+|DomibusConnectorMessageType
+|
+|Validate transition message
+|Exception
+|domibusConnectorLink
+
+|Validate transition message
+|The message in its transition model state is validated if the ebms data and message contents required are in place.
+As a result of this step also the type of message is known. This could either be "business message" (BM) or "confirmation message" (CM).
+|DomibusConnectorMessageType
+|validation result
+|Trigger Workflow
+|Exception
+|Link
+
+|Trigger Workflow
+|The workflow for this message is identified and the processes of the workflow are initialized.
+|DomibusConnectorMessageType, messageType
+|
+|End process
+|Exception
+|Link

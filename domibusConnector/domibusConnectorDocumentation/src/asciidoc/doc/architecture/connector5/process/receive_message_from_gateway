@@ -1,0 +1,91 @@
+= receive message from gateway
+
+== extensions
+* link:receive_business_message_from_gateway.html[receive business message from gateway]
+* link:receive_confirmation_message_from_gateway.html[receive confirmation message from gateway]
+
+
+== process-steps
+
+|===
+| step | description | parameters | returns | on success | on fail | module responsibility
+
+|Find Domain
+|ABSTRACT - defined in extension
+|DomibusConnectorMessageType transitionMessage
+|DcDomain identifiedDomain
+|Map to BusinessModel
+|ABSTRACT - defined in extension
+|Controller
+
+|Map to BusinessModel
+|mapping the transition model to the business model
+a|* DomibusConnectorMessageType transitionMessage
+* DcDomain identifiedDomain
+|DomibusConnectorMessage businessModelMessage
+|Persist message
+|ABSTRACT - defined in extension
+|Controller
+
+|Persist message
+a|* DC_MESSAGE
+* DC_EBMS_ROUTE
+* DC_MSG_CONTENT (without storage refs)
+* DC_MSG_PROCESS_STEP all steps to this process. Already handled steps with result.
+|DomibusConnectorMessage businessModelMessage
+|DomibusConnectorMessage businessModelMessage
+|Write to storage
+|ABSTRACT - defined in extension
+|Controller
+
+|Write to storage
+|Write content: message content files are received from CXF and put on storage.
+DC_MSG_CONTENT update with storage references.
+DC_MSG_PROCESS_STEP update with result.
+|DomibusConnectorMessage businessModelMessage
+|DomibusConnectorMessage businessModelMessage
+|Put on queue
+|ABSTRACT - defined in extension
+|Controller
+
+|Put on queue
+|The message is put on the queue for business processing.
+
+DC_MSG_PROCESS_STEP update with result.
+|DomibusConnectorMessage businessModelMessage
+|result
+|acknowledge Request
+|prepare for retry
+|Controller
+
+|prepare for retry
+|Message is prepared for retry. → new process!
+|DomibusConnectorMessage businessModelMessage
+|result
+|acknowledge Request
+|cleanUp
+|Controller
+
+|cleanUp
+|Persisted message data and storage contents are deleted.
+|DomibusConnectorMessage businessModelMessage
+|result
+|acknowledge Request
+|Exception
+|Controller
+
+|acknowledge request
+|The gateway request is answered with an ACK.
+|result
+|
+|End Process
+|Exception
+|Link
+
+|Exception
+|A typed exception is thrown back to webservice.
+|exception message
+|
+|End Process
+|
+|Link
