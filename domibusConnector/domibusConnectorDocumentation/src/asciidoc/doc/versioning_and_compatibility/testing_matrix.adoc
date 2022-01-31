@@ -10,6 +10,8 @@ endif::header[]
 
 = Testing Matrix
 
+NOTE: The following matrix may be always a little behind the current testing and installation, because it is generated with the release. The release afterwards is being tested. The result will then become part of the next release!
+
 == The Connector has been tested on
 
 .Infrastructure Components
@@ -64,6 +66,22 @@ endif::header[]
 | H2 4.200
 | Liquibase
 
+| 4.4.x
+| Windows 10
+| Adopt Open JDK 11
+| Standalone
+| H2 4.200
+| H2 4.200
+| Liquibase
+
+| 4.4.x
+| AIX
+| IBM JRE8
+| Tomcat 9
+| Ojdbc7
+| Oracle 19c
+| Liquibase
+
 |===
 
 == The Connector has been tested with
@@ -74,7 +92,7 @@ endif::header[]
 
 | 4.4.x
 | 4.2.x
-| 4.2.1
+| 4.2.x
 
 |===
 
@@ -85,5 +103,8 @@ endif::header[]
 
 | 4.4.x
 | 4.1.x
+
+| 4.4.x
+| 4.4.x
 
 |===
