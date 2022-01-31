@@ -1,6 +1,80 @@
-= receive request from gateway
 
-Process is triggered by an incoming request through WS-endpoint
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Receive Request from Gateway
+
+This process is triggered by a request received by the WS-endpoint
+
+== UML diagram
+
+=== Activity diagram
+
+[plantuml,receive_request_from_gateway,format=svg]
+----
+@startuml
+
+start
+:ReceiveRequest;
+if () then (onSuccess)
+    :Validate transition message;
+    if () then (onSuccess)
+        :Trigger workflow;
+        if () then (onSuccess)
+            end
+        else (onFail)
+        endif
+    else (onFail)
+    endif
+else (onFail)
+
+endif
+
+:Exception;
+
+
+
+
+
+
+
+@enduml
+----
+
+=== Component diagram
+
+[plantuml,receive_request_from_gateway_2,format=svg]
+----
+@startuml
+
+top to bottom direction
+skinparam monochrome false
+skinparam linetype ortho
+skinparam componentStyle uml2
+
+[ReceiveRequest]
+component ValidateTransitionMessage
+component TriggerWorkflow
+
+ReceiveRequest --> ValidateTransitionMessage : onSuccess
+ReceiveRequest -right-> Exception : onFail
+ValidateTransitionMessage -down-> TriggerWorkflow : onSuccess
+ValidateTransitionMessage -right-> Exception : onFail
+TriggerWorkflow --> EndProcess : onSuccess
+TriggerWorkflow -right-> Exception : onFail
+
+
+
+
+
+
+@enduml
+----
 
 == process-steps
 
