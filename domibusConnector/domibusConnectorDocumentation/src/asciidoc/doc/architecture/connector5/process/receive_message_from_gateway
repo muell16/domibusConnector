@@ -12,12 +12,14 @@ endif::header[]
 This is an abstract process with two extensions.
 The used extension depends on the message type received.
 
-== UML diagram
+== Process diagram
 
-The daigram for this process is defined within the extensions.
+The diagram for this process is defined within the extensions.
 
-== Process-Steps
+== Common Process-Steps
+All process-steps that are common for all extensions are described here.
 
+.Receive Message from Gateway common process-steps
 |===
 | step | description | parameters | returns | on success | on fail | module responsibility
 
@@ -106,65 +108,120 @@ DC_MSG_PROCESS_STEP update with result.
 == Extensions
 
 === Receive Business Message from Gateway
+This extension describes the process steps of receiving a business message from the gateway.
 
-==== UML diagram
+//==== Component diagram
+//
+//[plantuml,receive_BM_from_gateway_component,format=svg]
+//----
+//@startuml
+//
+//top to bottom direction
+//skinparam monochrome false
+//skinparam linetype ortho
+//skinparam componentStyle uml2
+//
+//[FindDomain]
+//[MapToBusinessModel]
+//[PersistMessage]
+//[WriteToStorage]
+//[PutOnQueue]
+//[PrepareForRetry]
+//[CleanUp]
+//[AcknowledgeRequest]
+//
+//[Create and send RELAY_REMMD_REJECTION]
+//
+//
+//queue toConnectorQueue
+//queue retryQueue
+//
+//database connectorDatabase
+//
+//node Storage
+//
+//StartProcess --> FindDomain
+//FindDomain --> [MapToBusinessModel] : onSuccess
+//FindDomain --> [Create and send RELAY_REMMD_REJECTION] : onFail
+//[MapToBusinessModel] --> [PersistMessage] : onSuccess
+//[MapToBusinessModel] --> [Create and send RELAY_REMMD_REJECTION] : onFail
+//[PersistMessage] --> [WriteToStorage] : onSuccess
+//[PersistMessage] ..> connectorDatabase : persistTo
+//[PersistMessage] --> [Create and send RELAY_REMMD_REJECTION] : onFail
+//[WriteToStorage] ..> Storage : writeTo
+//[WriteToStorage] ..> connectorDatabase : update
+//[WriteToStorage] --> [PutOnQueue] : onSuccess
+//[PutOnQueue] ..> toConnectorQueue
+//[PutOnQueue] --> [PrepareForRetry] : onFail
+//[PutOnQueue] --> [AcknowledgeRequest] : onSuccess
+//[PrepareForRetry] ..> retryQueue
+//[PrepareForRetry] --> [AcknowledgeRequest] : onSuccess
+//[PrepareForRetry] --> [CleanUp] : onFail
+//[CleanUp] --> [AcknowledgeRequest] : onSuccess
+//[CleanUp] --> Exception : onFail
+//[Create and send RELAY_REMMD_REJECTION] --> [CleanUp]
+//
+//
+//
+//@enduml
+//----
 
-[plantuml,receive_BM_from_gateway,format=svg]
+==== Process diagram
+
+[plantuml,receive_BM_from_gateway_activity,format=svg]
 ----
 @startuml
 
-top to bottom direction
-skinparam monochrome false
-skinparam linetype ortho
-skinparam componentStyle uml2
+skinparam conditionStyle InsideDiamond
 
-[FindDomain]
-[MapToBusinessModel]
-[PersistMessage]
-[WriteToStorage]
-[PutOnQueue]
-[PrepareForRetry]
-[CleanUp]
-[AcknowledgeRequest]
+(*) --> "FindDomain"
 
-[Create and send RELAY_REMMD_REJECTION]
+if "success" then
+    --> [success] "MapToBM"
+    if "success" then
+        --> [Yes] "PersistMessage"
+        if "success" then
+            --> [Yes] "WriteToStorage"
+            if "success" then
+                --> [Yes] "PutOnQueue"
+                if "" then
+                    --> [Yes] "acknowledgeRequest" as ack
+                else
+                    --> [No] "prepare for retry"
+                    if "success" then
+                        --> [Yes] ack
+                    else
+                        --> [No] "cleanUp" as cleanup
+                    endif
+                endif
+            else
+                --> [No] "Create and send RELAY_REMMD_REJECTION" as createR
+            endif
+        else
+            --> [No] createR
+        endif
 
+    else
+        --> [No] createR
+    endif
+else
+    --> [fail] createR
+endif
 
-queue toConnectorQueue
-queue retryQueue
-
-database connectorDatabase
-
-node Storage
-
-StartProcess --> FindDomain
-FindDomain --> [MapToBusinessModel] : onSuccess
-FindDomain --> [Create and send RELAY_REMMD_REJECTION] : onFail
-[MapToBusinessModel] --> [PersistMessage] : onSuccess
-[MapToBusinessModel] --> [Create and send RELAY_REMMD_REJECTION] : onFail
-[PersistMessage] --> [WriteToStorage] : onSuccess
-[PersistMessage] --> connectorDatabase : persistTo
-[PersistMessage] --> [Create and send RELAY_REMMD_REJECTION] : onFail
-[WriteToStorage] --> Storage : writeTo
-[WriteToStorage] --> connectorDatabase : update
-[WriteToStorage] --> [PutOnQueue] : onSuccess
-[PutOnQueue] --> toConnectorQueue
-[PutOnQueue] --> [PrepareForRetry] : onFail
-[PutOnQueue] --> [AcknowledgeRequest] : onSuccess
-[PrepareForRetry] --> retryQueue
-[PrepareForRetry] --> [AcknowledgeRequest] : onSuccess
-[PrepareForRetry] --> [CleanUp] : onFail
-[CleanUp] --> [AcknowledgeRequest] : onSuccess
-[CleanUp] --> Exception : onFail
-[Create and send RELAY_REMMD_REJECTION] --> [CleanUp]
-
-
+createR --> cleanup
+cleanup --> ack
 
 @enduml
 ----
 
+
+
+
 ==== Process-Steps
 
+Here, only the process-steps are described that extend the common process-steps.
+
+.Receive Business Message from Gateway process-steps
 |===
 | step | description | parameters | returns | on success | on fail | module responsibility
 
@@ -216,60 +273,112 @@ This is not treated as connector message!
 
 === Receive Confirmation Message from Gateway
 
-==== UML diagram
+//==== UML diagram
+//
+//[plantuml,receive_CM_from_gateway,format=svg]
+//----
+//@startuml
+//
+//top to bottom direction
+//skinparam monochrome false
+//skinparam linetype ortho
+//skinparam componentStyle uml2
+//
+//[FindDomain]
+//[MapToBusinessModel]
+//[PersistMessage]
+//[WriteToStorage]
+//[PutOnQueue]
+//[PrepareForRetry]
+//[CleanUp]
+//[AcknowledgeRequest]
+//
+//
+//queue toConnectorQueue
+//queue retryQueue
+//
+//database connectorDatabase
+//
+//node Storage
+//
+//StartProcess --> FindDomain
+//FindDomain --> [MapToBusinessModel] : onSuccess
+//[FindDomain] --> [AcknowledgeRequest] : onFail
+//[MapToBusinessModel] --> [PersistMessage] : onSuccess
+//[MapToBusinessModel] --> [AcknowledgeRequest] : onFail
+//[PersistMessage] --> [WriteToStorage] : onSuccess
+//[PersistMessage] --> connectorDatabase : persistTo
+//[PersistMessage] --> [AcknowledgeRequest] : onFail
+//[WriteToStorage] --> Storage : writeTo
+//[WriteToStorage] --> connectorDatabase : update
+//[WriteToStorage] --> [PutOnQueue] : onSuccess
+//[PutOnQueue] --> toConnectorQueue
+//[PutOnQueue] --> [PrepareForRetry] : onFail
+//[PutOnQueue] --> [AcknowledgeRequest] : onSuccess
+//[PrepareForRetry] --> retryQueue
+//[PrepareForRetry] --> [AcknowledgeRequest] : onSuccess
+//[PrepareForRetry] --> [CleanUp] : onFail
+//[CleanUp] --> [AcknowledgeRequest] : onSuccess
+//[CleanUp] --> Exception : onFail
+//
+//
+//
+//@enduml
+//----
 
-[plantuml,receive_CM_from_gateway,format=svg]
+==== Process diagram
+
+[plantuml,receive_CM_from_gateway_activity,format=svg]
 ----
 @startuml
 
-top to bottom direction
-skinparam monochrome false
-skinparam linetype ortho
-skinparam componentStyle uml2
+skinparam conditionStyle InsideDiamond
 
-[FindDomain]
-[MapToBusinessModel]
-[PersistMessage]
-[WriteToStorage]
-[PutOnQueue]
-[PrepareForRetry]
-[CleanUp]
-[AcknowledgeRequest]
+(*) --> "FindDomain"
 
+if "success" then
+    --> [Yes] "MapToBM"
+    if "success" then
+        --> [Yes] "PersistMessage"
+        if "success" then
+            --> [Yes] "WriteToStorage"
+            if "success" then
+                --> [Yes] "PutOnQueue"
+                if "" then
+                    --> [Yes] "acknowledgeRequest" as ack
+                else
+                    --> [No] "prepare for retry"
+                    if "success" then
+                        --> [Yes] ack
+                    else
+                        --> [No] "cleanUp" as cleanup
+                    endif
+                endif
+            else
+                --> [No] ack
+            endif
+        else
+            --> [No] ack
+        endif
 
-queue toConnectorQueue
-queue retryQueue
+    else
+        --> [No] ack
+    endif
+else
+    --> [No] ack
+endif
 
-database connectorDatabase
-
-node Storage
-
-StartProcess --> FindDomain
-FindDomain --> [MapToBusinessModel] : onSuccess
-[FindDomain] --> [AcknowledgeRequest] : onFail
-[MapToBusinessModel] --> [PersistMessage] : onSuccess
-[MapToBusinessModel] --> [AcknowledgeRequest] : onFail
-[PersistMessage] --> [WriteToStorage] : onSuccess
-[PersistMessage] --> connectorDatabase : persistTo
-[PersistMessage] --> [AcknowledgeRequest] : onFail
-[WriteToStorage] --> Storage : writeTo
-[WriteToStorage] --> connectorDatabase : update
-[WriteToStorage] --> [PutOnQueue] : onSuccess
-[PutOnQueue] --> toConnectorQueue
-[PutOnQueue] --> [PrepareForRetry] : onFail
-[PutOnQueue] --> [AcknowledgeRequest] : onSuccess
-[PrepareForRetry] --> retryQueue
-[PrepareForRetry] --> [AcknowledgeRequest] : onSuccess
-[PrepareForRetry] --> [CleanUp] : onFail
-[CleanUp] --> [AcknowledgeRequest] : onSuccess
-[CleanUp] --> Exception : onFail
-
-
+cleanup --> ack
 
 @enduml
 ----
 
+
+
 ==== Process-Steps
+Here, only the process-steps are described that extend the common process-steps.
+
+.Receive Confirmation Message from Gateway process-steps
 |===
 | step | description | parameters | returns | on success | on fail | module responsibility
 
