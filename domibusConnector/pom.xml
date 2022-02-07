@@ -90,7 +90,7 @@
         <asciidoctorj.maven.plugin.version>2.2.1</asciidoctorj.maven.plugin.version>
         <org.apache.cxf.version>3.3.12</org.apache.cxf.version>
         <!-- always update with cxf -->
-        <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>
+<!--        <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>-->
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
         <spring.boot.version>2.5.9</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
@@ -106,10 +106,12 @@
         <com.github.database-rider.rider-spring.version>1.10.1</com.github.database-rider.rider-spring.version>
 
         <javax.xml.bind.jaxb-api.version>2.3.1</javax.xml.bind.jaxb-api.version>
-        <com.sun.xml.bind.jaxb-core.version>3.0.2</com.sun.xml.bind.jaxb-core.version>
-        <com.sun.xml.bind.jaxb-impl.version>3.0.2</com.sun.xml.bind.jaxb-impl.version>
-        <com.sun.xml.bind.jaxb-xjc.version>3.0.2</com.sun.xml.bind.jaxb-xjc.version>
+        <com.sun.xml.bind.jaxb-core.version>2.3.0</com.sun.xml.bind.jaxb-core.version>
+        <com.sun.xml.bind.jaxb-impl.version>2.3.0</com.sun.xml.bind.jaxb-impl.version>
+        <com.sun.xml.bind.jaxb-xjc.version>2.3.0</com.sun.xml.bind.jaxb-xjc.version>
+        <javax.xml.ws.jaxws-api.version>2.3.1</javax.xml.ws.jaxws-api.version>
         <jakarta.xml.soap.jakarta.xml.soap-api.version>1.4.2</jakarta.xml.soap.jakarta.xml.soap-api.version>
+        <jakarta.jws.jakarta.jws-api.version>2.1.0</jakarta.jws.jakarta.jws-api.version>
         <javax.jms.javax.jms-api.version>2.0.1</javax.jms.javax.jms-api.version>
         <javax.validation.validation-api.version>2.0.1.Final</javax.validation.validation-api.version>
         <javax.mail.mail.version>1.5.0-b01</javax.mail.mail.version>
@@ -128,11 +130,12 @@
         <org.xmlunit.xmlunit-matchers.version>2.5.1</org.xmlunit.xmlunit-matchers.version>
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.0</org.dbunit.dbunit.version>
-<!--        <com.google.guava.version>30.0-jre</com.google.guava.version>-->
+        <com.google.guava.version>30.0-jre</com.google.guava.version>
         <mysql.mysql-connector-java.version>8.0.28</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.2</org.postgresql.postgresql.version>
 <!--        <com.oracle.ojdbc8.version>19.3.0.0.0</com.oracle.ojdbc8.version>-->
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
+        <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
 
     </properties>
     <dependencyManagement>
@@ -184,8 +187,19 @@
                 <version>${dss.tools.version}</version>
                 <exclusions>
                     <exclusion>
-                        <artifactId>bcpkix-jdk15on</artifactId>
                         <groupId>org.bouncycastl</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-xades</artifactId>
+                <version>${dss.tools.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.santuario</groupId>
+                        <artifactId>xmlsec</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -266,9 +280,19 @@
                 <version>${com.sun.xml.bind.jaxb-xjc.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.xml.ws</groupId>
+                <artifactId>jaxws-api</artifactId>
+                <version>${javax.xml.ws.jaxws-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>jakarta.xml.soap</groupId>
                 <artifactId>jakarta.xml.soap-api</artifactId>
                 <version>${jakarta.xml.soap.jakarta.xml.soap-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.jws</groupId>
+                <artifactId>jakarta.jws-api</artifactId>
+                <version>${jakarta.jws.jakarta.jws-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -330,11 +354,6 @@
                 <version>${org.ow2.asm.asm.version}</version>
             </dependency>
             <!-- Apache CXF dependencies -->
-            <dependency>
-                <groupId>org.apache.santurio</groupId>
-                <artifactId>xmlsec</artifactId>
-                <version>${org.apache.santuario.xmlsec.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-core</artifactId>
@@ -406,6 +425,25 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.santurio</groupId>-->
+<!--                <artifactId>xmlsec</artifactId>-->
+<!--                <version>${org.apache.santuario.xmlsec.version}</version>-->
+<!--            </dependency>-->
+            <!-- exclude xmlsec -->
+            <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>opensaml-security-api</artifactId>
+                <version>(3.3.1,)</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.santuario</groupId>
+                        <artifactId>xmlsec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
             <dependency>
                 <groupId>javax.jms</groupId>
                 <artifactId>javax.jms-api</artifactId>
@@ -447,23 +485,6 @@
                 <artifactId>xml-apis</artifactId>
                 <version>${xml-apis.xml-apis.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat</groupId>-->
-<!--                <artifactId>tomcat-jsp-api</artifactId>-->
-<!--                <version>${tomcat.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat</groupId>-->
-<!--                <artifactId>tomcat-el-api</artifactId>-->
-<!--                <version>${tomcat.version}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat</groupId>-->
-<!--                <artifactId>tomcat-jasper-el</artifactId>-->
-<!--                <version>${tomcat.version}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
             <!-- findbugs -->
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
@@ -501,6 +522,11 @@
                         <groupId>org.apache.commons</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${com.google.guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -890,6 +916,10 @@
                                 <include>com.vaadin:vaadin:${vaadin.version}</include>
                             </includes>
                         </bannedDependencies>
+                        <requireJavaVersion>
+                            <level>WARN</level>
+                            <version>11</version>
+                        </requireJavaVersion>
                     </rules>
                 </configuration>
             </plugin>

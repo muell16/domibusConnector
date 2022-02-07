@@ -1,6 +1,5 @@
 package eu.domibus.connector.common.service;
 
-import com.google.common.base.CaseFormat;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
