@@ -70,17 +70,17 @@ NOTE: The following matrix may be always a little behind the current testing and
 | Windows 10
 | Adopt Open JDK 11
 | Standalone
-| H2 4.200
-| H2 4.200
+| H2 4.201
+| H2 4.201
 | Liquibase
 
 | 4.4.x
 | AIX
 | IBM JRE8
 | Tomcat 9
-| Ojdbc7
+| Ojdbc8
 | Oracle 19c
-| Liquibase
+| Liquibase, DB-scripts
 
 |===
 
@@ -103,6 +103,9 @@ NOTE: The following matrix may be always a little behind the current testing and
 
 | 4.4.x
 | 4.1.x
+
+| 4.4.x
+| 4.2.x
 
 | 4.4.x
 | 4.4.x
