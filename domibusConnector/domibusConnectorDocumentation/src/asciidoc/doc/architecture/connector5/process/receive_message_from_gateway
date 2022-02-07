@@ -9,12 +9,20 @@ endif::header[]
 
 = Receive Message from Gateway
 
+== Process description
+
 This is an abstract process with two extensions.
 The used extension depends on the message type received.
 
+During this process the web-service request from the gateway is open.
+This is necessary to receive all data required from the web-service during this process.
+
+This process MUST end by responding and closing the web-service request with an acknowledgement.
+This acknowledgement can either be positive (success), or negative (fail) with a qualified error message.
+
 == Process diagram
 
-The diagram for this process is defined within the extensions.
+The diagram for this process is extension specific and therefore placed in the extension chapters.
 
 == Common Process-Steps
 All process-steps that are common for all extensions are described here.
@@ -28,7 +36,8 @@ All process-steps that are common for all extensions are described here.
 |DomibusConnectorMessageType transitionMessage
 |DcDomain identifiedDomain
 |Map to BusinessModel
-|ABSTRACT - defined in extension
+|Always ends by returning a DcDomain.
+Misconfiguration of the domibusConnector that leads to no DcDomain must be prevented!
 |Controller
 
 |Map to BusinessModel
@@ -37,7 +46,7 @@ a|* DomibusConnectorMessageType transitionMessage
 * DcDomain identifiedDomain
 |DomibusConnectorMessage businessModelMessage
 |Persist message
-|ABSTRACT - defined in extension
+|By successfully processing the validation of the transition message, this process-step must not fail.
 |Controller
 
 |Persist message
@@ -45,6 +54,9 @@ a|* DC_MESSAGE
 * DC_EBMS_ROUTE
 * DC_MSG_CONTENT (without storage refs)
 * DC_MSG_PROCESS_STEP all steps to this process. Already handled steps with result.
+
+This process-step MUST be transactional! The message data as a whole is either persisted and committed, or the transaction must be rolled back!
+
 |DomibusConnectorMessage businessModelMessage
 |DomibusConnectorMessage businessModelMessage
 |Write to storage
@@ -104,6 +116,21 @@ DC_MSG_PROCESS_STEP update with result.
 |Link
 
 |===
+
+===== Write to storage
+
+.Write to storage activity diagram
+
+[plantuml,write_to_storage_activity,format=svg]
+----
+@startuml
+
+start
+:Write to storage;
+
+@enduml
+----
+
 
 == Extensions
 
@@ -168,58 +195,51 @@ This extension describes the process steps of receiving a business message from 
 
 ==== Process diagram
 
+.receive business message from gateway - activity diagram
+
 [plantuml,receive_BM_from_gateway_activity,format=svg]
 ----
 @startuml
 
-skinparam conditionStyle InsideDiamond
-
-(*) --> "FindDomain"
-
-if "success" then
-    --> [success] "MapToBM"
-    if "success" then
-        --> [Yes] "PersistMessage"
-        if "success" then
-            --> [Yes] "WriteToStorage"
-            if "success" then
-                --> [Yes] "PutOnQueue"
-                if "" then
-                    --> [Yes] "acknowledgeRequest" as ack
-                else
-                    --> [No] "prepare for retry"
-                    if "success" then
-                        --> [Yes] ack
-                    else
-                        --> [No] "cleanUp" as cleanup
-                    endif
+start
+:FindDomain;
+:MapToBM;
+:PersistMessage;
+        if (message entirely persisted) then (true)
+            :WriteToStorage;
+            if (all message parts stored) then (true)
+                :PutOnQueue;
+                if (message put on toConnector queue) then (true)
+                    :acknowledgeRequest;
+                    end
+                else (false)
+                    :prepare for retry;
+                    :cleanUp;
+                    :acknowledgeRequest;
+                    end
                 endif
-            else
-                --> [No] "Create and send RELAY_REMMD_REJECTION" as createR
+            else (false)
+                :Create and send RELAY_REMMD_REJECTION;
+                :cleanUp;
+                :acknowledgeRequest;
+                end
             endif
-        else
-            --> [No] createR
+        else (false)
+            :Create and send RELAY_REMMD_REJECTION;
+            :acknowledgeRequest;
+            end
         endif
 
-    else
-        --> [No] createR
-    endif
-else
-    --> [fail] createR
-endif
-
-createR --> cleanup
-cleanup --> ack
 
 @enduml
 ----
 
 
-
-
-==== Process-Steps
+==== Extension specific Process-Steps
 
 Here, only the process-steps are described that extend the common process-steps.
+
+
 
 .Receive Business Message from Gateway process-steps
 |===
@@ -270,6 +290,71 @@ This is not treated as connector message!
 |cleanUp
 |Controller
 |===
+
+===== Find Domain - Business Message
+
+.Find Domain activity diagram - Business Message
+
+[plantuml,find_domain_activity_BM,format=svg]
+----
+@startuml
+
+start
+:FindDomain;
+if (are there multiple active DcDomains?) then (true)
+if(is there a referenced message?) then (true)
+    :return DcDomain from ref msg;
+    end
+else (false)
+    if(are there messages within this conversation already?) then (true)
+        :return DcDomain from other conversation messages;
+        end
+    else(false)
+        if(which MT domain is sent by gateway) then (true)
+            :return DcDomain that references gateway domain;
+            end
+        else (false)
+            :return default DcDomain;
+            end
+        endif
+    endif
+endif
+else (false)
+    :return default DcDomain;
+            end
+endif
+@enduml
+----
+
+===== Create and send RELAY_REMMD_REJECTION
+
+.Create and send RELAY_REMMD_REJECTION activity diagram
+
+[plantuml,create_send_RELAY_REMMD_REJECTION_activity_BM,format=svg]
+----
+@startuml
+
+start
+:Create and send RELAY_REMMD_REJECTION;
+if(data to create evidence available?) then (true)
+    :create evidence;
+    if(evidence created successfully) then (true)
+        :build message structure to submit;
+        :submit message to gateway;
+        if(message submitted) then (true)
+            end
+        else (false)
+        endif
+    else (false)
+    endif
+else (false)
+endif
+
+:throw Exception;
+end
+
+@enduml
+----
 
 === Receive Confirmation Message from Gateway
 
@@ -328,54 +413,46 @@ This is not treated as connector message!
 
 ==== Process diagram
 
+.receive confirmation message from gateway - activity diagram
+
 [plantuml,receive_CM_from_gateway_activity,format=svg]
 ----
 @startuml
 
-skinparam conditionStyle InsideDiamond
-
-(*) --> "FindDomain"
-
-if "success" then
-    --> [Yes] "MapToBM"
-    if "success" then
-        --> [Yes] "PersistMessage"
-        if "success" then
-            --> [Yes] "WriteToStorage"
-            if "success" then
-                --> [Yes] "PutOnQueue"
-                if "" then
-                    --> [Yes] "acknowledgeRequest" as ack
-                else
-                    --> [No] "prepare for retry"
-                    if "success" then
-                        --> [Yes] ack
-                    else
-                        --> [No] "cleanUp" as cleanup
-                    endif
+start
+:FindDomain;
+:MapToBM;
+:PersistMessage;
+        if (message entirely persisted) then (true)
+            :WriteToStorage;
+            if (all message parts stored) then (true)
+                :PutOnQueue;
+                if (message put on toConnector queue) then (true)
+                    :acknowledgeRequest;
+                    end
+                else (false)
+                    :prepare for retry;
+                    :cleanUp;
+                    :acknowledgeRequest;
+                    end
                 endif
-            else
-                --> [No] ack
+            else (false)
+                :cleanUp;
+                :acknowledgeRequest;
+                end
             endif
-        else
-            --> [No] ack
+        else (false)
+            :acknowledgeRequest;
+            end
         endif
 
-    else
-        --> [No] ack
-    endif
-else
-    --> [No] ack
-endif
-
-cleanup --> ack
 
 @enduml
 ----
 
 
 
-==== Process-Steps
+==== Extension specific Process-Steps
 Here, only the process-steps are described that extend the common process-steps.
 
 .Receive Confirmation Message from Gateway process-steps
@@ -414,3 +491,31 @@ Here, only the process-steps are described that extend the common process-steps.
 |acknowledge Request
 |inherited
 |===
+
+===== Find Domain - Confirmation Message
+
+.Find Domain activity diagram - Confirmation Message
+
+[plantuml,find_domain_activity_CM,format=svg]
+----
+@startuml
+
+start
+:FindDomain;
+if (is there a refToMessageId?) then (true)
+    :lookup original business message;
+
+    if(original business message loaded?) then (true)
+        :return DcDomain from original business message;
+        end
+    else (false)
+        :return default DcDomain;
+        end
+    endif
+
+else (false)
+    :return default DcDomain;
+            end
+endif
+@enduml
+----

@@ -1,8 +1,18 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+
 = Incoming Confirmation Message
 
 == Trigger
 This workflow is triggered by the process
-link:../process/receive_request_from_gateway.html[receive request from gateway].
+link:../process/receive_request_from_gateway[receive request from gateway].
 
 
 == Process
@@ -11,9 +21,26 @@ This workflow consists of the following processes:
 |===
 | process | precondition | outcome
 
-|link:../process/receive_confirmation_message_from_gateway.html[receive confirmation message from gateway]
-|message successfully received by process link:../process/receive_request_from_gateway.html[receive request from gateway]
+|link:../process/receive_confirmation_message_from_gateway[receive confirmation message from gateway]
+|message successfully received by process link:../process/receive_request_from_gateway[receive request from gateway]
 |confirmation message is on toConnector queue.
+
+|receive_message_from_toConnector_queue
+|business message is on toConnector queue and queue listener is triggered.
+|the business message is received from the toConnector queue and loaded from database.
+
+|backend_lookup
+|receive_message_from_toConnector_queue finished successfully.
+|It is known to the connector to which backend the business message must be submitted.
+
+|deliver_message_to_backend_link
+|all previous processes finished successfully. The backend is known.
+|the business message is put on the toLink queue.
+
+|submit_message_to_backend
+|the business message lies on the toLink queue and queue listener is triggered.
+|the message is delivered and acknowledged by the backend or put on queue for pull reception.
+
 
 
 
