@@ -76,3 +76,13 @@ They are:
 * Fix problems with certificate verification: The CommonCertificateVerifier has ignored any
 configured restrictions on AIA checking. This has lead to a very long message processing
 if the AIA source was not reachable.
+
+
+=== 4.4.5
+
+* Multiple updates of dependentant libraries
+* Fix for issues related to pull for web service backends
+* UI fix for enable change of message process settings
+** EBMS generation
+** should generated evidences relayed back to backend
+
