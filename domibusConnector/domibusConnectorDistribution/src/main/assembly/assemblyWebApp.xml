@@ -65,6 +65,11 @@
             <lineEnding>windows</lineEnding>
             <outputDirectory>standalone</outputDirectory>
         </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/readme.txt</source>
+            <lineEnding>windows</lineEnding>
+            <outputDirectory>./</outputDirectory>
+        </file>
     </files>
     <dependencySets>
         <dependencySet>
