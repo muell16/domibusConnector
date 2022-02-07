@@ -20,7 +20,7 @@ This workflow consists of the following processes:
 |===
 | process | precondition | outcome
 
-|link:../process/receive_business_message_from_gateway[receive business message from gateway]
+|link:../process/receive_message_from_gateway[receive business message from gateway]
 |message successfully received by process link:../process/receive_request_from_gateway.html[receive request from gateway]
 |business message is on toConnector queue.
 

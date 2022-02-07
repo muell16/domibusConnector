@@ -21,7 +21,7 @@ This workflow consists of the following processes:
 |===
 | process | precondition | outcome
 
-|link:../process/receive_confirmation_message_from_gateway[receive confirmation message from gateway]
+|link:../process/receive_message_from_gateway[receive confirmation message from gateway]
 |message successfully received by process link:../process/receive_request_from_gateway[receive request from gateway]
 |confirmation message is on toConnector queue.
 
