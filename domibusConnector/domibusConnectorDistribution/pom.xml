@@ -26,6 +26,12 @@
             <type>zip</type>
             <classifier>documentation</classifier>
         </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector.plugin</groupId>
+            <artifactId>domibus-connector-plugin-distribution</artifactId>
+            <version>4.4.0</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
     <build>
         <finalName>domibusConnector</finalName>

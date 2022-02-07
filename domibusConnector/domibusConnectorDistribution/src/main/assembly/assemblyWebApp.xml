@@ -74,5 +74,12 @@
             <unpack>true</unpack>
             <outputDirectory>documentation</outputDirectory>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>/domibusGatewayPlugin</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>eu.domibus.connector.plugin:domibus-connector-plugin-distribution:zip</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
 </assembly>
