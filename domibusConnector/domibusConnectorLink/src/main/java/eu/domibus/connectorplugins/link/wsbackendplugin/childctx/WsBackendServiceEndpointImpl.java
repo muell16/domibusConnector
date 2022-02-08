@@ -29,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
@@ -262,6 +264,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         }
 
         @Override
+        @Transactional(propagation = Propagation.REQUIRES_NEW)
         public void handleMessage(Message message) throws Fault {
             LOGGER.trace("ProcessMessageAfterDownloaded: handleMessage: invoking backendSubmissionService.processMessageAfterDownloaded setting transport set to " + TransportState.PENDING_DOWNLOADED);
             TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
