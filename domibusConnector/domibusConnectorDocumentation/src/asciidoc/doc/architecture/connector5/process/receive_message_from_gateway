@@ -117,6 +117,60 @@ DC_MSG_PROCESS_STEP update with result.
 
 |===
 
+===== Map to BusinessModel
+
+.Map to BusinessModel activity diagram
+
+[plantuml,map_to_BM_activity,format=svg]
+----
+@startuml
+
+start
+:Create new business model;
+:Generate connectorMessageId;
+:Map messageDetails by copy properties;
+:Map ebms action;
+:Map ebms service;
+:Map ebms fromParty;
+:Map ebms toParty;
+
+if(confirmations attached) then (true)
+    while (confirmations available)
+        :Map confirmation;
+    endwhile
+else
+endif
+
+if(messageContent attached) then (true)
+    :Map messageContent;
+    :Build model object with mapped messageDetails and mapped content;
+    if(confirmations available?) then (true)
+        :add mapped confirmations;
+    else
+    endif
+else
+    :extract first confirmation;
+    :Build model object with mapped messageDetails and first confirmation;
+    if(still confirmations available?) then (true)
+        :add mapped confirmations;
+    else
+    endif
+endif
+
+while (attachments attached)
+    :Map attachment;
+endwhile
+
+:set connectorMessageId to model;
+
+stop
+
+
+
+
+@enduml
+----
+
 ===== Write to storage
 
 .Write to storage activity diagram
@@ -211,23 +265,23 @@ start
                 :PutOnQueue;
                 if (message put on toConnector queue) then (true)
                     :acknowledgeRequest;
-                    end
+                    stop
                 else (false)
                     :prepare for retry;
                     :cleanUp;
                     :acknowledgeRequest;
-                    end
+                    stop
                 endif
             else (false)
                 :Create and send RELAY_REMMD_REJECTION;
                 :cleanUp;
                 :acknowledgeRequest;
-                end
+                stop
             endif
         else (false)
             :Create and send RELAY_REMMD_REJECTION;
             :acknowledgeRequest;
-            end
+            stop
         endif
 
 
@@ -304,24 +358,24 @@ start
 if (are there multiple active DcDomains?) then (true)
 if(is there a referenced message?) then (true)
     :return DcDomain from ref msg;
-    end
+    stop
 else (false)
     if(are there messages within this conversation already?) then (true)
         :return DcDomain from other conversation messages;
-        end
+        stop
     else(false)
         if(which MT domain is sent by gateway) then (true)
             :return DcDomain that references gateway domain;
-            end
+            stop
         else (false)
             :return default DcDomain;
-            end
+            stop
         endif
     endif
 endif
 else (false)
     :return default DcDomain;
-            end
+            stop
 endif
 @enduml
 ----
@@ -342,7 +396,7 @@ if(data to create evidence available?) then (true)
         :build message structure to submit;
         :submit message to gateway;
         if(message submitted) then (true)
-            end
+            stop
         else (false)
         endif
     else (false)
@@ -429,21 +483,21 @@ start
                 :PutOnQueue;
                 if (message put on toConnector queue) then (true)
                     :acknowledgeRequest;
-                    end
+                    stop
                 else (false)
                     :prepare for retry;
                     :cleanUp;
                     :acknowledgeRequest;
-                    end
+                    stop
                 endif
             else (false)
                 :cleanUp;
                 :acknowledgeRequest;
-                end
+                stop
             endif
         else (false)
             :acknowledgeRequest;
-            end
+            stop
         endif
 
 
@@ -507,15 +561,15 @@ if (is there a refToMessageId?) then (true)
 
     if(original business message loaded?) then (true)
         :return DcDomain from original business message;
-        end
+        stop
     else (false)
         :return default DcDomain;
-        end
+        stop
     endif
 
 else (false)
     :return default DcDomain;
-            end
+            stop
 endif
 @enduml
 ----

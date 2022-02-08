@@ -9,11 +9,14 @@ endif::header[]
 
 = Receive Request from Gateway
 
-This process is triggered by a request received by the WS-endpoint
+== Process description
+This process is triggered by a request received by the WS-endpoint.
 
-== UML diagram
+It is the very starting point and without being in a workflow.
 
-=== Activity diagram
+== Process diagram
+
+.Receive request from gateway activity diagram
 
 [plantuml,receive_request_from_gateway,format=svg]
 ----
@@ -21,17 +24,17 @@ This process is triggered by a request received by the WS-endpoint
 
 start
 :ReceiveRequest;
-if () then (onSuccess)
+if (return)
     :Validate transition message;
-    if () then (onSuccess)
+    if (return)
         :Trigger workflow;
-        if () then (onSuccess)
-            end
-        else (onFail)
+        if (return)
+            stop
+        else (Exception)
         endif
-    else (onFail)
+    else (Exception)
     endif
-else (onFail)
+else (Exception)
 
 endif
 
@@ -46,37 +49,8 @@ end
 @enduml
 ----
 
-=== Component diagram
 
-[plantuml,receive_request_from_gateway_2,format=svg]
-----
-@startuml
-
-top to bottom direction
-skinparam monochrome false
-skinparam linetype ortho
-skinparam componentStyle uml2
-
-[ReceiveRequest]
-component ValidateTransitionMessage
-component TriggerWorkflow
-
-ReceiveRequest --> ValidateTransitionMessage : onSuccess
-ReceiveRequest -right-> Exception : onFail
-ValidateTransitionMessage -down-> TriggerWorkflow : onSuccess
-ValidateTransitionMessage -right-> Exception : onFail
-TriggerWorkflow --> EndProcess : onSuccess
-TriggerWorkflow -right-> Exception : onFail
-
-
-
-
-
-
-@enduml
-----
-
-== process-steps
+== Process-steps
 
 |===
 | step | description | parameters | returns | on success | on fail | module responsibility
@@ -105,3 +79,99 @@ As a result of this step also the type of message is known. This could either be
 |End process
 |Exception
 |Link
+|===
+
+=== Validate transition message
+
+.Validate transtion message activity diagram
+
+[plantuml,validate_transition_message_activity,format=svg]
+----
+@startuml
+
+start
+
+if (is DomibusConnectorContentType set?) then (true)
+    if(is ebms ServiceType set?) then (true)
+        if(is ebms ActionType set?) then (true)
+            if(is ebms fromParty set?) then (true)
+                if(is ebms toParty set?) then (true)
+                    if(is ebms originalSender set?) then (true)
+                        if(is ebms finalRecipient set?) then (true)
+                            :Set messageType as Business Message;
+                            :return result;
+                            stop
+                        else
+                        endif
+                    else
+                    endif
+                else
+                endif
+            else
+            endif
+        else
+        endif
+    else
+    endif
+else (false)
+    if(is DomibusConnectorConfirmationType set?) then (true)
+        if (is refToMessageId set?) then (true)
+            :Set messageType as Confirmation Message;
+            :return result;
+            stop
+        else (false)
+        endif
+    else (false)
+    endif
+endif
+
+:throw Exception;
+
+
+end
+
+
+
+
+@enduml
+----
+
+=== Trigger workflow
+
+.Trigger workflow activity diagram
+
+[plantuml,trigger_workflow_activity,format=svg]
+----
+@startuml
+
+start
+
+if(is messageType set?) then (true)
+if (check messageType) then (Business Message)
+    :Setup workflow "incoming_business_message";
+    if(workflow set up) then (true)
+        :Start first process of workflow;
+        stop
+    else
+    endif
+else (Confirmation Message)
+    :Setup workflow "incoming_confirmation_message";
+    if(workflow set up) then (true)
+        :Start first process of workflow;
+        stop
+    else
+    endif
+endif
+else
+endif
+
+:throw Exception;
+
+
+end
+
+
+
+
+@enduml
+----
