@@ -50,8 +50,8 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsXades.class);
 
-    public EvidenceUtilsXades(Resource javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
-        super(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+    public EvidenceUtilsXades(Resource javaKeyStorePath, String javaKeyStoreType, String javaKeyStorePassword, String alias, String keyPassword) {
+        super(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
     }
 
     @Override
@@ -72,10 +72,10 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         LOG.info("Xades Signer started");
         //
 
-        KeyInfos keyInfos = getKeyInfosFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyInfos keyInfos = getKeyInfosFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         if (keyInfos == null) {
-            throw new RuntimeException(String.format("Was not able to load keyInfo from javaKeyStorePath=[%s], javaKeyStorePassword=[%s], alias=[%s], keyPassword=[%s]",
-                    javaKeyStorePath, logPassword(LOGGER, javaKeyStorePassword), alias, logPassword(LOGGER, keyPassword)));
+            throw new RuntimeException(String.format("Was not able to load keyInfo from javaKeyStorePath=[%s], javaKeyStoreType=[%s], javaKeyStorePassword=[%s], alias=[%s], keyPassword=[%s]",
+                    javaKeyStorePath, javaKeyStoreType, logPassword(LOGGER, javaKeyStorePassword), alias, logPassword(LOGGER, keyPassword)));
         }
 
         PrivateKey privKey = keyInfos.getPrivKey();
@@ -195,7 +195,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     }
 
     //TODO: refactor: use key store service
-    protected synchronized static KeyInfos getKeyInfosFromKeyStore(Resource store, String storePass, String alias, String keyPass) throws MalformedURLException {
+    protected synchronized static KeyInfos getKeyInfosFromKeyStore(Resource store, String keyStoreType, String storePass, String alias, String keyPass) throws MalformedURLException {
         LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
         KeyStore ks;
         InputStream kfis = null;
@@ -205,7 +205,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
         Key key = null;
         PrivateKey privateKey = null;
         try {
-            ks = KeyStore.getInstance("JKS");
+            ks = KeyStore.getInstance(keyStoreType);
 
             kfis = store.getInputStream();
             ks.load(kfis, (storePass == null) ? null : storePass.toCharArray());

@@ -48,8 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SubmissionAcceptanceRejectionTest  {
 
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder(new ClassPathResource("keystore.jks"), "test123", "new_Testcert", "test123");
-	private static EvidenceUtils utils = new EvidenceUtilsXades(new ClassPathResource("keystore.jks"), "test123", "new_Testcert", "test123");
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder(new ClassPathResource("keystore.jks"), "JKS", "test123", "new_Testcert", "test123");
+	private static EvidenceUtils utils = new EvidenceUtilsXades(new ClassPathResource("keystore.jks"), "JKS","test123", "new_Testcert", "test123");
 	
 	private static final String PATH_OUTPUT_FILES = "target/test/SubmissionAcceptanceRejectionTest/";
 	private static final String SUBMISSION_ACCEPTANCE_FILE = "submissionAcceptance.xml";
