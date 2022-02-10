@@ -156,6 +156,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 				.map(sortOrder ->
 						sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
 				.collect(Collectors.toList());
+		if (collect.isEmpty()) {
+			collect.add(Sort.Order.desc("created")); //set default sort order if none selected
+		}
 		Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
 
 		//creating page request with sort order and offset
