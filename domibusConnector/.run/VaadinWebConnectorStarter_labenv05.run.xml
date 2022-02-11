@@ -6,7 +6,7 @@
     <option name="ENABLE_JMX_AGENT" value="false" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../../ecodex-lab-box/labenv05/domibus-connector" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="SHORTEN_COMMAND_LINE" value="CLASSPATH_FILE" />
+    <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <additionalParameters>
