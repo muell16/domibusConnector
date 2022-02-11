@@ -7,10 +7,6 @@
         <version>4.4.5-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorDssToolkit</artifactId>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>eu.ecodex.utils</groupId>
@@ -23,6 +19,16 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-xades</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.santuario</groupId>
+                    <artifactId>xmlsec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>

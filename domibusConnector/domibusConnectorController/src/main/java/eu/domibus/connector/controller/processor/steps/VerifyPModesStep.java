@@ -9,6 +9,7 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -17,9 +18,11 @@ public class VerifyPModesStep {
 
     private static final Logger LOGGER = LogManager.getLogger(VerifyPModesStep.class);
     private final DomibusConnectorPModeService pModeService;
+    private final ConnectorMessageProcessingProperties connectorMessageProcessingProperties;
 
-    public VerifyPModesStep(DomibusConnectorPModeService pModeService) {
+    public VerifyPModesStep(DomibusConnectorPModeService pModeService, ConnectorMessageProcessingProperties connectorMessageProcessingProperties) {
         this.pModeService = pModeService;
+        this.connectorMessageProcessingProperties = connectorMessageProcessingProperties;
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
@@ -49,6 +52,10 @@ public class VerifyPModesStep {
                 throw new RuntimeException("error, service not configured!" + messageDetails.getService());
             }
 
+            if (!StringUtils.hasText(messageDetails.getToParty().getPartyIdType())) {
+                LOGGER.debug("PMode verification mode is relaxed. Assuming PartyIdType [{}] as empty!", messageDetails.getToParty().getPartyIdType());
+                messageDetails.getToParty().setPartyIdType(null);
+            }
             Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getToParty());
             if (toParty.isPresent()) {
                 messageDetails.setToParty(toParty.get());
@@ -58,9 +65,13 @@ public class VerifyPModesStep {
                 throw new RuntimeException("error, party not configured:" + messageDetails.getToParty());
             }
 
+            if (!StringUtils.hasText(messageDetails.getFromParty().getPartyIdType())) {
+                LOGGER.debug("PMode verification mode is relaxed. Assuming PartyIdType [{}] as empty!", messageDetails.getFromParty().getPartyIdType());
+                messageDetails.getFromParty().setPartyIdType(null);
+            }
             Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getFromParty());
             if (fromParty.isPresent()) {
-                messageDetails.setToParty(fromParty.get());
+                messageDetails.setFromParty(fromParty.get());
             } else {
                 LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getFromParty());
                 //TODO: improve exception
@@ -74,5 +85,18 @@ public class VerifyPModesStep {
         return true;
     }
 
+    public void verifyOutgoing(DomibusConnectorMessage message) {
+        if (message.getMessageDetails().getFromParty().getRoleType() == null) {
+            message.getMessageDetails().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        }
+        if (message.getMessageDetails().getToParty().getRoleType() == null) {
+            message.getMessageDetails().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        }
+        executeStep(message, connectorMessageProcessingProperties.getOutgoingPModeVerificationMode());
+    }
+
+    public void verifyIncoming(DomibusConnectorMessage message) {
+        executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
+    }
 
 }

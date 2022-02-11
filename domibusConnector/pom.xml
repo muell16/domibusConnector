@@ -90,7 +90,7 @@
         <asciidoctorj.maven.plugin.version>2.2.1</asciidoctorj.maven.plugin.version>
         <org.apache.cxf.version>3.3.12</org.apache.cxf.version>
         <!-- always update with cxf -->
-<!--        <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>-->
+        <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
         <spring.boot.version>2.5.9</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
@@ -196,12 +196,6 @@
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-xades</artifactId>
                 <version>${dss.tools.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.santuario</groupId>
-                        <artifactId>xmlsec</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -425,11 +419,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.apache.santurio</groupId>-->
-<!--                <artifactId>xmlsec</artifactId>-->
-<!--                <version>${org.apache.santuario.xmlsec.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>${org.apache.santuario.xmlsec.version}</version>
+            </dependency>
             <!-- exclude xmlsec -->
             <dependency>
                 <groupId>org.opensaml</groupId>

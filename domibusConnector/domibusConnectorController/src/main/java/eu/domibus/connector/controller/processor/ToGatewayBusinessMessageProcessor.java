@@ -1,5 +1,7 @@
 package eu.domibus.connector.controller.processor;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
@@ -38,7 +40,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final LookupGatewayNameStep lookupGatewayNameStep;
     private final GenerateEbmsIdStep generateEbmsIdStep;
     private final VerifyPModesStep verifyPModesStep;
-    private final ConnectorMessageProcessingProperties connectorMessageProcessingProperties;
+    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
 
     public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
                                              BuildECodexContainerStep buildECodexContainerStep,
@@ -49,7 +51,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
                                              LookupGatewayNameStep lookupGatewayNameStep,
                                              GenerateEbmsIdStep generateEbmsIdStep,
                                              VerifyPModesStep verifyPModesStep,
-                                             ConnectorMessageProcessingProperties connectorMessageProcessingProperties) {
+                                             ConfigurationPropertyManagerService configurationPropertyManagerService) {
         this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
         this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
         this.buildECodexContainerStep = buildECodexContainerStep;
@@ -59,17 +61,17 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
         this.lookupGatewayNameStep = lookupGatewayNameStep;
         this.generateEbmsIdStep = generateEbmsIdStep;
         this.verifyPModesStep = verifyPModesStep;
-        this.connectorMessageProcessingProperties = connectorMessageProcessingProperties;
+        this.configurationPropertyManagerService = configurationPropertyManagerService;
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DomibusConnectorMessage message) {
         try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getMessageDetails().getBackendMessageId())){
 
-
             //verify p-Modes step
-            ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
-            verifyPModesStep.executeStep(message, outgoingPModeVerificationMode);
+
+//            ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
+            verifyPModesStep.verifyOutgoing(message);
 
             //buildEcodexContainerStep
             buildECodexContainerStep.executeStep(message);

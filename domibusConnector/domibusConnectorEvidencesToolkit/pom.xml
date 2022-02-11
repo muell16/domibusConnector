@@ -10,32 +10,7 @@
     <name>${project.artifactId}</name>
     <description>The evidence toolkit contains the evidence releated services. It is is responsibly for creating the evidences.</description>
     <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>eu.ecodex.evidences</groupId>-->
-        <!--            <artifactId>EvidenceBuilder</artifactId>-->
-        <!--            <exclusions>-->
-        <!--                <exclusion>-->
-        <!--                    <artifactId>jaxb-impl</artifactId>-->
-        <!--                    <groupId>com.sun.xml.bind</groupId>-->
-        <!--                </exclusion>-->
-        <!--                <exclusion>-->
-        <!--                    <artifactId>jaxb-api</artifactId>-->
-        <!--                    <groupId>javax.xml.bind</groupId>-->
-        <!--                </exclusion>-->
-        <!--                <exclusion>-->
-        <!--                    <artifactId>jaxb-xjc</artifactId>-->
-        <!--                    <groupId>com.sun.xml.bind</groupId>-->
-        <!--                </exclusion>-->
-        <!--                <exclusion>-->
-        <!--                    <artifactId>bcmail-jdk15on</artifactId>-->
-        <!--                    <groupId>org.bouncycastle</groupId>-->
-        <!--                </exclusion>-->
-        <!--                <exclusion>-->
-        <!--                    <artifactId>bcprov-jdk15on</artifactId>-->
-        <!--                    <groupId>org.bouncycastle</groupId>-->
-        <!--                </exclusion>-->
-        <!--            </exclusions>-->
-        <!--        </dependency>-->
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
@@ -88,6 +63,10 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.santurio</groupId>-->
+<!--            <artifactId>xmlsec</artifactId>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>org.apache.tomcat</groupId>-->
 <!--            <artifactId>tomcat-el-api</artifactId>-->

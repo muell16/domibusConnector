@@ -1,8 +1,12 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@Component
+@BusinessDomainScoped
 @ConfigurationProperties(prefix = ConnectorMessageProcessingProperties.PREFIX)
 public class ConnectorMessageProcessingProperties {
 
@@ -32,6 +36,7 @@ public class ConnectorMessageProcessingProperties {
     private String ebmsIdSuffix = "ecodex.eu";
 
     private PModeVerificationMode outgoingPModeVerificationMode = PModeVerificationMode.RELAXED;
+
     private PModeVerificationMode incomingPModeVerificationMode = PModeVerificationMode.STRICT;
 
     public PModeVerificationMode getOutgoingPModeVerificationMode() {

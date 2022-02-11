@@ -26,7 +26,7 @@ public class ConnectorMessageProcessingConfigPanel extends DCVerticalLayoutWithT
         public static final String ROUTE = "messageProcessingConfig";
 
         public ConnectorMessageProcessingConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
-                                                     ConnectorMessageProcessingConfigForm form) {
+                                                     ConnectorMessageProcessingPropertiesConfigForm form) {
             super(HELP_ID, TITLE);
             ConfigurationPanelFactory.ConfigurationPanel<ConnectorMessageProcessingProperties> configurationPanel
                     = configurationPanelFactory.createConfigurationPanel(form, ConnectorMessageProcessingProperties.class);
