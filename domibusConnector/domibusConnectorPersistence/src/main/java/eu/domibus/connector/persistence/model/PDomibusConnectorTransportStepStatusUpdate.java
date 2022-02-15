@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.model;
 
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.persistence.model.converter.TransportStateJpaConverter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;

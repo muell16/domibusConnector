@@ -1,5 +1,6 @@
 package eu.domibus.connector.common.configuration;
 
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Validated
 @Valid
@@ -18,6 +20,9 @@ public class ConnectorConfigurationProperties {
 
     public ConnectorConfigurationProperties() {
     }
+
+    @NotNull
+    private ConfigurationSource[] allowedConfigurationSources = { ConfigurationSource.DB, ConfigurationSource.ENV };
 
     /**
      * a random instance name is the default
@@ -116,5 +121,13 @@ public class ConnectorConfigurationProperties {
 
     public void setStage(StageConfigurationProperties stage) {
         this.stage = stage;
+    }
+
+    public ConfigurationSource[] getAllowedConfigurationSources() {
+        return allowedConfigurationSources;
+    }
+
+    public void setAllowedConfigurationSources(ConfigurationSource[] allowedConfigurationSources) {
+        this.allowedConfigurationSources = allowedConfigurationSources;
     }
 }

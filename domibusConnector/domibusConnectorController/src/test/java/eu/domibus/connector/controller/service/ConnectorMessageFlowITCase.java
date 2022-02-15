@@ -17,15 +17,10 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import org.apache.activemq.artemis.api.core.client.ClientSession;
-import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
-import org.apache.activemq.artemis.api.core.client.ServerLocator;
-import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.management.impl.ActiveMQServerControlImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -36,7 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.annotation.Commit;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
 
@@ -297,7 +291,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //empty
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //empty
                             .withToParty(DomainEntityCreator.createPartyDE()) //empty
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -322,7 +316,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualTo(DomainEntityCreator.createPartyDE());
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyAT());
+                    .isEqualTo(DomainEntityCreator.createPartyATasInitiator());
 
             DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
             assertThat(deliveryEvidenceToBackendMessage)
@@ -399,7 +393,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
                             .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -424,7 +418,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
                             .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -449,7 +443,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualTo(DomainEntityCreator.createPartyDE());
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualTo(DomainEntityCreator.createPartyAT());
+                    .isEqualTo(DomainEntityCreator.createPartyATasInitiator());
 
             DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
             assertThat(deliveryEvidenceToBackendMessage)
@@ -539,7 +533,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
                             .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -562,7 +556,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyDE(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyAT(), "partyId", "partyIdType", "role");
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyATasInitiator(), "partyId", "partyIdType", "role");
 
 
 
@@ -635,7 +629,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
                             .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -664,7 +658,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("", "")
                             .withBackendMessageId("")
                             .withConversationId("")
-                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
                             .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
                             .withFinalRecipient("")
                             .withOriginalSender("")
@@ -689,7 +683,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyDE(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getToParty())
                     .as("Parties must be switched")
-                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyAT(), "partyId", "partyIdType", "role");
+                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyATasInitiator(), "partyId", "partyIdType", "role");
             assertThat(deliveryEvidenceMessageDetails.getOriginalSender())
                     .as("original sender must have switched")
                     .isEqualTo(FINAL_RECIPIENT);
@@ -761,7 +755,7 @@ public class ConnectorMessageFlowITCase {
                     .as("From Party must be switched")
                     .containsOnly(partyDE, partyDE);
 
-            DomibusConnectorParty partyAT = DomainEntityCreator.createPartyAT();
+            DomibusConnectorParty partyAT = DomainEntityCreator.createPartyATasInitiator();
             partyAT.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
             assertThat(toGwDeliveredMessages)
                     .extracting(m -> m.getMessageDetails().getToParty())
@@ -938,7 +932,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("service1", "servicetype")
                             .withConversationId("conv1")
                             .withBackendMessageId(BACKEND_MESSAGE_ID)
-                            .withFromParty(DomainEntityCreator.createPartyAT())
+                            .withFromParty(DomainEntityCreator.createPartyATasInitiator())
                             .withToParty(DomainEntityCreator.createPartyDE())
                             .withFinalRecipient("final")
                             .withOriginalSender("original")
@@ -1406,7 +1400,7 @@ public class ConnectorMessageFlowITCase {
                         .withService("service1", "servicetype")
                         .withConversationId("conv1")
                         .withBackendMessageId(backendMessageId)
-                        .withFromParty(DomainEntityCreator.createPartyAT())
+                        .withFromParty(DomainEntityCreator.createPartyATasInitiator())
                         .withToParty(DomainEntityCreator.createPartyDE())
                         .withFinalRecipient("final")
                         .withOriginalSender("original")

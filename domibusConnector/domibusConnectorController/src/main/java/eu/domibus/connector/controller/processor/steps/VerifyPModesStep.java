@@ -96,6 +96,12 @@ public class VerifyPModesStep {
     }
 
     public void verifyIncoming(DomibusConnectorMessage message) {
+        if (message.getMessageDetails().getFromParty().getRoleType() == null) {
+            message.getMessageDetails().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        }
+        if (message.getMessageDetails().getToParty().getRoleType() == null) {
+            message.getMessageDetails().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        }
         executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
     }
 
