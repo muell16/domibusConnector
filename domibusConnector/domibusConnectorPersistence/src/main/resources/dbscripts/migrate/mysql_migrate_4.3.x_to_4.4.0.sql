@@ -48,6 +48,9 @@ ALTER TABLE "DOMIBUS_CONNECTOR_BIGDATA"
 ALTER TABLE "DOMIBUS_CONNECTOR_BIGDATA"
     DROP COLUMN "MESSAGE_ID";
 
+
+ALTER TABLE DC_TRANSPORT_STEP_STATUS MODIFY created TIMESTAMP(6);
+
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
 -- Set rejected timestamp to all messages not rejected or confirmed and older than 5 days.
