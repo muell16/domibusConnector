@@ -91,6 +91,23 @@ public class PDomibusConnectorMsgCont {
     @Column(name = "DELETED")
     private Date deleted;
 
+    @javax.persistence.Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "CREATED")
+    private Date created;
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.created = new Date();
+    }
+
     public Long getId() {
         return id;
     }
