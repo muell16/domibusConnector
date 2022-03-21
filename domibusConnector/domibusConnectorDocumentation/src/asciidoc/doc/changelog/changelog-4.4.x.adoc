@@ -80,9 +80,15 @@ if the AIA source was not reachable.
 
 === 4.4.5
 
+==== Fixes
+
 * Multiple updates of dependentant libraries
 * Fix for issues related to pull for web service backends
 * UI fix for enable change of message process settings
 ** EBMS generation
 ** should generated evidences relayed back to backend
 * Fix for DOMIBUS_CONNECTOR_MSG_CONT entity: The created field was not filled by default with the current timestamp.
+
+==== Known Issues
+
+* Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occures because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration.
