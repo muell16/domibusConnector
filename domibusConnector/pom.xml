@@ -199,6 +199,11 @@
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-crl-parser-x509crl</artifactId>
+                <version>${dss.tools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-service</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>

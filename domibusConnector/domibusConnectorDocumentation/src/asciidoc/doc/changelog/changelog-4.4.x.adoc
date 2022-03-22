@@ -88,6 +88,7 @@ if the AIA source was not reachable.
 ** EBMS generation
 ** should generated evidences relayed back to backend
 * Fix for DOMIBUS_CONNECTOR_MSG_CONT entity: The created field was not filled by default with the current timestamp.
+* Fix for missing class issue [Ticket#55054]: Explicitly added dss-crl-parser-x509crl as dependency.
 
 ==== Known Issues
 
