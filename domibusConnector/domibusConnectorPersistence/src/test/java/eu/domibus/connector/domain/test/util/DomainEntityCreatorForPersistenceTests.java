@@ -144,7 +144,9 @@ public class DomainEntityCreatorForPersistenceTests {
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
         messageDetails.setToParty(createPartyAT());
+        messageDetails.getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
         messageDetails.setFromParty(createPartyDE());
+        messageDetails.getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
         
         return messageDetails;
     }

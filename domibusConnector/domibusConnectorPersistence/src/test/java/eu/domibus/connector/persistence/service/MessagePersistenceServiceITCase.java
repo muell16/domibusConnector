@@ -53,60 +53,6 @@ public class MessagePersistenceServiceITCase {
     @Autowired
     private TransactionTemplate txTemplate;
 
-    @Test
-    public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-        String connectorMessageId = "msg9021";
-
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
-        //message.setDbMessageId(null);
-        //PMessageDirection messageDirection = PMessageDirection.GATEWAY_TO_BACKEND;
-        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
-
-        messageDetails.setConversationId("conversation4211");
-        messageDetails.setEbmsMessageId("ebms4211");
-        messageDetails.setBackendMessageId("backend4211");
-
-        DomibusConnectorParty fromPartyAT = DomainEntityCreatorForPersistenceTests.createPartyAT();
-        DomibusConnectorParty toPartyDE = DomibusConnectorPartyBuilder.createBuilder()
-                .copyPropertiesFrom(DomainEntityCreatorForPersistenceTests.createPartyDE())
-                .setPartyIdType(null)
-                .build();
-
-
-        messageDetails.setFromParty(fromPartyAT);
-        messageDetails.setToParty(toPartyDE);
-
-
-        DomibusConnectorMessage persistedMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-
-        assertThat(persistedMessage).isNotNull();
-
-        //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-        QueryDataSet dataSet = new QueryDataSet(conn);
-        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE",
-                String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE CONNECTOR_MESSAGE_ID='%s'", connectorMessageId));
-
-        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
-
-        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
-        assertThat(ebmsId).isEqualTo("ebms4211");
-
-        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
-        assertThat(conversationId).isEqualTo("conversation4211");
-
-
-        DomibusConnectorMessageDetails persistedDetails = persistedMessage.getMessageDetails();
-
-
-//        assertThat(persistedDetails.getFromParty().getPartyIdType())
-//                .as("correct partyIdType of fromParty should be loaded from db!")
-//                .isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
-
-        assertThat(persistedDetails.getToParty().getPartyIdType())
-                .as("correct partyIdType of toParty should be loaded from db!")
-                .isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
-    }
 
     /**
      * Test if an the test EpoMessage can be persisted into database
@@ -190,6 +136,7 @@ public class MessagePersistenceServiceITCase {
             message.getMessageDetails().setEbmsMessageId(ebmsId);
             message.getMessageDetails().setBackendMessageId("fklwefa");
             message.getMessageDetails().setDirection(messageDirection);
+
 
             LargeFileReferenceMemoryBacked attachRef =
                     new LargeFileReferenceMemoryBacked("hallo welt".getBytes());
