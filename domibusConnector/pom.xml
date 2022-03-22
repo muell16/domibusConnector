@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.5-SNAPSHOT</version>
+    <version>4.4.5-RC1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -104,7 +104,6 @@
         <org.testcontainers.testcontainers.version>1.15.3</org.testcontainers.testcontainers.version>
         <org.ow2.asm.asm.version>9.2</org.ow2.asm.asm.version>
         <com.github.database-rider.rider-spring.version>1.10.1</com.github.database-rider.rider-spring.version>
-
         <javax.xml.bind.jaxb-api.version>2.3.1</javax.xml.bind.jaxb-api.version>
         <com.sun.xml.bind.jaxb-core.version>2.3.0</com.sun.xml.bind.jaxb-core.version>
         <com.sun.xml.bind.jaxb-impl.version>2.3.0</com.sun.xml.bind.jaxb-impl.version>
@@ -126,17 +125,15 @@
         <org.apache.commons.commons-lang3.version>3.4</org.apache.commons.commons-lang3.version>
         <org.apache.commons.commons-compress.version>1.21</org.apache.commons.commons-compress.version>
         <org.apache.poi.poi.version>3.17</org.apache.poi.poi.version>
-
         <org.xmlunit.xmlunit-matchers.version>2.5.1</org.xmlunit.xmlunit-matchers.version>
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.0</org.dbunit.dbunit.version>
         <com.google.guava.version>30.0-jre</com.google.guava.version>
         <mysql.mysql-connector-java.version>8.0.28</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.2</org.postgresql.postgresql.version>
-<!--        <com.oracle.ojdbc8.version>19.3.0.0.0</com.oracle.ojdbc8.version>-->
+        <!--        <com.oracle.ojdbc8.version>19.3.0.0.0</com.oracle.ojdbc8.version>-->
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
         <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
-
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -187,8 +184,8 @@
                 <version>${dss.tools.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.bouncycastl</groupId>
                         <artifactId>bcpkix-jdk15on</artifactId>
+                        <groupId>org.bouncycastl</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -298,7 +295,6 @@
                 <artifactId>commons-cli</artifactId>
                 <version>${commons-cli.commons-cli.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
@@ -403,7 +399,6 @@
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${org.apache.cxf.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-policy</artifactId>
@@ -436,13 +431,11 @@
                 <version>(3.3.1,)</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.apache.santuario</groupId>
                         <artifactId>xmlsec</artifactId>
+                        <groupId>org.apache.santuario</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
-
-
             <dependency>
                 <groupId>javax.jms</groupId>
                 <artifactId>javax.jms-api</artifactId>
@@ -575,7 +568,6 @@
                 <artifactId>postgresql</artifactId>
                 <version>${org.postgresql.postgresql.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc-bom</artifactId>
@@ -583,7 +575,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
     <dependencies>

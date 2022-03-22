@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.5-SNAPSHOT</version>
+        <version>4.4.5-RC1</version>
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -148,16 +148,16 @@
             <artifactId>liquibase-core</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tomcat</groupId>-->
-<!--            <artifactId>tomcat-el-api</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tomcat</groupId>-->
-<!--            <artifactId>tomcat-jasper-el</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat</groupId>-->
+        <!--            <artifactId>tomcat-el-api</artifactId>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat</groupId>-->
+        <!--            <artifactId>tomcat-jasper-el</artifactId>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>

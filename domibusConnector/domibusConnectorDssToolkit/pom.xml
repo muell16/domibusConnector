@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.5-SNAPSHOT</version>
+        <version>4.4.5-RC1</version>
     </parent>
     <artifactId>domibusConnectorDssToolkit</artifactId>
     <dependencies>
@@ -21,8 +21,8 @@
             <artifactId>dss-xades</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.santuario</groupId>
                     <artifactId>xmlsec</artifactId>
+                    <groupId>org.apache.santuario</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

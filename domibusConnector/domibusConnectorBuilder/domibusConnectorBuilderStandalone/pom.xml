@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>4.4.5-SNAPSHOT</version>
+        <version>4.4.5-RC1</version>
     </parent>
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
@@ -42,14 +42,14 @@
             <version>2.4.0</version>
             <scope>runtime</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tomcat</groupId>-->
-<!--            <artifactId>tomcat-el-api</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tomcat</groupId>-->
-<!--            <artifactId>tomcat-jasper-el</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat</groupId>-->
+        <!--            <artifactId>tomcat-el-api</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat</groupId>-->
+        <!--            <artifactId>tomcat-jasper-el</artifactId>-->
+        <!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>
