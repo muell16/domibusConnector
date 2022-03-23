@@ -99,7 +99,7 @@ CREATE TABLE DC_TRANSPORT_STEP
 	TRANSPORT_SYSTEM_MESSAGE_ID varchar(255),
 	REMOTE_MESSAGE_ID varchar(255),
 	CREATED timestamp without time zone,
-	TRANSPORT_MESSAGE text,
+	TRANSPORTED_MESSAGE text,
 	FINAL_STATE_REACHED timestamp without time zone
 )
 ;
