@@ -640,6 +640,8 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                        <meminitial>1024m</meminitial>
+                        <maxmem>2024m</maxmem>
                     </configuration>
                 </plugin>
                 <plugin>

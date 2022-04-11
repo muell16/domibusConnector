@@ -7,10 +7,13 @@ import eu.domibus.connector.ui.service.WebPModeService;
 import org.apache.cxf.configuration.security.KeyStoreType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
@@ -19,6 +22,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableConfigurationProperties(UploadPModesOnFirstStartConfigurationProperties.class)
+@DependsOn(CreateDefaultBusinessDomainOnFirstStart.BEAN_NAME)
 @ConditionalOnProperty(prefix = UploadPModesOnFirstStartConfigurationProperties.PREFIX, name = "enabled", havingValue = "true")
 public class UploadPModesOnFirstStart {
 
