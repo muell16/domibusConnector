@@ -126,7 +126,6 @@ DC_MSG_PROCESS_STEP update with result.
 @startuml
 
 start
-:Create new business model;
 :Generate connectorMessageId;
 :Map messageDetails by copy properties;
 :Map ebms action;
