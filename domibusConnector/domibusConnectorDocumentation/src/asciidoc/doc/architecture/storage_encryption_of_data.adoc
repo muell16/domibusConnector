@@ -8,7 +8,7 @@ ifndef::header[]
 include::{basepath}/doc/header.adoc[]
 endif::header[]
 
-= Storage and Encryption of Payload and Addressing Data
+= Storage, Encryption and Deletion of Payload, Addressing and other Data
 
 
 == Kinds of Data processed by the connector
