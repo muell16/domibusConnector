@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>4.4.5-RC2-SNAPSHOT</version>
+        <version>4.4.5-RC2</version>
     </parent>
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
@@ -85,10 +84,10 @@
                     <!-- download mysql driver -->
                     <execution>
                         <id>copy-mysql-driver</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>package</phase>
                         <configuration>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteReleases>true</overWriteReleases>
@@ -106,10 +105,10 @@
                     <!-- download mariadb driver -->
                     <execution>
                         <id>copy-mariadb-driver</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>package</phase>
                         <configuration>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteReleases>true</overWriteReleases>
@@ -127,10 +126,10 @@
                     <!-- download h2 driver -->
                     <execution>
                         <id>copy-h2-driver</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>package</phase>
                         <configuration>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteReleases>true</overWriteReleases>
