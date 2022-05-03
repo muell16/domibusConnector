@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="mysql8_4.4.0_full_init" type="DatabaseScript" editBeforeRun="true">
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_initial.ddl" />
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_initial-data.sql" />
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_quartz.sql" />
+    <script-mode>FILE</script-mode>
+    <data-source id="8ab0f29c-e4f7-4c44-807c-495820c21f76" />
+    <method v="2" />
+  </configuration>
+</component>

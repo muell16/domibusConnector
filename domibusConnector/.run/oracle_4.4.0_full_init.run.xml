@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="oracle_4.4.0_full_init" type="DatabaseScript">
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/Oracle/oracle_4.4.0_initial.ddl" />
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/Oracle/oracle_4.4.0_initial-data.sql" />
+    <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/Oracle/oracle_4.4.0_quartz.sql" />
+    <script-mode>FILE</script-mode>
+    <data-source id="5cd9e229-a579-45dd-b1b0-1162ca3ce2a6" />
+    <method v="2" />
+  </configuration>
+</component>

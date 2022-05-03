@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="mariadb_connector" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+  <configuration default="false" name="mariadb_connector_custom_no_volume_image" type="docker-deploy" factoryName="docker-image" server-name="Docker">
     <deployment type="docker-image">
       <settings>
-        <option name="imageTag" value="mariadb:latest" />
-        <option name="containerName" value="mariadb_connector" />
+        <option name="imageTag" value="mariadb_no_volume" />
+        <option name="containerName" value="mariadb_connector_no_volume" />
         <option name="envVars">
           <list>
             <DockerEnvVarImpl>
