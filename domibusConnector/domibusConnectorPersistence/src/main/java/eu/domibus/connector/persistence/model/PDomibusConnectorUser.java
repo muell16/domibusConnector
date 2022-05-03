@@ -39,20 +39,20 @@ public class PDomibusConnectorUser {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
     
-    @Column(name = "USERNAME", nullable=false)
+    @Column(name = "USERNAME", nullable=false, length = 50)
     private String username;
     
-    @Column(name = "ROLE", nullable=false)
+    @Column(name = "ROLE", nullable=false, length = 50)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name="LOCKED")
+    @Column(name="LOCKED", nullable = false, columnDefinition = "boolean default false")
 	private boolean locked;
 
-	@Column(name="NUMBER_OF_GRACE_LOGINS", nullable=false)
+	@Column(name="NUMBER_OF_GRACE_LOGINS", nullable=false, columnDefinition = "integer default 5")
 	private Long numberOfGraceLogins;
 
-	@Column(name="GRACE_LOGINS_USED", nullable=false)
+	@Column(name="GRACE_LOGINS_USED", nullable=false, columnDefinition = "integer default 0")
 	private Long graceLoginsUsed;
 	
     @Column(name = "CREATED", nullable = false)
@@ -66,9 +66,9 @@ public class PDomibusConnectorUser {
         if(this.created==null)
         	this.created = new Date();
         if(this.numberOfGraceLogins==null)
-        	this.numberOfGraceLogins = Long.valueOf(5);
+        	this.numberOfGraceLogins = 5L;
         if(this.graceLoginsUsed==null)
-        	this.graceLoginsUsed=Long.valueOf(0);
+        	this.graceLoginsUsed= 0L;
     }
     
     public Long getId() {

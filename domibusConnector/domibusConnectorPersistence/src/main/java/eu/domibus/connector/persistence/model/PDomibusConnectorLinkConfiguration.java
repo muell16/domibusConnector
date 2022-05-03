@@ -34,8 +34,8 @@ public class PDomibusConnectorLinkConfiguration {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_CONFIG_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_CONFIGURATION_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME")
-    @Column(name="PROPERTY_VALUE")
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 21844) // max length for varchar using 3-byte utf8 chars
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {

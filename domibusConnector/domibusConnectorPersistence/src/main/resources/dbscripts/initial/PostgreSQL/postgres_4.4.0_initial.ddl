@@ -37,7 +37,7 @@ CREATE TABLE DC_LINK_PARTNER
 	ID numeric(10) NOT NULL,
 	NAME varchar(50) NOT NULL,
 	DESCRIPTION text,
-	ENABLED numeric(1),
+	ENABLED boolean,
 	LINK_CONFIG_ID numeric(10),
 	LINK_TYPE varchar(20),
 	LINK_MODE varchar(20)

@@ -72,6 +72,7 @@ alter table DC_TRANSPORT_STEP drop column   bkp_cmid;
 
 alter table DC_TRANSPORT_STEP modify       CONNECTOR_MESSAGE_ID VARCHAR(255) not null;
 
+alter table DOMIBUS_CONNECTOR_EVIDENCE modify UPDATED TIMESTAMP(6) not null;
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
