@@ -48,6 +48,8 @@ This workflow consists of the following processes:
 |the business message lies on the toLink queue and queue listener is triggered.
 |the message is delivered and acknowledged by the backend or put on queue for pull reception.
 
+|===
+
 
 
 

@@ -1,0 +1,49 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Lookup correct flow / Business Domain for message
+
+== Responsibility
+
+* Determine Correct Message Flow
+
+== Entry Points / Interface
+
+* Triggered by MessageReceivedEvent
+
+== Activity Diagram
+
+[plantuml,receive_BM_from_gateway_activity,format=svg]
+----
+@startuml
+
+title Lookup Workflow
+
+start
+
+:receiveNewMessageEvent;
+
+switch(message)
+case (incoming business message)
+  : start incoming business message workflow;
+case (outgoing business message)
+  : start outgoing business message workflow;
+case (confirmation message)
+  : start confirmation message workflow;
+endswitch
+stop
+
+@enduml
+----
+
+== Notes, Tasks and discussion
+
+* Just load the correct message flow
+
+

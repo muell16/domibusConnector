@@ -1,0 +1,35 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
+
+= Message Item
+
+== Responsibility
+
+* Hold information about the transported message
+
+
+//== Activity Diagram
+//
+//[plantuml,receive_BM_from_gateway_activity,format=svg]
+//----
+//@startuml
+//
+//
+//@enduml
+//----
+
+
+
+
+
+
