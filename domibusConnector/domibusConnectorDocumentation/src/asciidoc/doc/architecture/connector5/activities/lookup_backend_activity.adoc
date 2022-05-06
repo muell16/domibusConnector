@@ -1,0 +1,74 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
+
+= Lookup business domain for message
+
+== Responsibility
+
+* Lookup business domain for message
+
+== Preconditions
+
+* Message exists in DB
+* Message has a ConnectorMessageId
+* Message has been assigned to a BusinessDomain
+
+== Postconditions
+
+=== GoodCase
+* BackendName name is added to message
+
+== Additional Step Properties
+
+* BusinessDomainName
+
+== Activity Diagram
+
+[plantuml,receive_BM_from_gateway_activity,format=svg]
+----
+@startuml
+
+title Lookup Workflow
+
+start
+
+if (message has refToMessageId) then (yes)
+:load backend of related message;
+
+elseif (message has conversationId) then (yes)
+:load backend of message with conversationId;
+
+else
+:use backend ruleset;
+
+endif
+
+stop
+
+@enduml
+----
+
+== Ruleset
+
+* The ruleset is loaded from current BusinessDomain
+
+As ruleset the routing rule grammar is used:
+
+[source]
+----
+include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
+----
+
+== Notes, Tasks and discussion
+
+

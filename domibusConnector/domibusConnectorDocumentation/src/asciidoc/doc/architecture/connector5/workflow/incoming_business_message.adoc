@@ -51,5 +51,66 @@ This workflow consists of the following processes:
 |===
 
 
+This workflow consists of the following activities:
+
+[plantuml,incoming_business_message,format=svg]
+----
+@startuml
+
+title Incoming Business Message Workflow
+
+start
+
+:New IncomingBusinessMessage Workflow started;
+
+:Create BusinessMessage;
+
+:Lookup Backend;
+
+:Validate and Resolve eCodex Container;
+if (validation has failed) then (has failed)
+:Create RELAY_REMMD_REJECTION or NON_DELIVERY;
+:process Evidence for BusinessMessage;
+:trigger send RELAY_REMMD_REJECTION / NON_DELIVERY;
+end
+else (validation OK)
+
+:Create Evidence RELAY_REMMD_ACCEPTANCE;
+endif
+
+:process Evidence for BusinessMessage;
+
+:deliver Message to BackendLink;
+
+stop
+
+@enduml
+----
+
+
+
+[plantuml,incoming_business_message_sent_result_event,format=svg]
+----
+@startuml
+
+title Incoming Business Message Workflow Submit Failure/Success Event
+
+start
+
+:Send to backendLink sent result received;
+if () then (send has failed)
+:create NON_DELIVERY;
+:process Evidence for BusinessMessage;
+:trigger send NON_DELIVERY;
+else (send success)
+: [for discussion] if activated via property? automatically crete DELIVERY?;
+endif
+
+stop
+
+@enduml
+----
+
+
 
 

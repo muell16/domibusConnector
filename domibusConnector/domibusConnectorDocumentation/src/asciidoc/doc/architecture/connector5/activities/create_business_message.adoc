@@ -21,6 +21,8 @@ endif::mvnbasedir[]
 
 * Message exists in DB
 * Message has a ConnectorMessageId
+* Message has either a EBMS_ID or a BackendMessageId assigned
+* Message is actually a BusinessMessage
 
 == Postconditions
 
@@ -34,50 +36,19 @@ endif::mvnbasedir[]
 === ErrorCase
 
 
-
-
 == Additional Step Properties
 
 * BusinessDomainName
 
-== Activity Diagram
 
-[plantuml,receive_BM_from_gateway_activity,format=svg]
-----
-@startuml
+=== Rollback
 
-title Lookup Workflow
+* This should be done within a Transaction
 
-start
+=== Notes, Tasks and discussion
 
-if (message has refToMessageId) then (yes)
-:load business domain of related message;
 
-elseif (message has conversationId) then (yes)
-:load business domain of message related by conversationId;
 
-else
-:use ruleset;
-
-endif
-
-stop
-
-@enduml
-----
-
-== Ruleset
-
-As ruleset the routing rule grammar is used:
-
-[source]
-----
-include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
-----
-
-=== Tasks:
-
-* The routing ruleset must be extended to also make use of gateway name, backend name
 
 
 
