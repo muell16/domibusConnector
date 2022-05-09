@@ -1,0 +1,212 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Message Processing
+
+
+This workflow consists of the following activities:
+
+== Main tasks
+
+The following main tasks for message processing have been identified:
+
+* Receive and save message
+* Process business message
+** ASIC-S container creation / validation
+** Business document validation
+** PDF/XML TrustToken creation
+* Process confirmation message
+* Create ETSI-REM evidence
+
+These tasks will be done by the following workflows:
+
+
+== Activity Diagram
+
+.Message Processing Activity Diagram Overview
+
+[plantuml,message_processing_activity_diagram_overview,format=svg]
+----
+@startuml
+
+title Process message workflow
+
+start
+
+:Receive, store Message;
+
+:Lookup Workflow, Business Domain, start Workflow;
+
+:Process Message;
+
+if () then (success)
+:Forward Message;
+else (failure)
+:create negative evidence and send it;
+endif
+:process send events;
+
+
+:Cleanup;
+
+stop
+
+@enduml
+----
+
+== Sequence Diagram Overview
+
+[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+box Connector
+collections LinkModule
+collections WorkflowModule
+'collections PersistenceModule
+collections ConnectorController
+endbox
+
+'database DB
+
+
+LP -> LinkModule++: submitMessage
+group DB_TX: message_receive
+LinkModule -> LinkModule: receive, save message
+end
+LinkModule --> LP
+LinkModule -> JMS--: send newMessageStoredEvent
+
+
+JMS --> WorkflowModule++: receive newMessageStoredEvent
+group DB_TX: lookup_workflow_business_domain
+WorkflowModule -> WorkflowModule: lookupWorkflow, lookupBusinessDomain
+end
+WorkflowModule -> JMS--: send newWorkflowCreatedEvent
+
+
+JMS -> ConnectorController++: receive newWorkflowCreatedEvent
+group DB_TX: process_message
+ConnectorController -> ConnectorController: process message
+alt success
+ConnectorController -> ConnectorController: Forward message
+else failure
+ConnectorController -> ConnectorController: create neg. evidence and send it
+end
+end
+ConnectorController -> JMS--: send messageReadyToSentEvent
+
+
+JMS -> LinkModule++: receive messageReadyToSentEvent
+group DB_TX
+LinkModule -> LinkModule: sendMessage
+end
+LinkModule -> JMS--: send messageSentEvent
+
+JMS -> ConnectorController++: receive messageSentEvent
+group DB_TX
+ConnectorController -> ConnectorController: process send events
+end
+ConnectorController -> JMS--: send messageProcessingFinishEvent;
+
+
+JMS -> ConnectorController++: receive messageProcessingFinishEvent
+group DB_TX
+ConnectorController -> ConnectorController: cleanup
+end
+ConnectorController -> JMS--: send cleanupFinishEvent;
+
+
+@enduml
+----
+
+== Message State Diagram
+
+NOTE: The connector threats business messages and confirmation messages different.
+
+
+[plantuml,message_state_diagram,format=svg]
+----
+@startuml
+
+
+state "Created by Connector" as start1 <<start>> : Eg. sending back: \n RELAY_REMMD_ACCEPTANCE\n SUBMISSION_REJECTION\n SUBMISSION_ACCEPTANCE\n ...
+
+
+[*] --> Receiving: Link Partner sends message
+
+start1 --> Saved: Connector creates message
+
+Receiving --> Saved: message has been saved into DB/on Disk
+
+Saved --> Processing
+state Processing {
+
+    state BusinessMessage {
+    }
+
+    state ConfirmationMessage {
+    }
+
+
+    [*] --> BusinessMessage: if business message
+    [*] --> ConfirmationMessage: if confirmation message
+    BusinessMessage --> [*]
+    ConfirmationMessage --> [*]
+}
+
+Processing --> Forwarding: Message forwarding to LinkPartner
+
+state Forwarding : For details see Send Message
+
+Forwarding --> CleaningUp
+
+CleaningUp --> Finished
+
+
+@enduml
+----
+
+The details are available here:
+
+** link:../level1/l1_send_message.adoc[Forwarding / Send Message]
+
+=== Business message state diagram
+
+Additional to the overall message states the business message has some additional states which are described by the received evidences (evidences are transported within a confirmation or business message).
+The following state model shows the states of the business message:
+
+[plantuml,business_message_state_diagram,format=svg]
+----
+@startuml
+[*] --> Created
+Created --> Submitted: by SUBMISSION_ACCEPTANCE
+Created --> Rejected: by SUBMISSION_FAILURE
+Created --> Rejected: by SUBMISSION_REJECTION
+
+Submitted --> Relayed: by RELAY_REMMD_ACCEPTANCE
+
+Relayed --> Relayed: by RELAY_REMMD_ACCEPTANCE
+Relayed --> Rejected: by RELAY_REMMD_REJECTION
+
+Relayed --> Delivered: by DELIVERY
+Relayed --> Confirmed: by DELIVERY\n (if RETRIEVAL is not required in Business Domain)
+Relayed --> Rejected: by NON_DELIVERY
+
+Delivered --> Rejected: by NON_RETRIEVAL\n (only if RETRIEVAL is required in Business Domain)
+Delivered --> Retrieved: by RETRIEVAL
+@enduml
+----
+
+=== Confirmation message
+
+The confirmation message do not have a seperate state model.

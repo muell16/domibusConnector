@@ -1,0 +1,114 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Send message
+
+
+== Sequence Diagram
+
+=== Synchronous request
+
+
+[plantuml,send_message_sequence_diagram,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+'collections WorkflowModule
+
+database DB
+
+
+JMS -> LinkModule++: receive messageReadyToSentEvent
+group DB_TX
+LinkModule -> LP--++: send submitMessageRequest
+LP --> LinkModule--++: return submitMessageResponse
+alt successfully sent
+LinkModule -> DB: set message as sent to link partner
+else send failure
+LinkModule -> DB: set message as failed to sent
+end
+end
+LinkModule -> JMS--: send messageSentEvent
+
+
+@enduml
+----
+
+==== <<link-send-questions-discussion-variant1, Questions / Discussion>>
+
+
+
+
+=== Asynchron request
+
+The asynchronus request will most likely if JMS or a file based interface is being used.
+
+[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+collections WorkflowModule
+collections PersistenceModule
+
+database DB
+
+
+activate LP
+LP -> LinkModule ++: SubmitMessage request
+group DB_TX
+deactivate LP
+
+LinkModule -> WorkflowModule --++: StartWorkflow
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return Workflow id
+
+
+group sub_DB_TX
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB++: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+
+
+
+LinkModule -> WorkflowModule --++: finishWorkflow
+WorkflowModule -> DB++: update workflow state
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+end
+
+LinkModule --> LP: return not/ACK response
+
+LinkModule --> JMS: send newMessageStoredEvent
+
+
+@enduml
+----
+
+==== <<link-send-questions-discussion-variant2, Questions / Discussion>>
+
+* If there is any failure within the sub_DUB_TX the result will be written to the workflow state and the LinkPartner will be informed
+* When should the return not/ACK be sent back? See discussions in xref:link-questions-discussion-variant1[1.1.1].
+
+
+==== Send message State Diagram
+
+

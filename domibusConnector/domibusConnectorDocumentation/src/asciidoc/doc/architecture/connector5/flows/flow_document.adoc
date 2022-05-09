@@ -1,0 +1,37 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Connector Workflows / Business Processing
+
+
+== Abstract
+
+This document summarizes the whole message/business proecessing of domibusConnector.
+
+This document splits the message processing process into different detail levels:
+
+* level 0: a very raw overview
+* level 1: give more details
+* level 2: a very detailed view of a specific activity/step, also holds a lot of implementation details
+
+== Transaction handling
+
+The concept of transactions will be the usage only of database based transactions. This means the only source of the current state will be the database. The JMS is only used for distributing the load over multiple instances and increase processing speed. Any lost jms message will be recovered by timer jobs which are checking the database for any stuck workflows.
+
+
+== Level 0
+
+include::level0/l0_process_message.adoc[leveloffset=+2]
+
+== Level 1
+
+include::level1/l1_send_message.adoc[leveloffset=+2]
+include::level1/l1_lookup_workflow_business_domain.adoc[leveloffset=+2]
+include::level1/l1_message_receive.adoc[leveloffset=+2]
+
