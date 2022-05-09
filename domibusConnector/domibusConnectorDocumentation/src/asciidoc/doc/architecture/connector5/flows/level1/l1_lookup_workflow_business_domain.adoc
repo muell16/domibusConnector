@@ -24,8 +24,9 @@ Process Message is responsible for taking the received message and assigning the
 * Message is valid on persistence level
 
 
-== Activity Diagram
+== Lookup Business Workflow Activity Diagram
 
+.Lookup Business Workflow Activity Diagram
 [plantuml,receive_BM_from_gateway_activity,format=svg]
 ----
 @startuml
@@ -44,23 +45,20 @@ stop
 @enduml
 ----
 
-== Sequence Diagram
+== Lookup Business Workflow Sequence Diagram
 
-[plantuml,process_message,format=svg]
+.Lookup Business Workflow Sequence Diagram
+[plantuml,lookup_business_workflow_sequence_diagram,format=svg]
 ----
 @startuml
 
-participant JMS
+participant EventService
 
-participant WorkflowHandler
-
-'collections LinkModule
-'collections WorkflowModule
-'collections PersistenceModule
+collections WorkflowHandler
 
 database DB
 
-JMS -> WorkflowHandler++: receive newMessageStoredEvent
+EventService -> WorkflowHandler++: receive newMessageStoredEvent
 
 group DB_TX
 WorkflowHandler -> WorkflowHandler: lookup workflow
@@ -71,7 +69,7 @@ WorkflowHandler -> DB: update message object
 DB --> WorkflowHandler: return
 end
 
-WorkflowHandler --> JMS --: newWorkflowCreatedEvent
+WorkflowHandler --> EventService --: newWorkflowCreatedEvent
 
 @enduml
 ----

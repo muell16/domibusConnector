@@ -9,12 +9,17 @@ endif::header[]
 
 = Message Receive
 
+A message can be received in different variantes:
 
-== Sequence Diagram
+* PUSH
+* PULL
+* Asynchronus/Synchronus
 
-=== Synchronous request
+== Receive Message Sequence Diagrams
 
+=== Receive Message by Synchronous Request
 
+.Synchronous Message Receive Sequence Diagram
 [plantuml,message_processing_sequence_diagram_overview,format=svg]
 ----
 @startuml
@@ -25,6 +30,7 @@ actor "LinkPartner (Gateway or Backend)" as LP
 collections LinkModule
 collections WorkflowModule
 collections PersistenceModule
+collections TransitionService
 
 database DB
 
@@ -41,6 +47,8 @@ WorkflowModule --> LinkModule --++: return Workflow id
 
 
 group sub_DB_TX
+LinkModule -> TransitionService --++: convert to domain message
+TransitionService --> LinkModule --++: return domain message
 LinkModule -> PersistenceModule --++: persist message
 PersistenceModule -> DB: persist
 DB --> PersistenceModule --:return db ids
@@ -55,7 +63,7 @@ DB --> WorkflowModule--: return
 WorkflowModule --> LinkModule --++: return
 
 
-LinkModule --> JMS: send newMessageReceivedEvent
+LinkModule --> EventService: send newMessageReceivedEvent
 
 deactivate LP
 
@@ -90,7 +98,7 @@ WorkflowModule --> LinkModule --++: return
 end
 
 LinkModule --> LP: return not/ACK response
-LinkModule --> JMS: send newMessageStoredEvent
+LinkModule --> EventService: send newMessageStoredEvent
 
 deactivate LP
 
@@ -111,10 +119,11 @@ end
 *** If update workflow state fails the LinkPartner will receive no ACK at all -> in this case the sub_DB_TX should be rolled back!
 
 
-=== Asynchron request
+=== Receive Message by Asynchronous Request
 
-The asynchronus request will most likely if JMS or a file based interface is being used.
+The asynchronus request will most likely if EventService or a file based interface is being used.
 
+.Asynchronous Message Receive Sequence Diagram
 [plantuml,message_processing_sequence_diagram_overview_async,format=svg]
 ----
 @startuml
@@ -159,7 +168,7 @@ end
 
 LinkModule --> LP: return not/ACK response
 
-LinkModule --> JMS: send newMessageStoredEvent
+LinkModule --> EventService: send newMessageStoredEvent
 
 
 @enduml
@@ -169,4 +178,69 @@ LinkModule --> JMS: send newMessageStoredEvent
 
 * If there is any failure within the sub_DUB_TX the result will be written to the workflow state and the LinkPartner will be informed
 * When should the return not/ACK be sent back? See discussions in xref:link-questions-discussion-variant1[1.1.1].
+
+
+=== Receive Message by Pulling Sequence Diagram
+
+.Receive Message by Pulling Sequence Diagram
+[plantuml,message_processing_sequence_diagram_overview_pull,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+collections WorkflowModule
+collections PersistenceModule
+
+database DB
+
+
+
+LinkModule -> LP ++: Request messages
+LP --> LinkModule--++: Return available message ids
+
+loop for every message
+
+LinkModule -> LP++: download message
+LP --> LinkModule--: return message
+
+group DB_TX
+deactivate LP
+
+LinkModule -> WorkflowModule --++: StartWorkflow
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return Workflow id
+
+
+group sub_DB_TX
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB++: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+
+
+
+LinkModule -> WorkflowModule --++: finishWorkflow
+WorkflowModule -> DB++: update workflow state
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+end
+
+LinkModule -> LP++: send not/ACK response
+LP --> LinkModule--++
+
+
+LinkModule --> EventService: send newMessageStoredEvent
+
+end
+
+@enduml
+----
+
 

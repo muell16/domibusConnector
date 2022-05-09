@@ -1,0 +1,56 @@
+= Validate transition message
+
+
+== Validate transition message activity diagram
+.Validate transtion message activity diagram
+
+[plantuml,validate_transition_message_activity,format=svg]
+----
+@startuml
+
+start
+
+if (is DomibusConnectorContentType set?) then (true)
+    if(is ebms ServiceType set?) then (true)
+        if(is ebms ActionType set?) then (true)
+            if(is ebms fromParty set?) then (true)
+                if(is ebms toParty set?) then (true)
+                    if(is ebms originalSender set?) then (true)
+                        if(is ebms finalRecipient set?) then (true)
+                            :Set messageType as Business Message;
+                            :return result;
+                            stop
+                        else
+                        endif
+                    else
+                    endif
+                else
+                endif
+            else
+            endif
+        else
+        endif
+    else
+    endif
+else (false)
+    if(is DomibusConnectorConfirmationType set?) then (true)
+        if (is refToMessageId set?) then (true)
+            :Set messageType as Confirmation Message;
+            :return result;
+            stop
+        else (false)
+        endif
+    else (false)
+    endif
+endif
+
+:throw Exception;
+
+
+end
+
+
+
+
+@enduml
+----

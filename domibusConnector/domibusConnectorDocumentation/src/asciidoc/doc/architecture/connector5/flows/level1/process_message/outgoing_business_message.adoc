@@ -1,0 +1,131 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+= Outgoing Business Message
+
+
+== Outgoing Business Message Activity Diagram
+
+This workflow consists of the following activities:
+
+.Outgoing Business Message Activity Diagram
+[plantuml,outgoing_business_message_acitivity_diagram,format=svg]
+----
+@startuml
+
+title Outgoing Business Message Workflow
+
+start
+
+:validate EBMS-Attributes;
+:Lookup Gateway;
+
+:create BusinessMessage;
+
+if () then (eCodex Container exists)
+
+else
+:validate businessDocument;
+:create trustToken;
+:create eCodexContainer;
+endif
+
+:Validate businessDocument Container;
+if () then (validation/creation has failed)
+:Create SUBMISSION_REJECTION;
+
+:create SUBMISSION_REJECTION confirmation message;
+:create messageReadyToSendEvent for confirmation message;
+
+else (validation/creation OK)
+
+:Create Evidence SUBMISSION_ACCEPTANCE;
+:append SUBMISSION_ACCEPTANCE to message;
+:create messageReadyToSendEvent for businessMessage;
+
+endif
+
+end
+
+@enduml
+----
+
+== Outgoing Business Message Sequence Diagram
+
+.Outgoing Business Message Sequence Diagram
+[plantuml,outgoing_business_message_sequence_diagram,format=svg]
+----
+@startuml
+
+
+participant EventService
+collections PersistenceService
+database DB
+
+participant OutgoingBusinessMessageProcess
+collections SecurityToolkit
+
+[-> EventService++: receive newWorkFlowCreatedEvent
+
+group DB_TX
+EventService -> OutgoingBusinessMessageProcess++: create/start workflow
+
+OutgoingBusinessMessageProcess -> ebmsValidationStep--++: validateEbmsAttributesStep
+ebmsValidationStep --> OutgoingBusinessMessageProcess--++: return validation result
+
+OutgoingBusinessMessageProcess -> lookupGatewayStep--++: lookup gateway
+lookupGatewayStep --> OutgoingBusinessMessageProcess--++: return gateway name / link partner name
+
+OutgoingBusinessMessageProcess -> PersistenceService--++: create businessMessage
+PersistenceService -> DB: save businessMessage
+DB --> PersistenceService: businessMessage db id
+PersistenceService --> OutgoingBusinessMessageProcess--++: return businessMessage db id
+
+alt
+OutgoingBusinessMessageProcess -> SecurityToolkit--++: validate business document
+SecurityToolkit -> SecurityToolkit: create TrustToken XML/PDF
+SecurityToolkit -> SecurityToolkit: create eCodex Container
+else eCodex Container exists
+end
+
+SecurityToolkit -> SecurityToolkit: validate eCodex Container
+SecurityToolkit --> OutgoingBusinessMessageProcess--++: return result
+
+alt success
+OutgoingBusinessMessageProcess -> EvidenceToolkit--++: create SUBMISSION_ACCEPTANCE
+EvidenceToolkit --> OutgoingBusinessMessageProcess--++: return SUBMISSION_ACCEPTANCE
+
+OutgoingBusinessMessageProcess -> OutgoingBusinessMessageProcess: append SUBMISSION_ACCEPTANCE to transported message
+
+OutgoingBusinessMessageProcess -> EventService: messageReadyToSentEvent for current message
+
+else failure/error
+
+OutgoingBusinessMessageProcess -> EvidenceToolkit--++: create SUBMISSION_REJECTION
+EvidenceToolkit --> OutgoingBusinessMessageProcess--++: return SUBMISSION_REJECTION
+
+OutgoingBusinessMessageProcess -> PersistenceService--++: create SUBMISSION_REJECTION confirmation message
+
+PersistenceService -> DB: create message
+
+PersistenceService -> EventService: trigger after TX messageReadyToSentEvent for confirmation message
+
+DB --> PersistenceService: return db ids
+PersistenceService --> OutgoingBusinessMessageProcess--++: return message id
+
+
+end
+
+OutgoingBusinessMessageProcess --> EventService: return
+
+EventService -> DB: save workflow result
+end
+EventService -> EventService: send pending events after TX complete
+
+
+
+
+@enduml
+----

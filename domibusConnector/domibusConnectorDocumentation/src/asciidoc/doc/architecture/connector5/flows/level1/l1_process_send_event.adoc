@@ -1,0 +1,102 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Process send event
+
+Process send event listens for messageSentEvents. A message sentEvent can either be pos or negative. The sendEvent holds also some exceptions or error codes. This process will then decide if a message should be retried or a negative evidence should be created.
+
+
+== Trigger
+
+* Triggered by the messageSentEvent
+
+== Pre-Conditions
+
+* The technical sending process has been finished (failed or successfully)
+
+== Post-Conditions
+
+* messageProcessingFinishEvent created
+* If ids are provided, ids are saved
+** EBMS id is saved
+** BackendMessageId is saved
+* In case of a business message
+** a SUBMISSION_ACCEPTANCE confirmation message is created
+** a SUBMISSION_REJECTION confirmation message is created
+* The created confirmation message is saved within DB and a newMessageReceivedEvent is created
+
+
+== Process send event activity diagram
+
+.Process Send Event Activity Diagram
+[plantuml,process_send_event_activity_diagram,format=svg]
+----
+@startuml
+
+:SendEventReceived;
+:if available write backend message id, ebms id into DB;
+if (business message) then
+    if () then (send success)
+      :create confirmation message with SUBMISSION_ACCEPTANCE;
+    else (send failure)
+      :create confirmation message with SUBMISSION_REJECTION;
+  endif
+
+endif
+
+end
+
+@enduml
+----
+
+== Process send event sequence diagram
+
+.Process Send Event Sequence Diagram
+[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+----
+@startuml
+
+
+participant JMS
+participant ConnectorController
+participant EvidenceToolkit
+database DB
+
+group DB_TX
+JMS -> ConnectorController++: messageSentEvent;
+ConnectorController -> DB: save message ids
+
+alt success
+
+ConnectorController -> ConnectorController: get SUBMISSION_ACCEPTANCE evidence from message
+else failure
+ConnectorController -> EvidenceToolkit--++: Create SUBMISSION_REJECTION
+EvidenceToolkit --> ConnectorController--++: return SUBMISSION_REJECTION
+
+end
+
+ConnectorController -> ConnectorController: create ConfirmationMessage with evidence
+
+ConnectorController -> PersistenceModule--++: create ConfirmationMessage as new message
+
+PersistenceModule --> ConnectorController--: return ids
+
+end
+
+rnote over PersistenceModule: send new MessageStoredEvent should be sent after successfull commit!
+
+PersistenceModule -> JMS: send newMessageStoredEvent
+
+@enduml
+----
+
+
+
+
+

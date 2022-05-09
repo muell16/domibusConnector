@@ -27,9 +27,10 @@ TODO: incoming/outgoing_confirmation_message might be almost the same?
 
 * Workflow information saved to DB
 
-== Activity Diagram
+== Lookup Workflow Activity Diagram
 
-[plantuml,receive_BM_from_gateway_activity,format=svg]
+.Lookup Workflow Activity Diagram
+[plantuml,lookup_workflow_activity_diagram,format=svg]
 ----
 @startuml
 

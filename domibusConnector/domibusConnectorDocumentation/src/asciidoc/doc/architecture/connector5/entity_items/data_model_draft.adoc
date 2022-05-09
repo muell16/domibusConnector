@@ -1,0 +1,38 @@
+= Data Model Draft
+
+
+[plantuml]
+----
+@startuml
+
+class "MessageProcess" as m
+
+class BusinessMessage
+class eCodexMessage
+class BackendMessage
+
+class ConfirmationMessage
+
+class Evidence
+class Payload
+
+
+'m <|-- BusinessMessage
+
+'BusinessMessage <|-- eCodexMessage
+'BusinessMessage <|-- BackendMessage
+
+'m <|-- ConfirmationMessage
+
+'BusinessMessage "0..*" --- "0..1" ConfirmationMessage: related confirmations
+
+BusinessMessage "0..*" --- "1" Evidence: related evidences
+
+'BusinessMessage "0..*" --- "0..1" Evidence: transported evidences
+
+'ConfirmationMessage "0..*" --- "0..1" Evidence: transported evidence
+
+
+
+@enduml
+----
