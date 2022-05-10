@@ -90,6 +90,7 @@ if the AIA source was not reachable.
 * Fix for DOMIBUS_CONNECTOR_MSG_CONT entity: The created field was not filled by default with the current timestamp.
 * Fix for missing class issue [Ticket#55054]: Explicitly added dss-crl-parser-x509crl as dependency.
 * Fix issue with 4.4.x initial scripts at table DC_TRANSPORT_STEP => TRANSPORT_MESSAGE column should be TRANSPORTED_MESSAGE
+* Add prometheus metrics export interface dependency + documentation
 
 ==== Known Issues
 
