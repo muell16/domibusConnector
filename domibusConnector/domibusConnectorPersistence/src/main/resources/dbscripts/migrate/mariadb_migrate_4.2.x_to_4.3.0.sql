@@ -4,7 +4,7 @@
 
 SET FOREIGN_KEY_CHECKS=0;
 -- requires MySQL >= 5.6.6, default since MySQL 8.0.2
--- SET EXPLICIT_DEFAULTS_FOR_TIMESTAMP = ON; -- not needed for mariadb
+-- SET EXPLICIT_DEFAULTS_FOR_TIMESTAMP = ON;
 -- fixes UUID bug: https://bugs.mysql.com/bug.php?id=101820es UUID bug
 -- also see: https://stackoverflow.com/questions/36296558/mysql-generating-duplicate-uuid
 SET names utf8;
@@ -81,87 +81,46 @@ alter table DC_PMODE_SET modify ACTIVE BOOLEAN not null;
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
-# DELIMITER $$
-# DROP PROCEDURE IF EXISTS UpdateSeqStore $$
-# CREATE PROCEDURE UpdateSeqStore ()
-# BEGIN
-#     IF EXISTS (select SEQ_NAME
-#                from DOMIBUS_CONNECTOR_SEQ_STORE
-#                where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') THEN
-#         IF EXISTS(select SEQ_NAME
-#                   from DOMIBUS_CONNECTOR_SEQ_STORE
-#                   where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') THEN
-#
-#             delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
-#         END IF;
-#     ELSE
-#         update DOMIBUS_CONNECTOR_SEQ_STORE
-#         set SEQ_NAME =   'DOMIBUS_CONNECTOR_MESSAGE.ID'
-#         where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
-#     END IF;
-#
-#     IF EXISTS (select SEQ_NAME
-#                from DOMIBUS_CONNECTOR_SEQ_STORE
-#                where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') THEN
-#         IF EXISTS(select SEQ_NAME
-#                   from DOMIBUS_CONNECTOR_SEQ_STORE
-#                   where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') THEN
-#
-#             delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
-#         END IF;
-#     ELSE
-#         update DOMIBUS_CONNECTOR_SEQ_STORE
-#         set SEQ_NAME =   'DOMIBUS_CONNECTOR_EVIDENCE.ID'
-#         where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
-#     END IF;
-# END
-# $$
-# DELIMITER ;
-# call UpdateSeqStore();
+# unprivileged mariadb user can use this, but this does not work for mysql
+DELIMITER $$
+DROP PROCEDURE IF EXISTS UpdateSeqStore $$
+CREATE PROCEDURE UpdateSeqStore ()
+BEGIN
+    IF EXISTS (select SEQ_NAME
+               from DOMIBUS_CONNECTOR_SEQ_STORE
+               where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') THEN
+        IF EXISTS(select SEQ_NAME
+                  from DOMIBUS_CONNECTOR_SEQ_STORE
+                  where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') THEN
 
-update DOMIBUS_CONNECTOR_SEQ_STORE
-set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
-where not exists
-    (select SEQ_NAME
-     from DOMIBUS_CONNECTOR_SEQ_STORE
-     where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
-    exists
-        (select SEQ_NAME
-         from DOMIBUS_CONNECTOR_SEQ_STORE
-         where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID')
-;
+            delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
+        END IF;
+    ELSE
+        update DOMIBUS_CONNECTOR_SEQ_STORE
+        set SEQ_NAME =   'DOMIBUS_CONNECTOR_MESSAGE.ID'
+        where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
+    END IF;
 
-update DOMIBUS_CONNECTOR_SEQ_STORE
-set SEQ_NAME='DOMIBUS_CONNECTOR_EVIDENCE.ID'
-where not exists
-    (select SEQ_NAME
-     from DOMIBUS_CONNECTOR_SEQ_STORE
-     where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') and
-    exists
-        (select SEQ_NAME
-         from DOMIBUS_CONNECTOR_SEQ_STORE
-         where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID')
-;
+    IF EXISTS (select SEQ_NAME
+               from DOMIBUS_CONNECTOR_SEQ_STORE
+               where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') THEN
+        IF EXISTS(select SEQ_NAME
+                  from DOMIBUS_CONNECTOR_SEQ_STORE
+                  where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') THEN
 
-delete from DOMIBUS_CONNECTOR_SEQ_STORE
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID' AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID')
-;
+            delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
+        END IF;
+    ELSE
+        update DOMIBUS_CONNECTOR_SEQ_STORE
+        set SEQ_NAME =   'DOMIBUS_CONNECTOR_EVIDENCE.ID'
+        where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
+    END IF;
+END
+$$
+DELIMITER ;
 
-delete from DOMIBUS_CONNECTOR_SEQ_STORE
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID' AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID')
-;
+call UpdateSeqStore();
+
 
 insert into DOMIBUS_CONNECTOR_SERVICE select * from BKP_DC_SERVICE;
 
