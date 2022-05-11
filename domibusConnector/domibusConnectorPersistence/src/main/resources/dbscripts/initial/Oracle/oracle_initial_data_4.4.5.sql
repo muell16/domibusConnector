@@ -35,11 +35,7 @@ VALUES (2, 2,
 INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION)
 VALUES (1, 'defaultMessageLane', 'default message lane')
 /
--- not part of the jpa model
-CREATE TABLE DC_DB_VERSION
-(
-    TAG VARCHAR(255) PRIMARY KEY
-)/
+
 INSERT INTO DC_DB_VERSION (TAG)
 VALUES ('V4.4.5')
 /

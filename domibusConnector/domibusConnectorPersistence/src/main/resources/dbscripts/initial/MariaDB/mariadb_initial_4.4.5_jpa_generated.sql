@@ -1,3 +1,9 @@
+-- not part of the jpa model
+CREATE TABLE DC_DB_VERSION
+(
+    TAG VARCHAR(255) PRIMARY KEY
+);
+
 create table DC_KEYSTORE
 (
     ID          bigint        not null
@@ -30,15 +36,16 @@ create table DC_LINK_CONFIG_PROPERTY
         foreign key (DC_LINK_CONFIGURATION_ID) references DC_LINK_CONFIGURATION (ID)
 );
 
+# bit defaults to true, but entity inits with false
 create table DC_LINK_PARTNER
 (
-    ID             bigint               not null
+    ID             bigint       not null
         primary key,
-    DESCRIPTION    longtext             null,
-    ENABLED        tinyint(1) default 0 not null,
-    NAME           varchar(255)         not null,
-    LINK_TYPE      varchar(20)          null,
-    LINK_CONFIG_ID bigint               null,
+    DESCRIPTION    longtext     null,
+    ENABLED        bit          not null,
+    NAME           varchar(255) not null,
+    LINK_TYPE      varchar(20)  null,
+    LINK_CONFIG_ID bigint       null,
     constraint UK_50y2l6v1vlcoaimoae2rpk5r6
         unique (NAME),
     constraint FKdhl3vsslwv2bo9ttjc5lnm4h6
@@ -294,28 +301,30 @@ create table DOMIBUS_CONNECTOR_MESSAGE_INFO
         foreign key (MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID)
 );
 
+# bit defaults to true
 create table DOMIBUS_CONNECTOR_USER
 (
-    ID                     bigint               not null
+    ID                     bigint      not null
         primary key,
-    CREATED                datetime(6)          not null,
-    GRACE_LOGINS_USED      int        default 0 not null,
-    LOCKED                 tinyint(1) default 0 not null,
-    NUMBER_OF_GRACE_LOGINS int        default 5 not null,
-    ROLE                   varchar(50)          not null,
-    USERNAME               varchar(50)          not null
+    CREATED                datetime(6) not null,
+    GRACE_LOGINS_USED      bigint      not null,
+    LOCKED                 bit         not null,
+    NUMBER_OF_GRACE_LOGINS bigint      not null,
+    ROLE                   varchar(50) not null,
+    USERNAME               varchar(50) not null
 );
 
+# bit defaults to true
 create table DOMIBUS_CONNECTOR_USER_PWD
 (
-    ID          bigint               not null
+    ID          bigint        not null
         primary key,
-    CREATED     datetime(6)          not null,
-    CURRENT_PWD tinyint(1) default 1 not null,
-    INITIAL_PWD tinyint(1) default 1 not null,
-    password    varchar(1024)        not null,
-    salt        varchar(512)         not null,
-    USER_ID     bigint               not null,
+    CREATED     datetime(6)   not null,
+    CURRENT_PWD bit           not null,
+    INITIAL_PWD bit           not null,
+    password    varchar(1024) not null,
+    salt        varchar(512)  not null,
+    USER_ID     bigint        not null,
     constraint FK62doe366dlq21rv9ysf7hfk4e
         foreign key (USER_ID) references DOMIBUS_CONNECTOR_USER (ID)
 );

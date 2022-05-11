@@ -1,3 +1,8 @@
+-- not part of the jpa model
+CREATE TABLE DC_DB_VERSION
+(
+    TAG VARCHAR2(255) PRIMARY KEY
+)/
 create table DC_KEYSTORE
 (
     ID          number(19, 0)      not null,
