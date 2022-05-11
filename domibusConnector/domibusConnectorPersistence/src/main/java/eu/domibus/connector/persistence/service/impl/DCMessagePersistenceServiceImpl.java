@@ -318,8 +318,8 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
     @Override
     @Transactional(readOnly = true)
-    public List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery() {
-        List<PDomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
+    public List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery() {
+        List<PDomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
         return mapDBMessagesToDTO(dbMessages);
     }
 
