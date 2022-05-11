@@ -542,7 +542,7 @@ create table DC_TRANSPORT_STEP
     TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR(255),
     REMOTE_MESSAGE_ID           VARCHAR(255),
     CREATED                     TIMESTAMP,
-    TRANSPORTED_MESSAGE         TEXT,
+    TRANSPORT_MESSAGE           TEXT,
     FINAL_STATE_REACHED         TIMESTAMP,
     constraint PK_DC_TRANSPORT_STEP
         primary key (ID)
@@ -552,7 +552,7 @@ create table DC_TRANSPORT_STEP_STATUS
 (
     TRANSPORT_STEP_ID BIGINT      not null,
     STATE             VARCHAR(40) not null,
-    CREATED           TIMESTAMP,
+    CREATED           timestamp without time zone,
     TEXT              TEXT,
     constraint PK_DC_TRANS_STEP_STATUS
         primary key (TRANSPORT_STEP_ID, STATE),

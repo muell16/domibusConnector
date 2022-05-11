@@ -39,8 +39,8 @@ public class PDomibusConnectorMessageLane {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_MESSAGE_LANE_PROPERTY", joinColumns=@JoinColumn(name="DC_MESSAGE_LANE_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME")
-    @Column(name="PROPERTY_VALUE", length = 21844) // max length for varchar using 3-byte utf8 chars
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {

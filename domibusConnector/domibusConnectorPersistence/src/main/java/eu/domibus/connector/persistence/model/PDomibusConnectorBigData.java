@@ -42,7 +42,7 @@ public class PDomibusConnectorBigData {
     @Column(name="CHECKSUM")
     private String checksum;
     
-    @Column(name="CREATED")
+    @Column(name="CREATED", nullable = false)
     private Date created;
 
     @Column(name="CONNECTOR_MESSAGE_ID")

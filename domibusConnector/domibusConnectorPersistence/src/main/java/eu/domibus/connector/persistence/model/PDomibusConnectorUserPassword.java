@@ -48,11 +48,11 @@ public class PDomibusConnectorUserPassword {
     @Column(nullable = false, length = 512)
     private String salt;
     
-    @Column(name="CURRENT_PWD", nullable = false, columnDefinition = "boolean default true")
-	private boolean currentPassword;
+    @Column(name="CURRENT_PWD", nullable = false)
+	private boolean currentPassword = true;
     
-    @Column(name="INITIAL_PWD", nullable = false, columnDefinition = "boolean default true")
-	private boolean initialPassword;
+    @Column(name="INITIAL_PWD", nullable = false)
+	private boolean initialPassword = true;
 		
     @Column(name = "CREATED", nullable = false)
     private Date created;

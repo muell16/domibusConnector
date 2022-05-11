@@ -23,13 +23,13 @@ public class PDomibusConnectorTransportStepStatusUpdate {
     private PDomibusConnectorTransportStep transportStep;
 
     @Id
-    @Column(name = "STATE")
+    @Column(name = "STATE", nullable = false)
     //@Convert(converter = TransportStateJpaConverter.class)
     //does not work because it is part of ID!
     //instead convert within setter/getter!
     private String transportStateString;
 
-    @Column(name = "CREATED")
+    @Column(name = "CREATED", nullable = false)
     private LocalDateTime created;
 
     @Lob

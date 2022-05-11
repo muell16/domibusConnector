@@ -1,13 +1,13 @@
 create table DC_KEYSTORE
 (
-    ID          bigint       not null
+    ID          bigint        not null
         primary key,
-    DESCRIPTION varchar(512) null,
-    KEYSTORE    longblob     not null,
-    PASSWORD    varchar(255) null,
-    TYPE        varchar(50)  null,
-    UPLOADED    datetime(6)  not null,
-    UUID        varchar(255) not null,
+    DESCRIPTION varchar(512)  null,
+    KEYSTORE    longblob      not null,
+    PASSWORD    varchar(1024) null,
+    TYPE        varchar(50)   null,
+    UPLOADED    datetime(6)   not null,
+    UUID        varchar(255)  not null,
     constraint UK_90ry06hw9optjgeay7s8mvyye
         unique (UUID)
 );
@@ -16,15 +16,15 @@ create table DC_LINK_CONFIGURATION
 (
     ID          bigint       not null
         primary key,
-    CONFIG_NAME varchar(255) null,
+    CONFIG_NAME varchar(255) not null,
     LINK_IMPL   varchar(255) null
 );
 
 create table DC_LINK_CONFIG_PROPERTY
 (
-    DC_LINK_CONFIGURATION_ID bigint       not null,
-    PROPERTY_VALUE           varchar(255) null,
-    PROPERTY_NAME            varchar(255) not null,
+    DC_LINK_CONFIGURATION_ID bigint        not null,
+    PROPERTY_VALUE           varchar(2048) null,
+    PROPERTY_NAME            varchar(255)  not null,
     primary key (DC_LINK_CONFIGURATION_ID, PROPERTY_NAME),
     constraint FK62l6hjp3v8y2mgs1rfwaqslqm
         foreign key (DC_LINK_CONFIGURATION_ID) references DC_LINK_CONFIGURATION (ID)
@@ -32,13 +32,13 @@ create table DC_LINK_CONFIG_PROPERTY
 
 create table DC_LINK_PARTNER
 (
-    ID             bigint       not null
+    ID             bigint               not null
         primary key,
-    DESCRIPTION    varchar(255) null,
-    ENABLED        bit          not null,
-    NAME           varchar(255) null,
-    LINK_TYPE      varchar(255) null,
-    LINK_CONFIG_ID bigint       null,
+    DESCRIPTION    longtext             null,
+    ENABLED        tinyint(1) default 0 not null,
+    NAME           varchar(255)         not null,
+    LINK_TYPE      varchar(20)          null,
+    LINK_CONFIG_ID bigint               null,
     constraint UK_50y2l6v1vlcoaimoae2rpk5r6
         unique (NAME),
     constraint FKdhl3vsslwv2bo9ttjc5lnm4h6
@@ -47,9 +47,9 @@ create table DC_LINK_PARTNER
 
 create table DC_LINK_PARTNER_PROPERTY
 (
-    DC_LINK_PARTNER_ID bigint       not null,
-    PROPERTY_VALUE     varchar(255) null,
-    PROPERTY_NAME      varchar(255) not null,
+    DC_LINK_PARTNER_ID bigint        not null,
+    PROPERTY_VALUE     varchar(2048) null,
+    PROPERTY_NAME      varchar(255)  not null,
     primary key (DC_LINK_PARTNER_ID, PROPERTY_NAME),
     constraint FKq1jp8n1v9eovkn9mmslnhlhhk
         foreign key (DC_LINK_PARTNER_ID) references DC_LINK_PARTNER (ID)
@@ -67,9 +67,9 @@ create table DC_MESSAGE_LANE
 
 create table DC_MESSAGE_LANE_PROPERTY
 (
-    DC_MESSAGE_LANE_ID bigint       not null,
-    PROPERTY_VALUE     varchar(255) null,
-    PROPERTY_NAME      varchar(255) not null,
+    DC_MESSAGE_LANE_ID bigint        not null,
+    PROPERTY_VALUE     varchar(2048) null,
+    PROPERTY_NAME      varchar(255)  not null,
     primary key (DC_MESSAGE_LANE_ID, PROPERTY_NAME),
     constraint FK8i4lmhlsfpwb2i9srbubyrhb4
         foreign key (DC_MESSAGE_LANE_ID) references DC_MESSAGE_LANE (ID)
@@ -86,14 +86,14 @@ create table DC_MSGCNT_DETSIG
 
 create table DC_PMODE_SET
 (
-    ID                bigint       not null
+    ID                bigint      not null
         primary key,
-    ACTIVE            bit          null,
-    CREATED           datetime(6)  null,
-    DESCRIPTION       varchar(255) null,
-    PMODES            tinyblob     null,
-    FK_CONNECTORSTORE bigint       null,
-    FK_MESSAGE_LANE   bigint       null,
+    ACTIVE            bit         null,
+    CREATED           datetime(6) null,
+    DESCRIPTION       longtext    null,
+    PMODES            longblob    null,
+    FK_CONNECTORSTORE bigint      null,
+    FK_MESSAGE_LANE   bigint      null,
     constraint FKawkfbejuoofu1ijhxhpqqjwdj
         foreign key (FK_CONNECTORSTORE) references DC_KEYSTORE (ID),
     constraint FKlnoic3soynw9bped4y6iqxjpk
@@ -104,11 +104,11 @@ create table DC_TRANSPORT_STEP
 (
     ID                          bigint       not null
         primary key,
-    ATTEMPT                     int          null,
-    CONNECTOR_MESSAGE_ID        varchar(255) null,
-    CREATED                     datetime(6)  null,
+    ATTEMPT                     int          not null,
+    CONNECTOR_MESSAGE_ID        varchar(255) not null,
+    CREATED                     datetime(6)  not null,
     FINAL_STATE_REACHED         datetime(6)  null,
-    LINK_PARTNER_NAME           varchar(255) null,
+    LINK_PARTNER_NAME           varchar(255) not null,
     REMOTE_MESSAGE_ID           varchar(255) null,
     TRANSPORT_ID                varchar(255) null,
     TRANSPORT_SYSTEM_MESSAGE_ID varchar(255) null,
@@ -119,7 +119,7 @@ create table DC_TRANSPORT_STEP_STATUS
 (
     STATE             varchar(255) not null,
     TRANSPORT_STEP_ID bigint       not null,
-    CREATED           datetime(6)  null,
+    CREATED           datetime(6)  not null,
     TEXT              longtext     null,
     primary key (STATE, TRANSPORT_STEP_ID),
     constraint FK5g1jngh3f82ialbtnqq99h418
@@ -130,7 +130,7 @@ create table DOMIBUS_CONNECTOR_ACTION
 (
     ID           bigint       not null
         primary key,
-    ACTION       varchar(255) null,
+    ACTION       varchar(255) not null,
     FK_PMODE_SET bigint       null,
     constraint FK249380r1rr1kt886abx7exj7g
         foreign key (FK_PMODE_SET) references DC_PMODE_SET (ID)
@@ -140,13 +140,13 @@ create table DOMIBUS_CONNECTOR_BIGDATA
 (
     ID                   bigint       not null
         primary key,
-    CHECKSUM             varchar(255) null,
+    CHECKSUM             longtext     null,
     CONNECTOR_MESSAGE_ID varchar(255) null,
     CONTENT              longblob     null,
-    CREATED              datetime(6)  null,
+    CREATED              datetime(6)  not null,
     LAST_ACCESS          datetime(6)  null,
     MIMETYPE             varchar(255) null,
-    NAME                 varchar(255) null
+    NAME                 longtext     null
 );
 
 create table DOMIBUS_CONNECTOR_MESSAGE
@@ -161,8 +161,8 @@ create table DOMIBUS_CONNECTOR_MESSAGE
     CREATED              datetime(6)  not null,
     DELIVERED_GW         datetime(6)  null,
     DELIVERED_BACKEND    datetime(6)  null,
-    DIRECTION_SOURCE     varchar(10)  null,
-    DIRECTION_TARGET     varchar(10)  null,
+    DIRECTION_SOURCE     varchar(20)  null,
+    DIRECTION_TARGET     varchar(20)  null,
     EBMS_MESSAGE_ID      varchar(255) null,
     GATEWAY_NAME         varchar(255) null,
     HASH_VALUE           longtext     null,
@@ -182,7 +182,7 @@ create table DOMIBUS_CONNECTOR_EVIDENCE
         primary key,
     DELIVERED_NAT datetime(6)  null,
     DELIVERED_GW  datetime(6)  null,
-    EVIDENCE      varchar(255) null,
+    EVIDENCE      longtext     null,
     TYPE          varchar(255) null,
     UPDATED       datetime(6)  not null,
     MESSAGE_ID    bigint       not null,
@@ -194,20 +194,20 @@ create table DOMIBUS_CONNECTOR_MSG_CONT
 (
     ID                    bigint       not null
         primary key,
-    CHECKSUM              varchar(255) null,
+    CHECKSUM              longtext     null,
     CONNECTOR_MESSAGE_ID  varchar(255) null,
     CONTENT               longblob     null,
     CONTENT_TYPE          varchar(255) null,
-    CREATED               datetime(6)  null,
+    CREATED               datetime(6)  not null,
     DELETED               datetime(6)  null,
-    DIGEST                varchar(255) null,
-    PAYLOAD_DESCRIPTION   varchar(255) null,
-    PAYLOAD_IDENTIFIER    varchar(255) null,
+    DIGEST                varchar(512) null,
+    PAYLOAD_DESCRIPTION   longtext     null,
+    PAYLOAD_IDENTIFIER    varchar(512) null,
     PAYLOAD_MIMETYPE      varchar(255) null,
-    PAYLOAD_NAME          varchar(255) null,
+    PAYLOAD_NAME          varchar(512) null,
     PAYLOAD_SIZE          bigint       null,
     STORAGE_PROVIDER_NAME varchar(255) null,
-    STORAGE_REFERENCE_ID  varchar(255) null,
+    STORAGE_REFERENCE_ID  varchar(512) null,
     DETACHED_SIGNATURE_ID bigint       null,
     MESSAGE_ID            bigint       null,
     constraint FK7emymoigdt3qsplyri0dq1xow
@@ -271,17 +271,17 @@ create table DOMIBUS_CONNECTOR_SERVICE
 
 create table DOMIBUS_CONNECTOR_MESSAGE_INFO
 (
-    ID               bigint       not null
+    ID               bigint        not null
         primary key,
-    CREATED          datetime(6)  not null,
-    FINAL_RECIPIENT  varchar(255) null,
-    ORIGINAL_SENDER  varchar(255) null,
-    UPDATED          datetime(6)  not null,
-    FK_ACTION        bigint       null,
-    FK_FROM_PARTY_ID bigint       null,
-    MESSAGE_ID       bigint       not null,
-    FK_SERVICE       bigint       null,
-    FK_TO_PARTY_ID   bigint       null,
+    CREATED          datetime(6)   not null,
+    FINAL_RECIPIENT  varchar(2048) null,
+    ORIGINAL_SENDER  varchar(2048) null,
+    UPDATED          datetime(6)   not null,
+    FK_ACTION        bigint        null,
+    FK_FROM_PARTY_ID bigint        null,
+    MESSAGE_ID       bigint        not null,
+    FK_SERVICE       bigint        null,
+    FK_TO_PARTY_ID   bigint        null,
     constraint FKa5oheqmhn4eu4j1yuyi3femsh
         foreign key (FK_TO_PARTY_ID) references DOMIBUS_CONNECTOR_PARTY (ID),
     constraint FKadkw4ku0o3a3x80felptltnfr
@@ -302,8 +302,8 @@ create table DOMIBUS_CONNECTOR_USER
     GRACE_LOGINS_USED      int        default 0 not null,
     LOCKED                 tinyint(1) default 0 not null,
     NUMBER_OF_GRACE_LOGINS int        default 5 not null,
-    ROLE                   varchar(255)         not null,
-    USERNAME               varchar(255)         not null
+    ROLE                   varchar(50)          not null,
+    USERNAME               varchar(50)          not null
 );
 
 create table DOMIBUS_CONNECTOR_USER_PWD
@@ -335,8 +335,8 @@ create table QRTZ_FIRED_TRIGGERS
     TRIGGER_NAME      varchar(190) not null,
     TRIGGER_GROUP     varchar(190) not null,
     INSTANCE_NAME     varchar(190) not null,
-    FIRED_TIME        bigint(13)   not null,
-    SCHED_TIME        bigint(13)   not null,
+    FIRED_TIME        bigint       not null,
+    SCHED_TIME        bigint       not null,
     PRIORITY          int          not null,
     STATE             varchar(16)  not null,
     JOB_NAME          varchar(190) null,
@@ -403,8 +403,8 @@ create table QRTZ_SCHEDULER_STATE
 (
     SCHED_NAME        varchar(120) not null,
     INSTANCE_NAME     varchar(190) not null,
-    LAST_CHECKIN_TIME bigint(13)   not null,
-    CHECKIN_INTERVAL  bigint(13)   not null,
+    LAST_CHECKIN_TIME bigint       not null,
+    CHECKIN_INTERVAL  bigint       not null,
     primary key (SCHED_NAME, INSTANCE_NAME)
 );
 
@@ -416,15 +416,15 @@ create table QRTZ_TRIGGERS
     JOB_NAME       varchar(190) not null,
     JOB_GROUP      varchar(190) not null,
     DESCRIPTION    varchar(250) null,
-    NEXT_FIRE_TIME bigint(13)   null,
-    PREV_FIRE_TIME bigint(13)   null,
+    NEXT_FIRE_TIME bigint       null,
+    PREV_FIRE_TIME bigint       null,
     PRIORITY       int          null,
     TRIGGER_STATE  varchar(16)  not null,
     TRIGGER_TYPE   varchar(8)   not null,
-    START_TIME     bigint(13)   not null,
-    END_TIME       bigint(13)   null,
+    START_TIME     bigint       not null,
+    END_TIME       bigint       null,
     CALENDAR_NAME  varchar(190) null,
-    MISFIRE_INSTR  smallint(2)  null,
+    MISFIRE_INSTR  smallint     null,
     JOB_DATA       blob         null,
     primary key (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP),
     constraint QRTZ_TRIGGERS_ibfk_1
@@ -462,9 +462,9 @@ create table QRTZ_SIMPLE_TRIGGERS
     SCHED_NAME      varchar(120) not null,
     TRIGGER_NAME    varchar(190) not null,
     TRIGGER_GROUP   varchar(190) not null,
-    REPEAT_COUNT    bigint(7)    not null,
-    REPEAT_INTERVAL bigint(12)   not null,
-    TIMES_TRIGGERED bigint(10)   not null,
+    REPEAT_COUNT    bigint       not null,
+    REPEAT_INTERVAL bigint       not null,
+    TIMES_TRIGGERED bigint       not null,
     primary key (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP),
     constraint QRTZ_SIMPLE_TRIGGERS_ibfk_1
         foreign key (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP) references QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP)

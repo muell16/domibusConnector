@@ -46,14 +46,14 @@ public class PDomibusConnectorUser {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name="LOCKED", nullable = false, columnDefinition = "boolean default false")
-	private boolean locked;
+    @Column(name="LOCKED", nullable = false)
+	private boolean locked = false;
 
-	@Column(name="NUMBER_OF_GRACE_LOGINS", nullable=false, columnDefinition = "integer default 5")
-	private Long numberOfGraceLogins;
+	@Column(name="NUMBER_OF_GRACE_LOGINS", nullable=false)
+	private Long numberOfGraceLogins = 5L;
 
-	@Column(name="GRACE_LOGINS_USED", nullable=false, columnDefinition = "integer default 0")
-	private Long graceLoginsUsed;
+	@Column(name="GRACE_LOGINS_USED", nullable=false)
+	private Long graceLoginsUsed = 0L;
 	
     @Column(name = "CREATED", nullable = false)
     private Date created;

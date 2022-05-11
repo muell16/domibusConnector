@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="mysql5_4.4.0_full_init" type="DatabaseScript" editBeforeRun="true">
+  <configuration default="false" name="mysql5_4.4.0_full_init" type="DatabaseScript" folderName="MySQL" editBeforeRun="true">
     <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_initial.ddl" />
     <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_initial-data.sql" />
     <script-file value="$PROJECT_DIR$/domibusConnectorPersistence/src/main/resources/dbscripts/initial/MySQL/mysql_4.4.0_quartz.sql" />

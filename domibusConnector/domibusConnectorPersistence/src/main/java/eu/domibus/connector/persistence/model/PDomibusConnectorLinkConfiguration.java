@@ -29,13 +29,13 @@ public class PDomibusConnectorLinkConfiguration {
     @Column(name = "LINK_IMPL")
     private String linkImpl;
 
-    @Column(name = "CONFIG_NAME")
+    @Column(name = "CONFIG_NAME", nullable = false)
     private String configName;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_CONFIG_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_CONFIGURATION_ID", referencedColumnName = "ID"))
     @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
-    @Column(name="PROPERTY_VALUE", length = 21844) // max length for varchar using 3-byte utf8 chars
+    @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {

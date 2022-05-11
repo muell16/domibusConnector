@@ -31,7 +31,7 @@ public class PDomibusConnectorLinkPartner {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name="ENABLED", nullable = false, columnDefinition = "boolean default false")
+    @Column(name="ENABLED", nullable = false)
     private Boolean enabled = Boolean.FALSE;
 
     @Column(name = "LINK_TYPE", length = 20)
@@ -39,8 +39,8 @@ public class PDomibusConnectorLinkPartner {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME")
-    @Column(name="PROPERTY_VALUE", length = 21844) // max length for varchar using 3-byte utf8 chars
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     @ManyToOne

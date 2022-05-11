@@ -285,6 +285,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_BIGDATA
     CHECKSUM    CLOB,
     CREATED     TIMESTAMP NOT NULL,
     MESSAGE_ID  DECIMAL(10, 0),
+    CONNECTOR_MESSAGE_ID VARCHAR2(255),
     LAST_ACCESS TIMESTAMP,
     NAME        CLOB,
     CONTENT     BLOB,
@@ -562,7 +563,7 @@ create table DC_TRANSPORT_STEP
     TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR2(255),
     REMOTE_MESSAGE_ID           VARCHAR2(255),
     CREATED                     TIMESTAMP,
-    TRANSPORTED_MESSAGE         CLOB,
+    TRANSPORT_MESSAGE         CLOB,
     FINAL_STATE_REACHED         TIMESTAMP,
     constraint PK_DC_TRANSPORT_STEP
         primary key (ID)
@@ -596,3 +597,14 @@ CREATE TABLE DC_DB_VERSION
 );
 INSERT INTO DC_DB_VERSION (TAG)
 VALUES ('V4.3');
+
+create table DC_LINK_PARTNER
+(
+    ID             number(19, 0)         not null,
+    DESCRIPTION    clob,
+    ENABLED        boolean default false not null,
+    NAME           varchar2(255 char)    not null,
+    LINK_TYPE      varchar2(20 char),
+    LINK_CONFIG_ID number(19, 0),
+    primary key (ID)
+)

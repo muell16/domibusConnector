@@ -18,9 +18,31 @@
         <option name="value" value="oracle" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="spring.jpa.generate-ddl" />
+        <option name="value" value="false" />
+      </param>
+      <param>
+        <option name="name" value="decorator.datasource.p6spy.enable-logging" />
         <option name="value" value="true" />
+      </param>
+      <param>
+        <option name="name" value="decorator.datasource.p6spy.log-file" />
+        <option name="value" value="spy.log" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target" />
+        <option name="value" value="gen_oracle.sql" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.jpa.properties.javax.persistence.schema-generation.create-source" />
+        <option name="value" value="metadata" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.jpa.properties.javax.persistence.schema-generation.scripts.action" />
+        <option name="value" value="create" />
       </param>
     </additionalParameters>
     <option name="DEBUG_MODE" value="true" />
