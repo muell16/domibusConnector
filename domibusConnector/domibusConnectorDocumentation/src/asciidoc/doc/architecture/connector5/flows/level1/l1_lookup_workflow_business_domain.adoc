@@ -27,7 +27,7 @@ Process Message is responsible for taking the received message and assigning the
 == Lookup Business Workflow Activity Diagram
 
 .Lookup Business Workflow Activity Diagram
-[plantuml,receive_BM_from_gateway_activity,format=svg]
+[plantuml,lookup_business_workflow_activity_diagram,format=svg]
 ----
 @startuml
 

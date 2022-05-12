@@ -1,4 +1,3 @@
-
 ifndef::basepath[]
 :basepath: ../../../../
 endif::basepath[]
@@ -12,15 +11,13 @@ ifndef::mvnbasedir[]
 :mvnbasedir: {basepath}/../../../../../
 endif::mvnbasedir[]
 
-
 = Connector Workflows / Business Processing
-
 
 == Abstract
 
-This document summarizes the whole message/business proecessing of domibusConnector.
+This document summarizes the whole message/business processing of domibusConnector.
 
-This document splits the message processing process into different detail levels:
+This document splits the message processing into different detail levels:
 
 * Detail Level 0: a very raw overview
 * Detail Level 1: give more details
@@ -50,20 +47,21 @@ include::level1/l1_process_send_event.adoc[leveloffset=+2]
 include::level2/l2_lookup_backend.adoc[leveloffset=+2]
 include::level2/l2_lookup_business_domain.adoc[leveloffset=+2]
 include::level2/l2_lookup_workflow.adoc[leveloffset=+2]
+include::level2/l2_validate_transition_message.adoc[leveloffset=+2]
 
 == Implementation Details
 
 === Events
 
-Sending a event shortly after a commit can be done by spring-events: https://www.baeldung.com/spring-events
+Sending an event shortly after a commit can be done by spring-events: https://www.baeldung.com/spring-events
 Using spring-events should also make it possible to make JMS completely optional!
 
-Still if the event is lost somehow timerjobs must look for these stuck messages and put them back on the queue/in the process.
+Still if the event is lost somehow timer jobs must look for these stuck messages and put them back on the queue/in the process.
 
 
-==== Other problems/issues
+=== Other problems/issues
 
-===== Evidence Ordering
+==== Evidence Ordering
 
 The ordering of evidences is necessary, but if a message is lost or at least retried on GW level the ordering might be wrong. For this case there is no strategy in place to resolve this issue.
 Possible solutions:
@@ -77,5 +75,5 @@ Possible solutions:
 
 |===
 
-NOTE: This migh only be a problem if RETRIEVAL evidences are created/required. In all other cases the message should fail anyway.
+NOTE: This might only be a problem if RETRIEVAL evidences are created/required. In all other cases the message should fail anyway.
 

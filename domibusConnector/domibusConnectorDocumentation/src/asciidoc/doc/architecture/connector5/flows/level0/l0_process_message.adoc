@@ -43,14 +43,23 @@ start
 
 :Lookup Workflow, Business Domain, start Workflow;
 
-:Process Message;
 
-if () then (success)
+
+if (is BusinessMessage) then (yes)
+:Process Message;
+if (processed successfully) then (yes)
 :Forward Message;
-else (failure)
+else (no)
 :create negative evidence and send it;
 endif
-:process send events;
+
+else (no)
+:Process ConfirmationMessage;
+:Forward ConfirmationMessage;
+endif
+
+
+:process forward/send events;
 
 
 :Cleanup;
@@ -60,9 +69,52 @@ stop
 @enduml
 ----
 
+== Activity Table
+
+|===
+| activity | description | sub-activities | on success | on fail
+
+| Receive, store Message
+| Receive Message from Link Partner and save it
+a|
+* link:../level1/l1_receive_and_store_message.adoc[]
+| Message with Payloads is saved
+| depends on LinkImpl
+
+| LookupWorkflow, Business Domain, start Workflow
+| Determine the correct workflow and business domain, and start processing the workflow
+a|
+* link:../level1/l1_lookup_workflow_business_domain.adoc[]
+| Correct workflow, business domain is set
+| Any failure will stop the message processing and will require a **human decision**?, Betriebsfall!?
+
+a|
+* Process Message / Process Confirmation Message
+* Forward Message / Forward ConfirmationMessage
+| Process the message or confirmation message then just forward the message to LinkPartner (Gateway or Backend).
+a|
+* link:../level1/l1_process_message.adoc[]
+| Message has been processed
+| New message created with an negative evidence. The new confirmation message will start with Receive, store message all over again.
+
+| process forward/send events
+| The forwarded message will be sent to a LinkPartner any results from this sending process will be processed here. (Send accepted, Send failure, Sending problem, Sending declined, ...)
+a|
+* link:../level1/l1_process_send_event.adoc[]
+a| In case of a send success event: The according evidence is created as new message and goes back to
+(Gateway (eg. RELAY_REMMD_ACCEPTANCE), BACKEND (eg. SUBMISSION_ACCEPTANCE))
+In case of a send failure event: The according evidence is created as new message and goes back to
+(Gateway (eg. RELAY_REMMD_REJECTION), BACKEND (eg. SUBMISSION_REJECTION))
+
+
+
+|===
+
+
+
 == Sequence Diagram Overview
 
-[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+[plantuml,message_processing_sequence_diagram_overview,format=svg]
 ----
 @startuml
 
@@ -74,6 +126,7 @@ collections LinkModule
 collections WorkflowModule
 'collections PersistenceModule
 collections ConnectorController
+participant EventHandler as JMS
 endbox
 
 'database DB
@@ -96,6 +149,9 @@ WorkflowModule -> JMS--: send newWorkflowCreatedEvent
 
 JMS -> ConnectorController++: receive newWorkflowCreatedEvent
 group DB_TX: process_message
+
+alt process BusinessMessage
+
 ConnectorController -> ConnectorController: process message
 alt success
 ConnectorController -> ConnectorController: Forward message
@@ -103,6 +159,12 @@ else failure
 ConnectorController -> ConnectorController: create neg. evidence and send it
 end
 end
+
+else process ConfirmationMessage
+ConnectorController -> ConnectorController: process message
+ConnectorController -> ConnectorController: Forward ConfirmationMessage
+end
+
 ConnectorController -> JMS--: send messageReadyToSentEvent
 
 

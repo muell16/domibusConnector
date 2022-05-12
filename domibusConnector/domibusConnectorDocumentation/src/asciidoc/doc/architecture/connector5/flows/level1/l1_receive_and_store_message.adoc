@@ -15,12 +15,16 @@ A message can be received in different variantes:
 * PULL
 * Asynchronus/Synchronus
 
+== Receive Message Activity Diagram
+
+//TODO: decide if recive/receive_from_gateway.adoc should be a l2 step, or directly be included here!?
+
 == Receive Message Sequence Diagrams
 
 === Receive Message by Synchronous Request
 
 .Synchronous Message Receive Sequence Diagram
-[plantuml,message_processing_sequence_diagram_overview,format=svg]
+[plantuml,receive_message_by_synchronous_request_sequence_diagram,format=svg]
 ----
 @startuml
 
@@ -40,10 +44,10 @@ group DB_TX
 activate LP
 LP -> LinkModule ++: SubmitMessage request
 
-LinkModule -> WorkflowModule --++: StartWorkflow
+LinkModule -> WorkflowModule --++: ReserveStepdId
 WorkflowModule -> DB++: persist
 DB --> WorkflowModule --: db ids
-WorkflowModule --> LinkModule --++: return Workflow id
+WorkflowModule --> LinkModule --++: return step id
 
 
 group sub_DB_TX
@@ -57,8 +61,8 @@ end
 
 LinkModule --> LP: return not/ACK response
 
-LinkModule -> WorkflowModule --++: finishWorkflow
-WorkflowModule -> DB++: update workflow state
+LinkModule -> WorkflowModule --++: save step result
+WorkflowModule -> DB++: update step result
 DB --> WorkflowModule--: return
 WorkflowModule --> LinkModule --++: return
 
@@ -90,8 +94,8 @@ end
 
 
 
-LinkModule -> WorkflowModule --++: finishWorkflow
-WorkflowModule -> DB++: update workflow state
+LinkModule -> WorkflowModule --++: save step result
+WorkflowModule -> DB++: update step result
 DB --> WorkflowModule--: return
 WorkflowModule --> LinkModule --++: return
 
@@ -124,7 +128,7 @@ end
 The asynchronus request will most likely if EventService or a file based interface is being used.
 
 .Asynchronous Message Receive Sequence Diagram
-[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+[plantuml,receive_message_by_asynchronous_request_sequence_diagram,format=svg]
 ----
 @startuml
 
@@ -183,7 +187,7 @@ LinkModule --> EventService: send newMessageStoredEvent
 === Receive Message by Pulling Sequence Diagram
 
 .Receive Message by Pulling Sequence Diagram
-[plantuml,message_processing_sequence_diagram_overview_pull,format=svg]
+[plantuml,receive_message_by_pulling_sequence_diagram,format=svg]
 ----
 @startuml
 

@@ -58,7 +58,7 @@ end
 == Process send event sequence diagram
 
 .Process Send Event Sequence Diagram
-[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+[plantuml,process_send_event_sequence_diagram,format=svg]
 ----
 @startuml
 
