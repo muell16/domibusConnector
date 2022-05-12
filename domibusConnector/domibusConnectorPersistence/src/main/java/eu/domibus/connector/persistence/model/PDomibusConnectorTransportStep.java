@@ -31,13 +31,13 @@ public class PDomibusConnectorTransportStep {
     private Long id;
 
 //    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @Column(name = "CONNECTOR_MESSAGE_ID")
+    @Column(name = "CONNECTOR_MESSAGE_ID", nullable = false)
     private String connectorMessageId;
 
-    @Column(name = "LINK_PARTNER_NAME")
+    @Column(name = "LINK_PARTNER_NAME", nullable = false)
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
 
-    @Column(name = "ATTEMPT")
+    @Column(name = "ATTEMPT", nullable = false)
     private int attempt = 1;
 
     @Column(name = "TRANSPORT_ID")
@@ -57,7 +57,7 @@ public class PDomibusConnectorTransportStep {
     @Column(name = "REMOTE_MESSAGE_ID")
     private String remoteMessageId;
 
-    @Column(name = "CREATED")
+    @Column(name = "CREATED", nullable = false)
     private LocalDateTime created;
 
     /**

@@ -24,6 +24,7 @@ public class PDomibusConnectorBigData {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
+    @Lob
     @Column(name="NAME")
     private String name;
 
@@ -33,14 +34,15 @@ public class PDomibusConnectorBigData {
     @Column(name="MIMETYPE")
     private String mimeType;
 
-    @Column(name="CONTENT")
     @Lob
+    @Column(name="CONTENT")
     private byte[] content;
-    
+
+    @Lob
     @Column(name="CHECKSUM")
     private String checksum;
     
-    @Column(name="CREATED")
+    @Column(name="CREATED", nullable = false)
     private Date created;
 
     @Column(name="CONNECTOR_MESSAGE_ID")

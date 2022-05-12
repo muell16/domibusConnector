@@ -18,11 +18,14 @@ rename table DOMIBUS_CONNECTOR_SERVICE to BKP_DC_SERVICE;
 -- delayed to 4.4
 -- alter table DOMIBUS_CONNECTOR_ACTION drop column PDF_REQUIRED;
 
-alter table DC_TRANSPORT_STEP
-    add FINAL_STATE_REACHED TIMESTAMP(6);
+alter table DC_TRANSPORT_STEP add TRANSPORT_MESSAGE LONGTEXT;
+alter table DC_TRANSPORT_STEP add FINAL_STATE_REACHED TIMESTAMP(6);
 
 alter table DOMIBUS_CONNECTOR_MSG_CONT
     add CONNECTOR_MESSAGE_ID VARCHAR(512);
+
+alter table DOMIBUS_CONNECTOR_BIGDATA
+    add CONNECTOR_MESSAGE_ID VARCHAR(255) null;
 
 CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
 (
@@ -32,10 +35,6 @@ CREATE TABLE DOMIBUS_CONNECTOR_SERVICE
     SERVICE_TYPE VARCHAR(255)
 );
 
-alter table DC_TRANSPORT_STEP change CONNECTOR_MESSAGE_ID bkp_cmid BIGINT NOT NULL;
-alter table DC_TRANSPORT_STEP add           CONNECTOR_MESSAGE_ID VARCHAR(255);
-alter table DC_TRANSPORT_STEP add           TRANSPORTED_MESSAGE LONGTEXT;
-update      DC_TRANSPORT_STEP set           CONNECTOR_MESSAGE_ID=CONVERT(bkp_cmid, char);
 
 DELIMITER $$
 DROP PROCEDURE IF EXISTS DropFK $$
@@ -64,20 +63,122 @@ DELIMITER ;
 -- To prevent errors I had to wrap the deletion in a procedure
 call DropFK('DC_TRANSPORT_STEP', 'FK_MESSAGESTEP_MESSAGE');
 
-alter table DC_TRANSPORT_STEP drop column   bkp_cmid;
+alter table DOMIBUS_CONNECTOR_EVIDENCE modify UPDATED TIMESTAMP(6) not null;
 
-alter table DC_TRANSPORT_STEP modify       CONNECTOR_MESSAGE_ID VARCHAR(255) not null;
+alter table DOMIBUS_CONNECTOR_MESSAGE modify UPDATED TIMESTAMP(6) not null;
+alter table DOMIBUS_CONNECTOR_MESSAGE modify CREATED TIMESTAMP(6) not null;
 
+alter table DOMIBUS_CONNECTOR_MESSAGE_INFO modify CREATED TIMESTAMP(6) not null;
+alter table DOMIBUS_CONNECTOR_MESSAGE_INFO modify UPDATED TIMESTAMP(6) not null;
+
+alter table DOMIBUS_CONNECTOR_MSG_CONT modify MESSAGE_ID BIGINT not null;
+alter table DOMIBUS_CONNECTOR_MSG_CONT modify CREATED TIMESTAMP(6) not null;
+
+alter table DOMIBUS_CONNECTOR_BIGDATA modify CREATED TIMESTAMP(6) not null;
+
+alter table DC_PMODE_SET modify CREATED TIMESTAMP(6) not null;
+alter table DC_PMODE_SET modify ACTIVE BOOLEAN not null;
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
+# todo cant use functions if you are an unprivileged user
+# DELIMITER $$
+# DROP PROCEDURE IF EXISTS UpdateSeqStore $$
+# CREATE PROCEDURE UpdateSeqStore ()
+# BEGIN
+#     IF EXISTS (select SEQ_NAME
+#                from DOMIBUS_CONNECTOR_SEQ_STORE
+#                where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') THEN
+#         IF EXISTS(select SEQ_NAME
+#                   from DOMIBUS_CONNECTOR_SEQ_STORE
+#                   where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') THEN
+#
+#             delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
+#         END IF;
+#     ELSE
+#         update DOMIBUS_CONNECTOR_SEQ_STORE
+#         set SEQ_NAME =   'DOMIBUS_CONNECTOR_MESSAGE.ID'
+#         where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
+#     END IF;
+#
+#     IF EXISTS (select SEQ_NAME
+#                from DOMIBUS_CONNECTOR_SEQ_STORE
+#                where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') THEN
+#         IF EXISTS(select SEQ_NAME
+#                   from DOMIBUS_CONNECTOR_SEQ_STORE
+#                   where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') THEN
+#
+#             delete from DOMIBUS_CONNECTOR_SEQ_STORE where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
+#         END IF;
+#     ELSE
+#         update DOMIBUS_CONNECTOR_SEQ_STORE
+#         set SEQ_NAME =   'DOMIBUS_CONNECTOR_EVIDENCE.ID'
+#         where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
+#     END IF;
+# END
+# $$
+# DELIMITER ;
+# call UpdateSeqStore();
+
+
+# ToDO fix
+# [2022-05-10 16:30:59] 0 row(s) affected in 74 ms
+# update DOMIBUS_CONNECTOR_SEQ_STORE
+# set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
+# where not exists
+#     (select SEQ_NAME
+#      from DOMIBUS_CONNECTOR_SEQ_STORE
+#      where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
+#     exists
+#         (select ...
+# .
+# [2022-05-10 16:30:59] [HY000][1093] You can't specify target table 'DOMIBUS_CONNECTOR_SEQ_STORE' for update in FROM clause
+## TODO check this : https://stackoverflow.com/questions/4429319/you-cant-specify-target-table-for-update-in-from-clause
+
+# this is supposed to replace the function above
 update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID';
+where not exists
+    (select SEQ_NAME
+     from DOMIBUS_CONNECTOR_SEQ_STORE
+     where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
+    exists
+        (select SEQ_NAME
+         from DOMIBUS_CONNECTOR_SEQ_STORE
+         where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID')
+;
 
 update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_EVIDENCE.ID'
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID';
+where not exists
+    (select SEQ_NAME
+     from DOMIBUS_CONNECTOR_SEQ_STORE
+     where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') and
+    exists
+        (select SEQ_NAME
+         from DOMIBUS_CONNECTOR_SEQ_STORE
+         where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID')
+;
+
+delete from DOMIBUS_CONNECTOR_SEQ_STORE
+where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID' AND
+    EXISTS(select SEQ_NAME
+           from DOMIBUS_CONNECTOR_SEQ_STORE
+           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') AND
+    EXISTS(select SEQ_NAME
+           from DOMIBUS_CONNECTOR_SEQ_STORE
+           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID')
+;
+
+delete from DOMIBUS_CONNECTOR_SEQ_STORE
+where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID' AND
+    EXISTS(select SEQ_NAME
+           from DOMIBUS_CONNECTOR_SEQ_STORE
+           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') AND
+    EXISTS(select SEQ_NAME
+           from DOMIBUS_CONNECTOR_SEQ_STORE
+           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID')
+;
 
 insert into DOMIBUS_CONNECTOR_SERVICE select * from BKP_DC_SERVICE;
 
@@ -111,7 +212,10 @@ drop table BKP_DC_SERVICE;
 
 ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT PK_DC_SERVICE PRIMARY KEY (ID);
 ALTER TABLE DOMIBUS_CONNECTOR_SERVICE ADD CONSTRAINT FK_SERVICE_PMODE_SET_ID FOREIGN KEY (FK_PMODE_SET) REFERENCES DC_PMODE_SET(ID);
+ALTER TABLE DOMIBUS_CONNECTOR_BIGDATA ADD CONSTRAINT FK_DC_BIGDATA_MESSAGE_01 FOREIGN KEY (MESSAGE_ID) REFERENCES DOMIBUS_CONNECTOR_MESSAGE (ID);
 
 -- #################### 6/6 UPDATE Version ####################
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+update DC_DB_VERSION set TAG='V4.3';

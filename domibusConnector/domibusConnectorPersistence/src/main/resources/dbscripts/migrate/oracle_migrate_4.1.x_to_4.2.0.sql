@@ -595,14 +595,14 @@ drop table BKP_DC_MESSAGE cascade constraints;
 -- #################### 5/6 ADD the constraints ####################
 
 alter table DC_LINK_CONFIGURATION add constraint PK_DC_LINK_CONFIGURATION primary key (ID);
-alter table DC_LINK_CONFIGURATION add constraint UN_DC_LINK_CONF_NAME_01 unique (CONFIG_NAME);
+alter table DC_LINK_CONFIGURATION add constraint UQ_DC_LINK_CONF_NAME_01 unique (CONFIG_NAME);
 
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
     ADD CONSTRAINT PK_DC_MESSAGE PRIMARY KEY (ID);
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
-    ADD CONSTRAINT UN_DC_MSG_ID UNIQUE (CONNECTOR_MESSAGE_ID);
+    ADD CONSTRAINT UQ_DC_MSG_ID UNIQUE (CONNECTOR_MESSAGE_ID);
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
-    ADD CONSTRAINT UN_DC_MSG_NAT_MSG_01 UNIQUE (BACKEND_MESSAGE_ID);
+    ADD CONSTRAINT UQ_DC_MSG_NAT_MSG_01 UNIQUE (BACKEND_MESSAGE_ID);
 
 ALTER TABLE DOMIBUS_CONNECTOR_MSG_ERROR
     ADD CONSTRAINT PK_DC_MSG_ERROR PRIMARY KEY (ID);
@@ -670,7 +670,7 @@ alter table DC_LINK_CONFIG_PROPERTY
 alter table DC_MESSAGE_LANE
     add constraint PK_DC_MSG_LANE primary key (ID);
 alter table DC_MESSAGE_LANE
-    add constraint UN_DC_MSG_LANE_01 unique (NAME);
+    add constraint UQ_DC_MSG_LANE_01 unique (NAME);
 
 alter table DC_MESSAGE_LANE_PROPERTY
     add constraint PK_DC_MSG_LANE_PROP
@@ -683,7 +683,7 @@ alter table DC_LINK_PARTNER
     add constraint PK_DC_LINK_P
         primary key (ID);
 alter table DC_LINK_PARTNER
-    add constraint UN_DC_LINK_P_01 unique (NAME);
+    add constraint UQ_DC_LINK_P_01 unique (NAME);
 alter table DC_LINK_PARTNER
     add constraint FK_DC_LINK_P_01
         foreign key (LINK_CONFIG_ID) references DC_LINK_CONFIGURATION (ID);
@@ -710,5 +710,4 @@ alter table DC_TRANSPORT_STEP_STATUS
 
 -- #################### 6/6 UPDATE Version ####################
 
-INSERT INTO DC_DB_VERSION (TAG)
-VALUES ('V4.2.8');
+update DC_DB_VERSION set TAG='V4.4';
