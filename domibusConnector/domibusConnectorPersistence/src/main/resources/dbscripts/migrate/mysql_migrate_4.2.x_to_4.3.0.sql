@@ -81,7 +81,7 @@ alter table DC_PMODE_SET modify ACTIVE BOOLEAN not null;
 
 -- #################### 3/6 TRANSFER & UPDATE data ####################
 
-# todo cant use functions if you are an unprivileged user
+# In MySQL you can't use functions if you are an unprivileged user, works on mariadb though
 # DELIMITER $$
 # DROP PROCEDURE IF EXISTS UpdateSeqStore $$
 # CREATE PROCEDURE UpdateSeqStore ()
@@ -120,64 +120,29 @@ alter table DC_PMODE_SET modify ACTIVE BOOLEAN not null;
 # DELIMITER ;
 # call UpdateSeqStore();
 
-
-# ToDO fix
-# [2022-05-10 16:30:59] 0 row(s) affected in 74 ms
-# update DOMIBUS_CONNECTOR_SEQ_STORE
-# set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
-# where not exists
-#     (select SEQ_NAME
-#      from DOMIBUS_CONNECTOR_SEQ_STORE
-#      where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
-#     exists
-#         (select ...
-# .
-# [2022-05-10 16:30:59] [HY000][1093] You can't specify target table 'DOMIBUS_CONNECTOR_SEQ_STORE' for update in FROM clause
-## TODO check this : https://stackoverflow.com/questions/4429319/you-cant-specify-target-table-for-update-in-from-clause
-
-# this is supposed to replace the function above
+# WHY MySQL, why do I have to select * as something first?
 update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_MESSAGE.ID'
 where not exists
-    (select SEQ_NAME
-     from DOMIBUS_CONNECTOR_SEQ_STORE
-     where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
+    (select a.SEQ_NAME
+     from (select * from DOMIBUS_CONNECTOR_SEQ_STORE) as a
+     where a.SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID') and
     exists
-        (select SEQ_NAME
-         from DOMIBUS_CONNECTOR_SEQ_STORE
-         where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID')
+        (select b.SEQ_NAME
+         from (select * from DOMIBUS_CONNECTOR_SEQ_STORE) as b
+         where b.SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID')
 ;
 
 update DOMIBUS_CONNECTOR_SEQ_STORE
 set SEQ_NAME='DOMIBUS_CONNECTOR_EVIDENCE.ID'
 where not exists
-    (select SEQ_NAME
-     from DOMIBUS_CONNECTOR_SEQ_STORE
-     where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') and
+    (select c.SEQ_NAME
+     from (select * from DOMIBUS_CONNECTOR_SEQ_STORE) as c
+     where c.SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID') and
     exists
-        (select SEQ_NAME
-         from DOMIBUS_CONNECTOR_SEQ_STORE
-         where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID')
-;
-
-delete from DOMIBUS_CONNECTOR_SEQ_STORE
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID' AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGES.ID') AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_MESSAGE.ID')
-;
-
-delete from DOMIBUS_CONNECTOR_SEQ_STORE
-where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID' AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID') AND
-    EXISTS(select SEQ_NAME
-           from DOMIBUS_CONNECTOR_SEQ_STORE
-           where SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCE.ID')
+        (select d.SEQ_NAME
+         from (select * from DOMIBUS_CONNECTOR_SEQ_STORE) as d
+         where d.SEQ_NAME = 'DOMIBUS_CONNECTOR_EVIDENCES.ID')
 ;
 
 insert into DOMIBUS_CONNECTOR_SERVICE select * from BKP_DC_SERVICE;
