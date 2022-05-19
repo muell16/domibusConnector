@@ -8,425 +8,6 @@ create table dc_db_version
 alter table dc_db_version
     owner to postgres;
 
-create table dc_keystore
-(
-    id          numeric(10)  not null
-        constraint pk_dc_keystore
-        primary key,
-    uuid        varchar(255) not null
-        constraint uq_dc_keystore
-        unique,
-    keystore    bytea        not null,
-    password    varchar(1024),
-    uploaded    timestamp    not null,
-    description varchar(512),
-    type        varchar(50)
-);
-
-alter table dc_keystore
-    owner to postgres;
-
-create table dc_link_configuration
-(
-    id          numeric(10)  not null
-        constraint pk_dc_link_configuration
-        primary key,
-    config_name varchar(255) not null
-        constraint un_dc_link_conf_name_01
-        unique,
-    link_impl   varchar(255)
-);
-
-alter table dc_link_configuration
-    owner to postgres;
-
-create table dc_link_config_property
-(
-    dc_link_configuration_id numeric(10)  not null
-        constraint fk_dc_link_conf_prop_01
-        references dc_link_configuration,
-    property_name            varchar(255) not null,
-    property_value           text,
-    constraint pk_dc_link_conf_prop
-        primary key (dc_link_configuration_id, property_name)
-);
-
-alter table dc_link_config_property
-    owner to postgres;
-
-create table dc_link_partner
-(
-    id             numeric(10) not null
-        constraint pk_dc_link_p
-        primary key,
-    name           varchar(50) not null
-        constraint un_dc_link_p_01
-        unique,
-    description    text,
-    enabled        boolean,
-    link_config_id numeric(10)
-        constraint fk_dc_link_p_01
-        references dc_link_configuration,
-    link_type      varchar(20),
-    link_mode      varchar(20)
-);
-
-alter table dc_link_partner
-    owner to postgres;
-
-create table dc_link_partner_property
-(
-    dc_link_partner_id numeric(10)  not null
-        constraint fk_dc_link_p_prop_01
-        references dc_link_partner,
-    property_name      varchar(255) not null,
-    property_value     text,
-    constraint pk_dc_link_p_prop
-        primary key (dc_link_partner_id, property_name)
-);
-
-alter table dc_link_partner_property
-    owner to postgres;
-
-create table dc_message_lane
-(
-    id          numeric(10)  not null
-        constraint pk_dc_msg_lane
-        primary key,
-    name        varchar(255) not null
-        constraint un_dc_msg_lane_01
-        unique,
-    description text
-);
-
-alter table dc_message_lane
-    owner to postgres;
-
-create table dc_message_lane_property
-(
-    dc_message_lane_id numeric(10)  not null
-        constraint fk_dc_msg_lane_prop_01
-        references dc_message_lane,
-    property_name      varchar(255) not null,
-    property_value     text,
-    constraint pk_dc_msg_lane_prop
-        primary key (dc_message_lane_id, property_name)
-);
-
-alter table dc_message_lane_property
-    owner to postgres;
-
-create table dc_msgcnt_detsig
-(
-    id             numeric(10) not null
-        constraint pk_detsig
-        primary key,
-    signature      text,
-    signature_name varchar(255),
-    signature_type varchar(255)
-);
-
-alter table dc_msgcnt_detsig
-    owner to postgres;
-
-create table dc_pmode_set
-(
-    id                numeric(10) not null
-        constraint pk_dc_pmode_set
-        primary key,
-    fk_message_lane   numeric(10)
-        constraint fk_dc_pmode_set_01
-        references dc_message_lane,
-    created           timestamp   not null,
-    description       text,
-    active            numeric(1)  not null,
-    pmodes            bytea,
-    fk_connectorstore numeric(10)
-);
-
-alter table dc_pmode_set
-    owner to postgres;
-
-create table dc_transport_step
-(
-    id                          numeric(10)  not null
-        constraint pk_dc_transport_step
-        primary key,
-    connector_message_id        varchar(255) not null,
-    link_partner_name           varchar(255) not null,
-    attempt                     numeric(2)   not null,
-    transport_id                varchar(255),
-    transport_system_message_id varchar(255),
-    remote_message_id           varchar(255),
-    created                     timestamp,
-    transported_message         text,
-    final_state_reached         timestamp
-);
-
-alter table dc_transport_step
-    owner to postgres;
-
-create table dc_transport_step_status
-(
-    transport_step_id numeric(10) not null
-        constraint fk_dc_trans_step_status_01
-        references dc_transport_step,
-    state             varchar(40) not null,
-    created           timestamp,
-    text              text,
-    constraint pk_dc_trans_step_status
-        primary key (transport_step_id, state)
-);
-
-alter table dc_transport_step_status
-    owner to postgres;
-
-create table domibus_connector_action
-(
-    id           numeric(10)  not null
-        constraint pk_dc_action
-        primary key,
-    fk_pmode_set numeric(10)  not null
-        constraint fk_dc_action_pmode_set_01
-        references dc_pmode_set,
-    action       varchar(255) not null
-);
-
-alter table domibus_connector_action
-    owner to postgres;
-
-create table domibus_connector_bigdata
-(
-    id                   varchar(255) not null
-        constraint pk_dc_bigdata
-        primary key,
-    checksum             text,
-    created              timestamp    not null,
-    connector_message_id varchar(255),
-    last_access          timestamp,
-    name                 text,
-    content              bytea,
-    mimetype             varchar(255)
-);
-
-alter table domibus_connector_bigdata
-    owner to postgres;
-
-create table domibus_connector_message
-(
-    id                   numeric(10) not null
-        constraint pk_dc_message
-        primary key,
-    ebms_message_id      varchar(255),
-    backend_message_id   varchar(255)
-        constraint uq_dc_msg_bck_msg_id
-        unique,
-    backend_name         varchar(255),
-    connector_message_id varchar(255)
-        constraint uq_dc_msg_con_msg_id
-        unique,
-    conversation_id      varchar(255),
-    hash_value           text,
-    confirmed            timestamp,
-    rejected             timestamp,
-    delivered_backend    timestamp,
-    delivered_gw         timestamp,
-    updated              timestamp   not null,
-    created              timestamp   not null,
-    direction_source     varchar(20),
-    direction_target     varchar(20),
-    gateway_name         varchar(255)
-);
-
-alter table domibus_connector_message
-    owner to postgres;
-
-create table domibus_connector_evidence
-(
-    id                   numeric(10) not null
-        constraint pk_dc_evidence
-        primary key,
-    message_id           numeric(10) not null
-        constraint fk_dc_evidences_01
-        references domibus_connector_message,
-    connector_message_id varchar(255),
-    type                 varchar(255),
-    evidence             text,
-    delivered_nat        timestamp,
-    delivered_gw         timestamp,
-    updated              timestamp   not null
-);
-
-alter table domibus_connector_evidence
-    owner to postgres;
-
-create table domibus_connector_msg_cont
-(
-    id                    numeric(10) not null
-        constraint pk_dc_msg_cont
-        primary key,
-    message_id            numeric(10) not null
-        constraint fk_dc_con_01
-        references domibus_connector_message,
-    content_type          varchar(255),
-    content               bytea,
-    checksum              text,
-    created               timestamp   not null,
-    storage_provider_name varchar(255),
-    storage_reference_id  varchar(512),
-    digest                varchar(512),
-    payload_name          varchar(512),
-    payload_identifier    varchar(512),
-    payload_description   text,
-    payload_mimetype      varchar(255),
-    payload_size          numeric(10),
-    detached_signature_id numeric(10)
-        constraint fk_dc_msg_cont_02
-        references dc_msgcnt_detsig,
-    deleted               timestamp,
-    connector_message_id  varchar(512)
-);
-
-alter table domibus_connector_msg_cont
-    owner to postgres;
-
-create table domibus_connector_msg_error
-(
-    id            numeric(10)   not null
-        constraint pk_dc_msg_error
-        primary key,
-    message_id    numeric(10)   not null
-        constraint fk_dc_msg_error_01
-        references domibus_connector_message,
-    error_message varchar(2048) not null,
-    detailed_text text,
-    error_source  text,
-    created       timestamp     not null
-);
-
-alter table domibus_connector_msg_error
-    owner to postgres;
-
-create table domibus_connector_party
-(
-    id            numeric(10)  not null
-        constraint pk_dc_party
-        primary key,
-    fk_pmode_set  numeric(10)  not null
-        constraint fk_dc_service_pmode_set_01
-        references dc_pmode_set,
-    identifier    varchar(255),
-    party_id      varchar(255) not null,
-    role          varchar(255) not null,
-    party_id_type varchar(512) not null
-);
-
-alter table domibus_connector_party
-    owner to postgres;
-
-create table domibus_connector_property
-(
-    id             numeric(10)   not null
-        constraint pk_domibus_conn_03
-        primary key,
-    property_name  varchar(2048) not null,
-    property_value varchar(2048)
-);
-
-alter table domibus_connector_property
-    owner to postgres;
-
-create table domibus_connector_seq_store
-(
-    seq_name  varchar(255) not null
-        constraint pk_dc_seq_store
-        primary key,
-    seq_value numeric(10)  not null
-);
-
-alter table domibus_connector_seq_store
-    owner to postgres;
-
-create table domibus_connector_service
-(
-    id           numeric(10)  not null
-        constraint pk_dc_service
-        primary key,
-    fk_pmode_set numeric(10)  not null
-        constraint fk_dc_service_pmode_set_01
-        references dc_pmode_set,
-    service      varchar(255) not null,
-    service_type varchar(512)
-);
-
-alter table domibus_connector_service
-    owner to postgres;
-
-create table domibus_connector_message_info
-(
-    id               numeric(10) not null
-        constraint pk_dc_message_info
-        primary key,
-    message_id       numeric(10) not null
-        constraint fk_dc_msg_info_i
-        references domibus_connector_message,
-    fk_from_party_id numeric(10)
-        constraint fk_dc_msg_info_f_party
-        references domibus_connector_party,
-    fk_to_party_id   numeric(10)
-        constraint fk_dc_msg_info_t_party
-        references domibus_connector_party,
-    original_sender  varchar(2048),
-    final_recipient  varchar(2048),
-    fk_service       numeric(10)
-        constraint fk_dc_msg_info_service
-        references domibus_connector_service,
-    fk_action        numeric(10)
-        constraint fk_dc_msg_info_action
-        references domibus_connector_action,
-    created          timestamp   not null,
-    updated          timestamp   not null
-);
-
-alter table domibus_connector_message_info
-    owner to postgres;
-
-create table domibus_connector_user
-(
-    id                     numeric(10)          not null
-        constraint pk_dc_user
-        primary key,
-    username               varchar(50)          not null
-        constraint username_unique
-        unique,
-    role                   varchar(50)          not null,
-    locked                 numeric(1) default 0 not null,
-    number_of_grace_logins numeric(2) default 5 not null,
-    grace_logins_used      numeric(2) default 0 not null,
-    created                timestamp            not null
-);
-
-alter table domibus_connector_user
-    owner to postgres;
-
-create table domibus_connector_user_pwd
-(
-    id          numeric(10)          not null
-        constraint pk_dc_user_pwd
-        primary key,
-    user_id     numeric(10)          not null
-        constraint fk_dc_user_pwd_01
-        references domibus_connector_user,
-    password    varchar(1024)        not null,
-    salt        varchar(512)         not null,
-    current_pwd numeric(1) default 0 not null,
-    initial_pwd numeric(1) default 0 not null,
-    created     timestamp            not null
-);
-
-alter table domibus_connector_user_pwd
-    owner to postgres;
-
 create table qrtz_job_details
 (
     sched_name        varchar(120) not null,
@@ -658,5 +239,399 @@ create table qrtz_locks
 );
 
 alter table qrtz_locks
+    owner to postgres;
+
+create table dc_keystore
+(
+    id          bigint       not null
+        primary key,
+    description varchar(512),
+    keystore    oid          not null,
+    password    varchar(1024),
+    type        varchar(50),
+    uploaded    timestamp    not null,
+    uuid        varchar(255) not null
+        constraint uk_90ry06hw9optjgeay7s8mvyye
+            unique
+);
+
+alter table dc_keystore
+    owner to postgres;
+
+create table dc_link_configuration
+(
+    id          bigint       not null
+        primary key,
+    config_name varchar(255) not null,
+    link_impl   varchar(255)
+);
+
+alter table dc_link_configuration
+    owner to postgres;
+
+create table dc_link_config_property
+(
+    dc_link_configuration_id bigint       not null
+        constraint fk62l6hjp3v8y2mgs1rfwaqslqm
+            references dc_link_configuration,
+    property_value           varchar(2048),
+    property_name            varchar(255) not null,
+    primary key (dc_link_configuration_id, property_name)
+);
+
+alter table dc_link_config_property
+    owner to postgres;
+
+create table dc_link_partner
+(
+    id             bigint       not null
+        primary key,
+    description    text,
+    enabled        boolean      not null,
+    name           varchar(255) not null
+        constraint uk_50y2l6v1vlcoaimoae2rpk5r6
+            unique,
+    link_type      varchar(20),
+    link_config_id bigint
+        constraint fkdhl3vsslwv2bo9ttjc5lnm4h6
+            references dc_link_configuration
+);
+
+alter table dc_link_partner
+    owner to postgres;
+
+create table dc_link_partner_property
+(
+    dc_link_partner_id bigint       not null
+        constraint fkq1jp8n1v9eovkn9mmslnhlhhk
+            references dc_link_partner,
+    property_value     varchar(2048),
+    property_name      varchar(255) not null,
+    primary key (dc_link_partner_id, property_name)
+);
+
+alter table dc_link_partner_property
+    owner to postgres;
+
+create table dc_message_lane
+(
+    id          bigint       not null
+        primary key,
+    description text,
+    name        varchar(255) not null
+        constraint uk_ljuyrly9is6sioein0ro1yfh3
+            unique
+);
+
+alter table dc_message_lane
+    owner to postgres;
+
+create table dc_message_lane_property
+(
+    dc_message_lane_id bigint       not null
+        constraint fk8i4lmhlsfpwb2i9srbubyrhb4
+            references dc_message_lane,
+    property_value     varchar(2048),
+    property_name      varchar(255) not null,
+    primary key (dc_message_lane_id, property_name)
+);
+
+alter table dc_message_lane_property
+    owner to postgres;
+
+create table dc_msgcnt_detsig
+(
+    id             bigint not null
+        primary key,
+    signature      oid,
+    signature_name varchar(255),
+    signature_type varchar(255)
+);
+
+alter table dc_msgcnt_detsig
+    owner to postgres;
+
+create table dc_pmode_set
+(
+    id                bigint not null
+        primary key,
+    active            boolean,
+    created           timestamp,
+    description       text,
+    pmodes            oid,
+    fk_connectorstore bigint
+        constraint fkawkfbejuoofu1ijhxhpqqjwdj
+            references dc_keystore,
+    fk_message_lane   bigint
+        constraint fklnoic3soynw9bped4y6iqxjpk
+            references dc_message_lane
+);
+
+alter table dc_pmode_set
+    owner to postgres;
+
+create table dc_transport_step
+(
+    id                          bigint       not null
+        primary key,
+    attempt                     integer      not null,
+    connector_message_id        varchar(255) not null,
+    created                     timestamp    not null,
+    final_state_reached         timestamp,
+    link_partner_name           varchar(255) not null,
+    remote_message_id           varchar(255),
+    transport_id                varchar(255),
+    transport_system_message_id varchar(255),
+    transported_message         text
+);
+
+alter table dc_transport_step
+    owner to postgres;
+
+create table dc_transport_step_status
+(
+    state             varchar(255) not null,
+    transport_step_id bigint       not null
+        constraint fk5g1jngh3f82ialbtnqq99h418
+            references dc_transport_step,
+    created           timestamp    not null,
+    text              text,
+    primary key (state, transport_step_id)
+);
+
+alter table dc_transport_step_status
+    owner to postgres;
+
+create table domibus_connector_action
+(
+    id           bigint       not null
+        primary key,
+    action       varchar(255) not null,
+    fk_pmode_set bigint
+        constraint fk249380r1rr1kt886abx7exj7g
+            references dc_pmode_set
+);
+
+alter table domibus_connector_action
+    owner to postgres;
+
+create table domibus_connector_bigdata
+(
+    id                   bigint    not null
+        primary key,
+    checksum             text,
+    connector_message_id varchar(255),
+    content              oid,
+    created              timestamp not null,
+    last_access          timestamp,
+    mimetype             varchar(255),
+    name                 text
+);
+
+alter table domibus_connector_bigdata
+    owner to postgres;
+
+create table domibus_connector_message
+(
+    id                   bigint       not null
+        primary key,
+    backend_message_id   varchar(255)
+        constraint uk_81o66ln4txujh8p62a6g6lqx9
+            unique,
+    backend_name         varchar(255),
+    confirmed            timestamp,
+    connector_message_id varchar(255) not null
+        constraint uk_s9y5ajqyjnjb7gjf2na4ae7ur
+            unique,
+    conversation_id      varchar(255),
+    created              timestamp    not null,
+    delivered_gw         timestamp,
+    delivered_backend    timestamp,
+    direction_source     varchar(20),
+    direction_target     varchar(20),
+    ebms_message_id      varchar(255)
+        constraint uk_e71rh4n71m4mpgcokhengr592
+            unique,
+    gateway_name         varchar(255),
+    hash_value           text,
+    rejected             timestamp,
+    updated              timestamp    not null
+);
+
+alter table domibus_connector_message
+    owner to postgres;
+
+create table domibus_connector_evidence
+(
+    id            bigint    not null
+        primary key,
+    delivered_nat timestamp,
+    delivered_gw  timestamp,
+    evidence      text,
+    type          varchar(255),
+    updated       timestamp not null,
+    message_id    bigint    not null
+        constraint fk4jxg7xyfgfl8txay9slwcafj1
+            references domibus_connector_message
+);
+
+alter table domibus_connector_evidence
+    owner to postgres;
+
+create table domibus_connector_msg_cont
+(
+    id                    bigint    not null
+        primary key,
+    checksum              text,
+    connector_message_id  varchar(255),
+    content               oid,
+    content_type          varchar(255),
+    created               timestamp not null,
+    deleted               timestamp,
+    digest                varchar(512),
+    payload_description   text,
+    payload_identifier    varchar(512),
+    payload_mimetype      varchar(255),
+    payload_name          varchar(512),
+    payload_size          bigint,
+    storage_provider_name varchar(255),
+    storage_reference_id  varchar(512),
+    detached_signature_id bigint
+        constraint fk7emymoigdt3qsplyri0dq1xow
+            references dc_msgcnt_detsig,
+    message_id            bigint
+        constraint fkda043m9h695ogla2sg58kxkb1
+            references domibus_connector_message
+);
+
+alter table domibus_connector_msg_cont
+    owner to postgres;
+
+create table domibus_connector_msg_error
+(
+    id            bigint        not null
+        primary key,
+    created       timestamp     not null,
+    detailed_text text,
+    error_message varchar(2048) not null,
+    error_source  text,
+    message_id    bigint        not null
+        constraint fki0wrarse6i0t5nj4r82p1e4n
+            references domibus_connector_message
+);
+
+alter table domibus_connector_msg_error
+    owner to postgres;
+
+create table domibus_connector_party
+(
+    id            bigint       not null
+        primary key,
+    party_id      varchar(255) not null,
+    party_id_type varchar(512) not null,
+    identifier    varchar(255),
+    role          varchar(255),
+    role_type     varchar(50),
+    fk_pmode_set  bigint
+        constraint fkal7yndgaiapslndruuu48g34
+            references dc_pmode_set
+);
+
+alter table domibus_connector_party
+    owner to postgres;
+
+create table domibus_connector_property
+(
+    id             integer       not null
+        primary key,
+    property_name  varchar(2048) not null,
+    property_value varchar(2048)
+);
+
+alter table domibus_connector_property
+    owner to postgres;
+
+create table domibus_connector_seq_store
+(
+    seq_name  varchar(255) not null
+        primary key,
+    seq_value bigint
+);
+
+alter table domibus_connector_seq_store
+    owner to postgres;
+
+create table domibus_connector_service
+(
+    id           bigint       not null
+        primary key,
+    service      varchar(255) not null,
+    service_type varchar(255),
+    fk_pmode_set bigint
+        constraint fkbj0847csnu0cbi0u92j81lrn0
+            references dc_pmode_set
+);
+
+alter table domibus_connector_service
+    owner to postgres;
+
+create table domibus_connector_message_info
+(
+    id               bigint    not null
+        primary key,
+    created          timestamp not null,
+    final_recipient  varchar(2048),
+    original_sender  varchar(2048),
+    updated          timestamp not null,
+    fk_action        bigint
+        constraint fkadkw4ku0o3a3x80felptltnfr
+            references domibus_connector_action,
+    fk_from_party_id bigint
+        constraint fkhbvkhb64ltjr9pjpvds09t6h7
+            references domibus_connector_party,
+    message_id       bigint    not null
+        constraint fkuvd19003ob697v6e8ovgw140
+            references domibus_connector_message,
+    fk_service       bigint
+        constraint fkoltsh7wsh3a0pjg7aagltlbbo
+            references domibus_connector_service,
+    fk_to_party_id   bigint
+        constraint fka5oheqmhn4eu4j1yuyi3femsh
+            references domibus_connector_party
+);
+
+alter table domibus_connector_message_info
+    owner to postgres;
+
+create table domibus_connector_user
+(
+    id                     bigint      not null
+        primary key,
+    created                timestamp   not null,
+    grace_logins_used      bigint      not null,
+    locked                 boolean     not null,
+    number_of_grace_logins bigint      not null,
+    role                   varchar(50) not null,
+    username               varchar(50) not null
+);
+
+alter table domibus_connector_user
+    owner to postgres;
+
+create table domibus_connector_user_pwd
+(
+    id          bigint        not null
+        primary key,
+    created     timestamp     not null,
+    current_pwd boolean       not null,
+    initial_pwd boolean       not null,
+    password    varchar(1024) not null,
+    salt        varchar(512)  not null,
+    user_id     bigint        not null
+        constraint fk62doe366dlq21rv9ysf7hfk4e
+            references domibus_connector_user
+);
+
+alter table domibus_connector_user_pwd
     owner to postgres;
 
