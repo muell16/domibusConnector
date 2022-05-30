@@ -301,7 +301,6 @@ create table DOMIBUS_CONNECTOR_MESSAGE_INFO
         foreign key (MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID)
 );
 
-# bit defaults to true
 create table DOMIBUS_CONNECTOR_USER
 (
     ID                     bigint      not null
@@ -314,7 +313,6 @@ create table DOMIBUS_CONNECTOR_USER
     USERNAME               varchar(50) not null
 );
 
-# bit defaults to true
 create table DOMIBUS_CONNECTOR_USER_PWD
 (
     ID          bigint        not null
@@ -535,4 +533,5 @@ create index IDX_QRTZ_T_N_STATE
 
 create index IDX_QRTZ_T_STATE
     on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_STATE);
+
 

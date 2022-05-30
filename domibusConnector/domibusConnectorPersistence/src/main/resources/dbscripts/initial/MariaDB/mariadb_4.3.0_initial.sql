@@ -543,7 +543,7 @@ create table DC_TRANSPORT_STEP
     TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR(255),
     REMOTE_MESSAGE_ID           VARCHAR(255),
     CREATED                     TIMESTAMP(6),
-    TRANSPORT_MESSAGE           LONGTEXT,
+    TRANSPORTED_MESSAGE           LONGTEXT,
     FINAL_STATE_REACHED         TIMESTAMP(6),
     constraint PK_DC_TRANSPORT_STEP
         primary key (ID)
