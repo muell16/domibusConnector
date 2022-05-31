@@ -27,6 +27,17 @@
             <classifier>documentation</classifier>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBuilderDeployable</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBuilderStandalone</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>eu.domibus.connector.plugin</groupId>
             <artifactId>domibus-connector-plugin-distribution</artifactId>
             <version>4.4.0</version>
