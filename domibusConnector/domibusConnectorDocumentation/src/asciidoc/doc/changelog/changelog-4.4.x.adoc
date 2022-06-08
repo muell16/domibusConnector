@@ -91,7 +91,5 @@ if the AIA source was not reachable.
 * Fix for missing class issue [Ticket#55054]: Explicitly added dss-crl-parser-x509crl as dependency.
 * Fix issue with 4.4.x initial scripts at table DC_TRANSPORT_STEP => TRANSPORT_MESSAGE column should be TRANSPORTED_MESSAGE
 * Add prometheus metrics export interface dependency + documentation
-
-==== Known Issues
-
-* Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occures because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration.
+* Extend documentation
+* Additional work on slow certificate verification: Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occurs because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration.
