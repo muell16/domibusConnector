@@ -156,6 +156,32 @@ public class DbTableService {
 
     }
 
+    public void createColumn(ColumnRow item) {
+        TableDefinition tableDefinition = item.getTableDefinition();
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+        String columnList = tableDefinition.getColumnDefinitionMap()
+                .keySet()
+                .stream()
+                .collect(Collectors.joining(", "));
+
+        String paramList = tableDefinition.getColumnDefinitionMap()
+                .keySet()
+                .stream()
+                .map(s -> ":"+s)
+                .collect(Collectors.joining(", "));
+
+        tableDefinition.getColumnDefinitionMap()
+                .keySet()
+                .forEach(column -> {
+                    parameterSource.addValue(column, item.getCell(column));
+                });
+
+        String insertQuery = String.format("INSERT INTO %s (%s) VALUES (%s)", tableDefinition.getTableName(), columnList, paramList);
+
+        jdbcTemplate.update(insertQuery, parameterSource);
+    }
+
     private static class DbTableDataProvider extends AbstractBackEndDataProvider<ColumnRow, Object>
             implements DataProvider<ColumnRow, Object> {
 

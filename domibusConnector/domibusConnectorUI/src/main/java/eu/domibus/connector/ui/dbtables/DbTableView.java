@@ -3,8 +3,8 @@ package eu.domibus.connector.ui.dbtables;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.grid.editor.EditorSaveEvent;
@@ -42,9 +42,13 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
 
     private final DbTableService dbTableService;
 
-    private Div gridDiv = new Div();
+    private final Div gridDiv = new Div();
 
-    Binder<DbTableService.ColumnRow> binder = new Binder<>();
+    private Binder<DbTableService.ColumnRow> binder = new Binder<>();
+    private DbTableService.TableDefinition currentTableDefinition;
+    private Grid<DbTableService.ColumnRow> currentGrid;
+    private final Button createNewRowButton = new Button("Add Row");
+
 
     public DbTableView(Optional<DbTableService> dbTableService) {
         this.dbTableService = dbTableService.orElse(null);
@@ -62,34 +66,70 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
         ComboBox<String> tableChooser = new ComboBox<>();
         tableChooser.setItems(tables);
         tableChooser.addValueChangeListener(this::selectedTableChanged);
+        tableChooser.setWidth("10cm");
         this.add(tableChooser);
-        Button addButton = new Button("Add Row");
-        addButton.addClickListener(this::addButtonClicked);
-        this.add(addButton);
+        createNewRowButton.addClickListener(this::addButtonClicked);
+        createNewRowButton.setEnabled(false);
+        this.add(createNewRowButton);
         this.add(gridDiv);
         gridDiv.setSizeFull();
 
     }
 
     private void addButtonClicked(ClickEvent<Button> buttonClickEvent) {
-//        grid.
-        //TODO: open dialog and add new row...
+        final Dialog rowDialog = new Dialog();
+
+        rowDialog.setModal(true);
+        rowDialog.setHeight("80%");
+        rowDialog.setWidth("80%");
+
+        VerticalLayout verticalLayout = new VerticalLayout();
+        HorizontalLayout buttonBar = new HorizontalLayout();
+        HorizontalLayout dataBar = new HorizontalLayout();
+
+        //generate binder
+        Binder<DbTableService.ColumnRow> binder = new Binder<>();
+        for (DbTableService.ColumnDefinition cd : currentTableDefinition.getColumnDefinitionMap().values()) {
+            AbstractField field = createFieldAndBind(binder, cd);
+            dataBar.add(field);
+        }
+        binder.setBean(new DbTableService.ColumnRow(currentTableDefinition));
+
+        Button saveButton = new Button(VaadinIcon.CHECK.create());
+        Button cancelButton = new Button(VaadinIcon.CLOSE_SMALL.create());
+        cancelButton.addClickListener(clickEvent -> rowDialog.close());
+        saveButton.addClickListener(clickEvent -> {
+            DbTableService.ColumnRow newRow = binder.getBean();
+            try {
+                dbTableService.createColumn(newRow);
+                currentGrid.getDataProvider().refreshAll();
+                rowDialog.close();
+            } catch (Exception e) {
+                Notification.show("Failed to create DB row: " + e.getLocalizedMessage());
+            }
+
+        });
+        buttonBar.add(saveButton, cancelButton);
+
+        verticalLayout.add(buttonBar, dataBar);
+        rowDialog.add(verticalLayout);
+
+        rowDialog.open();
+
     }
 
-    Grid<DbTableService.ColumnRow> grid;
+
     private void selectedTableChanged(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> comboBoxStringComponentValueChangeEvent) {
         String tableName = comboBoxStringComponentValueChangeEvent.getValue();
-        grid = createGrid(tableName);
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-
+        currentTableDefinition = dbTableService.getTableDefinition(tableName);
+        currentGrid = createGrid(currentTableDefinition);
+        createNewRowButton.setEnabled(true);
         gridDiv.removeAll();
-        gridDiv.add(grid);
+        gridDiv.add(currentGrid);
 
     }
 
-    private Grid<DbTableService.ColumnRow> createGrid(String tableName) {
-        DbTableService.TableDefinition tableDefinition = dbTableService.getTableDefinition(tableName);
+    private Grid<DbTableService.ColumnRow> createGrid(DbTableService.TableDefinition tableDefinition) {
         Collection<DbTableService.ColumnDefinition> columns = tableDefinition.getColumnDefinitionMap().values();
 
 
@@ -99,29 +139,16 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
         final Grid.Column<DbTableService.ColumnRow> editColumn = grid.addComponentColumn(row -> this.createEditButton(grid, row));
 
         for (DbTableService.ColumnDefinition cd : columns) {
-            TextField tf = new TextField(cd.getColumnName());
+
+            AbstractField field = createFieldAndBind(binder, cd);
 
             Grid.Column<DbTableService.ColumnRow> columnRowColumn = grid.addColumn((ValueProvider<DbTableService.ColumnRow, Object>) m -> m.getCell(cd.getColumnName()));
             columnRowColumn.setHeader(cd.getColumnName())
                     .setResizable(true)
                     .setFooter(cd.getColumnName());
-            columnRowColumn.setEditorComponent(tf);
+            columnRowColumn.setEditorComponent(field);
 
-
-//            horizontalLayout.add(tf);
-            binder.bind(tf, new ValueProvider<DbTableService.ColumnRow, String>() {
-                @Override
-                public String apply(DbTableService.ColumnRow columnRow) {
-                    return Objects.toString(columnRow.getCell(cd.getColumnName()));
-                }
-            }, new Setter<DbTableService.ColumnRow, String>() {
-                @Override
-                public void accept(DbTableService.ColumnRow columnRow, String s) {
-                    columnRow.setCell(cd.getColumnName(), s);
-                }
-            });
         }
-
 
         grid.setDataProvider(dbTableService.getDataProvider(tableDefinition));
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
@@ -138,14 +165,29 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
         Button cancelButton = new Button(VaadinIcon.CLOSE.create(),
                 e -> editor.cancel());
         Button deleteButton = new Button(VaadinIcon.TRASH.create(), e -> this.deleteRow(e, editor.getItem()));
-        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
         HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton, deleteButton);
         editColumn.setEditorComponent(actions);
 
         return grid;
 
+    }
+
+    private AbstractField createFieldAndBind(Binder<DbTableService.ColumnRow> binder, DbTableService.ColumnDefinition cd) {
+        TextField tf = new TextField(cd.getColumnName());
+
+        //            horizontalLayout.add(tf);
+        binder.bind(tf, new ValueProvider<DbTableService.ColumnRow, String>() {
+            @Override
+            public String apply(DbTableService.ColumnRow columnRow) {
+                return Objects.toString(columnRow.getCell(cd.getColumnName()));
+            }
+        }, new Setter<DbTableService.ColumnRow, String>() {
+            @Override
+            public void accept(DbTableService.ColumnRow columnRow, String s) {
+                columnRow.setCell(cd.getColumnName(), s);
+            }
+        });
+        return tf;
     }
 
     private Button createEditButton(Grid grid, DbTableService.ColumnRow columnRow) {
