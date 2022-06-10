@@ -18,7 +18,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.Setter;
-import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
@@ -40,23 +39,23 @@ import java.util.Optional;
 public class DbTableView extends VerticalLayout implements AfterNavigationObserver {
     public static final String ROUTE = "dbtables";
 
-    private final DbTableService dbTableService;
+    private final transient DbTableService dbTableService;
 
     private final Div gridDiv = new Div();
 
     private Binder<DbTableService.ColumnRow> binder = new Binder<>();
-    private DbTableService.TableDefinition currentTableDefinition;
+    private transient DbTableService.TableDefinition currentTableDefinition;
     private Grid<DbTableService.ColumnRow> currentGrid;
     private final Button createNewRowButton = new Button("Add Row");
 
 
-    public DbTableView(Optional<DbTableService> dbTableService) {
-        this.dbTableService = dbTableService.orElse(null);
+    public DbTableView(Optional<DbTableService> dbTableServiceOptional) {
+        this.dbTableService = dbTableServiceOptional.orElse(null);
 
-        if (dbTableService == null) {
-            add(new Label("Hidden DB table view is not activated!"));
-        } else {
+        if (dbTableServiceOptional.isPresent()) {
             initUI();
+        } else {
+            add(new Label("Hidden DB table view is not activated!"));
         }
 
     }
@@ -88,18 +87,18 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
         HorizontalLayout dataBar = new HorizontalLayout();
 
         //generate binder
-        Binder<DbTableService.ColumnRow> binder = new Binder<>();
+        Binder<DbTableService.ColumnRow> dialogBinder = new Binder<>();
         for (DbTableService.ColumnDefinition cd : currentTableDefinition.getColumnDefinitionMap().values()) {
-            AbstractField field = createFieldAndBind(binder, cd);
+            AbstractField field = createFieldAndBind(dialogBinder, cd);
             dataBar.add(field);
         }
-        binder.setBean(new DbTableService.ColumnRow(currentTableDefinition));
+        dialogBinder.setBean(new DbTableService.ColumnRow(currentTableDefinition));
 
         Button saveButton = new Button(VaadinIcon.CHECK.create());
         Button cancelButton = new Button(VaadinIcon.CLOSE_SMALL.create());
         cancelButton.addClickListener(clickEvent -> rowDialog.close());
         saveButton.addClickListener(clickEvent -> {
-            DbTableService.ColumnRow newRow = binder.getBean();
+            DbTableService.ColumnRow newRow = dialogBinder.getBean();
             try {
                 dbTableService.createColumn(newRow);
                 currentGrid.getDataProvider().refreshAll();
@@ -152,18 +151,14 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
 
         grid.setDataProvider(dbTableService.getDataProvider(tableDefinition));
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        grid.addSelectionListener(this::rowSelected);
 
         Editor<DbTableService.ColumnRow> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
         editor.addSaveListener(this::saveChangedRow);
 
-        Button saveButton = new Button(VaadinIcon.CHECK.create(), e -> {
-            editor.save();
-        });
-        Button cancelButton = new Button(VaadinIcon.CLOSE.create(),
-                e -> editor.cancel());
+        Button saveButton = new Button(VaadinIcon.CHECK.create(), e -> editor.save());
+        Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
         Button deleteButton = new Button(VaadinIcon.TRASH.create(), e -> this.deleteRow(e, editor.getItem()));
         HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton, deleteButton);
         editColumn.setEditorComponent(actions);
@@ -174,19 +169,8 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
 
     private AbstractField createFieldAndBind(Binder<DbTableService.ColumnRow> binder, DbTableService.ColumnDefinition cd) {
         TextField tf = new TextField(cd.getColumnName());
-
-        //            horizontalLayout.add(tf);
-        binder.bind(tf, new ValueProvider<DbTableService.ColumnRow, String>() {
-            @Override
-            public String apply(DbTableService.ColumnRow columnRow) {
-                return Objects.toString(columnRow.getCell(cd.getColumnName()));
-            }
-        }, new Setter<DbTableService.ColumnRow, String>() {
-            @Override
-            public void accept(DbTableService.ColumnRow columnRow, String s) {
-                columnRow.setCell(cd.getColumnName(), s);
-            }
-        });
+        binder.bind(tf, (ValueProvider<DbTableService.ColumnRow, String>) columnRow -> Objects.toString(columnRow.getCell(cd.getColumnName())),
+                (Setter<DbTableService.ColumnRow, String>) (columnRow, s) -> columnRow.setCell(cd.getColumnName(), s));
         return tf;
     }
 
@@ -205,7 +189,8 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
     private void deleteRow(ClickEvent<Button> buttonClickEvent, DbTableService.ColumnRow columnRow) {
         try {
             dbTableService.deleteColumn(columnRow);
-        } catch (Exception e) { //TODO: update exception handling
+        } catch (Exception e) {
+            //TODO: update exception handling
             Notification.show("Error deleting row!" + e.getLocalizedMessage());
         }
     }
@@ -214,16 +199,10 @@ public class DbTableView extends VerticalLayout implements AfterNavigationObserv
         DbTableService.ColumnRow item = columnRowEditorSaveEvent.getItem();
         try {
             dbTableService.updateColumn(item);
-        } catch (Exception e) { //TODO: update exception handling
-//            columnRowEditorSaveEvent.getSource().
+        } catch (Exception e) {
+            //TODO: update exception handling
             Notification.show("Error updating changed row!" + e.getLocalizedMessage());
         }
-    }
-
-
-
-    private void rowSelected(SelectionEvent<Grid<DbTableService.ColumnRow>, DbTableService.ColumnRow> gridColumnRowSelectionEvent) {
-
     }
 
 
