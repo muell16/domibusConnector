@@ -25,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {MoveMessagesFromDlqToQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
+@DirtiesContext
 public class MoveMessagesFromDlqToQueueTest {
 
     @SpringBootApplication
