@@ -41,6 +41,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
     public static final String DEFAULT_SPRING_CONFIG_LOCATION = "optional:classpath:/config/,optional:file:./config/,optional:file:./config/connector/";
 
+    private static final String FILE_STRING = "file:";
     private ServletContext servletContext;
 
     String springConfigLocation = DEFAULT_SPRING_CONFIG_LOCATION;
@@ -72,6 +73,9 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static Properties loadConnectorConfigProperties(String connectorConfigFile) {
         Properties p = new Properties();
         if (connectorConfigFile != null) {
+            if (connectorConfigFile.startsWith(FILE_STRING)) {
+                connectorConfigFile = connectorConfigFile.substring(FILE_STRING.length() - 1);
+            }
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
                 String errorString = String.format("Cannot start because the via System Property [%s] provided config file [%s] mapped to path [%s] does not exist!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME, connectorConfigFile, connectorConfigFilePath);
@@ -103,8 +107,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
 
-            if (!connectorConfigFile.startsWith("file:")) {
-                connectorConfigFile = "file:" + connectorConfigFile;
+            if (!connectorConfigFile.startsWith(FILE_STRING)) {
+                connectorConfigFile = FILE_STRING + connectorConfigFile;
             }
 
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigFile);
