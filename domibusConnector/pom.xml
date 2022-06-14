@@ -92,7 +92,7 @@
         <!-- always update with cxf -->
         <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.5.9</spring.boot.version>
+        <spring.boot.version>2.5.14</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
         <vaadin.version>14.7.8</vaadin.version>

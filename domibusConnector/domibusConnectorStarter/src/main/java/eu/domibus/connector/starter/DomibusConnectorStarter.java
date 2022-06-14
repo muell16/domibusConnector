@@ -91,7 +91,6 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static @Nullable
     String getConnectorConfigFilePropertyName() {
         String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
-        Properties springProperties = new Properties();
         if (connectorConfigFile != null) {
             connectorConfigFile = SystemPropertyUtils.resolvePlaceholders(connectorConfigFile);
             return connectorConfigFile;
@@ -104,20 +103,11 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
 
-            int lastIndex = connectorConfigFile.contains(File.separator) ? connectorConfigFile.lastIndexOf(File.separatorChar) : connectorConfigFile.lastIndexOf("/");
-            lastIndex++;
-            String connectorConfigLocation = connectorConfigFile.substring(0, lastIndex);
-            String configName = connectorConfigFile.substring(lastIndex);
+            if (!connectorConfigFile.startsWith("file:")) {
+                connectorConfigFile = "file:" + connectorConfigFile;
+            }
 
-            LOGGER.info(String.format("Setting:\n%s=%s\n%s=%s\n%s=%s\n%s=%s",
-                    SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME, configName,
-                    SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigLocation,
-                    SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation,
-                    SPRING_CONFIG_NAME_PROPERTY_NAME, configName));
-
-            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigFile);
-            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation);
-            springApplicationProperties.setProperty(SPRING_CONFIG_NAME_PROPERTY_NAME, configName);
+            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigFile);
 
         } else {
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
