@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {DeleteMessagesFromQueuesTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
-//@DirtiesContext
+@DirtiesContext
 //@Disabled //TODO: spring test context problems
 public class DeleteMessagesFromQueuesTest {
 

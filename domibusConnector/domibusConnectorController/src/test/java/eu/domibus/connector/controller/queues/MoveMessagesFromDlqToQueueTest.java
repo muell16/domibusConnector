@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {MoveMessagesFromDlqToQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
-//@DirtiesContext
+@DirtiesContext
 public class MoveMessagesFromDlqToQueueTest {
 
     @SpringBootApplication
