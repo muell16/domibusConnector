@@ -37,8 +37,8 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = {DeadLetterQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
-@Disabled
-@DirtiesContext
+//@Disabled
+//@DirtiesContext
 public class DeadLetterQueueTest {
 
     @SpringBootApplication

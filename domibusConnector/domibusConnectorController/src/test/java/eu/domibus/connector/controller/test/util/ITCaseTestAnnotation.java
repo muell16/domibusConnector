@@ -18,6 +18,6 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface ITCaseTestAnnotation {
 }
