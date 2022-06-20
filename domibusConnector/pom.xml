@@ -1036,6 +1036,7 @@
                                 <exclude>**/*ITCase.java</exclude>
                             </excludes>
                             <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -1052,6 +1053,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -1087,6 +1089,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                     <plugin>
