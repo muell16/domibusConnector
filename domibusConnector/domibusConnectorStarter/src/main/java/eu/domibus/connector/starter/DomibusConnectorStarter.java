@@ -1,6 +1,5 @@
 package eu.domibus.connector.starter;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +40,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
     public static final String DEFAULT_SPRING_CONFIG_LOCATION = "optional:classpath:/config/,optional:file:./config/,optional:file:./config/connector/";
 
-    private static final String FILE_STRING = "file:";
+    private static final String FILE_PREFIX = "file:";
     private ServletContext servletContext;
 
     String springConfigLocation = DEFAULT_SPRING_CONFIG_LOCATION;
@@ -73,8 +72,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static Properties loadConnectorConfigProperties(String connectorConfigFile) {
         Properties p = new Properties();
         if (connectorConfigFile != null) {
-            if (connectorConfigFile.startsWith(FILE_STRING)) {
-                connectorConfigFile = connectorConfigFile.substring(FILE_STRING.length() - 1);
+            if (connectorConfigFile.startsWith(FILE_PREFIX)) {
+                connectorConfigFile = connectorConfigFile.substring(FILE_PREFIX.length() - 1);
             }
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
@@ -107,8 +106,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
 
-            if (!connectorConfigFile.startsWith(FILE_STRING)) {
-                connectorConfigFile = FILE_STRING + connectorConfigFile;
+            if (!connectorConfigFile.startsWith(FILE_PREFIX)) {
+                connectorConfigFile = FILE_PREFIX + connectorConfigFile;
             }
 
             springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigFile);
