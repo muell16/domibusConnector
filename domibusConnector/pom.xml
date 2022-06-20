@@ -129,11 +129,12 @@
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.0</org.dbunit.dbunit.version>
         <com.google.guava.version>30.0-jre</com.google.guava.version>
-        <mysql.mysql-connector-java.version>8.0.28</mysql.mysql-connector-java.version>
+        <mysql.mysql-connector-java.version>8.0.29</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.2</org.postgresql.postgresql.version>
-        <!--        <com.oracle.ojdbc8.version>19.3.0.0.0</com.oracle.ojdbc8.version>-->
+        <org.mariadb.jdbc.mariadb-java-client.version>3.0.5</org.mariadb.jdbc.mariadb-java-client.version>
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
         <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
+        <org.liquibase.liquibase-core.version>4.2.12</org.liquibase.liquibase-core.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -569,11 +570,26 @@
                 <version>${org.postgresql.postgresql.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${com.h2database.h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${org.mariadb.jdbc.mariadb-java-client.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc-bom</artifactId>
                 <version>${com.oracle.database.jdbc.ojdbc-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${org.liquibase.liquibase-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
