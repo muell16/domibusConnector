@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {StoreMessageExceptionIntoDatabaseAspectTest.TestContextConfiguration.class})
-//@DirtiesContext(classMode=ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode=ClassMode.AFTER_EACH_TEST_METHOD)
 public class StoreMessageExceptionIntoDatabaseAspectTest {
     
     @Configuration
