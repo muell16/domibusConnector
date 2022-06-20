@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {ListMessagesInQueueTest.MyTestContext.class}, properties = {"spring.liquibase.enabled=false"})
 @ActiveProfiles({"test", "jms-test"})
 @DirtiesContext
-//@Disabled //TODO: find solution so all tests can run in same spring test context, or reduce spring context size
+@Disabled //TODO: find solution so all tests can run in same spring test context, or reduce spring context size
 public class ListMessagesInQueueTest {
 
     @SpringBootApplication
