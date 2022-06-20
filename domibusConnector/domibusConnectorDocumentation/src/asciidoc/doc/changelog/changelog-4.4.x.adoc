@@ -92,5 +92,6 @@ if the AIA source was not reachable.
 * Fix issue with 4.4.x initial scripts at table DC_TRANSPORT_STEP => TRANSPORT_MESSAGE column should be TRANSPORTED_MESSAGE
 * Add prometheus metrics export interface dependency + documentation
 * Extend documentation
-* Additional work on slow certificate verification: Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occurs because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration.
+* Additional work on slow certificate verification: Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occurs because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration. This has been fixed by removing the DataLoader from CommonCertificateVerifier class (the common config is still not used in every certificate verifier!).
 * Removed deprecated parts from installation manual
+* Fixed -Dconnector.config.file property is ignored by connector
