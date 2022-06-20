@@ -41,13 +41,11 @@ As JAVA is by definition a platform independent environment, every operating sys
 
 During implementation and testing phase of the domibusConnector, it was installend and tested on the following environments:
 
-* Microsoft Windows 10
-* Linux
-* IBM AIX
 
 === Java Runtime
 As the domibusConnector is a JAVA application, it also requires a proper installation of a Java Runtime to be able to run the software.
-The recent version {project-version} of the domibusConnector has been implemented and compiled with an Oracle JDK jdk-8u161. So at least this version or higher should be in place to avoid incompatibilities.
+
+Please have a look at the link:../versioning_and_compatibility/testing_matrix.adoc[Testing Matrix]
 
 [#_database]
 === Database
@@ -58,6 +56,8 @@ The domibusConnector needs an underlying database to store information.Currently
 * MySQL 8 and higher
 * PostgresSQL 13.2 and higher
 * Oracle 12g and higher
+
+Please have a look at the link:../versioning_and_compatibility/testing_matrix.adoc[Testing Matrix]
 
 The domibusConnector distribution package offers SQL scripts that are meant to either set up a completely new database for the connector, or to migrate an existing domibusConnector database to its current version.
 
@@ -82,15 +82,6 @@ Details on how to deploy the domibusConnector on that web server products can be
 
 === Internet connection
 As the domibusConnector needs some sources from the internet for the security library features, also an internet connection from the installation point must be given.To be able to configure your environment the domibusConnector gives the opportunity to configure proxy settings in the connector properties described in chapter xref:_configuration_properties[Configuration properties].
-
-=== Technical specifications
-The main frameworks and technologies the domibusConnector was implemented with is listed here for your information:
-
-* Java 8 (Oracle jdk-8u161)
-* Spring-boot 2.5.4
-* Hibernate 5.4.32.FINAL
-* Apache CXF 3.3.11
-* Apache Maven 3.6.3
 
 === The domibusConnector distribution package
 To get started, you first need to have downloaded and extracted the distribution package.
@@ -173,44 +164,12 @@ For example, if the upgrade is from domibusConnector-4.1 to domibusConnector 4.3
 
 IMPORTANT: It is strongly recommended to create a backup of the existing database schema before starting the migration!
 
-//You can choose to upgrade your database schema by executing the scripts manually or let liquibase perform the migration.
-
-//Both methods are assuming that there were no structural changes made (e.g. additional constraints, indexes added)
-//after the original connector setup.
-
 ==== Using the scripts
 1. Create a backup of your current database schema
 2. Drop/deactivate all foreign-key constraints (the script will create them again!)
 3. Execute the migration script which is located in the folder database-scripts/migration. Use the script that matches your dbms and connector schema version.
 4. Repeat until you have migrated to the version {project-version}.
 
-//==== Using liquibase
-//See next section xref:_migrate_with_liquibase[Migrate with Liquibase].
-
-//[#_migrate_with_liquibase]
-//=== Migrate with Liquibase
-//It is also possibly to let liquibase upgrade or create your database.Liquibase is a tool which splits the database creation/upgrade into multiple changesets.In the future it will allow semi automatic database upgrades.You can also use liquibase to use unsupported databases like postgresql.
-
-//Liquibase is packaged into the jar named domibusConnectorDatabaseInitializer.jar which includes all the necessary database scripts:
-
-//* Database Migrate 3.5 to 4.0 DB ChangeLog: “db/changelog/v004/upgrade-3to4.xml”
-//* Database Create 4.1 DB ChangeLog: “db/changelog/install/initial-4.1.xml”
-//You can execute the scripts in your database by executing the jar:
-
-//image:screenshot_liquibase_command.png[command_to_run_liquibase_migration]
-
-//You have to provide the following parameters:
-
-//* “--driver=” the jdbc driver name.
-//o com.mysql.jdbc.Driver for MySQL
-//o oracle.jdbc.OracleDriver for Oracle
-//* “--url=” the jdbc url to access the database (consult the documentation of your jdbc driver)
-//o Example: “jdbc: mysql://localhost/domibusconnector” for connecting to a local MySql database named domibusconnector.
-//* “--username=” the username to access the database.The database user needs the permission to make schema modifications.
-//* “--password=” the password of the database user.
-//* “--classpath=” the path to an additional jar which contains the jdbc driver (the package already contains the mysql jdbc driver, so this parameter is only needed to provide the oracle jdbc driver jar)
-//* “--changeLogFile=” the change log liquibase should run against the database
-//* “–help” will show the liquibase help
 
 == Certificate, Key-Stores and Trust-Stores
 
@@ -263,7 +222,6 @@ It is not a requirement that one of the listed web server products must be used.
 The deployment has been tested with the following versions:
 
 * Apache Tomcat 8.5.23 on Windows 10
-
 ==== Deployment steps
 * Copy the adopted “connector.properties” and “log4j.xml” file into “<path_to_tomcat>/conf/domibusConnector”.
 * Copy the “domibusConnector.war” into “<path_to_tomcat>/webapps”.
