@@ -135,6 +135,7 @@
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
         <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
         <org.liquibase.liquibase-core.version>4.12.0</org.liquibase.liquibase-core.version>
+        <org.apache.commons.commons-text.version>1.9</org.apache.commons.commons-text.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -506,6 +507,11 @@
                 <version>${org.apache.commons.commons-compress.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${org.apache.commons.commons-text.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
                 <version>${org.apache.poi.poi.version}</version>
@@ -590,6 +596,12 @@
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>${org.liquibase.liquibase-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-text</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -715,6 +727,7 @@
                         <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
                         <forkCount>1</forkCount>
                         <reuseForks>false</reuseForks>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
                 <plugin>
