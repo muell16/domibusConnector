@@ -34,6 +34,7 @@
             <column name="ACTIVE" type="java.sql.Types.BOOLEAN">
                 <constraints nullable="false"/>
             </column>
+            <column name="PMODES" type="${blob}"/>
             <column name="FK_CONNECTORSTORE" type="${id.type}"/>
         </createTable>
     </changeSet>
@@ -627,7 +628,7 @@
             <column name="UPLOADED" type="TIMESTAMP"/>
             <column name="DESCRIPTION" type="java.sql.Types.VARCHAR(512)"/>
             <column name="TYPE" type="java.sql.Types.VARCHAR(50)"/>
-            <column name="PMODES" type="${blob}"/>
+
 
         </createTable>
     </changeSet>
