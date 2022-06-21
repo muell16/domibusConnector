@@ -73,14 +73,14 @@
             <outputDirectory>/domibusGatewayPlugin</outputDirectory>
             <unpack>true</unpack>
             <includes>
-                <include>eu.domibus.connector.plugin:domibus-connector-plugin-distribution:zip</include>
+                <include>eu.domibus.connector:domibus-connector-plugin-distribution:zip</include>
             </includes>
         </dependencySet>
         <dependencySet>
             <outputDirectory>webapp</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>eu.domibus.connector.plugin:domibusConnectorBuilderDeployable:war</include>
+                <include>eu.domibus.connector:domibusConnectorBuilderDeployable:war</include>
             </includes>
         </dependencySet>
         <dependencySet>
