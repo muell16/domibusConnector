@@ -31,7 +31,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="${text.type}"/>
-            <column name="ACTIVE" type="java.sql.Types.BOOLEAN">
+            <column name="ACTIVE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="PMODES" type="${blob}"/>
@@ -325,6 +325,7 @@
             <column name="LAST_ACCESS" type="${timestamp.type}"/>
             <column name="CONTENT" type="${blob}"/>
             <column name="MIMETYPE" type="${varchar255.type}"/>
+            <column name="NAME" type="${varchar512.type}"/>
         </createTable>
     </changeSet>
     <changeSet id="create_domibus_connector_bigdata_pk" author="sks">
@@ -459,7 +460,7 @@
             <column name="TYPE" type="${varchar255.type}"/>
             <column name="EVIDENCE" type="${text.type}"> <constraints nullable="true" /></column>
             <column name="DELIVERED_NAT" type="${timestamp.type}"/>
-            <column name="DELVIERD_GW" type="${timestamp.type}"/>
+            <column name="DELIVERED_GW" type="${timestamp.type}"/>
             <column name="UPDATED" type="${timestamp.type}"/>
         </createTable>
     </changeSet>
@@ -712,7 +713,7 @@
             <column name="GRACE_LOGINS_USED" type="java.sql.Types.BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="LOCKED" type="java.sql.Types.BOOLEAN">
+            <column name="LOCKED" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="NUMBER_OF_GRACE_LOGINS" type="java.sql.Types.INTEGER">
@@ -753,10 +754,10 @@
             <column name="CREATED" type="${timestamp.type}" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="CURRENT_PWD" type="java.sql.Types.BOOLEAN">
+            <column name="CURRENT_PWD" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="INITIAL_PWD" type="java.sql.Types.BOOLEAN">
+            <column name="INITIAL_PWD" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="password" type="java.sql.Types.VARCHAR(1024)">
@@ -991,7 +992,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="${text.type}"/>
-            <column name="ENABLED" type="java.sql.Types.BOOLEAN">
+            <column name="ENABLED" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="NAME" type="${varchar255.type}">
