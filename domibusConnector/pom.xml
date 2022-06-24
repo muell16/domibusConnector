@@ -136,6 +136,7 @@
         <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
         <org.liquibase.liquibase-core.version>4.8.0</org.liquibase.liquibase-core.version>
         <org.apache.commons.commons-text.version>1.9</org.apache.commons.commons-text.version>
+        <org.fusesource.jansi.jansi.version>2.4.0</org.fusesource.jansi.jansi.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -164,6 +165,11 @@
                 <version>${ecodex.dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>${org.fusesource.jansi.jansi.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.ecodex.utils</groupId>
