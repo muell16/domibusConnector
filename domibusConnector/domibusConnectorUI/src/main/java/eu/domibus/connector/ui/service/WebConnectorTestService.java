@@ -178,6 +178,7 @@ public class WebConnectorTestService {
 		DomibusConnectorPartyType cParty = new DomibusConnectorPartyType();
 		cParty.setPartyId(pParty.getPartyId());
 		cParty.setPartyIdType(pParty.getPartyIdType());
+		cParty.setRole(pParty.getRole());
 		return cParty;
 	}
 

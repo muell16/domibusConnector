@@ -3,10 +3,12 @@ package eu.domibus.connector.ui.dto;
 import java.util.LinkedList;
 
 public class WebMessageDetail {
-	
+
 	public static class Party{
 	    private String partyId;
 	    private String partyIdType;
+
+		private String role;
 		/**
 		 * @param partyId
 		 * @param partyIdType
@@ -42,6 +44,15 @@ public class WebMessageDetail {
 		public String getPartyString() {
 			return partyId+"("+partyIdType+")";
 		}
+
+		public String getRole() {
+			return role;
+		}
+
+		public void setRole(String role) {
+			this.role = role;
+		}
+
 		public void setPartyString(String partyString) {
 			if(partyString.indexOf("(")>0 && partyString.indexOf(")")>0) {
 			this.partyId = partyString.substring(0, partyString.indexOf("("));
@@ -49,10 +60,10 @@ public class WebMessageDetail {
 			}else {
 				this.partyId = partyString;
 			}
-			
+
 		}
 	}
-	
+
 	public static class Service{
 		private String service;
 	    private String serviceType;
@@ -91,9 +102,9 @@ public class WebMessageDetail {
 		public String getServiceString() {
 			return serviceType!=null?service+"("+serviceType+")":service;
 		}
-		
+
 	}
-	
+
 	public static class Action{
 		private String action;
 
@@ -118,7 +129,7 @@ public class WebMessageDetail {
 			this.action = action;
 		}
 		public void setActionString(String action) {
-			
+
 		}
 	}
 
@@ -128,12 +139,12 @@ public class WebMessageDetail {
 	private Party to;
 	private String originalSender;
 	private String finalRecipient;
-	
-	
-	private LinkedList<WebMessageError> errors = new LinkedList<WebMessageError>();
-	
 
-	
+
+	private LinkedList<WebMessageError> errors = new LinkedList<WebMessageError>();
+
+
+
 
 
 	@Override
@@ -215,18 +226,18 @@ public class WebMessageDetail {
 		return errors;
 	}
 
-	
+
 	public void setServiceString(String service) {
-		
+
 	}
 
 	public void setActionString(String action) {
-		
+
 	}
 	public void setFromString(String from) {
-		
+
 	}
 	public void setToString(String to) {
-		
+
 	}
 }
