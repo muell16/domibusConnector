@@ -230,7 +230,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     private boolean loadAndValidateFromParty(WebMessage msg) {
         DomibusConnectorParty pParty = pModeService.getHomeParty();
         if (pParty != null) {
-            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType());
+            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), pParty.getRole());
             msg.getMessageInfo().setFrom(homeParty);
             return true;
         } else {

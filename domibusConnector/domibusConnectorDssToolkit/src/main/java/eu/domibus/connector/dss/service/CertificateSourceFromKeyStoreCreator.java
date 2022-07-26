@@ -1,7 +1,6 @@
 package eu.domibus.connector.dss.service;
 
 import eu.domibus.connector.common.service.DCKeyStoreService;
-import eu.domibus.connector.controller.exception.DCConfigException;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.tools.logging.LoggingUtils;

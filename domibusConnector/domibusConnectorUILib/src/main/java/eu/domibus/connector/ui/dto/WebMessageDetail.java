@@ -9,22 +9,30 @@ public class WebMessageDetail {
 	    private String partyIdType;
 
 		private String role;
-		/**
-		 * @param partyId
-		 * @param partyIdType
-		 */
-		public Party(String partyId, String partyIdType) {
+//		/**
+//		 * @param partyId
+//		 * @param partyIdType
+//		 */
+//		public Party(String partyId, String partyIdType) {
+//			super();
+//			this.partyId = partyId;
+//			this.partyIdType = partyIdType;
+//		}
+//		/**
+//		 * @param partyId
+//		 */
+//		public Party(String partyId) {
+//			super();
+//			this.partyId = partyId;
+//		}
+
+		public Party(String partyId, String partyIdType, String role) {
 			super();
 			this.partyId = partyId;
 			this.partyIdType = partyIdType;
+			this.role = role;
 		}
-		/**
-		 * @param partyId
-		 */
-		public Party(String partyId) {
-			super();
-			this.partyId = partyId;
-		}
+
 		@Override
 		public String toString() {
 			return partyId+"("+partyIdType+")";
