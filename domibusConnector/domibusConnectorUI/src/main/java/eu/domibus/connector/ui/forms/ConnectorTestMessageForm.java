@@ -5,6 +5,7 @@ import java.util.List;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
@@ -27,7 +28,7 @@ public class ConnectorTestMessageForm extends FormLayout {
 	private ComboBox<WebMessageDetail.Party> toParty = (ComboBox<WebMessageDetail.Party>) FormsUtil.getRequiredCombobox();
 	private TextField service = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField action = FormsUtil.getFormattedTextFieldReadOnly();
-	private TextField fromParty = FormsUtil.getFormattedTextFieldReadOnly();
+	private ComboBox<WebMessageDetail.Party> fromParty = (ComboBox<WebMessageDetail.Party>) FormsUtil.getRequiredCombobox();
 	
 	private Binder<WebMessage> binder = new Binder<>(WebMessage.class);
 
@@ -87,8 +88,7 @@ public class ConnectorTestMessageForm extends FormLayout {
             }
 			return ValidationResult.ok();
 		}).bind(
-				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getTo()!=null?
-						webMessage.getMessageInfo().getTo() :null,
+				webMessage -> webMessage.getMessageInfo()!=null ? webMessage.getMessageInfo().getTo() : null,
 				(webMessage,toParty) -> {
 					webMessage.getMessageInfo().setTo(toParty);
 				});
@@ -107,13 +107,14 @@ public class ConnectorTestMessageForm extends FormLayout {
 					webMessage.getMessageInfo().getAction().setAction(action);
 				});
 		addFormItem(action, "Action");
-		
-		binder.forField(fromParty).bind(
-				webMessage -> webMessage.getMessageInfo()!=null && webMessage.getMessageInfo().getFrom()!=null?
-						webMessage.getMessageInfo().getFrom().toString():"",
-				(webMessage,fromParty) -> {
-					webMessage.getMessageInfo().getFrom().setPartyString(fromParty);
-				});
+
+		binder.forField(fromParty)
+				.bind(webMessage -> webMessage.getMessageInfo() != null ? webMessage.getMessageInfo().getFrom() : null,
+						(webMessage, fromParty) -> {
+							webMessage.getMessageInfo().setFrom(fromParty);
+						});
+		fromParty.setReadOnly(true);
+
 		addFormItem(fromParty, "From Party");
 		
 	}
@@ -127,7 +128,10 @@ public class ConnectorTestMessageForm extends FormLayout {
 		
 		toParty.setItems(parties.stream()
 				.filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
-								.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType())));
+								.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
+		fromParty.setItems(parties.stream()
+				.filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
+				.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
 	}
 	
 	public void setMessage(WebMessage message) {

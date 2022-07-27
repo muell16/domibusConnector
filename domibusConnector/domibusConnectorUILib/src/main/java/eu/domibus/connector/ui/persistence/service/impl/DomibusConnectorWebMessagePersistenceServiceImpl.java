@@ -206,11 +206,11 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			}
 			
 			if(pMessageInfo.getFrom()!=null) {
-				messageDetail.setFrom(new WebMessageDetail.Party(pMessageInfo.getFrom().getPartyId(),pMessageInfo.getFrom().getPartyIdType()));
+				messageDetail.setFrom(new WebMessageDetail.Party(pMessageInfo.getFrom().getPartyId(),pMessageInfo.getFrom().getPartyIdType(),pMessageInfo.getFrom().getRole()));
 			}
 			
 			if(pMessageInfo.getTo()!=null) {
-				messageDetail.setTo(new WebMessageDetail.Party(pMessageInfo.getTo().getPartyId(),pMessageInfo.getTo().getPartyIdType()));
+				messageDetail.setTo(new WebMessageDetail.Party(pMessageInfo.getTo().getPartyId(),pMessageInfo.getTo().getPartyIdType(), pMessageInfo.getTo().getRole()));
 			}
 
 			return messageDetail;
