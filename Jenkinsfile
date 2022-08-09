@@ -54,15 +54,17 @@ pipeline {
 
         stage("mvn install") {
           steps {
+						dir ('domibusConnector') {
             withMaven {
 //               sh("")
 //               sh("mvn versions:set -DnewVersion= ")
               sh("mvn -U -T1C -Dmaven.test.failure.ignore=true install")
             }
+						}
           }
 
         }
-				
+
 		}
     post {
       always {
