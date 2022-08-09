@@ -36,6 +36,7 @@ pipeline {
          stage("Install Node & NPM") {
               steps {
                 withEnv([]) {
+										sh("ls -la /maven-cache")
                     sh("curl -Ok ${NODEJS_ORG_MIRROR}/${nodeVersion}/node-${nodeVersion}-${nodeDistro}.tar.gz")
                     sh("tar -xzf node-${nodeVersion}-${nodeDistro}.tar.gz -C ${WORKSPACE}")
                     sh("rm node-${nodeVersion}-${nodeDistro}.tar.gz")
