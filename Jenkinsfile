@@ -30,6 +30,15 @@ pipeline {
         stage("checkout") {
           steps {
             checkout scm
+
+						 checkout([  
+								$class: 'GitSCM', 
+								branches: [[name: 'refs/heads/feature/central-ci']], 
+								doGenerateSubmoduleConfigurations: false, 
+								extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pipeline']], 
+								submoduleCfg: [], 
+								userRemoteConfigs: [[credentialsId: 'juecodex-repo-bitbucket-token', url: 'https://spindlest@git.brz.gv.at/bitbucket/scm/jueuecodex/jenkins-jobs.git']]
+        		])
           }
         }
 
