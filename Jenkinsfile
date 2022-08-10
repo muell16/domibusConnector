@@ -37,7 +37,7 @@ pipeline {
 								doGenerateSubmoduleConfigurations: false, 
 								extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pipeline']], 
 								submoduleCfg: [], 
-								userRemoteConfigs: [[credentialsId: 'juecodex-repo-bitbucket-token', url: 'https://spindlest@git.brz.gv.at/bitbucket/scm/jueuecodex/jenkins-jobs.git']]
+								userRemoteConfigs: [[credentialsId: 'ju-eu-ecodex-bitbucket-ssh-key', url: 'ssh://git@git.brz.gv.at:7999/jueuecodex/jenkins-jobs.git']]
         		])
           }
         }
