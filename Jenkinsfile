@@ -39,6 +39,9 @@ pipeline {
 								submoduleCfg: [], 
 								userRemoteConfigs: [[credentialsId: 'ju-eu-ecodex-bitbucket-ssh-key', url: 'ssh://git@git.brz.gv.at:7999/jueuecodex/jenkins-jobs.git']]
         		])
+
+						sh ('ls -la pipeline')
+
           }
         }
 
@@ -68,7 +71,7 @@ pipeline {
             withMaven {
 //               sh("")
 //               sh("mvn versions:set -DnewVersion= ")
-              sh("mvn -U -T1C -Dmaven.test.failure.ignore=true install")
+              sh("mvn -T2C -Dmaven.test.failure.ignore=true install")
             }
 						}
           }
