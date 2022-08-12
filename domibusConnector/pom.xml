@@ -757,7 +757,7 @@
                             <includes>**/IT*.java</includes>
                             <includes>**/*IT.java</includes>
                             <includes>**/*ITCase.java</includes>
-                        </includes>>
+                        </includes>
                     </configuration>
                 </plugin>
                 <plugin>
