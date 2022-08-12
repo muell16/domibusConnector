@@ -751,6 +751,13 @@
                         <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
                         <forkCount>2C</forkCount>
                         <reuseForks>false</reuseForks>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <includes>
+                            <include>**/*DBUnit.java</include>
+                            <includes>**/IT*.java</includes>
+                            <includes>**/*IT.java</includes>
+                            <includes>**/*ITCase.java</includes>
+                        </includes>>
                     </configuration>
                 </plugin>
                 <plugin>
