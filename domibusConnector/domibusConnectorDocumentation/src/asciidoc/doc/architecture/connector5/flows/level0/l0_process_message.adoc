@@ -247,7 +247,7 @@ The details are available here:
 Additional to the overall message states the business message has some additional states which are described by the received evidences (evidences are transported within a confirmation or business message).
 The following state model shows the states of the business message:
 
-.Business message state diagram
+.business message state diagram
 [plantuml,business_message_state_diagram,format=svg]
 ----
 @startuml

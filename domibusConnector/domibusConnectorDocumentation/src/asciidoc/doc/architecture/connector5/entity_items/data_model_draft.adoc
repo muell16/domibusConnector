@@ -1,36 +1,76 @@
+
 = Data Model Draft
+
+== Persistence Services and their Responsibility
+
+Every service should be responsible for a limited set of tasks. Ideally there are no overlaps in the required data. So every PersistenceService can control their own entity model.
+
+=== ProcessPersistenceService / RawMessagePersistenceService
+
+Responsible for:
+
+* Store Processing / Persist RawMessage
+* Retrieve Processing / Load RawMessage
+* Retrieve State of processing
+* Set State of processing
+
+See also: link:../flows/level0/l0_process_message.adoc#_message_state_diagram[Message State diagram]
+
+//=== MessagePersistenceService
+//
+//* Load Message
+//* Persist Message
+//* Append Attachment to Message
+//* Append Evidence to Message
+//* Set business message state
+//* Retrieve business message state
+//
+//See also: link:../flows/level0/l0_process_message.adoc#_business_message_state[Business Message State diagram]
+
+== DB Data Model Requirements
+
+This requirements ONLY reflect our requirements agains the database. They are resulting from other requirements.
+
+=== D1.1: As ProcessPersistenceService I need to access at any time by ID my transported message / message process entity so I can process it.
+
+==== Discussion:
+
+**Do we need a history of this? Should we handle this as an immutable?**
+This would make it possible to track any changes between storing. It would also avoid updating fields or rows in DB. It might also make retrying easier, because a earlier message state can be used and put again into a activity/step/flow/...
+
+=== D1.2: As ProcessPersistenceService I need to provide a list which messages have not been updated for a specific time so a timer job can identify stuck messages.
+
+This would be required if a notification get's lost in the JMS system which will not be part of the transaction anymore.
+I also need to know a estimation how long the message will stay in current state. E.g.: Sending state? => retry would not usefull.
+Other similary states in future?
+Maybe better to offload this into state model table!
+
+
+//=== D2: As MessagePersistenceService I need to know very fast which business message has not already been rejected or confirmed so I can check which evidence is missing for this specific business message.
+//
+//This is needed to run/trigger evidence timeouts.
+
+//=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
+//
+//This requirement only covers the need to store large files into the DB. The LargeFilePersistenceServiceDBImpl is another LargeFileService implementation similar to LargeFileFSImpl (Storage on Filesystem). So it is decoupled from other DB Tables.
 
 
 [plantuml]
 ----
 @startuml
 
-class "MessageProcess" as m
+class RawMessage
+{
+  id: Int
+  connectorMessageId: String/UUID
+  msg: String/JSON
+  lastUpdated: Timestamp
+}
+note top of RawMessage: Created by D1
+note right of RawMessage::"lastUpdated: Timestamp"
+  D1.2
+end note
 
-class BusinessMessage
-class eCodexMessage
-class BackendMessage
-
-class ConfirmationMessage
-
-class Evidence
-class Payload
-
-
-'m <|-- BusinessMessage
-
-'BusinessMessage <|-- eCodexMessage
-'BusinessMessage <|-- BackendMessage
-
-'m <|-- ConfirmationMessage
-
-'BusinessMessage "0..*" --- "0..1" ConfirmationMessage: related confirmations
-
-BusinessMessage "0..*" --- "1" Evidence: related evidences
-
-'BusinessMessage "0..*" --- "0..1" Evidence: transported evidences
-
-'ConfirmationMessage "0..*" --- "0..1" Evidence: transported evidence
 
 
 
