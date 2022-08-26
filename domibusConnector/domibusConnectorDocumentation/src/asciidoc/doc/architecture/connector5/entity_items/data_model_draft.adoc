@@ -33,22 +33,26 @@ This requirements ONLY reflect our requirements agains the database. They are re
 
 === D1.1: As ProcessPersistenceService I need to access at any time by ID my transported message / message process entity so I can process it.
 
-==== Discussion:
 
-**Do we need a history of this? Should we handle this as an immutable?**
-This would make it possible to track any changes between storing. It would also avoid updating fields or rows in DB. It might also make retrying easier, because a earlier message state can be used and put again into a activity/step/flow/...
+=== D1.2: As ProcessPersistenceService I need to make sure that a process step can only be executed once!
 
-=== D1.2: As ProcessPersistenceService I need to provide a list which messages have not been updated for a specific time so a timer job can identify stuck messages.
+This is very important, because the notication system (JMS) is not part of the transaction so there is no guarantee that a notification will not be recevied twice or at all.
 
-This would be required if a notification get's lost in the JMS system which will not be part of the transaction anymore.
+=== D1.3: As ProcessPersistenceService I need to provide a list which messages have not been updated for a specific time so a timer job can identify stuck messages.
+
+This is very important, because the notication system (JMS) is not part of the transaction so there is no guarantee that a notification will not be recevied twice or at all.
+
 I also need to know a estimation how long the message will stay in current state. E.g.: Sending state? => retry would not usefull.
 Other similary states in future?
 Maybe better to offload this into state model table!
 
 
-//=== D2: As MessagePersistenceService I need to know very fast which business message has not already been rejected or confirmed so I can check which evidence is missing for this specific business message.
-//
-//This is needed to run/trigger evidence timeouts.
+NOTE: The recover timer job will need definitiv some additional information if a MessageProcess is stuck or not. Maybe the ProcessStep needs some kind of result and only if the result is null it should be retried?
+
+
+=== D2: As MessagePersistenceService I need to know very fast which business message has not already been rejected or confirmed so I can check which evidence is missing for this specific business message.
+
+This is needed to run/trigger evidence timeouts.
 
 //=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
 //
@@ -59,20 +63,49 @@ Maybe better to offload this into state model table!
 ----
 @startuml
 
-class RawMessage
+package processing <<rectangle>> {
+
+class DC5_Process
 {
   id: Int
   connectorMessageId: String/UUID
-  msg: String/JSON
-  lastUpdated: Timestamp
+  created: Timestamp
+  finished: Timestamp
 }
-note top of RawMessage: Created by D1
-note right of RawMessage::"lastUpdated: Timestamp"
-  D1.2
-end note
+
+note "Splitting up into the Process and Process steps will enforce\n \
+that a process step can only be executed once\n \
+(A retry logic could add a attempt counter to DC5_ProcessStep)" as N1
+
+class DC5_ProcessStep {
+  stepKey : String
+  created: Timestamp
+  msg: String/JSON
+}
+
+DC5_Process "1" -- "*" DC5_ProcessStep : has steps
+
+N1 .. DC5_ProcessStep
+N1 .. DC5_Process
+
+}
 
 
+package ecodex <<rectangle>> {
+
+class BusinessMessage {
+  id: Int
+  connectorMessageId: String/UUID
+  isRejectedOrConfirmed: Boolean
+}
+
+note "D2 only needs this" as N2
+
+N2 .. BusinessMessage
+
+}
 
 
 @enduml
 ----
+
