@@ -54,6 +54,10 @@ NOTE: The recover timer job will need definitiv some additional information if a
 
 This is needed to run/trigger evidence timeouts.
 
+=== D3: As MessagePersistenceService I need to find very fast a related business message. So I can link a ConfirmationMessage to the according BusinessMessage.
+
+The refToMessage can either use the ebmsId (for incoming international confirmation messages) or the backendMessageId (for by the backend generated confirmation message/s (triggers))
+
 //=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
 //
 //This requirement only covers the need to store large files into the DB. The LargeFilePersistenceServiceDBImpl is another LargeFileService implementation similar to LargeFileFSImpl (Storage on Filesystem). So it is decoupled from other DB Tables.
@@ -97,9 +101,11 @@ class BusinessMessage {
   id: Int
   connectorMessageId: String/UUID
   isRejectedOrConfirmed: Boolean
+  ebmsMessageId: String
+  backendMessageId: String
 }
 
-note "D2 only needs this" as N2
+note "D3 adds ebmsMessageId and backendMessageId to find related message" as N2
 
 N2 .. BusinessMessage
 
