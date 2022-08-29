@@ -58,6 +58,12 @@ This is needed to run/trigger evidence timeouts.
 
 The refToMessage can either use the ebmsId (for incoming international confirmation messages) or the backendMessageId (for by the backend generated confirmation message/s (triggers))
 
+=== D3.1: As MessagePersistenceService I also have to provide all evidences to a specific business message, so an additional evidence can be created.
+
+This is required to generate the RELAY_REMMD_EVIDENCE or DELVIERY_EVIDENCE out of the evidence trigger.
+
+
+=== D4: As TransportService I need to mark a message as ready to transport. 
 //=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
 //
 //This requirement only covers the need to store large files into the DB. The LargeFilePersistenceServiceDBImpl is another LargeFileService implementation similar to LargeFileFSImpl (Storage on Filesystem). So it is decoupled from other DB Tables.
@@ -105,11 +111,24 @@ class BusinessMessage {
   backendMessageId: String
 }
 
-note "D3 adds ebmsMessageId and backendMessageId to find related message" as N2
+class Evidence {
+  id: Int
+  type: String
+  evidenceXml: String
+}
 
+BusinessMessage "1" *-- "*" Evidence : has steps
+
+note "D3 adds ebmsMessageId and backendMessageId to find related message" as N2
 N2 .. BusinessMessage
 
+note "D3.1 adds this additional table" as N3
+N3 .. Evidence
+
 }
+
+
+
 
 
 @enduml
