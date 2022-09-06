@@ -63,7 +63,12 @@ The refToMessage can either use the ebmsId (for incoming international confirmat
 This is required to generate the RELAY_REMMD_EVIDENCE or DELVIERY_EVIDENCE out of the evidence trigger.
 
 
-=== D4: As TransportService I need to mark a message as ready to transport. 
+=== D4.0: As TransportService I need to create a message for transport for a specific link partner. So it can then be transported by this link partner.
+
+=== D4.1: As TransportService I need to update a TransportState so the current state of transport provided by the link partner is saved in DB.
+
+=== D4.1: As Admin I want to have a history of transport states so I can see how long a message waited for being pulled, transported, ...
+
 //=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
 //
 //This requirement only covers the need to store large files into the DB. The LargeFilePersistenceServiceDBImpl is another LargeFileService implementation similar to LargeFileFSImpl (Storage on Filesystem). So it is decoupled from other DB Tables.
@@ -117,13 +122,35 @@ class Evidence {
   evidenceXml: String
 }
 
-BusinessMessage "1" *-- "*" Evidence : has steps
+BusinessMessage "1" -- "*" Evidence : has evidences
 
 note "D3 adds ebmsMessageId and backendMessageId to find related message" as N2
 N2 .. BusinessMessage
 
 note "D3.1 adds this additional table" as N3
 N3 .. Evidence
+
+}
+
+package transport <<rectangle>> {
+
+
+
+class Transport {
+  id: int
+  connectorMessageId: String
+  linkPartner: String
+}
+
+class TransportState {
+  state: String
+  created: Timestamp
+}
+
+Transport "1" -- "1..*" TransportState
+
+note top of Transport: D4.0-D4.2 is handled by this tables
+
 
 }
 
