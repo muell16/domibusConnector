@@ -69,9 +69,15 @@ This is required to generate the RELAY_REMMD_EVIDENCE or DELVIERY_EVIDENCE out o
 
 === D4.1: As Admin I want to have a history of transport states so I can see how long a message waited for being pulled, transported, ...
 
-//=== D3: As LargeFilePersistenceServiceDBImpl I need to store large files into DB.
-//
-//This requirement only covers the need to store large files into the DB. The LargeFilePersistenceServiceDBImpl is another LargeFileService implementation similar to LargeFileFSImpl (Storage on Filesystem). So it is decoupled from other DB Tables.
+=== D5.0: As Operator I want to know which Payloads (including the business message) I have sent. So I can link the hashes with evidences to check delivery.
+I need to know how the message looked extracted.
+
+=== D5.1: As Operator I want to know which Payloads I have received. So I can link the hashes with evidences to check delivery.
+I need to know how the message looked after the container has been created. Or before message has
+been extracted.
+
+=== D5.2: As Operator I want to know the AS4 address data of every business message. So I can generate statistics of message transport.
+
 
 
 [plantuml]
@@ -83,7 +89,7 @@ package processing <<rectangle>> {
 class DC5_Process
 {
   id: Int
-  connectorMessageId: String/UUID
+  connectorMessageProcessId: String/UUID
   created: Timestamp
   finished: Timestamp
 }
@@ -108,13 +114,35 @@ N1 .. DC5_Process
 
 package ecodex <<rectangle>> {
 
-class BusinessMessage {
+note "D5.2 adds this table" as N5
+N5 .. Message
+
+class Message {
   id: Int
-  connectorMessageId: String/UUID
-  isRejectedOrConfirmed: Boolean
+  connectorMessageProcessId: String/UUID
   ebmsMessageId: String
   backendMessageId: String
+  backendLink: String
+  gwLink: String
+  fromPartyId, fromPartyIdType, fromPartyRole: String
+  toPartyId, toPartyIdType, toPartyRole: String
+  finalRecipient: String
+  originalSender: String
+  conversationId: String
+  direction: String
 }
+
+class BusinessMessage {
+  id: Int
+  isRejectedOrConfirmed: Boolean
+}
+
+Message ^-- BusinessMessage
+Message ^-- ConfirmationMessage
+
+Message "*" -- "*" Evidence : transports
+
+Payload ^-- Evidence
 
 class Evidence {
   id: Int
@@ -122,13 +150,29 @@ class Evidence {
   evidenceXml: String
 }
 
+class Payload {
+  id: Int
+  type: String
+  hash: String
+  storageRef: String
+  size: Int (notwendig?)
+}
+
 BusinessMessage "1" -- "*" Evidence : has evidences
+
+Message "1" -- "*" Payload : has payloads (business pdf, xml, attachments\n represents extracted message)
+Message "1" -- "*" Payload : has eCodexPayloads (container, token\n represents ecx message)
+
+
 
 note "D3 adds ebmsMessageId and backendMessageId to find related message" as N2
 N2 .. BusinessMessage
 
 note "D3.1 adds this additional table" as N3
 N3 .. Evidence
+
+note "D5 adds this table" as N4
+N4 .. Payload
 
 }
 
@@ -138,7 +182,7 @@ package transport <<rectangle>> {
 
 class Transport {
   id: int
-  connectorMessageId: String
+  connectorMessageProcessId: String
   linkPartner: String
 }
 
@@ -152,9 +196,25 @@ Transport "1" -- "1..*" TransportState
 note top of Transport: D4.0-D4.2 is handled by this tables
 
 
+
 }
 
 
+
+
+
+package config <<rectangle>> {
+
+class Domain {
+ id: int
+ name: string
+}
+
+class DomainProperties {
+  id: int
+}
+
+}
 
 
 
