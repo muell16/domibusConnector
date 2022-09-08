@@ -133,14 +133,16 @@ class Message {
 }
 
 class BusinessMessage {
-  id: Int
   isRejectedOrConfirmed: Boolean
+}
+
+class ConfirmationMessage {
+  refToMessageId: String
 }
 
 Message ^-- BusinessMessage
 Message ^-- ConfirmationMessage
 
-Message "*" -- "*" Evidence : transports
 
 Payload ^-- Evidence
 
