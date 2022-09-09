@@ -30,6 +30,7 @@
     <!-- should be the last module -->
     <module>domibusConnectorDistribution</module>
     <module>domibusConnectorDssToolkit</module>
+    <module>domibusConnectorIntegrationTests</module>
   </modules>
   <scm>
     <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
