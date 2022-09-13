@@ -156,6 +156,9 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 				.map(sortOrder ->
 						sortOrder.getDirection() == SortDirection.ASCENDING ? Sort.Order.asc(sortOrder.getSorted().getKey()) : Sort.Order.desc(sortOrder.getSorted().getKey()))
 				.collect(Collectors.toList());
+		if (collect.isEmpty()) {
+			collect.add(Sort.Order.desc("created")); //set default sort order if none selected
+		}
 		Sort sort = Sort.by(collect.toArray(new Sort.Order[]{}));
 
 		//creating page request with sort order and offset
@@ -170,8 +173,8 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 	}
 	
 	public void reloadList() {
-		LOGGER.debug("Call reloadList");
-		callbackDataProvider.refreshAll();
+		LOGGER.debug("#reloadList");
+		getCallbackDataProvider().refreshAll();
 	}
 	
 	public void setExampleWebMessage(WebMessage example) {
@@ -180,10 +183,17 @@ public class WebMessagesGrid extends PaginatedGrid<WebMessage> implements AfterN
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		LOGGER.debug("Create and set callbackDataProvider");
+		LOGGER.debug("#afterNavigation: Create and set callbackDataProvider");
 		callbackDataProvider
-			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
+			= getCallbackDataProvider();
 		setDataProvider(callbackDataProvider);
 		
+	}
+
+	private CallbackDataProvider<WebMessage, WebMessage> getCallbackDataProvider() {
+		if (callbackDataProvider == null) {
+			callbackDataProvider = new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
+		}
+		return callbackDataProvider;
 	}
 }

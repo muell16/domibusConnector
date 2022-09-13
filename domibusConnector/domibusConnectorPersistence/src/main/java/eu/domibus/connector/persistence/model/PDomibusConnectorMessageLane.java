@@ -30,17 +30,17 @@ public class PDomibusConnectorMessageLane {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name= "NAME", unique = true, length = 255)
+    @Column(name= "NAME", unique = true, nullable = false, length = 255)
     private DomibusConnectorBusinessDomain.BusinessDomainId name;
 
-    @Column(name = "DESCRIPTION")
     @Lob
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_MESSAGE_LANE_PROPERTY", joinColumns=@JoinColumn(name="DC_MESSAGE_LANE_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME")
-    @Column(name="PROPERTY_VALUE")
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {

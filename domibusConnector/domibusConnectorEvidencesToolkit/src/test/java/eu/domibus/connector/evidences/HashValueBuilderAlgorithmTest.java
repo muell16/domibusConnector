@@ -1,7 +1,6 @@
 package eu.domibus.connector.evidences;
 
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
-import org.bouncycastle.its.asn1.HashAlgorithm;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

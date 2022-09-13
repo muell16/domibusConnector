@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.2</version>
+        <version>4.4.5</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
     <packaging>pom</packaging>
@@ -25,6 +25,23 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>documentation</classifier>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBuilderDeployable</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBuilderStandalone</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector.plugin</groupId>
+            <artifactId>domibus-connector-plugin-distribution</artifactId>
+            <version>4.4.0</version>
+            <type>zip</type>
         </dependency>
     </dependencies>
     <build>
@@ -71,7 +88,7 @@
                                 <artifactItem>
                                     <groupId>com.h2database</groupId>
                                     <artifactId>h2</artifactId>
-                                    <version>1.4.197</version>
+                                    <version>${com.h2database.h2.version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
                                 </artifactItem>

@@ -200,7 +200,7 @@ CREATE TABLE DC_PMODE_SET
     FK_MESSAGE_LANE DECIMAL(10, 0),
     CREATED         TIMESTAMP,
     DESCRIPTION     CLOB,
-    ACTIVE          DECIMAL(1, 0) DEFAULT 0 NOT NULL,
+    ACTIVE          DECIMAL(1, 0) DEFAULT 0,
     CONSTRAINT PK_DC_PMODE_SET PRIMARY KEY (ID)
 );
 
@@ -492,12 +492,11 @@ create table DC_LINK_CONFIG_PROPERTY
 create table DC_MESSAGE_LANE
 (
     ID          DECIMAL(10, 0) not null,
-    NAME        VARCHAR2(255)  not null
-        constraint UN_DC_MSG_LANE_01
-            unique,
+    NAME        VARCHAR2(255)  not null,
     DESCRIPTION CLOB,
     constraint PK_DC_MSG_LANE
-        primary key (ID)
+        primary key (ID),
+    constraint UN_DC_MSG_LANE_01 unique (NAME)
 );
 
 create table DC_MESSAGE_LANE_PROPERTY
@@ -517,9 +516,7 @@ VALUES (1, 'defaultMessageLane', 'default message lane');
 create table DC_LINK_PARTNER
 (
     ID             DECIMAL(10, 0) not null,
-    NAME           VARCHAR2(255)  not null
-        constraint UN_DC_LINK_P_01
-            unique,
+    NAME           VARCHAR2(255)  not null,
     DESCRIPTION    CLOB,
     ENABLED        DECIMAL(1, 0),
     LINK_CONFIG_ID DECIMAL(10, 0),
@@ -528,7 +525,9 @@ create table DC_LINK_PARTNER
     constraint PK_DC_LINK_P
         primary key (ID),
     constraint FK_DC_LINK_P_01
-        foreign key (LINK_CONFIG_ID) references DC_LINK_CONFIGURATION (ID)
+        foreign key (LINK_CONFIG_ID) references DC_LINK_CONFIGURATION (ID),
+    constraint UN_DC_LINK_P_01
+        unique (NAME)
 );
 
 create table DC_LINK_PARTNER_PROPERTY
@@ -545,7 +544,7 @@ create table DC_LINK_PARTNER_PROPERTY
 create table DC_TRANSPORT_STEP
 (
     ID                          DECIMAL(10, 0) not null,
-    CONNECTOR_MESSAGE_ID        DECIMAL(10, 0) not null,
+    CONNECTOR_MESSAGE_ID        VARCHAR2(255)  not null,
     LINK_PARTNER_NAME           VARCHAR2(255)  not null,
     ATTEMPT                     INT            not null,
     TRANSPORT_ID                VARCHAR2(255),

@@ -45,16 +45,6 @@
     </fileSets>
     <files>
         <file>
-            <source>${project.basedir}/..//domibusConnectorBuilder/domibusConnectorBuilderDeployable/target/domibusConnectorBuilderDeployable-${project.version}.war</source>
-            <outputDirectory>/webapp</outputDirectory>
-            <destName>domibusConnector.war</destName>
-        </file>
-        <file>
-            <source>${project.basedir}/../domibusConnectorBuilder/domibusConnectorBuilderStandalone/target/domibusConnectorBuilderStandalone-${project.version}.jar</source>
-            <destName>connector.jar</destName>
-            <outputDirectory>standalone/bin</outputDirectory>
-        </file>
-        <file>
             <source>${project.basedir}/src/main/resources/bash/start.sh</source>
             <fileMode>0777</fileMode>
             <lineEnding>unix</lineEnding>
@@ -65,6 +55,11 @@
             <lineEnding>windows</lineEnding>
             <outputDirectory>standalone</outputDirectory>
         </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/readme.txt</source>
+            <lineEnding>windows</lineEnding>
+            <outputDirectory>./</outputDirectory>
+        </file>
     </files>
     <dependencySets>
         <dependencySet>
@@ -73,6 +68,27 @@
             </includes>
             <unpack>true</unpack>
             <outputDirectory>documentation</outputDirectory>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/domibusGatewayPlugin</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>eu.domibus.connector:domibus-connector-plugin-distribution:zip</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>webapp</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>eu.domibus.connector:domibusConnectorBuilderDeployable:war</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>standalone/bin</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>eu.domibus.connector:domibusConnectorBuilderStandalone:jar</include>
+            </includes>
         </dependencySet>
     </dependencySets>
 </assembly>

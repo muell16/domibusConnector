@@ -57,3 +57,41 @@ They are:
 * domibusConnectorAPI.pdf
 * domibusConnector-Architecture.pdf
 * Changelog.pdf
+
+
+=== 4.4.1
+
+* Multiple Fixes within UI
+
+=== 4.4.2
+
+* Fix related to log4j2 security issue  (upgrade to 2.15.0)
+
+=== 4.4.3
+
+* Fix related to log4j2 security issue (upgrade to 2.17.0)
+
+=== 4.4.4
+
+* Fix problems with certificate verification: The CommonCertificateVerifier has ignored any
+configured restrictions on AIA checking. This has lead to a very long message processing
+if the AIA source was not reachable.
+
+
+=== 4.4.5
+
+==== Fixes
+
+* Multiple updates of dependentant libraries
+* Fix for issues related to pull for web service backends
+* UI fix for enable change of message process settings
+** EBMS generation
+** should generated evidences relayed back to backend
+* Fix for DOMIBUS_CONNECTOR_MSG_CONT entity: The created field was not filled by default with the current timestamp.
+* Fix for missing class issue [Ticket#55054]: Explicitly added dss-crl-parser-x509crl as dependency.
+* Fix issue with 4.4.x initial scripts at table DC_TRANSPORT_STEP => TRANSPORT_MESSAGE column should be TRANSPORTED_MESSAGE
+* Add prometheus metrics export interface dependency + documentation
+* Extend documentation
+* Additional work on slow certificate verification: Under some circumstances message processing is slow. Because the DSS-Tools try to lookup AIA or other certificate related information. This occurs because currently not all Lookup Classes from SecurityToolkit and EvidenceToolkit are using the connector configuration. This has been fixed by removing the DataLoader from CommonCertificateVerifier class (the common config is still not used in every certificate verifier!).
+* Removed deprecated parts from installation manual
+* Fixed -Dconnector.config.file property is ignored by connector

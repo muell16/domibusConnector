@@ -4,7 +4,10 @@ import eu.domibus.connector.controller.exception.DCEvidenceNotRelevantException;
 import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.controller.processor.util.FindBusinessMessageByMsgId;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -31,7 +34,6 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
                                     FindBusinessMessageByMsgId findBusinessMessageByMsgId,
                                     MessageConfirmationStep messageConfirmationStep,
                                     ValidateMessageConfirmationStep validateMessageConfirmationStep,
-                                    SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
                                     SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep,
                                     ToCleanupQueue cleanupQueue) {
         this.evidenceTriggerStep = evidenceTriggerStep;
@@ -78,8 +80,9 @@ public class EvidenceMessageProcessor implements DomibusConnectorMessageProcesso
 
             submitConfirmationAsEvidenceMessageStep.submitOppositeDirection(message.getConnectorMessageId(), businessMsg, transportedConfirmation);
 
-            if (isEvidenceTrigger) {
+            if (isEvidenceTrigger && submitConfirmationAsEvidenceMessageStep.isSendCreatedTriggerEvidenceBack(businessMsg.getMessageLaneId())) {
                 //send generated evidence back...this would be the same direction as the business message...with new messageid
+                LOGGER.debug("Sending by trigger created confirmation message back to backend");
                 submitConfirmationAsEvidenceMessageStep.submitSameDirection(null, businessMsg, transportedConfirmation);
             }
 

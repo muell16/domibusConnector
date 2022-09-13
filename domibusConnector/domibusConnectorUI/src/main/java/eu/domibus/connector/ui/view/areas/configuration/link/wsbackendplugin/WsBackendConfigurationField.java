@@ -9,6 +9,7 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import eu.domibus.connector.ui.fields.KeyAndKeyStoreAndTrustStoreConfigurationField;
+import eu.domibus.connector.ui.fields.SpringResourceField;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinder;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import eu.domibus.connectorplugins.link.wsbackendplugin.childctx.WsBackendPluginConfigurationProperties;
@@ -27,13 +28,16 @@ public class WsBackendConfigurationField extends CustomField<WsBackendPluginConf
     private final TextField backendPublishAddress = new TextField();
     private final Checkbox cxfLoggingEnabled = new Checkbox();
     private final KeyAndKeyStoreAndTrustStoreConfigurationField soap;
+    private final SpringResourceField wsPolicy;
 
     private WsBackendPluginConfigurationProperties value = new WsBackendPluginConfigurationProperties();
 
     public WsBackendConfigurationField(SpringBeanValidationBinderFactory validationBinderFactory,
-                                       KeyAndKeyStoreAndTrustStoreConfigurationField soap) {
+                                       KeyAndKeyStoreAndTrustStoreConfigurationField soap,
+                                       SpringResourceField wsPolicyField) {
         binder = validationBinderFactory.create(WsBackendPluginConfigurationProperties.class);
         this.soap = soap;
+        this.wsPolicy = wsPolicyField;
         initUI();
     }
 
@@ -46,6 +50,7 @@ public class WsBackendConfigurationField extends CustomField<WsBackendPluginConf
         formLayout.addFormItem(backendPublishAddress, "backendPublishAddress");
         formLayout.addFormItem(soap, "Soap");
         formLayout.addFormItem(cxfLoggingEnabled, "cxfLoggingEnabled");
+        formLayout.addFormItem(wsPolicy, "WS Security Policy");
 
         binder.setStatusLabel(statusLabel);
         binder.bindInstanceFields(this);

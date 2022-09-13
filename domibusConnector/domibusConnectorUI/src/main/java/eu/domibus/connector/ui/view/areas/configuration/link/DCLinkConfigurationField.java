@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
@@ -187,7 +188,7 @@ public class DCLinkConfigurationField extends CustomField<DomibusConnectorLinkCo
     protected DomibusConnectorLinkConfiguration generateModelValue() {
         return value;
     }
-    
+
     @Override
     public DomibusConnectorLinkConfiguration getValue() {
         return value;

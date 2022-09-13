@@ -95,7 +95,7 @@ public interface DCMessagePersistenceService {
      *
      * @return a list of Messages or an emtpy List if nothing found
      */
-    List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+    List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
 
     /**
      *

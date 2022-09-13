@@ -149,17 +149,6 @@ public class MsgContentPersistenceService implements DCMessageContentManager {
         return largeFileReference;
     }
 
-    @Deprecated
-    public void saveMessagePayloads(@Nonnull DomibusConnectorMessage message) throws PersistenceException {
-        DomibusConnectorMessageId connectorMessageId = message.getConnectorMessageId();
-        Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId.getConnectorMessageId());
-        if (dbMessage.isPresent()) {
-            saveMessagePayloads(message, dbMessage.get());
-        } else {
-            throw new IllegalArgumentException("No message in db found with connector message id " + connectorMessageId);
-        }
-    }
-
 
     /**
      * takes a message and stores all content into the database
