@@ -39,8 +39,12 @@ public class CertificateSourceFromKeyStoreCreator {
         InputStream res = null;
         try {
             res = dcKeyStoreService.loadKeyStoreAsResource(storeConfigurationProperties).getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load trust store", e);
+        } catch (IOException ioException) {
+            String error = String.format("Failed to load keystore: location [%s], type [%s], password [%s] ",
+                    storeConfigurationProperties.getPath(),
+                    storeConfigurationProperties.getType(),
+                    LoggingUtils.logPassword(LOGGER, storeConfigurationProperties.getPassword()) );
+            throw new RuntimeException(error, ioException);
         }
         try {
             keyStoreCertificateSource = new KeyStoreCertificateSource(res, storeConfigurationProperties.getType(), storeConfigurationProperties.getPassword());
