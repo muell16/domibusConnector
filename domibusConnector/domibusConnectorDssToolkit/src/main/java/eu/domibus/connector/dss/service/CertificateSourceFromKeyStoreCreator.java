@@ -55,7 +55,6 @@ public class CertificateSourceFromKeyStoreCreator {
                     LoggingUtils.logPassword(LOGGER, storeConfigurationProperties.getPassword()) );
             throw new RuntimeException(error, dssException);
         }
-
         return keyStoreCertificateSource;
     }
 
