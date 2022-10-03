@@ -289,12 +289,15 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
+		builder.append("direction", this.direction);
         builder.append("ebmsMessageId", this.ebmsMessageId);
         builder.append("backendMessageId", this.backendMessageId);
         builder.append("refToMessageId", this.refToMessageId);
         builder.append("originalSender", this.originalSender);
         builder.append("finalRecipient", this.finalRecipient);
         builder.append("conversationId", this.conversationId);
+		builder.append("fromParty", this.fromParty);
+		builder.append("toParty", this.toParty);
         return builder.toString();        
     }
 
