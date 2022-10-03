@@ -1,8 +1,10 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -29,6 +31,11 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
     }
 
     public void submitMessage(DomibusConnectorMessage message) {
+        DomibusConnectorMessageDetails details = message.getMessageDetails();
+        if (details.getDirection().getTarget() == MessageTargetSource.GATEWAY) {
+            details.getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+            details.getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        }
         toLinkQueue.putOnQueue(message);
     }
 
