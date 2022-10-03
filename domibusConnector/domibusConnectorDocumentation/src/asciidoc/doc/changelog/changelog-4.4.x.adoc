@@ -101,3 +101,4 @@ if the AIA source was not reachable.
 ==== Fixes
 
 * Fix issue with connector2connecter tests if Sender and Initiating Role are the same
+* Also fix issue when responding to a c2c test

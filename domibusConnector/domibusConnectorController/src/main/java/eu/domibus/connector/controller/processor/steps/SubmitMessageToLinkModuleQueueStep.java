@@ -31,11 +31,6 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
     }
 
     public void submitMessage(DomibusConnectorMessage message) {
-        DomibusConnectorMessageDetails details = message.getMessageDetails();
-        if (details.getDirection().getTarget() == MessageTargetSource.GATEWAY) {
-            details.getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-            details.getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-        }
         toLinkQueue.putOnQueue(message);
     }
 
