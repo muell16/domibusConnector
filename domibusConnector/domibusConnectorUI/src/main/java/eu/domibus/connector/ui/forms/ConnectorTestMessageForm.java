@@ -127,10 +127,10 @@ public class ConnectorTestMessageForm extends FormLayout {
 	public void setParties(List<DomibusConnectorParty> parties) {
 		
 		toParty.setItems(parties.stream()
-				.filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
+				.filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
 								.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
 		fromParty.setItems(parties.stream()
-				.filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
+				.filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
 				.map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
 	}
 	
