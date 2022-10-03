@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
 
@@ -117,7 +118,7 @@ public class DomainModelHelper {
      *     <li>OriginalSender with FinalRecipient</li>
      * </ul>
      *
-     * When the party is switched, the party role type is preserved
+     * When the party is switched, the party role and role type is preserved
      * so the fromParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#INITIATOR}
      * and the toParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#RESPONDER}
      *
@@ -130,15 +131,21 @@ public class DomainModelHelper {
                 .copyPropertiesFrom(messageDetails)
                 .build();
         DomibusConnectorMessageDirection originalDirection = details.getDirection();
-        String finalRecipient = details.getFinalRecipient();
-        String originalSender = details.getOriginalSender();
-        DomibusConnectorParty newToParty = details.getFromParty();
-        newToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        DomibusConnectorParty newFromParty = details.getToParty();
-        newFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        String newFinalRecipient = details.getOriginalSender();
+        String newOriginalSender = details.getFinalRecipient();
+
+        //switching party, but keep Role and RoleType
+        DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
+        newToParty.setRoleType(details.getFromParty().getRoleType());
+        newToParty.setRole(details.getFromParty().getRole());
+        //switching party, but keep Role and RoleType
+        DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
+        newFromParty.setRoleType(details.getToParty().getRoleType());
+        newFromParty.setRole(details.getToParty().getRole());
+
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
-        details.setFinalRecipient(originalSender);
-        details.setOriginalSender(finalRecipient);
+        details.setFinalRecipient(newOriginalSender);
+        details.setOriginalSender(newFinalRecipient);
         details.setFromParty(newFromParty);
         details.setToParty(newToParty);
         return details;
