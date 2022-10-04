@@ -52,7 +52,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         // only check for timeout of DELIVERY/NON_DELIVERY evidences if the timeout is set in the connector.properties
         if (evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getMilliseconds() > 0 ||
                 evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getMilliseconds() > 0)
-            checkNotRejectedWithoutDelivery();
+            checkNotRejectedNorConfirmedAndWithoutDelivery();
 
         LOGGER.debug("Job for checking evidence timeouts finished in {} ms.",
                 (System.currentTimeMillis() - start.getTime()));
@@ -95,14 +95,14 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public void checkNotRejectedWithoutDelivery() throws DomibusConnectorControllerException {
+    public void checkNotRejectedNorConfirmedAndWithoutDelivery() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected yet and without a DELIVERY/NON_DELIVERY evidence
-        List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedAndWithoutDelivery();
+        List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
         LOGGER.trace("Checking [{}] messages for confirmation timeout notRejectedWithoutDelivery", messages.size());
-        messages.forEach(this::checkNotRejectedWithoutDelivery);
+        messages.forEach(this::checkNotRejectedNorConfirmedAndWithoutDelivery);
     }
 
-    void checkNotRejectedWithoutDelivery(DomibusConnectorMessage message) {
+    void checkNotRejectedNorConfirmedAndWithoutDelivery(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());

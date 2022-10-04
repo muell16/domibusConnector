@@ -28,16 +28,16 @@ public class PDomibusConnectorParty {
     @Column(name = "IDENTIFIER")
     private String pmodePartyIdentifier;
 
-    @Column(name = "PARTY_ID")
+    @Column(name = "PARTY_ID", nullable = false)
     private String partyId;
 
     @Column(name = "ROLE")
     private String role;
 
-    @Column(name = "PARTY_ID_TYPE")
+    @Column(name = "PARTY_ID_TYPE", nullable = false, length = 512)
     private String partyIdType;
     
-    @Column(name = "ROLE_TYPE")
+    @Column(name = "ROLE_TYPE", length = 50)
 //    @Enumerated(EnumType.STRING)
     private DomibusConnectorParty.PartyRoleType roleType;
 

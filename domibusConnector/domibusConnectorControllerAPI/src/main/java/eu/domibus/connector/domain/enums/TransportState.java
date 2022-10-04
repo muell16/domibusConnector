@@ -12,6 +12,7 @@ public enum TransportState {
     PENDING_DOWNLOADED("pend_down", 2),
     FAILED("failed", 10);
 
+
     private TransportState(String dbName, int priority) {
         this.priority = priority;
         this.dbName = dbName;

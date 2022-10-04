@@ -55,6 +55,7 @@ public class EvidenceUtilsImplTest {
     String javaKeyStorePassword = "test123";
     String alias = "new_Testcert";
     String keyPassword = "test123";
+    String javaKeyStoreType = "JKS";
 
     @BeforeAll
     public static void setUpTestEnv() throws IOException {
@@ -74,7 +75,7 @@ public class EvidenceUtilsImplTest {
     @Test
     public void testEvidenceUtilsImpl() throws Exception {
 
-        EvidenceUtilsImpl result = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl result = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         // add additional test code here
         assertNotNull(result);
     }
@@ -137,7 +138,7 @@ public class EvidenceUtilsImplTest {
     // }
 
     // private method to get the keypair
-    private KeyPair getKeyPairFromKeyStore(Resource store, String storePass, String alias, String keyPass) throws Exception {
+    private KeyPair getKeyPairFromKeyStore(Resource store, String keyStoreType, String storePass, String alias, String keyPass) throws Exception {
         KeyStore ks;
         InputStream kfis;
         KeyPair keyPair = null;
@@ -146,7 +147,7 @@ public class EvidenceUtilsImplTest {
         PublicKey publicKey = null;
         PrivateKey privateKey = null;
 
-        ks = KeyStore.getInstance("JKS");
+        ks = KeyStore.getInstance(keyStoreType);
 //        final URL ksLocation = new URL(store);
 
         kfis = store.getInputStream();
@@ -180,7 +181,7 @@ public class EvidenceUtilsImplTest {
         // create signature with methode signByteArray
         InputStream xmlFileInputStream = new ClassPathResource("ConvertIntoEvidenceTypetestFileA.xml").getInputStream();
         byte[] xmlData = StreamUtils.copyToByteArray(xmlFileInputStream);
-        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 
         byte[] signedxmlData = fixture.signByteArray(xmlData);
 
@@ -195,7 +196,7 @@ public class EvidenceUtilsImplTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 
         PublicKey publicKey = keypair.getPublic();
 
@@ -251,7 +252,7 @@ public class EvidenceUtilsImplTest {
      */
     @Test
     public void testVerifySignature() throws Exception {
-        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         byte[] xmlData = new byte[]{};
 
         boolean result = fixture.verifySignature(xmlData);

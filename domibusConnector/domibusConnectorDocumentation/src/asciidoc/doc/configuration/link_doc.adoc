@@ -106,6 +106,9 @@ ActiveLinkPartner "1" --> "*" DomibusConnectorLinkPartner
 @enduml
 ----
 
+
+CAUTION: The backends are authenticated with certificates at the connector. The CN of the certificate is used to determine which backend is talking to the connector. So make sure every backend has it's own CN within its certificate.
+
 === Configuration via Property File
 
 Or configuration via the environment. With this approach the configured

@@ -3,14 +3,7 @@ package eu.domibus.connector.persistence.model;
 import java.sql.Blob;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 
@@ -35,19 +28,20 @@ public class PDomibusConnectorKeystore {
 	@Column(name="UUID", nullable=false, unique=true)
 	private String uuid;
 
+	@Lob
 	@Column(name="KEYSTORE", nullable=false)
     private byte[] keystore;
 
-	@Column(name = "PASSWORD")
+	@Column(name = "PASSWORD", length = 1024)
 	private String password;
 	
-	@Column(name="UPLOADED")
+	@Column(name="UPLOADED", nullable = false)
     private Date uploaded;
 	
-	@Column(name="DESCRIPTION")
+	@Column(name="DESCRIPTION", length = 512)
 	private String description;
 	
-	@Column(name="TYPE")
+	@Column(name="TYPE", length = 50)
 //	@Enumerated(EnumType.STRING)
 	private DomibusConnectorKeystore.KeystoreType type;
 	

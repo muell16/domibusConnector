@@ -23,10 +23,10 @@ public class PDomibusConnectorProperties implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private int id;
 
-    @Column(name = "PROPERTY_NAME")
+    @Column(name = "PROPERTY_NAME", nullable = false, length = 2048)
     private String propertyName;
 
-    @Column(name = "PROPERTY_VALUE")
+    @Column(name = "PROPERTY_VALUE", length = 2048)
     private String propertyValue;
 
     public int getId() {

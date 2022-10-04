@@ -42,17 +42,17 @@ public class PDomibusConnectorUserPassword {
     @JoinColumn(name = "USER_ID", nullable = false)
     private PDomibusConnectorUser user;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String password;
 	
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String salt;
     
-    @Column(name="CURRENT_PWD")
-	private boolean currentPassword;
+    @Column(name="CURRENT_PWD", nullable = false)
+	private boolean currentPassword = true;
     
-    @Column(name="INITIAL_PWD")
-	private boolean initialPassword;
+    @Column(name="INITIAL_PWD", nullable = false)
+	private boolean initialPassword = true;
 		
     @Column(name = "CREATED", nullable = false)
     private Date created;

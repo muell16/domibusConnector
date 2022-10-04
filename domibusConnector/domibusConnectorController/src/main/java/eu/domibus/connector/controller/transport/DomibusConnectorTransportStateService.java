@@ -51,8 +51,16 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
                 m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
                 messagePersistenceService.updateMessageDetails(m);
                 messagePersistenceService.setDeliveredToGateway(m);
+                LOGGER.debug("Successfully updated business message [{}]", m);
             }
-            m.getTransportedMessageConfirmations().forEach(evidencePeristenceService::setConfirmationAsTransportedToGateway);
+            m.getTransportedMessageConfirmations().forEach(c -> {
+                try {
+                    evidencePeristenceService.setConfirmationAsTransportedToGateway(c);
+                } catch (Exception e) {
+                    //any issue here should not prevent commit!
+                    LOGGER.warn("Failed to set transport time stamp of confirmation!", e);
+                }
+            });
         });
 
     }
@@ -66,9 +74,16 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
                 m.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
                 messagePersistenceService.updateMessageDetails(m);
                 messagePersistenceService.setMessageDeliveredToNationalSystem(m);
+                LOGGER.debug("Successfully updated business message [{}]", m);
             }
-            m.getTransportedMessageConfirmations().forEach(evidencePeristenceService::setConfirmationAsTransportedToBackend);
-            LOGGER.debug("Successfully updated message [{}]", m);
+            m.getTransportedMessageConfirmations().forEach(c -> {
+                try {
+                    evidencePeristenceService.setConfirmationAsTransportedToBackend(c);
+                } catch (Exception e) {
+                    //any issue here should not prevent commit!
+                    LOGGER.warn("Failed to set transport time stamp of confirmation!", e);
+                }
+            });
         });
     }
 

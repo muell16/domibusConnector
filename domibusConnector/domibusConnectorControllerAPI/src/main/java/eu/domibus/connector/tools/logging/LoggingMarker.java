@@ -19,6 +19,8 @@ public class LoggingMarker {
     public static final String BUSINESS_CONTENT_LOG_MARKER_TEXT = "BUSINESS_CONTENT";
     public static final String UI_LOG_MARKER_TEXT = "UI";
 
+    public static final String TEST_LOG_MARKER_TEXT = "TEST";
+
     public static final Marker BUSINESS_LOG = MarkerFactory.getMarker(BUSINESS_LOG_MARKER_TEXT);
     public static final Marker BUSINESS_CERT_LOG = MarkerFactory.getMarker(BUSINESS_CERT_LOG_MARKER_TEXT);
     public static final Marker BUSINESS_EVIDENCE_LOG = MarkerFactory.getMarker(BUSINESS_EVIDENCE_LOG_MARKER_TEXT);
@@ -29,6 +31,7 @@ public class LoggingMarker {
         public static final org.apache.logging.log4j.Marker UI_LOG = MarkerManager.getMarker(UI_LOG_MARKER_TEXT);
         public static final org.apache.logging.log4j.Marker CONFIG = MarkerManager.getMarker(CONFIG_MARKER_TEXT);
         public static final org.apache.logging.log4j.Marker BUSINESS_LOG = MarkerManager.getMarker(BUSINESS_LOG_MARKER_TEXT);
+        public static final org.apache.logging.log4j.Marker TEST_LOG = MarkerManager.getMarker(TEST_LOG_MARKER_TEXT);
     }
 
     static {

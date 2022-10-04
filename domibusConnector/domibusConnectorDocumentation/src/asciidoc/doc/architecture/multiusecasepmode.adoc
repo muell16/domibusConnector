@@ -35,16 +35,21 @@ components:
 
 The p-Mode set contains a configuration with
 
-* Certificates of all Access Points
 * Access-Point Addresses (URL)
+* Certificates of all Access Points
+* Own certificates (shared) and corresponding private keys (not shared!)
 * Parties
 * Services
 * ServiceLegs
 * Actions
 
+These items will be referenced in this document as p-Mode item.
+
+CAUTION: Within a p-Modes set every Action, Party, Service, ServiceLeg must be unique! A p-mode set can only have one private key of a kind for e-Codex Container creation and evidence creation
+
 == Multi Backend / AS4 Service based Routing [already implemented]
 
-* Every UseCase is within the same P-Mode set
+* Every UseCase is within the same P-Mode set. This meanst that the merged usecases must not use the same name for a p-Mode item.
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name]
 
 
@@ -117,7 +122,7 @@ backend2 -[hidden]- backend1
 * Different p-Mode sets
 * Different use-cases are routed by the connector to different backends based on the use-case [AS4 Service Name] and the p-Mode set (domain name of Gateway)
 
-Currently the plugin has no support for this setup.
+Currently the domibus connector plugin has no support for this setup.
 
 [plantuml,multiusecase_3]
 ----
@@ -195,6 +200,7 @@ connector2 -down-> backend2
 @enduml
 ----
 
+CAUTION: The domibusConnectorPlugin 4.2.x comes with limited support for this environment. Only PULL-Mode on the plugin side is supported. For more details consult the domibusConnectorPlugin documentation.
 
 == Multi Tenancy, Multi Use Case [not implemented yet]
 

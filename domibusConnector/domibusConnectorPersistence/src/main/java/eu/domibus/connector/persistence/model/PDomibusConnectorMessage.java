@@ -52,12 +52,13 @@ public class PDomibusConnectorMessage implements Serializable {
     @Column(name = "CONVERSATION_ID", length = 255)
     private String conversationId;
 
-    @Column(name = "DIRECTION_SOURCE", length = 10)
+    @Column(name = "DIRECTION_SOURCE", length = 20)
     private MessageTargetSource directionSource;
 
-    @Column(name = "DIRECTION_TARGET", length = 10)
+    @Column(name = "DIRECTION_TARGET", length = 20)
     private MessageTargetSource directionTarget;
 
+    @Lob
     @Column(name = "HASH_VALUE")
     private String hashValue;
 

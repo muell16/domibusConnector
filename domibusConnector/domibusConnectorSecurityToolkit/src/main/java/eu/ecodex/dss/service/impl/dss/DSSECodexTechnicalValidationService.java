@@ -470,7 +470,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 				
 				try{
 					SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(file);
-					validator.setCertificateVerifier(new CommonCertificateVerifier());
+					validator.setCertificateVerifier(new CommonCertificateVerifier(true)); //TODO: use CertificateVerifier factory
 					
 					Reports rep = validator.validateDocument();
 //					String certId = rep.getDiagnosticData().getFirstSigningCertificateId();

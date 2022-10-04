@@ -1,14 +1,11 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -44,9 +41,9 @@ public interface DomibusConnectorMessageDao extends JpaRepository<PDomibusConnec
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null ")
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.businessMessage = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
-    public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+    public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
     
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.businessMessage = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
