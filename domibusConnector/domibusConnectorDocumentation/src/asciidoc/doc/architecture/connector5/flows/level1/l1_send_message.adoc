@@ -1,0 +1,217 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Send message
+
+The send message flow is responsible for handing over a message (confirmation or business message) to a specific link partner. This  flow do not take any care of the message type.
+
+It allows multiple variants of transporting the message:
+
+* Sync/Async send
+* Pull Mode (is async)
+** Implicit ACK
+** Explicit ACK
+
+
+== Trigger
+
+* Triggered by the messageReadyToSentEvent
+
+== Postcondition
+
+* message is marked in the DB with SuccessfullySent, Failed, Fetched or FailedPermanently
+* messageSentEvent created
+** messageSentEvent contains any errors provided by LP
+
+== Retry
+
+* Only retries on timeouts are or connection issues are attempted
+* The number of retries are counted
+
+
+== Send message State Diagram
+
+.Send Message State Diagram
+[plantuml,send_message_state_diagram,format=svg]
+----
+@startuml
+[*] --> ReadyToSent
+ReadyToSent --> Pending: eg. put on queue or filsystem\n async webservice call\n pull request
+Pending --> SuccessfullySent: eg. asynchronus webservice call answer\n JMS answer
+Pending -[#red]-> Fetched: pull request / optional?
+Fetched --> SuccessfullySent: eg. additional answer
+Fetched -[bold,dashed,#red]-> Failed : should not be possible!!
+ReadyToSent --> SuccessfullySent: eg. asynchronus webservice call\n pos. ack
+ReadyToSent --> Failed: eg. asynchronus webservice call\n neg. ack
+ReadyToSent --> FailedPermanently
+Pending --> Failed
+Failed --> FailedPermanently
+
+@enduml
+----
+
+=== Pull Mode / Fetched state
+* A transition from PendingFetched to failed should not be possible because, we assume that if a message has been fetched it cannot be failed via explicit message! It can only additionally acked. But does this make sense? Should it just only be put into the SuccessfullySent state after download?
+
+== Sequence Diagrams
+
+=== Synchronous request
+
+.Send Message Sequence Diagram
+[plantuml,send_message_sequence_diagram,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+'collections WorkflowModule
+
+database DB
+
+
+JMS -> LinkModule++: receive messageReadyToSentEvent
+group DB_TX
+LinkModule -> LP--++: send submitMessageRequest
+LP --> LinkModule--++: return submitMessageResponse
+alt successfully sent
+LinkModule -> DB: set message as sent to link partner
+else send failure
+LinkModule -> DB: set message as failed to sent
+end
+end
+LinkModule -> JMS--: send messageSentEvent
+
+
+@enduml
+----
+
+==== <<link-send-questions-discussion-sync-mode, Questions / Discussion>>
+
+
+=== Asynchronous Send Message Sequence Diagram
+
+.Asynchronous Send Message Sequence Diagram
+[plantuml,send_message_sequence_diagram_async,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+'collections WorkflowModule
+
+database DB
+
+
+JMS -> LinkModule++: receive messageReadyToSentEvent
+group DB_TX
+LinkModule -> JMS: send submitMessageRequest
+'LP --> LinkModule--++: return submitMessageResponse
+alt successfully sent
+LinkModule -> DB: set message as sent to link partner
+else send failure
+LinkModule -> DB: set message as failed to sent
+end
+end
+LinkModule -> JMS--: send messageSentEvent
+
+
+@enduml
+----
+
+==== <<link-send-questions-discussion-async-mode, Questions / Discussion>>
+
+
+=== Pull Mode: Send message by letting it pulled
+
+The pull message mode allows a LinkPartner to pull messages from connector. The pull works in 3 steps:
+
+1. Get list of all available messages
+2. Download a message by ID
+3. [optional] ACK message
+
+.Send Message by Letting it Pulled Sequence Diagram
+[plantuml,message_processing_sequence_diagram_overview_async,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+'collections WorkflowModule
+
+database DB
+
+
+JMS -> LinkModule++: receive messageReadyToSentEvent
+group DB_TX
+LinkModule -> DB--: set message as pending
+end
+
+
+
+alt auto ack
+
+
+LP -> LinkModule++: pull for messages
+activate LP
+LinkModule --> LP--: return list of pending messages
+
+LP -> LinkModule++: pull message
+group DB_TX
+LinkModule --> LP: return message
+
+LinkModule -> DB: set message to Fetched/SuccessfullySent\n See discussion pull mode Fetched State
+end
+LinkModule -> JMS--: send messageSentEvent
+deactivate LP
+
+else explicit ack
+
+
+LP -> LinkModule++: pull for messages
+activate LP
+LinkModule --> LP--: return list of pending messages
+
+LP -> LinkModule++: pull message
+group DB_TX
+LinkModule --> LP: return message
+
+
+LinkModule -> DB--: set message to Fetched
+end
+
+hnote over LP: after some time
+
+group DB_TX
+LP -> LinkModule++: ack / not ack Message
+deactivate LP
+
+
+LinkModule -> DB: set message as SuccessfullySent/Failed
+end
+LinkModule -> JMS--: send messageSentEvent
+
+end
+
+
+
+@enduml
+----
+
+==== <<link-send-questions-discussion-variant-pull, Questions / Discussion>>
+
+
+
+
+

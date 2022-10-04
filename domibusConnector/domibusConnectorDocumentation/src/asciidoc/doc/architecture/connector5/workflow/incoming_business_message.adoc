@@ -1,0 +1,116 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Incoming Business Message
+
+== Trigger
+This workflow is triggered by the process
+link:../process/receive_request_from_gateway[receive request from gateway].
+
+
+== Process
+This workflow consists of the following processes:
+
+|===
+| process | precondition | outcome
+
+|link:../process/receive_message_from_gateway[receive business message from gateway]
+|message successfully received by process link:../process/receive_request_from_gateway.html[receive request from gateway]
+|business message is on toConnector queue.
+
+|receive_message_from_toConnector_queue
+|business message is on toConnector queue and queue listener is triggered.
+|the business message is received from the toConnector queue and loaded from database.
+
+|backend_lookup
+|receive_message_from_toConnector_queue finished successfully.
+|It is known to the connector to which backend the business message must be submitted.
+
+|create_new_evidence_message_to_gateway
+|the business message is ready to be processed and all data necessary is identified.
+|a new confirmation message with a RELAY_REMMD_ACCEPTANCE is created and workflow for submission triggered.
+
+|validate_and_resolve_ecodex_container
+|all previous processes finished successfully.
+|the ecodex_container is resolved and business attachments available.
+
+|deliver_message_to_backend_link
+|all previous processes finished successfully. The backend is known.
+|the business message is put on the toLink queue.
+
+|submit_message_to_backend
+|the business message lies on the toLink queue and queue listener is triggered.
+|the message is delivered and acknowledged by the backend or put on queue for pull reception.
+
+|===
+
+
+This workflow consists of the following activities:
+
+[plantuml,incoming_business_message,format=svg]
+----
+@startuml
+
+title Incoming Business Message Workflow
+
+start
+
+:New IncomingBusinessMessage Workflow started;
+
+:Create BusinessMessage;
+
+:Lookup Backend;
+
+:Validate and Resolve eCodex Container;
+if (validation has failed) then (has failed)
+:Create RELAY_REMMD_REJECTION or NON_DELIVERY;
+:process Evidence for BusinessMessage;
+:trigger send RELAY_REMMD_REJECTION / NON_DELIVERY;
+end
+else (validation OK)
+
+:Create Evidence RELAY_REMMD_ACCEPTANCE;
+endif
+
+:process Evidence for BusinessMessage;
+
+:deliver Message to BackendLink;
+
+stop
+
+@enduml
+----
+
+
+
+[plantuml,incoming_business_message_sent_result_event,format=svg]
+----
+@startuml
+
+title Incoming Business Message Workflow Submit Failure/Success Event
+
+start
+
+:Send to backendLink sent result received;
+if () then (send has failed)
+:create NON_DELIVERY;
+:process Evidence for BusinessMessage;
+:trigger send NON_DELIVERY;
+else (send success)
+: [for discussion] if activated via property? automatically crete DELIVERY?;
+endif
+
+stop
+
+@enduml
+----
+
+
+
+

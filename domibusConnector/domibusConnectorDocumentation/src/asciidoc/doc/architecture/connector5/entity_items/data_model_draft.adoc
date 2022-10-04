@@ -1,0 +1,87 @@
+
+= Data Model Draft
+
+== Persistence Services and their Responsibility
+
+Every service should be responsible for a limited set of tasks. Ideally there are no overlaps in the required data. So every PersistenceService can control their own entity model.
+
+=== ProcessPersistenceService / RawMessagePersistenceService
+
+Responsible for:
+
+* Store Processing / Persist RawMessage
+* Retrieve Processing / Load RawMessage
+* Retrieve State of processing
+* Set State of processing
+
+See also: link:../flows/level0/l0_process_message.adoc#_message_state_diagram[Message State diagram]
+
+//=== MessagePersistenceService
+//
+//* Load Message
+//* Persist Message
+//* Append Attachment to Message
+//* Append Evidence to Message
+//* Set business message state
+//* Retrieve business message state
+//
+//See also: link:../flows/level0/l0_process_message.adoc#_business_message_state[Business Message State diagram]
+
+== DB Data Model Requirements
+
+This requirements ONLY reflect our requirements agains the database. They are resulting from other requirements.
+
+=== D1.1: As ProcessPersistenceService I need to access at any time by ID my transported message / message process entity so I can process it.
+
+
+=== D1.2: As ProcessPersistenceService I need to make sure that a process step can only be executed once!
+
+This is very important, because the notication system (JMS) is not part of the transaction so there is no guarantee that a notification will not be recevied twice or at all.
+
+=== D1.3: As ProcessPersistenceService I need to provide a list which messages have not been updated for a specific time so a timer job can identify stuck messages.
+
+This is very important, because the notication system (JMS) is not part of the transaction so there is no guarantee that a notification will not be recevied twice or at all.
+
+I also need to know a estimation how long the message will stay in current state. E.g.: Sending state? => retry would not usefull.
+Other similary states in future?
+Maybe better to offload this into state model table!
+
+
+NOTE: The recover timer job will need definitiv some additional information if a MessageProcess is stuck or not. Maybe the ProcessStep needs some kind of result and only if the result is null it should be retried?
+
+
+=== D2: As MessagePersistenceService I need to know very fast which business message has not already been rejected or confirmed so I can check which evidence is missing for this specific business message.
+
+This is needed to run/trigger evidence timeouts.
+
+=== D3: As MessagePersistenceService I need to find very fast a related business message. So I can link a ConfirmationMessage to the according BusinessMessage.
+
+The refToMessage can either use the ebmsId (for incoming international confirmation messages) or the backendMessageId (for by the backend generated confirmation message/s (triggers))
+
+=== D3.1: As MessagePersistenceService I also have to provide all evidences to a specific business message, so an additional evidence can be created.
+
+This is required to generate the RELAY_REMMD_EVIDENCE or DELVIERY_EVIDENCE out of the evidence trigger.
+
+
+=== D4.0: As TransportService I need to create a message for transport for a specific link partner. So it can then be transported by this link partner.
+
+=== D4.1: As TransportService I need to update a TransportState so the current state of transport provided by the link partner is saved in DB.
+
+=== D4.1: As Admin I want to have a history of transport states so I can see how long a message waited for being pulled, transported, ...
+
+=== D5.0: As Operator I want to know which Payloads (including the business message) I have sent. So I can link the hashes with evidences to check delivery.
+I need to know how the message looked extracted.
+
+=== D5.1: As Operator I want to know which Payloads I have received. So I can link the hashes with evidences to check delivery.
+I need to know how the message looked after the container has been created. Or before message has
+been extracted.
+
+=== D5.2: As Operator I want to know the AS4 address data of every business message. So I can generate statistics of message transport.
+
+
+
+//[plantuml]
+//----
+//
+//----
+

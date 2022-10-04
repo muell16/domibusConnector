@@ -1,0 +1,250 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Message Receive
+
+A message can be received in different variantes:
+
+* PUSH
+* PULL
+* Asynchronus/Synchronus
+
+== Receive Message Activity Diagram
+
+//TODO: decide if recive/receive_from_gateway.adoc should be a l2 step, or directly be included here!?
+
+== Receive Message Sequence Diagrams
+
+=== Receive Message by Synchronous Request
+
+.Synchronous Message Receive Sequence Diagram
+[plantuml,receive_message_by_synchronous_request_sequence_diagram,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+collections WorkflowModule
+collections PersistenceModule
+collections TransitionService
+
+database DB
+
+
+alt Variant1
+group DB_TX
+activate LP
+LP -> LinkModule ++: SubmitMessage request
+
+LinkModule -> WorkflowModule --++: ReserveStepdId
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return step id
+
+
+group sub_DB_TX
+LinkModule -> TransitionService --++: convert to domain message
+TransitionService --> LinkModule --++: return domain message
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+LinkModule --> LP: return not/ACK response
+
+LinkModule -> WorkflowModule --++: save step result
+WorkflowModule -> DB++: update step result
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+
+LinkModule --> EventService: send newMessageReceivedEvent
+
+deactivate LP
+
+end
+
+else Variant2
+
+group DB_TX
+activate LP
+LP -> LinkModule ++: SubmitMessage request
+
+LinkModule -> WorkflowModule --++: StartWorkflow
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return Workflow id
+
+
+group sub_DB_TX
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+
+
+LinkModule -> WorkflowModule --++: save step result
+WorkflowModule -> DB++: update step result
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+end
+
+LinkModule --> LP: return not/ACK response
+LinkModule --> EventService: send newMessageStoredEvent
+
+deactivate LP
+
+
+end
+
+@enduml
+----
+
+==== <<link-questions-discussion-variant1, Questions / Discussion>>
+
+* Should the ACK happen within or out of the DB_TX?
+** ACK within DB_TX [Variant1]
+*** If the message store fails the LinkPartner will receive a not ACK
+*** If update workflow state fails the message will be stuck, but the client will already have got an ACK!
+** ACK after DB_TX [Variant2]
+*** If the message store fails the LinkPartner will receive a not ACK (this not ACK might get lost if the DB_TX cannot be commited)
+*** If update workflow state fails the LinkPartner will receive no ACK at all -> in this case the sub_DB_TX should be rolled back!
+
+
+=== Receive Message by Asynchronous Request
+
+The asynchronus request will most likely if EventService or a file based interface is being used.
+
+.Asynchronous Message Receive Sequence Diagram
+[plantuml,receive_message_by_asynchronous_request_sequence_diagram,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+collections WorkflowModule
+collections PersistenceModule
+
+database DB
+
+
+activate LP
+LP -> LinkModule ++: SubmitMessage request
+group DB_TX
+deactivate LP
+
+LinkModule -> WorkflowModule --++: StartWorkflow
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return Workflow id
+
+
+group sub_DB_TX
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB++: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+
+
+
+LinkModule -> WorkflowModule --++: finishWorkflow
+WorkflowModule -> DB++: update workflow state
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+end
+
+LinkModule --> LP: return not/ACK response
+
+LinkModule --> EventService: send newMessageStoredEvent
+
+
+@enduml
+----
+
+==== Questions / Discussion / Notes
+
+* If there is any failure within the sub_DUB_TX the result will be written to the workflow state and the LinkPartner will be informed
+* When should the return not/ACK be sent back? See discussions in xref:link-questions-discussion-variant1[1.1.1].
+
+
+=== Receive Message by Pulling Sequence Diagram
+
+.Receive Message by Pulling Sequence Diagram
+[plantuml,receive_message_by_pulling_sequence_diagram,format=svg]
+----
+@startuml
+
+
+actor "LinkPartner (Gateway or Backend)" as LP
+
+collections LinkModule
+collections WorkflowModule
+collections PersistenceModule
+
+database DB
+
+
+
+LinkModule -> LP ++: Request messages
+LP --> LinkModule--++: Return available message ids
+
+loop for every message
+
+LinkModule -> LP++: download message
+LP --> LinkModule--: return message
+
+group DB_TX
+deactivate LP
+
+LinkModule -> WorkflowModule --++: StartWorkflow
+WorkflowModule -> DB++: persist
+DB --> WorkflowModule --: db ids
+WorkflowModule --> LinkModule --++: return Workflow id
+
+
+group sub_DB_TX
+LinkModule -> PersistenceModule --++: persist message
+PersistenceModule -> DB++: persist
+DB --> PersistenceModule --:return db ids
+PersistenceModule --> LinkModule --++:: return ids
+end
+
+
+
+
+LinkModule -> WorkflowModule --++: finishWorkflow
+WorkflowModule -> DB++: update workflow state
+DB --> WorkflowModule--: return
+WorkflowModule --> LinkModule --++: return
+
+end
+
+LinkModule -> LP++: send not/ACK response
+LP --> LinkModule--++
+
+
+LinkModule --> EventService: send newMessageStoredEvent
+
+end
+
+@enduml
+----
+
+

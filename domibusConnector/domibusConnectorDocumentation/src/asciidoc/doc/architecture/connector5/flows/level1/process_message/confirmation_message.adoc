@@ -1,0 +1,124 @@
+
+
+= Confirmation Message
+This flow does not take care of any message direction. It is message direction independent.
+
+
+
+== Trigger
+
+See parent xref::process_message[Process Message]
+
+== Pre-Conditions
+
+* Message is saved within DB
+* A workflow has been set
+* A BusinessDomain has been set
+
+== Post-Conditions
+
+* The xref::business_message_state[business message state] has changed according to process evidence
+
+== Confirmation Message Processing Activity Diagram
+
+This workflow consists of the following activities:
+
+.Confirmation Message Processing Activity Diagram
+[plantuml,confirmation_message,format=svg]
+----
+@startuml
+
+title Going through confirmation message
+
+start
+
+:Lookup BusinessMessage;
+
+:write EBMS-Attributes from BusinessMessage into ConfirmationMessage;
+:validate EBMS-Attributes;
+
+if () then (is evidenceTrigger AND\n link partner is allowed to trigger)
+
+:create evidence and put it into the message;
+
+endif
+
+:Validate evidence;
+:process evidence for business message;
+
+:forward message;
+
+end
+
+@enduml
+----
+
+
+=== Confirmation Message Process Sequence Diagram
+
+.Confirmation Message Process Sequence Diagram
+[plantuml,confirmation_message_sequence_diagram,format=svg]
+----
+@startuml
+
+
+participant EventService
+collections PersistenceService
+database DB
+
+participant ConfirmationMessageProcess
+collections SecurityToolkit
+
+[-> EventService++: receive newWorkFlowCreatedEvent
+
+group DB_TX
+EventService -> ConfirmationMessageProcess++: create/start workflow
+
+ConfirmationMessageProcess -> LookupBusinessMessageStep--++: find related business message
+LookupBusinessMessageStep --> ConfirmationMessageProcess--++: return business message
+
+ConfirmationMessageProcess -> ConfirmationMessageProcess: write EBMS attributes into confirmation message
+
+ConfirmationMessageProcess -> ValidateEbmsAttributesStep: validate EBMS Attributes
+
+alt is evidence trigger
+ConfirmationMessageProcess -> EvidenceToolkit--++: create evidence
+EvidenceToolkit --> ConfirmationMessageProcess--++: return
+ConfirmationMessageProcess -> ConfirmationMessageProcess: put evidence into confirmation message
+end
+
+alt optional
+ConfirmationMessageProcess -> EvidenceToolkit--++: validate evidence
+EvidenceToolkit --> ConfirmationMessageProcess--++: return
+end
+
+ConfirmationMessageProcess -> EvidenceProcessorStep--++: process evidence
+EvidenceProcessorStep --> ConfirmationMessageProcess--++: return
+
+ConfirmationMessageProcess -> PersistenceService--++: update message
+PersistenceService -> DB++: update message in DB
+DB --> PersistenceService--: return
+PersistenceService --> ConfirmationMessageProcess--++: return
+
+ConfirmationMessageProcess -> EventService: set message ready to sent
+
+ConfirmationMessageProcess --> EventService--: return
+
+end
+
+deactivate EventService
+
+@enduml
+----
+
+
+=== Discussions / Questions
+
+* What should be done on any error issues?
+** Technical issues will lead to TX rollback. The process will be started all over again.
+** Max retries?
+* What should happen on a evidence creation failure?
+* What should happen if evidence could not be validated?
+
+
+

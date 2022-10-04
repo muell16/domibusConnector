@@ -1,0 +1,177 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Receive Request from Gateway
+
+== Process description
+This process is triggered by a request received by the WS-endpoint.
+
+It is the very starting point and without being in a workflow.
+
+== Process diagram
+
+.Receive request from gateway activity diagram
+
+[plantuml,receive_request_from_gateway,format=svg]
+----
+@startuml
+
+start
+:ReceiveRequest;
+if (return)
+    :Validate transition message;
+    if (return)
+        :Trigger workflow;
+        if (return)
+            stop
+        else (Exception)
+        endif
+    else (Exception)
+    endif
+else (Exception)
+
+endif
+
+:throw WebService typed exception;
+
+
+end
+
+
+
+
+@enduml
+----
+
+
+== Process-steps
+
+|===
+| step | description | parameters | returns | on success | on fail | module responsibility
+
+|Receive Request
+|The WS Endpoint receives a request from the gateway
+|DomibusConnectorMessageType
+|
+|Validate transition message
+|Exception
+|domibusConnectorLink
+
+|Validate transition message
+|The message in its transition model state is validated if the ebms data and message contents required are in place.
+As a result of this step also the type of message is known. This could either be "business message" (BM) or "confirmation message" (CM).
+|DomibusConnectorMessageType
+|validation result
+|Trigger Workflow
+|Exception
+|Link
+
+|Trigger Workflow
+|The workflow for this message is identified and the processes of the workflow are initialized.
+|DomibusConnectorMessageType, messageType
+|
+|End process
+|Exception
+|Link
+|===
+
+=== Validate transition message
+
+.Validate transtion message activity diagram
+
+[plantuml,validate_transition_message_activity,format=svg]
+----
+@startuml
+
+start
+
+if (is DomibusConnectorContentType set?) then (true)
+    if(is ebms ServiceType set?) then (true)
+        if(is ebms ActionType set?) then (true)
+            if(is ebms fromParty set?) then (true)
+                if(is ebms toParty set?) then (true)
+                    if(is ebms originalSender set?) then (true)
+                        if(is ebms finalRecipient set?) then (true)
+                            :Set messageType as Business Message;
+                            :return result;
+                            stop
+                        else
+                        endif
+                    else
+                    endif
+                else
+                endif
+            else
+            endif
+        else
+        endif
+    else
+    endif
+else (false)
+    if(is DomibusConnectorConfirmationType set?) then (true)
+        if (is refToMessageId set?) then (true)
+            :Set messageType as Confirmation Message;
+            :return result;
+            stop
+        else (false)
+        endif
+    else (false)
+    endif
+endif
+
+:throw Exception;
+
+
+end
+
+
+
+
+@enduml
+----
+
+=== Trigger workflow
+
+.Trigger workflow activity diagram
+
+[plantuml,trigger_workflow_activity,format=svg]
+----
+@startuml
+
+start
+
+if(is messageType set?) then (true)
+if (check messageType) then (Business Message)
+    :Setup workflow "incoming_business_message";
+    if(workflow set up) then (true)
+        :Start first process of workflow;
+        stop
+    else
+    endif
+else (Confirmation Message)
+    :Setup workflow "incoming_confirmation_message";
+    if(workflow set up) then (true)
+        :Start first process of workflow;
+        stop
+    else
+    endif
+endif
+else
+endif
+
+:throw Exception;
+
+
+end
+
+
+
+
+@enduml
+----

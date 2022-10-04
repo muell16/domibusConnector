@@ -21,11 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import javax.validation.Validator;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -110,14 +107,20 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     @Override
-    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable) {
+    public Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(
+            Set<TransportState> states,
+            Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames,
+            Pageable pageable) {
+
         String[] stateStrings = states.stream().map(TransportState::getDbName).toArray(String[]::new);
-        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray;
+
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray = new DomibusConnectorLinkPartner.LinkPartnerName[1];
+
         if (linkPartnerNames.size() == 0) {
-            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
-        } else {
-            linkPartnerArray = linkPartnerNames.toArray(new DomibusConnectorLinkPartner.LinkPartnerName[0]);
+            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().toArray(new DomibusConnectorLinkPartner.LinkPartnerName[1]);
         }
+
+        // The query needs non-empty parameters to work. Null or () won't work, but ("") or (null) do.
         Page<PDomibusConnectorTransportStep> stepByLastState = transportStepDao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(stateStrings, linkPartnerArray, pageable);
         return stepByLastState.map(this::mapTransportStepToDomain);
     }

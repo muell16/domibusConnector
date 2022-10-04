@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.5.x-DEV-SNAPSHOT</version>
+        <version>4.4.6-bugfix-582-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorPersistence</artifactId>
     <packaging>jar</packaging>
@@ -109,6 +109,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

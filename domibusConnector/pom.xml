@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.5.x-DEV-SNAPSHOT</version>
+    <version>4.4.6-bugfix-582-SNAPSHOT</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -92,7 +92,7 @@
         <!-- always update with cxf -->
         <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.5.9</spring.boot.version>
+        <spring.boot.version>2.5.14</spring.boot.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
         <vaadin.version>14.7.8</vaadin.version>
@@ -129,11 +129,14 @@
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.0</org.dbunit.dbunit.version>
         <com.google.guava.version>30.0-jre</com.google.guava.version>
-        <mysql.mysql-connector-java.version>8.0.28</mysql.mysql-connector-java.version>
+        <mysql.mysql-connector-java.version>8.0.29</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.2</org.postgresql.postgresql.version>
-        <!--        <com.oracle.ojdbc8.version>19.3.0.0.0</com.oracle.ojdbc8.version>-->
+        <org.mariadb.jdbc.mariadb-java-client.version>3.0.5</org.mariadb.jdbc.mariadb-java-client.version>
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
         <com.h2database.h2.version>2.0.206</com.h2database.h2.version>
+        <org.liquibase.liquibase-core.version>4.8.0</org.liquibase.liquibase-core.version>
+        <org.apache.commons.commons-text.version>1.9</org.apache.commons.commons-text.version>
+        <org.fusesource.jansi.jansi.version>2.4.0</org.fusesource.jansi.jansi.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -162,6 +165,11 @@
                 <version>${ecodex.dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>${org.fusesource.jansi.jansi.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.ecodex.utils</groupId>
@@ -505,6 +513,11 @@
                 <version>${org.apache.commons.commons-compress.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${org.apache.commons.commons-text.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
                 <version>${org.apache.poi.poi.version}</version>
@@ -569,11 +582,32 @@
                 <version>${org.postgresql.postgresql.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${com.h2database.h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${org.mariadb.jdbc.mariadb-java-client.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc-bom</artifactId>
                 <version>${com.oracle.database.jdbc.ojdbc-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${org.liquibase.liquibase-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-text</artifactId>
+                        <groupId>org.apache.commons</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -699,6 +733,7 @@
                         <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
                         <forkCount>1</forkCount>
                         <reuseForks>false</reuseForks>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1036,6 +1071,7 @@
                                 <exclude>**/*ITCase.java</exclude>
                             </excludes>
                             <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -1052,6 +1088,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -1087,6 +1124,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                     <plugin>

@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ecx-gateway-lab${lab.id}-storage
+  namespace: ju-eu-ejustice-eqs
+annotations:
+  volume.beta.kubernetes.io/storage-provisioner: csi.trident.netapp.io
+finalizers:
+- kubernetes.io/pvc-protection
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
+  storageClassName: netapp-trident-brz-delete
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecx-gateway-lab${lab.id}
+  namespace: ju-eu-ejustice-eqs
+  labels:
+    pod.cp.cna.at/ingress: allow
+    product: ju-eu-ejustice-eqs
+spec:
+  selector:
+    app: ecx-gateway-lab${lab.id}
+  ports:
+  - name: ecx-gateway-lab${lab.id}-port
+    targetPort: 8080
+    protocol: TCP
+    port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecx-gateway-mariadb-lab${lab.id}
+  namespace: ju-eu-ejustice-eqs
+  labels:
+    pod.cp.cna.at/ingress: allow
+    product: ju-eu-ejustice-eqs
+spec:
+  selector:
+    app: ecx-gateway-mariadb-lab${lab.id}
+  ports:
+  - name: ecx-gateway-mariadb-lab${lab.id}-port
+    targetPort: 3306
+    protocol: TCP
+    port: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-lab${lab.id}-ecx-gateway
+  namespace: ju-eu-ejustice-eqs
+  labels:
+    pod.cp.cna.at/ingress: allow
+    product: ju-eu-ejustice-eqs
+    app: ecx-gateway-lab${lab.id}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecx-gateway-lab${lab.id}
+  template:
+    metadata:
+      labels:
+        pod.cp.cna.at/ingress: allow
+        product: ju-eu-ejustice-eqs
+        app: ecx-gateway-lab${lab.id}
+    spec:
+      volumes:
+      - name: domibus-config
+        configMap:
+          name: lab${lab.id}-gw-domibus-config
+          defaultMode: 420
+      - name: ecx-keystores
+        configMap:
+          name: ecx-keystores
+          defaultMode: 420
+      - name: ecx-gateway-lab${lab.id}-storage
+        persistentVolumeClaim:
+          claimName: ecx-gateway-lab${lab.id}-storage
+      - name: temp
+        emptyDir: {}
+      containers:
+      - name: cnt-ecx-gateway
+        env: null
+        image: default-route-openshift-image-registry.apps.a2.cp.cna.at/ju-eu-ejustice-eqs/domibus-gw-with-connector-plugin:latest
+        imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 2
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1
+          httpGet:
+            host:
+            scheme: HTTP
+            path: /domibus/services/msh
+            port: 8080
+        resources:
+          requests:
+            memory: 512M
+            cpu: 100m
+          limits:
+            memory: 1024M
+            cpu: 200m
+        volumeMounts:
+        - name: domibus-config
+          readOnly: true
+          mountPath: /app/domibus/conf/domibus/domibus.properties
+          subPath: domibus.properties
+        - name: ecx-gateway-lab${lab.id}-storage
+          mountPath: /app/data
+          subPath: domibus/data
+        - name: ecx-gateway-lab${lab.id}-storage
+          mountPath: /app/logs
+          subPath: domibus/logs
+        - name: temp
+          mountPath: /app/temp
+          subPath: domibus/temp
+        - name: ecx-keystores
+          mountPath: /app/domibus/conf/domibus/keystores/
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ecx-gateway-lab${lab.id}-route
+  namespace: ju-eu-ejustice-eqs
+spec:
+  host: ecx-gateway-lab${lab.id}-ju-eu-ejustice-eqs.apps.a2.cp.cna.at
+  to:
+    kind: Service
+    name: ecx-gateway-lab${lab.id}
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

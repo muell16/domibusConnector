@@ -1,0 +1,61 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= <<process_message,Process Message>>
+
+Process message is actually a abstract process:
+
+[plantuml]
+----
+@startuml
+
+abstract ProcessMessage
+
+ProcessMessage <|-- ProcessIncomingBusinessMessage
+ProcessMessage <|-- ProcessOutgoingBusinessMessage
+ProcessMessage <|-- ProcessConfirmationMessage
+
+@enduml
+----
+
+* Incoming Business Message
+* Outgoging Business Message
+* Confirmation Message
+
+== Trigger
+
+* Triggered by the newWorkflowCreatedEvent
+
+== Pre-Conditions
+
+* Message is saved within DB
+* A workflow has been set
+* A BusinessDomain has been set
+
+== Post-Conditions
+Look into inherited processes
+
+== Process Incoming Business Message
+
+The message is coming from another eCodex-AccessPoint and is received as eCodex-Container.
+
+include::process_message/incoming_business_message.adoc[leveloffset=+3]
+
+== Process Outgoing Business Message
+
+The message is coming from an internal system / backend. Attachments, business document, ... are not yet put into the ASIC-S container.
+
+include::process_message/outgoing_business_message.adoc[leveloffset=+3]
+
+== Process Confirmation Message
+
+Any confirmation message.
+
+include::process_message/confirmation_message.adoc[leveloffset=+3]
+

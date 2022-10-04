@@ -1,0 +1,75 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Process Message
+
+== Summary
+
+Process Message is responsible for taking the received message and assigning the correct workflow to it.
+
+== Triggers
+
+* New Message received / New workflow started
+
+
+== Preconditions
+
+* Message is completely stored in Persistence Layer
+* Message is valid on persistence level
+
+
+== Lookup Business Workflow Activity Diagram
+
+.Lookup Business Workflow Activity Diagram
+[plantuml,lookup_business_workflow_activity_diagram,format=svg]
+----
+@startuml
+
+title Lookup Workflow
+
+start
+
+:receive newMessageReceivedEvent;
+:lookup workflow;
+:lookup business domain;
+:continue workflow;
+
+stop
+
+@enduml
+----
+
+== Lookup Business Workflow Sequence Diagram
+
+.Lookup Business Workflow Sequence Diagram
+[plantuml,lookup_business_workflow_sequence_diagram,format=svg]
+----
+@startuml
+
+participant EventService
+
+collections WorkflowHandler
+
+database DB
+
+EventService -> WorkflowHandler++: receive newMessageStoredEvent
+
+group DB_TX
+WorkflowHandler -> WorkflowHandler: lookup workflow
+
+WorkflowHandler -> WorkflowHandler: lookup business domain
+
+WorkflowHandler -> DB: update message object
+DB --> WorkflowHandler: return
+end
+
+WorkflowHandler --> EventService --: newWorkflowCreatedEvent
+
+@enduml
+----

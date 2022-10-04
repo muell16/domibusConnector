@@ -1,0 +1,124 @@
+
+
+== From Backend Incoming Business Message
+This workflow calls the following steps:
+
+
+
+
+=== Incoming Business Message Process Activity Diagram
+
+This workflow consists of the following activities:
+
+.Incoming Business Message Process Activity Diagram
+[plantuml,incoming_business_message_process_activity_diagram,format=svg]
+----
+@startuml
+
+title From Backend Incoming Business Message Workflow
+
+start
+
+:validate EBMS-Attributes;
+:Lookup Backend;
+:create businessMessage;
+:Validate eCodex Container;
+
+if (validation has failed) then (has failed)
+
+:Create RELAY_REMMD_REJECTION or NON_DELIVERY;
+:process Evidence for BusinessMessage;
+:create RELAY_REMMD_REJECTION / NON_DELIVERY confirmation message;
+:create messageReadyToSendEvent for confirmationMessage;
+
+else (validation OK)
+
+:Create Evidence RELAY_REMMD_ACCEPTANCE;
+:Extract eCodex Container;
+:create messageReadyToSendEvent for businessMessage;
+
+endif
+
+end
+
+@enduml
+----
+
+
+=== Incoming Business Message Process Sequence Diagram
+
+.Incoming Business Message Process Sequence Diagram
+[plantuml,incoming_business_message_process_sequence_diagram,format=svg]
+----
+@startuml
+
+
+participant EventService
+collections PersistenceService
+database DB
+
+participant IncomingBusinessMessageProcess
+collections SecurityToolkit
+
+[-> EventService++: receive newWorkFlowCreatedEvent
+
+group DB_TX
+EventService -> IncomingBusinessMessageProcess++: create/start workflow
+
+IncomingBusinessMessageProcess -> ebmsValidationStep--++: validateEbmsAttributesStep
+ebmsValidationStep --> IncomingBusinessMessageProcess--++: return validation result
+
+IncomingBusinessMessageProcess -> lookupGatewayStep--++: lookup backend
+lookupGatewayStep --> IncomingBusinessMessageProcess--++: return backend name / link partner name
+
+IncomingBusinessMessageProcess -> PersistenceService--++: create businessMessage
+PersistenceService -> DB: save businessMessage
+DB --> PersistenceService: businessMessage db id
+PersistenceService --> IncomingBusinessMessageProcess--++: return businessMessage db id
+
+IncomingBusinessMessageProcess -> SecurityToolkit--++: validate eCodex container
+SecurityToolkit --> IncomingBusinessMessageProcess--++: return result
+
+alt success
+IncomingBusinessMessageProcess -> EvidenceToolkit--++: create RELAY_REMMD_ACCEPTANCE
+EvidenceToolkit --> IncomingBusinessMessageProcess--++: return RELAY_REMMD_ACCEPTANCE
+
+IncomingBusinessMessageProcess -> IncomingBusinessMessageProcess: append RELAY_REMMD_ACCEPTANCE to transported message
+
+IncomingBusinessMessageProcess -> EventService: messageReadyToSentEvent for current message
+
+else failure/error
+
+IncomingBusinessMessageProcess -> EvidenceToolkit--++: create RELAY_REMMD_REJECTION
+EvidenceToolkit --> IncomingBusinessMessageProcess--++: return RELAY_REMMD_REJECTION
+
+IncomingBusinessMessageProcess -> PersistenceService--++: create RELAY_REMMD_REJECTION confirmation message
+
+PersistenceService -> DB: create message
+
+PersistenceService -> EventService: trigger after TX messageReadyToSentEvent for confirmation message
+
+DB --> PersistenceService: return db ids
+PersistenceService --> IncomingBusinessMessageProcess--++: return message id
+
+
+end
+
+IncomingBusinessMessageProcess --> EventService: return
+
+EventService -> DB: save workflow result
+end
+EventService -> EventService: send pending events after TX complete
+
+
+@enduml
+----
+
+
+=== Discussion
+
+Which evidence should be generated?
+
+* NON_DELIVERY (in this case a RELAY_REMMD_ACCEPTANCE must be created first and sent back!). We also have to make sure, that both evidences are recived by the receiving connector in correct order! How should this guranteed?
+* RELAY_REMMD_REJECTION
+

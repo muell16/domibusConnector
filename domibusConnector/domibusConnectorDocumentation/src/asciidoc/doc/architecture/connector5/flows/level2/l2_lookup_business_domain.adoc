@@ -1,0 +1,84 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
+
+= Lookup business domain for message
+
+== Responsibility
+
+* Lookup business domain for message
+
+== Preconditions
+
+* Message exists in DB
+* Message has a ConnectorMessageId
+
+== Post-conditions
+
+=== GoodCase
+* BusinessDomain name is added to message
+
+
+== Additional Step Properties saved to DB
+
+* BusinessDomainName
+
+== Lookup Business Domain Activity Diagram
+
+.Lookup Business Domain Activity Diagram
+[plantuml,lookup_business_domain_activity_diagram,format=svg]
+----
+@startuml
+
+title Lookup Workflow
+
+start
+
+if (message has refToMessageId) then (yes)
+:load business domain of related message;
+
+elseif (message has conversationId) then (yes)
+:load business domain of message related by conversationId;
+
+else
+:use ruleset;
+
+endif
+
+stop
+
+@enduml
+----
+
+== Ruleset
+
+As ruleset the routing rule grammar is used:
+
+[source]
+----
+include::{mvnbasedir}/domibusConnectorControllerAPI/src/main/java/eu/domibus/connector/controller/routing/RoutingRulePattern.java[tag=BNF]
+----
+
+== Notes, Tasks and discussion
+
+* The ruleset must be extended to support LinkPartnerName as routing parameter
+
+|===
+
+| Pros | Cons
+
+| +very flexible approach
+| -requires additional configuration compared to a per LinkPartner behaviour
+
+|===
+
+

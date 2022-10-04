@@ -1,0 +1,236 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Receive Message from Link Activity
+
+== Responsibility
+
+* Save message
+* Minimal validation
+
+== Preconditions
+
+* None
+
+== Postconditions
+
+* GoodCase
+** SubmitStepResult is saved
+** Message has been saved including any attachments
+** NewMessageEvent created
+* ErrorCase
+** Negative SubmitStepResult is saved
+
+== Additional Step Properties
+
+* Receiving partner (LinkPartnerName)
+* ConnectorMessageId
+* TransportSystemMessageId (eg. JMS message reference, EBMS id) for async message ACK
+
+== Activity Diagram
+
+[plantuml,incoming_message_activity_diagram,format=svg]
+----
+@startuml
+
+start
+:create submit step;
+:receive message;
+:convert message to domain model;
+if (if convert ok) then
+:save create submit step with positive result;
+else
+:save create submit step with failure;
+endif
+
+end
+
+
+@enduml
+----
+
+== Sequence Diagram / Incoming message
+
+
+The message is coming in via a synchron service call. Eg. webservice.
+
+.Incoming message workflow sequence diagram Connector 4.4.x compared to 5.0.x
+
+[plantuml,incoming_message_workflow,format=svg]
+----
+@startuml
+
+Gateway -> ApacheCXF: SubmitMessage
+activate ApacheCXF
+
+
+ApacheCXF -> ConnectorLink_WSEndpoint: SubmitMessage
+activate ConnectorLink_WSEndpoint
+
+alt#Gold #LightBlue Connector 4.4.x
+ConnectorLink_WSEndpoint -> ConnectorLink_WSEndpoint: createConnectorMessageId
+else #Yellow Connector 5.0.x
+ConnectorLink_WSEndpoint -> FlowEngine: createSubmitStep
+activate FlowEngine
+
+FlowEngine -> DB: store
+DB --> FlowEngine: return DB ids
+
+FlowEngine --> ConnectorLink_WSEndpoint: return SubmitStep with ConnectorMessageId
+deactivate FlowEngine
+
+end
+
+ConnectorLink_WSEndpoint_WSEndpoint -> DomainToTransation: transformToDomainModel
+activate DomainToTransation
+
+DomainToTransation -> LargeFileProvider: persist large file content
+activate LargeFileProvider
+LargeFileProvider --> DomainToTransation: largeFile references
+deactivate LargeFileProvider
+
+DomainToTransation --> ConnectorLink_WSEndpoint: return DomainModel
+deactivate DomainToTransation
+
+ConnectorLink_WSEndpoint -> ConnectorController: SubmitMessage
+activate ConnectorController
+
+alt#Gold #LightBlue Connector 4.4.x
+ConnectorController -> JMS: put DomainMessage on Queue
+
+else #Yellow Connector 5.0.x
+ConnectorController -> MessagePersistenceService: persist
+activate MessagePersistenceService
+
+MessagePersistenceService -> DB : store
+activate DB
+DB --> MessagePersistenceService: return DB ids
+deactivate DB
+
+MessagePersistenceService --> ConnectorController: return message with db ids
+
+deactivate MessagePersistenceService
+end
+
+'ConnectorController -> JMS: put NewMessageEvent on Queue
+
+ConnectorController --> ConnectorLink_WSEndpoint: return
+deactivate ConnectorController
+
+
+
+alt#Gold #Yellow Connector 5.0.x
+ConnectorLink_WSEndpoint -> FlowEngine: saveAndCommitStepResult
+activate FlowEngine
+FlowEngine -> JMS: sendStepFinishedEvent
+FlowEngine --> ConnectorLink_WSEndpoint
+deactivate FlowEngine
+
+end
+
+ConnectorLink_WSEndpoint --> ApacheCXF: return
+deactivate ConnectorLink_WSEndpoint
+
+ApacheCXF --> Gateway: return
+deactivate ApacheCXF
+
+@enduml
+----
+
+.Incoming message asnyc workflow sequence diagram 5.0.x only with DB transactions
+
+[plantuml,incoming_message_async_workflow,format=svg]
+----
+@startuml
+
+database DB
+
+JMSListener -> JMS: ask for message
+JMS --> JMSListener: message
+
+JMSListener -> ConnectorLink: SubmitMessage
+activate ConnectorLink
+
+group DB_TX
+ConnectorLink -> FlowEngine: createSubmitStep
+activate FlowEngine
+
+FlowEngine -> DB ++: store
+
+DB --> FlowEngine --: return DB ids
+
+FlowEngine --> ConnectorLink: return SubmitStep with ConnectorMessageId
+deactivate FlowEngine
+
+
+
+group DB_SUB_TX
+
+ConnectorLink -> DomainToTransation: transformToDomainModel
+activate DomainToTransation
+
+loop For every attachment, content
+DomainToTransation -> LargeFileProvider: persist large file content
+activate LargeFileProvider
+LargeFileProvider --> DomainToTransation: largeFile references
+deactivate LargeFileProvider
+end
+
+DomainToTransation --> ConnectorLink: return DomainModel
+deactivate DomainToTransation
+
+ConnectorLink -> ConnectorController: SubmitMessage
+activate ConnectorController
+
+ConnectorController -> MessagePersistenceService: persist
+activate MessagePersistenceService
+
+MessagePersistenceService -> DB : store
+activate DB
+DB --> MessagePersistenceService: return DB ids
+deactivate DB
+
+MessagePersistenceService --> ConnectorController: return message with db ids
+
+deactivate MessagePersistenceService
+end
+
+
+'ConnectorController -> JMS: put NewMessageEvent on Queue
+
+ConnectorController --> ConnectorLink: return
+deactivate ConnectorController
+
+
+ConnectorLink -> FlowEngine: saveAndCommitStepResult
+activate FlowEngine
+FlowEngine -> JMS: sendStepFinishedEvent
+FlowEngine --> ConnectorLink
+deactivate FlowEngine
+
+end
+
+ConnectorLink --> JMSListener: return result
+
+
+@enduml
+----
+
+* DB_TX should always be committed, either with result failure or success of the IncomingMessageActivity
+* DB_SUB_TX should be rolled back on any failure, a rollback must lead to a as failure marked IncomingMessageActivity
+
+=== Rollback
+
+* The LargeFileProvider should be extended in a way that the LargeFileReference contains a Rollback reference OR large file provider rollback relies on timer jobs
+
+=== Notes, Tasks and discussion
+
+* This activity will be reused by every receiving activity
+* This activity stores the message as it is in DB/FS via Persistence and LargeFileSupport layer
+* This activity tries to know the possible minimum about the transport system and the message logic (connector business logic).

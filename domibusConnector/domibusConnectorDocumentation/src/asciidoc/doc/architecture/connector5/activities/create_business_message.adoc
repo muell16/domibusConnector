@@ -1,0 +1,57 @@
+
+ifndef::basepath[]
+:basepath: ../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+ifndef::mvnbasedir[]
+:mvnbasedir: {basepath}/../../../../
+endif::mvnbasedir[]
+
+= Create business message
+
+== Responsibility
+
+* Creates business message in DB
+
+== Preconditions
+
+* Message exists in DB
+* Message has a ConnectorMessageId
+* Message has either a EBMS_ID or a BackendMessageId assigned
+* Message is actually a BusinessMessage
+
+== Postconditions
+
+* Business message created in DB
+** with receive timestamp
+** with message ids if known (EBMS id, BackendMessageId, ConversationId, ...)
+
+=== GoodCase
+* Business message has been created in DB
+
+=== ErrorCase
+
+
+== Additional Step Properties
+
+* BusinessDomainName
+
+
+=== Rollback
+
+* This should be done within a Transaction
+
+=== Notes, Tasks and discussion
+
+
+
+
+
+
+
+
+

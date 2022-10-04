@@ -1,0 +1,171 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ecx-connector-client-lab${lab.id}-storage
+  namespace: ju-eu-ejustice-eqs
+annotations:
+  volume.beta.kubernetes.io/storage-provisioner: csi.trident.netapp.io
+finalizers:
+- kubernetes.io/pvc-protection
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
+  storageClassName: netapp-trident-brz-delete
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecx-connector-client-lab${lab.id}
+  namespace: ju-eu-ejustice-eqs
+  labels:
+    pod.cp.cna.at/ingress: allow
+    product: ju-eu-ejustice-eqs
+spec:
+  selector:
+    app: ecx-connector-client-lab${lab.id}
+  ports:
+  - name: ecx-connector-client-lab${lab.id}-port
+    targetPort: 8080
+    protocol: TCP
+    port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-lab${lab.id}-ecx-connector-client
+  namespace: ju-eu-ejustice-eqs
+  labels:
+    pod.cp.cna.at/ingress: allow
+    product: ju-eu-ejustice-eqs
+    app: ecx-connector-client-lab${lab.id}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecx-connector-client-lab${lab.id}
+  template:
+    metadata:
+      labels:
+        pod.cp.cna.at/ingress: allow
+        product: ju-eu-ejustice-eqs
+        app: ecx-connector-client-lab${lab.id}
+    spec:
+      volumes:
+      - name: ecx-keystores
+        configMap:
+          name: ecx-keystores
+          defaultMode: 420
+      - name: temp
+        emptyDir: {}
+      - name: storage
+        persistentVolumeClaim:
+          claimName: ecx-connector-client-lab${lab.id}-storage
+      containers:
+      - name: cnt-ecx-connector-client
+        env:
+        - name: debug
+          value: true
+        - name: logging.level.root
+          value: "TRACE"
+        - name: CONNECTOR_CLIENT_REST_URL
+          value: http://ecx-connector-client-lab${lab.id}:8080/restservice
+        - name: SPRING_CODEC_MAX_IN_MEMORY_SIZE
+          value: 20MB
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CONNECTOR_ADDRESS
+          value: http://ecx-connector-lab${lab.id}:8080/services/backend
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_ENCRYPT_ALIAS
+          value: connector
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_PUSH_ENABLED
+          value: true
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_KEY_STORE_PATH
+          value: file:/app/config/keystores/client-alice.jks
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_KEY_STORE_PASSWORD
+          value: "12345"
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_PRIVATE_KEY_ALIAS
+          value: alice
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_PRIVATE_KEY_PASSWORD
+          value: "12345"
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_TRUST_STORE_PATH
+          value: file:/app/config/keystores/client-alice.jks
+        - name: CONNECTOR_CLIENT_CONNECTOR_LINK_WS_CXF_TRUST_STORE_PASSWORD
+          value: "12345"
+        - name: CONNECTOR_CLIENT_SCHEDULER_GET_MESSAGES_FROM_CONNECTOR_JOB_ENABLED
+          value: false
+        - name: CONNECTOR_CLIENT_SCHEDULER_GET_MESSAGES_FROM_CONNECTOR_JOB_REPEAT_INTERVAL
+          value: 30s
+        - name: CONNECTOR_CLIENT_SCHEDULER_SUBMIT_MESSAGES_TO_CONNECTOR_JOB_ENABLED
+          value: false
+        - name: CONNECTOR_CLIENT_SCHEDULER_SUBMIT_MESSAGES_TO_CONNECTOR_JOB_REPEAT_INTERVAL
+          value: 30s
+        - name: CONNECTOR_CLIENT_STORAGE_FILESYSTEM_ENABLED
+          value: true
+        - name: CONNECTOR_CLIENT_STORAGE_FILESYSTEM_MESSAGES_PATH
+          value: /app/data/messages
+        - name: CONNECTOR_CLIENT_STORAGE_FILESYSTEM_MESSAGES_CREATE_IF_NON_EXISTENT
+          value: true
+        - name: CONNECTOR_CLIENT_CONTROLLER_UPDATE_STORAGE_STATUS_JOB_ENABLED
+          value: true
+        - name: CONNECTOR_CLIENT_CONTROLLER_UPDATE_STORAGE_STATUS_JOB_REPEAT_INTERVAL
+          value: 1m
+        - name: CONNECTOR_CLIENT_CONTROLLER_AUTO_CONFIRM_MESSAGES_JOB_ENABLED
+          value: true
+        - name: CONNECTOR_CLIENT_CONTROLLER_AUTO_CONFIRM_MESSAGES_JOB_REPEAT_INTERVAL
+          value: 1m
+        - name: CONNECTOR_CLIENT_CONTROLLER_RESTORE_DATABASE_FROM_STORAGE
+          value: false
+        - name: CONNECTOR_CLIENT_CONTROLLER_DELIVERY_REST_CLIENT_ENABLED
+          value: false
+        - name: SPRING_CLOUD_CONFIG_ENABLED
+          value: false
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:h2:file:/app/data/connector-client.db;AUTO_SERVER=true
+        - name: SPRING_DATASOURCE_USERNAME
+          value: connector-client
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: connector-client
+        - name: SPRING_DATASOURCE_INITIALIZE
+          value: false
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: org.hibernate.dialect.H2Dialect
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: update
+        image: default-route-openshift-image-registry.apps.a2.cp.cna.at/ju-eu-ejustice-eqs/dc-connector-client:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 512M
+            cpu: 100m
+          limits:
+            memory: 1024M
+            cpu: 200m
+        volumeMounts:
+        - name: storage
+          mountPath: /app/data
+          subPath: lab${lab.id}/connector-client
+        - name: storage
+          mountPath: /app/data/messages
+          subPath: lab${lab.id}/connector-client/messages
+        - name: ecx-keystores
+          mountPath: /app/config/keystores
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ecx-connector-client-lab${lab.id}-route
+  namespace: ju-eu-ejustice-eqs
+spec:
+  host: ecx-connector-client-lab${lab.id}-ju-eu-ejustice-eqs.apps.a2.cp.cna.at
+  to:
+    kind: Service
+    name: ecx-connector-client-lab${lab.id}
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

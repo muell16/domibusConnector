@@ -588,7 +588,7 @@ drop table bkp_dc_bigdata;
 drop table BKP_DC_MESSAGE_INFO;
 drop table BKP_DC_PARTY;
 drop table BKP_DC_ACTION;
-drop table BKP_DC_SERVICE;
+drop table BKP_DC_SERVICE cascade constraints;
 drop table BKP_DC_PROPERTY;
 drop table BKP_DC_MESSAGE cascade constraints;
 
@@ -710,4 +710,4 @@ alter table DC_TRANSPORT_STEP_STATUS
 
 -- #################### 6/6 UPDATE Version ####################
 
-update DC_DB_VERSION set TAG='V4.4';
+update DC_DB_VERSION set TAG='V4.2';

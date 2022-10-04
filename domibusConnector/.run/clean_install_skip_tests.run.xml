@@ -11,6 +11,9 @@
           <option name="goals">
             <list>
               <option value="-DskipTests=true" />
+              <option value="-Dmaven.javadoc.skip=true" />
+              <option value="-pl" />
+              <option value="!:domibusConnectorDocumentation" />
               <option value="clean" />
               <option value="install" />
             </list>

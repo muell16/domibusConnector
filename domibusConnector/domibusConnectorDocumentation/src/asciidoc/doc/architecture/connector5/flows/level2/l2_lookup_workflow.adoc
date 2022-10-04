@@ -1,0 +1,60 @@
+
+ifndef::basepath[]
+:basepath: ../../../../../
+endif::basepath[]
+
+ifndef::header[]
+include::{basepath}/doc/header.adoc[]
+endif::header[]
+
+= Lookup correct flow / Business Domain for message
+
+== Responsibility
+
+TODO: incoming/outgoing_confirmation_message might be almost the same?
+
+* Determine Correct Message Flow
+** incoming_business_message.adoc
+** incoming_confirmation_message.adoc
+** outgoing_confirmation_message.adoc
+** outgoing_business_message.adoc
+
+== Entry Points / Interface
+
+* Triggered by MessageReceivedEvent
+
+== Post-conditions
+
+* Workflow information saved to DB
+
+== Lookup Workflow Activity Diagram
+
+.Lookup Workflow Activity Diagram
+[plantuml,lookup_workflow_activity_diagram,format=svg]
+----
+@startuml
+
+title Lookup Workflow
+
+start
+
+:receiveNewMessageEvent;
+
+switch(message)
+case (incoming business message)
+  : start incoming business message workflow;
+case (outgoing business message)
+  : start outgoing business message workflow;
+case (confirmation message)
+  : start confirmation message workflow;
+endswitch
+stop
+
+@enduml
+----
+
+== Notes, Tasks and discussion
+
+* Just load the correct message flow
+
+
