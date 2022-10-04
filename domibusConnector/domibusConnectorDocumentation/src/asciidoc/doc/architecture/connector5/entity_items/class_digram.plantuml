@@ -25,7 +25,7 @@ DC5MsgProcess "0..1" -- "0..1" DC5Domain
 
 DC5MsgProcess "1" -- "0..1" DC5Message
 
-class DC5Message {
+class DC5Message <<abstract>> {
   pkId: Int
 
   ebmsMessageId: String
@@ -33,11 +33,21 @@ class DC5Message {
   backendLink: String
   gwLink: String
 
+'@Embeddable class Party
   fromPartyId, fromPartyIdType, fromPartyRole: String
   toPartyId, toPartyIdType, toPartyRole: String
 
   finalRecipient: String
   originalSender: String
+
+
+
+'@Embeddable class Service
+  service: Service
+'@Embeddable class Action
+  action: Action
+
+
 
   conversationId: String
 
@@ -46,6 +56,7 @@ class DC5Message {
 
   refToMessageId: String
 }
+
 
 'BCM ... BusinessDocumentMessage
 class DC5_BDM {
@@ -72,26 +83,40 @@ class DC5Payload {
 
 
 class DC5Evidence {
-  pkId: Int
   type: String
 }
 
-DC5Payload ^-- DC5Evidence
-DC5Payload ^-- DC5BusinessDocument
-DC5Payload ^-- DC5BusinessXml
-DC5Payload ^-- DC5AsicS
-DC5Payload ^-- DC5TokenXml
+'DC5Payload ^-- DC5Evidence
+'DC5Payload ^-- DC5BusinessDocument
+'DC5Payload ^-- DC5BusinessXml
+'DC5Payload ^-- DC5AsicS
+'DC5Payload ^-- DC5TokenXml
+'DC5Payload ^-- DetachedSignature
 
-DC5Payload "1" -- "0..1" DC5Payload : attached signature
+'DC5BusinessDocument "1" -- "0..1" DC5Payload : attached signature
 
-DC5_BDM "1" -- "0..1"  DC5AsicS
-DC5_BDM "1" -- "0..1"  DC5TokenXml
-DC5_BDM "1" -- "0..1"  DC5BusinessXml
-DC5_BDM "1" -- "0..1"  DC5BusinessDocument
+'DC5_BDM "1" -- "0..1"  DC5AsicS
+'DC5_BDM "1" -- "0..1"  DC5TokenXml
+'DC5_BDM "1" -- "0..1"  DC5BusinessXml
+'DC5_BDM "1" -- "0..1"  DC5BusinessDocument
+'DC5_BDM "1" -- "0..1"  DC5Attachment
 
-DC5Message "*" -- "*"  DC5Evidence : is transported with
-DC5_BDM "1" -- "*" DC5Evidence : is related to
+DC5Message "1" -- "*" DC5Payload : has payloads
 
+'DC5Message "*" -- "*"  DC5Evidence : is transported with
+'DC5Evidence "1" -- "0..1" DC5_BCM : has
+
+DC5Payload "1" -- "0..1" DC5Evidence
+DC5Evidence "*" -- "1" DC5_BDM : is confirmed by
+
+class DC5BusinessDocument {
+
+}
+
+DC5BusinessDocument "1" -- "0..1" DetachedSignature
+
+class DetachedSignature {
+}
 
 class DC5Domain {
  id: int
