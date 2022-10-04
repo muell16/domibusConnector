@@ -7,6 +7,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dc5Model</artifactId>
-    <name>Archetype - dc5Model</name>
-    <url>http://maven.apache.org</url>
+    <name>${project.artifactId}</name>
+    <description>This module is responsibly for persisting the messages and message contents into a persistent storage
+        (Database).
+    </description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

@@ -8,6 +8,7 @@
     </parent>
     <artifactId>domibusConnectorUI</artifactId>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
