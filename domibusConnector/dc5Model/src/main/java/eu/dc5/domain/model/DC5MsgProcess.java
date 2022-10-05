@@ -1,6 +1,4 @@
-package eu.dc5.domain.service;
-
-import eu.dc5.domain.model.DC5Message;
+package eu.dc5.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.Map;

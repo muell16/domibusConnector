@@ -1,10 +1,10 @@
 package eu.dc5.domain.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-@Getter
-@Setter
+@Entity
+@DiscriminatorValue("2")
 public class DC5BusinessConfirmationMessage extends DC5Message {
 }

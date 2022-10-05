@@ -1,14 +1,14 @@
 package eu.dc5.domain.model;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import net.jqwik.api.Example;
+import net.jqwik.spring.JqwikSpringSupport;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest
+@JqwikSpringSupport
 @Testcontainers
 class DC5MessageTest {
     @Container
@@ -21,7 +21,7 @@ class DC5MessageTest {
         registry.add("spring.datasource.password", mariadb::getPassword);
     }
 
-    @Test
+    @Example
     public void contextLoads() {
 
     }

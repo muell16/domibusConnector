@@ -1,4 +1,4 @@
-package eu.dc5.domain.service;
+package eu.dc5.domain.model;
 
 import java.time.LocalDateTime;
 
