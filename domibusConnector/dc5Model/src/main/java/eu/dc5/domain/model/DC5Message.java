@@ -72,14 +72,14 @@ public abstract class DC5Message implements Serializable {
 
     @Column(name = "DC5_MESSAGE_SOURCE", length = 255)
     private String source;
-    @Column(name = "DC5_MESSAGE_SOURCE", length = 255)
+    @Column(name = "DC5_MESSAGE_TARGET", length = 255)
     private String target;
 
 
     @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255) // TODO ?
     private String refToMessageId;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = TABLE_NAME)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "message")
     private Set<DC5Payload> payload;
 
 }
