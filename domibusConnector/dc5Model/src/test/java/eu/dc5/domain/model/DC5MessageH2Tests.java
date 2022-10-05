@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestPropertySource(properties = {
-        "spring.jpa.hibernate.ddl-auto=create",
+//        "spring.jpa.hibernate.ddl-auto=create", // apparently not needed
         "spring.jpa.show-sql=true"
 })
 class DC5MessageH2Tests {
@@ -25,7 +25,8 @@ class DC5MessageH2Tests {
     @Autowired
     private DC5PayloadRepo payloadRepo;
 
-//    @Example
+    // Tests use the same H2 instance!
+
     @Test
     public void contextLoads() {
 
@@ -42,13 +43,16 @@ class DC5MessageH2Tests {
 
     @Test
     public void storing_a_message_with_payload_also_persists_the_payload() {
+        // Arrange
         final DC5BusinessDocumentMessage dc5BusinessDocumentMessage = new DC5BusinessDocumentMessage();
-        final DC5Payload payload = new DC5Payload();
+        final DC5Payload payload = new DC5Payload(); // bidirectional mapping requires linking from both ends
         payload.setMessage(dc5BusinessDocumentMessage);
         dc5BusinessDocumentMessage.getPayload().add(payload);
 
+        // Act
         final DC5BusinessDocumentMessage save = msgRepo.saveAndFlush(dc5BusinessDocumentMessage);
 
+        // Assert
         final DC5Payload persistedPayload = payloadRepo.findAll().get(0);
         Assertions.assertThat(persistedPayload.getMessage().getId()).isEqualTo(save.getId());
     }
