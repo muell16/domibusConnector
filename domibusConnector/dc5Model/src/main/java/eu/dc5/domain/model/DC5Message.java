@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -79,7 +80,7 @@ public abstract class DC5Message implements Serializable {
     @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255) // TODO ?
     private String refToMessageId;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "message")
-    private Set<DC5Payload> payload;
+    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<DC5Payload> payload = new HashSet<>();
 
 }
