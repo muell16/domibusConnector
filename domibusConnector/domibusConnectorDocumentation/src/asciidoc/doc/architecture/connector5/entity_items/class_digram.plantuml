@@ -90,20 +90,41 @@ enum RoleType {
 }
 
 
+enum BusinessDocumentState {
+  CREATED
+  SUBMITTED
+  RELAYED
+  REJECTED
+  CONFIRMED
+  DELIVERED
+  RETRIEVED
+}
+
+class BusinessDocumentStateTransition {
+  pkid: int
+  state: BusinessDocumentState
+  created: timestamp
+  string: description
+  string: userprincipal
+}
+
+BusinessDocumentStateTransition "1" --  "1" DC5BusinessDocumentContent : current state
+BusinessDocumentStateTransition "*" --  "1" DC5BusinessDocumentContent : states
+
 
 
 
 'BCM ... BusinessDocumentMessage
-class DC5BusinessDocumentContent {
-
-}
+'class DC5BusinessDocumentContent {
+'
+'}
 
 'BCM ... BusinessConfirmationMessage
 class DC5BusinessConfirmation {
   type: String
 }
 
-DC5BusinessConfirmation "*" -- "1" DC5BusinessDocumentContent  : confirmes and rejects >
+DC5BusinessConfirmation "0..1" -- "0..1" BusinessDocumentStateTransition  : can create a state change
 
 DC5Message -- DC5BusinessConfirmation: transported within
 DC5Message -- DC5BusinessDocumentContent : transported within
@@ -132,9 +153,9 @@ class DC5Payload {
 'DC5Payload "1" -- "0..1" DC5Evidence
 'DC5Evidence "*" -- "1" DC5BusinessDocumentContent : is confirmed by
 
-class DC5BusinessDocument {
-
-}
+'class DC5BusinessDocument {
+'
+'}
 
 'DC5BusinessDocument "1" -- "0..1" DetachedSignature : can have
 
@@ -146,8 +167,8 @@ DC5BusinessConfirmation "1" -- "0..1" DC5Payload : has a evidence XML
 DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has a business document
 DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has an optional detached signature
 
-class DetachedSignature {
-}
+'class DetachedSignature {
+'}
 
 class DC5Domain {
  id: int
@@ -162,14 +183,27 @@ class DC5DomainProperty {
 
 DC5DomainProperty "*" -- "1" DC5Domain
 
-class DC5TransportStep {
-  pkId: int
+class DC5TransportRequest {
+'  pkId: int
   'TODO: either message as JSON oder linked in DB to Message
   'message: String
 
+  connectorTransportId: String
+  'jms ID, cxf id, ...
+  transportSystemId: String
+  'remote message id: backend message id, ebms id
+  remoteMessageId: String
+  'error
+  error: String
+  state: String
+  updated: timestamp
 }
 
-DC5_ProcessStep ^-- DC5TransportStep
+DC5_ProcessStep ^-- DC5TransportRequest
+
+DC5TransportRequest "0..1" -- "1" DC5EbmsBlock : transport info
+DC5TransportRequest "0..1" -- "1" DC5Message : transported message
+
 
 
 @enduml
