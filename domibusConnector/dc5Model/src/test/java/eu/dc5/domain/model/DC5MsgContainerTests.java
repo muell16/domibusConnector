@@ -22,7 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
         "spring.jpa.hibernate.ddl-auto=create"
 })
 @Disabled // does not work on CI, must be disabled before check in!
-class DC5MessageContainerTests {
+class DC5MsgContainerTests {
 
     // TODO: WIP
 
@@ -48,7 +48,7 @@ class DC5MessageContainerTests {
 //    @Example
     @Test
     public void canStoreMessage() {
-        final DC5BusinessDocumentMessage dc5BusinessDocumentMessage = new DC5BusinessDocumentMessage();
+        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
         msgRepo.save(dc5BusinessDocumentMessage);
     }
 }

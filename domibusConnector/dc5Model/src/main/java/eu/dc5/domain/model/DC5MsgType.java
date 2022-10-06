@@ -4,8 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity(name = "DC5_MESSAGE_TYPE")
-public class DC5MessageType {
+@Entity(name = DC5MsgType.TABLE_NAME)
+public class DC5MsgType {
+
+    public static final String TABLE_NAME = "DC5_MESSAGE_TYPE";
 
     @Id
     @Column(name = "ID", length = 1)

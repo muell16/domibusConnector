@@ -27,7 +27,7 @@ public class DC5Payload {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE_ID")
-    private DC5Message message;
+    private DC5Msg message;
 
     private DC5PayloadType payloadType = DC5PayloadType.EVIDENCE;
     private String hash;

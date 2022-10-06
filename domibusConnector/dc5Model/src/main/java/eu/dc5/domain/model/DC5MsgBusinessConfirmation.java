@@ -6,5 +6,5 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("2")
-public class DC5BusinessConfirmationMessage extends DC5Message {
+public class DC5MsgBusinessConfirmation extends DC5Msg {
 }
