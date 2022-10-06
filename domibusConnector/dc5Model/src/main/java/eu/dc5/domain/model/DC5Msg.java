@@ -13,15 +13,16 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "DC5Message")
+@Table(name = DC5Msg.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="DC5_MESSAGE_TYPE_ID",
         discriminatorType = DiscriminatorType.INTEGER,
         length = 1
 )
-public abstract class DC5Message implements Serializable {
+public abstract class DC5Msg implements Serializable {
 
-    private static final String TABLE_NAME = "DC5_Message";
+    public static final String TABLE_NAME = "DC5_Message";
+
     @Id
     @Column(name = "ID", nullable = false)
     @TableGenerator(name = "seq" + TABLE_NAME,
@@ -34,31 +35,12 @@ public abstract class DC5Message implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)
-    private String ebmsMessageId;
-
-    @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
-    private String backendMessageId;
-
     @Column(name = "DC5_BACKEND_LINK", length = 255)
     private String backendLink;
     
     @Column(name = "DC5_GATEWAY_LINK", length = 255)
     private String gwLink;
 
-    @Column(name = "DC5_FROM_PARTY_ID", length = 255)
-    private String fromPartyId; // Refactor to EcxAddress?
-    @Column(name = "DC5_FROM_PARTY_TYPE", length = 255)
-    private String fromPartyType;
-    @Column(name = "DC5_FROM_PARTY_ROLE", length = 255)
-    private String fromPartyRole;
-
-    @Column(name = "DC5_TO_PARTY_ID", length = 255)
-    private String toPartyId;
-    @Column(name = "DC5_TO_PARTY_TYPE", length = 255)
-    private String toPartyIdType;
-    @Column(name = "DC5_TO_PARTY_ROLE", length = 255)
-    private String toPartyRole;
 
     @Column(name = "DC5_FINAL_RECIEPIENT", length = 2048)
     private String finalRecipient;
@@ -68,8 +50,7 @@ public abstract class DC5Message implements Serializable {
 //    private Service service; // TODO: make new ones or import?
 //    private Action action;
 
-    @Column(name = "DC5_CONVERSATION_ID", length = 255)
-    private String conversationId;
+
 
     @Column(name = "DC5_MESSAGE_SOURCE", length = 255)
     private String source;
@@ -77,10 +58,24 @@ public abstract class DC5Message implements Serializable {
     private String target;
 
 
-    @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255) // TODO ?
-    private String refToMessageId;
-
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<DC5Payload> payload = new HashSet<>();
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // if there is no id, fallback to comparing by reference
+        if (this == o) return true;
+
+        if (!(o instanceof DC5Msg))
+            return false;
+
+        DC5Msg other = (DC5Msg) o;
+
+        return id != null && id.equals(other.getId());
+    }
 }
