@@ -25,51 +25,91 @@ DC5MsgProcess "0..1" -- "0..1" DC5Domain
 
 DC5MsgProcess "1" -- "0..1" DC5Message
 
-class DC5Message <<abstract>> {
+class DC5Message {
   pkId: Int
 
-  ebmsMessageId: String
-  backendMessageId: String
   backendLink: String
   gwLink: String
-
-'@Embeddable class Party
-  fromPartyId, fromPartyIdType, fromPartyRole: String
-  toPartyId, toPartyIdType, toPartyRole: String
-
-  finalRecipient: String
-  originalSender: String
-
-
-
-'@Embeddable class Service
-  service: Service
-'@Embeddable class Action
-  action: Action
-
-
-
-  conversationId: String
 
   source: String
   target: String
 
+}
+
+DC5Message "1" -- "1" DC5EbmsBlock : current address info
+DC5Message "*" -- "1" DC5EbmsBlock : historic addresses
+
+
+class DC5EbmsBlock {
+  pkid: int
+  created: timestamp
+  conversationId: String
+
+  ebmsMessageId: String
+  backendMessageId: String
   refToMessageId: String
 }
 
+DC5Message -- DC5EbmsBlock : contains a
+
+
+DC5EbmsBlock "*" *-- "1" DC5EcxAddress : > has a sender [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5EcxAddress : > has a reciver [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5Service : > has a service [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5Action : > has a action [JPA @Embedded]
+
+class DC5EcxAddress {
+  eAddress: String
+}
+
+class DC5Action {
+  action: String
+}
+
+class DC5Service {
+  service: String
+  serviceType: String
+}
+
+class DC5Party {
+  partyIdType: String
+  partyId: String
+}
+
+class DC5Role {
+  role: String
+  roleType: RoleType
+}
+
+DC5Role "1" --* "*" DC5EcxAddress : < has [JPA @Embedded]
+DC5Party "1" --* "*" DC5EcxAddress : < has [JPA @Embedded]
+
+enum RoleType {
+  INITIATOR
+  RESPONDER
+}
+
+
+
+
 
 'BCM ... BusinessDocumentMessage
-class DC5_BDM {
+class DC5BusinessDocumentContent {
 
 }
 
 'BCM ... BusinessConfirmationMessage
-class DC5_BCM {
-
+class DC5BusinessConfirmation {
+  type: String
 }
 
-DC5Message ^-- DC5_BCM
-DC5Message ^-- DC5_BDM
+DC5BusinessConfirmation "*" -- "1" DC5BusinessDocumentContent  : confirmes and rejects >
+
+DC5Message -- DC5BusinessConfirmation: transported within
+DC5Message -- DC5BusinessDocumentContent : transported within
+
+
+'DC5BusinessConfirmation -- DC5Payload : has a business document
 
 
 class DC5Payload {
@@ -78,42 +118,33 @@ class DC5Payload {
   hash: String
   name: String
   storageRef: String
-  size: Bigint
+  size: int
 }
 
 
-class DC5Evidence {
-  type: String
-}
+'class DC5Evidence {
+'  type: String
+'}
 
-'DC5Payload ^-- DC5Evidence
-'DC5Payload ^-- DC5BusinessDocument
-'DC5Payload ^-- DC5BusinessXml
-'DC5Payload ^-- DC5AsicS
-'DC5Payload ^-- DC5TokenXml
-'DC5Payload ^-- DetachedSignature
 
-'DC5BusinessDocument "1" -- "0..1" DC5Payload : attached signature
+'DC5Message "1" -- "*" DC5Payload : has payloads
 
-'DC5_BDM "1" -- "0..1"  DC5AsicS
-'DC5_BDM "1" -- "0..1"  DC5TokenXml
-'DC5_BDM "1" -- "0..1"  DC5BusinessXml
-'DC5_BDM "1" -- "0..1"  DC5BusinessDocument
-'DC5_BDM "1" -- "0..1"  DC5Attachment
-
-DC5Message "1" -- "*" DC5Payload : has payloads
-
-'DC5Message "*" -- "*"  DC5Evidence : is transported with
-'DC5Evidence "1" -- "0..1" DC5_BCM : has
-
-DC5Payload "1" -- "0..1" DC5Evidence
-DC5Evidence "*" -- "1" DC5_BDM : is confirmed by
+'DC5Payload "1" -- "0..1" DC5Evidence
+'DC5Evidence "*" -- "1" DC5BusinessDocumentContent : is confirmed by
 
 class DC5BusinessDocument {
 
 }
 
-DC5BusinessDocument "1" -- "0..1" DetachedSignature
+'DC5BusinessDocument "1" -- "0..1" DetachedSignature : can have
+
+'DC5Payload "1" -- "0..1" DC5BusinessDocument : can be
+'DC5Payload "1" -- "0..1" DetachedSignature : can be
+
+DC5BusinessConfirmation "1" -- "0..1" DC5Payload : has a evidence XML
+
+DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has a business document
+DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has an optional detached signature
 
 class DetachedSignature {
 }
@@ -133,7 +164,8 @@ DC5DomainProperty "*" -- "1" DC5Domain
 
 class DC5TransportStep {
   pkId: int
-  message: String
+  'TODO: either message as JSON oder linked in DB to Message
+  'message: String
 
 }
 
