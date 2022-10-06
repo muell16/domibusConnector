@@ -1,5 +1,9 @@
 @startuml
 
+skinparam scale 3508x4961
+skinparam dpi 600
+
+
 class DC5MsgProcess {
   pkId: Int
   processId: String/UUID
@@ -143,29 +147,27 @@ class DC5Payload {
 }
 
 
-'class DC5Evidence {
-'  type: String
-'}
+class DC5EcodexContent {
+}
 
-
-'DC5Message "1" -- "*" DC5Payload : has payloads
-
-'DC5Payload "1" -- "0..1" DC5Evidence
-'DC5Evidence "*" -- "1" DC5BusinessDocumentContent : is confirmed by
-
-'class DC5BusinessDocument {
-'
-'}
-
-'DC5BusinessDocument "1" -- "0..1" DetachedSignature : can have
-
-'DC5Payload "1" -- "0..1" DC5BusinessDocument : can be
-'DC5Payload "1" -- "0..1" DetachedSignature : can be
+class DC5BackendContent {
+}
 
 DC5BusinessConfirmation "1" -- "0..1" DC5Payload : has a evidence XML
 
-DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has a business document
-DC5BusinessDocumentContent "1" -- "0..1" DC5Payload : has an optional detached signature
+DC5BackendContent "1" -- "0..1" DC5BusinessDocumentContent
+DC5EcodexContent "1" -- "0..1" DC5BusinessDocumentContent
+
+DC5BackendContent "1" -- "0..1" DC5Payload : has a businessXML
+DC5BackendContent "1" -- "0..1" DC5Payload : has a business document
+DC5BackendContent "1" -- "0..1" DC5Payload : has an optional detached signature
+DC5BackendContent "1" -- "*" DC5Payload : has attachments
+
+DC5EcodexContent "1" -- "0..1" DC5Payload : has an ecodex container (ASICS)
+DC5EcodexContent "1" -- "0..1" DC5Payload : has a business XML
+DC5EcodexContent "1" -- "0..1" DC5Payload : has a Token XML
+
+
 
 'class DetachedSignature {
 '}
