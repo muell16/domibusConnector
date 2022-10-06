@@ -1,5 +1,6 @@
 package eu.dc5.domain.model;
 
+import eu.dc5.domain.repository.DC5EbmsRepo;
 import eu.dc5.domain.repository.DC5MessageRepo;
 import eu.dc5.domain.repository.DC5PayloadRepo;
 import org.assertj.core.api.Assertions;
@@ -24,6 +25,8 @@ class DC5MsgH2Tests {
 
     @Autowired
     private DC5PayloadRepo payloadRepo;
+    @Autowired
+    private DC5EbmsRepo ebmsRepo;
 
     // Tests use the same H2 instance!
 
@@ -32,7 +35,7 @@ class DC5MsgH2Tests {
     }
 
     @Test
-    public void canStoreMessage() {
+    public void can_persist_message() {
         final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
         new DC5Payload();
         final DC5MsgBusinessDocument save = msgRepo.save(dc5BusinessDocumentMessage);
@@ -54,5 +57,25 @@ class DC5MsgH2Tests {
         // Assert
         final DC5Payload persistedPayload = payloadRepo.findAll().get(0);
         Assertions.assertThat(persistedPayload.getMessage().getId()).isEqualTo(save.getId());
+    }
+
+    @Test
+    public void can_persist_ebms_entity() {
+        // Arrange
+        final DC5Ebms dc5Ebms = new DC5Ebms();
+        dc5Ebms.setSender(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO"), new DC5Role("SENDER", "DIR")));
+        dc5Ebms.setReceiver(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ"), new DC5Role("RECEIVER", "OPDIR")));
+
+        // Act
+        final DC5Ebms save = ebmsRepo.findById(ebmsRepo.save(dc5Ebms).getId()).get();
+
+        // Assert
+        Assertions.assertThat(save.getReceiver().getEcxAddress()).isEqualTo("ecxAddrRec");
+        Assertions.assertThat(save.getReceiver().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
+        Assertions.assertThat(save.getReceiver().getRole().getRoleType()).isEqualTo("OPDIR");
+
+        Assertions.assertThat(save.getSender().getEcxAddress()).isEqualTo("ecxAddrSend");
+        Assertions.assertThat(save.getSender().getParty().getPartyId()).isEqualTo("ID_SENDER");
+        Assertions.assertThat(save.getSender().getRole().getRoleType()).isEqualTo("DIR");
     }
 }

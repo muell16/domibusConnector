@@ -1,8 +1,13 @@
 package eu.dc5.domain.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 @Entity(name = DC5Ebms.TABLE_NAME)
 public class DC5Ebms {
     public static final String TABLE_NAME = "DC5_EBMS";
