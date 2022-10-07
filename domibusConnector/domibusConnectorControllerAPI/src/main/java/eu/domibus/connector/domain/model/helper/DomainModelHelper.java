@@ -136,12 +136,12 @@ public class DomainModelHelper {
 
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
-        newToParty.setRoleType(details.getFromParty().getRoleType());
-        newToParty.setRole(details.getFromParty().getRole());
+        newToParty.setRoleType(details.getToParty().getRoleType());
+        newToParty.setRole(details.getToParty().getRole());
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
-        newFromParty.setRoleType(details.getToParty().getRoleType());
-        newFromParty.setRole(details.getToParty().getRole());
+        newFromParty.setRoleType(details.getFromParty().getRoleType());
+        newFromParty.setRole(details.getFromParty().getRole());
 
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
         details.setOriginalSender(newOriginalSender);
