@@ -10,8 +10,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
+
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.INITIATOR;
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.RESPONDER;
 
 /**
  * This class contains static helper methods
@@ -130,15 +134,21 @@ public class DomainModelHelper {
                 .copyPropertiesFrom(messageDetails)
                 .build();
         DomibusConnectorMessageDirection originalDirection = details.getDirection();
-        String finalRecipient = details.getFinalRecipient();
-        String originalSender = details.getOriginalSender();
-        DomibusConnectorParty newToParty = details.getFromParty();
-        newToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        DomibusConnectorParty newFromParty = details.getToParty();
-        newFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        String newFinalRecipient = details.getOriginalSender();
+        String newOriginalSender = details.getFinalRecipient();
+
+        //switching party, but keep Role and RoleType
+        DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
+        newToParty.setRoleType(RESPONDER);
+        newToParty.setRole(details.getToParty().getRole());
+        //switching party, but keep Role and RoleType
+        DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
+        newFromParty.setRoleType(INITIATOR);
+        newFromParty.setRole(details.getFromParty().getRole());
+
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
-        details.setFinalRecipient(originalSender);
-        details.setOriginalSender(finalRecipient);
+        details.setOriginalSender(newOriginalSender);
+        details.setFinalRecipient(newFinalRecipient);
         details.setFromParty(newFromParty);
         details.setToParty(newToParty);
         return details;
