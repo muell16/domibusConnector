@@ -66,22 +66,32 @@ public class DomainModelHelperTest {
         origMsg.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         DomibusConnectorMessageDetails swMsgDetails = DomainModelHelper.switchMessageDirection(origMsg.getMessageDetails());
 
+        swMsgDetails.getFromParty().setRole("fromRole");
+        swMsgDetails.getToParty().setRole("toRole");
+
         DomibusConnectorMessageDetails origMsgDetails = origMsg.getMessageDetails();
 
         //assert direction is switched
         assertThat(swMsgDetails.getDirection()).isEqualTo(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         //assert that party is switched
         assertThat(swMsgDetails.getFromParty()).isNotNull();
-        assertThat(swMsgDetails.getFromParty()).isEqualToComparingOnlyGivenFields(origMsgDetails.getToParty(), "partyId", "partyIdType", "role");
+        assertThat(swMsgDetails.getFromParty()).isEqualToComparingOnlyGivenFields(origMsgDetails.getToParty(), "partyId", "partyIdType");
         assertThat(swMsgDetails.getFromParty().getRoleType())
                 .as("party role type of from party is always initiator")
                 .isEqualTo(DomibusConnectorParty.PartyRoleType.INITIATOR);
+        assertThat(swMsgDetails.getFromParty().getRole())
+                .as("party role of from party is always fromRole")
+                .isEqualTo("fromRole");
         assertThat(swMsgDetails.getToParty()).isNotNull();
         assertThat(swMsgDetails.getToParty())
-                .isEqualToComparingOnlyGivenFields(origMsgDetails.getFromParty(), "partyId", "partyIdType", "role");
+                .isEqualToComparingOnlyGivenFields(origMsgDetails.getFromParty(), "partyId", "partyIdType");
         assertThat(swMsgDetails.getToParty().getRoleType())
                 .as("party role type of to party is always responder")
                 .isEqualTo(DomibusConnectorParty.PartyRoleType.RESPONDER);
+        assertThat(swMsgDetails.getToParty().getRole())
+                .as("party role of to party is always toRole")
+                .isEqualTo("toRole");
+
         //assertThat final recipient/original sender is switched
         assertThat(swMsgDetails.getFinalRecipient()).isEqualTo(origMsgDetails.getOriginalSender());
         assertThat(swMsgDetails.getOriginalSender()).isEqualTo(origMsgDetails.getFinalRecipient());

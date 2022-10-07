@@ -14,6 +14,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
 
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.INITIATOR;
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.RESPONDER;
+
 /**
  * This class contains static helper methods
  * for the domain model
@@ -136,11 +139,11 @@ public class DomainModelHelper {
 
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
-        newToParty.setRoleType(details.getToParty().getRoleType());
+        newToParty.setRoleType(RESPONDER);
         newToParty.setRole(details.getToParty().getRole());
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
-        newFromParty.setRoleType(details.getFromParty().getRoleType());
+        newFromParty.setRoleType(INITIATOR);
         newFromParty.setRole(details.getFromParty().getRole());
 
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
