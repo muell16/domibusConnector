@@ -27,18 +27,17 @@ public class DC5Ebms {
     // TODO:
     private ZonedDateTime created;
 
+    @Column(name = "DC5_CONVERSATION_ID", length = 255)
+    private String conversationId;
+
     @Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)
     private String ebmsMessageId;
 
     @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
     private String backendMessageId;
 
-    @Column(name = "DC5_CONVERSATION_ID", length = 255)
-    private String conversationId;
-
-    @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255) // TODO ?
+    @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255)
     private String refToMessageId;
-
 
     @Embedded
     @AttributeOverrides({

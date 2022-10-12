@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = DC5Msg.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="DC5_MESSAGE_TYPE_ID",
+@DiscriminatorColumn(name = "DC5_MESSAGE_TYPE_ID",
         discriminatorType = DiscriminatorType.INTEGER,
         length = 1
 )
@@ -35,22 +35,20 @@ public abstract class DC5Msg implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
+//    @OneToOne(mappedBy = "refMessage", cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY, optional = false) // even with lazy this is still loaded eagerly in the non-owning side ...
+//    @LazyToOne(LazyToOneOption.NO_PROXY) // to prevent that (n+1 query problem), one needs bytecode enhancement which requires hibernate.
+//    private DC5Ebms ebmsSegment;
+
+    @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL) // unidirectional mapping
+    private DC5Ebms ebmsSegment;
+
+
     @Column(name = "DC5_BACKEND_LINK", length = 255)
     private String backendLink;
-    
+
     @Column(name = "DC5_GATEWAY_LINK", length = 255)
     private String gwLink;
-
-
-    @Column(name = "DC5_FINAL_RECIEPIENT", length = 2048)
-    private String finalRecipient;
-    @Column(name = "DC5_ORIGINAL_SENDER", length = 2048)
-    private String originalSender;
-
-//    private Service service; // TODO: make new ones or import?
-//    private Action action;
-
-
 
     @Column(name = "DC5_MESSAGE_SOURCE", length = 255)
     private String source;

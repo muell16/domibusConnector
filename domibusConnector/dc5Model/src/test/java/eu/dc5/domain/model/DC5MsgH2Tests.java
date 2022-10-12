@@ -37,10 +37,25 @@ class DC5MsgH2Tests {
     @Test
     public void can_persist_message() {
         final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
-        new DC5Payload();
         final DC5MsgBusinessDocument save = msgRepo.save(dc5BusinessDocumentMessage);
 
         Assertions.assertThat(save.getId()).isGreaterThan(1000L);
+    }
+
+    @Test
+    public void persisting_a_message_also_persits_ebms_segment() {
+        // Arrange
+        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
+        final DC5Ebms dc5Ebms = new DC5Ebms();
+        dc5Ebms.setEbmsMessageId("foo");
+        dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
+
+        // Act
+        final DC5MsgBusinessDocument save = msgRepo.save(dc5BusinessDocumentMessage);
+
+        // Assert
+//        Assertions.assertThat(Optional.empty()).isPresent(); // see it fail
+        Assertions.assertThat(ebmsRepo.findByEbmsMessageId("foo")).isPresent();
     }
 
     @Test
@@ -53,9 +68,9 @@ class DC5MsgH2Tests {
 
         // Act
         final DC5MsgBusinessDocument save = msgRepo.saveAndFlush(dc5BusinessDocumentMessage);
+        final DC5Payload persistedPayload = payloadRepo.findAll().get(0);
 
         // Assert
-        final DC5Payload persistedPayload = payloadRepo.findAll().get(0);
         Assertions.assertThat(persistedPayload.getMessage().getId()).isEqualTo(save.getId());
     }
 
@@ -67,7 +82,8 @@ class DC5MsgH2Tests {
         dc5Ebms.setReceiver(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ"), new DC5Role("RECEIVER", "OPDIR")));
 
         // Act
-        final DC5Ebms save = ebmsRepo.findById(ebmsRepo.save(dc5Ebms).getId()).get();
+        final Long id = ebmsRepo.save(dc5Ebms).getId();
+        final DC5Ebms save = ebmsRepo.findById(id).get();
 
         // Assert
         Assertions.assertThat(save.getReceiver().getEcxAddress()).isEqualTo("ecxAddrRec");
