@@ -11,12 +11,25 @@ public class DC5MsgProcess {
     public static final String TABLE_NAME = "DC5_MSG_PROCESS";
 
     @Id
+    @Column(name = "ID", nullable = false)
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = DC5PersistenceSettings.SEQ_STORE_TABLE_NAME,
+            pkColumnName = DC5PersistenceSettings.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = DC5PersistenceSettings.SEQ_VALUE_COLUMN_NAME,
+            initialValue = DC5PersistenceSettings.INITIAL_VALUE,
+            allocationSize = DC5PersistenceSettings.ALLOCATION_SIZE)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId // use the message ids as process ids.
-    @JoinColumn(name = "ID") // rename the colum from message_id to id
+    // TODO: why not this
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @MapsId // use the message ids as process ids.
+//    @JoinColumn(name = "ID") // rename the colum from message_id to id
+    @OneToOne(targetEntity = DC5Msg.class, cascade = CascadeType.ALL, optional = true) // TODO: cascade ?
     private DC5Msg message;
+
+    @OneToOne(targetEntity = DC5Domain.class, cascade = CascadeType.ALL, optional = true) // TODO: cascade ?
+    private DC5Domain domain;
 
     private String processId; // who needs this?
     private ZonedDateTime created; // TODO UTC or Zoned?

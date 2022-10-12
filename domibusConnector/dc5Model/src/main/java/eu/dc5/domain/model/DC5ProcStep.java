@@ -15,7 +15,8 @@ public class DC5ProcStep {
     public static final String TABLE_NAME = "DC5_PROC_STEP";
 
     @Id
-    private String stepKey;
+    @Column(name="STEP_ID", nullable = false, unique = true)
+    private String stepId;
 
     private LocalDateTime created;
 }
