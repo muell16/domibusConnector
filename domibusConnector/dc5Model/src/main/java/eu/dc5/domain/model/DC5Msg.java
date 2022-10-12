@@ -43,6 +43,8 @@ public abstract class DC5Msg implements Serializable {
     @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
     private DC5Ebms ebmsSegment;
 
+    @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
+    private DC5TransportRequest transportRequest;
 
     @Column(name = "DC5_BACKEND_LINK", length = 255)
     private String backendLink;

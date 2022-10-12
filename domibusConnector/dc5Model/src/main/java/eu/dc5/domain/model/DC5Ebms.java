@@ -24,6 +24,9 @@ public class DC5Ebms {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
+    @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
+    private DC5TransportRequest transportRequest;
+
     // TODO:
     private ZonedDateTime created;
 

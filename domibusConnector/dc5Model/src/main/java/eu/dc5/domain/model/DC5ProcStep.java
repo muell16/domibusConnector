@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity(name = DC5ProcStep.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="DC5_MESSAGE_TYPE_ID",
+@DiscriminatorColumn(name="DC5_PROC_STEP_TYPE_ID",
         discriminatorType = DiscriminatorType.INTEGER,
         length = 1
 )
