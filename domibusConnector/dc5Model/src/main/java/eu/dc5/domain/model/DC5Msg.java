@@ -40,7 +40,7 @@ public abstract class DC5Msg implements Serializable {
 //    @LazyToOne(LazyToOneOption.NO_PROXY) // to prevent that (n+1 query problem), one needs bytecode enhancement which requires hibernate.
 //    private DC5Ebms ebmsSegment;
 
-    @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL) // unidirectional mapping
+    @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
     private DC5Ebms ebmsSegment;
 
 
