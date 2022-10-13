@@ -1,13 +1,7 @@
 package eu.dc5.domain.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.*;
-import java.math.BigInteger;
 
-@Getter
-@Setter
 @Entity(name = DC5Payload.TABLE_NAME)
 public class DC5Payload {
 
@@ -25,13 +19,94 @@ public class DC5Payload {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
+    // TODO
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE_ID")
     private DC5Msg message;
 
-    private DC5PayloadType payloadType = DC5PayloadType.EVIDENCE;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DC5ContentBackend backendContent;
+
+    @Column(name = "TYPE")
+    private DC5PayloadType type;
+
+    @Column(name = "HASH")
     private String hash;
+
+    @Column(name = "NAME")
     private String name;
+
+    @Column(name = "STORAGE_REF")
     private String storageRef;
-    private BigInteger size;
+
+    @Column(name = "SIZE")
+    private int size;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5Payload )) return false;
+        return id != null && id.equals(((DC5Payload) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Msg getMessage() {
+        return message;
+    }
+
+    public void setMessage(DC5Msg message) {
+        this.message = message;
+    }
+
+    public DC5ContentBackend getBackendContent() {
+        return backendContent;
+    }
+
+    public void setBackendContent(DC5ContentBackend backendContent) {
+        this.backendContent = backendContent;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStorageRef() {
+        return storageRef;
+    }
+
+    public void setStorageRef(String storageRef) {
+        this.storageRef = storageRef;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }

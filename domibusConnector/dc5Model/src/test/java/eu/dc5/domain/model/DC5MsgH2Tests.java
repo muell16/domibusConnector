@@ -34,15 +34,18 @@ class DC5MsgH2Tests {
     public void contextLoads() {
     }
 
+    // TODO: test query performance
+    // TODO: test persistence behaviour
+
     @Test
     public void can_persist_message() {
         // Arrange
-        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
+        final DC5Msg dc5BusinessDocumentMessage = new DC5Msg();
         final DC5Ebms dc5Ebms = new DC5Ebms();
         dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
 
         // Act
-        final DC5MsgBusinessDocument save = msgRepo.save(dc5BusinessDocumentMessage);
+        final DC5Msg save = msgRepo.save(dc5BusinessDocumentMessage);
 
         // Assert
         Assertions.assertThat(save.getId()).isGreaterThan(1000L);
@@ -51,35 +54,17 @@ class DC5MsgH2Tests {
     @Test
     public void persisting_a_message_also_persits_ebms_segment() {
         // Arrange
-        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
+        final DC5Msg dc5BusinessDocumentMessage = new DC5Msg();
         final DC5Ebms dc5Ebms = new DC5Ebms();
         dc5Ebms.setEbmsMessageId("foo");
         dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
 
         // Act
-        final DC5MsgBusinessDocument save = msgRepo.save(dc5BusinessDocumentMessage);
+        final DC5Msg save = msgRepo.save(dc5BusinessDocumentMessage);
 
         // Assert
 //        Assertions.assertThat(Optional.empty()).isPresent(); // see it fail
         Assertions.assertThat(ebmsRepo.findByEbmsMessageId("foo")).isPresent();
-    }
-
-    @Test
-    public void storing_a_message_with_payload_also_persists_the_payload() {
-        // Arrange
-        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
-        final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
-        final DC5Payload payload = new DC5Payload(); // bidirectional mapping requires linking from both ends
-        payload.setMessage(dc5BusinessDocumentMessage);
-        dc5BusinessDocumentMessage.getPayload().add(payload);
-
-        // Act
-        final DC5MsgBusinessDocument save = msgRepo.saveAndFlush(dc5BusinessDocumentMessage);
-        final DC5Payload persistedPayload = payloadRepo.findAll().get(0);
-
-        // Assert
-        Assertions.assertThat(persistedPayload.getMessage().getId()).isEqualTo(save.getId());
     }
 
     @Test

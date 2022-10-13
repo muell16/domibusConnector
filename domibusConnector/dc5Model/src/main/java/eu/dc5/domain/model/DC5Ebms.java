@@ -28,6 +28,9 @@ public class DC5Ebms {
     private DC5TransportRequest transportRequest;
 
     // TODO:
+//    private List<DC5Msg> msgHistory;
+
+    // TODO:
     private ZonedDateTime created;
 
     @Column(name = "DC5_CONVERSATION_ID", length = 255)

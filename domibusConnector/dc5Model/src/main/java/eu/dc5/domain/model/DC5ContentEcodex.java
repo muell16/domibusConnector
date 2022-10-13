@@ -1,14 +1,11 @@
 package eu.dc5.domain.model;
 
-
 import javax.persistence.*;
-import java.util.Optional;
 
+@Entity(name = DC5ContentEcodex.TABLE_NAME)
+public class DC5ContentEcodex {
 
-@Entity(name = DC5MsgBusinessConfirmation.TABLE_NAME)
-public class DC5MsgBusinessConfirmation {
-
-    public static final String TABLE_NAME = "DC5_BUSINESS_CONFIRMATION";
+    public static final String TABLE_NAME = "DC5_ECODEX_CONTENT";
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -22,14 +19,12 @@ public class DC5MsgBusinessConfirmation {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    // TODO: ref message
+    @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
+    private DC5Payload asics;
 
+    @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
+    private DC5Payload businessXml;
 
-
-    @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true)
-    private DC5Payload evidenceXml;
-
-    public Optional<DC5Payload> getEvidenceXml() {
-        return Optional.ofNullable(evidenceXml);
-    }
+    @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
+    private DC5Payload tokenXml;
 }

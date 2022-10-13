@@ -1,25 +1,13 @@
 package eu.dc5.domain.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 
-@Getter
-@Setter
 @Entity
 @Table(name = DC5Msg.TABLE_NAME)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "DC5_MESSAGE_TYPE_ID",
-        discriminatorType = DiscriminatorType.INTEGER,
-        length = 1
-)
-public abstract class DC5Msg implements Serializable {
+public class DC5Msg implements Serializable {
 
     public static final String TABLE_NAME = "DC5_Message";
 
@@ -57,10 +45,6 @@ public abstract class DC5Msg implements Serializable {
     @Column(name = "DC5_MESSAGE_TARGET", length = 255)
     private String target;
 
-
-    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<DC5Payload> payload = new HashSet<>();
-
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -77,5 +61,62 @@ public abstract class DC5Msg implements Serializable {
         DC5Msg other = (DC5Msg) o;
 
         return id != null && id.equals(other.getId());
+    }
+
+    // just getter & setter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Ebms getEbmsSegment() {
+        return ebmsSegment;
+    }
+
+    public void setEbmsSegment(DC5Ebms ebmsSegment) {
+        this.ebmsSegment = ebmsSegment;
+    }
+
+    public DC5TransportRequest getTransportRequest() {
+        return transportRequest;
+    }
+
+    public void setTransportRequest(DC5TransportRequest transportRequest) {
+        this.transportRequest = transportRequest;
+    }
+
+    public String getBackendLink() {
+        return backendLink;
+    }
+
+    public void setBackendLink(String backendLink) {
+        this.backendLink = backendLink;
+    }
+
+    public String getGwLink() {
+        return gwLink;
+    }
+
+    public void setGwLink(String gwLink) {
+        this.gwLink = gwLink;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 }

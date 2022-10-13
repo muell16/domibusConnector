@@ -48,7 +48,7 @@ class DC5MsgContainerTests {
 //    @Example
     @Test
     public void canStoreMessage() {
-        final DC5MsgBusinessDocument dc5BusinessDocumentMessage = new DC5MsgBusinessDocument();
+        final DC5Msg dc5BusinessDocumentMessage = new DC5Msg();
         msgRepo.save(dc5BusinessDocumentMessage);
     }
 }
