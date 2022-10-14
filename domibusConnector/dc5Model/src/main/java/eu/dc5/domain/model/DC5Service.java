@@ -4,7 +4,6 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class DC5Service {
-    // TODO: why no usage
     private String service;
     private String serviceType;
 
