@@ -22,14 +22,24 @@ public class DC5MsgBusinessConfirmation {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    // TODO: ref message
-
-
+    // TODO: ref message, getter setter
 
     @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true)
     private DC5Payload evidenceXml;
 
     public Optional<DC5Payload> getEvidenceXml() {
         return Optional.ofNullable(evidenceXml);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5MsgBusinessConfirmation )) return false;
+        return id != null && id.equals(((DC5MsgBusinessConfirmation) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

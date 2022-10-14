@@ -37,4 +37,32 @@ public class DC5ContentBusinessDocument {
         state.setRefContent(null);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5ContentBusinessDocument )) return false;
+        return id != null && id.equals(((DC5ContentBusinessDocument) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5BusinessDocumentState getState() {
+        return state;
+    }
+
+    public void setState(DC5BusinessDocumentState state) {
+        this.state = state;
+    }
 }

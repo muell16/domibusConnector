@@ -32,17 +32,28 @@ public class DC5MsgProcess {
     private DC5Domain domain;
 
     private String processId; // who needs this?
-    private ZonedDateTime created; // TODO UTC or Zoned?
+    private ZonedDateTime created; // TODO UTC or Zoned?, getter, setter
     private ZonedDateTime finished;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
-            joinColumns=@JoinColumn(name= TABLE_NAME,
+            joinColumns = @JoinColumn(name = TABLE_NAME,
                     referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
-    @Column(name="PROPERTY_VALUE", length = 2048)
+    @MapKeyColumn(name = "PROPERTY_NAME", nullable = false)
+    @Column(name = "PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties; // TODO: does DC5MsgProcessProperty really need to be a class?
 
-//    private Map<DC5ProcStep, ZonedDateTime> currProcStep;
+    //    private Map<DC5ProcStep, ZonedDateTime> currProcStep;
 //    private DC5Domain optionalDomain;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5MsgProcess)) return false;
+        return id != null && id.equals(((DC5MsgProcess) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

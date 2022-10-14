@@ -1,19 +1,34 @@
 package eu.dc5.domain.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.Embeddable;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Embeddable
 public class DC5Party {
     private String partyId;
     private String partyIdType;
+
+    public DC5Party() {
+    }
+
+    public DC5Party(String partyId, String partyIdType) {
+        this.partyId = partyId;
+        this.partyIdType = partyIdType;
+    }
+
+    public String getPartyId() {
+        return partyId;
+    }
+
+    public void setPartyId(String partyId) {
+        this.partyId = partyId;
+    }
+
+    public String getPartyIdType() {
+        return partyIdType;
+    }
+
+    public void setPartyIdType(String partyIdType) {
+        this.partyIdType = partyIdType;
+    }
 }

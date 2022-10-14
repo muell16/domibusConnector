@@ -34,6 +34,12 @@ public class DC5Msg implements Serializable {
     @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
     private DC5TransportRequest transportRequest;
 
+    // TODO: ref
+    @OneToOne
+    private DC5ContentBusinessDocument content = new DC5ContentBusinessDocument();
+
+    // TODO: ref business confirmation
+
     @Column(name = "DC5_BACKEND_LINK", length = 255)
     private String backendLink;
 

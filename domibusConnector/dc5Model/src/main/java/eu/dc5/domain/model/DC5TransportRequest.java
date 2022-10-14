@@ -27,4 +27,65 @@ public class DC5TransportRequest extends DC5ProcStep {
 
     @Column(name = "UPDATED")
     private ZonedDateTime updated;
+
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof DC5TransportRequest)) return false;
+//        return id != null && id.equals(((DC5TransportRequest) o).getId());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return getClass().hashCode();
+//    }
+
+    public String getConnectorTransportId() {
+        return connectorTransportId;
+    }
+
+    public void setConnectorTransportId(String connectorTransportId) {
+        this.connectorTransportId = connectorTransportId;
+    }
+
+    public String getTransportSystemId() {
+        return transportSystemId;
+    }
+
+    public void setTransportSystemId(String transportSystemId) {
+        this.transportSystemId = transportSystemId;
+    }
+
+    public String getRemoteMessageId() {
+        return remoteMessageId;
+    }
+
+    public void setRemoteMessageId(String remoteMessageId) {
+        this.remoteMessageId = remoteMessageId;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public ZonedDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(ZonedDateTime updated) {
+        this.updated = updated;
+    }
 }

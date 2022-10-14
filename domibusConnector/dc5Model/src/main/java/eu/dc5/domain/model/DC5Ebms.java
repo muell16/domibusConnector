@@ -1,13 +1,8 @@
 package eu.dc5.domain.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
-@Getter
-@Setter
 @Entity(name = DC5Ebms.TABLE_NAME)
 public class DC5Ebms {
     public static final String TABLE_NAME = "DC5_EBMS";
@@ -45,6 +40,8 @@ public class DC5Ebms {
     @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255)
     private String refToMessageId;
 
+    // TODO: action, service, getter, setter
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride( name = "ecxAddress", column = @Column(name = "S_ECX_ADDRESS", length = 255)),
@@ -64,4 +61,90 @@ public class DC5Ebms {
             @AttributeOverride( name = "role.roleType", column = @Column(name = "R_ROLE_TYPE", length = 255)),
     })
     private DC5EcxAddress receiver;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5Ebms )) return false;
+        return id != null && id.equals(((DC5Ebms) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    // just getter & setter
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5TransportRequest getTransportRequest() {
+        return transportRequest;
+    }
+
+    public void setTransportRequest(DC5TransportRequest transportRequest) {
+        this.transportRequest = transportRequest;
+    }
+
+    public ZonedDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(ZonedDateTime created) {
+        this.created = created;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public String getEbmsMessageId() {
+        return ebmsMessageId;
+    }
+
+    public void setEbmsMessageId(String ebmsMessageId) {
+        this.ebmsMessageId = ebmsMessageId;
+    }
+
+    public String getBackendMessageId() {
+        return backendMessageId;
+    }
+
+    public void setBackendMessageId(String backendMessageId) {
+        this.backendMessageId = backendMessageId;
+    }
+
+    public String getRefToMessageId() {
+        return refToMessageId;
+    }
+
+    public void setRefToMessageId(String refToMessageId) {
+        this.refToMessageId = refToMessageId;
+    }
+
+    public DC5EcxAddress getSender() {
+        return sender;
+    }
+
+    public void setSender(DC5EcxAddress sender) {
+        this.sender = sender;
+    }
+
+    public DC5EcxAddress getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(DC5EcxAddress receiver) {
+        this.receiver = receiver;
+    }
 }

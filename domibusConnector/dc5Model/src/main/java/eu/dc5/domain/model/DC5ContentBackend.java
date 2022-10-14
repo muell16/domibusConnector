@@ -36,4 +36,55 @@ public class DC5ContentBackend {
             orphanRemoval = true
     )
     private Set<DC5Payload> attachments = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5ContentBackend )) return false;
+        return id != null && id.equals(((DC5ContentBackend) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Payload getBusinessXml() {
+        return businessXml;
+    }
+
+    public void setBusinessXml(DC5Payload businessXml) {
+        this.businessXml = businessXml;
+    }
+
+    public DC5Payload getBusinessDocument() {
+        return businessDocument;
+    }
+
+    public void setBusinessDocument(DC5Payload businessDocument) {
+        this.businessDocument = businessDocument;
+    }
+
+    public DC5Payload getOptionalDetachedSignature() {
+        return optionalDetachedSignature;
+    }
+
+    public void setOptionalDetachedSignature(DC5Payload optionalDetachedSignature) {
+        this.optionalDetachedSignature = optionalDetachedSignature;
+    }
+
+    public Set<DC5Payload> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<DC5Payload> attachments) {
+        this.attachments = attachments;
+    }
 }

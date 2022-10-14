@@ -27,4 +27,48 @@ public class DC5ContentEcodex {
 
     @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
     private DC5Payload tokenXml;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5ContentEcodex )) return false;
+        return id != null && id.equals(((DC5ContentEcodex) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Payload getAsics() {
+        return asics;
+    }
+
+    public void setAsics(DC5Payload asics) {
+        this.asics = asics;
+    }
+
+    public DC5Payload getBusinessXml() {
+        return businessXml;
+    }
+
+    public void setBusinessXml(DC5Payload businessXml) {
+        this.businessXml = businessXml;
+    }
+
+    public DC5Payload getTokenXml() {
+        return tokenXml;
+    }
+
+    public void setTokenXml(DC5Payload tokenXml) {
+        this.tokenXml = tokenXml;
+    }
 }
