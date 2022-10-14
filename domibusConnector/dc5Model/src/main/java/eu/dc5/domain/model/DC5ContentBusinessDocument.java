@@ -9,31 +9,29 @@ public class DC5ContentBusinessDocument {
     public static final String TABLE_NAME = "DC5_BUSINESS_DOCUMENT_CONTENT";
 
     @Id
-    @Column(name = "ID", nullable = false)
-    @TableGenerator(name = "seq" + TABLE_NAME,
-            table = DC5PersistenceSettings.SEQ_STORE_TABLE_NAME,
-            pkColumnName = DC5PersistenceSettings.SEQ_NAME_COLUMN_NAME,
-            pkColumnValue = TABLE_NAME + ".ID",
-            valueColumnName = DC5PersistenceSettings.SEQ_VALUE_COLUMN_NAME,
-            initialValue = DC5PersistenceSettings.INITIAL_VALUE,
-            allocationSize = DC5PersistenceSettings.ALLOCATION_SIZE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @OneToOne
-    private DC5BusinessDocumentState state;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "ID")
+    private DC5Msg refMsg;
 
-
+    // idx 0 is current state.
     @OneToMany(mappedBy = "refContent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DC5BusinessDocumentState> prvStates = new ArrayList<>();
+    private List<DC5BusinessDocumentState> state;
 
-    public void addPrvState(DC5BusinessDocumentState state) {
-        prvStates.add(state);
+    public DC5ContentBusinessDocument() {
+        state = new ArrayList<>();
+        state.add(new DC5BusinessDocumentState()); // TODO: discuss
+    }
+
+    public void addState(DC5BusinessDocumentState state) {
+        this.state.add(state);
         state.setRefContent(this);
     }
 
-    public void removePrvState(DC5BusinessDocumentState state) {
-        prvStates.remove(state);
+    public void removeState(DC5BusinessDocumentState state) {
+        this.state.remove(state);
         state.setRefContent(null);
     }
 
@@ -59,10 +57,19 @@ public class DC5ContentBusinessDocument {
     }
 
     public DC5BusinessDocumentState getState() {
-        return state;
+        return state.get(0);
     }
 
     public void setState(DC5BusinessDocumentState state) {
-        this.state = state;
+        addState(state);
+    }
+
+    public DC5Msg getRefMsg() {
+        return refMsg;
+    }
+
+    public void setRefMsg(DC5Msg refMsg) {
+        this.refMsg = refMsg;
+        this.id = refMsg.getId();
     }
 }

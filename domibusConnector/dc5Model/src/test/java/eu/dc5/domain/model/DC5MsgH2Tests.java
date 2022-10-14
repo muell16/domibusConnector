@@ -71,8 +71,8 @@ class DC5MsgH2Tests {
     public void can_persist_ebms_entity() {
         // Arrange
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5Ebms.setSender(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO"), new DC5Role("SENDER", "DIR")));
-        dc5Ebms.setReceiver(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ"), new DC5Role("RECEIVER", "OPDIR")));
+        dc5Ebms.setSender(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO"), new DC5Role("SENDER", DC5RoleType.INITIATOR)));
+        dc5Ebms.setReceiver(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ"), new DC5Role("RECEIVER", DC5RoleType.RESPONDER)));
 
         // Act
         final Long id = ebmsRepo.save(dc5Ebms).getId();
@@ -81,10 +81,10 @@ class DC5MsgH2Tests {
         // Assert
         Assertions.assertThat(save.getReceiver().getEcxAddress()).isEqualTo("ecxAddrRec");
         Assertions.assertThat(save.getReceiver().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
-        Assertions.assertThat(save.getReceiver().getRole().getRoleType()).isEqualTo("OPDIR");
+        Assertions.assertThat(save.getReceiver().getRole().getRoleType()).isEqualTo(DC5RoleType.RESPONDER);
 
         Assertions.assertThat(save.getSender().getEcxAddress()).isEqualTo("ecxAddrSend");
         Assertions.assertThat(save.getSender().getParty().getPartyId()).isEqualTo("ID_SENDER");
-        Assertions.assertThat(save.getSender().getRole().getRoleType()).isEqualTo("DIR");
+        Assertions.assertThat(save.getSender().getRole().getRoleType()).isEqualTo(DC5RoleType.INITIATOR);
     }
 }

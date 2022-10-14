@@ -1,6 +1,7 @@
 package eu.dc5.domain.model;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity(name = DC5ContentEcodex.TABLE_NAME)
 public class DC5ContentEcodex {
@@ -48,24 +49,24 @@ public class DC5ContentEcodex {
         this.id = id;
     }
 
-    public DC5Payload getAsics() {
-        return asics;
+    public Optional<DC5Payload> getAsics() {
+        return Optional.ofNullable(asics);
     }
 
     public void setAsics(DC5Payload asics) {
         this.asics = asics;
     }
 
-    public DC5Payload getBusinessXml() {
-        return businessXml;
+    public Optional<DC5Payload> getBusinessXml() {
+        return Optional.ofNullable(businessXml);
     }
 
     public void setBusinessXml(DC5Payload businessXml) {
         this.businessXml = businessXml;
     }
 
-    public DC5Payload getTokenXml() {
-        return tokenXml;
+    public Optional<DC5Payload> getTokenXml() {
+        return Optional.ofNullable(tokenXml);
     }
 
     public void setTokenXml(DC5Payload tokenXml) {

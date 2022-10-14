@@ -3,6 +3,8 @@ package eu.dc5.domain.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -31,14 +33,17 @@ public class DC5Msg implements Serializable {
     @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
     private DC5Ebms ebmsSegment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DC5Ebms refEbms;
+
     @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
     private DC5TransportRequest transportRequest;
 
-    // TODO: ref
-    @OneToOne
-    private DC5ContentBusinessDocument content = new DC5ContentBusinessDocument();
+    @OneToOne(mappedBy = "refMsg", cascade = CascadeType.ALL) // TODO: orphanRemoval = true?
+    private DC5ContentBusinessDocument content;
 
-    // TODO: ref business confirmation
+    @OneToMany(mappedBy = "refMsg", cascade = CascadeType.ALL) // TODO: should a confirmation be deleted if, no Msg references it? orphanRemoval=true?
+    private List<DC5MsgBusinessConfirmation> confirmations;
 
     @Column(name = "DC5_BACKEND_LINK", length = 255)
     private String backendLink;
@@ -50,6 +55,23 @@ public class DC5Msg implements Serializable {
     private String source;
     @Column(name = "DC5_MESSAGE_TARGET", length = 255)
     private String target;
+
+    public DC5Msg() {
+        confirmations = new ArrayList<>();
+        final DC5ContentBusinessDocument content = new DC5ContentBusinessDocument(); // TODO: discuss
+        content.setRefMsg(this);
+        this.content = content;
+    }
+
+    public void addConfirmation(DC5MsgBusinessConfirmation confirmation) {
+        confirmations.add(confirmation);
+        confirmation.setRefMsg(this);
+    }
+
+    public void removeConfirmation(DC5MsgBusinessConfirmation confirmation) {
+        confirmations.remove(confirmation);
+        confirmation.setRefMsg(null);
+    }
 
     @Override
     public int hashCode() {
@@ -80,6 +102,14 @@ public class DC5Msg implements Serializable {
 
     public DC5Ebms getEbmsSegment() {
         return ebmsSegment;
+    }
+
+    public DC5ContentBusinessDocument getContent() {
+        return content;
+    }
+
+    public void setContent(DC5ContentBusinessDocument content) { //TODO: remove this?
+        this.content = content;
     }
 
     public void setEbmsSegment(DC5Ebms ebmsSegment) {
@@ -124,5 +154,13 @@ public class DC5Msg implements Serializable {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public DC5Ebms getRefEbms() {
+        return refEbms;
+    }
+
+    public void setRefEbms(DC5Ebms refEbms) {
+        this.refEbms = refEbms;
     }
 }

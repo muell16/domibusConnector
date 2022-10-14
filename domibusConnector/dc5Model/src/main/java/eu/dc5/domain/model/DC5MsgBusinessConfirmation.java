@@ -22,14 +22,16 @@ public class DC5MsgBusinessConfirmation {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    // TODO: ref message, getter setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DC5Msg refMsg;
+
+    // TODO: example
+//    public void changeState() {
+//        refMsg.getContent().setState();
+//    }
 
     @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true)
     private DC5Payload evidenceXml;
-
-    public Optional<DC5Payload> getEvidenceXml() {
-        return Optional.ofNullable(evidenceXml);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,5 +43,30 @@ public class DC5MsgBusinessConfirmation {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Msg getRefMsg() {
+        return refMsg;
+    }
+
+    public void setRefMsg(DC5Msg refMsg) {
+        this.refMsg = refMsg;
+    }
+
+
+    public Optional<DC5Payload> getEvidenceXml() {
+        return Optional.ofNullable(evidenceXml);
+    }
+
+    public void setEvidenceXml(DC5Payload evidenceXml) {
+        this.evidenceXml = evidenceXml;
     }
 }

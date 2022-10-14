@@ -2,6 +2,7 @@ package eu.dc5.domain.model;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity(name = DC5ContentBackend.TABLE_NAME)
@@ -28,7 +29,7 @@ public class DC5ContentBackend {
     private DC5Payload businessDocument;
 
     @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
-    private DC5Payload optionalDetachedSignature;
+    private DC5Payload detachedSignature;
 
     @OneToMany(
             mappedBy = "",
@@ -56,28 +57,28 @@ public class DC5ContentBackend {
         this.id = id;
     }
 
-    public DC5Payload getBusinessXml() {
-        return businessXml;
+    public Optional<DC5Payload> getBusinessXml() {
+        return Optional.ofNullable(businessXml);
     }
 
     public void setBusinessXml(DC5Payload businessXml) {
         this.businessXml = businessXml;
     }
 
-    public DC5Payload getBusinessDocument() {
-        return businessDocument;
+    public Optional<DC5Payload> getBusinessDocument() {
+        return Optional.ofNullable(businessDocument);
     }
 
     public void setBusinessDocument(DC5Payload businessDocument) {
         this.businessDocument = businessDocument;
     }
 
-    public DC5Payload getOptionalDetachedSignature() {
-        return optionalDetachedSignature;
+    public Optional<DC5Payload> getOptionalDetachedSignature() {
+        return Optional.ofNullable(detachedSignature);
     }
 
-    public void setOptionalDetachedSignature(DC5Payload optionalDetachedSignature) {
-        this.optionalDetachedSignature = optionalDetachedSignature;
+    public void setOptionalDetachedSignature(DC5Payload detachedSignature) {
+        this.detachedSignature = detachedSignature;
     }
 
     public Set<DC5Payload> getAttachments() {

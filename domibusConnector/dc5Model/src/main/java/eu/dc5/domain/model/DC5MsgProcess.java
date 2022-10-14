@@ -1,7 +1,7 @@
 package eu.dc5.domain.model;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -31,9 +31,14 @@ public class DC5MsgProcess {
     @OneToOne(targetEntity = DC5Domain.class, cascade = CascadeType.ALL, optional = true) // TODO: cascade ?
     private DC5Domain domain;
 
-    private String processId; // who needs this?
-    private ZonedDateTime created; // TODO UTC or Zoned?, getter, setter
-    private ZonedDateTime finished;
+    @Column(name = "PROCESS_ID")
+    private String processId;
+
+    @Column(name = "CREATED")
+    private LocalDateTime created;
+
+    @Column(name = "FINISHED")
+    private LocalDateTime finished;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
@@ -55,5 +60,61 @@ public class DC5MsgProcess {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DC5Msg getMessage() {
+        return message;
+    }
+
+    public void setMessage(DC5Msg message) {
+        this.message = message;
+    }
+
+    public DC5Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(DC5Domain domain) {
+        this.domain = domain;
+    }
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getFinished() {
+        return finished;
+    }
+
+    public void setFinished(LocalDateTime finished) {
+        this.finished = finished;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

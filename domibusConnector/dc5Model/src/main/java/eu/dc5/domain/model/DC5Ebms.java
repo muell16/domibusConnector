@@ -1,7 +1,9 @@
 package eu.dc5.domain.model;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = DC5Ebms.TABLE_NAME)
 public class DC5Ebms {
@@ -22,11 +24,11 @@ public class DC5Ebms {
     @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
     private DC5TransportRequest transportRequest;
 
-    // TODO:
-//    private List<DC5Msg> msgHistory;
+    @OneToMany(mappedBy = "refEbms", cascade = CascadeType.ALL)
+    private List<DC5Msg> msgHistory = new ArrayList<>();
 
-    // TODO:
-    private ZonedDateTime created;
+    @Column(name = "CREATED")
+    private LocalDateTime created;
 
     @Column(name = "DC5_CONVERSATION_ID", length = 255)
     private String conversationId;
@@ -40,7 +42,11 @@ public class DC5Ebms {
     @Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255)
     private String refToMessageId;
 
-    // TODO: action, service, getter, setter
+    @Embedded
+    private DC5Action action;
+
+    @Embedded
+    private DC5Service service;
 
     @Embedded
     @AttributeOverrides({
@@ -61,6 +67,16 @@ public class DC5Ebms {
             @AttributeOverride( name = "role.roleType", column = @Column(name = "R_ROLE_TYPE", length = 255)),
     })
     private DC5EcxAddress receiver;
+
+    public void addState(DC5Msg historicMsg) {
+        this.msgHistory.add(historicMsg);
+        historicMsg.setRefEbms(this);
+    }
+
+    public void removeHistoricMsg(DC5Msg historicMsg) {
+        this.msgHistory.remove(historicMsg);
+        historicMsg.setRefEbms(null);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -92,11 +108,11 @@ public class DC5Ebms {
         this.transportRequest = transportRequest;
     }
 
-    public ZonedDateTime getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(ZonedDateTime created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
@@ -146,5 +162,21 @@ public class DC5Ebms {
 
     public void setReceiver(DC5EcxAddress receiver) {
         this.receiver = receiver;
+    }
+
+    public DC5Action getAction() {
+        return action;
+    }
+
+    public void setAction(DC5Action action) {
+        this.action = action;
+    }
+
+    public DC5Service getService() {
+        return service;
+    }
+
+    public void setService(DC5Service service) {
+        this.service = service;
     }
 }
