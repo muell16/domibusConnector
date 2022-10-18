@@ -8,19 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 
 
 @Entity
@@ -41,6 +29,7 @@ public class PDomibusConnectorPModeSet {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
+    @Lob
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -53,7 +42,8 @@ public class PDomibusConnectorPModeSet {
 
     @Column(name = "ACTIVE")
     private boolean active;
-    
+
+    @Lob
     @Column(name = "PMODES")
     private byte[] pmodes;
 

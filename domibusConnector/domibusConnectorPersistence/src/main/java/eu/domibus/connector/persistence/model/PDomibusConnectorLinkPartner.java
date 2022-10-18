@@ -24,22 +24,23 @@ public class PDomibusConnectorLinkPartner {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name= "NAME", unique = true, length = 255)
+    @Column(name= "NAME", unique = true, nullable = false, length = 255)
     private String linkName;
 
+    @Lob
     @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name="ENABLED", nullable = false)
     private Boolean enabled = Boolean.FALSE;
 
-    @Column(name = "LINK_TYPE")
+    @Column(name = "LINK_TYPE", length = 20)
     private LinkType linkType;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME")
-    @Column(name="PROPERTY_VALUE")
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     @ManyToOne

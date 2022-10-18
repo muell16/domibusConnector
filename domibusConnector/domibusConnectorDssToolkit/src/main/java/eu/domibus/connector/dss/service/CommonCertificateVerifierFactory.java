@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static eu.domibus.connector.dss.configuration.BasicDssConfiguration.DEFAULT_DATALOADER_BEAN_NAME;
 
@@ -54,8 +55,8 @@ public class CommonCertificateVerifierFactory {
     }
 
     public CommonCertificateVerifier createCommonCertificateVerifier(CertificateVerifierConfigurationProperties certificateVerifierConfig) {
-//        CommonCertificateVerifier commonCertificateVerifier = new CommonCertificateVerifier(true);
-//        ListCertificateSource listCertificateSource = new ListCertificateSource();
+        CommonCertificateVerifier commonCertificateVerifier = new CommonCertificateVerifier(true);
+        ListCertificateSource trustedCertificateSourcesList = new ListCertificateSource();
 
         List<CertificateSource> trustedCertSources = new ArrayList<>();
         CRLSource crlSource = null;
@@ -65,13 +66,16 @@ public class CommonCertificateVerifierFactory {
 
         if (certificateVerifierConfig.isAiaEnabled()) {
             LOGGER.debug("AIA loading is enabled");
-//            commonCertificateVerifier.setDataLoader(dataLoader);
+            commonCertificateVerifier.setDataLoader(dataLoader);
             aiaDataLoader = dataLoader;
+
         } else {
             LOGGER.debug("AIA loading is NOT enabled");
+            commonCertificateVerifier.setDataLoader(new IgnoreDataLoader());
         }
         if (certificateVerifierConfig.isOcspEnabled()) {
             ocspSource = onlineOCSPSource;
+            commonCertificateVerifier.setOcspSource(ocspSource);
             LOGGER.debug("OCSP checking is enabled");
         } else {
             LOGGER.debug("OCSP checking is NOT enabled");
@@ -79,6 +83,7 @@ public class CommonCertificateVerifierFactory {
         if (certificateVerifierConfig.isCrlEnabled()) {
             LOGGER.debug("CRL checking is enabled");
             crlSource = onlineCRLSource;
+            commonCertificateVerifier.setCrlSource(crlSource);
         } else {
             LOGGER.debug("CRL checking is NOT enabled");
         }
@@ -88,7 +93,7 @@ public class CommonCertificateVerifierFactory {
             Optional<TrustedListsCertificateSource> certificateSource = trustedListsManager.getCertificateSource(trustedListSourceName);
             if (certificateSource.isPresent()) {
                 TrustedListsCertificateSource tlSource = certificateSource.get();
-                trustedCertSources.add(tlSource);
+                trustedCertificateSourcesList.add(tlSource);
             } else {
                 LOGGER.warn("There is no TrustedListsCertificateSource with key [{}] configured. Available are [{}]", trustedListSourceName, trustedListsManager.getAllSourceNames());
             }
@@ -102,22 +107,26 @@ public class CommonCertificateVerifierFactory {
             CertificateSource certificateSourceFromStore = certificateSourceFromKeyStoreCreator.createCertificateSourceFromStore(certificateVerifierConfig.getTrustStore());
             CommonTrustedCertificateSource trustedCertSource = new CommonTrustedCertificateSource();
             trustedCertSource.importAsTrusted(certificateSourceFromStore);
-            trustedCertSources.add(trustedCertSource);
+            trustedCertificateSourcesList.add(trustedCertSource);
             LOGGER.debug("Setting source [{}] as trusted", certificateSourceFromStore);
         } else {
             LOGGER.debug("TrustStore is not enabled");
         }
 
-        if (trustedCertSources.isEmpty()) {
+        if (trustedCertificateSourcesList.isEmpty()) {
             LOGGER.warn("No trusted certificate source has been configured");
+        } else {
+            commonCertificateVerifier.setTrustedCertSources(trustedCertificateSourcesList);
+            LOGGER.debug("Setting trusted certificate sources: [{}]", trustedCertificateSourcesList.getSources()
+                    .stream()
+                    .map(s -> "[" + s.getCertificateSourceType() + " entries " + s.getCertificates().size() + "]")
+                    .collect(Collectors.joining(",")));
         }
-
-//        commonCertificateVerifier.setTrustedCertSources(listCertificateSource);
-        CommonCertificateVerifier commonCertificateVerifier = new CommonCertificateVerifier(trustedCertSources, crlSource, ocspSource, aiaDataLoader);
 
         if (certificateVerifierConfig.getIgnoreStore() != null) {
             CertificateSource ignoreCertificateSourceFromStore = certificateSourceFromKeyStoreCreator.createCertificateSourceFromStore(certificateVerifierConfig.getIgnoreStore());
             commonCertificateVerifier.setAdjunctCertSources(ignoreCertificateSourceFromStore);
+            LOGGER.debug("Setting untrusted certificate source: [{}]", ignoreCertificateSourceFromStore);
         }
 
         return commonCertificateVerifier;

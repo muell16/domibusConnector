@@ -14,7 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,13 +25,15 @@ import java.util.Date;
  */
 public class DomainEntityCreator {
 
-    public static DomibusConnectorParty createPartyAT() {
+    public static DomibusConnectorParty createPartyATasInitiator() {
         DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
+        p.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
         return p;
     }
     
     public static DomibusConnectorParty createPartyDE() {
-        DomibusConnectorParty p = new DomibusConnectorParty("DE", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");        
+        DomibusConnectorParty p = new DomibusConnectorParty("DE", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
+        p.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
         return p;
     }
 
@@ -301,7 +302,7 @@ public class DomainEntityCreator {
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
+        messageDetails.setToParty(createPartyATasInitiator());
         messageDetails.setFromParty(createPartyDE());
 
         DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageDeliveryConfirmation();
@@ -328,7 +329,7 @@ public class DomainEntityCreator {
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
+        messageDetails.setToParty(createPartyATasInitiator());
         messageDetails.setFromParty(createPartyDE());
 
         return messageDetails;
@@ -366,7 +367,7 @@ public class DomainEntityCreator {
         
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
+        messageDetails.setToParty(createPartyATasInitiator());
         messageDetails.setFromParty(createPartyDE());
         
         return messageDetails;

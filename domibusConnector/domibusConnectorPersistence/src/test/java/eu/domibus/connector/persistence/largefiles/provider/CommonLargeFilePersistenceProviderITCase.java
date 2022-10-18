@@ -68,7 +68,7 @@ public abstract class CommonLargeFilePersistenceProviderITCase {
 
     @Test
     public void testFindReferences() {
-        final String CONNECTOR_ID = "myid003";
+        final String CONNECTOR_ID = "myid006";
 
         final byte[] writtenBytes = new byte[20];
         new Random().nextBytes(writtenBytes);

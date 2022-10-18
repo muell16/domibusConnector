@@ -1,0 +1,211 @@
+@startuml
+
+skinparam scale 3508x4961
+skinparam dpi 600
+
+
+class DC5MsgProcess {
+  pkId: Int
+  processId: String/UUID
+  created: Timestamp
+  finished: Timestamp
+}
+
+class DC5MsgProcessProperty {
+  name: String
+  value: String
+}
+
+DC5MsgProcess "1" -- "*" DC5MsgProcessProperty : has properties
+
+class DC5_ProcessStep {
+  stepKey : String
+  created: Timestamp
+}
+
+DC5MsgProcess "1" -- "*" DC5_ProcessStep : has steps
+
+DC5MsgProcess "0..1" -- "0..1" DC5Domain
+
+DC5MsgProcess "1" -- "0..1" DC5Message
+
+class DC5Message {
+  pkId: Int
+
+  backendLink: String
+  gwLink: String
+
+  source: String
+  target: String
+
+}
+
+DC5Message "1" -- "1" DC5EbmsBlock : current address info
+DC5Message "*" -- "1" DC5EbmsBlock : historic addresses
+
+
+class DC5EbmsBlock {
+  pkid: int
+  created: timestamp
+  conversationId: String
+
+  ebmsMessageId: String
+  backendMessageId: String
+  refToMessageId: String
+}
+
+DC5Message -- DC5EbmsBlock : contains a
+
+
+DC5EbmsBlock "*" *-- "1" DC5EcxAddress : > has a sender [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5EcxAddress : > has a reciver [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5Service : > has a service [JPA @Embedded]
+DC5EbmsBlock "*" *-- "1" DC5Action : > has a action [JPA @Embedded]
+
+class DC5EcxAddress {
+  eAddress: String
+}
+
+class DC5Action {
+  action: String
+}
+
+class DC5Service {
+  service: String
+  serviceType: String
+}
+
+class DC5Party {
+  partyIdType: String
+  partyId: String
+}
+
+class DC5Role {
+  role: String
+  roleType: RoleType
+}
+
+DC5Role "1" --* "*" DC5EcxAddress : < has [JPA @Embedded]
+DC5Party "1" --* "*" DC5EcxAddress : < has [JPA @Embedded]
+
+enum RoleType {
+  INITIATOR
+  RESPONDER
+}
+
+
+enum BusinessDocumentState {
+  CREATED
+  SUBMITTED
+  RELAYED
+  REJECTED
+  CONFIRMED
+  DELIVERED
+  RETRIEVED
+}
+
+class BusinessDocumentStateTransition {
+  pkid: int
+  state: BusinessDocumentState
+  created: timestamp
+  string: description
+  string: userprincipal
+}
+
+BusinessDocumentStateTransition "1" --  "1" DC5BusinessDocumentContent : current state
+BusinessDocumentStateTransition "*" --  "1" DC5BusinessDocumentContent : states
+
+
+
+
+'BCM ... BusinessDocumentMessage
+'class DC5BusinessDocumentContent {
+'
+'}
+
+'BCM ... BusinessConfirmationMessage
+class DC5BusinessConfirmation {
+  type: String
+}
+
+DC5BusinessConfirmation "0..1" -- "0..1" BusinessDocumentStateTransition  : can create a state change
+
+DC5Message -- DC5BusinessConfirmation: transported within
+DC5Message -- DC5BusinessDocumentContent : transported within
+
+
+'DC5BusinessConfirmation -- DC5Payload : has a business document
+
+
+class DC5Payload {
+  id: Int
+  type: String
+  hash: String
+  name: String
+  storageRef: String
+  size: int
+}
+
+
+class DC5EcodexContent {
+}
+
+class DC5BackendContent {
+}
+
+DC5BusinessConfirmation "1" -- "0..1" DC5Payload : has a evidence XML
+
+DC5BackendContent "1" -- "0..1" DC5BusinessDocumentContent
+DC5EcodexContent "1" -- "0..1" DC5BusinessDocumentContent
+
+DC5BackendContent "1" -- "0..1" DC5Payload : has a businessXML
+DC5BackendContent "1" -- "0..1" DC5Payload : has a business document
+DC5BackendContent "1" -- "0..1" DC5Payload : has an optional detached signature
+DC5BackendContent "1" -- "*" DC5Payload : has attachments
+
+DC5EcodexContent "1" -- "0..1" DC5Payload : has an ecodex container (ASICS)
+DC5EcodexContent "1" -- "0..1" DC5Payload : has a business XML
+DC5EcodexContent "1" -- "0..1" DC5Payload : has a Token XML
+
+
+
+'class DetachedSignature {
+'}
+
+class DC5Domain {
+ id: int
+ name: string
+}
+
+
+class DC5DomainProperty {
+  name: String
+  value: String
+}
+
+DC5DomainProperty "*" -- "1" DC5Domain
+
+class DC5TransportRequest {
+'  pkId: int
+  'TODO: either message as JSON oder linked in DB to Message
+  'message: String
+
+  connectorTransportId: String
+  'jms ID, cxf id, ...
+  transportSystemId: String
+  'remote message id: backend message id, ebms id
+  remoteMessageId: String
+  'error
+  error: String
+  state: String
+  updated: timestamp
+}
+
+DC5_ProcessStep ^-- DC5TransportRequest
+
+DC5TransportRequest "0..1" -- "1" DC5EbmsBlock : transport info
+DC5TransportRequest "0..1" -- "1" DC5Message : transported message
+
+
+
+@enduml

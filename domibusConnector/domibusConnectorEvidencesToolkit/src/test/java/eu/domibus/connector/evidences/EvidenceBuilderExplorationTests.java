@@ -17,7 +17,7 @@ public class EvidenceBuilderExplorationTests {
 
     @Test
     public void testEvidenceBuilderWithoutValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
-        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource(""), "", "", "");
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource(""), "JKS", "", "", "");
 
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
         //if there is an error the generated evidence gets null!
@@ -26,7 +26,7 @@ public class EvidenceBuilderExplorationTests {
 
     @Test
     public void testEvidenceBuilderWithtValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
-        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource("/keystore/evidence_test.jks"), "12345", "test", "12345");
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder(new ClassPathResource("/keystore/evidence_test.jks"), "JKS", "12345", "test", "12345");
 
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
 

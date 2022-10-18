@@ -109,7 +109,7 @@ public class MsgContentPersistenceServiceTest {
             }
         }).when(this.msgContDao).saveAll(any());
 
-        this.msgContService.saveMessagePayloads(message);
+//        this.msgContService.saveMessagePayloads(message);
 
 //        Mockito.verify(msgContDao, times(1)).save(any(PDomibusConnectorMsgCont.class));
 
@@ -140,7 +140,7 @@ public class MsgContentPersistenceServiceTest {
             }
         }).when(this.msgContDao).saveAll(any());
         
-        this.msgContService.saveMessagePayloads(message);
+//        this.msgContService.saveMessagePayloads(message);
         
         assertThat(savedMsgCont.stream()
                 .filter(c -> StoreType.MESSAGE_CONTENT.equals(c.getContentType()))

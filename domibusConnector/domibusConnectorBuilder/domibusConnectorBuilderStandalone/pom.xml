@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>4.4.4-SNAPSHOT</version>
+        <version>4.4.6-bugfix-582-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
@@ -16,43 +16,59 @@
             <artifactId>domibusConnectorUI</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency> -->
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <version>2.4.0</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-el-api</artifactId>
+            <!-- will be packed together by the spring boot plugin -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-loader</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jasper-el</artifactId>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <to>
+                        <image>myimage</image>
+                    </to>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -84,6 +100,132 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- download mysql driver -->
+                    <execution>
+                        <id>copy-mysql-driver</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteReleases>true</overWriteReleases>
+                            <outputDirectory>target/gw/domibus/lib</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <overWrite>true</overWrite>
+                                    <groupId>mysql</groupId>
+                                    <artifactId>mysql-connector-java</artifactId>
+                                    <version>8.0.26</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <!-- download mariadb driver -->
+                    <execution>
+                        <id>copy-mariadb-driver</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteReleases>true</overWriteReleases>
+                            <outputDirectory>target/gw/domibus/lib</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <overWrite>true</overWrite>
+                                    <groupId>org.mariadb.jdbc</groupId>
+                                    <artifactId>mariadb-java-client</artifactId>
+                                    <version>3.0.4</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <!-- download h2 driver -->
+                    <execution>
+                        <id>copy-h2-driver</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteReleases>true</overWriteReleases>
+                            <outputDirectory>target/gw/domibus/lib</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <overWrite>true</overWrite>
+                                    <groupId>com.h2database</groupId>
+                                    <artifactId>h2</artifactId>
+                                    <version>2.1.212</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>openshift-maven-plugin</artifactId>
+                <version>1.7.0</version>
+                <configuration>
+                    <skip>false</skip>
+                    <buildStrategy>docker</buildStrategy>
+                    <resources>
+                        <openshiftBuildConfig>
+                            <requests>
+                                <cpu>200m</cpu>
+                                <memory>256Mi</memory>
+                            </requests>
+                            <limits>
+                                <cpu>1000m</cpu>
+                                <memory>1Gi</memory>
+                            </limits>
+                        </openshiftBuildConfig>
+                    </resources>
+                    <images>
+                        <image>
+                            <name>dc-connector</name>
+                            <build>
+                                <tags>
+                                    <tag>4.4.x</tag>
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                                <dockerFile>Dockerfile</dockerFile>
+                                <fromExt>
+                                    <name>java:openjdk-8-ubi8</name>
+                                    <kind>ImageStreamTag</kind>
+                                    <namespace>openshift</namespace>
+                                </fromExt>
+                                <assembly>
+                                    <name>connector_assembly</name>
+                                    <mode>dir</mode>
+                                    <targetDir>app</targetDir>
+                                    <excludeFinalOutputArtifact>true</excludeFinalOutputArtifact>
+                                    <layers>
+                                        <layer>
+                                            <id>connector-jar</id>
+                                            <files>
+                                                <file>
+                                                    <source>${project.basedir}/target/${project.artifactId}-${project.version}.jar</source>
+                                                    <outputDirectory>./</outputDirectory>
+                                                    <destName>connector.jar</destName>
+                                                </file>
+                                            </files>
+                                        </layer>
+                                    </layers>
+                                </assembly>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
 @DataSet(value = "/database/testdata/dbunit/DomibusConnectorTransportStep.xml", strategy = CLEAN_INSERT)
-//@Disabled("Test JVM is randomly crashing on CI and via mvn")
 public class DomibusConnectorTransportStepDaoTest {
 
     @Autowired
@@ -95,6 +95,21 @@ public class DomibusConnectorTransportStepDaoTest {
 
     }
 
+
+    @Test
+    public void testFindStepByLastState_Pending() {
+        Pageable pageable = Pageable.ofSize(20);
+        DomibusConnectorLinkPartner.LinkPartnerName[] lp = {new DomibusConnectorLinkPartner.LinkPartnerName("partner2")};
+
+        Assertions.assertAll(
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                                new String[]{TransportState.PENDING.getDbName()},
+                                lp,
+                                pageable)
+                        .getTotalElements()).isEqualTo(1) //there should be 1 entry with last state of pending
+        );
+    }
+
     @Test
     @Sql(statements = {"DELETE FROM DC_TRANSPORT_STEP_STATUS;", "DELETE FROM DC_TRANSPORT_STEP;"})
     public void testFindLastAttemptStepByLastStateAndLinkPartnerIsOneOf_withEmptyDB() {
@@ -108,6 +123,36 @@ public class DomibusConnectorTransportStepDaoTest {
                 new String[]{},
                 Arrays.array(new DomibusConnectorLinkPartner.LinkPartnerName("hallo")), Pageable.ofSize(20)
         );
+
+    }
+
+
+    @Test
+    @Sql(scripts = {
+            "classpath:/database/testdata/sql/DC_TRANSPORT_STEP_STATUS_CLEAN.sql",
+            "classpath:/database/testdata/sql/DC_TRANSPORT_STEP_CLEAN.sql",
+            "classpath:/database/testdata/sql/DC_TRANSPORT_STEP.sql",
+            "classpath:/database/testdata/sql/DC_TRANSPORT_STEP_STATUS.sql"
+    })
+    public void testLotData() {
+
+
+        Page<PDomibusConnectorTransportStep> allStates = dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                Stream.of(TransportState.values()).map(Enum::toString).toArray(String[]::new),
+                Arrays.array(new DomibusConnectorLinkPartner.LinkPartnerName("CN=mla_connector_client")), Pageable.ofSize(20)
+        );
+//        assertThat(allStates.getTotalElements()).isEqualTo(560);
+
+        Page<PDomibusConnectorTransportStep> pending = dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                Stream.of(TransportState.PENDING).map(Enum::toString).toArray(String[]::new),
+                Arrays.array(new DomibusConnectorLinkPartner.LinkPartnerName("mla")), Pageable.ofSize(200)
+        );
+        assertThat(pending.getTotalElements()).isEqualTo(0);
+
+        List<PDomibusConnectorTransportStep> lastStateIsPending =
+                dao.findByMsgLinkPartnerAndLastStateIs(new DomibusConnectorLinkPartner.LinkPartnerName("mla"), TransportState.PENDING.getDbName());
+        assertThat(lastStateIsPending).hasSize(0);
+
 
     }
 

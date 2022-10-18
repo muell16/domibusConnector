@@ -35,25 +35,6 @@ ALTER TABLE BKP_DC_MESSAGE_INFO DROP FOREIGN KEY FK_DC_MSG_INFO_04;
 
 ALTER TABLE DOMIBUS_CONNECTOR_BACK_2_S DROP FOREIGN KEY FK_DC_BACK2S_02;
 
-
-DROP TABLE IF EXISTS SequenceHelper;
-CREATE TABLE IF NOT EXISTS SequenceHelper
-(
-    name VARCHAR(70) NOT NULL UNIQUE,
-    next BIGINT NOT NULL
-);
-
-delimiter $$
-DROP function if exists next_val_in_seq;
-create function next_val_in_seq(seq_name varchar(10))
-    returns BIGINT
-    DETERMINISTIC
-begin
-    UPDATE SequenceHelper SET next = (@next := next) + 1 WHERE name = seq_name;
-    return (SELECT @next);
-end $$
-$$ DELIMITER ;
-
 CREATE TABLE QRTZ_JOB_DETAILS
 (
     SCHED_NAME        VARCHAR(120) NOT NULL,
@@ -223,12 +204,12 @@ CREATE TABLE DOMIBUS_CONNECTOR_MESSAGE
     CONNECTOR_MESSAGE_ID VARCHAR(255),
     CONVERSATION_ID      VARCHAR(255),
     HASH_VALUE           LONGTEXT,
-    CONFIRMED            TIMESTAMP NULL,
-    REJECTED             TIMESTAMP NULL,
-    DELIVERED_BACKEND    TIMESTAMP NULL,
-    DELIVERED_GW         TIMESTAMP NULL,
-    UPDATED              TIMESTAMP NULL,
-    CREATED              TIMESTAMP NULL,
+    CONFIRMED            TIMESTAMP(6) NULL,
+    REJECTED             TIMESTAMP(6) NULL,
+    DELIVERED_BACKEND    TIMESTAMP(6) NULL,
+    DELIVERED_GW         TIMESTAMP(6) NULL,
+    UPDATED              TIMESTAMP(6) NULL,
+    CREATED              TIMESTAMP(6) NULL,
     DIRECTION_SOURCE     VARCHAR(20),
     DIRECTION_TARGET     VARCHAR(20),
     GATEWAY_NAME         VARCHAR(255)
@@ -241,7 +222,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_MSG_ERROR
     ERROR_MESSAGE VARCHAR(2048) NOT NULL,
     DETAILED_TEXT LONGTEXT,
     ERROR_SOURCE  LONGTEXT,
-    CREATED       TIMESTAMP           NOT NULL
+    CREATED       TIMESTAMP(6)           NOT NULL
 );
 
 CREATE TABLE DOMIBUS_CONNECTOR_MSG_CONT
@@ -251,7 +232,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_MSG_CONT
     CONTENT_TYPE          VARCHAR(255),
    CONTENT LONGBLOB,
     CHECKSUM LONGTEXT,
-    CREATED               TIMESTAMP NULL,
+    CREATED               TIMESTAMP(6) NULL,
     STORAGE_PROVIDER_NAME VARCHAR(255),
     STORAGE_REFERENCE_ID  VARCHAR(512),
     DIGEST                VARCHAR(512),
@@ -261,7 +242,7 @@ CREATE TABLE DOMIBUS_CONNECTOR_MSG_CONT
     PAYLOAD_MIMETYPE      VARCHAR(255),
     PAYLOAD_SIZE          BIGINT,
     DETACHED_SIGNATURE_ID BIGINT,
-    DELETED               TIMESTAMP NULL
+    DELETED               TIMESTAMP(6) NULL
 );
 
 CREATE TABLE DOMIBUS_CONNECTOR_EVIDENCE
@@ -271,18 +252,18 @@ CREATE TABLE DOMIBUS_CONNECTOR_EVIDENCE
     CONNECTOR_MESSAGE_ID VARCHAR(255),
     TYPE                 VARCHAR(255),
     EVIDENCE             LONGTEXT,
-    DELIVERED_NAT        TIMESTAMP NULL,
-    DELIVERED_GW         TIMESTAMP NULL,
-    UPDATED              TIMESTAMP NULL
+    DELIVERED_NAT        TIMESTAMP(6) NULL,
+    DELIVERED_GW         TIMESTAMP(6) NULL,
+    UPDATED              TIMESTAMP(6) NULL
 );
 
 CREATE TABLE DOMIBUS_CONNECTOR_BIGDATA
 (
     ID          VARCHAR(255) NOT NULL,
     CHECKSUM    LONGTEXT,
-    CREATED     TIMESTAMP NULL,
+    CREATED     TIMESTAMP(6) NULL,
     MESSAGE_ID  BIGINT,
-    LAST_ACCESS TIMESTAMP NULL,
+    LAST_ACCESS TIMESTAMP(6) NULL,
     NAME        LONGTEXT,
    CONTENT LONGBLOB,
     MIMETYPE    VARCHAR(255)
@@ -300,8 +281,8 @@ CREATE TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO
     FINAL_RECIPIENT  VARCHAR(2048),
     FK_SERVICE       BIGINT,
     FK_ACTION        BIGINT,
-    CREATED          TIMESTAMP NULL,
-    UPDATED          TIMESTAMP NULL
+    CREATED          TIMESTAMP(6) NULL,
+    UPDATED          TIMESTAMP(6) NULL
 );
 
 CREATE TABLE DOMIBUS_CONNECTOR_PARTY
@@ -386,20 +367,20 @@ create table DC_LINK_PARTNER_PROPERTY
 create table DC_TRANSPORT_STEP
 (
     ID                          BIGINT not null,
-    CONNECTOR_MESSAGE_ID        BIGINT not null,
+    CONNECTOR_MESSAGE_ID        VARCHAR(255) not null,
     LINK_PARTNER_NAME           VARCHAR(255)  not null,
     ATTEMPT                     INT            not null,
     TRANSPORT_ID                VARCHAR(255),
     TRANSPORT_SYSTEM_MESSAGE_ID VARCHAR(255),
     REMOTE_MESSAGE_ID           VARCHAR(255),
-    CREATED                     TIMESTAMP NULL
+    CREATED                     TIMESTAMP(6) NULL
 );
 
 create table DC_TRANSPORT_STEP_STATUS
 (
     TRANSPORT_STEP_ID BIGINT not null,
     STATE             VARCHAR(40)   not null,
-    CREATED           TIMESTAMP NULL,
+    CREATED           TIMESTAMP(6) NULL,
     TEXT              LONGTEXT
 );
 
@@ -415,7 +396,7 @@ CREATE TABLE DC_PMODE_SET
 (
     ID              BIGINT,
     FK_MESSAGE_LANE BIGINT,
-    CREATED         TIMESTAMP NULL,
+    CREATED         TIMESTAMP(6) NULL,
     DESCRIPTION LONGTEXT,
     ACTIVE          BOOLEAN DEFAULT 0 NOT NULL
 );
@@ -483,7 +464,7 @@ VALUES (1,
 
 -- DOMIBUS_CONNECTOR_PARTY ---
 -- delete old default value row
-insert into SequenceHelper values ('party', 1000);
+set @party_seq := 1000;
 
 delete
 from BKP_DC_PARTY
@@ -493,7 +474,7 @@ insert into DOMIBUS_CONNECTOR_PARTY
 values (1, 1, null, 'n.a.', 'n.a.', 'n.a.');
 
 insert into DOMIBUS_CONNECTOR_PARTY
-select next_val_in_seq('party'),
+select @party_seq := @party_seq + 1,
        1,
        null as IDENTIFIER,
        PARTY_ID,
@@ -505,7 +486,7 @@ INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE
 VALUES ('DOMIBUS_CONNECTOR_PARTY.ID', (select max(ID) from DOMIBUS_CONNECTOR_PARTY) + 1 );
 
 -- DOMIBUS_CONNECTOR_ACTION ---
-insert into SequenceHelper values ('action', 1000);
+set @action_seq := 1000;
 
 -- delete old default value row
 delete
@@ -516,7 +497,7 @@ insert into DOMIBUS_CONNECTOR_ACTION
 values (1, 1, 'n.a.', 0);
 
 insert into DOMIBUS_CONNECTOR_ACTION
-select next_val_in_seq('action'),
+select  @action_seq := @action_seq + 1,
        1,
     ACTION,
     PDF_REQUIRED
@@ -526,7 +507,7 @@ INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE
 VALUES ('DOMIBUS_CONNECTOR_ACTION.ID',(select max(ID) from DOMIBUS_CONNECTOR_ACTION) + 1);
 
 -- DOMIBUS_CONNECTOR_SERVICE ---
-insert into SequenceHelper values ('service', 1000);
+set @service_seq := 1000;
 
 -- delete old default value row
 delete
@@ -537,7 +518,7 @@ insert into DOMIBUS_CONNECTOR_SERVICE
 values (1, 1, 'n.a.', 'n.a.');
 
 insert into DOMIBUS_CONNECTOR_SERVICE
-select next_val_in_seq('service'),
+select  @service_seq := @service_seq + 1 as ID,
        1,
        SERVICE,
        SERVICE_TYPE
@@ -547,10 +528,10 @@ INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE
 VALUES ('DOMIBUS_CONNECTOR_SERVICE.ID', (select max(ID) from DOMIBUS_CONNECTOR_SERVICE) + 1);
 
 -- DOMIBUS_CONNECTOR_PROPERTY ---
-insert into SequenceHelper values ('property', 1000);
+set @dc_prop_seq := 1000;
 
 insert into DOMIBUS_CONNECTOR_PROPERTY
-select next_val_in_seq('property') as ID, PROPERTY_NAME, PROPERTY_VALUE
+select @dc_prop_seq := @dc_prop_seq + 1 as ID, PROPERTY_NAME, PROPERTY_VALUE
 from bkp_dc_property;
 
 UPDATE DOMIBUS_CONNECTOR_SEQ_STORE
@@ -599,8 +580,6 @@ from BKP_DC_MESSAGE_INFO B;
 
 -- #################### 4/6 DELETE temporary tables, frees fk names ####################
 
-DROP function next_val_in_seq;
-DROP table SequenceHelper;
 drop table bkp_dc_msg_err;
 drop table bkp_dc_msg_cont;
 drop table bkp_dc_evidence;
@@ -615,14 +594,14 @@ drop table BKP_DC_MESSAGE cascade;
 -- #################### 5/6 ADD the constraints ####################
 
 alter table DC_LINK_CONFIGURATION add constraint PK_DC_LINK_CONFIGURATION primary key (ID);
-alter table DC_LINK_CONFIGURATION add constraint UN_DC_LINK_CONF_NAME_01 unique (CONFIG_NAME);
+alter table DC_LINK_CONFIGURATION add constraint UQ_DC_LINK_CONF_NAME_01 unique (CONFIG_NAME);
 
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
     ADD CONSTRAINT PK_DC_MESSAGE PRIMARY KEY (ID);
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
-    ADD CONSTRAINT UN_DC_MSG_ID UNIQUE (CONNECTOR_MESSAGE_ID);
+    ADD CONSTRAINT UQ_DC_MSG_ID UNIQUE (CONNECTOR_MESSAGE_ID);
 ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE
-    ADD CONSTRAINT UN_DC_MSG_NAT_MSG_01 UNIQUE (BACKEND_MESSAGE_ID);
+    ADD CONSTRAINT UQ_DC_MSG_NAT_MSG_01 UNIQUE (BACKEND_MESSAGE_ID);
 
 ALTER TABLE DOMIBUS_CONNECTOR_MSG_ERROR
     ADD CONSTRAINT PK_DC_MSG_ERROR PRIMARY KEY (ID);
@@ -690,7 +669,7 @@ alter table DC_LINK_CONFIG_PROPERTY
 alter table DC_MESSAGE_LANE
     add constraint PK_DC_MSG_LANE primary key (ID);
 alter table DC_MESSAGE_LANE
-    add constraint UN_DC_MSG_LANE_01 unique (NAME);
+    add constraint UQ_DC_MSG_LANE_01 unique (NAME);
 
 alter table DC_MESSAGE_LANE_PROPERTY
     add constraint PK_DC_MSG_LANE_PROP
@@ -703,7 +682,7 @@ alter table DC_LINK_PARTNER
     add constraint PK_DC_LINK_P
         primary key (ID);
 alter table DC_LINK_PARTNER
-    add constraint UN_DC_LINK_P_01 unique (NAME);
+    add constraint UQ_DC_LINK_P_01 unique (NAME);
 alter table DC_LINK_PARTNER
     add constraint FK_DC_LINK_P_01
         foreign key (LINK_CONFIG_ID) references DC_LINK_CONFIGURATION (ID);
@@ -720,7 +699,7 @@ alter table DC_TRANSPORT_STEP
         primary key (ID);
 alter table DC_TRANSPORT_STEP
     add constraint FK_MESSAGESTEP_MESSAGE
-        foreign key (CONNECTOR_MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (ID);
+        foreign key (CONNECTOR_MESSAGE_ID) references DOMIBUS_CONNECTOR_MESSAGE (CONNECTOR_MESSAGE_ID);
 
 alter table DC_TRANSPORT_STEP_STATUS
     add constraint PK_DC_TRANS_STEP_STATUS primary key (TRANSPORT_STEP_ID, STATE);
@@ -730,7 +709,6 @@ alter table DC_TRANSPORT_STEP_STATUS
 
 -- #################### 6/6 UPDATE Version ####################
 
-INSERT INTO DC_DB_VERSION (TAG)
-VALUES ('V4.2.8');
+update DC_DB_VERSION set TAG='V4.2.8';
 
 SET FOREIGN_KEY_CHECKS = 1;

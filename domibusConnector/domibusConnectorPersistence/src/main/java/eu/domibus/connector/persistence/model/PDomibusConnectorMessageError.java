@@ -35,18 +35,20 @@ public class PDomibusConnectorMessageError {
     /**
      * The short message of the exception
      */
-    @Column(name = "ERROR_MESSAGE", length = 2048)
+    @Column(name = "ERROR_MESSAGE", nullable = false, length = 2048)
     private String errorMessage;
 
     /**
      * contains the stack trace, if given
      */
+    @Lob
     @Column(name = "DETAILED_TEXT")
     private String detailedText;
 
     /**
      * usually contains the full qualified class name where error happened
      */
+    @Lob
     @Column(name = "ERROR_SOURCE")
     private String errorSource;
 

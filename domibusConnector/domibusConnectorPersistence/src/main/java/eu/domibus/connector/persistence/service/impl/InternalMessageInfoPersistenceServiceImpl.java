@@ -51,10 +51,10 @@ public class InternalMessageInfoPersistenceServiceImpl {
 
     /*
      * Looks up the Action, Service, Party within the database
-     *  and replaces the it with the corresponding persistence object
+     *  and replaces it with the corresponding persistence object
      *
      */
-    public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
+    private PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
         PDomibusConnectorAction dbAction = messageInfo.getAction();
         Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbAction);
@@ -69,18 +69,14 @@ public class InternalMessageInfoPersistenceServiceImpl {
         messageInfo.setService(dbServiceFound.get());
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
-        if (dbFromParty.getRoleType() == null) {
-            dbFromParty.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-        }
+
         Optional<PDomibusConnectorParty> dbFromPartyFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbFromParty);
         checkNull(dbFromParty, dbFromPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbFromParty));
         messageInfo.setFrom(dbFromPartyFound.get());
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
-        if (dbToParty.getRoleType() == null) {
-            dbToParty.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        }
+
         Optional<PDomibusConnectorParty> dbToPartyFound = pModeService.getConfiguredSingleDB(defaultBusinessDomainId, dbToParty);
         checkNull(dbToParty, dbToPartyFound,
                 String.format("No party [%s] is configured at the connector!", dbToParty));

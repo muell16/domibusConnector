@@ -11,9 +11,10 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@Configuration
+@Configuration(value = CreateDefaultBusinessDomainOnFirstStart.BEAN_NAME)
 public class CreateDefaultBusinessDomainOnFirstStart {
 
+    public static final String BEAN_NAME = "CreateDefaultBusinessDomainOnFirstStartBean";
     private static final Logger LOGGER = LogManager.getLogger(CreateDefaultBusinessDomainOnFirstStart.class);
 
     private final DomibusConnectorBusinessDomainDao messageLaneDao;

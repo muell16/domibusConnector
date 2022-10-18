@@ -63,10 +63,8 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
     public void submitSameDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
         validateParameters(businessMessage);
-        if (shouldBeSubmitted(businessMessage, businessMessage.getMessageDetails().getDirection())) {
-            DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
-            submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
-        }
+        DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
     }
 
     /**
@@ -77,6 +75,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      * for this purpose a new message is generated
      *  this message is NOT stored into the DB
      *
+     * @param messageId the connector message id of the new confirmation message
      * @param businessMessage the business message
      * @param confirmation the confirmation
      *
@@ -84,20 +83,12 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
     public void submitOppositeDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
         validateParameters(businessMessage);
-        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
-        if (shouldBeSubmitted(businessMessage, revertedDirection)) {
-            DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
-            submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
-        }
+//        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
+        DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
     }
 
-    private boolean shouldBeSubmitted(DomibusConnectorMessage businessMessage, DomibusConnectorMessageDirection direction) {
-        ConnectorMessageProcessingProperties config =
-                configurationPropertyLoaderService.loadConfiguration(businessMessage.getMessageLaneId(), ConnectorMessageProcessingProperties.class);
-        boolean result =  direction.getTarget() != MessageTargetSource.BACKEND || config.isSendGeneratedEvidencesToBackend();
-        LOGGER.debug("Evidence will be submitted back to Backend as EvidenceMessage: [{}]", result);
-        return result;
-    }
+
 
     private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
         if (messageId == null) {
@@ -147,4 +138,11 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         }
     }
 
+    public boolean isSendCreatedTriggerEvidenceBack(DomibusConnectorBusinessDomain.BusinessDomainId messageDomain) {
+        ConnectorMessageProcessingProperties processingProperties =
+                configurationPropertyLoaderService.loadConfiguration(messageDomain, ConnectorMessageProcessingProperties.class);
+        boolean result = processingProperties.isSendGeneratedEvidencesToBackend();
+        LOGGER.debug("Evidence will be submitted back to Backend as EvidenceMessage: [{}]", result);
+        return result;
+    }
 }

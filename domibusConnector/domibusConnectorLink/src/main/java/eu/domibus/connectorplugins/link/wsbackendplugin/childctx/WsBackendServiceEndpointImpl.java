@@ -29,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
@@ -161,7 +163,8 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         try {
             Optional<DomibusConnectorLinkPartner> backendClientInfoByName = checkBackendClient();
             if (backendClientInfoByName.isPresent()) {
-                List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner = transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
+                List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner =
+                        transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
 
                 List<String> pendingIds = pendingTransportsForLinkPartner.stream()
                         .map(DomibusConnectorTransportStep::getTransportId)
@@ -201,16 +204,15 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
                     return transformerService.transformDomainToTransition(msg);
                 } else {
-                    throw new IllegalStateException("The message is not readable anymore");
+                    throw new IllegalStateException(String.format("The message with transport id [%s] is not readable anymore!", messageTransportId));
                 }
             } else {
-                throw new IllegalArgumentException("The message is not in pending state!");
+                throw new IllegalArgumentException(String.format("The message with transport id [%s] is not in pending state!", messageTransportId));
             }
 
         } else {
-            throw new IllegalArgumentException("The provided transport id is not available!");
+            throw new IllegalArgumentException(String.format("The provided transport id [%s] is not available!", messageTransportId));
         }
-
     }
 
     @Override
@@ -262,6 +264,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         }
 
         @Override
+        @Transactional(propagation = Propagation.REQUIRES_NEW)
         public void handleMessage(Message message) throws Fault {
             LOGGER.trace("ProcessMessageAfterDownloaded: handleMessage: invoking backendSubmissionService.processMessageAfterDownloaded setting transport set to " + TransportState.PENDING_DOWNLOADED);
             TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();

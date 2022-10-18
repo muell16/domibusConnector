@@ -13,7 +13,6 @@ import org.dbunit.dataset.ITable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
@@ -135,7 +134,7 @@ public class DomibusConnectorMessageDaoDBUnit {
     public void testFindOutgoingMessagesNotRejectedAndWithoutDelivery() {
         Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
 
-            List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
+            List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
             assertThat(msgs).hasSize(2);
         });
     }

@@ -21,3 +21,6 @@ include::{basepath}/doc/architecture/ecodex_container_creation.adoc[leveloffset=
 include::{basepath}/doc/architecture/link_partners.adoc[leveloffset=+1]
 include::{basepath}/doc/architecture/loopback_message_sending.adoc[leveloffset=+1]
 include::{basepath}/doc/architecture/multiusecasepmode.adoc[leveloffset=+1]
+include::{basepath}/doc/architecture/dss_tools.adoc[leveloffset=+1]
+include::{basepath}/doc/architecture/storage_encryption_of_data.adoc[leveloffset=+1]
+include::{basepath}/doc/architecture/payload_handling.adoc[leveloffset=+1]
