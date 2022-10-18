@@ -14,6 +14,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
 
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.INITIATOR;
+import static eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType.RESPONDER;
+
 /**
  * This class contains static helper methods
  * for the domain model
@@ -118,7 +121,7 @@ public class DomainModelHelper {
      *     <li>OriginalSender with FinalRecipient</li>
      * </ul>
      *
-     * When the party is switched, the party role and role type is preserved
+     * When the party is switched, the party role type is preserved
      * so the fromParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#INITIATOR}
      * and the toParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#RESPONDER}
      *
@@ -136,12 +139,12 @@ public class DomainModelHelper {
 
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
-        newToParty.setRoleType(details.getFromParty().getRoleType());
-        newToParty.setRole(details.getFromParty().getRole());
+        newToParty.setRoleType(RESPONDER);
+        newToParty.setRole(details.getToParty().getRole());
         //switching party, but keep Role and RoleType
         DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
-        newFromParty.setRoleType(details.getToParty().getRoleType());
-        newFromParty.setRole(details.getToParty().getRole());
+        newFromParty.setRoleType(INITIATOR);
+        newFromParty.setRole(details.getFromParty().getRole());
 
         details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
         details.setOriginalSender(newOriginalSender);
