@@ -816,6 +816,15 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.12.0</version>
+                <configuration>
+                    <allowMajorUpdates>false</allowMajorUpdates>
+                    <allowMinorUpdates>false</allowMinorUpdates>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jgitflow-plugin</artifactId>
                 <version>1.0-alpha21.1</version>
