@@ -53,7 +53,6 @@ public class WsPolicyLoader {
         } catch (XMLStreamException ex) {
             throw new WsPolicyLoaderException("cannot parse policy " + wsPolicy , ex);
         }
-//        policyFeature.getPolicyElements().addAll(policyElements);
         policyFeature.setPolicyElements(policyElements);
         return policyFeature;
     }

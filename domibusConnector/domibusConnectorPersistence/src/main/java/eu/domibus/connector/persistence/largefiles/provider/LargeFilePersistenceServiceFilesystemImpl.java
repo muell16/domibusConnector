@@ -312,13 +312,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     OutputStream generateEncryptedOutputStream(FileBasedLargeFileReference bigDataReference, OutputStream outputStream) {
 
-        SecureRandom random;
-        try {
-            random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-
+        SecureRandom random = new SecureRandom();
+        
         byte[] iv = new byte[128/8];
         random.nextBytes(iv);
         IvParameterSpec ivspec = new IvParameterSpec(iv);
