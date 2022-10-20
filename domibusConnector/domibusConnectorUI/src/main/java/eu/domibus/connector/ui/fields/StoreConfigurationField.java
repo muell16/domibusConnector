@@ -39,7 +39,7 @@ public class StoreConfigurationField extends CustomField<StoreConfigurationPrope
         formLayout.addFormItem(path, "Store Location");
         formLayout.addFormItem(password, "Store password");
         formLayout.addFormItem(type, "Store Type");
-        type.setItems("JKS", "JCEKS", "PKCS");
+        type.setItems("JKS", "JCEKS", "PKCS12");
 
         binder = validationBinderFactory.create(StoreConfigurationProperties.class);
         binder.bindInstanceFields(this);

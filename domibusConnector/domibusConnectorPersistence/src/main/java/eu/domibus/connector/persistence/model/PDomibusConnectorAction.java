@@ -23,7 +23,7 @@ public class PDomibusConnectorAction implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name = "ACTION")
+    @Column(name = "ACTION", nullable = false)
     private String action;
 
 //    @Column(name = "PDF_REQUIRED")

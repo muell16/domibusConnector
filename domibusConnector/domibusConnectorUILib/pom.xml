@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.4-SNAPSHOT</version>
+        <version>4.4.6-bugfix-582-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorUILib</artifactId>
     <properties>

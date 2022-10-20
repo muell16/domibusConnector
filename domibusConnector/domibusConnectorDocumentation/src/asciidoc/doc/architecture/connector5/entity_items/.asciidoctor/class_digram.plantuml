@@ -1,0 +1,118 @@
+@startuml
+
+class DC5MsgProcess {
+  pkId: Int
+  processId: String/UUID
+  created: Timestamp
+  finished: Timestamp
+}
+
+class DC5MsgProcessProperty {
+  name: String
+  value: String
+}
+
+DC5MsgProcess "1" -- "*" DC5MsgProcessProperty : has properties
+
+class DC5_ProcessStep {
+  stepKey : String
+  created: Timestamp
+}
+
+DC5MsgProcess "1" -- "*" DC5_ProcessStep : has steps
+
+DC5MsgProcess "0..1" -- "0..1" DC5Domain
+
+DC5MsgProcess "1" -- "0..1" DC5Message
+
+class DC5Message {
+  pkId: Int
+
+  ebmsMessageId: String
+  backendMessageId: String
+  backendLink: String
+  gwLink: String
+
+  fromPartyId, fromPartyIdType, fromPartyRole: String
+  toPartyId, toPartyIdType, toPartyRole: String
+
+  finalRecipient: String
+  originalSender: String
+
+  conversationId: String
+
+  source: String
+  target: String
+
+  refToMessageId: String
+}
+
+'BCM ... BusinessDocumentMessage
+class DC5_BDM {
+
+}
+
+'BCM ... BusinessConfirmationMessage
+class DC5_BCM {
+
+}
+
+DC5Message ^-- DC5_BCM
+DC5Message ^-- DC5_BDM
+
+
+class DC5Payload {
+  id: Int
+  type: String
+  hash: String
+  name: String
+  storageRef: String
+  size: Bigint
+}
+
+
+class DC5Evidence {
+  pkId: Int
+  type: String
+}
+
+DC5Payload ^-- DC5Evidence
+DC5Payload ^-- DC5BusinessDocument
+DC5Payload ^-- DC5BusinessXml
+DC5Payload ^-- DC5AsicS
+DC5Payload ^-- DC5TokenXml
+
+DC5Payload "1" -- "0..1" DC5Payload : attached signature
+
+DC5_BDM "1" -- "0..1"  DC5AsicS
+DC5_BDM "1" -- "0..1"  DC5TokenXml
+DC5_BDM "1" -- "0..1"  DC5BusinessXml
+DC5_BDM "1" -- "0..1"  DC5BusinessDocument
+
+DC5Message "*" -- "*"  DC5Evidence : is transported with
+DC5_BDM "1" -- "*" DC5Evidence : is related to
+
+
+class DC5Domain {
+ id: int
+ name: string
+}
+
+
+class DC5DomainProperty {
+  name: String
+  value: String
+}
+
+DC5DomainProperty "*" -- "1" DC5Domain
+
+class DC5TransportStep {
+  pkId: int
+  message: String
+
+}
+
+DC5_ProcessStep ^-- DC5TransportStep
+
+
+@enduml

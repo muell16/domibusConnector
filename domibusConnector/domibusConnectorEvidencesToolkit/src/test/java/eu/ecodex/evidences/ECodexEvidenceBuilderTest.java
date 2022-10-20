@@ -55,6 +55,7 @@ public class ECodexEvidenceBuilderTest {
     String javaKeyStorePassword = "test123";
     String alias = "new_testcert";
     String keyPassword = "test123";
+    String javaKeyStoreType = "JKS";
     XMLSignatureFactory sigFactory = null;
     DocumentBuilderFactory dbf;
 
@@ -77,7 +78,7 @@ public class ECodexEvidenceBuilderTest {
      */
     @Test
     public void testECodexEvidenceBuilder() throws Exception {
-        ECodexEvidenceBuilder result = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder result = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         assertNotNull(result);
     }
 
@@ -134,7 +135,7 @@ public class ECodexEvidenceBuilderTest {
         byte[] signedxmlData;
         byte[] previousEvidence;
         PublicKey publicKey;
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         boolean isDelivery = true;
 
         //klara
@@ -156,7 +157,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
 
@@ -183,7 +184,7 @@ public class ECodexEvidenceBuilderTest {
 
         PublicKey publicKey;
 
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 
         boolean isDelivery = true;
 
@@ -205,7 +206,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
         assertTrue(signatureValidate(signedxmlData, publicKey), "Signature failed");
@@ -217,7 +218,7 @@ public class ECodexEvidenceBuilderTest {
         // REMEvidenceType evidenceType;
 
         byte[] evidenceAsByteArray;
-        ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 
         //klara
 //	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
@@ -248,7 +249,7 @@ public class ECodexEvidenceBuilderTest {
         byte[] signedxmlData;
         byte[] previousEvidence;
         PublicKey publicKey;
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         boolean isDelivery = true;
 
         //klara
@@ -268,7 +269,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
         assertTrue(signatureValidate(signedxmlData, publicKey), "Signature failed");
@@ -280,7 +281,7 @@ public class ECodexEvidenceBuilderTest {
         // REMEvidenceType evidenceType;
         byte[] evidenceAsByteArray;
         byte[] evidenceAsByteArray1;
-        ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 
         //klara
         EventReasonType eventReason = new EventReasonType();
@@ -316,7 +317,7 @@ public class ECodexEvidenceBuilderTest {
         byte[] signedxmlData;
         byte[] previousEvidence;
         PublicKey publicKey;
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         boolean isDelivery = true;
 
         //klara
@@ -338,7 +339,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
         assertTrue(signatureValidate(signedxmlData, publicKey), "Signature failed");
@@ -357,7 +358,7 @@ public class ECodexEvidenceBuilderTest {
     public void testCreateSubmissionAcceptanceRejection_shouldAcceptanceTrue() throws Exception {
         byte[] signedxmlData;
         PublicKey publicKey;
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         boolean isAcceptance = true;
 
         //klara
@@ -378,7 +379,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
         assertTrue(signatureValidate(signedxmlData, publicKey), "Signature failed");
@@ -397,7 +398,7 @@ public class ECodexEvidenceBuilderTest {
     public void testCreateSubmissionAcceptanceRejection_shouldAcceptanceFalse() throws Exception {
         byte[] signedxmlData;
         PublicKey publicKey;
-        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         boolean isAcceptance = false;
 
         //klara
@@ -421,7 +422,7 @@ public class ECodexEvidenceBuilderTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
         // KeyPair keypair= generateNewRandomKeyPair();
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
         publicKey = keypair.getPublic();
 
         // System.out.println(publicKey.toString());
@@ -501,7 +502,7 @@ public class ECodexEvidenceBuilderTest {
     }
 
     // private method to get the keypair
-    private KeyPair getKeyPairFromKeyStore(Resource store, String storePass, String alias, String keyPass) throws Exception {
+    private KeyPair getKeyPairFromKeyStore(Resource store, String storeType, String storePass, String alias, String keyPass) throws Exception {
         KeyStore ks;
         InputStream kfis;
         KeyPair keyPair = null;
@@ -510,7 +511,7 @@ public class ECodexEvidenceBuilderTest {
         PublicKey publicKey = null;
         PrivateKey privateKey = null;
 
-        ks = KeyStore.getInstance("JKS");
+        ks = KeyStore.getInstance(storeType);
 
 //        final URL ksLocation = new URL(store);
 

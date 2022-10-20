@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExpressionParserTest {
+
+    private static final Logger LOGGER = LogManager.getLogger(ExpressionParserTest.class);
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -35,7 +38,7 @@ public class ExpressionParserTest {
         assertThat(expressionParser.getParsedExpression()).isEmpty();
         assertThat(expressionParser.getParsingExceptions()).hasSize(1);
 
-        System.out.println(expressionParser.getParsingExceptions()
+        LOGGER.info(LoggingMarker.Log4jMarker.TEST_LOG, expressionParser.getParsingExceptions()
                 .stream()
                 .map(Exception::getMessage)
                 .collect(Collectors.joining(",")));

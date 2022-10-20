@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -102,11 +99,9 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	public Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable) {
 		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
 //		LOGGER.debug("Example: {}",exampleDbMsg.getProbe().toString());
-
+		
 		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
-		
-		
-		
+
 		LOGGER.debug("Returned {} results.", all.getSize());
 
 		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
@@ -211,11 +206,11 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			}
 			
 			if(pMessageInfo.getFrom()!=null) {
-				messageDetail.setFrom(new WebMessageDetail.Party(pMessageInfo.getFrom().getPartyId(),pMessageInfo.getFrom().getPartyIdType()));
+				messageDetail.setFrom(new WebMessageDetail.Party(pMessageInfo.getFrom().getPartyId(),pMessageInfo.getFrom().getPartyIdType(),pMessageInfo.getFrom().getRole()));
 			}
 			
 			if(pMessageInfo.getTo()!=null) {
-				messageDetail.setTo(new WebMessageDetail.Party(pMessageInfo.getTo().getPartyId(),pMessageInfo.getTo().getPartyIdType()));
+				messageDetail.setTo(new WebMessageDetail.Party(pMessageInfo.getTo().getPartyId(),pMessageInfo.getTo().getPartyIdType(), pMessageInfo.getTo().getRole()));
 			}
 
 			return messageDetail;

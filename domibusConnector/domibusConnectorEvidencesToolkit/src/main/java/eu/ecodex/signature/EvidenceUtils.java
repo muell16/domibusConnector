@@ -21,7 +21,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
+import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.core.net.ssl.KeyStoreConfiguration;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
@@ -34,10 +37,13 @@ public abstract class EvidenceUtils {
 
     protected static Logger LOG = Logger.getLogger(EvidenceUtilsImpl.class);
 
-    protected Resource javaKeyStorePath;
-    protected String javaKeyStorePassword, alias, keyPassword;
 
-    public EvidenceUtils(Resource javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
+    protected Resource javaKeyStorePath;
+    protected final String javaKeyStorePassword, alias, keyPassword;
+    protected final String javaKeyStoreType;
+
+    public EvidenceUtils(Resource javaKeyStorePath, String storeType, String javaKeyStorePassword, String alias, String keyPassword) {
+        this.javaKeyStoreType = storeType;
         this.javaKeyStorePath = javaKeyStorePath;
         this.javaKeyStorePassword = javaKeyStorePassword;
         this.alias = alias;

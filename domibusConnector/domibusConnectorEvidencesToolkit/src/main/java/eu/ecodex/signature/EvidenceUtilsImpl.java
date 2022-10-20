@@ -44,9 +44,9 @@ public class EvidenceUtilsImpl extends EvidenceUtils {
 
 	private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsImpl.class);
 
-	public EvidenceUtilsImpl(Resource javaKeyStorePath,
+	public EvidenceUtilsImpl(Resource javaKeyStorePath, String javaKeyStoreType,
 							 String javaKeyStorePassword, String alias, String keyPassword) {
-		super(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+		super(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
 	}
 
 	@Override

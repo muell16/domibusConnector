@@ -44,10 +44,10 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
     private static EvidenceUtils signer = null;
 
-    public ECodexEvidenceBuilder(Resource javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
+    public ECodexEvidenceBuilder(Resource javaKeyStorePath, String javaKeyStoreType, String javaKeyStorePassword, String alias, String keyPassword) {
         // signer = new EvidenceUtilsImpl(javaKeyStorePath,
         // javaKeyStorePassword, alias, keyPassword);
-        signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
     }
 
     @Override

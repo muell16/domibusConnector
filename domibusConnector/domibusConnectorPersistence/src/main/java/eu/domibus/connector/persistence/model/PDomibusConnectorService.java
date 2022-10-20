@@ -22,7 +22,7 @@ public class PDomibusConnectorService {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name = "SERVICE")
+    @Column(name = "SERVICE", nullable = false)
     private String service;
 
     @Column(name = "SERVICE_TYPE")

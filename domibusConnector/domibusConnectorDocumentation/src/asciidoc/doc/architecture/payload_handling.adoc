@@ -61,12 +61,20 @@ The storage follows this organisation:
 
 With this organisation after a message has been completly processed the <basepath>/<connector_message_id> folder can be deleted.
 
+==== Deletion
+
+The deletion happens in 2 steps.
+
+1. Deleting the password from DB and commit DB change
+2. Delete file on disk
+3. Mark file as deleted in DB and commit DB change
+
 === JPABased Database Storage (Does NOT support streaming)
 
 The JPA storage stores the content into the database. For this JPA mapping is used. The implementation needs to load the complete file into a byte array before writing it into the database. Also when the content is read the whole file is stored into a byte array. So this storage engine should not used if large files are expected.
 
 == Discussion
 
-In the future it is planned to implement that the used storage engine is choosen by the size of the content. So small content can still be handled completly in memory and larger content is automatically written to filesystem.
+In the future it is planned to implement that the used storage engine is chosen by the size of the content. So small content can still be handled completely in memory and larger content is automatically written to filesystem. This approach should avoid the file and network overhead for small files.
 
-It might also be usefull to support a bucket storage like S3. This could be useful for HA environments.
+It might also be useful to support a bucket storage like S3. This could be nice feature for HA environments.

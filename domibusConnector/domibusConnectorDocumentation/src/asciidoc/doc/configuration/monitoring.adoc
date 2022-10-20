@@ -22,7 +22,9 @@ The actuator interface can be exposed over http and JMX.
 
 === Actuator Security
 The actuator interface is located under <connectorURL>/acatuator and is password protected. To access the
-actuator interface a user with the ROLE actuator is required!
+actuator interface a user with the ROLE actuator or admin is required!
+
+NOTE: The initial admin user has the role admin
 
 === Exposed Actuator metrics
 
@@ -32,6 +34,17 @@ Currently only the default metrics are exposed. For the future it is planned to 
 * Processed messages (messages in/out)
 * Pending messages (messages with no DELIVERY or RETRIEVAL evidence)
 * ActiveMQ Queues
+
+==== Configuration of actuator endpoints
+
+----
+##############################################################################
+############################ MONITOR PROPERTIES###############################
+##############################################################################
+# see: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
+#
+management.endpoints.web.exposure.include=info,health,metrics,configprops,prometheus
+----
 
 === Exposed Health Endpoints
 

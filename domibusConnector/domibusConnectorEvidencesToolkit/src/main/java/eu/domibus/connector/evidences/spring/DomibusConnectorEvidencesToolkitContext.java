@@ -38,11 +38,12 @@ public class DomibusConnectorEvidencesToolkitContext {
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
         Resource javaKeyStorePath = keyStoreService.loadKeyStoreAsResource(evidencesToolkitConfigurationProperties.getSignature().getKeyStore());
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getSignature().getKeyStore().getPassword();
+        String javaKeyStoreType = evidencesToolkitConfigurationProperties.getSignature().getKeyStore().getType();
         String keyAlias = evidencesToolkitConfigurationProperties.getSignature().getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getSignature().getPrivateKey().getPassword();
-        LOGGER.debug("Creating ECodexEvidenceBuilder with keyStorePath [{}], keyStorePassword [{}], keyAlias [{}], keyPassword [password={}]",
-                javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);
-        return new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);
+        LOGGER.debug("Creating ECodexEvidenceBuilder with keyStorePath [{}], keyStoreType [{}], keyStorePassword [{}], keyAlias [{}], keyPassword [password={}]",
+                javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, keyAlias, keyPassword);
+        return new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, keyAlias, keyPassword);
     }
 
     @Bean

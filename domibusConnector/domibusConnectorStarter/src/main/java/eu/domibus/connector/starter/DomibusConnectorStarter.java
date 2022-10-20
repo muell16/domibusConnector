@@ -1,6 +1,5 @@
 package eu.domibus.connector.starter;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +40,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
     public static final String DEFAULT_SPRING_CONFIG_LOCATION = "optional:classpath:/config/,optional:file:./config/,optional:file:./config/connector/";
 
+    private static final String FILE_PREFIX = "file:";
     private ServletContext servletContext;
 
     String springConfigLocation = DEFAULT_SPRING_CONFIG_LOCATION;
@@ -72,6 +72,9 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static Properties loadConnectorConfigProperties(String connectorConfigFile) {
         Properties p = new Properties();
         if (connectorConfigFile != null) {
+            if (connectorConfigFile.startsWith(FILE_PREFIX)) {
+                connectorConfigFile = connectorConfigFile.substring(FILE_PREFIX.length() - 1);
+            }
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
                 String errorString = String.format("Cannot start because the via System Property [%s] provided config file [%s] mapped to path [%s] does not exist!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME, connectorConfigFile, connectorConfigFilePath);
@@ -91,7 +94,6 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static @Nullable
     String getConnectorConfigFilePropertyName() {
         String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
-        Properties springProperties = new Properties();
         if (connectorConfigFile != null) {
             connectorConfigFile = SystemPropertyUtils.resolvePlaceholders(connectorConfigFile);
             return connectorConfigFile;
@@ -104,20 +106,11 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
 
-            int lastIndex = connectorConfigFile.contains(File.separator) ? connectorConfigFile.lastIndexOf(File.separatorChar) : connectorConfigFile.lastIndexOf("/");
-            lastIndex++;
-            String connectorConfigLocation = connectorConfigFile.substring(0, lastIndex);
-            String configName = connectorConfigFile.substring(lastIndex);
+            if (!connectorConfigFile.startsWith(FILE_PREFIX)) {
+                connectorConfigFile = FILE_PREFIX + connectorConfigFile;
+            }
 
-            LOGGER.info(String.format("Setting:\n%s=%s\n%s=%s\n%s=%s\n%s=%s",
-                    SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME, configName,
-                    SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigLocation,
-                    SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation,
-                    SPRING_CONFIG_NAME_PROPERTY_NAME, configName));
-
-            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigFile);
-            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation);
-            springApplicationProperties.setProperty(SPRING_CONFIG_NAME_PROPERTY_NAME, configName);
+            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigFile);
 
         } else {
             springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);

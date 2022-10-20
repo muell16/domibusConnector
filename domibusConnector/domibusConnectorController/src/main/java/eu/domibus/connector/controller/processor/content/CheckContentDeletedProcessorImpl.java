@@ -73,6 +73,15 @@ public class CheckContentDeletedProcessorImpl {
                 LOGGER.debug("Message with id [{}] already confirmed/rejected - deleting content [{}]", id, references);
                 references.stream()
                         .forEach(this::deleteReference);
+            } else {
+                LOGGER.debug("Message with connector message id [{}] is older then 7 days. Deleting reference anyway.", id);
+                ZonedDateTime oneWeekAgo = ZonedDateTime.now().minusDays(7);
+                //delete only refs which are older than 7 days
+                List<LargeFileReference> collect = references.stream()
+                        .filter(r -> r.getCreationDate() != null && r.getCreationDate().isBefore(oneWeekAgo))
+                        .collect(Collectors.toList());
+                LOGGER.debug("Deleting references [{}] where associated business message is older then 7 days", collect);
+                collect.forEach(this::deleteReference);
             }
         }
     }

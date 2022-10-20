@@ -43,30 +43,32 @@ public class PDomibusConnectorMsgCont {
     @Column(name = "STORAGE_PROVIDER_NAME")
     private String storageProviderName;
 
-    @Column(name = "STORAGE_REFERENCE_ID")
+    @Column(name = "STORAGE_REFERENCE_ID", length = 512)
     private String storageReferenceId;
 
+    @Lob
     @Deprecated
     @Column(name="CONTENT")
-    @Lob
     private byte[] content;
 
+    @Lob
     @Deprecated
     @Column(name="CHECKSUM")
     private String checksum;
 
-    @Column(name="DIGEST")
+    @Column(name="DIGEST", length = 512)
     private String digest;
     
     @Column(name="CONTENT_TYPE")
     private StoreType contentType;
 
-    @Column(name = "PAYLOAD_NAME")
+    @Column(name = "PAYLOAD_NAME", length = 512)
     private String payloadName;
 
-    @Column(name = "PAYLOAD_IDENTIFIER")
+    @Column(name = "PAYLOAD_IDENTIFIER", length = 512)
     private String payloadIdentifier;
 
+    @Lob
     @Column(name = "PAYLOAD_DESCRIPTION")
     private String payloadDescription;
 
@@ -90,6 +92,23 @@ public class PDomibusConnectorMsgCont {
     @javax.persistence.Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "DELETED")
     private Date deleted;
+
+    @javax.persistence.Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "CREATED", nullable = false)
+    private Date created;
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.created = new Date();
+    }
 
     public Long getId() {
         return id;

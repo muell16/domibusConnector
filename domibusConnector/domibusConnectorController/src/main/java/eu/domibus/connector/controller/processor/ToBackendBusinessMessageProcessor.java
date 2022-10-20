@@ -2,14 +2,10 @@ package eu.domibus.connector.controller.processor;
 
 
 import eu.domibus.connector.controller.processor.steps.*;
-import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
@@ -38,6 +34,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
 	private final LookupBackendNameStep lookupBackendNameStep;
 	private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
+	private final VerifyPModesStep verifyPModesStep;
 
 	public ToBackendBusinessMessageProcessor(
 			DomibusConnectorEvidencesToolkit evidencesToolkit,
@@ -46,7 +43,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
 			SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
 			SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
-			LookupBackendNameStep lookupBackendNameStep) {
+			LookupBackendNameStep lookupBackendNameStep, VerifyPModesStep verifyPModesStep) {
 		this.evidencesToolkit = evidencesToolkit;
 		this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
 		this.messageConfirmationStep = messageConfirmationStep;
@@ -54,6 +51,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 		this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
 		this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
 		this.lookupBackendNameStep = lookupBackendNameStep;
+		this.verifyPModesStep = verifyPModesStep;
 	}
 
 	@Override
@@ -61,6 +59,9 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
+
+			//verify pModes
+			verifyPModesStep.verifyIncoming(incomingMessage);
 
 			//lookup correct backend name
 			lookupBackendNameStep.executeStep(incomingMessage);

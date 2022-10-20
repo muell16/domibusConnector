@@ -36,10 +36,10 @@ public class PDomibusConnectorMessageInfo {
     @JoinColumn(name = "FK_TO_PARTY_ID", referencedColumnName = "ID")
     private PDomibusConnectorParty to;
 
-    @Column(name = "ORIGINAL_SENDER")
+    @Column(name = "ORIGINAL_SENDER", length = 2048)
     private String originalSender;
 
-    @Column(name = "FINAL_RECIPIENT")
+    @Column(name = "FINAL_RECIPIENT", length = 2048)
     private String finalRecipient;
 
     @ManyToOne

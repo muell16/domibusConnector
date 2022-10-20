@@ -43,6 +43,8 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 	public static final String TITLE = "Import new active PMode-Set";
 	public static final String HELP_ID = "ui/pmodes/pmodeset_import.html";
 
+	public static final String DEFAULT_CONNECTOR_STORE_PW = "changeit";
+
 	WebPModeService pmodeService;
 	
 	byte[] pmodeFile = null;
@@ -83,6 +85,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		
 		connectorstorePwd.setHelperText("The password of the truststore.");
 		add(connectorstorePwd);
+		connectorstorePwd.setValue(DEFAULT_CONNECTOR_STORE_PW);
 		
 		connectorstoreType.setLabel("Connectorstore type: ");
 		connectorstoreType.setHelperText("The type of the truststore. Usually JKS.");

@@ -4,6 +4,7 @@ import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.tools.logging.LoggingUtils;
+import eu.europa.esig.dss.model.DSSException;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
@@ -38,11 +39,22 @@ public class CertificateSourceFromKeyStoreCreator {
         InputStream res = null;
         try {
             res = dcKeyStoreService.loadKeyStoreAsResource(storeConfigurationProperties).getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load trust store", e);
+        } catch (IOException ioException) {
+            String error = String.format("Failed to load keystore: location [%s], type [%s], password [%s] ",
+                    storeConfigurationProperties.getPath(),
+                    storeConfigurationProperties.getType(),
+                    LoggingUtils.logPassword(LOGGER, storeConfigurationProperties.getPassword()) );
+            throw new RuntimeException(error, ioException);
         }
-        keyStoreCertificateSource = new KeyStoreCertificateSource(res, storeConfigurationProperties.getType(), storeConfigurationProperties.getPassword());
-
+        try {
+            keyStoreCertificateSource = new KeyStoreCertificateSource(res, storeConfigurationProperties.getType(), storeConfigurationProperties.getPassword());
+        } catch (DSSException dssException) {
+            String error = String.format("Failed to load keystore: location [%s], type [%s], password [%s] ",
+                    storeConfigurationProperties.getPath(),
+                    storeConfigurationProperties.getType(),
+                    LoggingUtils.logPassword(LOGGER, storeConfigurationProperties.getPassword()) );
+            throw new RuntimeException(error, dssException);
+        }
         return keyStoreCertificateSource;
     }
 
