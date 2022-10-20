@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.testutil;
 
-import org.apache.poi.poifs.property.PropertyTable;
 import org.assertj.core.api.Assertions;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.RunScript;
@@ -16,7 +15,6 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
 
     public static final String INITIAL_TEST_SCRIPTS_LOCATION = "dbscripts/test/h2/";
 
-//    String version;
     String dbType;
 
     public static H2TestDatabaseFactory h2Oracle() {
