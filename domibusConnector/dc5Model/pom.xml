@@ -43,6 +43,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.moduliths</groupId>
+            <artifactId>moduliths-core</artifactId>
+            <version>${org.moduliths.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -64,26 +70,15 @@
             <scope>test</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>net.jqwik</groupId>-->
-<!--            <artifactId>jqwik</artifactId>-->
-<!--            <version>1.7.0</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>net.jqwik</groupId>-->
-<!--            <artifactId>jqwik-spring</artifactId>-->
-<!--            <version>0.9.0</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.0.8</version>
+            <groupId>org.moduliths</groupId>
+            <artifactId>moduliths-test</artifactId>
+            <version>${org.moduliths.version}</version>
+            <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
