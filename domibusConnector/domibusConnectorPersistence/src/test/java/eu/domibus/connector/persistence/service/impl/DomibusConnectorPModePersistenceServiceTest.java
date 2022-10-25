@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 class DomibusConnectorPModePersistenceServiceTest {
 
     @Autowired

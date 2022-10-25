@@ -16,6 +16,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsB
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.mockito.Answers;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
+@Disabled
 public class EvidenceMessageProcessorTest {
 
 

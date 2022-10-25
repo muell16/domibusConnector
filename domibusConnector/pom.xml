@@ -89,11 +89,13 @@
         <asciidoctorj.diagram.version>2.2.1</asciidoctorj.diagram.version>
         <asciidoctorj.diagram.plantuml.version>1.2021.8</asciidoctorj.diagram.plantuml.version>
         <asciidoctorj.maven.plugin.version>2.2.1</asciidoctorj.maven.plugin.version>
-        <org.apache.cxf.version>3.3.12</org.apache.cxf.version>
+        <org.apache.cxf.version>3.5.4</org.apache.cxf.version>
+        <org.apache.wss4j.version>3.0.0</org.apache.wss4j.version>
         <!-- always update with cxf -->
-        <org.apache.santuario.xmlsec.version>2.1.7</org.apache.santuario.xmlsec.version>
-        <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.5.14</spring.boot.version>
+        <org.apache.santuario.xmlsec.version>3.0.1</org.apache.santuario.xmlsec.version>
+<!--        <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>-->
+        <spring.boot.version>2.6.13</spring.boot.version>
+        <org.moduliths.version>1.3.0</org.moduliths.version>
         <org.junit.jupiter.version>5.8.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
         <vaadin.version>14.7.8</vaadin.version>
@@ -433,18 +435,28 @@
                 <artifactId>xmlsec</artifactId>
                 <version>${org.apache.santuario.xmlsec.version}</version>
             </dependency>
-            <!-- exclude xmlsec -->
             <dependency>
-                <groupId>org.opensaml</groupId>
-                <artifactId>opensaml-security-api</artifactId>
-                <version>(3.3.1,)</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>xmlsec</artifactId>
-                        <groupId>org.apache.santuario</groupId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-policy</artifactId>
+                <version>${org.apache.wss4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-bindings</artifactId>
+                <version>${org.apache.wss4j.version}</version>
+            </dependency>
+            <!-- exclude xmlsec -->
+<!--            <dependency>-->
+<!--                <groupId>org.opensaml</groupId>-->
+<!--                <artifactId>opensaml-security-api</artifactId>-->
+<!--                <version>(3.3.1,)</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <artifactId>xmlsec</artifactId>-->
+<!--                        <groupId>org.apache.santuario</groupId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>javax.jms</groupId>
                 <artifactId>javax.jms-api</artifactId>
