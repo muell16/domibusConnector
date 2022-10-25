@@ -11,6 +11,8 @@ import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.spi.x509.ListCertificateSource;
+import eu.europa.esig.dss.spi.x509.aia.AIASource;
+import eu.europa.esig.dss.spi.x509.aia.DefaultAIASource;
 import eu.europa.esig.dss.spi.x509.revocation.RevocationSource;
 import eu.europa.esig.dss.spi.x509.revocation.RevocationToken;
 import eu.europa.esig.dss.spi.x509.revocation.crl.CRLSource;
@@ -66,12 +68,10 @@ public class CommonCertificateVerifierFactory {
 
         if (certificateVerifierConfig.isAiaEnabled()) {
             LOGGER.debug("AIA loading is enabled");
-            commonCertificateVerifier.setDataLoader(dataLoader);
-            aiaDataLoader = dataLoader;
-
+            AIASource aiaSource = new DefaultAIASource(dataLoader);
+            commonCertificateVerifier.setAIASource(aiaSource);
         } else {
             LOGGER.debug("AIA loading is NOT enabled");
-            commonCertificateVerifier.setDataLoader(new IgnoreDataLoader());
         }
         if (certificateVerifierConfig.isOcspEnabled()) {
             ocspSource = onlineOCSPSource;
