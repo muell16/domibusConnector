@@ -51,10 +51,6 @@ public class MyBigDssFile implements DSSDocument {
         throw new UnsupportedOperationException("This document is read only!");
     }
 
-    @Override
-    public String getAbsolutePath() {
-        throw new UnsupportedOperationException("This document is read only!");
-    }
 
     @Override
     public MimeType getMimeType() {
