@@ -26,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DSSSignatureChecker<T extends ECodexContainer.ECodexDSSDocumentType> {
 
@@ -180,7 +181,7 @@ public class DSSSignatureChecker<T extends ECodexContainer.ECodexDSSDocumentType
             if (Indication.PASSED.equals(indication) || Indication.TOTAL_PASSED.equals(indication)) {
                 continue;
             }
-            final List<String> errors = simpleReport.getErrors(signatureId);
+            final List<String> errors = simpleReport.getQualificationErrors(signatureId).stream().map(m -> m.getValue()).collect(Collectors.toList());
             final String message;
             if (errors.isEmpty()) {
 
