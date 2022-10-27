@@ -19,6 +19,7 @@ import eu.domibus.connector.ws.backend.webservice.GetMessageByIdRequest;
 import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -50,6 +51,7 @@ import static test.eu.domibus.connector.link.LinkTestContext.SUBMIT_TO_CONNECTOR
 )
 @ActiveProfiles({"wsbackendplugin-test", "plugin-test", "test", LINK_PLUGIN_PROFILE_NAME})
 @Log4j2
+@Disabled
 public class WsBackendPluginTest {
 
     @LocalServerPort
