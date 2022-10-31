@@ -1,18 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>domibusConnector</artifactId>
         <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
         <version>4.4.6-bugfix-582-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>dc5Model</artifactId>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>This module is responsibly for persisting the messages and message contents into a persistent storage
-        (Database).
-    </description>
-    <packaging>jar</packaging>
-
+        (Database).</description>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -24,7 +22,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,19 +38,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.moduliths</groupId>
             <artifactId>moduliths-core</artifactId>
             <version>${org.moduliths.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -69,7 +67,6 @@
             <artifactId>mariadb</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.moduliths</groupId>
             <artifactId>moduliths-test</artifactId>
@@ -82,19 +79,13 @@
             <version>${org.moduliths.version}</version>
             <scope>test</scope>
         </dependency>
-
-
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.1.214</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -104,5 +95,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

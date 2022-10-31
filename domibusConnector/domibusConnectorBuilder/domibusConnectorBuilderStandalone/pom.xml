@@ -170,25 +170,25 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>io.github.git-commit-id</groupId>-->
-<!--                <artifactId>git-commit-id-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <dotGitDirectory>${project.basedir}/../../../.git</dotGitDirectory>-->
-<!--                    <generateGitPropertiesFile>true</generateGitPropertiesFile>-->
-<!--                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>-->
-<!--                </configuration>-->
-<!--                <inherited>false</inherited>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>get-the-git-infos</id>-->
-<!--                        <goals>-->
-<!--                            <goal>revision</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>initialize</phase>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>io.github.git-commit-id</groupId>-->
+            <!--                <artifactId>git-commit-id-maven-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <dotGitDirectory>${project.basedir}/../../../.git</dotGitDirectory>-->
+            <!--                    <generateGitPropertiesFile>true</generateGitPropertiesFile>-->
+            <!--                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>-->
+            <!--                </configuration>-->
+            <!--                <inherited>false</inherited>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>get-the-git-infos</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>revision</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>initialize</phase>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
                 <artifactId>openshift-maven-plugin</artifactId>
@@ -213,7 +213,7 @@
                             <name>dc-connector</name>
                             <build>
                                 <tags>
-<!--                                    <tag>${git.commit.id.abbrev}</tag>-->
+                                    <!--                                    <tag>${git.commit.id.abbrev}</tag>-->
                                     <tag>${project.version}</tag>
                                 </tags>
                                 <dockerFile>Dockerfile</dockerFile>

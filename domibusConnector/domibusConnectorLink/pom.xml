@@ -17,8 +17,8 @@
             <artifactId>wss4j-policy</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.neethi</groupId>
                     <artifactId>neethi</artifactId>
+                    <groupId>org.apache.neethi</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
