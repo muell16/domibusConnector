@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -198,7 +199,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
         }
 
         WebMessage msg = new WebMessage();
-
+        //set defaults
+        msg.setConversationId(UUID.randomUUID().toString());
+        msg.getMessageInfo().setFinalRecipient("finalRecipient");
+        msg.getMessageInfo().setOriginalSender("originalSender");
 
         resultArea.removeAll();
 
@@ -230,7 +234,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     private boolean loadAndValidateFromParty(WebMessage msg) {
         DomibusConnectorParty pParty = pModeService.getHomeParty();
         if (pParty != null) {
-            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType());
+            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), pParty.getRole());
             msg.getMessageInfo().setFrom(homeParty);
             return true;
         } else {

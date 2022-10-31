@@ -29,10 +29,14 @@ import eu.domibus.connector.ui.dto.WebMessageDetail.Party;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.europa.esig.dss.model.MimeType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.StreamUtils;
 
 
 public class WebConnectorTestService {
+
+	private static final Logger LOGGER = LogManager.getLogger(WebConnectorTestService.class);
 
 	private final DCConnector2ConnectorTestService connectorTestService;
 	private final ConnectorTestConfigurationProperties config;
@@ -46,7 +50,7 @@ public class WebConnectorTestService {
 	
 	public void submitTestMessage(WebMessage testMsg) {
 		DomibusConnectorMessageType connectorMsg = mapWebMessageToTransition(testMsg);
-		
+		LOGGER.debug("Submitting test message [{}]", connectorMsg);
 		connectorTestService.submitTestMessage(connectorMsg);
 	}
 
@@ -178,6 +182,7 @@ public class WebConnectorTestService {
 		DomibusConnectorPartyType cParty = new DomibusConnectorPartyType();
 		cParty.setPartyId(pParty.getPartyId());
 		cParty.setPartyIdType(pParty.getPartyIdType());
+		cParty.setRole(pParty.getRole());
 		return cParty;
 	}
 
