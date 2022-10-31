@@ -10,9 +10,6 @@
     <name>domibusConnectorDocumentation</name>
     <description>This module contains the documentation like the create, migrate sql scripts</description>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <!--  This needs to be set to be able to call the sites from the UI! -->
         <html.docu.output.directory>${project.basedir}/target/classes/META-INF/resources/documentation</html.docu.output.directory>
     </properties>
