@@ -474,17 +474,17 @@ class DSSTokenValidationCreator {
 				return;
 			}
 
-			if (decisionData.diagnosis.signatureConclusion == SignatureQualification.QES) {
+			if (decisionData.diagnosis.signatureConclusion == SignatureQualification.QESIG) {
 				// 5-1. In case of qualified signatures, the issuing certificate has to be present and verifiable at a national TSL.
 				//      Otherwise the signature can be assessed with “AdES_QC” and the comment “Unable to verify the certificates issuer at a national TSL”.
 				if (!decisionData.validation.trustAnchor) {
 					final SignatureAttributes tokenSignatureAttributes = tValidation.getVerificationData().getSignatureData().get(0).getSignatureInformation();
-					tokenSignatureAttributes.setSignatureLevel(SignatureQualification.ADES_QC.name());
+					tokenSignatureAttributes.setSignatureLevel(SignatureQualification.ADESIG_QC.name());
 					decide(decisionData, TechnicalTrustLevel.SUFFICIENT, "Unable to verify the certificate's issuer at a national TSL.");
 					return;
 				}
 			} else //noinspection ConstantConditions
-				if (decisionData.diagnosis.signatureConclusion == SignatureQualification.ADES_QC || decisionData.diagnosis.signatureConclusion == SignatureQualification.ADES) {
+				if (decisionData.diagnosis.signatureConclusion == SignatureQualification.ADESIG_QC || decisionData.diagnosis.signatureConclusion == SignatureQualification.ADESIG_QC) {
 					// only for clarity
 					// 5-2. In case of AdES and AdES_QC, the issuing certificate should be validated against a TSL if possible
 					//      and the result of the verification should be part of the technical validation part of the “Trust Ok”-Token.

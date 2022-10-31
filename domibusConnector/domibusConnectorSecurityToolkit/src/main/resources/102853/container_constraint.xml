@@ -1,4 +1,5 @@
 <ConstraintsParameters Name="ECodex-based" xmlns="http://dss.esig.europa.eu/validation/policy">
+	<!-- TODO: update algo sizes and strenghts -->
 	<Description>eCODEX validation policy</Description>
 	<ContainerConstraints>
 		<AcceptableContainerTypes Level="FAIL">
@@ -50,8 +51,8 @@
 				<AuthorityInfoAccessPresent Level="WARN" />
 				<RevocationInfoAccessPresent Level="WARN" />
 				<RevocationDataAvailable Level="WARN" />
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<KeyUsage Level="WARN">
 					<Id>nonRepudiation</Id>
 				</KeyUsage>
@@ -88,8 +89,8 @@
 				<Signature Level="WARN" />
 				<NotExpired Level="FAIL" />
 				<RevocationDataAvailable Level="WARN" />
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<NotRevoked Level="WARN" />
 				<!--				<NotOnHold Level="FAIL" /> -->
 				<Cryptographic Level="FAIL">
@@ -170,8 +171,8 @@
 				<Signature Level="FAIL" />
 				<NotExpired Level="FAIL" />
 				<RevocationDataAvailable Level="FAIL" />
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<NotRevoked Level="FAIL" />
 				<NotOnHold Level="FAIL" />
 				<Cryptographic Level="FAIL">
@@ -199,8 +200,8 @@
 				<Signature Level="FAIL" />
 				<NotExpired Level="FAIL" />
 				<RevocationDataAvailable Level="WARN" />
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<NotRevoked Level="FAIL" />
 				<NotOnHold Level="FAIL" />
 				<Cryptographic Level="WARN">
@@ -247,7 +248,7 @@
 		</BasicSignatureConstraints>
 	</Timestamp>
 	<Revocation>
-		<RevocationFreshness Level="WARN" Unit="DAYS" Value="0" />			<!-- Changed from FAIL -->
+<!--		<RevocationFreshness Level="WARN" Unit="DAYS" Value="0" />			&lt;!&ndash; Changed from FAIL &ndash;&gt;-->
 		<BasicSignatureConstraints>
 			<ReferenceDataExistence Level="FAIL" />
 			<ReferenceDataIntact Level="FAIL" />
@@ -258,8 +259,8 @@
 				<Signature Level="FAIL" />
 				<NotExpired Level="FAIL" />
 				<RevocationDataAvailable Level="WARN" />		 			<!-- Changed from FAIL -->
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<NotRevoked Level="FAIL" />
 				<NotOnHold Level="FAIL" />
 				<Cryptographic Level="WARN">
@@ -287,8 +288,8 @@
 				<Signature Level="FAIL" />
 				<NotExpired Level="FAIL" />
 				<RevocationDataAvailable Level="WARN" />
-				<RevocationDataNextUpdatePresent Level="WARN" />
-				<RevocationDataFreshness Level="WARN" />
+<!--				<RevocationDataNextUpdatePresent Level="WARN" />-->
+<!--				<RevocationDataFreshness Level="WARN" />-->
 				<NotRevoked Level="FAIL" />
 				<NotOnHold Level="FAIL" />
 				<Cryptographic Level="FAIL">

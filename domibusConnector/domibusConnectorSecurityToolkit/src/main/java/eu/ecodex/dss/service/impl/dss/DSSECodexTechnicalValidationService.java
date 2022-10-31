@@ -31,6 +31,7 @@ import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 
 import eu.europa.esig.dss.spi.x509.CandidatesForSigningCertificate;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
+import eu.europa.esig.dss.spi.x509.CertificateValidity;
 import eu.europa.esig.dss.validation.AdvancedSignature;
 
 import eu.europa.esig.dss.validation.CertificateVerifier;
@@ -49,6 +50,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -487,13 +489,14 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 						if(lastSignature == null || lastSignature.after(curSig.getSigningTime())){
 							
 							CandidatesForSigningCertificate candidates = curSig.getCandidatesForSigningCertificate();
-							List<CertificateToken> candidateList = candidates.getSigningCertificateTokenList();
-							
-							for (CertificateToken certificateToken : candidateList) {
-								if(certificateToken.getDSSIdAsString().equals(certId)){
-									signatureCert = certificateToken.getCertificate();
-								}
-							}
+
+							signatureCert =  candidates.getCertificateValidityList()
+									.stream()
+									.map(CertificateValidity::getCertificateToken)
+									.filter(c -> c.getDSSIdAsString().equals(certId))
+									.map(CertificateToken::getCertificate)
+									.findFirst().orElse(null);
+
 						}
 					}
 				} catch(DSSException ex) {

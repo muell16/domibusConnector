@@ -335,8 +335,8 @@ class TechnicalValidationUtil {
 						return false;
 					} else {
 						for (XmlConstraint curConstraint : signatureConstraints) {
-							XmlName curName = (curConstraint == null) ? null : curConstraint.getName();
-							String nameId = (curName == null) ? null : curName.getNameId();
+							XmlMessage curName = (curConstraint == null) ? null : curConstraint.getName();
+							String nameId = (curName == null) ? null : curName.getValue();
 
 							XmlStatus curStatus = (curConstraint == null) ? null : curConstraint.getStatus();
 							String finalStatus = (curStatus == null) ? null : curStatus.value();
@@ -356,22 +356,22 @@ class TechnicalValidationUtil {
 		case NOT_ADES_QC:
 		case NOT_ADES_QC_QSCD:
 			return false;
-		case ADES:
-		case ADES_QC:
+//		case ADES:
+//		case ADES_QC:
 		case ADESEAL:
 		case ADESEAL_QC:
 		case ADESIG:
 		case ADESIG_QC:
-		case INDETERMINATE_ADES:
-		case INDETERMINATE_ADES_QC:
+//		case INDETERMINATE_ADES:
+//		case INDETERMINATE_ADES_QC:
 		case INDETERMINATE_ADESEAL:
 		case INDETERMINATE_ADESEAL_QC:
 		case INDETERMINATE_ADESIG:
 		case INDETERMINATE_ADESIG_QC:
-		case INDETERMINATE_QES:
+//		case INDETERMINATE_QES:
 		case INDETERMINATE_QESEAL:
 		case INDETERMINATE_QESIG:
-		case QES:
+//		case QES:
 		case QESIG:
 		case QESEAL:
 			return true;

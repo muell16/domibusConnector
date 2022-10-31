@@ -14,11 +14,11 @@ The new version is {project-version}.
 
 It is available under https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibusConnectorDistribution/{project-version}/domibusConnectorDistribution-{project-version}.zip
 
-Username and password will by provided via e-mail request.
+Username and password will be provided via e-mail request.
 
 == Changelog
 
-The changelog of this version is available within the zip folder under 'documentation-site/changelog.html'
+The changelog of this version is available within the zip folder under "online-documentation/documentation/changelog/changelog.html"
 
 Best regards,
 

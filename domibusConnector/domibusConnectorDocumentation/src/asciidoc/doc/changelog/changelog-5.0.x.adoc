@@ -1,0 +1,11 @@
+== Changelog for domibusConnector-5.0.x
+
+=== 5.0.0
+
+==== API changes
+
+==== LIB changes
+
+* Spring Boot Update 2.4.x => 2.6.x
+* CXF Update 3.3.x => 3.5.x
+* Partial JAXB (2.x) update to JAXB 3.0 (jakarta)
