@@ -7,8 +7,8 @@ import javax.persistence.Entity;
 import java.time.ZonedDateTime;
 
 @Entity
-@DiscriminatorValue("2")
-public class DC5TransportRequest extends DC5ProcStep {
+@DiscriminatorValue("TRANSPORT_REQUEST_STEP")
+public class DC5TransportRequest extends DC5ProcessStep {
 
     @Column(name = "CONNECTOR_TRANSPORT_ID", length = 255)
     private String connectorTransportId;

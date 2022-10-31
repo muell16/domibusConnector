@@ -170,6 +170,26 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.moduliths</groupId>
+                <artifactId>moduliths-core</artifactId>
+                <version>${org.moduliths.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.moduliths</groupId>
+                <artifactId>moduliths-api</artifactId>
+                <version>${org.moduliths.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.moduliths</groupId>
+                <artifactId>moduliths-test</artifactId>
+                <version>${org.moduliths.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.moduliths</groupId>
+                <artifactId>moduliths-docs</artifactId>
+                <version>${org.moduliths.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.fusesource.jansi</groupId>
                 <artifactId>jansi</artifactId>
                 <version>${org.fusesource.jansi.jansi.version}</version>
@@ -640,6 +660,17 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
+                    <version>5.0.0</version>
+                    <configuration>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                        <useNativeGit>true</useNativeGit>
+                        <skipPoms>false</skipPoms>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>fabric8-maven-plugin</artifactId>
                     <version>4.4.1</version>
@@ -829,27 +860,17 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jgitflow-plugin</artifactId>
-                <version>1.0-alpha21.1</version>
-                <configuration>
-                    <allowSnapshots>false</allowSnapshots>
-                    <allowUntracked>false</allowUntracked>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <flowInitContext>
-                        <masterBranchName>master</masterBranchName>
-                        <developBranchName>development</developBranchName>
-                        <featureBranchPrefix>feature/</featureBranchPrefix>
-                        <releaseBranchPrefix>release/</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix></versionTagPrefix>
-                    </flowInitContext>
-                    <pushFeatures>false</pushFeatures>
-                    <pushHotfixes>false</pushHotfixes>
-                    <pushReleases>false</pushReleases>
-                    <updateDependencies>true</updateDependencies>
-                    <keepBranch>true</keepBranch>
-                </configuration>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
