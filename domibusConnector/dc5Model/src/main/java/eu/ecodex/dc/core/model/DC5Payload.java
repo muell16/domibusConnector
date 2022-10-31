@@ -1,8 +1,11 @@
 package eu.ecodex.dc.core.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity(name = DC5Payload.TABLE_NAME)
+@Data
 public class DC5Payload {
 
     public static final String TABLE_NAME = "DC5_PAYLOAD";
@@ -20,14 +23,7 @@ public class DC5Payload {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MESSAGE_ID")
-    private DC5Msg message;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private DC5ContentBackend backendContent;
-
-    @Column(name = "TYPE")
-    private DC5PayloadType type;
+    private DC5MsgProcess process;
 
     @Column(name = "HASH")
     private String hash;
@@ -41,71 +37,5 @@ public class DC5Payload {
     @Column(name = "SIZE")
     private int size;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DC5Payload )) return false;
-        return id != null && id.equals(((DC5Payload) o).getId());
-    }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public DC5Msg getMessage() {
-        return message;
-    }
-
-    public void setMessage(DC5Msg message) {
-        this.message = message;
-    }
-
-    public DC5ContentBackend getBackendContent() {
-        return backendContent;
-    }
-
-    public void setBackendContent(DC5ContentBackend backendContent) {
-        this.backendContent = backendContent;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStorageRef() {
-        return storageRef;
-    }
-
-    public void setStorageRef(String storageRef) {
-        this.storageRef = storageRef;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
 }

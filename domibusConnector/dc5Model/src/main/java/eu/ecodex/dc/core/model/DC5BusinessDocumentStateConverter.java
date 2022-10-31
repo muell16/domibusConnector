@@ -5,16 +5,16 @@ import javax.persistence.Converter;
 import java.util.stream.Stream;
 
 @Converter(autoApply = true)
-public class DC5BusinessDocumentStateConverter implements AttributeConverter<DC5BusinessDocumentStates, Byte> {
+public class DC5BusinessDocumentStateConverter implements AttributeConverter<DC5BusinessDocumentStatesEnum, Byte> {
 
     @Override
-    public Byte convertToDatabaseColumn(DC5BusinessDocumentStates state) {
+    public Byte convertToDatabaseColumn(DC5BusinessDocumentStatesEnum state) {
         return state.getCode();
     }
 
     @Override
-    public DC5BusinessDocumentStates convertToEntityAttribute(Byte code) {
-        return Stream.of(DC5BusinessDocumentStates.values())
+    public DC5BusinessDocumentStatesEnum convertToEntityAttribute(Byte code) {
+        return Stream.of(DC5BusinessDocumentStatesEnum.values())
                 .filter(c -> c.getCode() == code)
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);

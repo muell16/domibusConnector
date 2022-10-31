@@ -1,5 +1,7 @@
 package eu.ecodex.dc.core.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
         length = 100
 )
 @DiscriminatorValue("PROCESS_STEP")
+@Data
 public class DC5ProcessStep {
 
 
@@ -21,6 +24,7 @@ public class DC5ProcessStep {
 
     @Id
     @Column(name="PK_ID")
+    @GeneratedValue
     private Long id;
 
     @Column(name="STEP_NAME", nullable = false)
@@ -32,58 +36,11 @@ public class DC5ProcessStep {
 
     @Column(name="ERROR_TXT")
     @Lob
-    private String errorText;
+    private String longErrorText;
 
     @ManyToOne
     private DC5Msg messageResult;
 
     private LocalDateTime created;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStepName() {
-        return stepName;
-    }
-
-    public void setStepName(String stepId) {
-        this.stepName = stepId;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public DC5Msg getMessageResult() {
-        return messageResult;
-    }
-
-    public void setMessageResult(DC5Msg messageResult) {
-        this.messageResult = messageResult;
-    }
-
-    public String getErrorText() {
-        return errorText;
-    }
-
-    public void setErrorText(String errorText) {
-        this.errorText = errorText;
-    }
 }

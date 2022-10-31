@@ -2,6 +2,7 @@ package eu.ecodex.dc.core.model;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +31,12 @@ public class DC5Msg implements Serializable {
 //    @LazyToOne(LazyToOneOption.NO_PROXY) // to prevent that (n+1 query problem), one needs bytecode enhancement which requires hibernate.
 //    private DC5Ebms ebmsSegment;
 
+    @NotNull
     @OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
     private DC5Ebms ebmsSegment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private DC5Ebms refEbms;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private DC5Ebms refEbms;
 
     @OneToOne(targetEntity = DC5TransportRequest.class, cascade = CascadeType.ALL, optional = true) // unidirectional mapping
     private DC5TransportRequest transportRequest;
@@ -156,11 +158,4 @@ public class DC5Msg implements Serializable {
         this.target = target;
     }
 
-    public DC5Ebms getRefEbms() {
-        return refEbms;
-    }
-
-    public void setRefEbms(DC5Ebms refEbms) {
-        this.refEbms = refEbms;
-    }
 }
