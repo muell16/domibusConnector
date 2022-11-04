@@ -1,12 +1,5 @@
 package eu.domibus.connector.starter;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -21,10 +14,16 @@ import org.springframework.util.SystemPropertyUtils;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-@PropertySource({"classpath:/config/build-info.properties", "classpath:/config/connector.properties"})
+@PropertySource("classpath:/config/connector.properties")
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
