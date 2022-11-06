@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 public class ModularityTest {
 
-    Documenter documenter = new Documenter(TestApplication.class);
+    Documenter documenter = new Documenter(DC5FlowModule.class);
 
 
     @Test
