@@ -24,6 +24,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${com.h2database.h2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
