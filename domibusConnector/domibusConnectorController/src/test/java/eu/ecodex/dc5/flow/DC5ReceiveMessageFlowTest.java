@@ -6,6 +6,7 @@ import eu.ecodex.dc5.core.model.*;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.TransformMessageException;
 import eu.ecodex.dc5.flow.flows.ReceiveMessageFlow;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase
 @SpringBootTest(classes = eu.ecodex.dc5.DC5FlowModule.class)
 @ActiveProfiles("small")
+@Disabled
 class DC5ReceiveMessageFlowTest {
 
     @Autowired
