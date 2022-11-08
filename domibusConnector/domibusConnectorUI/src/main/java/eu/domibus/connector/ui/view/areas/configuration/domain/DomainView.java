@@ -24,8 +24,8 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-import eu.ecodex.dc.core.model.DC5Domain;
-import eu.ecodex.dc.core.repository.DC5DomainRepo;
+import eu.ecodex.dc5.core.model.DC5Domain;
+import eu.ecodex.dc5.core.repository.DC5DomainRepo;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

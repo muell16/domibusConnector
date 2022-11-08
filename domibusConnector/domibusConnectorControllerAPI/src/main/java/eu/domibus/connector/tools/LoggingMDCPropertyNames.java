@@ -1,6 +1,10 @@
 
 package eu.domibus.connector.tools;
 
+import org.slf4j.MDC;
+
+import java.io.Closeable;
+
 /**
  * This class contains MDC logging property names
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -19,6 +23,13 @@ public class LoggingMDCPropertyNames {
     public static final String MDC_REMOTE_MSG_ID = "remote_message_id";
 
     public static final String MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME = "messageid";
+
+    public static final String MDC_DC5_MSG_PROCESS_ID = "msgProcessId";
     public static final String MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME = "backendMessageId";
     public static final String MDC_EBMS_MESSAGE_ID_PROPERTY_NAME = "ebmsMessageId";
+
+    //Facade for MDC implementation
+    public static MDC.MDCCloseable putMdc(String key, String value) {
+        return MDC.putCloseable(key, value);
+    }
 }
