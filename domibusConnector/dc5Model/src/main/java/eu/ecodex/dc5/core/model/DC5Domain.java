@@ -28,7 +28,7 @@ public class DC5Domain {
     private String name;
 
     @Column(name = "DOMAIN_KEY")
-    private String businessDomainId;
+    private String businessDomainId; //ist gleich MessageLaneId
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
