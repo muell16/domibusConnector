@@ -1,10 +1,13 @@
 package eu.ecodex.dc5.core.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Map;
 
 
 @Entity(name = DC5Domain.TABLE_NAME)
+@Data
 public class DC5Domain {
 
     public static final String TABLE_NAME = "DC5_DOMAIN";
@@ -23,6 +26,9 @@ public class DC5Domain {
 
     @Column(name = "NAME")
     private String name;
+
+    @Column(name = "DOMAIN_KEY")
+    private String businessDomainId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,

@@ -4,6 +4,7 @@ import eu.domibus.configuration.Configuration;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType;
@@ -94,19 +95,21 @@ public class WebPModeService {
         Configuration pmodes = null;
         try {
             pmodes = (Configuration) byteArrayToXmlObject(contents, Configuration.class, Configuration.class);
+            String referenceString = uploadPModeFile(contents);
+            updatePModes(referenceString);
         } catch (Exception e) {
             LOGGER.error("Cannot load provided pmode file!", e);
             throw new RuntimeException(e);
         }
 
         DomibusConnectorPModeSet pModeSet;
-        try {
-            pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, store);
-            this.updatePModeSet(pModeSet);
-        } catch (Exception e) {
-            LOGGER.error("Cannot import provided pmode file into database!", e);
-            throw new RuntimeException(e);
-        }
+//        try {
+//            pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, store);
+//            this.updatePModeSet(pModeSet);
+//        } catch (Exception e) {
+//            LOGGER.error("Cannot import provided pmode file into database!", e);
+//            throw new RuntimeException(e);
+//        }
 
         try {
             updateSecurityConfiguration(store);
@@ -119,6 +122,16 @@ public class WebPModeService {
         return true;
     }
 
+    private void updatePModes(String referenceString) {
+        ConnectorMessageProcessingProperties props = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), ConnectorMessageProcessingProperties.class);
+        props.setpModeFile(referenceString);
+        configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), props);
+    }
+
+    private String uploadPModeFile(byte[] content) {
+        throw new RuntimeException("TODO: Bruno must implement that similar to keystore upload! JUEUSW-597");
+    }
+
     /**
      * Update the security toolki configuration settings
      * within the current business domain
@@ -126,17 +139,13 @@ public class WebPModeService {
      */
     private void updateSecurityConfiguration(DomibusConnectorKeystore store) {
         DCEcodexContainerProperties dcEcodexContainerProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), DCEcodexContainerProperties.class);
-//        if(dcEcodexContainerProperties.getSignatureValidation().getTrustStore()!=null) {
-//        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setPassword(store.getPasswordPlain());
-//        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setType(store.getType().toString());
-//        dcEcodexContainerProperties.getSignatureValidation().getTrustStore().setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
-//        }else {
-        	StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
-        	storeConfigurationProperties.setPassword(store.getPasswordPlain());
-        	storeConfigurationProperties.setType(store.getType().toString());
-        	storeConfigurationProperties.setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
-        	dcEcodexContainerProperties.getSignatureValidation().setTrustStore(storeConfigurationProperties);
-//        }
+
+        StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
+        storeConfigurationProperties.setPassword(store.getPasswordPlain());
+        storeConfigurationProperties.setType(store.getType().toString());
+        storeConfigurationProperties.setPath(DatabaseResourceLoader.DB_URL_PREFIX + store.getUuid());
+        dcEcodexContainerProperties.getSignatureValidation().setTrustStore(storeConfigurationProperties);
+
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), dcEcodexContainerProperties);
     }
 

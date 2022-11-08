@@ -35,6 +35,8 @@ public class ConnectorMessageProcessingProperties {
 
     private String ebmsIdSuffix = "ecodex.eu";
 
+    private String pModeFile;   //TODO: JUEUSW-597
+
     private PModeVerificationMode outgoingPModeVerificationMode = PModeVerificationMode.RELAXED;
 
     private PModeVerificationMode incomingPModeVerificationMode = PModeVerificationMode.STRICT;
@@ -81,5 +83,13 @@ public class ConnectorMessageProcessingProperties {
 
     public static enum PModeVerificationMode {
         CREATE, RELAXED, STRICT;
+    }
+
+    public String getpModeFile() {
+        return pModeFile;
+    }
+
+    public void setpModeFile(String pModeFile) {
+        this.pModeFile = pModeFile;
     }
 }
