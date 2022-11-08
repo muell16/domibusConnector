@@ -1,10 +1,11 @@
 package eu.ecodex.dc5.flow.flows;
 
+import ec.ecodex.dc5.process.MessageProcessId;
 import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.ecodex.dc5.core.model.DC5Msg;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.StepFailedException;
-import eu.ecodex.dc5.flow.events.NewMessageReceivedEvent;
+import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.steps.DC5SaveMessageStep;
 import eu.ecodex.dc5.flow.steps.DC5TransformMessageStep;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class ReceiveMessageFlow {
         try {
             DC5Msg msg = transformMessageStep.transformMessage(message, transform);
             DC5Msg dc5Msg = saveMessageStep.receiveMessage(msg);
-            eventPublisher.publishEvent(new NewMessageReceivedEvent(dc5Msg));
+            eventPublisher.publishEvent(NewMessageStoredEvent.of(dc5Msg.getId()));
             return ReceiveMessageFlowResult.getSuccess();
         } catch (StepFailedException stepFailedException) {
             return new ReceiveMessageFlowResult(false,Optional.empty(), Optional.of(stepFailedException));

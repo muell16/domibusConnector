@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class MessageProcessManager {
@@ -27,7 +28,7 @@ public class MessageProcessManager {
         return new MessageProcessId(threadLocalMsgProcess.get().getProcessId());
     }
 
-    private Closeable setCurrentProcessId(DC5MsgProcess p) {
+    private CloseableMessageProcess setCurrentProcessId(DC5MsgProcess p) {
         threadLocalMsgProcess.set(p);
         return () -> threadLocalMsgProcess.remove();
     }
@@ -75,12 +76,23 @@ public class MessageProcessManager {
         return dc5MsgProcess;
     }
 
-    public static class CloseableMessageProcess implements Closeable {
+    public MessageProcessId getCurrentMessageProcesssId() {
+        return new MessageProcessId(getCurrentProcess().getProcessId());
+    }
 
-        @Override
-        public void close() throws IOException {
+    public CloseableMessageProcess resumeProcess(MessageProcessId messageProcessId) {
 
+        Optional<DC5MsgProcess> byProcessId = msgProcessRepo.findByProcessId(messageProcessId.getProcessId());
+        if (byProcessId.isPresent()) {
+            return setCurrentProcessId(byProcessId.get());
+        } else {
+            String error = String.format("Cannot find process with id [%s] in DB", messageProcessId);
+            throw new IllegalStateException(error);
         }
+    }
+
+    public static interface CloseableMessageProcess extends Closeable {
+        public void close();
     }
 
 }

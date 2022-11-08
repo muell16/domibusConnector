@@ -24,7 +24,6 @@ class DC5ReceiveMessageFlowTest {
     ReceiveMessageFlow receiveMessageFlow;
 
 
-
     eu.ecodex.dc5.flow.api.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomain = new DC5TransformToDomain<DomibusConnectorMessageType>() {
 
         @Override

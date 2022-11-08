@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.lang.annotation.*;
 
@@ -16,12 +17,14 @@ import java.lang.annotation.*;
 @Import(DC5JpaConfiguration.class)
 //@ImportAutoConfiguration()
 @EntityScan
+@EnableTransactionManagement(order = 200)
 @Modulithic( //
         sharedModules = { //
-                "eu.ecodex.dc.core", //
+                "eu.ecodex.dc5.core", //
                 "eu.ecodex.dc5.flow", //
+                "eu.ecodex.dc5.events", //
                 }, //
-        additionalPackages = "eu.ecodex.dc", //
+        additionalPackages = "eu.ecodex.dc5", //
         useFullyQualifiedModuleNames = true)
 @SpringBootApplication
 public @interface EnableDC5 {
