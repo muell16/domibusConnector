@@ -5,6 +5,9 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -19,7 +22,12 @@ import java.util.Date;
  *
  *
  */
+@Entity
 public class DomibusConnectorMessageDetails implements Serializable {
+
+	@Id
+	@GeneratedValue
+	private long id;
 
 	@Nullable
 	private String backendMessageId;
@@ -301,5 +309,11 @@ public class DomibusConnectorMessageDetails implements Serializable {
         return builder.toString();        
     }
 
+	public long getId() {
+		return id;
+	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
 }

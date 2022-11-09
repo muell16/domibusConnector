@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -26,6 +26,10 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class DomibusConnectorMessage implements Serializable {
 
+	@GeneratedValue
+	@Id
+	private long id;
+
 //	@NotNull
 	@Valid
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
@@ -34,17 +38,29 @@ public class DomibusConnectorMessage implements Serializable {
 	private DomibusConnectorMessageId connectorMessageId;
 	@NotNull
 	@Valid
+	@OneToOne(orphanRemoval = true)
 	private DomibusConnectorMessageDetails messageDetails;
 
+	@OneToOne(orphanRemoval = true)
 	private DomibusConnectorMessageContent messageContent;
+
+
+	@OneToMany
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	//holds all message confirmations which are transported with this message
+	@OneToMany(cascade = CascadeType.ALL)
 	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<>();
+
+
 	//holds all message confirmations which are related to this business message
+	@Transient
 	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
 	//holds all errors which occured during message processing...
+
+	@Transient
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
+	@Transient
 	private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
 
 
@@ -258,4 +274,21 @@ public class DomibusConnectorMessage implements Serializable {
 	public void setMessageContent(DomibusConnectorMessageContent messageContent) {
 		this.messageContent = messageContent;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public DomibusConnectorBusinessDomain.BusinessDomainId getBusinessDomainId() {
+		return businessDomainId;
+	}
+
+	public void setBusinessDomainId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+		this.businessDomainId = businessDomainId;
+	}
+
 }

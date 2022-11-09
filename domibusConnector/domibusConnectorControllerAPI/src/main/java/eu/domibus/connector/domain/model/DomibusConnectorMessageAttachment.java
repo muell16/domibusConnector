@@ -1,7 +1,11 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+
+import lombok.Data;
 import org.springframework.core.style.ToStringCreator;
+
+import javax.persistence.*;
 
 
 /**
@@ -14,13 +18,24 @@ import org.springframework.core.style.ToStringCreator;
  * @author riederb
  * @version 1.0
  */
+@Entity
+@Data
 public class DomibusConnectorMessageAttachment implements Serializable {
 
+	@GeneratedValue
+	@Id
+	private long id;
+
 	private String identifier;
+
+	@Transient
 	private LargeFileReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
+
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	private DetachedSignature detachedSignature;
 
 	public DomibusConnectorMessageAttachment() {}
 

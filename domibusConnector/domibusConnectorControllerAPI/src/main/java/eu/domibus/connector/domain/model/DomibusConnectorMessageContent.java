@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Null;
 
 
@@ -23,7 +27,13 @@ import javax.validation.constraints.Null;
  * @version 1.0
  * updated 29-Dez-2017 10:12:49
  */
+@Entity
+@Data
 public class DomibusConnectorMessageContent implements Serializable {
+
+	@GeneratedValue
+	@Id
+	public long id;
 
 	private byte xmlContent[];
 	@Nullable

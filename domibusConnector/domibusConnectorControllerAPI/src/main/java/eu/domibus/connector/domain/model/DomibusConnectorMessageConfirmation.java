@@ -8,6 +8,10 @@ import org.springframework.core.style.ToStringCreator;
 
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * This is an object that internally represents the evidences for a message. It
  * contains the evidence itself as a byte[] containing a structured document, and
@@ -18,7 +22,12 @@ import org.springframework.lang.Nullable;
  * @version 1.0
  *
  */
+@Entity
 public class DomibusConnectorMessageConfirmation implements Serializable {
+
+	@GeneratedValue
+	@Id
+	private long id;
 
 	/**
 	 * Is null by default, will be set if the confirmation has been
@@ -104,5 +113,13 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 	@Override
 	public int hashCode() {
 		return Arrays.hashCode(evidence);
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

@@ -1,5 +1,9 @@
 package eu.domibus.connector.domain.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.io.Serializable;
 
 
@@ -7,8 +11,14 @@ import java.io.Serializable;
  * @author riederb
  * @version 1.0
  */
+@Entity
 public class DetachedSignature implements Serializable {
 
+	@GeneratedValue
+	@Id
+	private long id;
+
+	@Lob
 	private byte detachedSignature[];
 	private String detachedSignatureName;
 	private DetachedSignatureMimeType mimeType;
