@@ -9,13 +9,14 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.domain.model.DomibusConnectorParty.PartyRoleType;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
-import eu.domibus.connector.evidences.spring.HomePartyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
+import eu.ecodex.dc5.core.model.DC5Domain;
+import eu.ecodex.dc5.core.repository.DC5DomainRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -50,17 +51,21 @@ public class WebPModeService {
     private final DomibusConnectorPModeService pModeService;
     private final DomibusConnectorKeystorePersistenceService keystorePersistenceService;
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
+
+    private final DC5DomainRepo domainRepo; // TODO: add service layer?
+
     private final ApplicationContext ctx;
 
     public WebPModeService(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService,
                            DomibusConnectorPModeService pModeService,
                            DomibusConnectorKeystorePersistenceService keystorePersistenceService,
                            ConfigurationPropertyManagerService configurationPropertyManagerService,
-                           ApplicationContext ctx) {
+                           DC5DomainRepo domainRepo, ApplicationContext ctx) {
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.pModeService = pModeService;
         this.keystorePersistenceService = keystorePersistenceService;
         this.configurationPropertyManagerService = configurationPropertyManagerService;
+        this.domainRepo = domainRepo;
         this.ctx = ctx;
     }
 
@@ -87,7 +92,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public boolean importPModes(byte[] contents, String description, DomibusConnectorKeystore store) {
+    public boolean importPModes(byte[] contents, String description, DomibusConnectorKeystore store, DC5Domain domain) {
         if (contents == null || contents.length < 1) {
             throw new IllegalArgumentException("pModes are not allowed to be null or empty!");
         }
@@ -96,7 +101,7 @@ public class WebPModeService {
         try {
             pmodes = (Configuration) byteArrayToXmlObject(contents, Configuration.class, Configuration.class);
             String referenceString = uploadPModeFile(contents);
-            updatePModes(referenceString);
+            updatePModes(referenceString, domain);
         } catch (Exception e) {
             LOGGER.error("Cannot load provided pmode file!", e);
             throw new RuntimeException(e);
@@ -122,14 +127,25 @@ public class WebPModeService {
         return true;
     }
 
-    private void updatePModes(String referenceString) {
-        ConnectorMessageProcessingProperties props = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), ConnectorMessageProcessingProperties.class);
+    private void updatePModes(String referenceString, DC5Domain domain) {
+
+        DomibusConnectorBusinessDomain.BusinessDomainId msgLaneId;
+        if (domain == null) {
+            msgLaneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+        } else {
+            msgLaneId = new DomibusConnectorBusinessDomain.BusinessDomainId(domain.getBusinessDomainId());
+        }
+
+        ConnectorMessageProcessingProperties props = configurationPropertyManagerService.loadConfiguration(msgLaneId, ConnectorMessageProcessingProperties.class);
         props.setpModeFile(referenceString);
         configurationPropertyManagerService.updateConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), props);
     }
 
     private String uploadPModeFile(byte[] content) {
-        throw new RuntimeException("TODO: Bruno must implement that similar to keystore upload! JUEUSW-597");
+        final DomibusConnectorKeystore domibusConnectorKeystore = new DomibusConnectorKeystore();
+        domibusConnectorKeystore.setKeystoreBytes(content);
+        DomibusConnectorKeystore result = keystorePersistenceService.persistNewKeystore(domibusConnectorKeystore);
+        return result.getUuid();
     }
 
     /**
@@ -505,4 +521,7 @@ public class WebPModeService {
     	return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
     }
 
+    public List<DC5Domain> getDomains() {
+        return domainRepo.findAll();
+    }
 }

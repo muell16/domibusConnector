@@ -70,11 +70,18 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         .setFlexGrow(0)
                         .setTextAlign(ColumnTextAlign.CENTER);
 
-        final Grid.Column<DC5Domain> instrumentColumn =
+        final Grid.Column<DC5Domain> nameColumn =
                 grid.addColumn(DC5Domain::getName)
                         .setKey("getName")
                         .setHeader("Name")
                         .setSortable(true);
+
+        final Grid.Column<DC5Domain> domainMsgLaneIdColumn =
+                grid.addColumn(DC5Domain::getBusinessDomainId)
+                        .setKey("getBusinessDomainId")
+                        .setHeader("Business / Message Lane ID")
+                        .setSortable(true);
+
 
         // Row editing configuration
         Binder<DC5Domain> binder = new Binder<>(DC5Domain.class);
@@ -106,11 +113,20 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
         TextField nameField = new TextField();
 
-        instrumentColumn.setEditorComponent(nameField);
+        nameColumn.setEditorComponent(nameField);
 
         binder.forField(nameField)
                 .asRequired("A domain name is required!")
                 .bind(DC5Domain::getName, DC5Domain::setName);
+
+        TextField domainMsgLaneIdTextField = new TextField();
+
+        domainMsgLaneIdColumn.setEditorComponent(domainMsgLaneIdTextField);
+
+        binder.forField(domainMsgLaneIdTextField)
+                .asRequired("A domain ID is required!")
+                // TODO: probably check uniqueness here
+                .bind(DC5Domain::getBusinessDomainId, DC5Domain::setBusinessDomainId);
 
         return grid;
     }
@@ -164,7 +180,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         "calc(var(--lumo-space-s) * -1) calc(var(--lumo-space-l) * -1) 0");
 
         TextField nameField = new TextField("Name");
-
+        TextField domainMsgLaneIdTextField = new TextField("Business / Message Lane ID");
         VerticalLayout fieldLayout = new VerticalLayout(nameField);
 
         fieldLayout.setSpacing(false);
@@ -181,6 +197,11 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         binder.forField(nameField)
                 .asRequired("A domain name is required!")
                 .bind(DC5Domain::getName, DC5Domain::setName);
+
+        binder.forField(domainMsgLaneIdTextField)
+                .asRequired("A domain ID is required!")
+                // TODO: probably check uniqueness here
+                .bind(DC5Domain::getBusinessDomainId, DC5Domain::setBusinessDomainId);
 
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {

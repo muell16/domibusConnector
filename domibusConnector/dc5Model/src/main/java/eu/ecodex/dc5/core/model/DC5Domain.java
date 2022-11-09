@@ -1,13 +1,10 @@
 package eu.ecodex.dc5.core.model;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Map;
 
 
 @Entity(name = DC5Domain.TABLE_NAME)
-@Data
 public class DC5Domain {
 
     public static final String TABLE_NAME = "DC5_DOMAIN";
@@ -63,6 +60,14 @@ public class DC5Domain {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBusinessDomainId() {
+        return businessDomainId;
+    }
+
+    public void setBusinessDomainId(String businessDomainId) {
+        this.businessDomainId = businessDomainId;
     }
 
     public Map<String, String> getProperties() {

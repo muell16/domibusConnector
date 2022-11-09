@@ -4,11 +4,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.ui.service.WebPModeService;
-import org.apache.cxf.configuration.security.KeyStoreType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -61,7 +58,7 @@ public class UploadPModesOnFirstStart {
             DomibusConnectorKeystore domibusConnectorKeystore = webPModeService.importConnectorstore(trustStoreBytes, pw, DomibusConnectorKeystore.KeystoreType.ofDbName(type));
 
             byte[] pModeXml = StreamUtils.copyToByteArray(pModeUpload.getpModeXml().getInputStream());
-            boolean success = webPModeService.importPModes(pModeXml, "Initially loaded by UploadPModesOnFirstStart", domibusConnectorKeystore);
+            boolean success = webPModeService.importPModes(pModeXml, "Initially loaded by UploadPModesOnFirstStart", domibusConnectorKeystore, null); // TODO: null ???
 
             if (success) {
                 LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Successfully Uploaded configured p-Modes and trustStore: [{}]", pModeUpload);
