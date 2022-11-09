@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -27,11 +27,11 @@ public class ToConnectorControllerListener {
 
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
-    private final EvidenceMessageProcessor evidenceMessageProcessor;
+    private final ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
                                          ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor,
-                                         EvidenceMessageProcessor evidenceMessageProcessor) {
+                                         ConfirmationMessageProcessingFlow evidenceMessageProcessor) {
         this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
         this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
         this.evidenceMessageProcessor = evidenceMessageProcessor;

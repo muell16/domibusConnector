@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.queues;
 
 import eu.domibus.connector.controller.processor.CleanupMessageProcessor;
-import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.controller.queues.listener.ToLinkPartnerListener;
@@ -83,7 +83,7 @@ public class DeleteMessagesFromQueuesTest {
     SubmitToConnector submitToConnector;
 
     @MockBean
-    EvidenceMessageProcessor evidenceMessageProcessor;
+    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     @MockBean
     ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;

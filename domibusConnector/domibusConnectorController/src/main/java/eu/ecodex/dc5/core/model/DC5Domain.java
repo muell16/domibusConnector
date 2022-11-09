@@ -7,7 +7,6 @@ import java.util.Map;
 
 
 @Entity(name = DC5Domain.TABLE_NAME)
-@Data
 public class DC5Domain {
 
     public static final String TABLE_NAME = "DC5_DOMAIN";
@@ -28,7 +27,7 @@ public class DC5Domain {
     private String name;
 
     @Column(name = "DOMAIN_KEY")
-    private String businessDomainId; //ist gleich MessageLaneId
+    private String domainKey; //ist gleich MessageLaneId
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
@@ -71,5 +70,13 @@ public class DC5Domain {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public String getDomainKey() {
+        return domainKey;
+    }
+
+    public void setDomainKey(String domainKey) {
+        this.domainKey = domainKey;
     }
 }

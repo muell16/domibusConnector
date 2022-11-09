@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Entity;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -20,12 +21,12 @@ import javax.validation.constraints.NotNull;
  * inside this structure changes up to the point where the message is completely
  * finished.
  * @author riederb
- * @version 1.0
  */
 @Validated
+@Entity
 public class DomibusConnectorMessage implements Serializable {
 
-	@NotNull
+//	@NotNull
 	@Valid
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 	@NotNull

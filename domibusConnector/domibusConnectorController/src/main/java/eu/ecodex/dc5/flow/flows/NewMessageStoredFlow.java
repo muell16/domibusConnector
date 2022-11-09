@@ -6,7 +6,6 @@ import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.steps.DC5LookupDomainStep;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,10 +27,11 @@ public class NewMessageStoredFlow {
         }
         DC5Msg msg = byId.get();
 
-        lookupDomainStep.lookupDomain(msg);
+        msg = lookupDomainStep.lookupDomain(msg);
 
-        //if message is business message to GW
-        //run backend2gateway flow
+        if (isConfirmationMessage(msg)) {
+//            confirmationMessageProcessingFlow.processMessage(msg);
+        }
 
         //if message is a business message to backend
         //run gateway2backend flow
@@ -39,6 +39,11 @@ public class NewMessageStoredFlow {
         //if message is a confirmation message
         //run confirmation message flow
 
+    }
+
+
+    private boolean isConfirmationMessage(DC5Msg msg) {
+        return (msg.getConfirmations().size() == 1 && !msg.getContent().isPresent());
     }
 
 }

@@ -1,11 +1,14 @@
 package eu.ecodex.dc5.core.model;
 
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -42,6 +45,7 @@ public class DC5Msg implements Serializable {
     private DC5TransportRequest transportRequest;
 
     @OneToOne(mappedBy = "refMsg", cascade = CascadeType.ALL) // TODO: orphanRemoval = true?
+    @Nullable
     private DC5ContentBusinessDocument content;
 
     @OneToMany(mappedBy = "refMsg", cascade = CascadeType.ALL) // TODO: should a confirmation be deleted if, no Msg references it? orphanRemoval=true?
@@ -58,11 +62,15 @@ public class DC5Msg implements Serializable {
     @Column(name = "DC5_MESSAGE_TARGET", length = 255)
     private String target;
 
+    @ManyToOne
+    private DC5Domain businessDomain;
+
     public DC5Msg() {
         confirmations = new ArrayList<>();
-        final DC5ContentBusinessDocument content = new DC5ContentBusinessDocument(); // TODO: discuss
-        content.setRefMsg(this);
-        this.content = content;
+    }
+
+    public List<DC5MsgBusinessConfirmation> getConfirmations() {
+        return confirmations;
     }
 
     public void addConfirmation(DC5MsgBusinessConfirmation confirmation) {
@@ -106,11 +114,11 @@ public class DC5Msg implements Serializable {
         return ebmsSegment;
     }
 
-    public DC5ContentBusinessDocument getContent() {
-        return content;
+    public Optional<DC5ContentBusinessDocument> getContent() {
+        return Optional.ofNullable(content);
     }
 
-    public void setContent(DC5ContentBusinessDocument content) { //TODO: remove this?
+    public void setContent(DC5ContentBusinessDocument content) {
         this.content = content;
     }
 
@@ -158,4 +166,11 @@ public class DC5Msg implements Serializable {
         this.target = target;
     }
 
+    public void setDomain(DC5Domain domain) {
+        this.businessDomain = domain;
+    }
+
+    public DC5Domain getBusinessDomain() {
+        return businessDomain;
+    }
 }

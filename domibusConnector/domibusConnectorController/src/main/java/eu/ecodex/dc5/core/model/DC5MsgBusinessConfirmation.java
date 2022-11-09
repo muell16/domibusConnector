@@ -1,6 +1,8 @@
 package eu.ecodex.dc5.core.model;
 
 
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+
 import javax.persistence.*;
 import java.util.Optional;
 
@@ -32,6 +34,8 @@ public class DC5MsgBusinessConfirmation {
 
     @OneToOne(targetEntity = DC5Payload.class, cascade = CascadeType.ALL, optional = true)
     private DC5Payload evidenceXml;
+
+    private DomibusConnectorEvidenceType evidenceType;
 
     @Override
     public boolean equals(Object o) {
@@ -68,5 +72,13 @@ public class DC5MsgBusinessConfirmation {
 
     public void setEvidenceXml(DC5Payload evidenceXml) {
         this.evidenceXml = evidenceXml;
+    }
+
+    public DomibusConnectorEvidenceType getEvidenceType() {
+        return evidenceType;
+    }
+
+    public void setEvidenceType(DomibusConnectorEvidenceType evidenceType) {
+        this.evidenceType = evidenceType;
     }
 }

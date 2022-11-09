@@ -1,6 +1,5 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
@@ -15,19 +14,15 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirma
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.mockito.Answers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockReset;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
@@ -49,7 +44,7 @@ public class EvidenceMessageProcessorTest {
 
 
     @Autowired
-    EvidenceMessageProcessor evidenceMessageProcessor;
+    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService backendDeliveryService;
