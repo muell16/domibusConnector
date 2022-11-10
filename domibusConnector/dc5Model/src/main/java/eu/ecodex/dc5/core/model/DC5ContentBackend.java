@@ -32,7 +32,7 @@ public class DC5ContentBackend {
     private DC5Payload detachedSignature;
 
     @OneToMany(
-            mappedBy = "",
+            mappedBy = "id",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

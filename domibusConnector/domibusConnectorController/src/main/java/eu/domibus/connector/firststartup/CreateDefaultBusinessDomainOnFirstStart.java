@@ -7,8 +7,6 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.EventListener;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -26,9 +24,9 @@ public class CreateDefaultBusinessDomainOnFirstStart {
         this.messageLaneDao = messageLaneDao;
     }
 
-    @EventListener
+    @PostConstruct
     @Transactional
-    public void createDefaultBusinessDomain(ContextStartedEvent ctxStartEvt) {
+    public void createDefaultBusinessDomain() {
         Optional<PDomibusConnectorMessageLane> byName = messageLaneDao.findByName(new DomibusConnectorBusinessDomain.BusinessDomainId(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME));
         if (!byName.isPresent()) {
             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Create default Business Message Domain [{}]", DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME);

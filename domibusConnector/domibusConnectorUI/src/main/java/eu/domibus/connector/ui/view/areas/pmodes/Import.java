@@ -2,7 +2,6 @@ package eu.domibus.connector.ui.view.areas.pmodes;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,6 +13,7 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.ui.component.LumoLabel;
@@ -51,34 +51,45 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 	
 	VerticalLayout areaImportResult = new VerticalLayout();
 	
-	Div areaPModeFileUploadResult = new Div();
+	VerticalLayout areaPModeFileUploadResult = new VerticalLayout();
 	LumoLabel pModeFileUploadResultLabel = new LumoLabel();
 	
 	byte[] connectorstore = null;
 	
-	Div areaConnectorstoreUploadResult = new Div();
+	VerticalLayout areaConnectorstoreUploadResult = new VerticalLayout();
 	LumoLabel connectorstoreUploadResultLabel = new LumoLabel();
 	
 	TextArea pModeSetDescription = new TextArea("Description:");
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
+	ComboBox<DomibusConnectorBusinessDomain.BusinessDomainId> domains = new ComboBox<>();
+
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		super(HELP_ID, TITLE);
-		
+
+//		domains.setRenderer(new ComponentRenderer<FlexLayout, DC5Domain>(domain -> {
+//			final FlexLayout wrapper = new FlexLayout();
+//			wrapper.setAlignItems(FlexComponent.Alignment.CENTER);
+//
+//			return wrapper;
+//		}));
+		domains.setLabel("PMode is valid in domain:");
+//		domains.setItemLabelGenerator(DC5Domain::getName);
+
 		this.pmodeService = pmodeService;
 		
 		
-		Div areaPmodeFileUpload = createPModeImportArea();
+		VerticalLayout areaPmodeFileUpload = createPModeImportArea();
 		
 		add(areaPmodeFileUpload);
 		add(areaPModeFileUploadResult);
 
-		Div areaPModeSetDescription = createPModeSetDescriptionArea();
+		VerticalLayout areaPModeSetDescription = createPModeSetDescriptionArea();
 		
 		add(areaPModeSetDescription);
 		
-		Div areaConnectorstoreUpload = createConnectorstoreUploadArea();
+		VerticalLayout areaConnectorstoreUpload = createConnectorstoreUploadArea();
 		
 		add(areaConnectorstoreUpload);
 		add(areaConnectorstoreUploadResult);
@@ -98,7 +109,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		importBtn.setText("Import PMode-Set");
 		importBtn.addClickListener(e -> {
 			boolean result = false;
-			result = importPModeSet(pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue(), connectorstoreType.getValue());
+			result = importPModeSet(pmodeFile, pModeSetDescription.getValue(), connectorstore, connectorstorePwd.getValue(), connectorstoreType.getValue(), domains.getValue());
 			showOutput(result, result?"PMode-Set successfully imported!":"Import of PMode-Set failed!");
 		});
 		importBtn.setEnabled(true);
@@ -110,8 +121,10 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		
 	}
 	
-	private Div createPModeImportArea() {
-		Div areaPmodeFileUpload = new Div();
+	private VerticalLayout createPModeImportArea() {
+		VerticalLayout areaPmodeFileUpload = new VerticalLayout();
+
+		areaPmodeFileUpload.add(domains);
 		
 		areaPmodeFileUpload.add(new LumoLabel("Upload new PMode file:"));
 		
@@ -142,8 +155,8 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		return areaPmodeFileUpload;
 	}
 	
-	private Div createPModeSetDescriptionArea() {
-		Div areaPModeSetDescription = new Div();
+	private VerticalLayout createPModeSetDescriptionArea() {
+		VerticalLayout areaPModeSetDescription = new VerticalLayout();
 		
 		pModeSetDescription.setHelperText("Describes the contents of the PMode Set like project or use-case name");
 		pModeSetDescription.setRequired(true);
@@ -153,8 +166,8 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		return areaPModeSetDescription;
 	}
 
-	private Div createConnectorstoreUploadArea() {
-		Div areaConnectorstoreUpload = new Div();
+	private VerticalLayout createConnectorstoreUploadArea() {
+		VerticalLayout areaConnectorstoreUpload = new VerticalLayout();
 		
 		areaConnectorstoreUpload.add(new LumoLabel("Upload new Connectorstore file:"));
 		
@@ -217,7 +230,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		}
 	}
 
-	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType) {
+	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
 
 		if (pmodeFile == null || pmodeFile.length < 1
 				|| connectorstore == null || connectorstore.length < 1
@@ -227,7 +240,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		DomibusConnectorKeystore connectorstoreUUID = pmodeService.importConnectorstore(connectorstore, connectorStorePwd, connectorstoreType);
 
 		if (connectorstoreUUID != null) {
-			return pmodeService.importPModes(pmodeFile, description, connectorstoreUUID);
+			return pmodeService.importPModes(pmodeFile, description, connectorstoreUUID, domainId);
 		} else {
 			return false;
 		}
@@ -235,6 +248,8 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
+		domains.setItems(pmodeService.getDomains());
+
 		areaImportResult.removeAll();
 		areaConnectorstoreUploadResult.removeAll();
 		areaPModeFileUploadResult.removeAll();
