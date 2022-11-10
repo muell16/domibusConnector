@@ -43,6 +43,14 @@ public class PDomibusConnectorMessageLane {
     @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
+
+
+
+
+
+
+
+
     public Long getId() {
         return id;
     }

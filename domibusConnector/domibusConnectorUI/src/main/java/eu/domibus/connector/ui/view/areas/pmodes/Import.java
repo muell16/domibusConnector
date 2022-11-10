@@ -13,6 +13,7 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.ui.component.LumoLabel;
@@ -20,7 +21,6 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
-import eu.ecodex.dc5.core.model.DC5Domain;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -63,7 +63,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
-	ComboBox<DC5Domain> domains = new ComboBox<>();
+	ComboBox<DomibusConnectorBusinessDomain.BusinessDomainId> domains = new ComboBox<>();
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		super(HELP_ID, TITLE);
@@ -75,7 +75,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 //			return wrapper;
 //		}));
 		domains.setLabel("PMode is valid in domain:");
-		domains.setItemLabelGenerator(DC5Domain::getName);
+//		domains.setItemLabelGenerator(DC5Domain::getName);
 
 		this.pmodeService = pmodeService;
 		
@@ -230,7 +230,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		}
 	}
 
-	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType, DC5Domain domain) {
+	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
 
 		if (pmodeFile == null || pmodeFile.length < 1
 				|| connectorstore == null || connectorstore.length < 1
@@ -240,7 +240,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		DomibusConnectorKeystore connectorstoreUUID = pmodeService.importConnectorstore(connectorstore, connectorStorePwd, connectorstoreType);
 
 		if (connectorstoreUUID != null) {
-			return pmodeService.importPModes(pmodeFile, description, connectorstoreUUID, domain);
+			return pmodeService.importPModes(pmodeFile, description, connectorstoreUUID, domainId);
 		} else {
 			return false;
 		}

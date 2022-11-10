@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -20,14 +21,19 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-import eu.ecodex.dc5.core.model.DC5Domain;
-import eu.ecodex.dc5.core.repository.DC5DomainRepo;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.Charset;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @UIScope
@@ -42,9 +48,9 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
     public static final String TITLE = "Domain Configuration";
     public static final String HELP_ID = "ui/configuration/TODO_NOT_VALID.html"; // TODO
 
-    private final DC5DomainRepo domainRepo;
+    private final DCBusinessDomainManager domainRepo; // TODO: read only
 
-    public DomainView(DC5DomainRepo domainRepo) {
+    public DomainView(DCBusinessDomainManager domainRepo) {
         super(HELP_ID, TITLE);
         this.domainRepo = domainRepo;
 
@@ -53,44 +59,50 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         add(createAddMatrixEntryButtonDiv(), domainGrid);
     }
 
-    private Grid<DC5Domain> domainGrid;
+    private Grid<DomibusConnectorBusinessDomain> domainGrid;
     private final Dialog addCourtDialog;
 
-    private Grid<DC5Domain> initGrid() {
+    private Grid<DomibusConnectorBusinessDomain> initGrid() {
         // Grid Settings
-        final Grid<DC5Domain> grid = new Grid<>();
+        final Grid<DomibusConnectorBusinessDomain> grid = new Grid<>();
         grid.setAllRowsVisible(true);
         grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_COMPACT, GridVariant.LUMO_ROW_STRIPES);
 
         // Grid Layout
-        final Grid.Column<DC5Domain> editColumn =
+        final Grid.Column<DomibusConnectorBusinessDomain> editColumn =
                 grid.addComponentColumn(this::createEditButton)
                         .setHeader("edit")
                         .setWidth("160px")
                         .setFlexGrow(0)
                         .setTextAlign(ColumnTextAlign.CENTER);
 
-        final Grid.Column<DC5Domain> nameColumn =
-                grid.addColumn(DC5Domain::getName)
-                        .setKey("getName")
-                        .setHeader("Name")
+        final Grid.Column<DomibusConnectorBusinessDomain> nameColumn =
+                grid.addColumn(DomibusConnectorBusinessDomain::getId)
+                        .setKey("getId")
+                        .setHeader("Domain Name / ID")
                         .setSortable(true);
 
-        final Grid.Column<DC5Domain> domainMsgLaneIdColumn =
-                grid.addColumn(DC5Domain::getBusinessDomainId)
-                        .setKey("getBusinessDomainId")
-                        .setHeader("Business / Message Lane ID")
+        final Grid.Column<DomibusConnectorBusinessDomain> domainMsgLaneIdColumn =
+                grid.addColumn(DomibusConnectorBusinessDomain::getDescription)
+                        .setKey("getDescription")
+                        .setHeader("Description")
+                        .setSortable(true);
+
+        final Grid.Column<DomibusConnectorBusinessDomain> domainConfigSource =
+                grid.addColumn(d -> d.getConfigurationSource().toString())
+                        .setKey("getConfigurationSource")
+                        .setHeader("Configuration Source")
                         .setSortable(true);
 
 
         // Row editing configuration
-        Binder<DC5Domain> binder = new Binder<>(DC5Domain.class);
-        final Editor<DC5Domain> editor = grid.getEditor();
+        Binder<DomibusConnectorBusinessDomain> binder = new Binder<>(DomibusConnectorBusinessDomain.class);
+        final Editor<DomibusConnectorBusinessDomain> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
 
         editor.addSaveListener(e -> {
-            domainRepo.save(e.getItem());
+            domainRepo.createBusinessDomain(e.getItem());
         });
 
         Button saveButton = new Button(VaadinIcon.CHECK.create(), e -> {
@@ -100,8 +112,12 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 e -> editor.cancel());
         Button deleteButton = new Button(VaadinIcon.TRASH.create(),
                 e -> {
-                    domainRepo.delete(editor.getItem());
-                    domainGrid.setItems(domainRepo.findAll());
+                    if (editor.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
+//                        domainRepo.delete(editor.getItem()); // TODO what to do here???
+                        domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+                    } else {
+                        new Notification("Can't delete / edit properties that are not stored in the database!").open();
+                    }
                     editor.cancel();
                 });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
@@ -117,16 +133,10 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
         binder.forField(nameField)
                 .asRequired("A domain name is required!")
-                .bind(DC5Domain::getName, DC5Domain::setName);
-
-        TextField domainMsgLaneIdTextField = new TextField();
-
-        domainMsgLaneIdColumn.setEditorComponent(domainMsgLaneIdTextField);
-
-        binder.forField(domainMsgLaneIdTextField)
-                .asRequired("A domain ID is required!")
-                // TODO: probably check uniqueness here
-                .bind(DC5Domain::getBusinessDomainId, DC5Domain::setBusinessDomainId);
+                .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
+                .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
+                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, DomibusConnectorBusinessDomain.BusinessDomainId::getMessageLaneId)
+                .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
 
         return grid;
     }
@@ -135,7 +145,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         final Dialog addCourtDialog;
         addCourtDialog = new Dialog();
         addCourtDialog.getElement().setAttribute("aria-label", "Additional Court");
-        addCourtDialog.add(createAddCourtDialog(addCourtDialog));
+        addCourtDialog.add(createAddDomainDialog(addCourtDialog));
         addCourtDialog.setModal(false);
         addCourtDialog.setDraggable(true);
         return addCourtDialog;
@@ -150,10 +160,10 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return div;
     }
 
-    private Button createEditButton(DC5Domain competence) {
+    private Button createEditButton(DomibusConnectorBusinessDomain competence) {
         final Button edit = new Button(new Icon(VaadinIcon.PENCIL));
         edit.addClickListener(event -> {
-            final Editor<DC5Domain> editor = domainGrid.getEditor();
+            final Editor<DomibusConnectorBusinessDomain> editor = domainGrid.getEditor();
             if (editor.isOpen()) {
                 editor.cancel();
             }
@@ -162,8 +172,8 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return edit;
     }
 
-    private VerticalLayout createAddCourtDialog(Dialog dialog) {
-        H2 headline = new H2("Competence Matrix Entry");
+    private VerticalLayout createAddDomainDialog(Dialog dialog) {
+        H2 headline = new H2("New Domain");
         headline.getStyle().set("margin", "0").set("font-size", "1.5em")
                 .set("font-weight", "bold");
         HorizontalLayout header = new HorizontalLayout(headline);
@@ -179,9 +189,12 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .set("margin",
                         "calc(var(--lumo-space-s) * -1) calc(var(--lumo-space-l) * -1) 0");
 
-        TextField nameField = new TextField("Name");
-        TextField domainMsgLaneIdTextField = new TextField("Business / Message Lane ID");
-        VerticalLayout fieldLayout = new VerticalLayout(nameField);
+        TextField nameField = new TextField("Domain Name / ID");
+        TextField descriptionField = new TextField("Description");
+        TextField configurationSourceField = new TextField("Configuration Source");
+        configurationSourceField.setReadOnly(true);
+
+        VerticalLayout fieldLayout = new VerticalLayout(nameField, descriptionField,configurationSourceField);
 
         fieldLayout.setSpacing(false);
         fieldLayout.setPadding(false);
@@ -191,24 +204,31 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
             dialog.close();
         });
 
-        Binder<DC5Domain> binder = new Binder<>();
-        binder.setBean(new DC5Domain()); // this db entity exists until save, it can cause subtle bugs, if the binder is not bound to another entity after save, as the entity persists in the dialog and subsequent saves store the old object again and again.
+        Binder<DomibusConnectorBusinessDomain> binder = new Binder<>();
+        final DomibusConnectorBusinessDomain bean = new DomibusConnectorBusinessDomain();
+        bean.setConfigurationSource(ConfigurationSource.DB);
+        binder.setBean(bean); // this db entity exists until save, it can cause subtle bugs, if the binder is not bound to another entity after save, as the entity persists in the dialog and subsequent saves store the old object again and again.
 
         binder.forField(nameField)
                 .asRequired("A domain name is required!")
-                .bind(DC5Domain::getName, DC5Domain::setName);
+                .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
+                .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
+                .withValidator(s -> !domainRepo.getBusinessDomain(new DomibusConnectorBusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
+                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getMessageLaneId())
+                .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
 
-        binder.forField(domainMsgLaneIdTextField)
-                .asRequired("A domain ID is required!")
-                // TODO: probably check uniqueness here
-                .bind(DC5Domain::getBusinessDomainId, DC5Domain::setBusinessDomainId);
+        binder.forField(descriptionField)
+                .bind(DomibusConnectorBusinessDomain::getDescription, DomibusConnectorBusinessDomain::setDescription);
+
+        binder.forField(configurationSourceField)
+                .bind(d -> d.getConfigurationSource().toString(), null);
 
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
-                domainRepo.save(binder.getBean());
-                this.domainGrid.setItems(domainRepo.findAll());
+                domainRepo.createBusinessDomain(binder.getBean());
+                domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
                 dialog.close();
-                binder.setBean(new DC5Domain()); // as mentioned above, this is very important when using the db entities directly.
+                binder.setBean(new DomibusConnectorBusinessDomain()); // as mentioned above, this is very important when using the db entities directly.
             }
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -226,6 +246,6 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        domainGrid.setItems(domainRepo.findAll());
+        domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
     }
 }
