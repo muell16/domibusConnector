@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @CommonPersistenceTest
+@Disabled
 public class DCLinkPersistenceServiceTest {
 
     @Autowired

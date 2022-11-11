@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @CommonPersistenceTest
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+@Disabled
 public class DCRoutingRulePersistenceServiceImplTest {
 
     @Autowired

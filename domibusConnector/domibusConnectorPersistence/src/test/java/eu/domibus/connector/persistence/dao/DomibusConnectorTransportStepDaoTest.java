@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
 @DataSet(value = "/database/testdata/dbunit/DomibusConnectorTransportStep.xml", strategy = CLEAN_INSERT)
+@Disabled
 public class DomibusConnectorTransportStepDaoTest {
 
     @Autowired

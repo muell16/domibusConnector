@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
  * in parallel
  */
 @CommonPersistenceTest
+@Disabled
 class PersistMessageInBulkTest {
 
     @Autowired

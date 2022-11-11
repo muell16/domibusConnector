@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  *
  */
+@Disabled
 public class DomibusConnectorDomainMessageTransformerServiceTest {
 
     public DomibusConnectorDomainMessageTransformerServiceTest() {

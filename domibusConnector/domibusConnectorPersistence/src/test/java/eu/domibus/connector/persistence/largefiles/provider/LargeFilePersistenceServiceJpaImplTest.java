@@ -12,6 +12,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CommonPersistenceTest
+@Disabled
 class LargeFilePersistenceServiceJpaImplTest {
 
     private static final Logger LOGGER = LogManager.getLogger(LargeFilePersistenceServiceJpaImplTest.class);

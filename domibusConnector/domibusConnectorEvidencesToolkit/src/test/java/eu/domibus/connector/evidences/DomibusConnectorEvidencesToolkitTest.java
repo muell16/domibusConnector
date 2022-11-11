@@ -10,6 +10,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
+@Disabled
 public class DomibusConnectorEvidencesToolkitTest {
 
     @SpringBootApplication(

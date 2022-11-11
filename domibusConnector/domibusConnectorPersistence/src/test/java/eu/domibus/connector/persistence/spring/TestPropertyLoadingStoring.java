@@ -5,10 +5,7 @@ import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles({"test", "db_h2", "storage-db", STORAGE_DB_PROFILE_NAME, "prop-test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 public class TestPropertyLoadingStoring {
 
     @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
