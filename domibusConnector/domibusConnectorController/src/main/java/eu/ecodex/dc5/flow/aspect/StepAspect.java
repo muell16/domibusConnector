@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow.aspect;
 
-import ec.ecodex.dc5.process.MessageProcessManager;
+import eu.ecodex.dc5.process.MessageProcessManager;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.ecodex.dc5.core.model.DC5ProcessStep;
 import eu.ecodex.dc5.flow.api.Step;

@@ -20,18 +20,18 @@ public class NewMessageStoredFlow {
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleNewMessageStoredEvent(NewMessageStoredEvent newMessageStoredEvent) {
 
-        Optional<DC5Msg> byId = messageRepo.findById(newMessageStoredEvent.getMessageId()); //load message
-        if (!byId.isPresent()) {
-            String error = String.format("Unable to find message with id [%s] in MessageRepository", newMessageStoredEvent.getMessageId());
-            throw new IllegalStateException(error);
-        }
-        DC5Msg msg = byId.get();
+//        Optional<DC5Msg> byId = messageRepo.findById(newMessageStoredEvent.getMessageId()); //load message
+//        if (!byId.isPresent()) {
+//            String error = String.format("Unable to find message with id [%s] in MessageRepository", newMessageStoredEvent.getMessageId());
+//            throw new IllegalStateException(error);
+//        }
+//        DC5Msg msg = byId.get();
+//
+//        msg = lookupDomainStep.lookupDomain(msg);
 
-        msg = lookupDomainStep.lookupDomain(msg);
-
-        if (isConfirmationMessage(msg)) {
+//        if (isConfirmationMessage(msg)) {
 //            confirmationMessageProcessingFlow.processMessage(msg);
-        }
+//        }
 
         //if message is a business message to backend
         //run gateway2backend flow

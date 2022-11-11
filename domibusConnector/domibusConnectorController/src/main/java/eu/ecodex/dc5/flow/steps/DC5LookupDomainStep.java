@@ -3,6 +3,7 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.ecodex.dc5.core.model.DC5Domain;
 import eu.ecodex.dc5.core.model.DC5Msg;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
@@ -18,17 +19,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DC5LookupDomainStep {
 
-    private final DC5DomainRepo domainRepo;
     private final DCBusinessDomainManager domainManager;
 
     @Step(name = "LookupDomainStep")
-    public DC5Msg lookupDomain(DC5Msg msg) {
+    public DomibusConnectorMessage lookupDomain(DomibusConnectorMessage msg) {
         //TODO: implement Business domain matching rules here!
-        Optional<DC5Domain> optionalDomain = domainRepo.findByDomainKey(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME);
-        if (optionalDomain.isPresent()) {
-            DC5Domain domain = optionalDomain.get();
-            CurrentBusinessDomain.setCurrentBusinessDomain(new DomibusConnectorBusinessDomain.BusinessDomainId(domain.getDomainKey()));
-            msg.setDomain(optionalDomain.get());
+
+        Optional<DomibusConnectorBusinessDomain> bd = domainManager.getBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        if (bd.isPresent()) {
+            DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = bd.get();
+            CurrentBusinessDomain.setCurrentBusinessDomain(domibusConnectorBusinessDomain.getId());
+            msg.setBusinessDomainId(domibusConnectorBusinessDomain.getId());
         } else {
             throw new IllegalStateException("No default business domain found in DB!");
         }

@@ -1,4 +1,4 @@
-package ec.ecodex.dc5.process;
+package eu.ecodex.dc5.process;
 
 import lombok.Getter;
 

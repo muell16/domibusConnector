@@ -2,8 +2,8 @@ package eu.ecodex.dc5.events;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.ecodex.dc5.process.MessageProcessId;
-import ec.ecodex.dc5.process.MessageProcessManager;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.MessageProcessManager;
 import eu.ecodex.dc5.events.model.JPAEventStorageItem;
 import eu.ecodex.dc5.events.repo.DC5EventStorageItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
 

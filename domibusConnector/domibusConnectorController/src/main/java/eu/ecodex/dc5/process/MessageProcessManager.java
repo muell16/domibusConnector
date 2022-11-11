@@ -1,4 +1,4 @@
-package ec.ecodex.dc5.process;
+package eu.ecodex.dc5.process;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -8,7 +8,6 @@ import eu.ecodex.dc5.core.repository.DC5MsgProcessRepo;
 import org.springframework.stereotype.Service;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;

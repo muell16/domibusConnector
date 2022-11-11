@@ -1,9 +1,8 @@
 package eu.ecodex.dc5.events;
 
-import ec.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.MessageProcessId;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 

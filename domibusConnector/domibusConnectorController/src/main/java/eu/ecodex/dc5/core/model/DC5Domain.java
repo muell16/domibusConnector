@@ -5,7 +5,6 @@ import java.util.Map;
 
 
 @Entity(name = DC5Domain.TABLE_NAME)
-public class DC5Domain { // implemented
 public class DC5Domain {
 
     public static final String TABLE_NAME = "DC5_DOMAIN";
@@ -35,15 +34,6 @@ public class DC5Domain {
     @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
     @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties;
-
-
-
-
-
-
-
-
-
 
 
     @Override
@@ -89,11 +79,5 @@ public class DC5Domain {
         this.properties = properties;
     }
 
-    public String getDomainKey() {
-        return domainKey;
-    }
 
-    public void setDomainKey(String domainKey) {
-        this.domainKey = domainKey;
-    }
 }

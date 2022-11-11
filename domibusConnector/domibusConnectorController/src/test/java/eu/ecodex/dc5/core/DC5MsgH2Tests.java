@@ -18,8 +18,10 @@ import org.springframework.test.context.TestPropertySource;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestPropertySource(properties = {
 //        "spring.jpa.hibernate.ddl-auto=create", // apparently not needed
-        "spring.jpa.show-sql=true"
+        "spring.jpa.show-sql=true",
+        "spring.liquibase.enabled=false"
 })
+
 class DC5MsgH2Tests {
 
     @SpringBootApplication

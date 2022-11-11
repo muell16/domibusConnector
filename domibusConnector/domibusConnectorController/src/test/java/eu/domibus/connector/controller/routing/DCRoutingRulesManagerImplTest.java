@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
+@Disabled
 public class DCRoutingRulesManagerImplTest {
 
     @Autowired

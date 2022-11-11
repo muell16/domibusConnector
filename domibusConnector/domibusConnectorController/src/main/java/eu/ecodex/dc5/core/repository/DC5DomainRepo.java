@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface DC5DomainRepo extends JpaRepository<DC5Domain, Long> {
 
-//    @Query("SELECT d FROM DC5Domain d WHERE d.domainKey = :key")
-    Optional<DC5Domain> findByDomainKey(String key);
 
 }

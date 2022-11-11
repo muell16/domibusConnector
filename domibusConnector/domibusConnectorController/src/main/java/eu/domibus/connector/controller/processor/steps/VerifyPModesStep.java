@@ -94,7 +94,6 @@ public class VerifyPModesStep {
         }
         if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT) {
             LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT + " is experimental feature!");
-            //just don't complete p-Mode information => messagePersist has to do the work
         }
 
         return true;
