@@ -1,12 +1,11 @@
 package eu.ecodex.dc5.core.model;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Map;
 
 
 @Entity(name = DC5Domain.TABLE_NAME)
+public class DC5Domain { // implemented
 public class DC5Domain {
 
     public static final String TABLE_NAME = "DC5_DOMAIN";
@@ -27,7 +26,7 @@ public class DC5Domain {
     private String name;
 
     @Column(name = "DOMAIN_KEY")
-    private String domainKey; //ist gleich MessageLaneId
+    private String businessDomainId; //ist gleich MessageLaneId
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
@@ -36,6 +35,16 @@ public class DC5Domain {
     @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
     @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties;
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -62,6 +71,14 @@ public class DC5Domain {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBusinessDomainId() {
+        return businessDomainId;
+    }
+
+    public void setBusinessDomainId(String businessDomainId) {
+        this.businessDomainId = businessDomainId;
     }
 
     public Map<String, String> getProperties() {

@@ -1,11 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
-import java.sql.Blob;
-import java.util.Date;
-
 import javax.persistence.*;
-
-import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
+import java.util.Date;
 
 @Entity
 @Table(name = PDomibusConnectorKeystore.TABLE_NAME)
@@ -32,8 +28,8 @@ public class PDomibusConnectorKeystore {
 	@Column(name="KEYSTORE", nullable=false)
     private byte[] keystore;
 
-	@Column(name = "PASSWORD", length = 1024)
-	private String password;
+//	@Column(name = "PASSWORD", length = 1024)
+//	private String password;
 	
 	@Column(name="UPLOADED", nullable = false)
     private Date uploaded;
@@ -41,9 +37,9 @@ public class PDomibusConnectorKeystore {
 	@Column(name="DESCRIPTION", length = 512)
 	private String description;
 	
-	@Column(name="TYPE", length = 50)
+//	@Column(name="TYPE", length = 50)
 //	@Enumerated(EnumType.STRING)
-	private DomibusConnectorKeystore.KeystoreType type;
+//	private DomibusConnectorKeystore.KeystoreType type;
 	
 	@PrePersist
     public void prePersist() {
@@ -65,14 +61,6 @@ public class PDomibusConnectorKeystore {
 
 	public void setKeystore(byte[] keystore) {
 		this.keystore = keystore;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public Date getUploaded() {
@@ -98,16 +86,6 @@ public class PDomibusConnectorKeystore {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public DomibusConnectorKeystore.KeystoreType getType() {
-		return type;
-	}
-
-	public void setType(DomibusConnectorKeystore.KeystoreType type) {
-		this.type = type;
-	}
-
-
 
 	
 }

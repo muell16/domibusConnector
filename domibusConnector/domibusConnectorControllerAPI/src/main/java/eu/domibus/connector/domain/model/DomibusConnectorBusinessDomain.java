@@ -18,7 +18,7 @@ public class DomibusConnectorBusinessDomain {
 
     private Map<String, String> messageLaneProperties = new HashMap<>();
 
-    private ConfigurationSource configurationSource;
+    private ConfigurationSource configurationSource; // TODO: must be read-only if props are not from db, beause cant change .properties.
 
     public static DomibusConnectorBusinessDomain getDefaultMessageLane() {
         DomibusConnectorBusinessDomain defaultMessageLane = new DomibusConnectorBusinessDomain();

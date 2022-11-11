@@ -1,22 +1,20 @@
 package eu.domibus.connector.domain.model;
 
+import org.springframework.core.style.ToStringCreator;
+
 import java.util.Date;
 import java.util.stream.Stream;
-
-import org.springframework.core.style.ToStringCreator;
 
 
 public class DomibusConnectorKeystore {
 	
 	public static enum KeystoreType {
 		JKS("JKS", ".jks"), JCEKS("JCEKS",".jceks"), PKCS12("PKCS12",".pkcs12"), PKCS12S2("PKCS12S2",".pkcs12s2") ;
-		
-		
+
 		private KeystoreType(String dbName, String fileExtension) {
 			this.dbName = dbName;
 			this.fileExtension = fileExtension;
 		}
-		
 		
 		String dbName;
 		String fileExtension;
@@ -64,15 +62,13 @@ public class DomibusConnectorKeystore {
 	 * @param description
 	 * @param type
 	 */
-	public DomibusConnectorKeystore(String uuid, byte[] keystoreBytes, String passwordPlain, Date uploaded,
-			String description, KeystoreType type) {
+	public DomibusConnectorKeystore(String uuid, byte[] keystoreBytes, Date uploaded,
+			String description) {
 		super();
 		this.uuid = uuid;
 		this.keystoreBytes = keystoreBytes;
-		this.passwordPlain = passwordPlain;
 		this.uploaded = uploaded;
 		this.description = description;
-		this.type = type;
 	}
 
 
