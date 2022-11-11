@@ -16,6 +16,19 @@ import org.springframework.lang.Nullable;
  */
 public class LargeFileReference implements DataSource, Serializable {
 
+    public static String mapToString(LargeFileReference r) {
+        return r.getStorageProviderName() + "::" + r.getStorageIdReference();
+    }
+
+    public static LargeFileReference mapFromString(String s) {
+        String[] split = s.split("::");
+        LargeFileReference r = new LargeFileReference();
+        r.setStorageProviderName(split[0]);
+        r.setStorageIdReference(split[1]);
+        return r;
+    }
+
+
     private String storageProviderName = "";
 
     private String storageIdReference = "";

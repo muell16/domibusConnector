@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
+import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 
@@ -15,7 +16,8 @@ public final class DomibusConnectorMessageAttachmentBuilder {
 	private String name;
 	private String mimeType;
 	private String description;
-    
+    private DetachedSignature detachedSignature;
+
     public static DomibusConnectorMessageAttachmentBuilder createBuilder() {
         return new DomibusConnectorMessageAttachmentBuilder();
     }
@@ -46,6 +48,11 @@ public final class DomibusConnectorMessageAttachmentBuilder {
         this.description = description;
         return this;
     }
+
+    public DomibusConnectorMessageAttachmentBuilder withDetachedSignature(DetachedSignature detachedSignature) {
+        this.detachedSignature = detachedSignature;
+        return this;
+    }
     
     public DomibusConnectorMessageAttachmentBuilder copyPropertiesFrom(DomibusConnectorMessageAttachment attachment) {
         this.attachment = attachment.getAttachment();
@@ -53,6 +60,7 @@ public final class DomibusConnectorMessageAttachmentBuilder {
         this.identifier = attachment.getIdentifier();
         this.mimeType = attachment.getMimeType();
         this.name = attachment.getName();
+        this.detachedSignature = attachment.getDetachedSignature();
         return this;
     }
 
@@ -67,6 +75,7 @@ public final class DomibusConnectorMessageAttachmentBuilder {
         domibusConnectorMessageAttachment.setDescription(description);
         domibusConnectorMessageAttachment.setMimeType(mimeType);
         domibusConnectorMessageAttachment.setName(name);
+        domibusConnectorMessageAttachment.setDetachedSignature(detachedSignature);
         return domibusConnectorMessageAttachment;
     }
 

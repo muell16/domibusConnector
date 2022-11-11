@@ -8,6 +8,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

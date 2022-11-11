@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.domibus.connector.domain.model.jpa.BusinessDomainIdConverter;
+import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,9 +34,11 @@ public class DomibusConnectorMessage implements Serializable {
 
 //	@NotNull
 	@Valid
+	@Convert(converter = BusinessDomainIdConverter.class)
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 	@NotNull
 	@Valid
+	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
 	@NotNull
 	@Valid
@@ -44,9 +48,8 @@ public class DomibusConnectorMessage implements Serializable {
 	@OneToOne(orphanRemoval = true)
 	private DomibusConnectorMessageContent messageContent;
 
-
-	@OneToMany
-	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
+//	@OneToMany
+//	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	//holds all message confirmations which are transported with this message
 	@OneToMany(cascade = CascadeType.ALL)
 	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<>();
@@ -160,9 +163,9 @@ public class DomibusConnectorMessage implements Serializable {
 		return this.messageContent;
 	}
 
-	public List<DomibusConnectorMessageAttachment> getMessageAttachments(){
-		return this.messageAttachments;
-	}
+//	public List<DomibusConnectorMessageAttachment> getMessageAttachments(){
+//		return this.messageAttachments;
+//	}
 
 	public List<DomibusConnectorMessageConfirmation> getTransportedMessageConfirmations(){
 		return this.transportedMessageConfirmations;
@@ -202,9 +205,9 @@ public class DomibusConnectorMessage implements Serializable {
 	 * 
 	 * @param attachment    attachment
 	 */
-	public void addAttachment(final DomibusConnectorMessageAttachment attachment){
-	   	this.messageAttachments.add(attachment);
-	}
+//	public void addAttachment(final DomibusConnectorMessageAttachment attachment){
+//	   	this.messageAttachments.add(attachment);
+//	}
 
 	/**
 	 * Method to add a new {@link DomibusConnectorMessageConfirmation} to the

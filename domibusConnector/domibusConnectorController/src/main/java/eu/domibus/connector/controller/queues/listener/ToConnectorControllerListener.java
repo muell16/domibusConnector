@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
+//import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -27,14 +27,14 @@ public class ToConnectorControllerListener {
 
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
-    private final ConfirmationMessageProcessingFlow evidenceMessageProcessor;
+//    private final ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
-                                         ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor,
-                                         ConfirmationMessageProcessingFlow evidenceMessageProcessor) {
+                                         ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor
+                                        ) {
         this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
         this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
-        this.evidenceMessageProcessor = evidenceMessageProcessor;
+//        this.evidenceMessageProcessor = evidenceMessageProcessor;
     }
 
     @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
@@ -50,7 +50,7 @@ public class ToConnectorControllerListener {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
             if (DomainModelHelper.isEvidenceMessage(message)) {
-                evidenceMessageProcessor.processMessage(message);
+//                evidenceMessageProcessor.processMessage(message);
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.GATEWAY) {
                 toGatewayBusinessMessageProcessor.processMessage(message);
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.BACKEND) {

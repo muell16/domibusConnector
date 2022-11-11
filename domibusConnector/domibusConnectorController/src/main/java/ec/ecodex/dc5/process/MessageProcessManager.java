@@ -1,6 +1,7 @@
 package ec.ecodex.dc5.process;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.core.model.DC5ProcessStep;
 import eu.ecodex.dc5.core.repository.DC5MsgProcessRepo;
@@ -10,6 +11,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MessageProcessManager {
@@ -19,9 +21,9 @@ public class MessageProcessManager {
     private final DC5MsgProcessRepo msgProcessRepo;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
-    public MessageProcessManager(DC5MsgProcessRepo msgProcessRepo, DomibusConnectorMessageIdGenerator messageIdGenerator) {
+    public MessageProcessManager(DC5MsgProcessRepo msgProcessRepo) {
         this.msgProcessRepo = msgProcessRepo;
-        this.messageIdGenerator = messageIdGenerator;
+        this.messageIdGenerator = () -> new DomibusConnectorMessageId(UUID.randomUUID().toString());
     }
 
     public static MessageProcessId getCurrentProcessId() {

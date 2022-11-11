@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -47,7 +48,7 @@ public class ConfigurationPropertyLoaderServiceImplTest {
 
 
     @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
-    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.utils", "eu.domibus.connector.common"})
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.utils", "eu.domibus.connector.common"}, exclude = {DataSourceAutoConfiguration.class})
     public static class TestContext {
 
         @Bean

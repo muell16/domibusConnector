@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +24,7 @@ class BeanToPropertyMapConverterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BeanToPropertyMapConverterTest.class);
 
-    @SpringBootApplication(scanBasePackages = "eu.domibus.connector.utils")
+    @SpringBootApplication(scanBasePackages = "eu.domibus.connector.utils", exclude = {DataSourceAutoConfiguration.class})
     public static class TestContext {
 
     }

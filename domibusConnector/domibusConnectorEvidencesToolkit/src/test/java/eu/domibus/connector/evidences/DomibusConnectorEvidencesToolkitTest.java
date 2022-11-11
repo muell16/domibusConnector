@@ -131,8 +131,8 @@ public class DomibusConnectorEvidencesToolkitTest {
         DomibusConnectorMessageDocument document =
                 new DomibusConnectorMessageDocument(ref, "documentName", null);
 
-        content.setXmlContent("originalMessage".getBytes());
-        content.setDocument(document);
+//        content.setXmlContent("originalMessage".getBytes());
+//        content.setDocument(document);
 
         DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
@@ -152,8 +152,8 @@ public class DomibusConnectorEvidencesToolkitTest {
         DomibusConnectorMessageDocument document =
                 new DomibusConnectorMessageDocument(null, "documentName", null);
 
-        content.setXmlContent("originalMessage".getBytes());
-        content.setDocument(document);
+//        content.setXmlContent("originalMessage".getBytes());
+//        content.setDocument(document);
 
         DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 

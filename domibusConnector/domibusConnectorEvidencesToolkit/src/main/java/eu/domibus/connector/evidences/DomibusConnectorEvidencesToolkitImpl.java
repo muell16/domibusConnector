@@ -90,27 +90,32 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     
     private String checkPDFandBuildHashValue(DomibusConnectorMessage message)
             throws DomibusConnectorEvidencesToolkitException {
-        String hashValue = null;
-    	if (ArrayUtils.isEmpty(message.getMessageContent().getXmlContent())) {
-            DomibusConnectorAction action = message.getMessageDetails().getAction();
-            if (action == null) {
-                throw new DomibusConnectorEvidencesToolkitException("Action still null!");
-            }
-//            if (action.isDocumentRequired()) {
-//                throw new DomibusConnectorEvidencesToolkitException(
-//                        "There is no document in the message though the Action " + action.getAction()
-//                                + " requires one!");
-//            }
-        } else {
-            try {
-                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getXmlContent());
+        throw new RuntimeException("THIS MUS BE IMPLEMENTED!");
 
-            } catch (Exception e) {
-                throw new DomibusConnectorEvidencesToolkitException("Could not build hash code though the PDF is not empty!",
-                        e);
-            }
-        }
-        return hashValue;
+        //TODO: rethink if the hash should really reference the business doc?!
+        //maybe better the hash references the TOKEN? Because the Token also references the business doc?!
+
+//        String hashValue = null;
+//    	if (ArrayUtils.isEmpty(message.getMessageContent().getXmlContent())) {
+//            DomibusConnectorAction action = message.getMessageDetails().getAction();
+//            if (action == null) {
+//                throw new DomibusConnectorEvidencesToolkitException("Action still null!");
+//            }
+////            if (action.isDocumentRequired()) {
+////                throw new DomibusConnectorEvidencesToolkitException(
+////                        "There is no document in the message though the Action " + action.getAction()
+////                                + " requires one!");
+////            }
+//        } else {
+//            try {
+//                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getXmlContent());
+//
+//            } catch (Exception e) {
+//                throw new DomibusConnectorEvidencesToolkitException("Could not build hash code though the PDF is not empty!",
+//                        e);
+//            }
+//        }
+//        return hashValue;
     }
     
     private byte[] createSubmissionAcceptance(DomibusConnectorMessage message)

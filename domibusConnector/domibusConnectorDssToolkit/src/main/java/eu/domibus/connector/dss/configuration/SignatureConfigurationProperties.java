@@ -8,6 +8,11 @@ import javax.validation.constraints.NotNull;
 
 public class SignatureConfigurationProperties extends KeyAndKeyStoreConfigurationProperties {
 
+    //connector.ecodex-container.signature.encryption-algorithm=blabla
+
+    //connector.business-domain[domain1].properties.connector.ecodex-container.signature.encryption-algorithm=12345
+
+
     @NotNull
     EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
 

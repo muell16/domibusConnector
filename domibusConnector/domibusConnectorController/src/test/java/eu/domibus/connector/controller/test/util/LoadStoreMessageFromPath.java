@@ -67,26 +67,26 @@ public class LoadStoreMessageFromPath {
         //store content
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (messageContent != null) {
-            byte[] xmlContent = messageContent.getXmlContent();
+            DomibusConnectorMessageAttachment xmlContent = messageContent.getBusinessContent().getBusinessXml();
             Resource r = basicFolder.createRelative(LoadStoreTransitionMessage.DEFAULT_CONTENT_XML_FILE_NAME);
             messageProperties.put(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME, LoadStoreTransitionMessage.DEFAULT_CONTENT_XML_FILE_NAME);
-            writeByteArrayToResource(r, xmlContent);
+            writeBigDataReferenceToResource(r, xmlContent.getAttachment());
 
             //store message document
-            DomibusConnectorMessageDocument messageDocument = messageContent.getDocument();
+            DomibusConnectorMessageAttachment messageDocument = messageContent.getBusinessContent().getBusinessDocument();
             if (messageDocument != null) {
-                messageDocument.getDocument();
-                String fileName = messageDocument.getDocumentName() == null ? "document.pdf" : messageDocument.getDocumentName();
+
+                String fileName = messageDocument.getIdentifier() == null ? "document.pdf" : messageDocument.getIdentifier();
                 Resource d = basicFolder.createRelative(fileName);
-                writeBigDataReferenceToResource(d, messageDocument.getDocument());
+                writeBigDataReferenceToResource(d, messageDocument.getAttachment());
 
                 messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_FILE_PROP_NAME, fileName);
 
-                if (messageDocument.getDocumentName() != null ) {
-                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_NAME_PROP_NAME, messageDocument.getDocumentName());
+                if (messageDocument.getIdentifier() != null ) {
+                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_NAME_PROP_NAME, messageDocument.getIdentifier());
                 }
-                if (messageDocument.getHashValue() != null) {
-                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_HASH_PROP_NAME, messageDocument.getHashValue());
+                if (messageDocument.getHash() != null) {
+                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_HASH_PROP_NAME, messageDocument.getHash());
                 }
 
                 DetachedSignature detachedSignature = messageDocument.getDetachedSignature();
@@ -114,7 +114,8 @@ public class LoadStoreMessageFromPath {
         }
 
         //store attachments
-        storeMessageAttachments(message.getMessageAttachments());
+        List<DomibusConnectorMessageAttachment> attachments = message.getMessageContent().getBusinessContent().getAttachments();
+        storeMessageAttachments(attachments);
 
 
         //store confirmations
@@ -215,18 +216,22 @@ public class LoadStoreMessageFromPath {
         Resource contentResource = createRelativeResource(messageProperties.getProperty(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME));
         if (contentResource != null && contentResource.exists()) {
             DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
-            content.setXmlContent(StreamUtils.copyToByteArray(contentResource.getInputStream()));
+
+            LargeFileReference largeFileReference = loadResourceAsBigDataRef(contentResource);
+            //TODO: switch between
+            content.getBusinessContent().setBusinessXml(new DomibusConnectorMessageAttachment(largeFileReference, "BUSINESS_XML"));
+            content.getEcodexContent().setBusinessXml(new DomibusConnectorMessageAttachment(largeFileReference, "BUSINESS_XML"));
 
             messageBuilder.setMessageContent(content);
             //load document
             String docFileName = messageProperties.getProperty("message.content.document.file");
             if (docFileName != null) {
-                DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
+                DomibusConnectorMessageAttachmentBuilder documentBuilder = DomibusConnectorMessageAttachmentBuilder.createBuilder();
                 Resource r = basicFolder.createRelative(docFileName);
                 LargeFileReference bigDataReferenceDocument = loadResourceAsBigDataRef(r);
-                documentBuilder.setContent(bigDataReferenceDocument);
+                documentBuilder.setAttachment(bigDataReferenceDocument);
                 String docName = messageProperties.getProperty("message.content.document.name");
-                documentBuilder.setName(docName);
+                documentBuilder.setIdentifier(docName);
 
                 //load signature
                 String signatureFileName = messageProperties.getProperty("message.content.document.signature.file");
@@ -246,9 +251,7 @@ public class LoadStoreMessageFromPath {
                     documentBuilder.withDetachedSignature(detachedSignature);
                 }
 
-
-                DomibusConnectorMessageDocument doc = documentBuilder.build();
-                content.setDocument(doc);
+                content.getBusinessContent().setBusinessDocument(documentBuilder.build());
 
             }
 

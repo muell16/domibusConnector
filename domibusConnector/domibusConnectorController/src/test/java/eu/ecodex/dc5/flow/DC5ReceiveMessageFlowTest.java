@@ -1,5 +1,7 @@
 package eu.ecodex.dc5.flow;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.ecodex.dc5.core.model.*;
@@ -29,39 +31,8 @@ class DC5ReceiveMessageFlowTest {
     eu.ecodex.dc5.flow.api.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomain = new DC5TransformToDomain<DomibusConnectorMessageType>() {
 
         @Override
-        public DC5Msg transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
-            DC5Msg dbMsg = new DC5Msg();
-            DC5ContentBusinessDocument businessContent = new DC5ContentBusinessDocument();
-
-            DC5ContentEcodex ecxContent = new DC5ContentEcodex();
-            businessContent.setEcodexContent(ecxContent);
-            businessContent.setCurrentState(new DC5BusinessDocumentState(CREATED));
-            dbMsg.setContent(businessContent);
-
-            DC5Ebms dc5Ebms = new DC5Ebms();
-
-            DC5EcxAddress toParty = new DC5EcxAddress();
-            DC5Party p = new DC5Party();
-            p.setPartyId("id1");
-            p.setPartyIdType("type1");
-            toParty.setParty(p);
-            toParty.setEcxAddress("finalRecipient");
-            dc5Ebms.setReceiver(toParty);
-
-
-            DC5EcxAddress fromParty = new DC5EcxAddress();
-            DC5Party p1 = new DC5Party();
-            p1.setPartyId("id1");
-            p1.setPartyIdType("type1");
-            fromParty.setParty(p1);
-            fromParty.setEcxAddress("originalSender");
-            dc5Ebms.setSender(fromParty);
-
-            dc5Ebms.setService(new DC5Service("service", "serviceType"));
-            dc5Ebms.setAction(new DC5Action("action"));
-            dbMsg.setEbmsSegment(dc5Ebms);
-
-            return dbMsg;
+        public DomibusConnectorMessage transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+            return DomainEntityCreator.createEpoMessage();
         }
     };
 
@@ -74,7 +45,7 @@ class DC5ReceiveMessageFlowTest {
 
     DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithException = new DC5TransformToDomain<DomibusConnectorMessageType>() {
         @Override
-        public DC5Msg transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+        public DomibusConnectorMessage transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
             throw new TransformMessageException("ERROR");
         }
     };
@@ -85,11 +56,11 @@ class DC5ReceiveMessageFlowTest {
     void receiveMessage() {
         DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
 
-        receiveMessageFlow.receiveMessage(epoMessage, DC5TransformToDomain);
+        ReceiveMessageFlow.ReceiveMessageFlowResult receiveMessageFlowResult = receiveMessageFlow.receiveMessage(epoMessage, DC5TransformToDomain);
 
         //TODO: check if event is created!
         //TODO: check db storage
-//        assertThat(dc5ProcessStep.getError()).isNull();
+        assertThat(receiveMessageFlowResult.getError()).isNull();
 
     }
 //
@@ -98,9 +69,9 @@ class DC5ReceiveMessageFlowTest {
     void testReceiveWithException() {
         DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
 
-        receiveMessageFlow.receiveMessage(epoMessage, DC5TransformToDomainWithException);
+        ReceiveMessageFlow.ReceiveMessageFlowResult receiveMessageFlowResult = receiveMessageFlow.receiveMessage(epoMessage, DC5TransformToDomainWithException);
 
-//        assertThat(dc5ProcessStep.getError()).isEqualTo("ERROR");
+        assertThat(receiveMessageFlowResult.getError()).isEqualTo("ERROR");
     }
 
 }

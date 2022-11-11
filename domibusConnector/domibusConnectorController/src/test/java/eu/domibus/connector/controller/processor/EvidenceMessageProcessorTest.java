@@ -14,7 +14,6 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirma
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,8 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EvidenceMessageProcessorTest {
 
 
-    @Autowired
-    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
+//    @Autowired
+//    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService backendDeliveryService;
@@ -111,7 +110,7 @@ public class EvidenceMessageProcessorTest {
                 deliveryTrigger.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
                 deliveryTrigger.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
-                evidenceMessageProcessor.processMessage(deliveryTrigger);
+//                evidenceMessageProcessor.processMessage(deliveryTrigger);
                 return null;
             });
         } finally {
@@ -172,7 +171,7 @@ public class EvidenceMessageProcessorTest {
                 deliveryTrigger.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
                 deliveryTrigger.setMessageLaneId(domain);
 
-                evidenceMessageProcessor.processMessage(deliveryTrigger);
+//                evidenceMessageProcessor.processMessage(deliveryTrigger);
                 return null;
             });
         } finally {

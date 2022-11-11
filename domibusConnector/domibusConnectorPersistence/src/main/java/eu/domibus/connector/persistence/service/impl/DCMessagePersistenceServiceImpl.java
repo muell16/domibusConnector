@@ -29,14 +29,14 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     private static final Logger LOGGER = LoggerFactory.getLogger(DCMessagePersistenceServiceImpl.class);
 
     private final DomibusConnectorMessageDao messageDao;
-    private final MsgContentPersistenceService msgContentService;
+//    private final MsgContentPersistenceService msgContentService;
     private final InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
 
     public DCMessagePersistenceServiceImpl(DomibusConnectorMessageDao messageDao,
-                                           MsgContentPersistenceService msgContentService,
+//                                           MsgContentPersistenceService msgContentService,
                                            InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
         this.messageDao = messageDao;
-        this.msgContentService = msgContentService;
+//        this.msgContentService = msgContentService;
         this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
     }
 
@@ -118,7 +118,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         }
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
-        this.msgContentService.saveMessagePayloads(message, dbMessage);
+//        this.msgContentService.saveMessagePayloads(message, dbMessage);
     }
 
 
@@ -158,7 +158,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
             throw new PersistenceException(error, cve);
         }
 
-        this.msgContentService.saveMessagePayloads(message, dbMessage);
+//        this.msgContentService.saveMessagePayloads(message, dbMessage);
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
 
@@ -223,7 +223,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 //            messageInfoDao.save(messageInfo);
         }
 
-        this.msgContentService.saveMessagePayloads(message, dbMessage);
+//        this.msgContentService.saveMessagePayloads(message, dbMessage);
         mapRelatedConfirmations(dbMessage, message);
         
         this.messageDao.save(dbMessage);
@@ -418,7 +418,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
         messageBuilder.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()); //TODO: replace with value from DB!
 
-        this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
+//        this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
 
         loadRelatedEvidences(messageBuilder, dbMessage);
 

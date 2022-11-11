@@ -173,17 +173,17 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        messageContent.setXmlContent("<xmlContent/>".getBytes());
+//        messageContent.setXmlContent("<xmlContent/>".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
                         
-        messageContent.setDocument(messageDocument);
+//        messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
         msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
-        msg.addAttachment(createSimpleMessageAttachment());
+//        msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());
         return msg;
     }
@@ -192,12 +192,12 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageDetails();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        messageContent.setXmlContent("<xmlContent/>".getBytes());
+//        messageContent.setXmlContent("<xmlContent/>".getBytes());
 
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
 
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
-        messageContent.setDocument(messageDocument);
+//        messageContent.setDocument(messageDocument);
 
         DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
                 .addAttachment(createSimpleMessageAttachment())
@@ -213,12 +213,12 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent(); //TODO: should be a asic container
-        messageContent.setXmlContent("<xmlContent/>".getBytes());
+//        messageContent.setXmlContent("<xmlContent/>".getBytes());
 
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
 
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
-        messageContent.setDocument(messageDocument);
+//        messageContent.setDocument(messageDocument);
 
         DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
                 .addAttachment(createSimpleMessageAttachment())
@@ -419,27 +419,27 @@ public class DomainEntityCreator {
     }
     
     public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoSignature()  {
-        try {
+//        try {
             DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
-            messageContent.setDocument(createDocumentWithNoSignature());
+//            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
+//            messageContent.setDocument(createDocumentWithNoSignature());
                         
             return messageContent;
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex);
-        }
+//        } catch (UnsupportedEncodingException ex) {
+//            throw new RuntimeException(ex);
+//        }
     }
 
     public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoPdfDocument() {
-        try {
+//        try {
             DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
-            messageContent.setDocument(null);
+//            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
+//            messageContent.setDocument(null);
                         
             return messageContent;
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex);
-        }
+//        } catch (UnsupportedEncodingException ex) {
+//            throw new RuntimeException(ex);
+//        }
     }
 
     public static String dateFormat = "YYYY-MM-DD HH:mm:ss";

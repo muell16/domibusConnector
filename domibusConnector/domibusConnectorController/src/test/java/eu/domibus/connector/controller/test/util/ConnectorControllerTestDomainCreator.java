@@ -96,7 +96,7 @@ public class ConnectorControllerTestDomainCreator {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        messageContent.setXmlContent("xmlContent".getBytes());
+//        messageContent.setXmlContent("xmlContent".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
 
@@ -106,11 +106,11 @@ public class ConnectorControllerTestDomainCreator {
                
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(inMemory, "Document1.pdf", detachedSignature);
                         
-        messageContent.setDocument(messageDocument);
+//        messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
         msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
-        msg.addAttachment(createSimpleMessageAttachment());
+//        msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());
         return msg;
     }

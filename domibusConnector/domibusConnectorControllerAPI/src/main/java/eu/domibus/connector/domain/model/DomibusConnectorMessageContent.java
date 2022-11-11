@@ -8,9 +8,7 @@ import lombok.Data;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Null;
 
 
@@ -35,42 +33,17 @@ public class DomibusConnectorMessageContent implements Serializable {
 	@Id
 	public long id;
 
-	private byte xmlContent[];
-	@Nullable
-	private DomibusConnectorMessageDocument document;
+	@OneToOne(cascade = CascadeType.ALL)
+	private DCEcodexContent ecodexContent;
 
-	public DomibusConnectorMessageContent(){
-
-	}
-
-	public byte[] getXmlContent(){
-		return this.xmlContent;
-	}
-
-	/**
-	 * 
-	 * @param xmlContent    newVal
-	 */
-	public void setXmlContent(byte[] xmlContent){
-		this.xmlContent = xmlContent;
-	}
-
-	public DomibusConnectorMessageDocument getDocument(){
-		return this.document;
-	}
-
-	/**
-	 * 
-	 * @param document    newVal
-	 */
-	public void setDocument(DomibusConnectorMessageDocument document){
-		this.document = document;
-	}
+	@OneToOne(cascade = CascadeType.ALL)
+	private DCBackendContent businessContent;
 
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-        builder.append("document", this.document);
+        builder.append("BusinessContent", this.businessContent);
+		builder.append("ECodexContent", this.ecodexContent);
         return builder.toString();        
     }
     

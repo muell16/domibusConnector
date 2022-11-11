@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.queues;
 
 
 import eu.domibus.connector.controller.processor.CleanupMessageProcessor;
-import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
+//import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
@@ -58,8 +58,8 @@ public class DeadLetterQueueTest {
     @MockBean
     SubmitToConnector submitToConnector;
 
-    @MockBean
-    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
+//    @MockBean
+//    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     @MockBean
     ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
@@ -171,7 +171,7 @@ public class DeadLetterQueueTest {
     public void when_message_handling_in_transition_from_gateway_to_connector_fails_the_message_should_end_up_in_the_connector_dead_letter_queue() {
 
         // Arrange
-        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(evidenceMessageProcessor).processMessage(any());
+//        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(evidenceMessageProcessor).processMessage(any());
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toGatewayBusinessMessageProcessor).processMessage(any());
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toBackendBusinessMessageProcessor).processMessage(any());
 

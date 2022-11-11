@@ -34,6 +34,12 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 	private String mimeType;
 	private String description;
 
+	private String storageReference;
+
+	private String hash;
+
+	private long size = -1;
+
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private DetachedSignature detachedSignature;
 

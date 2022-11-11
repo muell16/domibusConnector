@@ -23,6 +23,7 @@ import java.lang.annotation.*;
                 "eu.ecodex.dc5.core", //
                 "eu.ecodex.dc5.flow", //
                 "eu.ecodex.dc5.events", //
+                "eu.ecodex.dc5.process"
                 }, //
         additionalPackages = "eu.ecodex.dc5", //
         useFullyQualifiedModuleNames = true)

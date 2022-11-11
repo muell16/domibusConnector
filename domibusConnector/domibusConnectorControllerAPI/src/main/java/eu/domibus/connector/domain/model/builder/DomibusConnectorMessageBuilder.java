@@ -125,7 +125,7 @@ public final class DomibusConnectorMessageBuilder {
         message.setConnectorMessageId(this.connectorMessageId);
         message.setMessageLaneId(this.businessDomainId);
         message.setMessageContent(this.messageContent);
-        message.getMessageAttachments().addAll(this.messageAttachments);
+//        message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
         message.getMessageProcessErrors().addAll(this.messageErrors);
         message.getRelatedMessageConfirmations().addAll(this.relatedMessageConfirmations);
@@ -145,11 +145,11 @@ public final class DomibusConnectorMessageBuilder {
                     .copyPropertiesFrom(message.getMessageContent())
                     .build();
         }
-        this.messageAttachments = message.getMessageAttachments()
-                .stream()
-                .map(a -> DomibusConnectorMessageAttachmentBuilder.createBuilder()
-                        .copyPropertiesFrom(a).build())
-                .collect(Collectors.toList());
+//        this.messageAttachments = message.getMessageAttachments()
+//                .stream()
+//                .map(a -> DomibusConnectorMessageAttachmentBuilder.createBuilder()
+//                        .copyPropertiesFrom(a).build())
+//                .collect(Collectors.toList());
 
         this.transportedConfirmations = message.getTransportedMessageConfirmations()
                 .stream()

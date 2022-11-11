@@ -4,12 +4,11 @@ import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
@@ -35,6 +35,10 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DomibusConnectorDomainMessageTransformerService {
+
+    public static final String ASICS_CONTAINER_IDENTIFIER = "ASIC-S";
+
+    public static final String TOKEN_XML_IDENTIFIER = "tokenXML";
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDomainMessageTransformerService.class);
     private final LargeFilePersistenceService largeFilePersistenceService;
@@ -101,8 +105,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 
         //map messageDetails
         TOMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
-        //map messageContent
-        TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent()));
+
         //map message confirmations
         List<DomibusConnectorMessageConfirmation> messageConfirmations = domainMessage.getTransportedMessageConfirmations();
         LOGGER.trace("#transformDomainToTransition: transform messageConfirmations [{}] to transition", messageConfirmations);
@@ -110,12 +113,32 @@ public class DomibusConnectorDomainMessageTransformerService {
             TOMessageType.getMessageConfirmations()
                     .add(transformMessageConfirmationDomainToTransition(msgConfirm));
         }
-        //map message attachments
-        LOGGER.trace("#transformDomainToTransition: transform messageAttachments [{}] to transition", domainMessage.getMessageAttachments());
-        for (DomibusConnectorMessageAttachment msgAttach : domainMessage.getMessageAttachments()) {
-            TOMessageType.getMessageAttachments()
-                    .add(transformMessageAttachmentDomainToTransition(msgAttach));
+
+        //map messageContent business XML
+        if (domainMessage.getMessageDetails().getDirection().getTarget() == MessageTargetSource.GATEWAY) {
+            TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getEcodexContent().getBusinessXml()));
+
+            //map ASIC-S
+            ;
+
+            //map Token-XML
+            domainMessage.getMessageContent().getEcodexContent().getTrustTokenXml();
+
+            TOMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), ASICS_CONTAINER_IDENTIFIER));
+            TOMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), TOKEN_XML_IDENTIFIER));
         }
+
+
+        if (domainMessage.getMessageDetails().getDirection().getTarget() == MessageTargetSource.BACKEND) {
+            TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getBusinessXml()));
+
+            for (DomibusConnectorMessageAttachment msgAttach : domainMessage.getMessageContent().getBusinessContent().getAttachments()) {
+                TOMessageType.getMessageAttachments()
+                    .add(transformMessageAttachmentDomainToTransition(msgAttach));
+            }
+
+        }
+
         //map message errors
         LOGGER.trace("#transformDomainToTransition: transform messageErrors [{}] to transition", domainMessage.getMessageProcessErrors());
         for (DomibusConnectorMessageError msgError : domainMessage.getMessageProcessErrors()) {
@@ -124,6 +147,15 @@ public class DomibusConnectorDomainMessageTransformerService {
         }
 
         return TOMessageType;
+    }
+
+    private DomibusConnectorMessageAttachmentType mapAttachment(DomibusConnectorMessageAttachment asicContainer, String asicsContainerIdentifier) {
+        DomibusConnectorMessageAttachmentType messageAttachmentType = new DomibusConnectorMessageAttachmentType();
+        messageAttachmentType.setMimeType(asicContainer.getMimeType());
+        messageAttachmentType.setIdentifier(asicsContainerIdentifier);
+        messageAttachmentType.setName(asicContainer.getName());
+        messageAttachmentType.setAttachment(this.convertBigDataReferenceToDataHandler(asicContainer.getAttachment(), asicContainer.getMimeType()));
+        return messageAttachmentType;
     }
 
     /**
@@ -200,56 +232,61 @@ public class DomibusConnectorDomainMessageTransformerService {
     /**
      * Translates messageContent from domain model to transition model
      *
-     * @param messageContent - the (domain model) messageContent
+     * @param businessXml - the (domain model) messageContent
      * @return the translated (transition model) messageContent or null if null provided
      */
     @Nullable
-    DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DomibusConnectorMessageContent messageContent) {
-        if (messageContent == null) {
+    DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DomibusConnectorMessageAttachment businessXml
+                                                                        ) {
+        if (businessXml == null) {
             return null;
         }
         DomibusConnectorMessageContentType messageContentTO = new DomibusConnectorMessageContentType();
-        if (messageContent.getXmlContent() == null) {
+        if (businessXml.getAttachment() == null) {
             throw new CannotBeMappedToTransitionException("xmlContent of content must be not null!");
         }
 
-        if(LOGGER.isTraceEnabled()) {
-        	LOGGER.trace("Business content XML before transformed to stream: {}", new String(messageContent.getXmlContent()));
+//        if(LOGGER.isTraceEnabled()) {
+//        	LOGGER.trace("Business content XML before transformed to stream: {}", new String(businessXml.getXmlContent()));
+//        }
+        StreamSource streamSource = null;
+        try {
+            streamSource = new StreamSource(            //byte[] is copied because domain model is not immutable
+    //                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)
+                    largeFilePersistenceService.getReadableDataSource(businessXml.getAttachment()).getInputStream()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
-                //byte[] is copied because domain model is not immutable
-//                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)
-        		messageContent.getXmlContent()
-                ));
         messageContentTO.setXmlContent(streamSource);
 
         //maps Document of messageContent
-        DomibusConnectorMessageDocument document = messageContent.getDocument();
+//        DomibusConnectorMessageDocument document = messageContent.get
         DomibusConnectorMessageDocumentType documentTO = new DomibusConnectorMessageDocumentType();
 
-        if (document != null) {
-            LargeFileReference docDataRef = document.getDocument();
-            documentTO.setDocument(convertBigDataReferenceToDataHandler(docDataRef, null));
-            documentTO.setDocumentName(document.getDocumentName());
-            messageContentTO.setDocument(documentTO);
-
-            //map signature type of document
-            DetachedSignature detachedSignature = document.getDetachedSignature();
-            if (detachedSignature != null) {
-                DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
-                detachedSignatureTypeTO.setDetachedSignature(
-                        Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
-                detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
-                detachedSignatureTypeTO.setMimeType(
-                        DomibusConnectorDomainDetachedSignatureEnumTransformer
-                                .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
-                documentTO.setDetachedSignature(detachedSignatureTypeTO);
-            } else {
-                LOGGER.debug("#transformMessageContentDomainToTransition: no detached signature to map!");
-            }
-        } else {
-            LOGGER.debug("#transformMessageContentDomainToTransition: document contains no document data");
-        }
+//        if (document != null) {
+//            LargeFileReference docDataRef = document.getDocument();
+//            documentTO.setDocument(convertBigDataReferenceToDataHandler(docDataRef, null));
+//            documentTO.setDocumentName(document.getDocumentName());
+//            messageContentTO.setDocument(documentTO);
+//
+//            //map signature type of document
+//            DetachedSignature detachedSignature = document.getDetachedSignature();
+//            if (detachedSignature != null) {
+//                DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
+//                detachedSignatureTypeTO.setDetachedSignature(
+//                        Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
+//                detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
+//                detachedSignatureTypeTO.setMimeType(
+//                        DomibusConnectorDomainDetachedSignatureEnumTransformer
+//                                .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
+//                documentTO.setDetachedSignature(detachedSignatureTypeTO);
+//            } else {
+//                LOGGER.debug("#transformMessageContentDomainToTransition: no detached signature to map!");
+//            }
+//        } else {
+//            LOGGER.debug("#transformMessageContentDomainToTransition: document contains no document data");
+//        }
 
 
         return messageContentTO;
@@ -388,11 +425,12 @@ public class DomibusConnectorDomainMessageTransformerService {
 
             //map message attachments
             LOGGER.trace("#transformTransitionToDomain: transform messageAttachments [{}]", transitionMessage.getMessageAttachments());
-            for (DomibusConnectorMessageAttachmentType attachment : transitionMessage.getMessageAttachments()) {
-                domibusConnectorMessage.addAttachment(
-                        transformMessageAttachmentTransitionToDomain(attachment));
-            }
-            LOGGER.trace("#transformTransitionToDomain: Sucessfully transformed [{}] message attachments", domibusConnectorMessage.getMessageAttachments());
+            //TODO:!!!
+//            for (DomibusConnectorMessageAttachmentType attachment : transitionMessage.getMessageAttachments()) {
+//                domibusConnectorMessage.addAttachment(
+//                        transformMessageAttachmentTransitionToDomain(attachment));
+//            }
+//            LOGGER.trace("#transformTransitionToDomain: Sucessfully transformed [{}] message attachments", domibusConnectorMessage.getMessageAttachments());
 
             LOGGER.trace("#transformTransitionToDomain: Sucessfully transformed message to [{}]", domibusConnectorMessage);
 
@@ -468,7 +506,19 @@ public class DomibusConnectorDomainMessageTransformerService {
 
         byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
-        messageContent.setXmlContent(result);
+        LargeFileReference businessXml = largeFilePersistenceService.createDomibusConnectorBigDataReference(this.messageIdThreadLocal.get(), "BUSINESS_XML", MimeTypeUtils.TEXT_XML_VALUE);
+        try ( OutputStream os = businessXml.getOutputStream()) {
+            StreamUtils.copy(result, os);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        DomibusConnectorMessageAttachment businessXmlAttachment = new DomibusConnectorMessageAttachment(businessXml, "BUSINESS_XML");
+
+        //TODO: direction!!
+        messageContent.getEcodexContent().setBusinessXml(businessXmlAttachment);
+        messageContent.getBusinessContent().setBusinessXml(businessXmlAttachment);
+
         if(LOGGER.isTraceEnabled()) {
         	LOGGER.trace("Business content XML after transformed from stream: {}", new String(result));
         }
@@ -477,7 +527,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
 
         if (documentTO != null) {
-            DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
+            DomibusConnectorMessageAttachmentBuilder documentBuilder = DomibusConnectorMessageAttachmentBuilder.createBuilder();
             //maps signature of document     
             DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
 
@@ -491,10 +541,11 @@ public class DomibusConnectorDomainMessageTransformerService {
                 );
                 documentBuilder.withDetachedSignature(detachedSignature);
             }
-            documentBuilder.setContent(convertDataHandlerToBigFileReference(documentTO.getDocument()));
-            documentBuilder.setName(documentTO.getDocumentName());
+            documentBuilder.setAttachment(convertDataHandlerToBigFileReference(documentTO.getDocument()));
+            documentBuilder.setIdentifier(documentTO.getDocumentName());
 
-            messageContent.setDocument(documentBuilder.build());
+//            messageContent.setDocument(documentBuilder.build());
+            messageContent.getBusinessContent().setBusinessDocument(documentBuilder.build());
         }
 
         return messageContent;
