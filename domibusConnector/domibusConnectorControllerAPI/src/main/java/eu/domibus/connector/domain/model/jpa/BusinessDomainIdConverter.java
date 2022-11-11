@@ -5,7 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+//@Converter(autoApply = true)
 public class BusinessDomainIdConverter implements AttributeConverter<DomibusConnectorBusinessDomain.BusinessDomainId, String> {
 
     @Override

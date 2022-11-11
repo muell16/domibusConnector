@@ -5,7 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+//@Converter(autoApply = true)
 public class DomibusConnectorMessageIdConverter implements AttributeConverter<DomibusConnectorMessageId, String> {
 
 
