@@ -14,15 +14,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CleanupMessageProcessor implements DomibusConnectorMessageProcessor {
 
-    private final DCMessageContentManager dcMessageContentManager;
+//    private final DCMessageContentManager dcMessageContentManager;
 
-    public CleanupMessageProcessor(DCMessageContentManager dcMessageContentManager) {
-        this.dcMessageContentManager = dcMessageContentManager;
+    public CleanupMessageProcessor() {
+//        this.dcMessageContentManager = dcMessageContentManager;
     }
 
     @Override
     public void processMessage(DomibusConnectorMessage message) {
-        dcMessageContentManager.cleanForMessage(message);
+
+//        dcMessageContentManager.cleanForMessage(message);
     }
 
 }
