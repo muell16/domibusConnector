@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.largefiles.provider;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import org.junit.jupiter.api.Test;

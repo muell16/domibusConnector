@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

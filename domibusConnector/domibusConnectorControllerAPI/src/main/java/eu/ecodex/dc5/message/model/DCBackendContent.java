@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import lombok.Data;
 

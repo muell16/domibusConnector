@@ -1,9 +1,8 @@
 package eu.domibus.connector.domain.model.jpa;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 //@Converter(autoApply = true)
 public class DomibusConnectorMessageIdConverter implements AttributeConverter<DomibusConnectorMessageId, String> {

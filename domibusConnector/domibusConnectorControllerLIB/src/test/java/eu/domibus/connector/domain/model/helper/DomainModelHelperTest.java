@@ -1,9 +1,9 @@
 package eu.domibus.connector.domain.model.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;

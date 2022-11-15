@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain.transformer;
 
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

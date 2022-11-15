@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.core.model;
 
 
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;

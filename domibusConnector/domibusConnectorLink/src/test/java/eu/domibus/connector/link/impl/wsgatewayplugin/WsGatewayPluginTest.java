@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.impl.wsgatewayplugin;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;

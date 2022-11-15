@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.controller.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 
 import javax.validation.constraints.NotNull;
 

@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model;
 
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotNull;

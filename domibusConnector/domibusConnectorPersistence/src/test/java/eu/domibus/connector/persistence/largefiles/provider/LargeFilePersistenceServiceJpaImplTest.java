@@ -1,8 +1,6 @@
 package eu.domibus.connector.persistence.largefiles.provider;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @CommonPersistenceTest
 @Disabled

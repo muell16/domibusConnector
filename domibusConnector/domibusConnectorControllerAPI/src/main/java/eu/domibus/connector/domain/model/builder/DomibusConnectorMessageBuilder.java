@@ -1,13 +1,14 @@
 package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.*;
+import eu.ecodex.dc5.message.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Builder for @see eu.domibus.connector.domain.model.DomibusConnectorMessage
+ * Builder for @see eu.ecodex.dc5.message.model.DomibusConnectorMessage
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  * 
@@ -135,8 +136,8 @@ public final class DomibusConnectorMessageBuilder {
     }
 
     public DomibusConnectorMessageBuilder copyPropertiesFrom(DomibusConnectorMessage message) {
-        this.messageDetails = DomibusConnectorMessageDetailsBuilder.create()
-                .copyPropertiesFrom(message.getMessageDetails())
+        this.messageDetails = message.getMessageDetails()
+                .toBuilder()
                 .build();
         this.connectorMessageId = message.getConnectorMessageId();
         this.businessDomainId = message.getMessageLaneId();

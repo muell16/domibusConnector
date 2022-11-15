@@ -1,6 +1,8 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
+
+import eu.domibus.connector.domain.model.LargeFileReference;
 import org.springframework.lang.Nullable;
 import org.springframework.core.style.ToStringCreator;
 

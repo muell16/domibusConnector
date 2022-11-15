@@ -8,13 +8,13 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachme
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
+import eu.ecodex.dc5.message.model.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

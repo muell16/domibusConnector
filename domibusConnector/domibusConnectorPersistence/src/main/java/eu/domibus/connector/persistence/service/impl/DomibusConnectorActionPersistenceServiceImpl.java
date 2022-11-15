@@ -1,13 +1,11 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,22 +25,22 @@ public class DomibusConnectorActionPersistenceServiceImpl implements eu.domibus.
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction() {
+    public DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction() {
         return getAction(DomibusConnectorActionPersistenceServiceImpl.RELAY_REMMD_ACCEPTANCE_REJECTION_ACTION);
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorAction getRelayREMMDFailure() {
+    public DomibusConnectorAction getRelayREMMDFailure() {
         return getAction(DomibusConnectorActionPersistenceServiceImpl.RELAY_REMMD_FAILURE_ACTION);
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction() {
+    public DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction() {
         return getAction(DomibusConnectorActionPersistenceServiceImpl.DELIVERY_NON_DELIVERY_TO_RECIPIENT_ACTION);
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
+    public DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
         return getAction(DomibusConnectorActionPersistenceServiceImpl.RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT_ACTION);
     }
 

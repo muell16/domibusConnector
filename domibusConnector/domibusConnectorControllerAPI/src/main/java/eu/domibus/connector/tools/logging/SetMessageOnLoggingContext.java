@@ -1,6 +1,6 @@
 package eu.domibus.connector.tools.logging;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.MDC;
 

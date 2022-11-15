@@ -1,13 +1,9 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
 import eu.domibus.connector.persistence.service.impl.helper.MapperHelper;
-
-import javax.annotation.Nullable;
-import java.io.UnsupportedEncodingException;
 
 public class MessageConfirmationMapper {
 

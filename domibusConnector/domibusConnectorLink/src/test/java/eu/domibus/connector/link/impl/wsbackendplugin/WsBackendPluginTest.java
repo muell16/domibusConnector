@@ -5,7 +5,6 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
@@ -17,6 +16,9 @@ import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebServ
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import eu.domibus.connector.ws.backend.webservice.GetMessageByIdRequest;
 import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;

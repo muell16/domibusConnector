@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import java.util.List;
 
 /**

@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.testutil.matcher;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import org.mockito.ArgumentMatcher;
 
 /**

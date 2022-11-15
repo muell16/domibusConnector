@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
+import eu.ecodex.dc5.message.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;

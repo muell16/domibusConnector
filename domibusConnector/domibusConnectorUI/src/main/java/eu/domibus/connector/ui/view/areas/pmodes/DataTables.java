@@ -22,6 +22,9 @@ import eu.domibus.connector.ui.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

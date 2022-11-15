@@ -39,7 +39,7 @@ public class DomibusConnectorServicePersistenceImplTest {
 //        Mockito.when(this.serviceDao.findById(eq("EPO")))
 //                .thenReturn(Optional.of(PersistenceEntityCreator.createServiceEPO()));
 //
-//        eu.domibus.connector.domain.model.DomibusConnectorService service = servicePersistenceService.getService("EPO");
+//        eu.ecodex.dc5.message.model.DomibusConnectorService service = servicePersistenceService.getService("EPO");
 //
 //        assertThat(service).isNotNull();
 //        assertThat(service.getService()).isEqualTo("EPO");

@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
 
 /**
  *

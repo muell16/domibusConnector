@@ -1,15 +1,11 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import lombok.Data;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
 
 
 /**

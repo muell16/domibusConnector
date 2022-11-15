@@ -1,10 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 

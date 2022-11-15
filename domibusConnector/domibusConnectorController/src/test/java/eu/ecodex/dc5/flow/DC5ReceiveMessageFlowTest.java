@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.testdata.TransitionCreator;
@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static eu.ecodex.dc5.core.model.DC5BusinessDocumentStatesEnum.CREATED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase

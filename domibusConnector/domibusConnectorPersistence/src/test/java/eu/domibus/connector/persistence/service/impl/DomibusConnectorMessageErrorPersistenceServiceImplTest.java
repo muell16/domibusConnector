@@ -8,6 +8,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
@@ -90,7 +91,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
 
 //    @Test
 //    public void testPersistMessageErrorFromException() {
-//        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+//        eu.ecodex.dc5.message.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
 //        //message.setDbMessageId(47L);
 //        Exception ex = new RuntimeException("hallo welt!");
 //        Class source = Integer.class;
@@ -106,7 +107,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
 
 //    @Test(expected=RuntimeException.class)
 //    public void testPersistMessageErrorFromException_messageHasNoId_shouldThrowException() {
-//        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+//        eu.ecodex.dc5.message.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
 //        //message.setDbMessageId(null);
 //        Exception ex = new RuntimeException("hallo welt!");
 //        Class source = Integer.class;
@@ -121,7 +122,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
 
     @Test
     public void testGetMessageErrors() throws Exception {
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(47L);
 
         List<PDomibusConnectorMessageError> errorList = Arrays.asList(new PDomibusConnectorMessageError[] {
@@ -142,7 +143,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
 
     @Test
     public void testGetMessageErrors_noResult_shouldReturnEmptyList() throws Exception {
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(47L);
 
         List<eu.domibus.connector.domain.model.DomibusConnectorMessageError> messageErrors = messageErrorPersistenceService.getMessageErrors(message);

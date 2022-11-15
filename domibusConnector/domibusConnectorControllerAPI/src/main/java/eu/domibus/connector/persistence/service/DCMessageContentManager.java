@@ -1,12 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
-
-import javax.annotation.Nonnull;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 
 /**
  * Takes a message and persists all big data of this message into

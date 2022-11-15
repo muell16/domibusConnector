@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 
 public interface PutOnQueue {
 

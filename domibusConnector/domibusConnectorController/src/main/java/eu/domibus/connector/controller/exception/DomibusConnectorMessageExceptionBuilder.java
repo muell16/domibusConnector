@@ -1,8 +1,8 @@
 
 package eu.domibus.connector.controller.exception;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 

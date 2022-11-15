@@ -2,7 +2,7 @@ package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 
 import javax.persistence.*;
 

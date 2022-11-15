@@ -1,8 +1,8 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DetachedSignature;
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.ecodex.dc5.message.model.DetachedSignature;
+import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 
 import javax.validation.constraints.NotNull;
 

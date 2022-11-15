@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
+import eu.ecodex.dc5.message.model.*;
 import org.junit.jupiter.api.*;
 import org.springframework.util.StreamUtils;
 

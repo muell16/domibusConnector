@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;

@@ -1,13 +1,9 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
@@ -63,13 +59,13 @@ public class RoutingRulePattern {
         } else if (as4Attribute == TokenType.AS4_ACTION) {
             return details.getAction().getAction();
         } else if (as4Attribute == TokenType.AS4_FINAL_RECIPIENT) {
-            return details.getFinalRecipient();
+            return details.getReceiver().getEcxAddress();
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
-            return details.getFromParty().getPartyIdType();
+            return details.getSender().getParty().getPartyIdType();
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
-            return details.getFromParty().getPartyId();
+            return details.getSender().getParty().getPartyId();
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
-            return details.getFromParty().getRole();
+            return details.getSender().getRole().toString();
         } else {
             throw new RuntimeException("Unsupported AS4 Attribute to match!");
         }

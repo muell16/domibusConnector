@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import java.io.Serializable;

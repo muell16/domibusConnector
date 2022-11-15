@@ -1,10 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 
 import javax.persistence.*;
-
-import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.*;
 
 @Entity
 @Table(name = PDomibusConnectorDetachedSignature.TABLE_NAME)

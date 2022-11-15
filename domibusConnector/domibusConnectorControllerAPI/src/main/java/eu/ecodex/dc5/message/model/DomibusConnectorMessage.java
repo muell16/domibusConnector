@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.domibus.connector.domain.model.DCMessageProcessSettings;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.BusinessDomainIdConverter;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import org.springframework.core.style.ToStringCreator;
@@ -32,7 +35,10 @@ public class DomibusConnectorMessage implements Serializable {
 	@Id
 	private long id;
 
-//	@NotNull
+	@NotNull
+	@OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
+	private DC5Ebms ebmsSegment;
+
 	@Valid
 	@Convert(converter = BusinessDomainIdConverter.class)
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
@@ -40,6 +46,8 @@ public class DomibusConnectorMessage implements Serializable {
 	@Valid
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
+
+
 	@NotNull
 	@Valid
 	@OneToOne(orphanRemoval = true)
@@ -48,8 +56,6 @@ public class DomibusConnectorMessage implements Serializable {
 	@OneToOne(orphanRemoval = true)
 	private DomibusConnectorMessageContent messageContent;
 
-//	@OneToMany
-//	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	//holds all message confirmations which are transported with this message
 	@OneToMany(cascade = CascadeType.ALL)
 	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<>();

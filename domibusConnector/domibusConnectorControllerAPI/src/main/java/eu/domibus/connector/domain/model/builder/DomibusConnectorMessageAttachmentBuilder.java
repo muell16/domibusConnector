@@ -1,9 +1,9 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DetachedSignature;
+import eu.ecodex.dc5.message.model.DetachedSignature;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
 
 /**
  *

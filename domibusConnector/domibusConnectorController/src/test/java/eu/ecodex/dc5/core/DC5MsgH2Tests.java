@@ -4,6 +4,7 @@ import eu.ecodex.dc5.core.model.*;
 import eu.ecodex.dc5.core.repository.DC5EbmsRepo;
 import eu.ecodex.dc5.core.repository.DC5MessageRepo;
 import eu.ecodex.dc5.core.repository.DC5PayloadRepo;
+import eu.ecodex.dc5.message.model.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

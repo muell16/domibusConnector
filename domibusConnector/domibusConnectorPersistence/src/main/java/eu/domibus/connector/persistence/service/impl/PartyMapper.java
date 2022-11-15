@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 
 import javax.annotation.Nullable;
@@ -10,8 +10,8 @@ public class PartyMapper {
     static @Nullable
     DomibusConnectorParty mapPartyToDomain(@Nullable PDomibusConnectorParty persistenceParty) {
         if (persistenceParty != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorParty p
-                    = new eu.domibus.connector.domain.model.DomibusConnectorParty(
+            DomibusConnectorParty p
+                    = new DomibusConnectorParty(
                     persistenceParty.getPartyId(),
                     persistenceParty.getPartyIdType(),
                     persistenceParty.getRole()

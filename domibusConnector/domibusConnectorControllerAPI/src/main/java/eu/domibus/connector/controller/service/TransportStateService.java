@@ -3,6 +3,8 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 

@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -14,10 +12,8 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +26,7 @@ import org.springframework.util.StreamUtils;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.dao.DomibusConnectorBigDataDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 
 
 /**

@@ -1,7 +1,6 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DCMessageContentManager;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import org.springframework.stereotype.Service;
 
 /**

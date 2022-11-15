@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
@@ -36,7 +36,7 @@ public class DomibusConnectorPartyPersistenceServiceImplTest {
 //        Mockito.when(this.domibusConnectorPartyDao.findById(eq(createPartyPKforPartyAT())))
 //                .thenReturn(Optional.of(createPartyAT()));
 
-        eu.domibus.connector.domain.model.DomibusConnectorParty party = partyPersistenceService.getParty("AT", "GW");
+        DomibusConnectorParty party = partyPersistenceService.getParty("AT", "GW");
 
         assertThat(party).isNotNull();
         assertThat(party.getPartyId()).isEqualTo("AT");
@@ -50,7 +50,7 @@ public class DomibusConnectorPartyPersistenceServiceImplTest {
 //        Mockito.when(this.domibusConnectorPartyDao.findOneByPartyId(eq("AT")))
 //                .thenReturn(createPartyAT());
 
-        eu.domibus.connector.domain.model.DomibusConnectorParty party = partyPersistenceService.getPartyByPartyId("AT");
+        DomibusConnectorParty party = partyPersistenceService.getPartyByPartyId("AT");
 
         assertThat(party).isNotNull();
         assertThat(party.getPartyId()).isEqualTo("AT");

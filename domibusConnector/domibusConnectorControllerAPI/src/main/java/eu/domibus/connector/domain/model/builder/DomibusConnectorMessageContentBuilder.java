@@ -1,10 +1,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-
-import java.util.Arrays;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
 
 /**
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }

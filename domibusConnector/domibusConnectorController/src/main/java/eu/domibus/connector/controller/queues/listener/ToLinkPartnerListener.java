@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

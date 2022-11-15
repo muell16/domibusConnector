@@ -1,7 +1,7 @@
 package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
 import org.apache.commons.lang3.ArrayUtils;
 
 public final class DomibusConnectorMessageConfirmationBuilder {

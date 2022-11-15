@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
@@ -64,7 +64,7 @@ public class DomibusConnectorServicePersistenceImpl implements DomibusConnectorS
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorService getService(String service) {
+    public DomibusConnectorService getService(String service) {
 //        PDomibusConnectorService srv = serviceDao.findById(service).get();
 //        return ServiceMapper.mapServiceToDomain(srv);
         return null;

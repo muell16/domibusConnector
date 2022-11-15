@@ -1,19 +1,19 @@
 
 package eu.domibus.connector.domain.test.util;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DetachedSignature;
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.ecodex.dc5.message.model.DetachedSignature;
+import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 

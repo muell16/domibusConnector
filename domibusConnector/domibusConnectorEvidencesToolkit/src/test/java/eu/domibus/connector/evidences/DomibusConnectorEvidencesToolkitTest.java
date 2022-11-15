@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
+import eu.ecodex.dc5.message.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

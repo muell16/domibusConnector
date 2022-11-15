@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 
 import javax.persistence.AttributeConverter;

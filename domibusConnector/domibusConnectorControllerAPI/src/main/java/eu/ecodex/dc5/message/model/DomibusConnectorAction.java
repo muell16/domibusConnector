@@ -1,25 +1,33 @@
-package eu.domibus.connector.domain.model;
+package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 
 /**
  * @author riederb
  * @version 1.0
  */
+@Entity
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class DomibusConnectorAction implements Serializable {
 
-	private Long dbKey;
+	@Id
+	@GeneratedValue
+	private Long id;
 	private String action;
 
-	/**
-	 * Default constructor, needed for frameworks
-	 * to serialize and deserialize objects of this class
-	 */
-	public DomibusConnectorAction() {}
 
 	/**
 	 *
@@ -38,11 +46,11 @@ public class DomibusConnectorAction implements Serializable {
 	}
 
 	public void setDbKey(Long dbKey) {
-		this.dbKey = dbKey;
+		this.id = dbKey;
 	}
 
 	public Long getDbKey() {
-		return dbKey;
+		return id;
 	}
 
 	@Override

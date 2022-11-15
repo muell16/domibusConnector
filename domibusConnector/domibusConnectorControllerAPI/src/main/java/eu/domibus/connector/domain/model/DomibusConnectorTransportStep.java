@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;

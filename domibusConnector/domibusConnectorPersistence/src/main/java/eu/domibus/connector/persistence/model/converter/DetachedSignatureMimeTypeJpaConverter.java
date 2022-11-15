@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

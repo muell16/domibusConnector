@@ -1,8 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
-import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Nullable;
 
@@ -12,8 +11,8 @@ public class ServiceMapper {
 	public
     DomibusConnectorService mapServiceToDomain(@Nullable PDomibusConnectorService persistenceService) {
         if (persistenceService != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorService service
-                    = new eu.domibus.connector.domain.model.DomibusConnectorService(
+            DomibusConnectorService service
+                    = new DomibusConnectorService(
                     persistenceService.getService(),
                     persistenceService.getServiceType()
             );

@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;

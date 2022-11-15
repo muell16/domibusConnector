@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 
 /**
  *

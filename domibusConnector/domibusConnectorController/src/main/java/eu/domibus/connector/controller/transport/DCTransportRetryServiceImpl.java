@@ -1,8 +1,7 @@
 package eu.domibus.connector.controller.transport;
 
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;

@@ -1,5 +1,9 @@
 package eu.domibus.connector.domain.model;
 
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

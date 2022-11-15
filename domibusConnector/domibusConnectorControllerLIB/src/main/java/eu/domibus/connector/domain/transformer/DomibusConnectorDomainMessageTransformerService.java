@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.ecodex.dc5.message.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -535,7 +536,7 @@ public class DomibusConnectorDomainMessageTransformerService {
                 DetachedSignature detachedSignature = new DetachedSignature(
                         Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
                         detachedSignatureTO.getDetachedSignatureName(),
-                        //                eu.domibus.connector.domain.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
+                        //                eu.ecodex.dc5.message.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
                         DomibusConnectorDomainDetachedSignatureEnumTransformer
                                 .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
                 );

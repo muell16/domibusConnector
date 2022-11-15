@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 //import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
@@ -29,7 +29,7 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorParty getParty(String partyId, String role) {
+    public DomibusConnectorParty getParty(String partyId, String role) {
 //        PDomibusConnectorPartyPK pk = new PDomibusConnectorPartyPK(partyId, role);
 //        PDomibusConnectorParty party = partyDao.findById(pk).get();
 //        PDomibusConnectorParty party = partyDao.findByPartyIdAndRoleAndDeletedIsFalse(partyId, role).get(0);
@@ -38,7 +38,7 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorParty getPartyByPartyId(String partyId) {
+    public DomibusConnectorParty getPartyByPartyId(String partyId) {
 //        PDomibusConnectorParty party = partyDao.findByPartyIdAndDeletedIsNot(partyId).get(0);
 //        return mapPartyToDomain(party);
         return null;
@@ -95,8 +95,8 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     @Nullable
     public DomibusConnectorParty mapPartyToDomain(@Nullable PDomibusConnectorParty persistenceParty) {
         if (persistenceParty != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorParty p
-                    = new eu.domibus.connector.domain.model.DomibusConnectorParty(
+            DomibusConnectorParty p
+                    = new DomibusConnectorParty(
                     persistenceParty.getPartyId(),
                     persistenceParty.getPartyIdType(),
                     persistenceParty.getRole()

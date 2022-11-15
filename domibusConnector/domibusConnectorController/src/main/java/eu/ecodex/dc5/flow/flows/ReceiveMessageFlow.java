@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.exception.ErrorCode;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.StepFailedException;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;

@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.queues.producer;
 
 import eu.domibus.connector.controller.queues.QueueHelper;
 import eu.domibus.connector.controller.service.HasManageableDlq;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
 
 import javax.jms.Message;
 import javax.jms.Queue;

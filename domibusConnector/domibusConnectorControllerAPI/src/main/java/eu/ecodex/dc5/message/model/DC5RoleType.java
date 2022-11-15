@@ -1,4 +1,4 @@
-package eu.ecodex.dc5.core.model;
+package eu.ecodex.dc5.message.model;
 
 public enum DC5RoleType {
     INITIATOR, RESPONDER

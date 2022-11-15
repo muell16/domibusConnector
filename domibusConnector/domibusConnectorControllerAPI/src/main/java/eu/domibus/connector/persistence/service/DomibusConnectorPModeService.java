@@ -2,6 +2,9 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.DomibusConnectorService;
 
 import java.util.List;
 import java.util.Optional;

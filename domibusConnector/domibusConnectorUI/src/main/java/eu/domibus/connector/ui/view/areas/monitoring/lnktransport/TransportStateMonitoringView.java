@@ -1,7 +1,5 @@
 package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
-import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusinessMessage;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +36,8 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
