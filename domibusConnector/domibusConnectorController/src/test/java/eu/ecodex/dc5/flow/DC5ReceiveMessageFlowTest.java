@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.testdata.TransitionCreator;
@@ -30,7 +30,7 @@ class DC5ReceiveMessageFlowTest {
     eu.ecodex.dc5.flow.api.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomain = new DC5TransformToDomain<DomibusConnectorMessageType>() {
 
         @Override
-        public DomibusConnectorMessage transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
             return DomainEntityCreator.createEpoMessage();
         }
     };
@@ -44,7 +44,7 @@ class DC5ReceiveMessageFlowTest {
 
     DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithException = new DC5TransformToDomain<DomibusConnectorMessageType>() {
         @Override
-        public DomibusConnectorMessage transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
             throw new TransformMessageException("ERROR");
         }
     };

@@ -9,7 +9,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.lib.logging.aspects.MDCSetterAspectConfiguration;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -57,7 +57,7 @@ public class ITCaseTestContext {
      * Use this interface to tamper with the test...
      */
     public interface DomibusConnectorGatewaySubmissionServiceInterceptor {
-        public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
+        public void submitToGateway(DC5Message message) throws DomibusConnectorGatewaySubmissionException;
     }
 
 
@@ -65,7 +65,7 @@ public class ITCaseTestContext {
      * Use this interface to tamper with the test...
      */
     public interface DomibusConnectorBackendDeliveryServiceInterceptor {
-        void deliveryToBackend(DomibusConnectorMessage message);
+        void deliveryToBackend(DC5Message message);
     }
 
     @Autowired
@@ -119,12 +119,12 @@ public class ITCaseTestContext {
         QueueBasedDomibusConnectorGatewaySubmissionService queueBasedDomibusConnectorGatewaySubmissionService;
 
         @Override
-        public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
+        public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
             if (message.getConnectorMessageId() == null) {
                 throw new IllegalArgumentException("connectorMessageId is null!");
             }
             try {
-                MessageTargetSource target = message.getMessageDetails().getDirection().getTarget();
+                MessageTargetSource target = message.getDirection().getTarget();
                 if (target == MessageTargetSource.GATEWAY) {
                     queueBasedDomibusConnectorGatewaySubmissionService.submitToGateway(message);
                 } else if (target == MessageTargetSource.BACKEND) {
@@ -148,9 +148,9 @@ public class ITCaseTestContext {
 
 //        @Autowired
 //        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
+        public BlockingQueue<DC5Message> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
 
-        public synchronized void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+        public synchronized void deliverMessageToBackend(DC5Message message) throws DomibusConnectorControllerException {
             interceptor.deliveryToBackend(message);
 
             LOGGER.info("Delivered Message [{}] to Backend", message);
@@ -167,10 +167,10 @@ public class ITCaseTestContext {
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToBackendClientStatus(transportId, state);
 
-            DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)
                     .build();
-            msg.getMessageDetails().setBackendMessageId(backendMsgId);
+            msg.getBackendData().setBackendMessageId(backendMsgId);
 
             toBackendDeliveredMessages.add(msg);
 
@@ -180,7 +180,7 @@ public class ITCaseTestContext {
             toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);
         }
 
-        public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {
+        public synchronized BlockingQueue<DC5Message> getQueue() {
             return this.toBackendDeliveredMessages;
         }
     }
@@ -195,9 +195,9 @@ public class ITCaseTestContext {
 
 //        @Autowired
 //        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
+        public BlockingQueue<DC5Message> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
 
-        public synchronized void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+        public synchronized void submitToGateway(DC5Message message) throws DomibusConnectorGatewaySubmissionException {
             interceptor.submitToGateway(message);
             LOGGER.info("Delivered Message [{}] to Gateway", message);
 
@@ -211,10 +211,10 @@ public class ITCaseTestContext {
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToGatewayStatus(dummyGW , state);
 
-            DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)
                     .build();
-            msg.getMessageDetails().setEbmsMessageId(ebmsId);
+            msg.getEbmsData().setEbmsMessageId(ebmsId);
 
             toGatewayDeliveredMessages.add(msg);
         }
@@ -223,7 +223,7 @@ public class ITCaseTestContext {
             toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
         }
 
-        public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {
+        public synchronized BlockingQueue<DC5Message> getQueue() {
             return this.toGatewayDeliveredMessages;
         }
 

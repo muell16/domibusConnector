@@ -1,6 +1,6 @@
 package eu.domibus.connector.tools.logging;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.MDC;
 
@@ -13,11 +13,11 @@ public class SetMessageOnLoggingContext {
      * puts the connector message id of the passed message
      * in the logging MDC context
      *  does nothing if domibusConnectorMessage parameter is null
-     * @param domibusConnectorMessage the message
+     * @param DC5Message the message
      */
-    public static void putConnectorMessageIdOnMDC(@Nullable DomibusConnectorMessage domibusConnectorMessage) {
-        if (domibusConnectorMessage != null) {
-            String connectorMessageId = domibusConnectorMessage.getConnectorMessageIdAsString();
+    public static void putConnectorMessageIdOnMDC(@Nullable DC5Message DC5Message) {
+        if (DC5Message != null) {
+            String connectorMessageId = DC5Message.getConnectorMessageIdAsString();
             putConnectorMessageIdOnMDC(connectorMessageId);
         } else {
             putConnectorMessageIdOnMDC((String)null);

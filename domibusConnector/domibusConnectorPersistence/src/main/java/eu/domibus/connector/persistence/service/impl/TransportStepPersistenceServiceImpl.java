@@ -7,7 +7,7 @@ import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
@@ -148,8 +148,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
             the message can be null if the format is not compatible to current connector version (old data)
          */
         try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())) {
-            DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
-            step.setTransportedMessage(domibusConnectorMessage);
+            DC5Message DC5Message = parser.readValueAs(DC5Message.class);
+            step.setTransportedMessage(DC5Message);
         } catch (IOException e) {
             LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
         }

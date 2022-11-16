@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.impl.wsgatewayplugin;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -76,7 +76,7 @@ class WsGatewayPluginTest {
 
     @Autowired
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+    public BlockingQueue<DC5Message> toConnectorSubmittedMessages;
 
 
     static TestGW testGwWebService;
@@ -120,7 +120,7 @@ class WsGatewayPluginTest {
         assertThat(domibsConnectorAcknowledgementType.isResult()).isTrue();
 
 
-        DomibusConnectorMessage poll = toConnectorSubmittedMessages.poll(30, TimeUnit.SECONDS);
+        DC5Message poll = toConnectorSubmittedMessages.poll(30, TimeUnit.SECONDS);
 
         assertThat(poll).isNotNull();
 
@@ -129,7 +129,7 @@ class WsGatewayPluginTest {
 
     @Test
     public void testSubmitToGw() throws Exception {
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
 //        gatewaySubmissionService.submitToGateway(message);
 
         DomibusConnectorMessageType msg = testGwWebService.deliveredMessagesList().poll(30, TimeUnit.SECONDS);

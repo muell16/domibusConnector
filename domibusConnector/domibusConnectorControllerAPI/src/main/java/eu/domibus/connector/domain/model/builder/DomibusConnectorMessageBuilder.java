@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 public final class DomibusConnectorMessageBuilder {
 
     private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
-    private DomibusConnectorMessageDetails messageDetails;
+    private DC5Ebms messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
-	private List<DomibusConnectorMessageConfirmation> transportedConfirmations = new ArrayList<>();
+	private List<DC5Confirmation> transportedConfirmations = new ArrayList<>();
 	private List<DomibusConnectorMessageError> messageErrors = new ArrayList<>();
     private DomibusConnectorMessageId connectorMessageId;
-    private List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
+    private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
 
     public static DomibusConnectorMessageBuilder createBuilder() {
         return new DomibusConnectorMessageBuilder();
@@ -47,7 +47,7 @@ public final class DomibusConnectorMessageBuilder {
      * @param msgDetails the messageDetails
      * @return the builder
      */
-    public DomibusConnectorMessageBuilder setMessageDetails(DomibusConnectorMessageDetails msgDetails) {
+    public DomibusConnectorMessageBuilder setMessageDetails(DC5Ebms msgDetails) {
         this.messageDetails = msgDetails;
         return this;
     }
@@ -85,12 +85,12 @@ public final class DomibusConnectorMessageBuilder {
      * @param confirmation the confirmation
      * @return the builder
      */
-    public DomibusConnectorMessageBuilder addTransportedConfirmations(DomibusConnectorMessageConfirmation confirmation) {
+    public DomibusConnectorMessageBuilder addTransportedConfirmations(DC5Confirmation confirmation) {
         this.transportedConfirmations.add(confirmation);
         return this;
     }
 
-    public DomibusConnectorMessageBuilder addTransportedConfirmations(List<DomibusConnectorMessageConfirmation> confirmations) {
+    public DomibusConnectorMessageBuilder addTransportedConfirmations(List<DC5Confirmation> confirmations) {
         this.transportedConfirmations.addAll(confirmations);
         return this;
     }
@@ -117,12 +117,12 @@ public final class DomibusConnectorMessageBuilder {
      * 
      * @return the created DomibusConnectorMessage
      */
-    public DomibusConnectorMessage build() {
-        DomibusConnectorMessage message = new DomibusConnectorMessage();
+    public DC5Message build() {
+        DC5Message message = new DC5Message();
         if (this.messageDetails == null) {
             throw new IllegalArgumentException("Setting message details is required!");
         }        
-        message.setMessageDetails(this.messageDetails);
+        message.setEbmsData(this.messageDetails);
         message.setConnectorMessageId(this.connectorMessageId);
         message.setMessageLaneId(this.businessDomainId);
         message.setMessageContent(this.messageContent);
@@ -135,8 +135,8 @@ public final class DomibusConnectorMessageBuilder {
         return message;
     }
 
-    public DomibusConnectorMessageBuilder copyPropertiesFrom(DomibusConnectorMessage message) {
-        this.messageDetails = message.getMessageDetails()
+    public DomibusConnectorMessageBuilder copyPropertiesFrom(DC5Message message) {
+        this.messageDetails = message.getEbmsData()
                 .toBuilder()
                 .build();
         this.connectorMessageId = message.getConnectorMessageId();
@@ -179,12 +179,12 @@ public final class DomibusConnectorMessageBuilder {
     }
 
 
-    public DomibusConnectorMessageBuilder addRelatedConfirmations(List<DomibusConnectorMessageConfirmation> collect) {
+    public DomibusConnectorMessageBuilder addRelatedConfirmations(List<DC5Confirmation> collect) {
         this.relatedMessageConfirmations = collect;
         return this;
     }
 
-    public DomibusConnectorMessageBuilder addRelatedConfirmation(DomibusConnectorMessageConfirmation c) {
+    public DomibusConnectorMessageBuilder addRelatedConfirmation(DC5Confirmation c) {
         this.relatedMessageConfirmations.add(c);
         return this;
     }

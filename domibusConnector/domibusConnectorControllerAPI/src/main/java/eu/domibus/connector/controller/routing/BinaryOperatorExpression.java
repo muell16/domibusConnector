@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 public class BinaryOperatorExpression extends Expression {
     private final TokenType operand;
@@ -14,7 +14,7 @@ public class BinaryOperatorExpression extends Expression {
     }
 
     @Override
-    boolean evaluate(DomibusConnectorMessage message) {
+    boolean evaluate(DC5Message message) {
         if (operand == TokenType.OR) {
             return exp1.evaluate(message) || exp2.evaluate(message);
         } else if (operand == TokenType.AND) {

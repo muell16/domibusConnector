@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import org.junit.jupiter.api.Disabled;
@@ -23,7 +23,7 @@ public class MessageConfirmationMapperTest {
         evidence.setType(EvidenceType.DELIVERY);
 
 
-        DomibusConnectorMessageConfirmation confirmation = MessageConfirmationMapper.mapFromDbToDomain(evidence);
+        DC5Confirmation confirmation = MessageConfirmationMapper.mapFromDbToDomain(evidence);
 
         assertThat(confirmation.getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
         assertThat(confirmation.getEvidence()).isEqualTo("test".getBytes());
@@ -35,7 +35,7 @@ public class MessageConfirmationMapperTest {
         evidence.setEvidence(null);
         evidence.setType(EvidenceType.DELIVERY);
 
-        DomibusConnectorMessageConfirmation confirmation = MessageConfirmationMapper.mapFromDbToDomain(evidence);
+        DC5Confirmation confirmation = MessageConfirmationMapper.mapFromDbToDomain(evidence);
 
         assertThat(confirmation.getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
         assertThat(confirmation.getEvidence()).isNull();

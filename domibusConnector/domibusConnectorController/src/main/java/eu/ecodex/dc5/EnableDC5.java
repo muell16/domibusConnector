@@ -20,6 +20,7 @@ import java.lang.annotation.*;
 @EnableTransactionManagement(order = 200)
 @Modulithic( //
         sharedModules = { //
+                "eu.ecodex.dc5.message", //
                 "eu.ecodex.dc5.core", //
                 "eu.ecodex.dc5.flow", //
                 "eu.ecodex.dc5.events", //

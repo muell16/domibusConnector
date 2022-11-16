@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,7 +29,7 @@ public class ToLinkPartnerListener {
     @JmsListener(destination = TO_LINK_QUEUE_BEAN)
     @Transactional(rollbackFor = Exception.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToLinkPartnerListener")
-    public void handleMessage(DomibusConnectorMessage message) {
+    public void handleMessage(DC5Message message) {
         String messageId = message.getConnectorMessageId().toString();
         MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
         try {

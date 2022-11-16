@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,13 +45,13 @@ public class RoutingRulePattern {
     }
 
 
-    public boolean matches(DomibusConnectorMessage message) {
+    public boolean matches(DC5Message message) {
         return this.expression.evaluate(message);
     }
 
 
-    static String extractAs4Value(DomibusConnectorMessage message, TokenType as4Attribute) {
-        DomibusConnectorMessageDetails details = message.getMessageDetails();
+    static String extractAs4Value(DC5Message message, TokenType as4Attribute) {
+        DC5Ebms details = message.getEbmsData();
         if (as4Attribute == TokenType.AS4_SERVICE_NAME) {
             return details.getService().getService();
         } else if (as4Attribute == TokenType.AS4_SERVICE_TYPE) {

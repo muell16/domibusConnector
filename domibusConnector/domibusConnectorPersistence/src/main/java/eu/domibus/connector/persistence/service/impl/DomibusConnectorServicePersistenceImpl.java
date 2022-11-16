@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
@@ -25,17 +25,17 @@ public class DomibusConnectorServicePersistenceImpl implements DomibusConnectorS
     }
 
     @Override
-    public DomibusConnectorService persistNewService(DomibusConnectorService newService) {
+    public DC5Service persistNewService(DC5Service newService) {
         PDomibusConnectorService dbService = ServiceMapper.mapServiceToPersistence(newService);
         dbService = this.serviceDao.save(dbService);
         return ServiceMapper.mapServiceToDomain(dbService);
     }
 
     @Override
-    public List<DomibusConnectorService> getServiceList() {
-        List<DomibusConnectorService> services = new ArrayList<>();
+    public List<DC5Service> getServiceList() {
+        List<DC5Service> services = new ArrayList<>();
         for (PDomibusConnectorService dbService : this.serviceDao.findAll()) {
-            DomibusConnectorService srv = ServiceMapper.mapServiceToDomain(dbService);
+            DC5Service srv = ServiceMapper.mapServiceToDomain(dbService);
             services.add(srv);
         }
         return services;
@@ -51,20 +51,20 @@ public class DomibusConnectorServicePersistenceImpl implements DomibusConnectorS
     }
 
     @Override
-    public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService newService) {
+    public DC5Service updateService(DC5Service oldService, DC5Service newService) {
         PDomibusConnectorService dbService = ServiceMapper.mapServiceToPersistence(newService);
         dbService = this.serviceDao.save(dbService);
         return ServiceMapper.mapServiceToDomain(dbService);
     }
 
     @Override
-    public void deleteService(DomibusConnectorService service) {
+    public void deleteService(DC5Service service) {
         PDomibusConnectorService dbService = ServiceMapper.mapServiceToPersistence(service);
         this.serviceDao.delete(dbService);
     }
 
     @Override
-    public DomibusConnectorService getService(String service) {
+    public DC5Service getService(String service) {
 //        PDomibusConnectorService srv = serviceDao.findById(service).get();
 //        return ServiceMapper.mapServiceToDomain(srv);
         return null;

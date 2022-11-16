@@ -3,9 +3,9 @@ package eu.domibus.connector.domain.model.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
@@ -22,14 +22,14 @@ public class DomainModelHelper {
     /**
      * Checks if the message is an evidence message
      *  <ul>
-     *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
-     *      <li>the message must have at least one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
+     *      <li>message content of the message must be null {@link DC5Message#getMessageContent()}</li>
+     *      <li>the message must have at least one confirmation {@link DC5Message#getTransportedMessageConfirmations()}</li>
      *  </ul>
      *
      * @param message - the message to check
      * @return true if it is a evidence message
      */
-    public static boolean isEvidenceMessage(DomibusConnectorMessage message) {
+    public static boolean isEvidenceMessage(DC5Message message) {
         if (message == null) {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
@@ -39,15 +39,15 @@ public class DomainModelHelper {
     /**
      * Checks if the message is an evidence trigger message
      *  <ul>
-     *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
-     *      <li>the message must contain exact one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
-     *      <li>the confirmation must have only a confirmation type - the evidence must be empty or null: ArrayUtils.isEmpty({@link DomibusConnectorMessageConfirmation#getEvidence()})</li>
+     *      <li>message content of the message must be null {@link DC5Message#getMessageContent()}</li>
+     *      <li>the message must contain exact one confirmation {@link DC5Message#getTransportedMessageConfirmations()}</li>
+     *      <li>the confirmation must have only a confirmation type - the evidence must be empty or null: ArrayUtils.isEmpty({@link DC5Confirmation#getEvidence()})</li>
      *  </ul>
      *
      * @param message - the message to check
      * @return true if it is a evidence trigger message
      */
-    public static boolean isEvidenceTriggerMessage(DomibusConnectorMessage message) {
+    public static boolean isEvidenceTriggerMessage(DC5Message message) {
         if (message == null) {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
@@ -57,11 +57,11 @@ public class DomainModelHelper {
 
     /**
      * The message is a businesss message if it is not an evidence message
-     * see also {@link #isEvidenceMessage(DomibusConnectorMessage)}
+     * see also {@link #isEvidenceMessage(DC5Message)}
      * @param message - the message to check
      * @return true if it is a business message
      */
-    public static boolean isBusinessMessage(DomibusConnectorMessage message) {
+    public static boolean isBusinessMessage(DC5Message message) {
         return !isEvidenceMessage(message);
     }
 
@@ -71,7 +71,7 @@ public class DomainModelHelper {
      * @return the evidence type of the first confirmation of the message
      */
     public static @Nullable
-    DomibusConnectorEvidenceType getEvidenceTypeOfEvidenceMessage(DomibusConnectorMessage message) {
+    DomibusConnectorEvidenceType getEvidenceTypeOfEvidenceMessage(DC5Message message) {
         if (message == null || message.getTransportedMessageConfirmations() == null || message.getTransportedMessageConfirmations().size() == 0) {
             return null;
         }
@@ -122,7 +122,7 @@ public class DomainModelHelper {
      * @param messageDetails
      * @return
      */
-    public static DomibusConnectorMessageDetails switchMessageDirection(DomibusConnectorMessageDetails messageDetails) {
+    public static DC5Ebms switchMessageDirection(DC5Ebms messageDetails) {
 //        DomibusConnectorMessageDetails details = DomibusConnectorMessageDetailsBuilder.create()
 //                .copyPropertiesFrom(messageDetails)
 //                .build();

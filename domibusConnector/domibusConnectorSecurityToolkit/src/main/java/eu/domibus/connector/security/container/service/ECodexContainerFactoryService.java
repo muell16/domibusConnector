@@ -1,7 +1,7 @@
 package eu.domibus.connector.security.container.service;
 
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.dss.service.CertificateSourceFromKeyStoreCreator;
 import eu.domibus.connector.dss.service.CommonCertificateVerifierFactory;
@@ -68,7 +68,7 @@ public class ECodexContainerFactoryService {
         this.commonCertificateVerifierFactory = commonCertificateVerifierFactory;
     }
 
-    public ECodexContainerService createECodexContainerService(DomibusConnectorMessage message) {
+    public ECodexContainerService createECodexContainerService(DC5Message message) {
 
         DSSECodexContainerService containerService = new DSSECodexContainerService(
                 createTechnicalBusinessDocumentValidationService(message),
@@ -85,7 +85,7 @@ public class ECodexContainerFactoryService {
         return new DSSECodexLegalValidationService();
     }
 
-    private TokenIssuer tokenIssuer(DomibusConnectorMessage message) {
+    private TokenIssuer tokenIssuer(DC5Message message) {
         String country = dcBusinessDocConfig.getCountry();
         TokenIssuer tokenIssuer = new TokenIssuer();
         tokenIssuer.setCountry(country);
@@ -96,7 +96,7 @@ public class ECodexContainerFactoryService {
         return tokenIssuer;
     }
 
-    public ECodexTechnicalValidationService createTechnicalBusinessDocumentValidationService(DomibusConnectorMessage message) {
+    public ECodexTechnicalValidationService createTechnicalBusinessDocumentValidationService(DC5Message message) {
         AdvancedSystemType advancedElectronicSystemType = getAdvancedSystemType(message);
         switch(advancedElectronicSystemType) {
             case SIGNATURE_BASED: return createDSSECodexTechnicalValidationService(dcBusinessDocConfig.getSignatureValidation());
@@ -105,7 +105,7 @@ public class ECodexContainerFactoryService {
         }
     }
 
-    private AdvancedSystemType getAdvancedSystemType(DomibusConnectorMessage message) {
+    private AdvancedSystemType getAdvancedSystemType(DC5Message message) {
         Objects.requireNonNull(message, "message is not allowed to be null");
         Objects.requireNonNull(message.getDcMessageProcessSettings(), "messageProcess settings are not allowed to be null!");
         AdvancedElectronicSystemType validationServiceName = message.getDcMessageProcessSettings().getValidationServiceName();
@@ -128,7 +128,7 @@ public class ECodexContainerFactoryService {
         return advancedElectronicSystemType;
     }
 
-    private ECodexTechnicalValidationService createDSSAuthenticationBasedValidationService(DomibusConnectorMessage message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
+    private ECodexTechnicalValidationService createDSSAuthenticationBasedValidationService(DC5Message message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
         Objects.requireNonNull(config, "AuthenticationValidationConfigurationProperties is not allowed to be null!");
         Class<? extends DCAuthenticationBasedTechnicalValidationServiceFactory> authenticatorServiceFactoryClass = config.getAuthenticatorServiceFactoryClass();
         DCAuthenticationBasedTechnicalValidationServiceFactory bean = applicationContext.getBean(authenticatorServiceFactoryClass);

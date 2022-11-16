@@ -2,7 +2,7 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
 
 import java.util.NoSuchElementException;
@@ -19,7 +19,7 @@ public enum StoreType {
     MESSAGE_ATTACHMENT("domibus_message_attachment", DomibusConnectorMessageAttachment.class),
     MESSAGE_ATTACHMENT_CONTENT("dcm_attachment", Object.class),
     MESSAGE_CONFIRMATION_XML("dcm_confirmation_xml", Object.class),
-    MESSAGE_CONFIRMATION("domibus_message_confirmation", DomibusConnectorMessageConfirmation.class);
+    MESSAGE_CONFIRMATION("domibus_message_confirmation", DC5Confirmation.class);
 
     private final String dbString;
     private final Class domainClazz;

@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.exception;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 /**
  * This exception should be thrown by a link implementation
@@ -9,19 +9,19 @@ import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
  */
 public class DomibusConnectorSubmitToLinkException extends DomibusConnectorMessageTransportException {
 
-    public DomibusConnectorSubmitToLinkException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason) {
+    public DomibusConnectorSubmitToLinkException(DC5Message message, DomibusConnectorRejectionReason reason) {
         super(message, reason);
     }
 
-    public DomibusConnectorSubmitToLinkException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason, Throwable cause) {
+    public DomibusConnectorSubmitToLinkException(DC5Message message, DomibusConnectorRejectionReason reason, Throwable cause) {
         super(message, reason, cause);
     }
 
-    public DomibusConnectorSubmitToLinkException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason, String reasonMessage, Throwable cause) {
+    public DomibusConnectorSubmitToLinkException(DC5Message message, DomibusConnectorRejectionReason reason, String reasonMessage, Throwable cause) {
         super(message, reason, reasonMessage, cause);
     }
 
-    public DomibusConnectorSubmitToLinkException(DomibusConnectorMessage message, String errorMessage) {
+    public DomibusConnectorSubmitToLinkException(DC5Message message, String errorMessage) {
         super(message, errorMessage);
     }
 

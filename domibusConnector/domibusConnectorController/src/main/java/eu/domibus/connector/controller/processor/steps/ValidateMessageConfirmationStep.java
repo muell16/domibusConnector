@@ -5,9 +5,9 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Action;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
@@ -36,38 +36,38 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "ValidateMessageConfirmationStep")
-    public boolean executeStep(final DomibusConnectorMessage domibusConnectorMessage) {
-        domibusConnectorMessage
+    public boolean executeStep(final DC5Message DC5Message) {
+        DC5Message
                 .getTransportedMessageConfirmations()
-                .forEach(c -> this.validateConfirmation(domibusConnectorMessage, c));
+                .forEach(c -> this.validateConfirmation(DC5Message, c));
 
-        if (domibusConnectorMessage.getTransportedMessageConfirmations().size() == 1) {
-            validateActionService(domibusConnectorMessage);
+        if (DC5Message.getTransportedMessageConfirmations().size() == 1) {
+            validateActionService(DC5Message);
         }
         return true;
     }
 
-    private void validateActionService(DomibusConnectorMessage domibusConnectorMessage) {
+    private void validateActionService(DC5Message DC5Message) {
         EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
-                configurationPropertyLoaderService.loadConfiguration(domibusConnectorMessage.getMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+                configurationPropertyLoaderService.loadConfiguration(DC5Message.getMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
         boolean enforcing = evidenceActionServiceConfigurationProperties.isEnforceServiceActionNames();
 
-        DomibusConnectorMessageConfirmation confirmation = domibusConnectorMessage.getTransportedMessageConfirmations().get(0);
+        DC5Confirmation confirmation = DC5Message.getTransportedMessageConfirmations().get(0);
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-        DomibusConnectorAction requiredEvidenceAction = confirmationCreatorService.createEvidenceAction(evidenceType);
+        DC5Action requiredEvidenceAction = confirmationCreatorService.createEvidenceAction(evidenceType);
 
-        DomibusConnectorAction action = domibusConnectorMessage.getMessageDetails().getAction();
+        DC5Action action = DC5Message.getEbmsData().getAction();
         if (!requiredEvidenceAction.equals(action)) {
             String error = String.format("Enforcing the AS4 action is [%s] and the action [%s] is illegal for this type [%s] of evidence", enforcing, action, evidenceType);
             if (enforcing) {
-                throwError(domibusConnectorMessage, error);
+                throwError(DC5Message, error);
             } else {
                 LOGGER.warn(error);
             }
         }
     }
 
-    private void validateConfirmation(DomibusConnectorMessage msg, DomibusConnectorMessageConfirmation confirmation) {
+    private void validateConfirmation(DC5Message msg, DC5Confirmation confirmation) {
         if (confirmation.getEvidenceType() == null) {
             throwError(msg, "The evidence type is null!");
         }
@@ -76,7 +76,7 @@ public class ValidateMessageConfirmationStep implements MessageProcessStep {
         }
     }
 
-    private void throwError(DomibusConnectorMessage msg, String text) {
+    private void throwError(DC5Message msg, String text) {
         throw new DomibusConnectorMessageException(msg, ValidateMessageConfirmationStep.class, text);
     }
 

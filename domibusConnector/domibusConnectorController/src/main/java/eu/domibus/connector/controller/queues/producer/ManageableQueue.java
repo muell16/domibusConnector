@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.queues.producer;
 
 import eu.domibus.connector.controller.queues.QueueHelper;
 import eu.domibus.connector.controller.service.HasManageableDlq;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 import javax.jms.Message;
 import javax.jms.Queue;
@@ -17,7 +17,7 @@ public abstract class ManageableQueue implements HasManageableDlq {
     }
 
     @Override
-    public void putOnQueue(DomibusConnectorMessage message) {
+    public void putOnQueue(DC5Message message) {
         queueHelper.putOnQueue(message);
     }
 

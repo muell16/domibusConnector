@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 
 /**
  *
@@ -28,14 +28,14 @@ public final class DomibusConnectorServiceBuilder {
         return this;
     }
     
-    public DomibusConnectorService build() {
+    public DC5Service build() {
         if (service == null) {
             throw new IllegalArgumentException("Service must be set!");
         }
-        return new DomibusConnectorService(service, serviceType);
+        return new DC5Service(service, serviceType);
     }
 
-    public DomibusConnectorServiceBuilder copyPropertiesFrom(DomibusConnectorService service) {
+    public DomibusConnectorServiceBuilder copyPropertiesFrom(DC5Service service) {
         this.service = service.getService();
         this.serviceType = service.getServiceType();
         return this;

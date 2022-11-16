@@ -27,15 +27,15 @@ public class VerifyPModesStep {
     }
 
 
-    private boolean executeStep(DomibusConnectorMessage domibusConnectorMessage,
+    private boolean executeStep(DC5Message DC5Message,
                                 ConnectorMessageProcessingProperties.PModeVerificationMode verificationMode) {
         LOGGER.debug("Verifying PModes with verification mode [{}]", verificationMode);
-        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = domibusConnectorMessage.getMessageLaneId();
-        DomibusConnectorMessageDetails messageDetails = domibusConnectorMessage.getMessageDetails();
+        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DC5Message.getMessageLaneId();
+        DC5Ebms messageDetails = DC5Message.getEbmsData();
 
         if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.RELAXED) {
 
-            Optional<DomibusConnectorAction> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
+            Optional<DC5Action> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
             if (action.isPresent()) {
                 messageDetails.setAction(action.get());
             } else {
@@ -44,7 +44,7 @@ public class VerifyPModesStep {
                 throw new RuntimeException("error, action not configured:" + messageDetails.getAction());
             }
 
-            Optional<DomibusConnectorService> service = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getService());
+            Optional<DC5Service> service = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getService());
             if (service.isPresent()) {
                 messageDetails.setService(service.get());
             } else {
@@ -53,42 +53,42 @@ public class VerifyPModesStep {
                 throw new RuntimeException("error, service not configured!" + messageDetails.getService());
             }
 
-            if (!StringUtils.hasText(messageDetails.getToParty().getPartyIdType())) {
-                LOGGER.debug("PMode verification mode is relaxed. Assuming ToParty PartyIdType [{}] as empty!", messageDetails.getToParty().getPartyIdType());
-                messageDetails.getToParty().setPartyIdType(null);
-            }
+//            if (!StringUtils.hasText(messageDetails.getToParty().getPartyIdType())) {
+//                LOGGER.debug("PMode verification mode is relaxed. Assuming ToParty PartyIdType [{}] as empty!", messageDetails.getToParty().getPartyIdType());
+//                messageDetails.getToParty().setPartyIdType(null);
+//            }
 
 //            an empty role is valid!
 //            if (!StringUtils.hasText(messageDetails.getToParty().getRole())) {
 //                LOGGER.debug("PMode verification mode is relaxed. Assuming ToParty Role [{}] as empty!", messageDetails.getToParty().getRole());
 //                messageDetails.getToParty().setRole(null);
 //            }
-            Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getToParty());
-            if (toParty.isPresent()) {
-                messageDetails.setToParty(toParty.get());
-            } else {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getToParty());
-                //TODO: improve exception
-                throw new RuntimeException("error, party not configured:" + messageDetails.getToParty());
-            }
+//            Optional<DomibusConnectorParty> toParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getToParty());
+//            if (toParty.isPresent()) {
+//                messageDetails.setToParty(toParty.get());
+//            } else {
+//                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getToParty());
+//                //TODO: improve exception
+//                throw new RuntimeException("error, party not configured:" + messageDetails.getToParty());
+//            }
 
-            if (!StringUtils.hasText(messageDetails.getFromParty().getPartyIdType())) {
-                LOGGER.debug("PMode verification mode is relaxed. Assuming FromParty PartyIdType [{}] as empty!", messageDetails.getFromParty().getPartyIdType());
-                messageDetails.getFromParty().setPartyIdType(null);
-            }
+//            if (!StringUtils.hasText(messageDetails.getFromParty().getPartyIdType())) {
+//                LOGGER.debug("PMode verification mode is relaxed. Assuming FromParty PartyIdType [{}] as empty!", messageDetails.getFromParty().getPartyIdType());
+//                messageDetails.getFromParty().setPartyIdType(null);
+//            }
 //          an empty role is valid!
 //            if (!StringUtils.hasText(messageDetails.getFromParty().getRole())) {
 //                LOGGER.debug("PMode verification mode is relaxed. Assuming FromParty Role [{}] as empty!", messageDetails.getFromParty().getRole());
 //                messageDetails.getFromParty().setRole(null);
 //            }
-            Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getFromParty());
-            if (fromParty.isPresent()) {
-                messageDetails.setFromParty(fromParty.get());
-            } else {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getFromParty());
-                //TODO: improve exception
-                throw new RuntimeException("error, party not configured:" + messageDetails.getFromParty());
-            }
+//            Optional<DomibusConnectorParty> fromParty = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getFromParty());
+//            if (fromParty.isPresent()) {
+//                messageDetails.setFromParty(fromParty.get());
+//            } else {
+//                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The toParty [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getFromParty());
+//                //TODO: improve exception
+//                throw new RuntimeException("error, party not configured:" + messageDetails.getFromParty());
+//            }
         }
         if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE) {
             LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE + " is not supported!");
@@ -101,24 +101,24 @@ public class VerifyPModesStep {
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
-    public void verifyOutgoing(DomibusConnectorMessage message) {
-        if (message.getMessageDetails().getFromParty().getRoleType() == null) {
-            message.getMessageDetails().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-        }
-        if (message.getMessageDetails().getToParty().getRoleType() == null) {
-            message.getMessageDetails().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        }
+    public void verifyOutgoing(DC5Message message) {
+//        if (message.getEbmsData().getFromParty().getRoleType() == null) {
+//            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+//        }
+//        if (message.getEbmsData().getToParty().getRoleType() == null) {
+//            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+//        }
         executeStep(message, connectorMessageProcessingProperties.getOutgoingPModeVerificationMode());
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
-    public void verifyIncoming(DomibusConnectorMessage message) {
-        if (message.getMessageDetails().getFromParty().getRoleType() == null) {
-            message.getMessageDetails().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-        }
-        if (message.getMessageDetails().getToParty().getRoleType() == null) {
-            message.getMessageDetails().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        }
+    public void verifyIncoming(DC5Message message) {
+//        if (message.getEbmsData().getFromParty().getRoleType() == null) {
+//            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
+//        }
+//        if (message.getEbmsData().getToParty().getRoleType() == null) {
+//            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
+//        }
         executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
     }
 

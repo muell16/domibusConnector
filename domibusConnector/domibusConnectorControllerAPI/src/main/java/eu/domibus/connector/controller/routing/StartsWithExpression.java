@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 public class StartsWithExpression extends MatchExpression {
 
@@ -13,7 +13,7 @@ public class StartsWithExpression extends MatchExpression {
     }
 
     @Override
-    boolean evaluate(DomibusConnectorMessage message) {
+    boolean evaluate(DC5Message message) {
         return RoutingRulePattern.extractAs4Value(message, as4Attribute).startsWith(startsWithString);
     }
 

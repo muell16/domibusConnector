@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
@@ -42,7 +42,7 @@ public interface TransportStateService {
      * @param message
      * @return
      */
-    public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+    public TransportId createTransportFor(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 

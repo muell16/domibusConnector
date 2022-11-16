@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.exception.ErrorCode;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.StepFailedException;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
@@ -27,8 +27,8 @@ public class ReceiveMessageFlow {
     @Transactional
     public <T> ReceiveMessageFlowResult receiveMessage(T message, DC5TransformToDomain<T> transform) {
         try {
-            DomibusConnectorMessage msg = transformMessageStep.transformMessage(message, transform);
-            DomibusConnectorMessage dc5Msg = saveMessageStep.saveNewMessage(msg);
+            DC5Message msg = transformMessageStep.transformMessage(message, transform);
+            DC5Message dc5Msg = saveMessageStep.saveNewMessage(msg);
             eventPublisher.publishEvent(NewMessageStoredEvent.of(dc5Msg.getId()));
             return ReceiveMessageFlowResult.getSuccess();
         } catch (StepFailedException stepFailedException) {

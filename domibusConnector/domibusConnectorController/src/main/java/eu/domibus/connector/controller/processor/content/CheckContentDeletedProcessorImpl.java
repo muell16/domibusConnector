@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.processor.content;
 
 import eu.domibus.connector.controller.spring.ContentDeletionConfigurationProperties;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
@@ -10,6 +10,7 @@ import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,18 +32,14 @@ import java.util.stream.Collectors;
  */
 @Service
 @ConditionalOnProperty(prefix = ContentDeletionConfigurationProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
+@RequiredArgsConstructor
 public class CheckContentDeletedProcessorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessorImpl.class);
 
     private final LargeFilePersistenceService largeFilePersistenceService;
-    private final DCMessagePersistenceService messagePersistenceService;
+//    private final DCMessagePersistenceService messagePersistenceService;
 
-    public CheckContentDeletedProcessorImpl(LargeFilePersistenceService largeFilePersistenceService,
-                                            DCMessagePersistenceService messagePersistenceService) {
-        this.largeFilePersistenceService = largeFilePersistenceService;
-        this.messagePersistenceService = messagePersistenceService;
-    }
 
     @Scheduled(fixedDelayString = "#{" + ContentDeletionConfigurationProperties.BEAN_NAME + ".checkTimeout.milliseconds}")
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "checkContentDeletedProcessor")
@@ -53,7 +50,8 @@ public class CheckContentDeletedProcessorImpl {
     }
 
     private void checkDelete(DomibusConnectorMessageId id, List<LargeFileReference> references) {
-        DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
+//        DC5Message msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
+        DC5Message msg = null;
         String messageIdString = msg == null ? "" : msg.getConnectorMessageId().getConnectorMessageId();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageIdString)) {
             if (msg == null) {
@@ -65,11 +63,11 @@ public class CheckContentDeletedProcessorImpl {
                         .collect(Collectors.toList());
                 LOGGER.debug("Deleting references [{}] with no associated business message", collect);
                 collect.forEach(this::deleteReference);
-            } else if (msg.getMessageDetails().getConfirmed() != null || msg.getMessageDetails().getRejected() != null) {
-                //delete refs when business msg already rejected or confirmed
-                LOGGER.debug("Message with id [{}] already confirmed/rejected - deleting content [{}]", id, references);
-                references.stream()
-                        .forEach(this::deleteReference);
+//            } else if (msg.getEbmsData().getConfirmed() != null || msg.getEbmsData().getRejected() != null) {
+//                //delete refs when business msg already rejected or confirmed
+//                LOGGER.debug("Message with id [{}] already confirmed/rejected - deleting content [{}]", id, references);
+//                references.stream()
+//                        .forEach(this::deleteReference);
             } else {
                 LOGGER.debug("Message with connector message id [{}] is older then 7 days. Deleting reference anyway.", id);
                 ZonedDateTime oneWeekAgo = ZonedDateTime.now().minusDays(7);

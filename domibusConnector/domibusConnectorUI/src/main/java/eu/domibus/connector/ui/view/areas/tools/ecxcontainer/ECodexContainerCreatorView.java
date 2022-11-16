@@ -11,9 +11,8 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.ui.utils.RoleRequired;
@@ -95,11 +94,12 @@ public class ECodexContainerCreatorView extends VerticalLayout {
             DSSDocument document = new InMemoryDocument(bytes, fileName);
 
 
-            DomibusConnectorMessage theMessage = DomibusConnectorMessageBuilder.createBuilder()
-                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
-                            .withOriginalSender("TheOriginalSender")
-                            .build())
-                    .build();
+            DC5Message theMessage = null;
+//            DC5Message theMessage = DomibusConnectorMessageBuilder.createBuilder()
+//                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+//                            .withOriginalSender("TheOriginalSender")
+//                            .build())
+//                    .build();
 
             ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(theMessage);
             BusinessContent businessContent = new BusinessContent();

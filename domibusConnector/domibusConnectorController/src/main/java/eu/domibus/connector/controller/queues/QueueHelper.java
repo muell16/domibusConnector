@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.queues;
 
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.controller.service.HasManageableDlq;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +34,7 @@ public class QueueHelper implements HasManageableDlq {
     }
 
     @Override
-    public void putOnQueue(DomibusConnectorMessage message) {
+    public void putOnQueue(DC5Message message) {
         jmsTemplate.convertAndSend(destination, message);
     }
 
@@ -75,7 +75,7 @@ public class QueueHelper implements HasManageableDlq {
     @Override
     public void moveMsgFromDlqToQueue(Message msg) {
         try {
-            final DomibusConnectorMessage c = (DomibusConnectorMessage) jmsTemplate.receiveSelectedAndConvert(msg.getJMSDestination(), "JMSMessageID = '" + msg.getJMSMessageID() + "'");
+            final DC5Message c = (DC5Message) jmsTemplate.receiveSelectedAndConvert(msg.getJMSDestination(), "JMSMessageID = '" + msg.getJMSMessageID() + "'");
             putOnQueue(c);
         } catch (JMSException e) {
             e.printStackTrace();

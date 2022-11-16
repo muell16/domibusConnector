@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.test.util;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 
 import org.junit.jupiter.api.Disabled;
@@ -24,7 +24,7 @@ public class LoadStoreMessageFromPathTest {
 
         Resource r = new ClassPathResource("testmessages/msg2/");
 
-        DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(r);
+        DC5Message message = LoadStoreMessageFromPath.loadMessageFrom(r);
 
 
         assertThat(message).isNotNull();
@@ -43,7 +43,7 @@ public class LoadStoreMessageFromPathTest {
 
         Resource r = new FileSystemResource("./target/testmsg/msg1/");
 
-        DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
+        DC5Message message = DomainEntityCreator.createEpoMessage();
 
         LoadStoreMessageFromPath.storeMessageTo(r, message);
     }

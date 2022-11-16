@@ -4,23 +4,17 @@ package eu.domibus.connector.testdata;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 
-import org.apache.cxf.helpers.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.*;
 import java.util.List;
 import java.util.Properties;
@@ -35,6 +29,8 @@ import javax.annotation.Nullable;
  */
 public class LoadStoreTransitionMessage {
 
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadStoreTransitionMessage.class);
 
     public static final String READ_LOCK_FILE_NAME = "edit.lock";
@@ -42,7 +38,6 @@ public class LoadStoreTransitionMessage {
     public static final String MESSAGE_PROPERTIES_PROPERTY_FILE_NAME = "message.properties";
     public static final String SERVICE_NAME_PROP_NAME = "service";
     public static final String SERVICE_TYPE_PROP_NAME = "service.type";
-    public static final String NATIONAL_ID_PROP_NAME = "message.national-id";
     public static final String EBMS_ID_PROP_NAME = "message.ebms-id";
     public static final String BACKEND_CLIENT_NAME_PROP_NAME = "message.backend-client-name";
     public static final String MESSAGE_CONTENT_XML_PROP_NAME = "message.content.xml";
@@ -67,6 +62,11 @@ public class LoadStoreTransitionMessage {
 
     public static String MESSAGE_CONFIRMATIONS_PREFIX = "message.confirmation";
     public static String MESSAGE_ATTACHMENT_PREFIX = "message.attachment";
+
+    public static final String BACKEND_CONVERSATION_ID_PROP_NAME = "backend.conversation-id";
+    public static final String BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME = "backend.ref-to-message-id";
+    public static final String BACKEND_MESSAGE_ID_PROP_NAME = "backend.message-id";
+
 
     private Path basicFolder;
 
@@ -150,7 +150,7 @@ public class LoadStoreTransitionMessage {
     }
 
     private void storeMessageDetails(DomibusConnectorMessageDetailsType messageDetails) {
-        putIfNotNull(NATIONAL_ID_PROP_NAME, messageDetails.getBackendMessageId());
+        putIfNotNull(BACKEND_MESSAGE_ID_PROP_NAME, messageDetails.getBackendMessageId());
         putIfNotNull(EBMS_ID_PROP_NAME, messageDetails.getEbmsMessageId());
         putIfNotNull(CONVERSATION_ID_PROP_NAME, messageDetails.getConversationId());
         putIfNotNull(FINAL_RECIPIENT_PROP_NAME, messageDetails.getFinalRecipient());
@@ -521,7 +521,7 @@ public class LoadStoreTransitionMessage {
         messageDetails.setEbmsMessageId(messageProperties.getProperty(EBMS_ID_PROP_NAME));
         messageDetails.setRefToMessageId(messageProperties.getProperty(REF_TO_MESSAGE_ID_PROP_NAME));
 
-        messageDetails.setBackendMessageId(messageProperties.getProperty(NATIONAL_ID_PROP_NAME));
+        messageDetails.setBackendMessageId(messageProperties.getProperty(BACKEND_MESSAGE_ID_PROP_NAME));
 
         messageDetails.setOriginalSender(messageProperties.getProperty(ORIGINAL_SENDER_NAME_PROP_NAME));
         messageDetails.setFinalRecipient(messageProperties.getProperty(FINAL_RECIPIENT_PROP_NAME));

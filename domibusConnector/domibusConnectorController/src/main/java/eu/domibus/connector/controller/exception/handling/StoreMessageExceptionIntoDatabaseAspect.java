@@ -2,7 +2,7 @@
 package eu.domibus.connector.controller.exception.handling;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
@@ -57,7 +57,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
         }
         
       
-        DomibusConnectorMessage message = exception.getDomibusConnectorMessage();        
+        DC5Message message = exception.getDomibusConnectorMessage();
         if (message != null && message.getConnectorMessageIdAsString() != null) {
             
             DomibusConnectorMessageErrorBuilder messageErrorBuilder = DomibusConnectorMessageErrorBuilder.createBuilder()

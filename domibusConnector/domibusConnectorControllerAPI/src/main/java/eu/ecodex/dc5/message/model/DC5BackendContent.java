@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class DCBackendContent {
+public class DC5BackendContent {
 
     @Id
     @GeneratedValue

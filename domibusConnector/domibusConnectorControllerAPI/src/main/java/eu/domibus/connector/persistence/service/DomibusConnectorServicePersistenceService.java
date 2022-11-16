@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import java.util.List;
 
 /**
@@ -12,15 +12,15 @@ import java.util.List;
 @Deprecated
 public interface DomibusConnectorServicePersistenceService {
 
-    public DomibusConnectorService persistNewService(DomibusConnectorService newService);
+    public DC5Service persistNewService(DC5Service newService);
     
-    public List<DomibusConnectorService> getServiceList();
+    public List<DC5Service> getServiceList();
     
-    public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService newService);
+    public DC5Service updateService(DC5Service oldService, DC5Service newService);
     
-    public void deleteService(DomibusConnectorService service);
+    public void deleteService(DC5Service service);
 
-    public DomibusConnectorService getService(String service);
+    public DC5Service getService(String service);
 
 	List<String> getServiceListString();
 

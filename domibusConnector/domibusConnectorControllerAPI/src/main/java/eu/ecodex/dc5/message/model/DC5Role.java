@@ -1,21 +1,22 @@
 package eu.ecodex.dc5.message.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder(toBuilder = true)
 public class DC5Role {
     private String role;
     private DC5RoleType roleType;
-
-    public DC5Role() {
-
-    }
-
-    public DC5Role(String role, DC5RoleType roleType) {
-        this.role = role;
-        this.roleType = roleType;
-    }
 
     public String getRole() {
         return role;

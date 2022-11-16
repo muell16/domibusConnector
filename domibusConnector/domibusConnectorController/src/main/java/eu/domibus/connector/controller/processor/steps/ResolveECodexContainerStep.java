@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -22,8 +22,8 @@ public class ResolveECodexContainerStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "ResolveECodexContainerStep")
-    public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
-        securityToolkit.validateContainer(domibusConnectorMessage);
+    public boolean executeStep(DC5Message DC5Message) {
+        securityToolkit.validateContainer(DC5Message);
         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully resolved eCodexContainer");
         return true;
     }

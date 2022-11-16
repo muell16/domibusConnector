@@ -7,9 +7,9 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -44,21 +44,22 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    public List<DomibusConnectorAction> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction searchAction) {
+    public List<DC5Action> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action searchAction) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
             return new ArrayList<>();
         }
-        List<DomibusConnectorAction> foundActions = findByExample(ActionMapper.mapActionToPersistence(searchAction), currentPModeSetOptional)
-                .map(ActionMapper::mapActionToDomain)
-                .collect(Collectors.toList());
-        return foundActions;
+//        List<DC5Action> foundActions = findByExample(ActionMapper.mapActionToPersistence(searchAction), currentPModeSetOptional)
+//                .map(ActionMapper::mapActionToDomain)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
-    public Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction searchAction) {
-        return getConfiguredSingleDB(lane, ActionMapper.mapActionToPersistence(searchAction))
-                .map(ActionMapper::mapActionToDomain);
+    public Optional<DC5Action> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action searchAction) {
+//        return getConfiguredSingleDB(lane, ActionMapper.mapActionToPersistence(searchAction))
+//                .map(ActionMapper::mapActionToDomain);
+        return null;
     }
 
     public Optional<PDomibusConnectorAction> getConfiguredSingleDB(DomibusConnectorBusinessDomain.BusinessDomainId lane, PDomibusConnectorAction searchAction) {
@@ -94,18 +95,18 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    public Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService searchService) {
+    public Optional<DC5Service> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service searchService) {
         return getConfiguredSingleDB(lane, ServiceMapper.mapServiceToPersistence(searchService))
                 .map(ServiceMapper::mapServiceToDomain);
     }
 
     @Override
-    public List<DomibusConnectorService> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService searchService) {
+    public List<DC5Service> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service searchService) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
             return new ArrayList<>();
         }
-        List<DomibusConnectorService> foundServices = findByExampleStream(ServiceMapper.mapServiceToPersistence(searchService), currentPModeSetOptional)
+        List<DC5Service> foundServices = findByExampleStream(ServiceMapper.mapServiceToPersistence(searchService), currentPModeSetOptional)
                 .map(ServiceMapper::mapServiceToDomain)
                 .collect(Collectors.toList());
         return foundServices;
@@ -243,9 +244,9 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
             throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
         }
 
-        connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
-        connectorPModeSet.getActions().forEach(a -> a.setDbKey(null));
-        connectorPModeSet.getServices().forEach(s -> s.setDbKey(null));
+//        connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
+//        connectorPModeSet.getActions().forEach(a -> a.setDbKey(null));
+//        connectorPModeSet.getServices().forEach(s -> s.setDbKey(null));
 
         Optional<PDomibusConnectorMessageLane> messageLaneOptional = messageLaneDao.findByName(lane);
         PDomibusConnectorMessageLane pDomibusConnectorMessageLane = messageLaneOptional.orElseThrow(() -> new RuntimeException(String.format("No message lane found with name [%s]", lane)));
@@ -304,16 +305,17 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                 .collect(Collectors.toSet());
     }
 
-    private Set<PDomibusConnectorService> mapServiceListToDb(List<DomibusConnectorService> services) {
+    private Set<PDomibusConnectorService> mapServiceListToDb(List<DC5Service> services) {
         return services.stream()
                 .map(ServiceMapper::mapServiceToPersistence)
                 .collect(Collectors.toSet());
     }
 
-    private Set<PDomibusConnectorAction> mapActionListToDb(List<DomibusConnectorAction> actions) {
-        return actions.stream()
-                .map(ActionMapper::mapActionToPersistence)
-                .collect(Collectors.toSet());
+    private Set<PDomibusConnectorAction> mapActionListToDb(List<DC5Action> actions) {
+//        return actions.stream()
+//                .map(ActionMapper::mapActionToPersistence)
+//                .collect(Collectors.toSet());
+        return null;
     }
 
 
@@ -351,12 +353,12 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                         .map(PartyMapper::mapPartyToDomain)
                         .collect(Collectors.toList())
         );
-        pModeSet.setActions(
-                dbPmodes.getActions()
-                .stream()
-                .map(ActionMapper::mapActionToDomain)
-                .collect(Collectors.toList())
-        );
+//        pModeSet.setActions(
+//                dbPmodes.getActions()
+//                .stream()
+////                .map(ActionMapper::mapActionToDomain)
+//                .collect(Collectors.toList())
+//        );
         pModeSet.setServices(
                 dbPmodes.getServices()
                 .stream()

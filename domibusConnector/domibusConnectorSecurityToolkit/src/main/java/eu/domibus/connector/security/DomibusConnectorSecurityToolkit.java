@@ -1,7 +1,7 @@
 package eu.domibus.connector.security;
 
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
 /**
@@ -12,8 +12,8 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
  */
 public interface DomibusConnectorSecurityToolkit {
 
-    DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
+    DC5Message validateContainer(DC5Message message) throws DomibusConnectorSecurityException;
 
-    DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
+    DC5Message buildContainer(DC5Message message) throws DomibusConnectorSecurityException;
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.*;
 /**
  * The DomibusConnectorMessageContent holds the main content of a message. This is
  * the XML data of the main Form of the message and the printable document that
- * most of the {@link DomibusConnectorAction} require.
+ * most of the {@link DC5Action} require.
  *
  * A message is a business message only if a messageContent is
  * present
@@ -30,10 +30,10 @@ public class DomibusConnectorMessageContent implements Serializable {
 	public long id;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private DCEcodexContent ecodexContent;
+	private DC5EcodexContent ecodexContent;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private DCBackendContent businessContent;
+	private DC5BackendContent businessContent;
 
 	@Override
     public String toString() {

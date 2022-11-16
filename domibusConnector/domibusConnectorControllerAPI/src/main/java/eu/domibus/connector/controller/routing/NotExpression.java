@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 public class NotExpression extends Expression {
 
@@ -13,7 +13,7 @@ public class NotExpression extends Expression {
     }
 
     @Override
-    boolean evaluate(DomibusConnectorMessage message) {
+    boolean evaluate(DC5Message message) {
         return !exp1.evaluate(message);
     }
 

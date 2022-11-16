@@ -7,7 +7,6 @@ import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperti
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.ecodex.dc5.message.model.*;
@@ -60,9 +59,9 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      *
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
-    public void submitSameDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
+    public void submitSameDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
-        DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        DC5Message evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
         submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
     }
 
@@ -80,59 +79,60 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      *
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
-    public void submitOppositeDirection(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
+    public void submitOppositeDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
 //        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
-        DomibusConnectorMessage evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        DC5Message evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
         submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
     }
 
 
 
-    private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageId messageId, DomibusConnectorMessage businessMessage, DomibusConnectorMessageConfirmation confirmation) {
+    private DC5Message buildEvidenceMessage(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+
         if (messageId == null) {
             messageId = messageIdGenerator.generateDomibusConnectorMessageId();
             LOGGER.info("MessageId is null starting new message transport.");
         }
-        try (final CloseableThreadContext.Instance ctc =
-                     CloseableThreadContext.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId.getConnectorMessageId())) {
+//        try (final CloseableThreadContext.Instance ctc =
+//                     CloseableThreadContext.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId.getConnectorMessageId())) {
+//
+//            DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
+//            DC5Action evidenceAction = confirmationCreator.createEvidenceAction(evidenceType);
+//
+//            DC5Ebms messageDetails = DomibusConnectorMessageDetailsBuilder.create()
+//                    .copyPropertiesFrom(businessMessage.getEbmsData())
+//                    .withAction(evidenceAction)
+//                    .build();
+//            messageDetails.setRefToMessageId(businessMessage.getEbmsData().getEbmsMessageId());
+//            messageDetails.setRefToBackendMessageId(businessMessage.getEbmsData().getBackendMessageId());
+//
+//            DC5Message evidenceMessage = DomibusConnectorMessageBuilder.createBuilder()
+//                    .addTransportedConfirmations(confirmation)
+//                    .setMessageDetails(messageDetails)
+//                    .build();
+//
+//            evidenceMessage.setMessageLaneId(businessMessage.getMessageLaneId());
+//            if (evidenceMessage.getMessageLaneId() == null) {
+//                evidenceMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+//            }
+//
+//            evidenceMessage.setConnectorMessageId(messageId);
+//            evidenceMessage.getEbmsData().setCausedBy(businessMessage.getConnectorMessageId());
+//            LOGGER.info("Sending evidence as confirmation message with ID [{}]", evidenceMessage.getConnectorMessageId());
 
-            DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-            DomibusConnectorAction evidenceAction = confirmationCreator.createEvidenceAction(evidenceType);
-
-            DomibusConnectorMessageDetails messageDetails = DomibusConnectorMessageDetailsBuilder.create()
-                    .copyPropertiesFrom(businessMessage.getMessageDetails())
-                    .withAction(evidenceAction)
-                    .build();
-            messageDetails.setRefToMessageId(businessMessage.getMessageDetails().getEbmsMessageId());
-            messageDetails.setRefToBackendMessageId(businessMessage.getMessageDetails().getBackendMessageId());
-
-            DomibusConnectorMessage evidenceMessage = DomibusConnectorMessageBuilder.createBuilder()
-                    .addTransportedConfirmations(confirmation)
-                    .setMessageDetails(messageDetails)
-                    .build();
-
-            evidenceMessage.setMessageLaneId(businessMessage.getMessageLaneId());
-            if (evidenceMessage.getMessageLaneId() == null) {
-                evidenceMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-            }
-
-            evidenceMessage.setConnectorMessageId(messageId);
-            evidenceMessage.getMessageDetails().setCausedBy(businessMessage.getConnectorMessageId());
-            LOGGER.info("Sending evidence as confirmation message with ID [{}]", evidenceMessage.getConnectorMessageId());
-
-            return evidenceMessage;
-        }
+            return null;
+//        }
     }
 
-    private void validateParameters(DomibusConnectorMessage businessMessage) {
+    private void validateParameters(DC5Message businessMessage) {
         if (businessMessage == null) {
             throw new IllegalArgumentException("The businessMessage cannot be null here!");
         }
-        if (businessMessage.getMessageDetails() == null) {
+        if (businessMessage.getEbmsData() == null) {
             throw new IllegalArgumentException("The messageDetails of the businessMessage cannot be null here!");
         }
-        if (businessMessage.getMessageDetails().getDirection() == null) {
+        if (businessMessage.getDirection() == null) {
             throw new IllegalArgumentException("The direction is not allowed to be null here!");
         }
     }

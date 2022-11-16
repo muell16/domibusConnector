@@ -6,11 +6,14 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.BusinessDomainIdConverter;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,7 +23,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * This domain object contains all data of a message. At least the {@link
- * DomibusConnectorMessageDetails} and the {@link DomibusConnectorMessageContent}
+ * DC5Ebms} and the {@link DomibusConnectorMessageContent}
  * must be given at the time of creation as they represent the minimum structure
  * of a message. While the message is processed by the domibusConnector, the data
  * inside this structure changes up to the point where the message is completely
@@ -29,15 +32,17 @@ import javax.validation.constraints.NotNull;
  */
 @Validated
 @Entity
-public class DomibusConnectorMessage implements Serializable {
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class DC5Message implements Serializable {
 
 	@GeneratedValue
 	@Id
 	private long id;
-
-	@NotNull
-	@OneToOne(targetEntity = DC5Ebms.class, cascade = CascadeType.ALL, optional = false) // unidirectional mapping
-	private DC5Ebms ebmsSegment;
 
 	@Valid
 	@Convert(converter = BusinessDomainIdConverter.class)
@@ -47,103 +52,47 @@ public class DomibusConnectorMessage implements Serializable {
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
 
+	@NotNull
+	@Valid
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+	private DC5Ebms ebmsData;
 
 	@NotNull
 	@Valid
-	@OneToOne(orphanRemoval = true)
-	private DomibusConnectorMessageDetails messageDetails;
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+	private DC5BackendData backendData;
+
+	@Convert(converter = MessageTargetSourceConverter.class)
+	private MessageTargetSource target;
+
+	@Convert(converter = MessageTargetSourceConverter.class)
+	private MessageTargetSource source;
+
+	private String gatewayLinkName;
+
+	private String backendLinkName;
 
 	@OneToOne(orphanRemoval = true)
 	private DomibusConnectorMessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message
 	@OneToMany(cascade = CascadeType.ALL)
-	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<>();
+	@Singular("transportedMessageConfirmation")
+	private List<DC5Confirmation> transportedMessageConfirmations = new ArrayList<>();
 
 
 	//holds all message confirmations which are related to this business message
 	@Transient
-	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
+	@Singular
+	@OneToMany()
+	private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
 	//holds all errors which occured during message processing...
 
-	@Transient
+	@Transient //TODO: move to process
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
-	@Transient
+	@Transient  //TODO: move to process
 	private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
-
-
-	/**
-	 * Default constructor, needed for frameworks
-	 * to serialize and deserialize objects of this class
-	 */
-    public DomibusConnectorMessage() {}
-
-	/**
-	 * This constructor initializes an instance of a DomibusConnectorMessage in case
-	 * it is not a confirmation message. At least the messageDetails and the
-	 * messageContent must be given.
-	 * 
-	 * @param messageDetails    The details for message routing.
-	 * @param messageContent    The content of the message.
-     * 
-     * 
-	 */
-	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageContent messageContent){
-	   this.messageDetails = messageDetails;
-	   this.messageContent = messageContent;
-	}
-
-    /**
-	 * This constructor initializes an instance of a DomibusConnectorMessage in case
-	 * it is not a confirmation message. At least the messageDetails and the
-	 * messageContent must be given.
-	 * 
-     * @param connectorMessageId The internal connector message process id
-	 * @param messageDetails    The details for message routing.
-	 * @param messageContent    The content of the message.
-	 */
-	public DomibusConnectorMessage(
-            final String connectorMessageId,
-            final DomibusConnectorMessageDetails messageDetails, 
-            final DomibusConnectorMessageContent messageContent){
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
-        this.messageDetails = messageDetails;
-        this.messageContent = messageContent;
-	}
-    
-	/**
-	 * This constructor initializes an instance of a DomibusConnectorMessage in case
-	 * it is a confirmation message. At least the messageDetails and the
-	 * messageConfirmation must be given.
-	 * 
-	 * @param messageDetails messageDetails
-	 * @param messageConfirmation messageConfirmation
-     * 
-     * 
-	 */
-	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageConfirmation messageConfirmation){
-	   this.messageDetails = messageDetails;
-	   addTransportedMessageConfirmation(messageConfirmation);
-	}
-    
-    /**
-	 * This constructor initializes an instance of a DomibusConnectorMessage in case
-	 * it is a confirmation message. At least the messageDetails and the
-	 * messageConfirmation must be given.
-	 * 
-     * @param connectorMessageId internal connector message process id
-	 * @param messageDetails messageDetails
-	 * @param messageConfirmation messageConfirmation
-	 */
-    public DomibusConnectorMessage(
-            final String connectorMessageId, 
-            final DomibusConnectorMessageDetails messageDetails, 
-            final DomibusConnectorMessageConfirmation messageConfirmation) {
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
-        this.messageDetails = messageDetails;
-        addTransportedMessageConfirmation(messageConfirmation);
-    }
 
 
     @JsonProperty
@@ -157,12 +106,12 @@ public class DomibusConnectorMessage implements Serializable {
 		this.connectorMessageId = messageId;
 	}
 
-	public DomibusConnectorMessageDetails getMessageDetails(){
-		return this.messageDetails;
+	public DC5Ebms getEbmsData(){
+		return this.ebmsData;
 	}
 
-	public void setMessageDetails(DomibusConnectorMessageDetails messageDetails) {
-		this.messageDetails = messageDetails;
+	public void setEbmsData(DC5Ebms messageDetails) {
+		this.ebmsData = messageDetails;
 	}
 
 	public DomibusConnectorMessageContent getMessageContent(){
@@ -173,11 +122,11 @@ public class DomibusConnectorMessage implements Serializable {
 //		return this.messageAttachments;
 //	}
 
-	public List<DomibusConnectorMessageConfirmation> getTransportedMessageConfirmations(){
+	public List<DC5Confirmation> getTransportedMessageConfirmations(){
 		return this.transportedMessageConfirmations;
 	}
 
-	public List<DomibusConnectorMessageConfirmation> getRelatedMessageConfirmations() {
+	public List<DC5Confirmation> getRelatedMessageConfirmations() {
 		return relatedMessageConfirmations;
 	}
 
@@ -190,7 +139,7 @@ public class DomibusConnectorMessage implements Serializable {
 	}
 
 	/**
-	 * Method to add a new {@link DomibusConnectorMessageConfirmation} to the
+	 * Method to add a new {@link DC5Confirmation} to the
 	 * collection.
 	 *
 	 * The confirmations here are related to the message document/content
@@ -201,7 +150,7 @@ public class DomibusConnectorMessage implements Serializable {
 	 * @param confirmation    confirmation
 	 * @return for return see: {@link List#add(Object)}
 	 */
-	public boolean addRelatedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
+	public boolean addRelatedMessageConfirmation(final DC5Confirmation confirmation){
 		return this.relatedMessageConfirmations.add(confirmation);
 	}
 
@@ -216,7 +165,7 @@ public class DomibusConnectorMessage implements Serializable {
 //	}
 
 	/**
-	 * Method to add a new {@link DomibusConnectorMessageConfirmation} to the
+	 * Method to add a new {@link DC5Confirmation} to the
 	 * collection. This collection holds only Confirmations which are transported
 	 * with this message. In case of a business message they are also related
 	 * to it.
@@ -225,7 +174,7 @@ public class DomibusConnectorMessage implements Serializable {
 	 * 
 	 * @param confirmation    confirmation
 	 */
-	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
+	public boolean addTransportedMessageConfirmation(final DC5Confirmation confirmation){
 		if (!this.transportedMessageConfirmations.contains(confirmation)) {
 			return this.transportedMessageConfirmations.add(confirmation);
 		} else {
@@ -276,7 +225,7 @@ public class DomibusConnectorMessage implements Serializable {
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("connectorMessageId", this.connectorMessageId);
-        builder.append("messageDetails", this.messageDetails);
+        builder.append("messageDetails", this.ebmsData);
         return builder.toString();
 	}
 
@@ -298,6 +247,15 @@ public class DomibusConnectorMessage implements Serializable {
 
 	public void setBusinessDomainId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
 		this.businessDomainId = businessDomainId;
+	}
+
+	public void setDirection(DomibusConnectorMessageDirection gatewayToBackend) {
+		this.setSource(gatewayToBackend.getSource());
+		this.setTarget(gatewayToBackend.getTarget());
+	}
+
+	public DomibusConnectorMessageDirection getDirection() {
+		return DomibusConnectorMessageDirection.fromMessageTargetSource(this.source, this.target);
 	}
 
 }

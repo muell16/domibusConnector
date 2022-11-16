@@ -10,7 +10,7 @@ import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
@@ -144,9 +144,9 @@ public class DeleteMessagesFromQueuesTest {
 
         // Arrange
         final QueueHelper sut = new QueueHelper(q1, dlq1, nonXaJmsTemplate);
-        DomibusConnectorMessage msgDlq = DomainEntityCreator.createMessage();
+        DC5Message msgDlq = DomainEntityCreator.createMessage();
         msgDlq.setConnectorMessageId(new DomibusConnectorMessageId("msgDlq"));
-        DomibusConnectorMessage msgQueue = DomainEntityCreator.createMessage();
+        DC5Message msgQueue = DomainEntityCreator.createMessage();
         msgQueue.setConnectorMessageId(new DomibusConnectorMessageId("msgQueue"));
         nonXaJmsTemplate.convertAndSend(q1, msgQueue); // put something on the queue
         nonXaJmsTemplate.convertAndSend(dlq1, msgDlq); // put something on the dlq

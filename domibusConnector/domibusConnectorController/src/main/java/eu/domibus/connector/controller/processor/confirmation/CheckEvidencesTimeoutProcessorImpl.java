@@ -4,11 +4,13 @@ import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,21 +24,15 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
     private static Logger LOGGER = LogManager.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
     private final EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
-    private final DCMessagePersistenceService persistenceService;
+//    private final DCMessagePersistenceService persistenceService;
     private final CreateEvidenceTimeoutConfirmationStep createEvidenceTimeoutConfirmationStep;
 
-    public CheckEvidencesTimeoutProcessorImpl(EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties,
-                                              DCMessagePersistenceService persistenceService,
-                                              CreateEvidenceTimeoutConfirmationStep createEvidenceTimeoutConfirmationStep) {
-        this.evidencesTimeoutConfigurationProperties = evidencesTimeoutConfigurationProperties;
-        this.persistenceService = persistenceService;
-        this.createEvidenceTimeoutConfirmationStep = createEvidenceTimeoutConfirmationStep;
-    }
 
     @Override
     @Scheduled(fixedDelayString = "#{evidencesTimeoutConfigurationProperties.checkTimeout.milliseconds}")
@@ -62,12 +58,12 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkNotRejectedNorConfirmedWithoutRelayREMMD() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected and not confirmed yet and without a RELAY_REMMD_ACCEPTANCE/REJECTION evidence
-        List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
-        LOGGER.trace("Checking [{}] messages for not rejected nor confirmed withoutRelayREMMD", messages.size());
-        messages.forEach(this::checkNotRejectedNorConfirmedWithoutRelayREMMD);
+//        List<DC5Message> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+//        LOGGER.trace("Checking [{}] messages for not rejected nor confirmed withoutRelayREMMD", messages.size());
+//        messages.forEach(this::checkNotRejectedNorConfirmedWithoutRelayREMMD);
     }
 
-    void checkNotRejectedNorConfirmedWithoutRelayREMMD(DomibusConnectorMessage message) {
+    void checkNotRejectedNorConfirmedWithoutRelayREMMD(DC5Message message) {
         String messageId = message.getConnectorMessageId().toString();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
@@ -97,12 +93,12 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkNotRejectedNorConfirmedAndWithoutDelivery() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected yet and without a DELIVERY/NON_DELIVERY evidence
-        List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
-        LOGGER.trace("Checking [{}] messages for confirmation timeout notRejectedWithoutDelivery", messages.size());
-        messages.forEach(this::checkNotRejectedNorConfirmedAndWithoutDelivery);
+//        List<DC5Message> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
+//        LOGGER.trace("Checking [{}] messages for confirmation timeout notRejectedWithoutDelivery", messages.size());
+//        messages.forEach(this::checkNotRejectedNorConfirmedAndWithoutDelivery);
     }
 
-    void checkNotRejectedNorConfirmedAndWithoutDelivery(DomibusConnectorMessage message) {
+    void checkNotRejectedNorConfirmedAndWithoutDelivery(DC5Message message) {
         String messageId = message.getConnectorMessageId().toString();
         try (org.slf4j.MDC.MDCCloseable mdcCloseable = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
@@ -129,24 +125,26 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         }
     }
 
-    private Instant getDeliveryTime(DomibusConnectorMessage message) {
-        DomibusConnectorMessageDetails details = message.getMessageDetails();
-        if (details.getDirection() == null) {
-            throw new IllegalArgumentException("Message direction is not set!");
-        }
-        Date deliveryDate;
-        switch (details.getDirection()) {
-            case GATEWAY_TO_BACKEND:
-                deliveryDate = details.getDeliveredToBackend();
-                break;
-            case BACKEND_TO_GATEWAY:
-                deliveryDate = details.getDeliveredToGateway();
-                break;
-            default:
-                throw new IllegalStateException("Unknown message direction, cannot process any timeouts!");
+    private Instant getDeliveryTime(DC5Message message) {
+        DC5Ebms details = message.getEbmsData();
 
-        }
-        return deliveryDate.toInstant();
+//        if (details.getDirection() == null) {
+//            throw new IllegalArgumentException("Message direction is not set!");
+//        }
+//        Date deliveryDate;
+//        switch (details.getDirection()) {
+//            case GATEWAY_TO_BACKEND:
+//                deliveryDate = details.getDeliveredToBackend();
+//                break;
+//            case BACKEND_TO_GATEWAY:
+//                deliveryDate = details.getDeliveredToGateway();
+//                break;
+//            default:
+//                throw new IllegalStateException("Unknown message direction, cannot process any timeouts!");
+//        }
+
+//        return deliveryDate.toInstant();
+        throw new NotImplementedException("todo");
     }
 
 

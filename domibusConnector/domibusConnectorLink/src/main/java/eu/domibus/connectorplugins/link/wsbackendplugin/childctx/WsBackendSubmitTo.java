@@ -6,7 +6,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -38,7 +38,7 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
 
 
     @Override
-    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         Optional<ActiveLinkPartner> activeLinkPartnerByName = linkManagerService.getActiveLinkPartnerByName(linkPartnerName);
         if (activeLinkPartnerByName.isPresent()) {
             WsBackendPluginActiveLinkPartner activeLinkPartner = (WsBackendPluginActiveLinkPartner) activeLinkPartnerByName.get();
@@ -53,7 +53,7 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
         }
     }
 
-    void makeMessageReadyForPull(DomibusConnectorMessage message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
+    void makeMessageReadyForPull(DC5Message message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
 //        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
         TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
@@ -65,7 +65,7 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
 
     }
 
-    void pushMessage(DomibusConnectorMessage message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
+    void pushMessage(DC5Message message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
         TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());

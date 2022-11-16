@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
@@ -82,17 +82,17 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
     }
 
     @Override
-    public DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+    public DC5Message validateContainer(DC5Message message) throws DomibusConnectorSecurityException {
         recieveContainerContents(message);
         return message;
     }
 
     @Override
-    public DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+    public DC5Message buildContainer(DC5Message message) throws DomibusConnectorSecurityException {
         return this.createContainer(message);
     }
 
-    BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
+    BusinessContent buildBusinessContent(@Nonnull DC5Message message) {
         if (message.getMessageContent() == null) {
             throw new IllegalArgumentException("messageContent is null!");
         }
@@ -172,7 +172,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
      * @param message the message to process
      * @return - the processed message (same object as passed by param message)
      */
-    public DomibusConnectorMessage createContainer(@Nonnull DomibusConnectorMessage message) {
+    public DC5Message createContainer(@Nonnull DC5Message message) {
 
         ECodexContainerService containerService = eCodexContainerFactoryService.createECodexContainerService(message);
 
@@ -240,7 +240,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
      *
      * @param message - the message to process
      */
-    public void recieveContainerContents(DomibusConnectorMessage message) {
+    public void recieveContainerContents(DC5Message message) {
         ECodexContainerService containerService = eCodexContainerFactoryService.createECodexContainerService(message);
 
 
@@ -477,7 +477,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
     }
 
 
-    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DomibusConnectorMessage message, DSSDocument document, String identifier) //, String name, String mimeType)
+    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DC5Message message, DSSDocument document, String identifier) //, String name, String mimeType)
             throws IOException {
         LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
 

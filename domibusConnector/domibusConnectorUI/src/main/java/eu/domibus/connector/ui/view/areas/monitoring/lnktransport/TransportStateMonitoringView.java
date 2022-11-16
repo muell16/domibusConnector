@@ -36,7 +36,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.link.service.DCLinkFacade;
@@ -164,7 +164,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
     private HorizontalLayout buttonProvider(DomibusConnectorTransportStep step) {
         HorizontalLayout layout = new HorizontalLayout();
 
-        Optional<DomibusConnectorMessage> msg = step.getTransportedMessage();
+        Optional<DC5Message> msg = step.getTransportedMessage();
         DomibusConnectorMessageId connectorMessageId = step.getConnectorMessageId();
 
         //goto business message button

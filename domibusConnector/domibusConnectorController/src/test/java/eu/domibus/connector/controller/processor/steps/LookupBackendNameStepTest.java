@@ -4,9 +4,9 @@ import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Action;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.DisplayName;
@@ -43,15 +43,15 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setService(DomainEntityCreator.createServiceEPO());
-        message.getMessageDetails().setConnectorBackendClientName("BACKEND_ON_THE_MESSAGE");
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
+        message.setBackendLinkName("BACKEND_ON_THE_MESSAGE");
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("BACKEND_ON_THE_MESSAGE");
+        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ON_THE_MESSAGE");
     }
 
 
@@ -75,15 +75,15 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setService(DomainEntityCreator.createServiceEPO());
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
 //        message.getMessageDetails().setConnectorBackendClientName("EPO_backend");
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("DEFAULT_BACKEND");
+        assertThat(message.getBackendLinkName()).isEqualTo("DEFAULT_BACKEND");
     }
 
     //regel4: setze das default backend
@@ -106,15 +106,15 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setService(DomainEntityCreator.createServiceEPO());
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
 //        message.getMessageDetails().setConnectorBackendClientName("EPO_backend");
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("DEFAULT_BACKEND");
+        assertThat(message.getBackendLinkName()).isEqualTo("DEFAULT_BACKEND");
     }
 
     //regel2: gibt es eine Nachricht mit der gleichen ConversationId, die ein Backend gesetzt hat? Wenn ja nimm das.
@@ -124,10 +124,10 @@ class LookupBackendNameStepTest {
         final ConfigurationPropertyManagerService configMock = Mockito.mock(ConfigurationPropertyManagerService.class);
 
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
-        List<DomibusConnectorMessage> messagesByConversationId = new ArrayList<>();
-        final DomibusConnectorMessage otherMessageWithConvId = DomainEntityCreator.createMessage();
-        otherMessageWithConvId.getMessageDetails().setConversationId("fooConvId");
-        otherMessageWithConvId.getMessageDetails().setConnectorBackendClientName("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
+        List<DC5Message> messagesByConversationId = new ArrayList<>();
+        final DC5Message otherMessageWithConvId = DomainEntityCreator.createMessage();
+        otherMessageWithConvId.getEbmsData().setConversationId("fooConvId");
+        otherMessageWithConvId.setBackendLinkName("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
         messagesByConversationId.add(otherMessageWithConvId);
         Mockito.when(peristenceMock.findMessagesByConversationId(any())).thenReturn(messagesByConversationId);
 
@@ -145,14 +145,14 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setService(DomainEntityCreator.createServiceEPO());
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
+        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
     }
 
     //regel3: Werte die Routing Rules aus, die erste  Routing Rule die matched gewinnt. Matching geht nach routing rule priorität.
@@ -175,15 +175,15 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setAction(new DomibusConnectorAction("ConTest_Form"));
-        message.getMessageDetails().setService(new DomibusConnectorService("Connector-TEST", "urn:e-codex:services:"));
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
+        message.getEbmsData().setService(new DC5Service("Connector-TEST", "urn:e-codex:services:"));
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE");
+        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE");
     }
 
     //regel3: Werte die Routing Rules aus, die erste  Routing Rule die matched gewinnt. Matching geht nach routing rule priorität.
@@ -214,15 +214,15 @@ class LookupBackendNameStepTest {
 
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
-        final DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.getMessageDetails().setAction(new DomibusConnectorAction("ConTest_Form"));
-        message.getMessageDetails().setService(new DomibusConnectorService("Connector-TEST", "urn:e-codex:services:"));
+        final DC5Message message = DomainEntityCreator.createMessage();
+        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
+        message.getEbmsData().setService(new DC5Service("Connector-TEST", "urn:e-codex:services:"));
 
         // Act
         sut.executeStep(message);
 
         // Assert
-        assertThat(message.getMessageDetails().getConnectorBackendClientName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY");
+        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY");
     }
 }
 

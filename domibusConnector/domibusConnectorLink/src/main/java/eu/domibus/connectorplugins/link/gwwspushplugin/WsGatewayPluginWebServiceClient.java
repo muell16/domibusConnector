@@ -6,7 +6,7 @@ import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -39,7 +39,7 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
 
     @Override
 //    @Transactional //(Transactional.TxType.REQUIRES_NEW)
-    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setStatus(TransportState.PENDING);
         TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);

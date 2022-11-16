@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.impl.gwwspullplugin;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
@@ -93,7 +93,7 @@ class DCGatewayPullPluginTest {
 
     @Autowired
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+    public BlockingQueue<DC5Message> toConnectorSubmittedMessages;
 
 
     @Test
@@ -126,9 +126,9 @@ class DCGatewayPullPluginTest {
         Mockito.reset(testGwWebService.getMessageByIdMock());
         Mockito.when(testGwWebService.getMessageByIdMock().getMessageById(Mockito.any(GetMessageByIdRequest.class))).thenReturn(msg1, msg2);
 
-        DomibusConnectorMessage poll1 = toConnectorSubmittedMessages.poll(120, TimeUnit.SECONDS);
+        DC5Message poll1 = toConnectorSubmittedMessages.poll(120, TimeUnit.SECONDS);
         assertThat(poll1).isNotNull();
-        DomibusConnectorMessage poll2 = toConnectorSubmittedMessages.poll(30, TimeUnit.SECONDS);
+        DC5Message poll2 = toConnectorSubmittedMessages.poll(30, TimeUnit.SECONDS);
         assertThat(poll2).isNotNull();
 
 
@@ -136,7 +136,7 @@ class DCGatewayPullPluginTest {
 
     @Test
     public void testSubmitToGw() throws Exception {
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
 //        gatewaySubmissionService.submitToGateway(message);
 
         DomibusConnectorMessageType msg = testGwWebService.submittedMessagesList().poll(30, TimeUnit.SECONDS);

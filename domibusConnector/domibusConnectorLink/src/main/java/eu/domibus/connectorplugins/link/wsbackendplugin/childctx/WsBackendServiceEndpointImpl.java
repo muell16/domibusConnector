@@ -7,7 +7,7 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -133,8 +133,8 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                     DomibusConnectorLinkPartner linkPartner = backendClientInfoByName.get();
                     try(MDC.MDCCloseable mdc = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkPartnerName().getLinkName())) {
 
-                        DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest, domibusConnectorMessageId);
-                        msg.getMessageDetails().setConnectorBackendClientName(linkPartner.getLinkPartnerName().getLinkName());
+                        DC5Message msg = transformerService.transformTransitionToDomain(submitMessageRequest, domibusConnectorMessageId);
+                        msg.setBackendLinkName(linkPartner.getLinkPartnerName().getLinkName());
                         LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
 
                         submitToConnector.submitToConnector(msg, linkPartner);
@@ -193,7 +193,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
             DomibusConnectorTransportStep domibusConnectorTransportStep = transportStepById.get();
             if (domibusConnectorTransportStep.isInPendingState()) {
                 if (domibusConnectorTransportStep.getTransportedMessage().isPresent()) {
-                    DomibusConnectorMessage msg = domibusConnectorTransportStep.getTransportedMessage().get();
+                    DC5Message msg = domibusConnectorTransportStep.getTransportedMessage().get();
 
                     //add post invoke message processor
                     MessageContext mContext = webServiceContext.getMessageContext();

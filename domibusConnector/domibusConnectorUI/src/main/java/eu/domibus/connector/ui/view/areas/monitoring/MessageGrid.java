@@ -4,7 +4,7 @@ package eu.domibus.connector.ui.view.areas.monitoring;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.ui.controller.QueueController;
 import eu.domibus.connector.ui.dto.WebQueue;
 
@@ -83,8 +83,8 @@ public class MessageGrid extends Grid<Message> {
     private String getConnectorId(Message msg) {
         String result = null;
         try {
-            final DomibusConnectorMessage domibusConnectorMessage = (DomibusConnectorMessage) queueController.getConverter().fromMessage(msg);
-            result = domibusConnectorMessage.getConnectorMessageId().getConnectorMessageId();
+            final DC5Message DC5Message = (DC5Message) queueController.getConverter().fromMessage(msg);
+            result = DC5Message.getConnectorMessageId().getConnectorMessageId();
         } catch (JMSException e) {
             e.printStackTrace();
         }

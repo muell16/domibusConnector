@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.test.util.ConnectorControllerTestDomainCreator;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import org.junit.jupiter.api.Assertions;
@@ -72,7 +72,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
 
     @Test
     public void testIfExceptionIsPersisted() {
-        DomibusConnectorMessage message = ConnectorControllerTestDomainCreator.createMessage();
+        DC5Message message = ConnectorControllerTestDomainCreator.createMessage();
         message.setConnectorMessageId("testid");
         try {
             passExceptionProcessor.processMessage(message);
@@ -88,7 +88,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     @Test
     public void testPassException() {
         Assertions.assertThrows(DomibusConnectorMessageException.class, () -> {
-            DomibusConnectorMessage message = ConnectorControllerTestDomainCreator.createMessage();
+            DC5Message message = ConnectorControllerTestDomainCreator.createMessage();
             message.setConnectorMessageId("testid");
             passExceptionProcessor.processMessage(message);
         });
@@ -96,7 +96,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     
     @Test
     public void testAspectNotPassException() {        
-        DomibusConnectorMessage message = ConnectorControllerTestDomainCreator.createMessage();
+        DC5Message message = ConnectorControllerTestDomainCreator.createMessage();
         message.setConnectorMessageId("testid");
         noPassExceptionProcessor.processMessage(message);
         
@@ -110,7 +110,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
 
         @Override
         @StoreMessageExceptionIntoDatabase(passException=false)
-        public void processMessage(DomibusConnectorMessage message) {
+        public void processMessage(DC5Message message) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setText("i am an exception!")
                     .setSourceObject(this)
@@ -124,7 +124,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
 
         @Override
         @StoreMessageExceptionIntoDatabase(passException=true)
-        public void processMessage(DomibusConnectorMessage message) {
+        public void processMessage(DC5Message message) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setText("i am an exception!")
                     .setSourceObject(this)

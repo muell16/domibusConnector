@@ -1,8 +1,8 @@
 package eu.domibus.connector.domain.configuration;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Action;
+import eu.ecodex.dc5.message.model.DC5Service;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -76,7 +76,7 @@ public class EvidenceActionServiceConfigurationProperties {
         }
 
         @Nullable
-        public DomibusConnectorAction getConnectorAction() {
+        public DC5Action getConnectorAction() {
             if (this.action == null) {
                 return null;
             }
@@ -84,7 +84,7 @@ public class EvidenceActionServiceConfigurationProperties {
         }
 
         @Nullable
-        public DomibusConnectorService getConnectorService() {
+        public DC5Service getConnectorService() {
             if (this.service == null) {
                 return null;
             }
@@ -113,8 +113,8 @@ public class EvidenceActionServiceConfigurationProperties {
             this.action = action;
         }
 
-        public DomibusConnectorAction getConnectorAction() {
-            return new DomibusConnectorAction(this.action);
+        public DC5Action getConnectorAction() {
+            return new DC5Action(this.action);
         }
     }
 
@@ -155,8 +155,8 @@ public class EvidenceActionServiceConfigurationProperties {
             this.serviceType = serviceType;
         }
 
-        public DomibusConnectorService getConnectorService() {
-            return new DomibusConnectorService(this.name, this.serviceType);
+        public DC5Service getConnectorService() {
+            return new DC5Service(this.name, this.serviceType);
         }
     }
 

@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @CommonPersistenceTest
 @DataSet(value = "/database/testdata/dbunit/DomibusConnectorMessage.xml", strategy = CLEAN_INSERT)
-public class DomibusConnectorMessageDaoDBUnit {
+public class DC5MessageDaoDBUnit {
 
     @Autowired
     private DomibusConnectorMessageDao messageDao;

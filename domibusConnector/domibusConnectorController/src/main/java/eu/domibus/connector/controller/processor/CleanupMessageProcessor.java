@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,7 +20,7 @@ public class CleanupMessageProcessor implements DomibusConnectorMessageProcessor
     }
 
     @Override
-    public void processMessage(DomibusConnectorMessage message) {
+    public void processMessage(DC5Message message) {
 
 //        dcMessageContentManager.cleanForMessage(message);
     }

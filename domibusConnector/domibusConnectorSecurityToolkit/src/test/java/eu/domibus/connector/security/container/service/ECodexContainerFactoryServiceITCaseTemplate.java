@@ -4,10 +4,8 @@ import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.checks.CheckResult;
@@ -111,11 +109,13 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
         DCMessageProcessSettings settings = new DCMessageProcessSettings();
         settings.setValidationServiceName(AdvancedElectronicSystemType.AUTHENTICATION_BASED);
-        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
-                .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
-                        .withOriginalSender("originalSender")
-                        .build())
-                .build();
+        DC5Message msg = DC5Message.builder().build();
+
+//                DomibusConnectorMessageBuilder.createBuilder()
+//                .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+//                        .withOriginalSender("originalSender")
+//                        .build())
+//                .build();
         msg.setDcMessageProcessSettings(settings);
 
         ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(msg);

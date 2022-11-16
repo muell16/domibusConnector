@@ -3,7 +3,7 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.flow.api.Step;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class DC5LookupDomainStep {
     private final DCBusinessDomainManager domainManager;
 
     @Step(name = "LookupDomainStep")
-    public DomibusConnectorMessage lookupDomain(DomibusConnectorMessage msg) {
+    public DC5Message lookupDomain(DC5Message msg) {
         //TODO: implement Business domain matching rules here!
 
         Optional<DomibusConnectorBusinessDomain> bd = domainManager.getBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());

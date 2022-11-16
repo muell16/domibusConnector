@@ -7,11 +7,10 @@ import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.Assertions;
@@ -51,8 +50,8 @@ public class EvidenceMessageProcessorTest {
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorGatewaySubmissionService gwService;
 
-    @Autowired
-    ITCaseTestContext.QueueBasedSubmitToLinkService submitToLinkService;
+//    @Autowired
+//    ITCaseTestContext.QueueBasedSubmitToLinkService submitToLinkService;
 
     @Autowired
     ConfirmationCreatorService confirmationCreatorService;
@@ -60,8 +59,8 @@ public class EvidenceMessageProcessorTest {
     @Autowired
     MessageConfirmationStep messageConfirmationStep;
 
-    @Autowired
-    DCMessagePersistenceService messagePersistenceService;
+//    @Autowired
+//    DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
     TransactionTemplate txTemplate;
@@ -80,35 +79,35 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
             //prepare test message in DB
-            DomibusConnectorMessage businessMsg = DomainEntityCreator.createEpoMessage();
-            businessMsg.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-            businessMsg.getMessageDetails().setEbmsMessageId(EBMSID);
+            DC5Message businessMsg = DomainEntityCreator.createEpoMessage();
+            businessMsg.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+            businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
             businessMsg.getConnectorMessageId().setConnectorMessageId(UUID.randomUUID().toString());
-            businessMsg.getMessageDetails().setBackendMessageId(UUID.randomUUID().toString());
+            businessMsg.getBackendData().setBackendMessageId(UUID.randomUUID().toString());
             businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
+//            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
-            DomibusConnectorMessageConfirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
+            DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
             businessMsg.addRelatedMessageConfirmation(submissionAcc);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, submissionAcc);
 
-            DomibusConnectorMessageConfirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
+            DC5Confirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
             businessMsg.addRelatedMessageConfirmation(relayRemd);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, relayRemd);
 
             txTemplate.execute((t) -> {
 
-                DomibusConnectorMessage deliveryTrigger = DomibusConnectorMessageBuilder.createBuilder()
-                        .setConnectorMessageId(UUID.randomUUID().toString())
-                        .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
-                                .withRefToMessageId(EBMSID)
-                                .build())
-                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
-                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-                                .build())
-                        .build();
-                deliveryTrigger.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-                deliveryTrigger.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+//                DC5Message deliveryTrigger = DomibusConnectorMessageBuilder.createBuilder()
+//                        .setConnectorMessageId(UUID.randomUUID().toString())
+//                        .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+//                                .withRefToMessageId(EBMSID)
+//                                .build())
+//                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
+//                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+//                                .build())
+//                        .build();
+//                deliveryTrigger.getEbmsData().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+//                deliveryTrigger.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
 //                evidenceMessageProcessor.processMessage(deliveryTrigger);
                 return null;
@@ -117,8 +116,8 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
 
-        DomibusConnectorMessage m1 = backendDeliveryService.toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
-        DomibusConnectorMessage m2 = gwService.toGatewayDeliveredMessages.poll(10, TimeUnit.SECONDS);
+        DC5Message m1 = backendDeliveryService.toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
+        DC5Message m2 = gwService.toGatewayDeliveredMessages.poll(10, TimeUnit.SECONDS);
 
         Assertions.assertAll(
                 () -> assertThat(backendDeliveryService.toBackendDeliveredMessages).as("Queue must be emtpy").hasSize(0),
@@ -141,35 +140,35 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(domain);
 
             //prepare test message in DB
-            DomibusConnectorMessage businessMsg = DomainEntityCreator.createEpoMessage();
-            businessMsg.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-            businessMsg.getMessageDetails().setEbmsMessageId(EBMSID);
+            DC5Message businessMsg = DomainEntityCreator.createEpoMessage();
+//            businessMsg.getEbmsData().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+            businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
             businessMsg.getConnectorMessageId().setConnectorMessageId(UUID.randomUUID().toString());
-            businessMsg.getMessageDetails().setBackendMessageId(UUID.randomUUID().toString());
+//            businessMsg.getEbmsData().setBackendMessageId(UUID.randomUUID().toString());
             businessMsg.setMessageLaneId(domain);
-            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
+//            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
-            DomibusConnectorMessageConfirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
+            DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
             businessMsg.addRelatedMessageConfirmation(submissionAcc);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, submissionAcc);
 
-            DomibusConnectorMessageConfirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
+            DC5Confirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
             businessMsg.addRelatedMessageConfirmation(relayRemd);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, relayRemd);
 
             txTemplate.execute((t) -> {
 
-                DomibusConnectorMessage deliveryTrigger = DomibusConnectorMessageBuilder.createBuilder()
-                        .setConnectorMessageId(UUID.randomUUID().toString())
-                        .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
-                                .withRefToMessageId(EBMSID)
-                                .build())
-                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
-                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-                                .build())
-                        .build();
-                deliveryTrigger.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-                deliveryTrigger.setMessageLaneId(domain);
+//                DC5Message deliveryTrigger = DomibusConnectorMessageBuilder.createBuilder()
+//                        .setConnectorMessageId(UUID.randomUUID().toString())
+//                        .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
+//                                .withRefToMessageId(EBMSID)
+//                                .build())
+//                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
+//                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+//                                .build())
+//                        .build();
+//                deliveryTrigger.getEbmsData().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+//                deliveryTrigger.setMessageLaneId(domain);
 
 //                evidenceMessageProcessor.processMessage(deliveryTrigger);
                 return null;
@@ -178,8 +177,8 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);
         }
 
-        DomibusConnectorMessage m1 = backendDeliveryService.toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
-        DomibusConnectorMessage m2 = gwService.toGatewayDeliveredMessages.poll(10, TimeUnit.SECONDS);
+        DC5Message m1 = backendDeliveryService.toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
+        DC5Message m2 = gwService.toGatewayDeliveredMessages.poll(10, TimeUnit.SECONDS);
 
         Assertions.assertAll(
                 () -> assertThat(backendDeliveryService.toBackendDeliveredMessages).as("Queue must be emtpy").hasSize(0),

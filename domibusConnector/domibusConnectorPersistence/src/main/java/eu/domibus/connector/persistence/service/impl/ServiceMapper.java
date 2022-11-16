@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 
 import javax.annotation.Nullable;
@@ -8,15 +8,14 @@ import javax.annotation.Nullable;
 public class ServiceMapper {
 
     static @Nullable
-	public
-    DomibusConnectorService mapServiceToDomain(@Nullable PDomibusConnectorService persistenceService) {
+	public DC5Service mapServiceToDomain(@Nullable PDomibusConnectorService persistenceService) {
         if (persistenceService != null) {
-            DomibusConnectorService service
-                    = new DomibusConnectorService(
+            DC5Service service
+                    = new DC5Service(
                     persistenceService.getService(),
                     persistenceService.getServiceType()
             );
-            service.setDbKey(persistenceService.getId());
+//            service.setDbKey(persistenceService.getId());
             return service;
         }
         return null;
@@ -24,12 +23,12 @@ public class ServiceMapper {
 
     static @Nullable
 	public
-    PDomibusConnectorService mapServiceToPersistence(@Nullable DomibusConnectorService service) {
+    PDomibusConnectorService mapServiceToPersistence(@Nullable DC5Service service) {
         if (service != null) {
             PDomibusConnectorService persistenceService = new PDomibusConnectorService();
             persistenceService.setServiceType(service.getServiceType());
             persistenceService.setService(service.getService());
-            persistenceService.setId(service.getDbKey());
+//            persistenceService.setId(service.getDbKey());
             return persistenceService;
         }
         return null;

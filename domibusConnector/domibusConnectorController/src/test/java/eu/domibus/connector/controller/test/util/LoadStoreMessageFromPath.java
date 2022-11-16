@@ -17,9 +17,7 @@ import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +35,7 @@ public class LoadStoreMessageFromPath {
 
 
 
-    public static void storeMessageTo(Resource resource, DomibusConnectorMessage message) throws IOException {
+    public static void storeMessageTo(Resource resource, DC5Message message) throws IOException {
         LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource);
         loadStoreMessageFromPath.storeMessage(message);
     }
@@ -50,7 +48,7 @@ public class LoadStoreMessageFromPath {
 
 
 
-    private void storeMessage(DomibusConnectorMessage message) throws IOException {
+    private void storeMessage(DC5Message message) throws IOException {
 
         if (!basicFolder.exists()) {
             System.out.println("basic folder is: " + basicFolder.getFile().getAbsolutePath());
@@ -62,8 +60,12 @@ public class LoadStoreMessageFromPath {
             throw new RuntimeException("message already exists cannot overwrite it!");
         }
 
-
-        storeMessageDetails(message.getMessageDetails());
+        if (message.getEbmsData() != null) {
+            storeEbmsMessageDetails(message.getEbmsData());
+        }
+        if (message.getBackendData() != null) {
+            storeBackendData(message.getBackendData());
+        }
 
         //store content
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
@@ -130,10 +132,10 @@ public class LoadStoreMessageFromPath {
 
     }
 
-    private void storeMessageConfirmations(List<DomibusConnectorMessageConfirmation> messageConfirmations) {
+    private void storeMessageConfirmations(List<DC5Confirmation> messageConfirmations) {
         for (int i = 0; i < messageConfirmations.size(); i++) {
             try {
-                DomibusConnectorMessageConfirmation confirmation = messageConfirmations.get(i);
+                DC5Confirmation confirmation = messageConfirmations.get(i);
 
                 String evidenceFilePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_CONFIRMATIONS_PREFIX, i, "file");
                 String evidenceTypePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_CONFIRMATIONS_PREFIX, i, "type");
@@ -193,14 +195,14 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    public static DomibusConnectorMessage loadMessageFrom(Resource resource) throws IOException {
+    public static DC5Message loadMessageFrom(Resource resource) throws IOException {
         LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource);
-        DomibusConnectorMessage message = loadStoreMessageFromPath.loadMessage();
+        DC5Message message = loadStoreMessageFromPath.loadMessage();
 
         return message;
     }
 
-    private DomibusConnectorMessage loadMessage() throws IOException {
+    private DC5Message loadMessage() throws IOException {
         DomibusConnectorMessageBuilder messageBuilder = DomibusConnectorMessageBuilder.createBuilder();
 
 
@@ -273,7 +275,7 @@ public class LoadStoreMessageFromPath {
 
 
 
-    private List<DomibusConnectorMessageConfirmation> loadConfirmations() {
+    private List<DC5Confirmation> loadConfirmations() {
         return messageProperties.stringPropertyNames()
                 .stream()
                 .sorted()
@@ -379,23 +381,41 @@ public class LoadStoreMessageFromPath {
 
     }
 
-    private void storeMessageDetails(DomibusConnectorMessageDetails details) {
+    private void storeBackendData(DC5BackendData backendData) {
+        if (backendData.getBackendMessageId() != null) {
+            messageProperties.put(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME, backendData.getBackendMessageId());
+        }
+        if (backendData.getRefToBackendMessageId() != null) {
+            messageProperties.put(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME, backendData.getBackendMessageId());
+        }
+        if (backendData.getBackendConversationId() != null) {
+            messageProperties.put(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME, backendData.getBackendMessageId());
+        }
+    }
+
+    public static final String SENDER_PREFIX = "sender.";
+    public static final String RECEIVER_PREFIX = "receiver.";
+
+    private void storeEbmsMessageDetails(DC5Ebms details) {
 
         if (details.getAction() != null && details.getAction().getAction() != null) {
             messageProperties.put(LoadStoreTransitionMessage.ACTION_PROP_NAME, details.getAction().getAction());
         }
 
-        if (details.getFromParty() != null && details.getFromParty().getPartyId() != null && details.getFromParty().getRole() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.FROM_PARTY_ID_PROP_NAME, details.getFromParty().getPartyId());
-            messageProperties.put(LoadStoreTransitionMessage.FROM_PARTY_ROLE_PROP_NAME, details.getFromParty().getRole());
+        if (details.getSender() != null) {
+            Map<String, String> senderProperties = getSenderProperties(details.getSender());
+            senderProperties.forEach((key, value) ->
+                    messageProperties.put(SENDER_PREFIX + key, value));
         }
-        if (details.getToParty() != null && details.getToParty().getPartyId() != null && details.getToParty().getRole() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.TO_PARTY_ID_PROP_NAME, details.getToParty().getPartyId());
-            messageProperties.put(LoadStoreTransitionMessage.TO_PARTY_ROLE_PROP_NAME, details.getToParty().getRole());
+        if (details.getReceiver() != null) {
+            Map<String, String> senderProperties = getSenderProperties(details.getSender());
+            senderProperties.forEach((key, value) ->
+                    messageProperties.put(RECEIVER_PREFIX + key, value));
         }
 
         if (details.getService() != null && details.getService() != null) {
             messageProperties.put(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME, details.getService().getService());
+            messageProperties.put(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME, details.getService().getServiceType());
         }
 
         if (details.getEbmsMessageId() != null) {
@@ -404,59 +424,71 @@ public class LoadStoreMessageFromPath {
         if (details.getConversationId() != null) {
             messageProperties.put(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME, details.getConversationId());
         }
-        if (details.getConnectorBackendClientName() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.BACKEND_CLIENT_NAME_PROP_NAME, details.getConnectorBackendClientName());
-        }
-        if (details.getBackendMessageId() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.NATIONAL_ID_PROP_NAME, details.getBackendMessageId());
-        }
-
 
     }
 
+    public static final String PARTY_ID_PROP_NAME = "party-id";
+    public static final String PARTY_ID_TYPE_PROP_NAME = "party-id-type";
+    public static final String PARTY_ROLE_NAME_PROP_NAME = "role";
+    public static final String PARTY_ROLE_TYPE_PROP_NAME = "role-type";
+    public static final String ECX_ADDRESS_PROP_NAME = "ecxaddress";
 
-
-
-    private DomibusConnectorMessageDetails loadMessageDetailsFromProperties() {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-
-        messageDetails.setAction(DomibusConnectorActionBuilder.createBuilder()
-                .setAction(messageProperties.getProperty("action"))
-//                .withDocumentRequired(false)
-                .build()
-        );
-
-
-        messageDetails.setFromParty(DomibusConnectorPartyBuilder.createBuilder()
-                .setPartyId(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ID_PROP_NAME))
-                .setPartyIdType(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ID_TYPE_PROP_NAME))
-                .setRole(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ROLE_PROP_NAME))
-                .build()
-        );
-
-        messageDetails.setToParty(DomibusConnectorPartyBuilder.createBuilder()
-                .setPartyId(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ID_PROP_NAME))
-                .setPartyIdType(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ID_TYPE_PROP_NAME))
-                .setRole(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ROLE_PROP_NAME))
-                .build()
-        );
-
-        messageDetails.setService(DomibusConnectorServiceBuilder.createBuilder()
-                .setService(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
-                .build()
-        );
-
-        messageDetails.setConversationId(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME));
-
-        messageDetails.setEbmsMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME));
-
-        messageDetails.setBackendMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.NATIONAL_ID_PROP_NAME));
-
-        return messageDetails;
+    private Map<String, String> getSenderProperties(DC5EcxAddress addr) {
+        Map<String, String> p = new HashMap<>();
+        p.put(ECX_ADDRESS_PROP_NAME, addr.getEcxAddress());
+        if (addr.getParty() != null) {
+            p.put(PARTY_ID_PROP_NAME, addr.getParty().getPartyId());
+            p.put(PARTY_ID_TYPE_PROP_NAME, addr.getParty().getPartyIdType());
+        }
+        if (addr.getRole() != null) {
+            p.put(PARTY_ROLE_NAME_PROP_NAME, addr.getRole().getRole());
+            p.put(PARTY_ROLE_TYPE_PROP_NAME, addr.getRole().getRoleType().name());
+        }
+        return p;
     }
 
 
+    private DC5BackendData loadBackendDetailsFromProperties() {
+        return DC5BackendData.builder()
+                .backendMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME))
+                .backendConversationId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME))
+                .refToBackendMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME))
+                .build();
+    }
 
+
+    private DC5Ebms loadMessageDetailsFromProperties() {
+
+        return DC5Ebms.builder()
+                .action(new DC5Action(messageProperties.getProperty("action")))
+                .service(DC5Service.builder()
+                                        .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
+                                        .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
+                                                .build())
+                .ebmsMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME))
+                .conversationId(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME))
+                .refToMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME))
+                .sender(loadEcxAddress(SENDER_PREFIX))
+                .receiver(loadEcxAddress(RECEIVER_PREFIX))
+                .build();
+
+    }
+
+    private DC5EcxAddress loadEcxAddress(String senderPrefix) {
+
+         return DC5EcxAddress.builder()
+                .ecxAddress(messageProperties.getProperty(senderPrefix + ECX_ADDRESS_PROP_NAME))
+                .party(DC5Party.builder()
+                        .partyId(messageProperties.getProperty(senderPrefix + PARTY_ID_PROP_NAME))
+                        .partyIdType(messageProperties.getProperty(senderPrefix + PARTY_ID_TYPE_PROP_NAME))
+                        .build()
+                ).role(DC5Role.builder()
+                        .role(messageProperties.getProperty(senderPrefix + PARTY_ROLE_NAME_PROP_NAME))
+                        .roleType(DC5RoleType.INITIATOR) //TODO: read from properties...?
+                        .build()
+                ).build();
+
+    }
 
 
 }

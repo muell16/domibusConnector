@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class DCEcodexContent {
+public class DC5EcodexContent {
 
     @GeneratedValue
     @Id

@@ -2,7 +2,7 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
@@ -16,15 +16,15 @@ import javax.annotation.Nonnull;
  */
 public interface DCMessagePersistenceService {
 
-    boolean checkMessageConfirmed(DomibusConnectorMessage message);
+    boolean checkMessageConfirmed(DC5Message message);
 
-    default boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
+    default boolean checkMessageConfirmedOrRejected(DC5Message message) {
         return checkMessageConfirmedOrRejected(message.getConnectorMessageId());
     }
 
     boolean checkMessageConfirmedOrRejected(DomibusConnectorMessageId message);
 
-    boolean checkMessageRejected(DomibusConnectorMessage message);
+    boolean checkMessageRejected(DC5Message message);
 
     /**
      * marks the message as rejected
@@ -34,7 +34,7 @@ public interface DCMessagePersistenceService {
      * rejected
      * @param message - the message
      */
-    void rejectMessage(DomibusConnectorMessage message);
+    void rejectMessage(DC5Message message);
 
     /**
      * marks the message as confirmed
@@ -44,15 +44,15 @@ public interface DCMessagePersistenceService {
      * confirmed
      * @param message - the message to confirm
      */
-    void confirmMessage(DomibusConnectorMessage message);
+    void confirmMessage(DC5Message message);
 
     /**
      * all messages which are going to the national system
      * @return the list of unconfirmed messages
      */
-    List<DomibusConnectorMessage> findIncomingUnconfirmedMessages();
+    List<DC5Message> findIncomingUnconfirmedMessages();
 
-    DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
+    DC5Message findMessageByConnectorMessageId(String connectorMessageId);
 
     /**
      *
@@ -61,7 +61,7 @@ public interface DCMessagePersistenceService {
      * @param messageDirection - the direction of the message
      * @return the found message or an empty Optional if no message found with this ebmsId and direction
      */
-    Optional<DomibusConnectorMessage> findMessageByEbmsIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
+    Optional<DC5Message> findMessageByEbmsIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
 
     /**
      * finds the message by the national id and direction
@@ -70,7 +70,7 @@ public interface DCMessagePersistenceService {
      * @param messageDirection - the direction of the message
      * @return the found message or an empty Optional if no message found with this nationalMessageId and direction
      */
-    Optional<DomibusConnectorMessage> findMessageByNationalIdAndDirection(String nationalMessageId, DomibusConnectorMessageDirection messageDirection);
+    Optional<DC5Message> findMessageByNationalIdAndDirection(String nationalMessageId, DomibusConnectorMessageDirection messageDirection);
 
 
     /**
@@ -80,7 +80,7 @@ public interface DCMessagePersistenceService {
      * @param messageDirection - the direction of the message
      * @return the found message or an empty Optional if no message found with this ebmsId and direction
      */
-    Optional<DomibusConnectorMessage> findMessageByEbmsIdOrBackendIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
+    Optional<DC5Message> findMessageByEbmsIdOrBackendIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
 
     /**
      * returns all messages related to the
@@ -89,25 +89,25 @@ public interface DCMessagePersistenceService {
      * @return - a list of messages, if there are no messages found
      *  the list will be empty
      */
-    List<DomibusConnectorMessage> findMessagesByConversationId(String conversationId);
+    List<DC5Message> findMessagesByConversationId(String conversationId);
 
     /**
      *
      * @return a list of Messages or an emtpy List if nothing found
      */
-    List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
+    List<DC5Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutDelivery();
 
     /**
      *
      * @return a list of Messages or an emtpy List if nothing found
      */
-    List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+    List<DC5Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
 
     /**
      * all messages which are going to the GW
      * @return the list of unconfirmed messages
      */
-    List<DomibusConnectorMessage> findOutgoingUnconfirmedMessages();
+    List<DC5Message> findOutgoingUnconfirmedMessages();
 
     /**
      * Only updates
@@ -134,7 +134,7 @@ public interface DCMessagePersistenceService {
      * @throws PersistenceException in case of an error
      */
     @Deprecated
-    DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
+    DC5Message mergeMessageWithDatabase(@Nonnull DC5Message message) throws PersistenceException;
 
     /**
      * stores a new message into storage
@@ -147,21 +147,21 @@ public interface DCMessagePersistenceService {
      *
      */
     @Deprecated
-    DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
+    DC5Message persistMessageIntoDatabase(@Nonnull DC5Message message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
     /**
      * Marks the message as delivered to the gateway
      * @param message - the message, which should be marked
      */
-    void setDeliveredToGateway(DomibusConnectorMessage message);
+    void setDeliveredToGateway(DC5Message message);
 
     /**
      * Marks the message as delivered to national backend
      * @param message - the message, which should be marked
      */
-    void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
+    void setMessageDeliveredToNationalSystem(DC5Message message);
 
-    void updateMessageDetails(DomibusConnectorMessage message);
+    void updateMessageDetails(DC5Message message);
 
     /**
      * stores a business messsage into database
@@ -171,5 +171,5 @@ public interface DCMessagePersistenceService {
      *
      * @param message - the connector message
      */
-    void persistBusinessMessageIntoDatabase(DomibusConnectorMessage message);
+    void persistBusinessMessageIntoDatabase(DC5Message message);
 }

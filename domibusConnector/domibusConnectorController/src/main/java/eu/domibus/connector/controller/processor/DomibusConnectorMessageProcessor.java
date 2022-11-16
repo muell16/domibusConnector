@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 /**
  * Connector Controller internal API
@@ -11,6 +11,6 @@ import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
  */
 public interface DomibusConnectorMessageProcessor {
 
-	void processMessage(DomibusConnectorMessage message);
+	void processMessage(DC5Message message);
 
 }

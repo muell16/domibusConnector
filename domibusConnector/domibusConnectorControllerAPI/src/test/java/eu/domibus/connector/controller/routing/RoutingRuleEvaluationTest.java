@@ -14,7 +14,7 @@ public class RoutingRuleEvaluationTest {
 
     @ParameterizedTest
     @MethodSource("provideParameters")
-    public void testMatch_shouldEvaluateToTrue(String expression, DomibusConnectorMessage message) {
+    public void testMatch_shouldEvaluateToTrue(String expression, DC5Message message) {
         //ExpressionParser expressionParser = new ExpressionParser(expression);
 
         RoutingRulePattern rulePattern = new RoutingRulePattern(expression);
@@ -32,7 +32,7 @@ public class RoutingRuleEvaluationTest {
 
     @ParameterizedTest
     @MethodSource("provideNotMatchingParameters")
-    public void testMatch_shouldNotMatch(String expression, DomibusConnectorMessage message) {
+    public void testMatch_shouldNotMatch(String expression, DC5Message message) {
         //ExpressionParser expressionParser = new ExpressionParser(expression);
 
         RoutingRulePattern rulePattern = new RoutingRulePattern(expression);
@@ -50,29 +50,25 @@ public class RoutingRuleEvaluationTest {
     }
 
 
-    private static DomibusConnectorMessage getMessage1() {
-        DomibusConnectorMessage message = new DomibusConnectorMessage();
-        message.setMessageDetails(new DomibusConnectorMessageDetails());
-        message.getMessageDetails().setAction(new DomibusConnectorAction());
-        message.getMessageDetails().getAction().setAction("OtherAction");
-        message.getMessageDetails().setService(new DomibusConnectorService());
-        message.getMessageDetails().getService().setService("EPO_SERVICE");
-        message.getMessageDetails().getService().setServiceType("urn:e-codex:services:");
-        message.getMessageDetails().setFromParty(new DomibusConnectorParty());
-        message.getMessageDetails().getFromParty().setPartyId("gw01");
+    private static DC5Message getMessage1() {
+        DC5Message message = new DC5Message();
+        message.setEbmsData(new DC5Ebms());
+        message.getEbmsData().setAction(new DC5Action("OtherAction"));
+        message.getEbmsData().setService(new DC5Service());
+        message.getEbmsData().getService().setService("EPO_SERVICE");
+        message.getEbmsData().getService().setServiceType("urn:e-codex:services:");
+        message.getEbmsData().getReceiver().setParty(DC5Party.builder().partyId("gw01").build());
         return message;
     }
 
-    private static DomibusConnectorMessage getMessage2() {
-        DomibusConnectorMessage message = new DomibusConnectorMessage();
-        message.setMessageDetails(new DomibusConnectorMessageDetails());
-        message.getMessageDetails().setAction(new DomibusConnectorAction());
-        message.getMessageDetails().getAction().setAction("ConTest_Form");
-        message.getMessageDetails().setService(new DomibusConnectorService());
-        message.getMessageDetails().getService().setService("Connector-TEST");
-        message.getMessageDetails().getService().setServiceType("urn:e-codex:services:");
-        message.getMessageDetails().setFromParty(new DomibusConnectorParty());
-        message.getMessageDetails().getFromParty().setPartyId("gw01");
+    private static DC5Message getMessage2() {
+        DC5Message message = new DC5Message();
+        message.setEbmsData(new DC5Ebms());
+        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
+        message.getEbmsData().setService(new DC5Service());
+        message.getEbmsData().getService().setService("Connector-TEST");
+        message.getEbmsData().getService().setServiceType("urn:e-codex:services:");
+        message.getEbmsData().getSender().setParty(DC5Party.builder().partyId("gw01").build());
         return message;
     }
 

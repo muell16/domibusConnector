@@ -30,10 +30,10 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
@@ -250,10 +250,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestAction(WebMessage msg) {
-        List<DomibusConnectorAction> actionList = pModeService.getActionList();
+        List<DC5Action> actionList = pModeService.getActionList();
         if (actionList != null && !actionList.isEmpty()) {
             WebMessageDetail.Action action = webTestService.getTestAction();
-            Optional<DomibusConnectorAction> testAction = actionList.stream()
+            Optional<DC5Action> testAction = actionList.stream()
                     .filter(p -> (p.getAction().equals(action.getAction())))
                     .findFirst();
             if (testAction.isPresent()) {
@@ -279,10 +279,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestService(WebMessage msg) {
-        List<DomibusConnectorService> serviceList = pModeService.getServiceList();
+        List<DC5Service> serviceList = pModeService.getServiceList();
         if (serviceList != null && !serviceList.isEmpty()) {
             WebMessageDetail.Service service = webTestService.getTestService();
-            Optional<DomibusConnectorService> testService = serviceList.stream()
+            Optional<DC5Service> testService = serviceList.stream()
                     .filter(p -> (p.getService().equals(service.getService())))
                     .findFirst();
             if (testService.isPresent()) {

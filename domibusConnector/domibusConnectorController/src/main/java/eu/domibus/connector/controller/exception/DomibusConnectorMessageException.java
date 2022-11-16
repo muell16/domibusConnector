@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.exception;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 public class DomibusConnectorMessageException extends RuntimeException {
 
@@ -9,40 +9,40 @@ public class DomibusConnectorMessageException extends RuntimeException {
      */
     private static final long serialVersionUID = 2899706995862182574L;
    
-    private DomibusConnectorMessage domibusConnectorMessage;
+    private DC5Message DC5Message;
     private Class<?> source;
 
     public DomibusConnectorMessageException() {
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source) {
+    public DomibusConnectorMessageException(DC5Message message, Class<?> source) {
         super();
-        this.domibusConnectorMessage = message;
+        this.DC5Message = message;
         this.source = source;
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, Throwable cause) {
+    public DomibusConnectorMessageException(DC5Message message, Class<?> source, Throwable cause) {
         super(cause);
-        this.domibusConnectorMessage = message;
+        this.DC5Message = message;
         this.source = source;
         this.setStackTrace(cause.getStackTrace());
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, String text) {
+    public DomibusConnectorMessageException(DC5Message message, Class<?> source, String text) {
         super(text);
-        this.domibusConnectorMessage = message;
+        this.DC5Message = message;
         this.source = source;
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, Throwable cause, String text) {
+    public DomibusConnectorMessageException(DC5Message message, Class<?> source, Throwable cause, String text) {
         super(text, cause);
-        this.domibusConnectorMessage = message;
+        this.DC5Message = message;
         this.source = source;
         this.setStackTrace(cause.getStackTrace());
     }
 
-    public DomibusConnectorMessage getDomibusConnectorMessage() {
-        return domibusConnectorMessage;
+    public DC5Message getDomibusConnectorMessage() {
+        return DC5Message;
     }
 
     public Class<?> getSource() {

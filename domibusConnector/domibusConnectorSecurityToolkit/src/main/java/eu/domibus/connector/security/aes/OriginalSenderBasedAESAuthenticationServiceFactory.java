@@ -1,6 +1,6 @@
 package eu.domibus.connector.security.aes;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.ecodex.dss.model.token.*;
 import eu.ecodex.dss.service.ECodexException;
@@ -31,7 +31,7 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
 
 
     @Override
-    public ECodexTechnicalValidationService createTechnicalValidationService(DomibusConnectorMessage message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
+    public ECodexTechnicalValidationService createTechnicalValidationService(DC5Message message, DCBusinessDocumentValidationConfigurationProperties.AuthenticationValidationConfigurationProperties config) {
         DomibusConnectorAESTokenValidationCreator domibusConnectorAESTokenValidationCreator = new DomibusConnectorAESTokenValidationCreator(config.getIdentityProvider());
         return new DomibusConnectorAESTechnicalValidationService(message, domibusConnectorAESTokenValidationCreator);
     }
@@ -42,9 +42,9 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
 
         private final DomibusConnectorAESTokenValidationCreator delegate;
 
-        private final DomibusConnectorMessage message;
+        private final DC5Message message;
 
-        public DomibusConnectorAESTechnicalValidationService(final DomibusConnectorMessage message, final DomibusConnectorAESTokenValidationCreator delegate) {
+        public DomibusConnectorAESTechnicalValidationService(final DC5Message message, final DomibusConnectorAESTokenValidationCreator delegate) {
             super();
             this.message = message;
             this.delegate = delegate;
@@ -146,7 +146,7 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
             this.identityProvider = identityProvider;
         }
 
-        TokenValidation createTokenValidation(DomibusConnectorMessage message) throws Exception {
+        TokenValidation createTokenValidation(DC5Message message) throws Exception {
 
             TokenValidation tValidation = new TokenValidation();
 
@@ -156,7 +156,7 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
             final AuthenticationInformation tokenAuthentication = new AuthenticationInformation();
 
             tokenAuthentication.setIdentityProvider(identityProvider);
-            tokenAuthentication.setUsernameSynonym(message.getMessageDetails().getOriginalSender());
+            tokenAuthentication.setUsernameSynonym(message.getEbmsData().getSender().getEcxAddress());
             tokenAuthentication.setTimeOfAuthentication(
                         DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 

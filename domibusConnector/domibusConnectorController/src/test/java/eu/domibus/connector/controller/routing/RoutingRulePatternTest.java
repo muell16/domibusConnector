@@ -1,8 +1,8 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Action;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +12,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "serviceType");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(ServiceName, 'serviceName')");
         assertThat(pattern.matches(epoMessage)).isTrue();
@@ -22,9 +22,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesStartWithServiceName() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "serviceType");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'serv')");
         assertThat(pattern.matches(epoMessage)).isTrue();
@@ -32,9 +32,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesStartWithServiceName_noMatch() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "serviceType");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'aserv')");
         assertThat(pattern.matches(epoMessage)).isFalse();
@@ -42,9 +42,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_shouldFail() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "serviceType");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(ServiceName, 'service')");
         assertThat(pattern.matches(epoMessage)).isFalse();
@@ -52,9 +52,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_withAnd() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "s:ervice-Type");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "s:ervice-Type");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("&(equals(ServiceName, 'serviceName'),equals(ServiceType, 's:ervice-Type'))");
         assertThat(pattern.matches(epoMessage)).isTrue();
@@ -62,9 +62,9 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_withOr() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorService service = new DomibusConnectorService("serviceName", "serviceType");
-        epoMessage.getMessageDetails().setService(service);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Service service = new DC5Service("serviceName", "serviceType");
+        epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("|(equals(ServiceName, 'serviceName'),equals(ServiceName, 'serName'))");
         assertThat(pattern.matches(epoMessage)).isTrue();
@@ -73,9 +73,9 @@ public class RoutingRulePatternTest {
     @Test
     public void testAction() {
 
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        DomibusConnectorAction action = new DomibusConnectorAction("Connector-TEST");
-        epoMessage.getMessageDetails().setAction(action);
+        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Action action = new DC5Action("Connector-TEST");
+        epoMessage.getEbmsData().setAction(action);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(Action, 'Connector-TEST')");
         assertThat(pattern.matches(epoMessage)).isTrue();

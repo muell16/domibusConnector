@@ -5,7 +5,7 @@ import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.springframework.stereotype.Service;
@@ -26,19 +26,19 @@ public class SubmitToLinkServiceImpl implements SubmitToLinkService {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = SUBMIT_TO_LINK_SERVICE)
-    public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
-        DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
+    public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
+        DomibusConnectorMessageDirection direction = message.getDirection();
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
         if (direction.getTarget() == MessageTargetSource.BACKEND) {
-            if (StringUtils.isEmpty(message.getMessageDetails().getConnectorBackendClientName())) {
+            if (StringUtils.isEmpty(message.getBackendLinkName())) {
                 throw new DomibusConnectorSubmitToLinkException(message, "The backendClientName is empty!");
             }
-            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getMessageDetails().getConnectorBackendClientName());
+            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getBackendLinkName());
         } else if (direction.getTarget() == MessageTargetSource.GATEWAY) {
-            if (StringUtils.isEmpty(message.getMessageDetails().getGatewayName())) {
+            if (StringUtils.isEmpty(message.getGatewayLinkName())) {
                 throw new DomibusConnectorSubmitToLinkException(message, "The gatewayName is empty!");
             }
-            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getMessageDetails().getGatewayName());
+            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getGatewayLinkName());
         } else {
             throw new IllegalArgumentException("MessageTarget not valid!");
         }

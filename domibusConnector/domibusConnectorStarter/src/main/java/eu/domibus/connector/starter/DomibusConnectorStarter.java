@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-@SpringBootApplication(scanBasePackages = "eu.domibus.connector")
+@SpringBootApplication(scanBasePackages = {"eu.domibus.connector", "eu.ecodex.dc5"})
 @EnableTransactionManagement
 @PropertySource("classpath:/config/connector.properties")
 public class DomibusConnectorStarter extends SpringBootServletInitializer {

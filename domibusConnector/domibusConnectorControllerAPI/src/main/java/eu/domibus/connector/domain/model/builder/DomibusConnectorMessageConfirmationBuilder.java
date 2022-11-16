@@ -1,7 +1,7 @@
 package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import org.apache.commons.lang3.ArrayUtils;
 
 public final class DomibusConnectorMessageConfirmationBuilder {
@@ -24,7 +24,7 @@ public final class DomibusConnectorMessageConfirmationBuilder {
         return this;
     }
 
-    public DomibusConnectorMessageConfirmation build() {
+    public DC5Confirmation build() {
         if (evidence == null) {
             evidence = new byte[0];
             //throw new IllegalArgumentException("Evidence is not allowed to be null!");
@@ -32,10 +32,13 @@ public final class DomibusConnectorMessageConfirmationBuilder {
         if (evidenceType == null) {
             throw new IllegalArgumentException("Evidence type must be set!");
         }
-        return new DomibusConnectorMessageConfirmation(evidenceType, evidence);
+        return DC5Confirmation.builder()
+                .evidenceType(evidenceType)
+                .evidence(evidence)
+                .build();
     }
 
-    public DomibusConnectorMessageConfirmationBuilder copyPropertiesFrom(DomibusConnectorMessageConfirmation c) {
+    public DomibusConnectorMessageConfirmationBuilder copyPropertiesFrom(DC5Confirmation c) {
         if (c == null) {
             throw new IllegalArgumentException("Cannot copy properties from null object!");
         }

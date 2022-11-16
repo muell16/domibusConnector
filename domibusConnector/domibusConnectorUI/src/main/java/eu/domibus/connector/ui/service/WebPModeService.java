@@ -8,7 +8,7 @@ import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty.PartyRoleType;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
@@ -18,7 +18,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -220,13 +220,13 @@ public class WebPModeService {
     }
 
 
-    private List<DomibusConnectorService> importServices(Configuration pmodes) {
+    private List<DC5Service> importServices(Configuration pmodes) {
         return pmodes.getBusinessProcesses()
                 .getServices()
                 .getService()
                 .stream()
                 .map(s -> {
-                    DomibusConnectorService service = new DomibusConnectorService();
+                    DC5Service service = new DC5Service();
                     service.setService(s.getValue());
                     service.setServiceType(s.getType());
                     return service;
@@ -234,14 +234,14 @@ public class WebPModeService {
                 .collect(Collectors.toList());
     }
 
-    private List<DomibusConnectorAction> importActions(Configuration pmodes) {
+    private List<DC5Action> importActions(Configuration pmodes) {
 
         return pmodes.getBusinessProcesses()
                 .getActions()
                 .getAction()
                 .stream()
                 .map(a -> {
-                    DomibusConnectorAction action = new DomibusConnectorAction();
+                    DC5Action action = new DC5Action("action");
                     action.setAction(a.getValue());
                     return action;
                 })
@@ -320,25 +320,25 @@ public class WebPModeService {
         return getCurrentPModeSetOrNewSet().getParties();
     }
 
-    public List<DomibusConnectorAction> getActionList() {
+    public List<DC5Action> getActionList() {
         return getCurrentPModeSetOrNewSet().getActions();
     }
 
     public List<String> getActionListString() {
         return this.getActionList()
                 .stream()
-                .map(DomibusConnectorAction::getAction)
+                .map(DC5Action::getAction)
                 .collect(Collectors.toList());
     }
 
-    public List<DomibusConnectorService> getServiceList() {
+    public List<DC5Service> getServiceList() {
         return getCurrentPModeSetOrNewSet().getServices();
     }
 
     public List<String> getServiceListString() {
         return this.getServiceList()
                 .stream()
-                .map(DomibusConnectorService::getService)
+                .map(DC5Service::getService)
                 .collect(Collectors.toList());
     }
 
@@ -383,7 +383,7 @@ public class WebPModeService {
     }
 
     @Transactional
-    public void deleteAction(DomibusConnectorAction action) {
+    public void deleteAction(DC5Action action) {
         LOGGER.trace("deleteAction: delete Action [{}]", action);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().remove(action);
@@ -392,7 +392,7 @@ public class WebPModeService {
     }
 
     @Transactional
-    public DomibusConnectorAction createAction(DomibusConnectorAction action) {
+    public DC5Action createAction(DC5Action action) {
         LOGGER.trace("#createAction: called with action [{}]", action);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().add(action);
@@ -407,7 +407,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction updatedAction) {
+    public DC5Action updateAction(DC5Action oldAction, DC5Action updatedAction) {
         LOGGER.trace("updateAction: updateAction with oldAction [{}] and new action [{}]", oldAction, updatedAction);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().remove(oldAction);
@@ -423,7 +423,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public DomibusConnectorService createService(DomibusConnectorService service) {
+    public DC5Service createService(DC5Service service) {
         LOGGER.trace("createService: with service [{}]", service);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().add(service);
@@ -438,7 +438,7 @@ public class WebPModeService {
     }
 
     @Transactional
-    public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService updatedService) {
+    public DC5Service updateService(DC5Service oldService, DC5Service updatedService) {
         LOGGER.trace("updateService: with new service [{}]", updatedService);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().remove(oldService);
@@ -454,7 +454,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public void deleteService(DomibusConnectorService service) {
+    public void deleteService(DC5Service service) {
         LOGGER.trace("deleteService: with service [{}]", service);
         DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().remove(service);

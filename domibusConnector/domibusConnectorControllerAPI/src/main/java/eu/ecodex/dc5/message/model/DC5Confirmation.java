@@ -1,9 +1,10 @@
 package eu.ecodex.dc5.message.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import java.io.Serializable;
+
 import java.util.Arrays;
 
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import org.springframework.lang.Nullable;
@@ -17,48 +18,28 @@ import javax.persistence.Id;
  * contains the evidence itself as a byte[] containing a structured document, and
  * an enum type {@link DomibusConnectorEvidenceType} which describes the evidence type. To be able
  * to connect the confirmation to a message it should be instantiated and added to
- * the {@link DomibusConnectorMessage} object.
+ * the {@link DC5Message} object.
  * @author riederb
  * @version 1.0
  *
  */
 @Entity
-public class DomibusConnectorMessageConfirmation implements Serializable {
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class DC5Confirmation {
 
 	@GeneratedValue
 	@Id
 	private long id;
 
-	/**
-	 * Is null by default, will be set if the confirmation has been
-	 * stored to database.
-	 * Is used to identify the evidence for updating the transport state of the evidence
-	 */
-	private @Nullable Long evidenceDbId = null;
 	private DomibusConnectorEvidenceType evidenceType;
 	private @Nullable byte evidence[];
 
-	/**
-	 * 
-	 * @param evidenceType the evidenceType
-	 * @param evidence    evidence
-	 */
-	public DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType evidenceType, @Nullable byte[] evidence){
-	   this.evidenceType = evidenceType;
-	   this.evidence = evidence;
-	}
 
-	/**
-	 * 
-	 * @param evidenceType    evidenceType
-	 */
-	public DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType evidenceType){
-	   this.evidenceType = evidenceType;
-	}
-
-	public DomibusConnectorMessageConfirmation(){
-
-	}
 
 	public DomibusConnectorEvidenceType getEvidenceType(){
 		return this.evidenceType;
@@ -86,11 +67,11 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 
 	@Nullable
 	public Long getEvidenceDbId() {
-		return evidenceDbId;
+		return id;
 	}
 
 	public void setEvidenceDbId(@Nullable Long evidenceDbId) {
-		this.evidenceDbId = evidenceDbId;
+		this.id = evidenceDbId;
 	}
 
 	@Override
@@ -103,9 +84,9 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof DomibusConnectorMessageConfirmation)) return false;
+		if (!(o instanceof DC5Confirmation)) return false;
 
-		DomibusConnectorMessageConfirmation that = (DomibusConnectorMessageConfirmation) o;
+		DC5Confirmation that = (DC5Confirmation) o;
 
 		return Arrays.equals(evidence, that.evidence);
 	}

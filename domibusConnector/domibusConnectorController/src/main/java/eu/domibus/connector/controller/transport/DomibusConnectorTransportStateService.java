@@ -3,12 +3,13 @@ package eu.domibus.connector.controller.transport;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,39 +24,31 @@ import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isBusin
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DomibusConnectorTransportStateService implements TransportStateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStateService.class);
 
-    private final DCMessagePersistenceService messagePersistenceService;
+//    private final DCMessagePersistenceService messagePersistenceService;
     private final DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
     private final TransportStepPersistenceService transportStepPersistenceService;
-    private final DomibusConnectorEvidencePersistenceService evidencePeristenceService;
+//    private final DomibusConnectorEvidencePersistenceService evidencePeristenceService;
 
-    public DomibusConnectorTransportStateService(DCMessagePersistenceService messagePersistenceService,
-                                                 DomibusConnectorMessageErrorPersistenceService errorPersistenceService,
-                                                 TransportStepPersistenceService transportStepPersistenceService,
-                                                 DomibusConnectorEvidencePersistenceService evidencePeristenceService) {
-        this.messagePersistenceService = messagePersistenceService;
-        this.errorPersistenceService = errorPersistenceService;
-        this.transportStepPersistenceService = transportStepPersistenceService;
-        this.evidencePeristenceService = evidencePeristenceService;
-    }
 
     @Override
     @Transactional
     public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
 
-        this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
+        this.updateTransportStatus(transportId, transportState, (DC5Message m) -> {
             if (isBusinessMessage(m)) {
-                m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
-                messagePersistenceService.updateMessageDetails(m);
-                messagePersistenceService.setDeliveredToGateway(m);
+                m.getEbmsData().setEbmsMessageId(transportState.getRemoteMessageId());
+//                messagePersistenceService.updateMessageDetails(m);
+//                messagePersistenceService.setDeliveredToGateway(m);
                 LOGGER.debug("Successfully updated business message [{}]", m);
             }
             m.getTransportedMessageConfirmations().forEach(c -> {
                 try {
-                    evidencePeristenceService.setConfirmationAsTransportedToGateway(c);
+//                    evidencePeristenceService.setConfirmationAsTransportedToGateway(c);
                 } catch (Exception e) {
                     //any issue here should not prevent commit!
                     LOGGER.warn("Failed to set transport time stamp of confirmation!", e);
@@ -69,16 +62,16 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     @Override
     @Transactional
     public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
-        this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
+        this.updateTransportStatus(transportId, transportState, (DC5Message m) -> {
             if (isBusinessMessage(m)) {
-                m.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
-                messagePersistenceService.updateMessageDetails(m);
-                messagePersistenceService.setMessageDeliveredToNationalSystem(m);
+                m.getBackendData().setBackendMessageId(transportState.getRemoteMessageId());
+//                messagePersistenceService.updateMessageDetails(m);
+//                messagePersistenceService.setMessageDeliveredToNationalSystem(m);
                 LOGGER.debug("Successfully updated business message [{}]", m);
             }
             m.getTransportedMessageConfirmations().forEach(c -> {
                 try {
-                    evidencePeristenceService.setConfirmationAsTransportedToBackend(c);
+//                    evidencePeristenceService.setConfirmationAsTransportedToBackend(c);
                 } catch (Exception e) {
                     //any issue here should not prevent commit!
                     LOGGER.warn("Failed to set transport time stamp of confirmation!", e);
@@ -88,7 +81,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
     private static interface SuccessHandler {
-        void success(DomibusConnectorMessage message);
+        void success(DC5Message message);
     }
 
 
@@ -116,7 +109,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         transportStepPersistenceService.update(transportStep);
 
 
-        DomibusConnectorMessage message = transportStep.getTransportedMessage().orElse(null);
+        DC5Message message = transportStep.getTransportedMessage().orElse(null);
 
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have
@@ -142,7 +135,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
     @Override
-    public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+    public TransportId createTransportFor(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
 
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
         transportStep.setLinkPartnerName(linkPartnerName);

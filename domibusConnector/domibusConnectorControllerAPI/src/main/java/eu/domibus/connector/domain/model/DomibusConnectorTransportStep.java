@@ -2,7 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 
 import javax.annotation.Nullable;
@@ -13,7 +13,7 @@ public class DomibusConnectorTransportStep {
 
     private TransportStateService.TransportId transportId;
     @Nullable
-    private DomibusConnectorMessage transportedMessage = null;
+    private DC5Message transportedMessage = null;
     private DomibusConnectorMessageId connectorMessageIdOfTransportedMsg;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
@@ -23,11 +23,11 @@ public class DomibusConnectorTransportStep {
     private PriorityQueue<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new PriorityQueue<>(new TransportStepComparator());
     private LocalDateTime finalStateReached;
 
-    public Optional<DomibusConnectorMessage> getTransportedMessage() {
+    public Optional<DC5Message> getTransportedMessage() {
         return Optional.ofNullable(transportedMessage);
     }
 
-    public void setTransportedMessage(DomibusConnectorMessage transportedMessage) {
+    public void setTransportedMessage(DC5Message transportedMessage) {
         if (transportedMessage == null) {
             throw new IllegalArgumentException("The transported message is not allowed to be null");
         }

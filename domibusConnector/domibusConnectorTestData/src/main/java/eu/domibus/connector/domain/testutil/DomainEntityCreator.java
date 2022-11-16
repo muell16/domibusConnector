@@ -47,25 +47,25 @@ public class DomainEntityCreator {
         return p;
     }
     
-    public static DomibusConnectorAction createActionForm_A() {
-        DomibusConnectorAction a = new DomibusConnectorAction("Form_A");     
+    public static DC5Action createActionForm_A() {
+        DC5Action a = new DC5Action("Form_A");
 //        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);
         return a;                
     }
     
-    public static DomibusConnectorAction createActionRelayREMMDAcceptanceRejection() {
-        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection");
+    public static DC5Action createActionRelayREMMDAcceptanceRejection() {
+        DC5Action a = new DC5Action("RelayREMMDAcceptanceRejection");
 //        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection", true);
         return a;
     }
     
-    public static DomibusConnectorService createServiceEPO() {
-        DomibusConnectorService s = new DomibusConnectorService("EPO", "urn:e-codex:services:");
+    public static DC5Service createServiceEPO() {
+        DC5Service s = new DC5Service("EPO", "urn:e-codex:services:");
         return s;
     }
 
-    public static DomibusConnectorMessageConfirmation createMessageSubmissionAcceptanceConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+    public static DC5Confirmation createMessageSubmissionAcceptanceConfirmation() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_SUBMISSION_ACCEPTANCE/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
         return confirmation;
@@ -73,36 +73,36 @@ public class DomainEntityCreator {
 
 
 
-    public static DomibusConnectorMessageConfirmation createMessageSubmissionRejectionConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+    public static DC5Confirmation createMessageSubmissionRejectionConfirmation() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_SUBMISSION_REJECT/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
         return confirmation;
     }
 
-    public static DomibusConnectorMessageConfirmation createMessageRelayRemmdAcceptanceConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+    public static DC5Confirmation createMessageRelayRemmdAcceptanceConfirmation() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_RELAY_REMMD/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
         return confirmation;
     }
     
-    public static DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+    public static DC5Confirmation createMessageDeliveryConfirmation() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_DELIVERY/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         return confirmation;
     }
     
-    public static DomibusConnectorMessageConfirmation createMessageNonDeliveryConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();        
+    public static DC5Confirmation createMessageNonDeliveryConfirmation() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_NON_DELIVERY/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
 
-    public static DomibusConnectorMessageConfirmation createRetrievalEvidenceMessage() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+    public static DC5Confirmation createRetrievalEvidenceMessage() {
+        DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE_RETRIEVAL/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.RETRIEVAL);
         return confirmation;
@@ -141,11 +141,11 @@ public class DomainEntityCreator {
         return reference;
     }
     
-    public static DomibusConnectorMessage createEvidenceNonDeliveryMessage() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
-        DomibusConnectorMessageConfirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
+    public static DC5Message createEvidenceNonDeliveryMessage() {
+        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
+        DC5Confirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
         
-        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+        DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setConnectorMessageId("id1")
                 .setMessageDetails(messageDetails)
                 .addTransportedConfirmations(nonDeliveryConfirmation)
@@ -155,22 +155,26 @@ public class DomainEntityCreator {
     }
 
 
-    public static DomibusConnectorMessage createSimpleTestMessage() {
+    public static DC5Message createSimpleTestMessage() {
         
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        messageDetails.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+        DC5Ebms messageDetails = new DC5Ebms();
+
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId("ebms1");
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
+        DC5Message msg = DC5Message.builder()
+                .ebmsData(messageDetails)
+                .build();
+
+        msg.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         //msg.setDbMessageId(78L);
         //msg.getMessageDetails().
         return msg;
     }
     
-    public static DomibusConnectorMessage createMessage() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
+    public static DC5Message createMessage() {
+        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
@@ -180,16 +184,17 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
                         
 //        messageContent.setDocument(messageDocument);
-        
-        DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
-        msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
-//        msg.addAttachment(createSimpleMessageAttachment());
-        msg.addError(createMessageError());
-        return msg;
+
+        return DC5Message.builder()
+                        .transportedMessageConfirmation(createMessageDeliveryConfirmation())
+                .ebmsData(messageDetails)
+                .messageContent(messageContent)
+                .build();
+
     }
 
-    public static DomibusConnectorMessage createEpoMessage() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageDetails();
+    public static DC5Message createEpoMessage() {
+        DC5Ebms messageDetails = createDomibusConnectorEpoMessageDetails();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
@@ -199,7 +204,7 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
 //        messageContent.setDocument(messageDocument);
 
-        DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
+        DC5Message message = DomibusConnectorMessageBuilder.createBuilder()
                 .addAttachment(createSimpleMessageAttachment())
                 .setMessageDetails(messageDetails)
                 .setMessageContent(messageContent)
@@ -209,8 +214,8 @@ public class DomainEntityCreator {
         return message;
     }
 
-    public static DomibusConnectorMessage createEpoMessageFormAFromGwdomibusRed() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
+    public static DC5Message createEpoMessageFormAFromGwdomibusRed() {
+        DC5Ebms messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent(); //TODO: should be a asic container
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
@@ -220,7 +225,7 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
 //        messageContent.setDocument(messageDocument);
 
-        DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
+        DC5Message message = DomibusConnectorMessageBuilder.createBuilder()
                 .addAttachment(createSimpleMessageAttachment())
                 .setMessageDetails(messageDetails)
                 .setMessageContent(messageContent)
@@ -233,142 +238,139 @@ public class DomainEntityCreator {
     }
 
 
-    public static DomibusConnectorMessage createRelayRemmdAcceptanceEvidenceForMessage(DomibusConnectorMessage message) {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
+    public static DC5Message createRelayRemmdAcceptanceEvidenceForMessage(DC5Message message) {
+        DC5Ebms.DC5EbmsBuilder dc5EbmsBuilder = message.getEbmsData().toBuilder();
 
         //messageDetails.setConversationId(null);      //first message no conversation set yet!
-        messageDetails.setEbmsMessageId(null); //message from backend
-        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
-        messageDetails.setFinalRecipient(null);
-        messageDetails.setOriginalSender(null);
-        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+//        dc5EbmsBuilder.setEbmsMessageId(null); //message from backend
+//        dc5EbmsBuilder.setBackendMessageId(null);   //has not been processed by the backend yet
+//        dc5EbmsBuilder.setFinalRecipient(null);
+//        dc5EbmsBuilder.setOriginalSender(null);
+        dc5EbmsBuilder.refToMessageId(message.getEbmsData().getEbmsMessageId());     //reference the previous message
 
-        messageDetails.setAction(createActionForm_A());
-        messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(message.getMessageDetails().getFromParty());
-        messageDetails.setFromParty(message.getMessageDetails().getToParty());
+        dc5EbmsBuilder.action(createActionForm_A());
+        dc5EbmsBuilder.service(createServiceEPO());
+        dc5EbmsBuilder.receiver(message.getEbmsData().getReceiver());
+        dc5EbmsBuilder.sender(message.getEbmsData().getSender());
 
-        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
+        DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
 
-//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
-
-        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
-                .setMessageDetails(messageDetails)
-                .addTransportedConfirmations(messageDeliveryConfirmation)
+        return DC5Message.builder()
+                .ebmsData(dc5EbmsBuilder.build())
+                .transportedMessageConfirmation(messageDeliveryConfirmation)
                 .build();
 
-        return msg;
     }
 
-    public static DomibusConnectorMessage creatEvidenceMsgForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
+    public static DC5Message creatEvidenceMsgForMessage(DC5Message message, DC5Confirmation confirmation) {
+        DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
 
-        messageDetails.setConversationId(message.getMessageDetails().getConversationId());
-        messageDetails.setEbmsMessageId(null);
-        messageDetails.setBackendMessageId(null);
-        messageDetails.setFinalRecipient(message.getMessageDetails().getOriginalSender());
-        messageDetails.setOriginalSender(message.getMessageDetails().getFinalRecipient());
-        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+        ebmsBuilder.conversationId(message.getEbmsData().getConversationId());
+        ebmsBuilder.ebmsMessageId(null);
+        ebmsBuilder.receiver(message.getEbmsData().getReceiver());
+        ebmsBuilder.sender(message.getEbmsData().getSender());
+        ebmsBuilder.refToMessageId(message.getEbmsData().getEbmsMessageId());     //reference the previous message
 
-        messageDetails.setAction(createActionForm_A());
-        messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(message.getMessageDetails().getFromParty());
-        messageDetails.setFromParty(message.getMessageDetails().getToParty());
+        ebmsBuilder.action(createActionForm_A());
+        ebmsBuilder.service(createServiceEPO());
 
-//        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
+        return DC5Message.builder()
+                .ebmsData(ebmsBuilder.build())
+                .transportedMessageConfirmation(confirmation)
+                .build();
+    }
 
-//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
+    public static DC5Message createDeliveryEvidenceForMessage(DC5Message message) {
 
-        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
-                .setMessageDetails(messageDetails)
-                .addTransportedConfirmations(confirmation)
+        DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
+
+        ebmsBuilder.conversationId(message.getEbmsData().getConversationId());
+        ebmsBuilder.ebmsMessageId(null);
+        ebmsBuilder.receiver(message.getEbmsData().getReceiver());
+        ebmsBuilder.sender(message.getEbmsData().getSender());
+        ebmsBuilder.refToMessageId(message.getEbmsData().getEbmsMessageId());     //reference the previous message
+
+        ebmsBuilder.action(createActionForm_A());
+        ebmsBuilder.service(createServiceEPO());
+
+        return DC5Message.builder()
+                .ebmsData(ebmsBuilder.build())
+                .transportedMessageConfirmation(createMessageDeliveryConfirmation())
                 .build();
 
-        return msg;
     }
 
-    public static DomibusConnectorMessage createDeliveryEvidenceForMessage(DomibusConnectorMessage message) {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
 
-        //messageDetails.setConversationId(null);      //first message no conversation set yet!
-        messageDetails.setEbmsMessageId(null); //message from backend
-        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
-        messageDetails.setFinalRecipient(null);
-        messageDetails.setOriginalSender(null);
-        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+    public static DC5Ebms createDomibusConnectorEpoMessageDetails() {
+        DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
+        ebmsBuilder.conversationId(null);      //first message no conversation set yet!
+        ebmsBuilder.ebmsMessageId("ebms1");
+//        ebmsBuilder.backendMessageId(null);   //has not been processed by the backend yet
+//        ebmsBuilder.("finalRecipient");
+//        ebmsBuilder.setOriginalSender("originalSender");
 
-        messageDetails.setAction(createActionForm_A());
-        messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyATasInitiator());
-        messageDetails.setFromParty(createPartyDE());
+//        ebmsBuilder.setToParty(createPartyATasInitiator());
+//        ebmsBuilder.setFromParty(createPartyDE());
+        ebmsBuilder.receiver(createAtReceiver());
+        ebmsBuilder.sender(createDeSender());
+        ebmsBuilder.refToMessageId(null);     //is the first message
 
-        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageDeliveryConfirmation();
+        ebmsBuilder.action(createActionForm_A());
+        ebmsBuilder.service(createServiceEPO());
 
-//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
+        return ebmsBuilder.build();
+    }
 
-        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
-                .setMessageDetails(messageDetails)
-                .addTransportedConfirmations(messageDeliveryConfirmation)
+    private static DC5EcxAddress createDeSender() {
+        return DC5EcxAddress.builder()
+                .party(new DC5Party("DE", "ecodex"))
+                .role(new DC5Role("GW", DC5RoleType.INITIATOR))
+                .ecxAddress("originalSender")
                 .build();
-
-        return msg;
     }
 
-
-    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageDetails() {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        messageDetails.setConversationId(null);      //first message no conversation set yet!
-        messageDetails.setEbmsMessageId("ebms1");
-        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
-        messageDetails.setFinalRecipient("finalRecipient");
-        messageDetails.setOriginalSender("originalSender");
-        messageDetails.setRefToMessageId(null);     //is the first message
-
-        messageDetails.setAction(createActionForm_A());
-        messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyATasInitiator());
-        messageDetails.setFromParty(createPartyDE());
-
-        return messageDetails;
+    private static DC5EcxAddress createAtReceiver() {
+        return DC5EcxAddress.builder()
+                .party(new DC5Party("AT", "ecodex"))
+                .role(new DC5Role("GW", DC5RoleType.RESPONDER))
+                .ecxAddress("finalRecipient")
+                .build();
     }
 
-    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageFormAFromGWdomibusRed() {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+    public static DC5Ebms createDomibusConnectorEpoMessageFormAFromGWdomibusRed() {
+        DC5Ebms messageDetails = new DC5Ebms();
         messageDetails.setConversationId("conv567");      //first message no conversation set yet!
         messageDetails.setEbmsMessageId("ebms5123");
-        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
-        messageDetails.setFinalRecipient("finalRecipient");
-        messageDetails.setOriginalSender("originalSender");
+//        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
+//        messageDetails.setFinalRecipient("finalRecipient");
+//        messageDetails.setOriginalSender("originalSender");
         messageDetails.setRefToMessageId(null);     //is the first message
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyDomibusBlue());
-        messageDetails.setFromParty(createPartyDomibusRed());
+//        messageDetails.setToParty(createPartyDomibusBlue());
+//        messageDetails.setFromParty(createPartyDomibusRed());
 
         return messageDetails;
     }
 
-    public static DomibusConnectorMessageDetails createDomibusConnectorMessageDetails() {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+    public static DC5Ebms createDomibusConnectorMessageDetails() {
+        DC5Ebms messageDetails = new DC5Ebms();
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId("ebms1");
-        messageDetails.setBackendMessageId("national1");
-        messageDetails.setFinalRecipient("finalRecipient");
-        messageDetails.setOriginalSender("originalSender");
+//        messageDetails.setBackendMessageId("national1");
+//        messageDetails.setFinalRecipient("finalRecipient");
+//        messageDetails.setOriginalSender("originalSender");
         messageDetails.setRefToMessageId("refToMessageId");
 
-        messageDetails.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-        messageDetails.setDeliveredToGateway(parseDateTime("2018-01-01 12:12:12"));
-        messageDetails.setDeliveredToBackend(parseDateTime("2018-01-01 12:12:12"));
+//        messageDetails.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+//        messageDetails.setDeliveredToGateway(parseDateTime("2018-01-01 12:12:12"));
+//        messageDetails.setDeliveredToBackend(parseDateTime("2018-01-01 12:12:12"));
         
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyATasInitiator());
-        messageDetails.setFromParty(createPartyDE());
+//        messageDetails.setToParty(createPartyATasInitiator());
+//        messageDetails.setFromParty(createPartyDE());
         
         return messageDetails;
     }

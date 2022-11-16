@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
@@ -26,12 +26,12 @@ public class LookupGatewayNameStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupGatewayNameStep")
-    public boolean executeStep(DomibusConnectorMessage message) {
-        if (!StringUtils.isEmpty(message.getMessageDetails().getGatewayName())) {
+    public boolean executeStep(DC5Message message) {
+        if (StringUtils.hasText(message.getGatewayLinkName())) {
             //return when already set
             return true;
         }
-        message.getMessageDetails().setGatewayName(dcMessageRoutingConfigurationProperties.getDefaultGatewayName());
+        message.setGatewayLinkName(dcMessageRoutingConfigurationProperties.getDefaultGatewayName());
         return true;
     }
 

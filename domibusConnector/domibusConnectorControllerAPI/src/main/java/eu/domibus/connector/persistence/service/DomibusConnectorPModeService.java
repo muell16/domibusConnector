@@ -2,9 +2,9 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public interface DomibusConnectorPModeService {
      * @param action - the action
      * @return a list of services
      */
-    List<DomibusConnectorAction> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction action);
+    List<DC5Action> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action action);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -39,7 +39,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorAction action);
+    Optional<DC5Action> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action action);
 
 
     /**
@@ -48,23 +48,23 @@ public interface DomibusConnectorPModeService {
      * Ff any matching service is found it will be returned within the list
      * a null value acts as wildcard
      * @param lane - the MessageLaneConfiguration which is asked
-     * @param domibusConnectorService the service
+     * @param DC5Service the service
      * @return a list of matching services
      *
      */
-    List<DomibusConnectorService> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService domibusConnectorService);
+    List<DC5Service> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service DC5Service);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
      * the requested service. Only the attribute service will be looked up
      * if any matching service is found it will be returned
      * @param lane - the MessageLaneConfiguration which is asked
-     * @param domibusConnectorService the service
+     * @param DC5Service the service
      * @return the domibusConnectorService
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorService domibusConnectorService);
+    Optional<DC5Service> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service DC5Service);
 
     /**
      * Will check if the current p-Mode set for this message lane contains

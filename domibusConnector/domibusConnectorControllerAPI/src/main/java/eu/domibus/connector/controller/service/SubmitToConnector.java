@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 /**
  * Generic interface to submit a message to the connector
@@ -11,11 +11,11 @@ import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
  */
 public interface SubmitToConnector {
 
-    default public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
+    default public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
         submitToConnector(message, linkPartner.getLinkPartnerName(), linkPartner.getLinkType());
     }
 
-    public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName
+    public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName
             , LinkType linkType) throws DomibusConnectorSubmitToLinkException;
 
 }

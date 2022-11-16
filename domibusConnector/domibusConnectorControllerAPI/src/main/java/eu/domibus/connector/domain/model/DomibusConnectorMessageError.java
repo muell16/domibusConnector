@@ -1,13 +1,13 @@
 package eu.domibus.connector.domain.model;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotNull;
 
 
 /**
- * Internal part of the {@link DomibusConnectorMessage}. All message related
+ * Internal part of the {@link DC5Message}. All message related
  * errors raised while processing a message and all message related errors
  * reported by the gateway are stored and added to the message.
  * @author riederb

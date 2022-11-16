@@ -22,9 +22,9 @@ import eu.domibus.connector.ui.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -71,8 +71,8 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 	Button updateConnectorstorePassword = new Button("Update connectorstore password");
 
 	Grid<DomibusConnectorParty> partyGrid;
-	Grid<DomibusConnectorAction> actionGrid;
-	Grid<DomibusConnectorService> serviceGrid;
+	Grid<DC5Action> actionGrid;
+	Grid<DC5Service> serviceGrid;
 
 	Grid<DomibusConnectorPModeSet> pModesGrid;
 
@@ -235,10 +235,10 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		LumoLabel servicesLabel = createGridTitleText("Services within active PMode-Set:");
 		services.add(servicesLabel);
 
-		serviceGrid = new Grid<DomibusConnectorService>();
+		serviceGrid = new Grid<DC5Service>();
 
-		serviceGrid.addColumn(DomibusConnectorService::getService).setHeader("Service").setWidth("500px").setSortable(true).setResizable(true);
-		serviceGrid.addColumn(DomibusConnectorService::getServiceType).setHeader("Service Type").setWidth("500px").setSortable(true).setResizable(true);
+		serviceGrid.addColumn(DC5Service::getService).setHeader("Service").setWidth("500px").setSortable(true).setResizable(true);
+		serviceGrid.addColumn(DC5Service::getServiceType).setHeader("Service Type").setWidth("500px").setSortable(true).setResizable(true);
 		serviceGrid.setWidth("1020px");
 		serviceGrid.setHeight("320px");
 		serviceGrid.setMultiSort(true);
@@ -254,10 +254,10 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		LumoLabel actionsLabel = createGridTitleText("Actions within active PMode-Set:");
 		actions.add(actionsLabel);
 
-		actionGrid = new Grid<DomibusConnectorAction>();
+		actionGrid = new Grid<DC5Action>();
 
 
-		actionGrid.addColumn(DomibusConnectorAction::getAction).setHeader("Action").setWidth("600px").setSortable(true).setResizable(true);
+		actionGrid.addColumn(DC5Action::getAction).setHeader("Action").setWidth("600px").setSortable(true).setResizable(true);
 		actionGrid.setWidth("620px");
 		actionGrid.setHeight("320px");
 		actionGrid.setMultiSort(true);
@@ -366,13 +366,13 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 			}
 			updateDescriptionResult.setText("");
 
-			List<DomibusConnectorService> serviceList = this.pmodeService.getServiceList();
+			List<DC5Service> serviceList = this.pmodeService.getServiceList();
 			if(!CollectionUtils.isEmpty(serviceList)) {
 				serviceGrid.setItems(serviceList);
 				serviceGrid.setVisible(true);
 			}
 
-			List<DomibusConnectorAction> actionList = pmodeService.getActionList();
+			List<DC5Action> actionList = pmodeService.getActionList();
 			if(!CollectionUtils.isEmpty(actionList)) {
 				actionGrid.setItems(actionList);
 				actionGrid.setVisible(true);

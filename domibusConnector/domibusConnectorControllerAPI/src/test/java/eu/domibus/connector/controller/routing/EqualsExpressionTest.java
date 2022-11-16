@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.ecodex.dc5.message.model.DC5Action;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +14,9 @@ class EqualsExpressionTest {
         String ACTION = "Action1";
         EqualsExpression equalsExpression = new EqualsExpression(TokenType.AS4_ACTION, ACTION);
 
-        DomibusConnectorMessage message = new DomibusConnectorMessage();
-        message.setMessageDetails(new DomibusConnectorMessageDetails());
-        message.getMessageDetails().setAction(new DC5Action());
-        message.getMessageDetails().getAction().setAction(ACTION);
+        DC5Message message = new DC5Message();
+        message.setEbmsData(new DC5Ebms());
+        message.getEbmsData().setAction(new DC5Action(ACTION));
 
         boolean result = equalsExpression.evaluate(message);
         assertThat(result).isTrue();
@@ -28,10 +27,9 @@ class EqualsExpressionTest {
         String ACTION = "Action1";
         EqualsExpression equalsExpression = new EqualsExpression(TokenType.AS4_ACTION, ACTION);
 
-        DomibusConnectorMessage message = new DomibusConnectorMessage();
-        message.setMessageDetails(new DomibusConnectorMessageDetails());
-        message.getMessageDetails().setAction(new DC5Action());
-        message.getMessageDetails().getAction().setAction("OtherAction");
+        DC5Message message = new DC5Message();
+        message.setEbmsData(new DC5Ebms());
+        message.getEbmsData().setAction(new DC5Action("OtherAction"));
 
         boolean result = equalsExpression.evaluate(message);
         assertThat(result).isFalse();

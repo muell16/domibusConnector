@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.testutil.matcher;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import org.mockito.ArgumentMatcher;
 
 /**
@@ -10,11 +10,11 @@ import org.mockito.ArgumentMatcher;
 public class MockitoDomainMatcher {
 
 
-    public static ArgumentMatcher<DomibusConnectorMessage> eqToRefToMessageId(String refToMessageId) {
+    public static ArgumentMatcher<DC5Message> eqToRefToMessageId(String refToMessageId) {
         return new RefToMessageIdMatcher(refToMessageId);
     }
 
-    private static class RefToMessageIdMatcher implements ArgumentMatcher<DomibusConnectorMessage> {
+    private static class RefToMessageIdMatcher implements ArgumentMatcher<DC5Message> {
 
         private final String messageReference;
 
@@ -26,11 +26,11 @@ public class MockitoDomainMatcher {
         }
 
         @Override
-        public boolean matches(DomibusConnectorMessage message) {
+        public boolean matches(DC5Message message) {
             if (message == null) {
                 return false;
             }
-            return messageReference.equals(message.getMessageDetails().getRefToMessageId());
+            return messageReference.equals(message.getEbmsData().getRefToMessageId());
         }
 
     }

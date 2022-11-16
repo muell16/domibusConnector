@@ -8,10 +8,10 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+//import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import org.apache.logging.log4j.LogManager;
@@ -26,43 +26,43 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitToTestLink.class);
 
-    private final SubmitToConnector submitToConnector;
-    private final TransportStateService transportStateService;
-    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
+//    private final SubmitToConnector submitToConnector;
+//    private final TransportStateService transportStateService;
+//    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     private boolean enabled;
     private DomibusConnectorLinkPartner linkPartner;
 
-    public SubmitToTestLink(SubmitToConnector submitToConnector,
-                            TransportStateService transportStateService,
-                            DomibusConnectorMessageIdGenerator messageIdGenerator) {
-        this.submitToConnector = submitToConnector;
-        this.transportStateService = transportStateService;
-        this.messageIdGenerator = messageIdGenerator;
-    }
+//    public SubmitToTestLink(SubmitToConnector submitToConnector,
+//                            TransportStateService transportStateService,
+//                            DomibusConnectorMessageIdGenerator messageIdGenerator) {
+//        this.submitToConnector = submitToConnector;
+//        this.transportStateService = transportStateService;
+//        this.messageIdGenerator = messageIdGenerator;
+//    }
 
     @Override
-    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         if (DomainModelHelper.isBusinessMessage(message)) {
 
             if (this.enabled) {
-                String ebmsMessageId = message.getMessageDetails().getEbmsMessageId();
+                String ebmsMessageId = message.getEbmsData().getEbmsMessageId();
 
-                DomibusConnectorMessage deliveryConfirmation = DomibusConnectorMessageBuilder.createBuilder()
-                        .setMessageDetails(
-                                DomibusConnectorMessageDetailsBuilder.create()
-                                        .withRefToMessageId(ebmsMessageId)                                              //set ref to message id to ebms id
-                                        .build()
-                        )
-                        .setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
-                        .setMessageLaneId(message.getMessageLaneId())
-                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()     //append evidence trigger of type DELIVERY
-                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-                                .setEvidence(new byte[0])
-                                .build())
-                        .build();
+//                DC5Message deliveryConfirmation = DomibusConnectorMessageBuilder.createBuilder()
+//                        .setMessageDetails(
+//                                DomibusConnectorMessageDetailsBuilder.create()
+//                                        .withRefToMessageId(ebmsMessageId)                                              //set ref to message id to ebms id
+//                                        .build()
+//                        )
+//                        .setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
+//                        .setMessageLaneId(message.getMessageLaneId())
+//                        .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()     //append evidence trigger of type DELIVERY
+//                                .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+//                                .setEvidence(new byte[0])
+//                                .build())
+//                        .build();
 
-                submitToConnector.submitToConnector(deliveryConfirmation, linkPartnerName, LinkType.BACKEND);       //submit trigger message to connector
+//                submitToConnector.submitToConnector(deliveryConfirmation, linkPartnerName, LinkType.BACKEND);       //submit trigger message to connector
 
                 LOGGER.info("Generated Delivery evidence trigger message for connector test message with EBMS ID [{}]", message.getConnectorMessageId());
             } else {
@@ -71,13 +71,13 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
         } else {
             //ignore evidence messages...
         }
-        TransportStateService.TransportId transportFor = transportStateService.createTransportFor(message, linkPartnerName);
+//        TransportStateService.TransportId transportFor = transportStateService.createTransportFor(message, linkPartnerName);
         TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-        state.setConnectorTransportId(transportFor);
+//        state.setConnectorTransportId(transportFor);
         state.setLinkPartner(linkPartner);
         state.setRemoteMessageId("Testbackend_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         state.setStatus(TransportState.ACCEPTED);
-        transportStateService.updateTransportStatus(state);
+//        transportStateService.updateTransportStatus(state);
 
     }
 

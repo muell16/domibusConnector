@@ -10,7 +10,7 @@ import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
@@ -133,7 +133,7 @@ public class MoveMessagesFromDlqToQueueTest {
 
         // Arrange
         final QueueHelper sut = new QueueHelper(q1, dlq1, nonXaJmsTemplate);
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("msg1"));
 
         final List<Message> test1 = sut.listAllMessagesInDlq(); // debug
@@ -145,7 +145,7 @@ public class MoveMessagesFromDlqToQueueTest {
         // Act
         sut.moveMsgFromDlqToQueue(jmsMessage);
         final List<Message> listMsgDlq = sut.listAllMessagesInDlq();
-        final DomibusConnectorMessage msgOnQueue = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(q1);
+        final DC5Message msgOnQueue = (DC5Message) nonXaJmsTemplate.receiveAndConvert(q1);
         final List<Message> listMsgDlq2 = sut.listAllMessagesInDlq();
 
         // Assert

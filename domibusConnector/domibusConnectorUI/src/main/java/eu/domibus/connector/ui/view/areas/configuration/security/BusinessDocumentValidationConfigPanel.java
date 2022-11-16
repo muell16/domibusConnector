@@ -3,7 +3,6 @@ package eu.domibus.connector.ui.view.areas.configuration.security;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;

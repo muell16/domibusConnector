@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
@@ -21,7 +21,7 @@ public interface DomibusConnectorMessageErrorPersistenceService {
      * @throws PersistenceException if there are errors accessing or reading from persistence layer
      */
     @Nonnull
-    List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
+    List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DC5Message message) throws PersistenceException;
 
     /**
      * persists an error to the message

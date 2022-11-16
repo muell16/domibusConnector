@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -30,7 +30,7 @@ class TransportStepPersistenceServiceImplITCase {
 
     @Test
     void createNewTransportStep() {
-        DomibusConnectorMessage m = DomainEntityCreator.createMessage();
+        DC5Message m = DomainEntityCreator.createMessage();
         m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
@@ -47,7 +47,7 @@ class TransportStepPersistenceServiceImplITCase {
 
     @Test
     void createNewTransportStepSetPending() {
-        DomibusConnectorMessage m = DomainEntityCreator.createMessage();
+        DC5Message m = DomainEntityCreator.createMessage();
         m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();

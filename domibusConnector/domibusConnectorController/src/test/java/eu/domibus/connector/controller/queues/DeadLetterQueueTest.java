@@ -10,7 +10,7 @@ import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.junit.jupiter.api.Assertions;
@@ -111,10 +111,10 @@ public class DeadLetterQueueTest {
         // Arrange
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(cleanupMessageProcessor).processMessage(any());
 
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("asdfasdfasdf"));
 
-        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[1];
+        final DC5Message[] DC5Message = new DC5Message[1];
 
         // Act
         txTemplate.executeWithoutResult(tx -> toCleanupQueueProducer.putOnQueue(message));
@@ -127,9 +127,9 @@ public class DeadLetterQueueTest {
                 () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
                     nonXaJmsTemplate.setReceiveTimeout(20000);
                     nonXaJmsTemplate.setSessionTransacted(false);
-                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getCleanupDeadLetterQueue());
+                    DC5Message[0] = (DC5Message) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getCleanupDeadLetterQueue());
                 }),
-                () -> assertThat(domibusConnectorMessage[0])
+                () -> assertThat(DC5Message[0])
                         .isNotNull()
                         .extracting(c -> c.getConnectorMessageId().getConnectorMessageId()).isEqualTo("asdfasdfasdf")
         );
@@ -141,10 +141,10 @@ public class DeadLetterQueueTest {
         // Arrange
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(submitToLinkService).submitToLink(any());
 
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("qwerqwerqwrerttz"));
 
-        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[2];
+        final DC5Message[] DC5Message = new DC5Message[2];
 
         // Act
         txTemplate.executeWithoutResult(tx -> toLinkQueueProducer.putOnQueue(message));
@@ -156,13 +156,13 @@ public class DeadLetterQueueTest {
                 () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
                     nonXaJmsTemplate.setReceiveTimeout(20000);
 //                    nonXaJmsTemplate.setSessionTransacted(false);
-                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkDeadLetterQueue());
-                    domibusConnectorMessage[1] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkQueue());
+                    DC5Message[0] = (DC5Message) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkDeadLetterQueue());
+                    DC5Message[1] = (DC5Message) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToLinkQueue());
                 }),
-                () -> assertThat(domibusConnectorMessage[0])
+                () -> assertThat(DC5Message[0])
                         .isNotNull()
                         .extracting(c -> c.getConnectorMessageId().getConnectorMessageId()).isEqualTo("qwerqwerqwrerttz"),
-                () -> assertThat(domibusConnectorMessage[1])
+                () -> assertThat(DC5Message[1])
                         .isNull()
         );
     }
@@ -175,10 +175,10 @@ public class DeadLetterQueueTest {
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toGatewayBusinessMessageProcessor).processMessage(any());
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toBackendBusinessMessageProcessor).processMessage(any());
 
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+        DC5Message message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("yxcvyxcvyxcv"));
 
-        final DomibusConnectorMessage[] domibusConnectorMessage = new DomibusConnectorMessage[1];
+        final DC5Message[] DC5Message = new DC5Message[1];
 
         // Act
         txTemplate.executeWithoutResult(tx -> toConnectorQueueProducer.putOnQueue(message));
@@ -188,9 +188,9 @@ public class DeadLetterQueueTest {
                 () -> Assertions.assertTimeoutPreemptively(Duration.ofSeconds(40), () -> {
                     nonXaJmsTemplate.setReceiveTimeout(20000);
                     nonXaJmsTemplate.setSessionTransacted(false);
-                    domibusConnectorMessage[0] = (DomibusConnectorMessage) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToConnectorControllerDeadLetterQueue());
+                    DC5Message[0] = (DC5Message) nonXaJmsTemplate.receiveAndConvert(queuesConfigurationProperties.getToConnectorControllerDeadLetterQueue());
                 }),
-                () -> assertThat(domibusConnectorMessage[0])
+                () -> assertThat(DC5Message[0])
                         .isNotNull()
                         .extracting(c -> c.getConnectorMessageId().getConnectorMessageId()).isEqualTo("yxcvyxcvyxcv")
         );

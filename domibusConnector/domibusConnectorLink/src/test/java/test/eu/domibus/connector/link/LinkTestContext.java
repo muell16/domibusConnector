@@ -12,7 +12,7 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.lib.spring.configuration.validation.HelperMethods;
@@ -134,7 +134,7 @@ public class LinkTestContext {
 
     @Bean
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages() {
+    public BlockingQueue<DC5Message> toConnectorSubmittedMessages() {
         return new LinkedBlockingDeque<>(90);
     }
 
@@ -142,10 +142,10 @@ public class LinkTestContext {
 
         @Autowired
         @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+        public BlockingQueue<DC5Message> toConnectorSubmittedMessages;
 
         @Override
-        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) throws DomibusConnectorSubmitToLinkException {
+        public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) throws DomibusConnectorSubmitToLinkException {
 
             LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
             try {

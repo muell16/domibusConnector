@@ -1,8 +1,8 @@
 package eu.domibus.connector.domain.model;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorService;
+import eu.ecodex.dc5.message.model.DC5Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +16,8 @@ public class DomibusConnectorPModeSet {
     private byte[] pModes;
 
     private List<DomibusConnectorParty> parties = new ArrayList<>();
-    private List<DomibusConnectorAction> actions = new ArrayList<>();
-    private List<DomibusConnectorService> services = new ArrayList<>();
+    private List<DC5Action> actions = new ArrayList<>();
+    private List<DC5Service> services = new ArrayList<>();
     
     private DomibusConnectorKeystore connectorstore;
     private DomibusConnectorParty homeParty;
@@ -31,19 +31,19 @@ public class DomibusConnectorPModeSet {
         this.parties = parties;
     }
 
-    public List<DomibusConnectorAction> getActions() {
+    public List<DC5Action> getActions() {
         return actions;
     }
 
-    public void setActions(List<DomibusConnectorAction> actions) {
+    public void setActions(List<DC5Action> actions) {
         this.actions = actions;
     }
 
-    public List<DomibusConnectorService> getServices() {
+    public List<DC5Service> getServices() {
         return services;
     }
 
-    public void setServices(List<DomibusConnectorService> services) {
+    public void setServices(List<DC5Service> services) {
         this.services = services;
     }
 

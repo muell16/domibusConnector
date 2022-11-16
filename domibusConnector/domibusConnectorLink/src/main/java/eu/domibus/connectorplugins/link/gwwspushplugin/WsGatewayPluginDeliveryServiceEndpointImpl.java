@@ -3,7 +3,7 @@ package eu.domibus.connectorplugins.link.gwwspushplugin;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -40,10 +40,10 @@ public class WsGatewayPluginDeliveryServiceEndpointImpl implements DomibusConnec
                 MDC.MDCCloseable conId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId.getConnectorMessageId())
         ) {
             LOGGER.debug("Message delivered from gateway [{}] assigning connectorMessageId [{}]", linkName, connectorMessageId);
-            DomibusConnectorMessage domibusConnectorMessage = transformerService.transformTransitionToDomain(deliverMessageRequest, connectorMessageId);
-            domibusConnectorMessage.setConnectorMessageId(connectorMessageId);
+            DC5Message DC5Message = transformerService.transformTransitionToDomain(deliverMessageRequest, connectorMessageId);
+            DC5Message.setConnectorMessageId(connectorMessageId);
 
-            submitToConnector.submitToConnector(domibusConnectorMessage, linkPartner);
+            submitToConnector.submitToConnector(DC5Message, linkPartner);
 
             ret.setMessageId(connectorMessageId.getConnectorMessageId());
             ret.setResult(true);

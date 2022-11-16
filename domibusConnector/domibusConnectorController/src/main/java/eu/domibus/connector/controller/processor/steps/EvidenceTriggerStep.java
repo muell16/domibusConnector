@@ -7,9 +7,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDetails;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
@@ -42,19 +42,19 @@ public class EvidenceTriggerStep implements MessageProcessStep {
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "EvidenceTriggerStep")
-    public boolean executeStep(DomibusConnectorMessage evidenceTriggerMsg) {
+    public boolean executeStep(DC5Message evidenceTriggerMsg) {
 
         //is evidence triggering allowed
         isEvidenceTriggeringAllowed(evidenceTriggerMsg);
 
         //only incoming evidence messages are looked up
-        DomibusConnectorMessage businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(evidenceTriggerMsg, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        DomibusConnectorMessageDetails businessMsgDetails = businessMsg.getMessageDetails();
+        DC5Message businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(evidenceTriggerMsg, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+        DC5Ebms businessMsgDetails = businessMsg.getEbmsData();
 
         DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
         //create evidence
-        DomibusConnectorMessageConfirmation confirmation = confirmationCreatorService.createConfirmation(evidenceType, businessMsg, DomibusConnectorRejectionReason.OTHER, "");
+        DC5Confirmation confirmation = confirmationCreatorService.createConfirmation(evidenceType, businessMsg, DomibusConnectorRejectionReason.OTHER, "");
         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
 
         //set generated evidence into the trigger message
@@ -62,7 +62,7 @@ public class EvidenceTriggerStep implements MessageProcessStep {
         evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
                 .setEvidence(confirmation.getEvidence());
 
-        DomibusConnectorMessageDetails evidenceTriggerMsgDetails = evidenceTriggerMsg.getMessageDetails();
+        DC5Ebms evidenceTriggerMsgDetails = evidenceTriggerMsg.getEbmsData();
 
         //set correct action for evidence message
         evidenceTriggerMsgDetails.setAction(confirmationCreatorService.createEvidenceAction(confirmation.getEvidenceType()));
@@ -70,34 +70,34 @@ public class EvidenceTriggerStep implements MessageProcessStep {
         evidenceTriggerMsgDetails.setService(businessMsgDetails.getService());
 
         //set correct original sender / final recipient
-        evidenceTriggerMsgDetails.setOriginalSender(businessMsgDetails.getFinalRecipient());
-        evidenceTriggerMsgDetails.setFinalRecipient(businessMsgDetails.getOriginalSender());
+//        evidenceTriggerMsgDetails.setOriginalSender(businessMsgDetails.getFinalRecipient());
+//        evidenceTriggerMsgDetails.setFinalRecipient(businessMsgDetails.getOriginalSender());
         //set correct from/to party
-        evidenceTriggerMsgDetails.setFromParty(businessMsgDetails.getToParty());
-        evidenceTriggerMsgDetails.setToParty(businessMsgDetails.getFromParty());
+//        evidenceTriggerMsgDetails.setFromParty(businessMsgDetails.getToParty());
+//        evidenceTriggerMsgDetails.setToParty(businessMsgDetails.getFromParty());
 
         return true;
     }
 
-    private void isEvidenceTriggeringAllowed(DomibusConnectorMessage evidenceTriggerMsg) {
+    private void isEvidenceTriggeringAllowed(DC5Message evidenceTriggerMsg) {
         if (!DomainModelHelper.isEvidenceTriggerMessage(evidenceTriggerMsg)) {
             throwException(evidenceTriggerMsg, "The message is not an evidence trigger message!");
         }
-        MessageTargetSource source = evidenceTriggerMsg.getMessageDetails().getDirection().getSource();
+        MessageTargetSource source = evidenceTriggerMsg.getDirection().getSource();
         if (source != MessageTargetSource.BACKEND) {
             throwException(evidenceTriggerMsg, "Only backend can generate trigger messages");
         }
     }
 
-    private void throwException(DomibusConnectorMessage evidenceTriggerMsg, String s) {
+    private void throwException(DC5Message evidenceTriggerMsg, String s) {
         throw new DomibusConnectorMessageException(evidenceTriggerMsg, EvidenceTriggerStep.class, s);
     }
 
-    private DomibusConnectorEvidenceType getEvidenceType(DomibusConnectorMessage evidenceTriggerMsg) {
+    private DomibusConnectorEvidenceType getEvidenceType(DC5Message evidenceTriggerMsg) {
         if (!DomainModelHelper.isEvidenceTriggerMessage(evidenceTriggerMsg)) {
             throw new DomibusConnectorMessageException(evidenceTriggerMsg, EvidenceTriggerStep.class, "The message is not an evidence trigger msg!");
         }
-        DomibusConnectorMessageConfirmation msgConfirmation = evidenceTriggerMsg.getTransportedMessageConfirmations().get(0);
+        DC5Confirmation msgConfirmation = evidenceTriggerMsg.getTransportedMessageConfirmations().get(0);
         return msgConfirmation.getEvidenceType();
     }
 

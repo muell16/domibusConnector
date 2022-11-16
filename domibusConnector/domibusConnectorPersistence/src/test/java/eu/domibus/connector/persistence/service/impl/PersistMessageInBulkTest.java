@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
@@ -28,8 +28,6 @@ class PersistMessageInBulkTest {
     @Autowired
     TransportStepPersistenceService transportStepPersistenceService;
 
-    @Autowired
-    DCMessagePersistenceServiceImpl messagePersistenceService;
 
     @Autowired
     DomibusConnectorMessageDao msgDao;
@@ -38,15 +36,15 @@ class PersistMessageInBulkTest {
     @Disabled("is broken and does test a deprecated function")
     public void testBulkMessage() {
 
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId(new DomibusConnectorMessageId("msg2"));
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-
-        IntStream.range(0, 30).parallel().forEach(i -> {
-            DomibusConnectorMessage message2 = DomainEntityCreator.createMessage();
-            message2.setConnectorMessageId(new DomibusConnectorMessageId("msg2" + i));
-            messagePersistenceService.persistMessageIntoDatabase(message2, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-        });
+//        DC5Message message = DomainEntityCreator.createMessage();
+//        message.setConnectorMessageId(new DomibusConnectorMessageId("msg2"));
+//        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+//
+//        IntStream.range(0, 30).parallel().forEach(i -> {
+//            DC5Message message2 = DomainEntityCreator.createMessage();
+//            message2.setConnectorMessageId(new DomibusConnectorMessageId("msg2" + i));
+//            messagePersistenceService.persistMessageIntoDatabase(message2, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+//        });
 
     }
 }

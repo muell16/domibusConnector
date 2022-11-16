@@ -1,38 +1,38 @@
 package eu.domibus.connector.controller.exception;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 public class DomibusConnectorMessageTransportException extends RuntimeException {
 
-    private DomibusConnectorMessage connectorMessage;
+    private DC5Message connectorMessage;
     private DomibusConnectorRejectionReason reason;
     private boolean retryable = false;
     private ErrorCode errorCode;
 
-    public DomibusConnectorMessageTransportException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason) {
+    public DomibusConnectorMessageTransportException(DC5Message message, DomibusConnectorRejectionReason reason) {
         this.connectorMessage = message;
         this.reason = reason;
     }
 
-    public DomibusConnectorMessageTransportException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason, Throwable cause) {
+    public DomibusConnectorMessageTransportException(DC5Message message, DomibusConnectorRejectionReason reason, Throwable cause) {
         super(cause);
         this.connectorMessage = message;
         this.reason = reason;
     }
 
-    public DomibusConnectorMessageTransportException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason, String reasonMessage, Throwable cause) {
+    public DomibusConnectorMessageTransportException(DC5Message message, DomibusConnectorRejectionReason reason, String reasonMessage, Throwable cause) {
         super(reasonMessage, cause);
         this.connectorMessage = message;
         this.reason = reason;
     }
 
-    public DomibusConnectorMessageTransportException(DomibusConnectorMessage message, String errorMessage) {
+    public DomibusConnectorMessageTransportException(DC5Message message, String errorMessage) {
         super(errorMessage);
         this.connectorMessage = message;
     }
 
-    public DomibusConnectorMessage getConnectorMessage() {
+    public DC5Message getConnectorMessage() {
         return connectorMessage;
     }
 
@@ -40,7 +40,7 @@ public class DomibusConnectorMessageTransportException extends RuntimeException 
         return reason;
     }
 
-    public void setConnectorMessage(DomibusConnectorMessage connectorMessage) {
+    public void setConnectorMessage(DC5Message connectorMessage) {
         this.connectorMessage = connectorMessage;
     }
 

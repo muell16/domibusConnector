@@ -5,7 +5,6 @@ import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.ecodex.dc5.message.model.*;
@@ -64,12 +63,12 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionAcceptance() throws DomibusConnectorEvidencesToolkitException, TransformerException {
         LOG.info("Started testCreateSubmissionAcceptance");
 
-        DomibusConnectorMessage message = buildTestMessage();
+        DomibusConnectorEvidencesToolkit.MessageParameters message = buildTestMessage();
 
         assertThat(evidencesToolkit).as("evidences toolkit must be init!").isNotNull();
         assertThat(message).as("message must not be null!").isNotNull();
 
-        DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+        DomibusConnectorEvidencesToolkit.Evidence confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
         Assertions.assertNotNull(confirmation);
         String evidencePretty = prettyPrint(confirmation.getEvidence());
         LOG.info(evidencePretty);
@@ -81,12 +80,11 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionAcceptance_businessDocIsNull() throws DomibusConnectorEvidencesToolkitException, TransformerException {
         LOG.info("Started testCreateSubmissionAcceptance");
 
-        DomibusConnectorMessage message = buildTestMessage_businessDocIsNull();
+        DomibusConnectorEvidencesToolkit.MessageParameters message = buildTestMessage();
 
         assertThat(evidencesToolkit).as("evidences toolkit must be init!").isNotNull();
         assertThat(message).as("message must not be null!").isNotNull();
-
-        DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+        DomibusConnectorEvidencesToolkit.Evidence confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
         Assertions.assertNotNull(confirmation);
         String evidencePretty = prettyPrint(confirmation.getEvidence());
         LOG.info(evidencePretty);
@@ -98,10 +96,10 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionRejection() {
         LOG.info("Started testCreateSubmissionRejection");
 
-        DomibusConnectorMessage message = buildTestMessage();
+        DomibusConnectorEvidencesToolkit.MessageParameters message = buildTestMessage();
 
         try {
-            DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(
+            DomibusConnectorEvidencesToolkit.Evidence confirmation = evidencesToolkit.createEvidence(
                     DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
                     message,
                     DomibusConnectorRejectionReason.OTHER, null);
@@ -121,47 +119,22 @@ public class DomibusConnectorEvidencesToolkitTest {
         LOG.info("Finished testCreateSubmissionRejection");
     }
 
-    private DomibusConnectorMessage buildTestMessage() {
-        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-        details.setBackendMessageId("nationalMessageId1");
-        details.setOriginalSender("someSenderAddress");
-        details.setFinalRecipient("someRecipientAddress");
+    private DomibusConnectorEvidencesToolkit.MessageParameters buildTestMessage() {
+        DomibusConnectorEvidencesToolkit.MessageParameters details = DomibusConnectorEvidencesToolkit.MessageParameters
+                .builder()
+                .senderAddress("someSenderAddress")
+                .recipientAddress("someRecipientAddress")
+                .nationalMessageId("nationalMessageId1")
+                .businessDocumentHash(DomibusConnectorEvidencesToolkit.HashValue.builder()
+                        .hash("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad") //algorithm SHA256 value 'abc'
+                        .algorithm("SHA256")
+                        .build())
+                .build();
 
-        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
-
-        LargeFileReferenceMemoryBacked ref = new LargeFileReferenceMemoryBacked("originalMessage".getBytes());
-
-        DomibusConnectorMessageDocument document =
-                new DomibusConnectorMessageDocument(ref, "documentName", null);
-
-//        content.setXmlContent("originalMessage".getBytes());
-//        content.setDocument(document);
-
-        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
-
-        return message;
+        return details;
     }
 
-    private DomibusConnectorMessage buildTestMessage_businessDocIsNull() {
-        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-        details.setBackendMessageId("nationalMessageId1");
-        details.setOriginalSender("someSenderAddress");
-        details.setFinalRecipient("someRecipientAddress");
 
-        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
-
-//        LargeFileReferenceMemoryBacked ref = new LargeFileReferenceMemoryBacked("originalMessage".getBytes());
-
-        DomibusConnectorMessageDocument document =
-                new DomibusConnectorMessageDocument(null, "documentName", null);
-
-//        content.setXmlContent("originalMessage".getBytes());
-//        content.setDocument(document);
-
-        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
-
-        return message;
-    }
 
     private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {
         // Instantiate transformer input

@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.repo.DomibusConnectorMessageRepo;
 import eu.ecodex.dc5.flow.api.Step;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class DC5SaveMessageStep {
 
     @Step(name = "SaveMessage")
     @Transactional(propagation = Propagation.REQUIRES_NEW) //run in a new nested TX
-    public DomibusConnectorMessage saveNewMessage(DomibusConnectorMessage msg) {
-        DomibusConnectorMessage dbMsg = messageRepo.save(msg);
+    public DC5Message saveNewMessage(DC5Message msg) {
+        DC5Message dbMsg = messageRepo.save(msg);
         return dbMsg;
     }
 

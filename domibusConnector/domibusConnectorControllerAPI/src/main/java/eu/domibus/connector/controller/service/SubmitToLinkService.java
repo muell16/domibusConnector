@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 /**
  * Will be called by the connector
@@ -11,6 +11,6 @@ import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
  */
 public interface SubmitToLinkService {
 
-    public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException;
+    public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException;
 
 }

@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 
 /**
  * Takes a message and persists all big data of this message into
@@ -20,5 +20,5 @@ public interface DCMessageContentManager {
      * message
      * @param message - the message
      */
-    void cleanForMessage(DomibusConnectorMessage message);
+    void cleanForMessage(DC5Message message);
 }

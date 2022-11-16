@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkExc
 import eu.domibus.connector.controller.service.*;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -53,7 +53,7 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
 
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setStatus(TransportState.PENDING);
         TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
@@ -96,7 +96,7 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
             getMessageByIdRequest.setMessageId(remoteMessageId);
             DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
 
-            DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById, connectorMessageId);
+            DC5Message message = transformerService.transformTransitionToDomain(messageById, connectorMessageId);
 
 
             Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);

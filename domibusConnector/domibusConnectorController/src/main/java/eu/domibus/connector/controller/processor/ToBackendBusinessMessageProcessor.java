@@ -7,8 +7,8 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,6 +20,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.springframework.transaction.annotation.Transactional;
+
+import static eu.domibus.connector.controller.processor.util.ConfirmationCreatorService.toDC5Confirmation;
+import static eu.domibus.connector.controller.processor.util.ConfirmationCreatorService.toMessageParams;
 
 @Component(ToBackendBusinessMessageProcessor.GW_TO_BACKEND_MESSAGE_PROCESSOR)
 public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
@@ -58,8 +61,8 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
-	public void processMessage(final DomibusConnectorMessage incomingMessage) {
-		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getMessageDetails().getEbmsMessageId())) {
+	public void processMessage(final DC5Message incomingMessage) {
+		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getEbmsData().getEbmsMessageId())) {
 
 			//verify pModes
 			verifyPModesStep.verifyIncoming(incomingMessage);
@@ -74,7 +77,7 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
 			//Create relayREMMD //TODO: decide if this should maybe generated after msg successfully transported to backend link?
-			DomibusConnectorMessageConfirmation relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
+			DC5Confirmation relayREMMDEvidence = createRelayREMMDEvidence(incomingMessage, true);
 			//process created relayREMMD (save it to db and attach it to transported message)
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence);
 
@@ -87,30 +90,35 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
 
 			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",
-					incomingMessage.getMessageDetails().getEbmsMessageId(),
-					incomingMessage.getMessageDetails().getConnectorBackendClientName()
+					incomingMessage.getEbmsData().getEbmsMessageId(),
+					incomingMessage.getBackendLinkName()
 			);
 
 		} catch (DomibusConnectorSecurityException e) {
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
-			DomibusConnectorMessageConfirmation negativeEvidence = createNonDeliveryEvidence(incomingMessage);
+			DC5Confirmation negativeEvidence = createNonDeliveryEvidence(incomingMessage);
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
 			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
 			LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
-					incomingMessage.getMessageDetails().getEbmsMessageId(),
-					incomingMessage.getMessageDetails().getConnectorBackendClientName()
+					incomingMessage.getEbmsData().getEbmsMessageId(),
+					incomingMessage.getBackendLinkName()
 			);
 		}
 	}
 
 	
-	private DomibusConnectorMessageConfirmation createNonDeliveryEvidence(DomibusConnectorMessage originalMessage)
+	private DC5Confirmation createNonDeliveryEvidence(DC5Message originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
+
+		DomibusConnectorEvidencesToolkit.MessageParameters msgData = toMessageParams(originalMessage);
+
 		try {
-			return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY,
-					originalMessage,
+			DomibusConnectorEvidencesToolkit.Evidence evidence = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY,
+					msgData,
 					DomibusConnectorRejectionReason.OTHER, "");
+			return toDC5Confirmation(evidence);
+
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -124,21 +132,26 @@ public class ToBackendBusinessMessageProcessor implements DomibusConnectorMessag
 		}
 	}
 
-	private DomibusConnectorMessageConfirmation createRelayREMMDEvidence(DomibusConnectorMessage originalMessage, boolean isAcceptance)
+
+
+	private DC5Confirmation createRelayREMMDEvidence(DC5Message originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
+		DomibusConnectorEvidencesToolkit.MessageParameters msgData = toMessageParams(originalMessage);
 		try {
+			DomibusConnectorEvidencesToolkit.Evidence evidence;
 			if(isAcceptance) {
 			    LOGGER.trace("relay is acceptance, generating RELAY_REMMD_ACCEPTANCE");
-				return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE,
-						originalMessage,
+				evidence = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE,
+						msgData,
 						DomibusConnectorRejectionReason.OTHER, "");
-            } else {
+			} else {
                 LOGGER.trace("relay is denied, generating RELAY_REMMD_REJECTION");
-                return evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION,
-						originalMessage,
+				evidence = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION,
+						msgData,
 						DomibusConnectorRejectionReason.OTHER, "");
-            }
+			}
+			return toDC5Confirmation(evidence);
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()

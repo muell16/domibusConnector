@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 
 /**
@@ -15,7 +15,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      *  the confirmation must have already been persisted to the database
      * @param confirmation the confirmation, the dbEvidenceId must not be null!
      */
-    void setConfirmationAsTransportedToGateway(DomibusConnectorMessageConfirmation confirmation);
+    void setConfirmationAsTransportedToGateway(DC5Confirmation confirmation);
 
 
     /**
@@ -23,7 +23,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      *  the confirmation must have already been persisted to the database
      * @param confirmation the confirmation, the dbEvidenceId must not be null!
      */
-    void setConfirmationAsTransportedToBackend(DomibusConnectorMessageConfirmation confirmation);
+    void setConfirmationAsTransportedToBackend(DC5Confirmation confirmation);
 
     /**
      * Persist the confirmation to the business message
@@ -33,5 +33,5 @@ public interface DomibusConnectorEvidencePersistenceService {
      *                     with the value from DB
      *
      */
-    void persistEvidenceMessageToBusinessMessage(DomibusConnectorMessage businessMessage, DomibusConnectorMessageId transportId, DomibusConnectorMessageConfirmation confirmation);
+    void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DomibusConnectorMessageId transportId, DC5Confirmation confirmation);
 }

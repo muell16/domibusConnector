@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorAction;
+import eu.ecodex.dc5.message.model.DC5Action;
 import java.util.List;
 
 
@@ -13,23 +13,23 @@ import java.util.List;
 @Deprecated
 public interface DomibusConnectorActionPersistenceService {
 
-    public DomibusConnectorAction persistNewAction(DomibusConnectorAction service);
+    public DC5Action persistNewAction(DC5Action service);
     
-    public List<DomibusConnectorAction> getActionList();
+    public List<DC5Action> getActionList();
     
-    public DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction newAction);
+    public DC5Action updateAction(DC5Action oldAction, DC5Action newAction);
     
-    public void deleteAction(DomibusConnectorAction deleteAction);
+    public void deleteAction(DC5Action deleteAction);
     
-    public DomibusConnectorAction getAction(String action);
+    public DC5Action getAction(String action);
 
-    public DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
+    public DC5Action getRelayREMMDAcceptanceRejectionAction();
 
-    public DomibusConnectorAction getRelayREMMDFailure();
+    public DC5Action getRelayREMMDFailure();
 
-    public DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
+    public DC5Action getDeliveryNonDeliveryToRecipientAction();
 
-    public DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
+    public DC5Action getRetrievalNonRetrievalToRecipientAction();
 
 	List<String> getActionListString();
 

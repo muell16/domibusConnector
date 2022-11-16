@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessage;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageConfirmation;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
@@ -42,7 +42,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     @Override
-    public void setConfirmationAsTransportedToGateway(DomibusConnectorMessageConfirmation confirmation) {
+    public void setConfirmationAsTransportedToGateway(DC5Confirmation confirmation) {
         if (confirmation == null) {
             throw new IllegalArgumentException("The confirmation is not allowed to be null!");
         }
@@ -53,7 +53,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     @Override
-    public void setConfirmationAsTransportedToBackend(DomibusConnectorMessageConfirmation confirmation) {
+    public void setConfirmationAsTransportedToBackend(DC5Confirmation confirmation) {
         if (confirmation == null) {
             throw new IllegalArgumentException("The confirmation is not allowed to be null!");
         }
@@ -64,7 +64,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     @Override
-    public void persistEvidenceMessageToBusinessMessage(DomibusConnectorMessage businessMessage, DomibusConnectorMessageId transportId, DomibusConnectorMessageConfirmation confirmation) {
+    public void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DomibusConnectorMessageId transportId, DC5Confirmation confirmation) {
         String connectorMessageId = businessMessage.getConnectorMessageId().getConnectorMessageId();
         Optional<PDomibusConnectorMessage> optionalMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
         if (!optionalMessage.isPresent()) {
