@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 public class MessageProcessManager {
 
-    static ThreadLocal<DC5MsgProcess> threadLocalMsgProcess;
+    private final ThreadLocal<DC5MsgProcess> threadLocalMsgProcess = new ThreadLocal<>();
 
     private final DC5MsgProcessRepo msgProcessRepo;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
@@ -25,9 +25,9 @@ public class MessageProcessManager {
         this.messageIdGenerator = () -> new DomibusConnectorMessageId(UUID.randomUUID().toString());
     }
 
-    public static MessageProcessId getCurrentProcessId() {
-        return new MessageProcessId(threadLocalMsgProcess.get().getProcessId());
-    }
+//    public static MessageProcessId getCurrentProcessId() {
+//        return new MessageProcessId(threadLocalMsgProcess.get().getProcessId());
+//    }
 
     private CloseableMessageProcess setCurrentProcessId(DC5MsgProcess p) {
         threadLocalMsgProcess.set(p);
@@ -64,6 +64,7 @@ public class MessageProcessManager {
 //        if (dc5MsgProcess == null) {
 //            throw new IllegalStateException("No message process is currently active in this thread! You must start one first with MessageProcessManager.startProcess");
 //        }
+//        processStepRepo.save(processStep);
         dc5MsgProcess.addProcessStep(processStep);
         return processStep;
     }

@@ -1,4 +1,4 @@
-package eu.ecodex.dc5.core.repository;
+package eu.ecodex.dc5.message.repo;
 
 import eu.ecodex.dc5.message.model.DC5Ebms;
 import org.springframework.data.jpa.repository.JpaRepository;

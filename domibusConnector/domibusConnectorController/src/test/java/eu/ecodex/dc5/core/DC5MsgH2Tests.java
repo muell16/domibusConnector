@@ -1,10 +1,10 @@
 package eu.ecodex.dc5.core;
 
 import eu.ecodex.dc5.core.model.*;
-import eu.ecodex.dc5.core.repository.DC5EbmsRepo;
-import eu.ecodex.dc5.core.repository.DC5MessageRepo;
+import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
 import eu.ecodex.dc5.core.repository.DC5PayloadRepo;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +48,12 @@ class DC5MsgH2Tests {
     @Test
     public void can_persist_message() {
         // Arrange
-        final DC5Msg dc5BusinessDocumentMessage = new DC5Msg();
+        final DC5Message dc5BusinessDocumentMessage = new DC5Message();
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
+        dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
 
         // Act
-        final DC5Msg save = msgRepo.save(dc5BusinessDocumentMessage);
+        final DC5Message save = msgRepo.save(dc5BusinessDocumentMessage);
 
         // Assert
         Assertions.assertThat(save.getId()).isGreaterThan(1000L);
@@ -62,13 +62,13 @@ class DC5MsgH2Tests {
     @Test
     public void persisting_a_message_also_persits_ebms_segment() {
         // Arrange
-        final DC5Msg dc5BusinessDocumentMessage = new DC5Msg();
+        final DC5Message dc5BusinessDocumentMessage = new DC5Message();
         final DC5Ebms dc5Ebms = new DC5Ebms();
         dc5Ebms.setEbmsMessageId("foo");
-        dc5BusinessDocumentMessage.setEbmsSegment(dc5Ebms);
+        dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
 
         // Act
-        final DC5Msg save = msgRepo.save(dc5BusinessDocumentMessage);
+        final DC5Message save = msgRepo.save(dc5BusinessDocumentMessage);
 
         // Assert
 //        Assertions.assertThat(Optional.empty()).isPresent(); // see it fail

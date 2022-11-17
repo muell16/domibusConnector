@@ -8,11 +8,17 @@ public class MessageTargetSourceConverter implements AttributeConverter<MessageT
 
     @Override
     public String convertToDatabaseColumn(MessageTargetSource attribute) {
+        if (attribute == null) {
+            return null;
+        }
         return attribute.getDbName();
     }
 
     @Override
     public MessageTargetSource convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
+            return null;
+        }
         return MessageTargetSource.ofOfDbName(dbData);
     }
 }

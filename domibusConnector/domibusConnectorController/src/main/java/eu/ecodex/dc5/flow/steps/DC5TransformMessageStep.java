@@ -5,13 +5,17 @@ import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.Step;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
 @Service
 public class DC5TransformMessageStep {
 
+    @NonNull
     public MessageProcessManager messageProcessManager;
 
     @Step(name = "ConvertMessageStep")

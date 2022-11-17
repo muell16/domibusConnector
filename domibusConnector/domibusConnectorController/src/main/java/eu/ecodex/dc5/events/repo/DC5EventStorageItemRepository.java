@@ -18,7 +18,7 @@ public interface DC5EventStorageItemRepository extends JpaRepository<JPAEventSto
 //    public List<Long> getAllEventIds();
 
     @Modifying
-    @Query("UPDATE JPAEventStorageItem i SET i.consumed = CURRENT_TIMESTAMP WHERE i.id = :id")
+    @Query("UPDATE JPAEventStorageItem i SET i.consumed = CURRENT_TIMESTAMP WHERE i.id = ?1")
     public void setConsumed(long id);
 
 }

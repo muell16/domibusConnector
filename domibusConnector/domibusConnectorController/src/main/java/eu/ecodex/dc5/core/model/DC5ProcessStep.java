@@ -1,6 +1,9 @@
 package eu.ecodex.dc5.core.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +15,10 @@ import java.time.LocalDateTime;
         length = 100
 )
 @DiscriminatorValue("PROCESS_STEP")
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class DC5ProcessStep {
 
 
@@ -40,8 +46,8 @@ public class DC5ProcessStep {
     @Lob
     private String longErrorText;
 
-    @ManyToOne
-    private DC5Msg messageResult;
+//    @ManyToOne
+//    private DC5Msg messageResult;
 
     private boolean success;
 

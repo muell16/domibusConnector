@@ -24,8 +24,8 @@ public class DC5MsgBusinessConfirmation {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private DC5Msg refMsg;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private DC5Msg refMsg;
 
     // TODO: example
 //    public void changeState() {
@@ -57,13 +57,6 @@ public class DC5MsgBusinessConfirmation {
         this.id = id;
     }
 
-    public DC5Msg getRefMsg() {
-        return refMsg;
-    }
-
-    public void setRefMsg(DC5Msg refMsg) {
-        this.refMsg = refMsg;
-    }
 
 
     public Optional<DC5Payload> getEvidenceXml() {

@@ -27,11 +27,11 @@ public class DC5MsgProcess {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = true, orphanRemoval = true)
-    private DC5Msg message;
+//    @OneToOne(cascade = CascadeType.ALL, optional = true, orphanRemoval = true)
+//    private DC5Msg message;
 
-    @OneToOne(optional = true)
-    private DC5Domain domain;
+//    @OneToOne(optional = true)
+//    private DC5Domain domain;
 
     @Column(name = "PROCESS_ID")
     private String processId;
@@ -42,7 +42,7 @@ public class DC5MsgProcess {
     @Column(name = "FINISHED")
     private LocalDateTime finished;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DC5ProcessStep> procStepList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)

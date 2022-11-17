@@ -59,7 +59,7 @@ public class DC5Message implements Serializable {
 
 	@NotNull
 	@Valid
-	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = true)
 	private DC5BackendData backendData;
 
 	@Convert(converter = MessageTargetSourceConverter.class)
@@ -72,7 +72,7 @@ public class DC5Message implements Serializable {
 
 	private String backendLinkName;
 
-	@OneToOne(orphanRemoval = true)
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	private DomibusConnectorMessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message

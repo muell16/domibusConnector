@@ -1,7 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.domibus.connector.domain.model.repo.DomibusConnectorMessageRepo;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.flow.api.Step;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DC5SaveMessageStep {
 
-    private final DomibusConnectorMessageRepo messageRepo;
+    private final DC5MessageRepo messageRepo;
 
 
     @Step(name = "SaveMessage")
     @Transactional(propagation = Propagation.REQUIRES_NEW) //run in a new nested TX
-    public DC5Message saveNewMessage(DC5Message msg) {
-        DC5Message dbMsg = messageRepo.save(msg);
+    public eu.ecodex.dc5.message.model.DC5Message saveNewMessage(eu.ecodex.dc5.message.model.DC5Message msg) {
+        eu.ecodex.dc5.message.model.DC5Message dbMsg = messageRepo.save(msg);
         return dbMsg;
     }
 

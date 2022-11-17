@@ -1,8 +1,15 @@
 package eu.ecodex.dc5.message.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -10,17 +17,17 @@ import javax.persistence.Embeddable;
  * @version 1.0
  */
 @Embeddable
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DC5Action {
 
+	@NotNull
+	@NotBlank
+	@Column(nullable=false)
 	private String action;
-
-	/**
-	 *
-	 * @param action action
-	 */
-	public DC5Action(final String action){
-		this.action = action;
-	}
 
 	public String getAction(){
 		return this.action;

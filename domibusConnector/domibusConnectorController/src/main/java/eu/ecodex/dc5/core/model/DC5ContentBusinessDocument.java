@@ -16,9 +16,9 @@ public class DC5ContentBusinessDocument {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID")
-    private DC5Msg refMsg;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ID")
+//    private DC5Msg refMsg;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DC5BusinessDocumentState> states = new ArrayList<>();

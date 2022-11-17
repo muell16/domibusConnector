@@ -20,11 +20,8 @@ public class ToLinkPartnerListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ToLinkPartnerListener.class);
 
-    private final SubmitToLinkService submitToLink;
+//    private final SubmitToLinkService submitToLink;
 
-    public ToLinkPartnerListener(SubmitToLinkService submitToLink) {
-        this.submitToLink = submitToLink;
-    }
 
     @JmsListener(destination = TO_LINK_QUEUE_BEAN)
     @Transactional(rollbackFor = Exception.class)
@@ -34,7 +31,7 @@ public class ToLinkPartnerListener {
         MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId);
         try {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
-            submitToLink.submitToLink(message);
+//            submitToLink.submitToLink(message);
         } catch (Exception exc) {
             LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

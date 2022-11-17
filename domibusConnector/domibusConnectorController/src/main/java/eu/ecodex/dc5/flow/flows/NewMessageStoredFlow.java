@@ -1,10 +1,9 @@
 package eu.ecodex.dc5.flow.flows;
 
-import eu.ecodex.dc5.core.model.DC5Msg;
-import eu.ecodex.dc5.core.repository.DC5MessageRepo;
 import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.steps.DC5LookupDomainStep;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +41,8 @@ public class NewMessageStoredFlow {
     }
 
 
-    private boolean isConfirmationMessage(DC5Msg msg) {
-        return (msg.getConfirmations().size() == 1 && !msg.getContent().isPresent());
-    }
+//    private boolean isConfirmationMessage(DC5Msg msg) {
+//        return (msg.getConfirmations().size() == 1 && !msg.getContent().isPresent());
+//    }
 
 }

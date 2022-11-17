@@ -1,9 +1,10 @@
 package eu.ecodex.dc5;
 
-import eu.ecodex.dc5.core.DC5JpaConfiguration;
+import eu.ecodex.dc5.core.DC5CoreJpaConfiguration;
 import org.moduliths.Modulithic;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -14,10 +15,11 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(DC5JpaConfiguration.class)
+@Import(DC5CoreJpaConfiguration.class)
 //@ImportAutoConfiguration()
 @EntityScan
 @EnableTransactionManagement(order = 200)
+@EnableAspectJAutoProxy
 @Modulithic( //
         sharedModules = { //
                 "eu.ecodex.dc5.message", //

@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DCTransportRetryServiceImpl implements DCTransportRetryService {
 
-    private final SubmitToLinkService submitToLinkService;
+//    private final SubmitToLinkService submitToLinkService;
 //    private final DCMessagePersistenceService messagePersistenceService;
 
 
     @Override
     public void retryTransport(DomibusConnectorTransportStep step) {
-        step.getTransportedMessage().ifPresent(submitToLinkService::submitToLink);
+//        step.getTransportedMessage().ifPresent(submitToLinkService::submitToLink);
     }
 
 
