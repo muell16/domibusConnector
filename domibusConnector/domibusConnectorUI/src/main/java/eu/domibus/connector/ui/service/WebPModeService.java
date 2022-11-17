@@ -4,7 +4,6 @@ import eu.domibus.configuration.Configuration;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
@@ -51,19 +50,17 @@ public class WebPModeService {
     private final DomibusConnectorPModeService pModeService;
     private final DomibusConnectorKeystorePersistenceService keystorePersistenceService;
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-    private final DCBusinessDomainManager dcBusinessDomainManager;
     private final ApplicationContext ctx;
 
     public WebPModeService(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService,
                            DomibusConnectorPModeService pModeService,
                            DomibusConnectorKeystorePersistenceService keystorePersistenceService,
                            ConfigurationPropertyManagerService configurationPropertyManagerService,
-                           DCBusinessDomainManager dcBusinessDomainManager, ApplicationContext ctx) {
+                           ApplicationContext ctx) {
         this.propertiesPersistenceService = propertiesPersistenceService;
         this.pModeService = pModeService;
         this.keystorePersistenceService = keystorePersistenceService;
         this.configurationPropertyManagerService = configurationPropertyManagerService;
-        this.dcBusinessDomainManager = dcBusinessDomainManager;
         this.ctx = ctx;
     }
 
@@ -511,7 +508,4 @@ public class WebPModeService {
     	return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
     }
 
-    public List<DomibusConnectorBusinessDomain.BusinessDomainId> getDomains() {
-        return dcBusinessDomainManager.getActiveBusinessDomainIds();
-    }
 }

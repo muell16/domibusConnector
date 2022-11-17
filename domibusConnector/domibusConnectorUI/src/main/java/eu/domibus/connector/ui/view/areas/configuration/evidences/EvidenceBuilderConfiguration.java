@@ -1,18 +1,11 @@
 package eu.domibus.connector.ui.view.areas.configuration.evidences;
 
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
-import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
-import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
-import eu.domibus.connector.ui.component.LumoCheckbox;
-import eu.domibus.connector.ui.forms.FormsUtil;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
-import eu.domibus.connector.ui.service.WebKeystoreService;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
@@ -44,10 +37,10 @@ public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndH
 
 	public EvidenceBuilderConfiguration(ConfigurationPanelFactory configurationPanelFactory,
 										ObjectProvider<ImportOldEvidenceConfigDialog> importOldEvidenceConfigDialog,
-										EvidencesToolkitConfigurationPropertiesForm form) {
+										EvidencesToolkitConfigurationPropertiesForm form, DomainSelect domainSelect) {
 		super(HELP_ID, TITLE);
 		ConfigurationPanelFactory.ConfigurationPanel<EvidencesToolkitConfigurationProperties> configurationPanel
-				= configurationPanelFactory.createConfigurationPanel(form, EvidencesToolkitConfigurationProperties.class);
+				= configurationPanelFactory.createConfigurationPanel(form, domainSelect, EvidencesToolkitConfigurationProperties.class);
 
 		Button b = new Button("Import old config");
 		b.addClickListener(event -> {

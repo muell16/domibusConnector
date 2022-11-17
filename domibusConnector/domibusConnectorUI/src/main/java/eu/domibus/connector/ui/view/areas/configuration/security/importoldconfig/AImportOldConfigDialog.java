@@ -1,6 +1,5 @@
 package eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -8,6 +7,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,28 +35,26 @@ public abstract class AImportOldConfigDialog extends Dialog {
     private MemoryBuffer buffer = new MemoryBuffer();
     private Upload upload = new Upload(buffer);
 
+    private DomainSelect domainSelect;
 
-    public AImportOldConfigDialog(ConfigurationPanelFactory configurationPanelFactory) {
+    public AImportOldConfigDialog(ConfigurationPanelFactory configurationPanelFactory, DomainSelect domainSelect) {
         this.configurationPanelFactory = configurationPanelFactory;
-        initUi();
-    }
-
-    private void initUi() {
+        this.domainSelect = domainSelect;
         this.setWidth("80%");
         this.setHeightFull();
 
         add(layout);
 
-        upload.addSucceededListener(this::uploadSecceeded);
+        upload.addSucceededListener(this::uploadSucceeded);
 
-        layout.add(upload, resultArea);
+        layout.add(upload, domainSelect, resultArea);
 
         this.setCloseOnEsc(true);
         this.setCloseOnOutsideClick(true);
         this.addDialogCloseActionListener(event -> this.close());
     }
 
-    private void uploadSecceeded(SucceededEvent succeededEvent) {
+    private void uploadSucceeded(SucceededEvent succeededEvent) {
         try {
             InputStream inputStream = buffer.getInputStream();
 
@@ -71,7 +70,7 @@ public abstract class AImportOldConfigDialog extends Dialog {
             //add save button...
             Button saveButton = new Button("Save Imported Config");
             saveButton.addClickListener(event -> {
-                this.save(configBean);
+                this.save(configBean, domainSelect.getValue());
             });
             resultArea.add(saveButton);
             resultArea.add(div);
@@ -85,8 +84,8 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     protected abstract Object showImportedConfig(Div div, Map<String, String> p);
 
-    protected void save(Object configClass) {
-        configurationPanelFactory.showChangedPropertiesDialog(configClass, AImportOldConfigDialog.this::close);
+    protected void save(Object configClass, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+        configurationPanelFactory.showChangedPropertiesDialog(configClass, domainId, AImportOldConfigDialog.this::close);
     }
 
     public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {

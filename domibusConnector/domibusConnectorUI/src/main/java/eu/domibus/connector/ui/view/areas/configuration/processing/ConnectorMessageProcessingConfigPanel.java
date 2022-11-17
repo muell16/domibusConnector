@@ -3,6 +3,7 @@ package eu.domibus.connector.ui.view.areas.configuration.processing;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
@@ -26,10 +27,10 @@ public class ConnectorMessageProcessingConfigPanel extends DCVerticalLayoutWithT
         public static final String ROUTE = "messageProcessingConfig";
 
         public ConnectorMessageProcessingConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
-                                                     ConnectorMessageProcessingPropertiesConfigForm form) {
+                                                     ConnectorMessageProcessingPropertiesConfigForm form, DomainSelect domainSelect) {
             super(HELP_ID, TITLE);
             ConfigurationPanelFactory.ConfigurationPanel<ConnectorMessageProcessingProperties> configurationPanel
-                    = configurationPanelFactory.createConfigurationPanel(form, ConnectorMessageProcessingProperties.class);
+                    = configurationPanelFactory.createConfigurationPanel(form, domainSelect, ConnectorMessageProcessingProperties.class);
 
             this.add(configurationPanel);
 
