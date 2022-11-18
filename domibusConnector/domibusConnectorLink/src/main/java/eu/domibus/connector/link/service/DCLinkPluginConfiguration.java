@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.service;
 
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connectorplugins.link.gwwspullplugin.DCGatewayPullPlugin;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connectorplugins.link.testbackend.TestbackendPlugin;

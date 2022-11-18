@@ -66,6 +66,7 @@ public class LoadStoreTransitionMessage {
     public static final String BACKEND_CONVERSATION_ID_PROP_NAME = "backend.conversation-id";
     public static final String BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME = "backend.ref-to-message-id";
     public static final String BACKEND_MESSAGE_ID_PROP_NAME = "backend.message-id";
+    public static final String BACKEND_MESSAGE_CONTENT_PROP_NAME = "backend.content.xml";
 
 
     private Path basicFolder;

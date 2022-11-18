@@ -216,14 +216,30 @@ public class LoadStoreMessageFromPath {
 
         messageBuilder.setMessageDetails(loadMessageDetailsFromProperties());
 
+        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
+        content.setBusinessContent(new DC5BackendContent());
+        content.setEcodexContent(new DC5EcodexContent());
+
+        Resource backendContentResource = createRelativeResource(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_CONTENT_PROP_NAME));
+        if (backendContentResource != null && backendContentResource.exists()) {
+            LargeFileReference backendContentR = loadResourceAsBigDataRef(backendContentResource);
+            content.getBusinessContent().setBusinessXml(DomibusConnectorMessageAttachment
+                    .builder()
+                    .attachment(backendContentR)
+                    .identifier("BUSINESS_XML")
+                    .build());
+        }
+
         Resource contentResource = createRelativeResource(messageProperties.getProperty(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME));
         if (contentResource != null && contentResource.exists()) {
-            DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
             LargeFileReference largeFileReference = loadResourceAsBigDataRef(contentResource);
-            //TODO: switch between
-            content.getBusinessContent().setBusinessXml(new DomibusConnectorMessageAttachment(largeFileReference, "BUSINESS_XML"));
-            content.getEcodexContent().setBusinessXml(new DomibusConnectorMessageAttachment(largeFileReference, "BUSINESS_XML"));
+
+            content.getEcodexContent().setBusinessXml(DomibusConnectorMessageAttachment
+                    .builder()
+                    .attachment(largeFileReference)
+                    .identifier("BUSINESS_XML")
+                    .build());
 
             messageBuilder.setMessageContent(content);
             //load document
@@ -244,7 +260,6 @@ public class LoadStoreMessageFromPath {
                     String name = messageProperties.getProperty("message.content.document.signature.name");
                     Resource fResource = basicFolder.createRelative(signatureFileName);
                     byte[] signatureBytes = loadResourceAsByteArray(fResource);
-
 
                     DetachedSignature detachedSignature = DetachedSignatureBuilder.createBuilder()
                             .setMimeType(mimeType)
@@ -450,9 +465,9 @@ public class LoadStoreMessageFromPath {
 
     private DC5BackendData loadBackendDetailsFromProperties() {
         return DC5BackendData.builder()
-                .backendMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME))
+                .backendMessageId(BackendMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME)))
                 .backendConversationId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME))
-                .refToBackendMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME))
+                .refToBackendMessageId(BackendMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME)))
                 .build();
     }
 
@@ -465,9 +480,9 @@ public class LoadStoreMessageFromPath {
                                         .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
                                         .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
                                                 .build())
-                .ebmsMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME))
+                .ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)))
                 .conversationId(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME))
-                .refToMessageId(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME))
+                .refToEbmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME)))
                 .sender(loadEcxAddress(SENDER_PREFIX))
                 .receiver(loadEcxAddress(RECEIVER_PREFIX))
                 .build();

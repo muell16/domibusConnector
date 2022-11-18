@@ -1,8 +1,10 @@
 package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.*;
@@ -22,8 +24,13 @@ import javax.persistence.*;
  * updated 29-Dez-2017 10:12:49
  */
 @Entity
-@Data
-public class DomibusConnectorMessageContent implements Serializable {
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
+@Getter
+@Setter
+public class DomibusConnectorMessageContent {
 
 	@GeneratedValue
 	@Id
@@ -34,6 +41,12 @@ public class DomibusConnectorMessageContent implements Serializable {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BackendContent businessContent;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
+
+	@OneToOne(optional = false)
+	private DC5BusinessMessageState currentState;
 
 	@Override
     public String toString() {

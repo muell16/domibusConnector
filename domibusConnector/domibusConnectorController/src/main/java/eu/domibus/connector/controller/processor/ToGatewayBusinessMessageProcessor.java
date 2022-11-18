@@ -1,8 +1,9 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.processor.steps.*;
-import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
+import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.lib.logging.MDC;
@@ -64,7 +65,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DC5Message message) {
-        try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId())){
+        try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId().toString())){
 
             //verify p-Modes step
 

@@ -2,7 +2,7 @@ package eu.domibus.connector.security.configuration;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
-import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(classes = DCBusinessDocumentValidationConfigurationPropertiesTest.TestContext.class)

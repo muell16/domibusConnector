@@ -1,7 +1,6 @@
 package eu.domibus.connector.link.utils;
 
 import eu.domibus.connector.common.DomibusConnectorDefaults;
-import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
@@ -9,7 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
-import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connectorplugins.link.gwwspushplugin.WsGatewayPluginConfigurationProperties;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPlugin;

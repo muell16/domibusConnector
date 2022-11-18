@@ -1,12 +1,18 @@
 package eu.ecodex.dc5.message.model;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Data
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
 public class DC5BackendContent {
 
     @Id
@@ -21,7 +27,8 @@ public class DC5BackendContent {
      * but it has to be supported by ecodex container
      *
      */
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @NotNull
     private DomibusConnectorMessageAttachment businessDocument;
 
     @OneToMany(cascade = CascadeType.ALL)

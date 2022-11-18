@@ -2,7 +2,7 @@ package eu.domibus.connector.ui.view.areas.configuration.link.importoldconfig;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
-import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;

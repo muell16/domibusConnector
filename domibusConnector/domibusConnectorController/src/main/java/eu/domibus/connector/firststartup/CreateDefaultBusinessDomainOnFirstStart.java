@@ -1,8 +1,8 @@
 package eu.domibus.connector.firststartup;
 
-import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
+import eu.ecodex.dc5.domain.repo.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessageLane;
+import eu.ecodex.dc5.domain.repo.DC5BusinessDomainJpaEntity;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +27,10 @@ public class CreateDefaultBusinessDomainOnFirstStart {
     @PostConstruct
     @Transactional
     public void createDefaultBusinessDomain() {
-        Optional<PDomibusConnectorMessageLane> byName = messageLaneDao.findByName(new DomibusConnectorBusinessDomain.BusinessDomainId(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME));
+        Optional<DC5BusinessDomainJpaEntity> byName = messageLaneDao.findByName(new DomibusConnectorBusinessDomain.BusinessDomainId(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME));
         if (!byName.isPresent()) {
             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Create default Business Message Domain [{}]", DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME);
-            PDomibusConnectorMessageLane newLane = new PDomibusConnectorMessageLane();
+            DC5BusinessDomainJpaEntity newLane = new DC5BusinessDomainJpaEntity();
             newLane.setDescription("The default business message domain");
             newLane.setName(new DomibusConnectorBusinessDomain.BusinessDomainId(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME));
             messageLaneDao.save(newLane);

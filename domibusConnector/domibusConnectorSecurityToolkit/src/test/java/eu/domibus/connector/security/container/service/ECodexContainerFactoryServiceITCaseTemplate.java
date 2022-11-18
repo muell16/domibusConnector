@@ -72,7 +72,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with XML as business doc")
     public void createContainerFromXML(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -97,7 +97,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
     }
@@ -145,7 +145,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
 
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
         JAXBContext jaxbContext = JAXBContext.newInstance(Token.class);
@@ -165,7 +165,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with ASIC-S as business doc")
     public void createContainerFromAsicS(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -190,7 +190,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
         //there must be a token XML
@@ -208,7 +208,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @DisplayName("Build ASIC-S container with unsigned doc.txt")
     public void createContainerFromTextDocument(TestInfo testInfo) throws ECodexException, IOException {
 
-        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -233,7 +233,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
     }
@@ -243,7 +243,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     public void simpleTestCreateContainerServiceAndBuildAsicContainer(TestInfo testInfo) throws ECodexException, IOException {
 
 
-        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
 
         BusinessContent businessContent = new BusinessContent();
 
@@ -271,7 +271,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
         byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
         byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
     }
@@ -280,7 +280,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     @Test
     public void testCreateContainerServiceAndResolveAsicContainer() throws IOException, ECodexException {
 
-        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createEpoMessage());
+        ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
 
 
         InputStream asicContainer = getClass().getResourceAsStream("/examples/asics1/asic-s.asics");

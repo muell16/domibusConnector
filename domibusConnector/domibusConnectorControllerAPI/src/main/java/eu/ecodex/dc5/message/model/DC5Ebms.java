@@ -1,12 +1,10 @@
 package eu.ecodex.dc5.message.model;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
@@ -39,11 +37,13 @@ public class DC5Ebms {
 	@Column(name = "DC5_CONVERSATION_ID", length = 255)
 	private String conversationId;
 
-	@Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)
-	private String ebmsMessageId;
+	@Column(name = "EBMS_MESSAGE_ID", length = 255)
+	@Convert(converter = EbmsMessageIdConverter.class)
+	private EbmsMessageId ebmsMessageId;
 
 	@Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255)
-	private String refToMessageId;
+	@Convert(converter = EbmsMessageIdConverter.class)
+	private EbmsMessageId refToEbmsMessageId;
 
 	@Embedded
 	private DC5Action action;
@@ -78,7 +78,7 @@ public class DC5Ebms {
 		builder.append("sender", this.sender);
 		builder.append("receiver", this.receiver);
         builder.append("ebmsMessageId", this.ebmsMessageId);
-        builder.append("refToMessageId", this.refToMessageId);
+        builder.append("refToMessageId", this.refToEbmsMessageId);
         builder.append("conversationId", this.conversationId);
 
         return builder.toString();        

@@ -3,12 +3,14 @@ package eu.domibus.connector.controller.transport;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.ecodex.dc5.message.model.BackendMessageId;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
+import eu.ecodex.dc5.message.model.EbmsMessageId;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +43,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
 
         this.updateTransportStatus(transportId, transportState, (DC5Message m) -> {
             if (isBusinessMessage(m)) {
-                m.getEbmsData().setEbmsMessageId(transportState.getRemoteMessageId());
+                m.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(transportState.getRemoteMessageId()));
 //                messagePersistenceService.updateMessageDetails(m);
 //                messagePersistenceService.setDeliveredToGateway(m);
                 LOGGER.debug("Successfully updated business message [{}]", m);
@@ -64,7 +66,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
         this.updateTransportStatus(transportId, transportState, (DC5Message m) -> {
             if (isBusinessMessage(m)) {
-                m.getBackendData().setBackendMessageId(transportState.getRemoteMessageId());
+                m.getBackendData().setBackendMessageId(new BackendMessageId(transportState.getRemoteMessageId()));
 //                messagePersistenceService.updateMessageDetails(m);
 //                messagePersistenceService.setMessageDeliveredToNationalSystem(m);
                 LOGGER.debug("Successfully updated business message [{}]", m);

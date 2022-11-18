@@ -71,7 +71,9 @@ public final class DomibusConnectorMessageAttachmentBuilder {
         if (this.identifier == null) {
             throw new IllegalArgumentException("identifier must be provided!");
         }
-        DomibusConnectorMessageAttachment domibusConnectorMessageAttachment = new DomibusConnectorMessageAttachment(attachment, identifier);
+        DomibusConnectorMessageAttachment domibusConnectorMessageAttachment = new DomibusConnectorMessageAttachment();
+        domibusConnectorMessageAttachment.setAttachment(attachment);
+        domibusConnectorMessageAttachment.setIdentifier(identifier);
         domibusConnectorMessageAttachment.setDescription(description);
         domibusConnectorMessageAttachment.setMimeType(mimeType);
         domibusConnectorMessageAttachment.setName(name);

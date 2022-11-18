@@ -3,10 +3,11 @@ package eu.ecodex.dc5.message.model;
 import java.io.Serializable;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
-import lombok.Data;
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 
 /**
@@ -20,13 +21,21 @@ import javax.persistence.*;
  * @version 1.0
  */
 @Entity
-@Data
+
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class DomibusConnectorMessageAttachment implements Serializable {
 
 	@GeneratedValue
 	@Id
 	private long id;
 
+	@NotBlank
+	@NonNull
 	private String identifier;
 
 	@Transient
@@ -44,19 +53,6 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private DetachedSignature detachedSignature;
 
-	public DomibusConnectorMessageAttachment() {}
-
-	/**
-	 * Constructor filling the two mandatory attributes
-	 * 
-	 * @param attachment    The data
-	 * @param identifier    Identifies the attachment for transformation and
-	 * transportation
-	 */
-	public DomibusConnectorMessageAttachment(final LargeFileReference attachment, final String identifier){
-	   this.attachment = attachment;
-	   this.identifier = identifier;
-	}
 
 	public String getIdentifier(){
 		return this.identifier;

@@ -30,7 +30,7 @@ public class MockitoDomainMatcher {
             if (message == null) {
                 return false;
             }
-            return messageReference.equals(message.getEbmsData().getRefToMessageId());
+            return messageReference.equals(message.getEbmsData().getRefToEbmsMessageId());
         }
 
     }

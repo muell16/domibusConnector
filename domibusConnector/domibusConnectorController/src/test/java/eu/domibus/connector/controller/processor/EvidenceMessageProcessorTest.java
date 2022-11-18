@@ -1,18 +1,14 @@
 package eu.domibus.connector.controller.processor;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
-import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
+import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
+import eu.ecodex.dc5.message.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,7 +19,6 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
@@ -71,7 +66,7 @@ public class EvidenceMessageProcessorTest {
     @Test
     @Timeout(30)
     public void testDeliverTrigger() throws InterruptedException {
-        String EBMSID = "testDeliverTrigger_1";
+        EbmsMessageId EBMSID = EbmsMessageId.ofString("testDeliverTrigger_1");
 
         //send trigger to evidenceMessageProcessor...
         try {
@@ -79,20 +74,20 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
             //prepare test message in DB
-            DC5Message businessMsg = DomainEntityCreator.createEpoMessage();
+            DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
             businessMsg.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
-            businessMsg.getConnectorMessageId().setConnectorMessageId(UUID.randomUUID().toString());
-            businessMsg.getBackendData().setBackendMessageId(UUID.randomUUID().toString());
+            businessMsg.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
+            businessMsg.getBackendData().setBackendMessageId(BackendMessageId.ofRandom());
             businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
             DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
-            businessMsg.addRelatedMessageConfirmation(submissionAcc);
+//            businessMsg.addRelatedMessageConfirmation(submissionAcc);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, submissionAcc);
 
             DC5Confirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
-            businessMsg.addRelatedMessageConfirmation(relayRemd);
+//            businessMsg.addRelatedMessageConfirmation(relayRemd);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, relayRemd);
 
             txTemplate.execute((t) -> {
@@ -130,7 +125,7 @@ public class EvidenceMessageProcessorTest {
     @Test
     @Timeout(30)
     public void testDeliverTrigger_evidenceShouldBeSentBack() throws InterruptedException {
-        String EBMSID = "testDeliverTrigger_evidenceShouldBeSentBack_1";
+        EbmsMessageId EBMSID = EbmsMessageId.ofString("testDeliverTrigger_evidenceShouldBeSentBack_1");
 
         DomibusConnectorBusinessDomain.BusinessDomainId domain = new DomibusConnectorBusinessDomain.BusinessDomainId();
         domain.setMessageLaneId("lane1");
@@ -140,20 +135,20 @@ public class EvidenceMessageProcessorTest {
             CurrentBusinessDomain.setCurrentBusinessDomain(domain);
 
             //prepare test message in DB
-            DC5Message businessMsg = DomainEntityCreator.createEpoMessage();
+            DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
 //            businessMsg.getEbmsData().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
-            businessMsg.getConnectorMessageId().setConnectorMessageId(UUID.randomUUID().toString());
+            businessMsg.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
 //            businessMsg.getEbmsData().setBackendMessageId(UUID.randomUUID().toString());
             businessMsg.setMessageLaneId(domain);
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
             DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
-            businessMsg.addRelatedMessageConfirmation(submissionAcc);
+//            businessMsg.addRelatedMessageConfirmation(submissionAcc);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, submissionAcc);
 
             DC5Confirmation relayRemd = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, businessMsg, null, "");
-            businessMsg.addRelatedMessageConfirmation(relayRemd);
+//            businessMsg.addRelatedMessageConfirmation(relayRemd);
             messageConfirmationStep.processConfirmationForMessage(businessMsg, relayRemd);
 
             txTemplate.execute((t) -> {

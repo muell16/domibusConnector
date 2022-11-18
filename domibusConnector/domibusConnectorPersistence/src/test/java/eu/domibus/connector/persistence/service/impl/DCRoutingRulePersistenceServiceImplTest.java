@@ -1,22 +1,16 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
-import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.domibus.connector.persistence.service.DCRoutingRulePersistenceService;
 import org.junit.jupiter.api.*;
-import org.junit.runner.OrderWith;
-import org.junit.runner.manipulation.Ordering;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @CommonPersistenceTest
 

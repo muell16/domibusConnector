@@ -11,12 +11,13 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.jpa.BusinessDomainIdConverter;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
+import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.CheckForNull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -44,48 +45,58 @@ public class DC5Message implements Serializable {
 	@Id
 	private long id;
 
-	@Valid
+	@CheckForNull
 	@Convert(converter = BusinessDomainIdConverter.class)
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+
 	@NotNull
 	@Valid
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
 
-	@NotNull
 	@Valid
+	@NotNull
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
-	private DC5Ebms ebmsData;
+	private DC5Ebms ebmsData = new DC5Ebms();
 
-	@NotNull
 	@Valid
-	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = true)
-	private DC5BackendData backendData;
+	@NotNull
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+	private DC5BackendData backendData = new DC5BackendData();
 
 	@Convert(converter = MessageTargetSourceConverter.class)
+	@NotNull
 	private MessageTargetSource target;
 
 	@Convert(converter = MessageTargetSourceConverter.class)
+	@NotNull
 	private MessageTargetSource source;
 
+	@CheckForNull
 	private String gatewayLinkName;
 
+	@CheckForNull
 	private String backendLinkName;
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+	@CheckForNull
 	private DomibusConnectorMessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message
 	@OneToMany(cascade = CascadeType.ALL)
 	@Singular("transportedMessageConfirmation")
+	@NotNull
 	private List<DC5Confirmation> transportedMessageConfirmations = new ArrayList<>();
 
 
-	//holds all message confirmations which are related to this business message
-	@Transient
-	@Singular
-	@OneToMany()
-	private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
+//	//holds all message confirmations which are related to this business message
+//	@Transient
+//	@Singular
+//	@OneToMany()
+//	@NotNull
+//	private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
+
+
 	//holds all errors which occured during message processing...
 
 	@Transient //TODO: move to process
@@ -126,9 +137,9 @@ public class DC5Message implements Serializable {
 		return this.transportedMessageConfirmations;
 	}
 
-	public List<DC5Confirmation> getRelatedMessageConfirmations() {
-		return relatedMessageConfirmations;
-	}
+//	public List<DC5Confirmation> getRelatedMessageConfirmations() {
+//		return relatedMessageConfirmations;
+//	}
 
 	public DomibusConnectorBusinessDomain.BusinessDomainId getMessageLaneId() {
 		return businessDomainId;
@@ -150,9 +161,9 @@ public class DC5Message implements Serializable {
 	 * @param confirmation    confirmation
 	 * @return for return see: {@link List#add(Object)}
 	 */
-	public boolean addRelatedMessageConfirmation(final DC5Confirmation confirmation){
-		return this.relatedMessageConfirmations.add(confirmation);
-	}
+//	public boolean addRelatedMessageConfirmation(final DC5Confirmation confirmation){
+//		return this.relatedMessageConfirmations.add(confirmation);
+//	}
 
 	/**
 	 * Method to add a new {@link DomibusConnectorMessageAttachment} to the collection.

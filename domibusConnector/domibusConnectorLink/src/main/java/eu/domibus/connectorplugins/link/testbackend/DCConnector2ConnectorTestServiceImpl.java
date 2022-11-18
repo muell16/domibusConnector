@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;

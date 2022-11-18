@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;

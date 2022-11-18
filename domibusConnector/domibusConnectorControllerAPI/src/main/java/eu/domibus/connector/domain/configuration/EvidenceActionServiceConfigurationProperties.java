@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain.configuration;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Service;
 import lombok.Data;

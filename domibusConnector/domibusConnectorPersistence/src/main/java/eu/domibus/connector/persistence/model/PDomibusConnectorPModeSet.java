@@ -1,11 +1,11 @@
 package eu.domibus.connector.persistence.model;
 
-import java.sql.Blob;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -13,6 +13,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = PDomibusConnectorPModeSet.TABLE_NAME)
+
+@Setter
+@Getter
 public class PDomibusConnectorPModeSet {
 
     public static final String TABLE_NAME = "DC_PMODE_SET";
@@ -36,9 +39,9 @@ public class PDomibusConnectorPModeSet {
     @Column(name = "CREATED")
     private Timestamp created;
 
-    @ManyToOne
-    @JoinColumn(name = "FK_MESSAGE_LANE", referencedColumnName = "ID")
-    private PDomibusConnectorMessageLane messageLane;
+//    @ManyToOne
+//    @JoinColumn(name = "FK_MESSAGE_LANE", referencedColumnName = "ID")
+//    private PDomibusConnectorMessageLane messageLane;
 
     @Column(name = "ACTIVE")
     private boolean active;
@@ -60,21 +63,6 @@ public class PDomibusConnectorPModeSet {
     @JoinColumn(name = "FK_CONNECTORSTORE", referencedColumnName = "ID")
     private PDomibusConnectorKeystore connectorstore;
 
-    public PDomibusConnectorMessageLane getMessageLane() {
-        return messageLane;
-    }
-
-    public void setMessageLane(PDomibusConnectorMessageLane messageLane) {
-        this.messageLane = messageLane;
-    }
-
-    public PDomibusConnectorKeystore getConnectorstore() {
-		return connectorstore;
-	}
-
-	public void setConnectorstore(PDomibusConnectorKeystore connectorstore) {
-		this.connectorstore = connectorstore;
-	}
 
 	@PrePersist
     public void prePersist() {
@@ -84,68 +72,5 @@ public class PDomibusConnectorPModeSet {
         this.services.forEach(s -> s.setpModeSet(this));
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Timestamp getCreated() {
-        return created;
-    }
-
-    public void setCreated(Timestamp created) {
-        this.created = created;
-    }
-
-    public Set<PDomibusConnectorParty> getParties() {
-        return parties;
-    }
-
-    public void setParties(Set<PDomibusConnectorParty> parties) {
-        this.parties = parties;
-    }
-
-    public Set<PDomibusConnectorAction> getActions() {
-        return actions;
-    }
-
-    public void setActions(Set<PDomibusConnectorAction> actions) {
-        this.actions = actions;
-    }
-
-    public Set<PDomibusConnectorService> getServices() {
-        return services;
-    }
-
-    public void setServices(Set<PDomibusConnectorService> services) {
-        this.services = services;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public byte[] getPmodes() {
-        return pmodes;
-    }
-
-    public void setPmodes(byte[] pmodes) {
-        this.pmodes = pmodes;
-    }
 }
 

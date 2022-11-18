@@ -2,9 +2,9 @@ package eu.domibus.connector.controller.processor.confirmation;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
 import eu.domibus.connector.controller.processor.steps.SubmitConfirmationAsEvidenceMessageStep;
-import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;

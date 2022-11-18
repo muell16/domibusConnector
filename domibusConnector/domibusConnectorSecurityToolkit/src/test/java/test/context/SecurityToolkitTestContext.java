@@ -2,7 +2,6 @@ package test.context;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.dss.configuration.BasicDssConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
@@ -15,7 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 

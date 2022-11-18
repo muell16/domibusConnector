@@ -1,31 +1,39 @@
 package eu.ecodex.dc5.message.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
+import java.util.UUID;
 
 @Validated
-public class DomibusConnectorMessageId {
+@Getter
+public final class DomibusConnectorMessageId {
 
     @NotBlank
-    String connectorMessageId;
+    @NonNull
+    private final String connectorMessageId;
 
-    public DomibusConnectorMessageId() {
+    @Deprecated //use static ofString method instead!
+    public DomibusConnectorMessageId(String s) {
+        Objects.requireNonNull(s, "ConnectorMessageId is not allowed to be null!");
+        if (s.length() < 1) {
+            throw new IllegalArgumentException("ConnectorMessageId is not allowed to be empty!");
+        }
+        connectorMessageId = s;
     }
 
-    public DomibusConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = connectorMessageId;
+
+    public static DomibusConnectorMessageId ofRandom() {
+        return new DomibusConnectorMessageId(UUID.randomUUID().toString());
     }
 
-    @JsonProperty(required = true)
-    public String getConnectorMessageId() {
-        return connectorMessageId;
-    }
-
-    @JsonProperty(required = true)
-    public void setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = connectorMessageId;
+    public static DomibusConnectorMessageId ofString(String s) {
+        return new DomibusConnectorMessageId(s);
     }
 
     @Override
@@ -35,15 +43,15 @@ public class DomibusConnectorMessageId {
 
         DomibusConnectorMessageId that = (DomibusConnectorMessageId) o;
 
-        return connectorMessageId != null ? connectorMessageId.equals(that.connectorMessageId) : that.connectorMessageId == null;
+        return connectorMessageId.equals(that.connectorMessageId);
     }
 
     @Override
     public int hashCode() {
-        return connectorMessageId != null ? connectorMessageId.hashCode() : 0;
+        return connectorMessageId.hashCode();
     }
 
     public String toString() {
-        return this.connectorMessageId;
+        return "ConnectorMessageId: [" + this.connectorMessageId + "]";
     }
 }

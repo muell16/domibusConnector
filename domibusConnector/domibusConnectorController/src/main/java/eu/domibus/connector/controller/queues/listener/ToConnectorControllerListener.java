@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.queues.listener;
 
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 //import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
-import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ProcessIncomingBusinessMessageFlow;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -26,14 +26,14 @@ public class ToConnectorControllerListener {
     private static final Logger LOGGER = LogManager.getLogger(ToConnectorControllerListener.class);
 
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
-    private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
+    private final ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 //    private final ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     public ToConnectorControllerListener(ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor,
-                                         ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor
+                                         ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow
                                         ) {
         this.toGatewayBusinessMessageProcessor = toGatewayBusinessMessageProcessor;
-        this.toBackendBusinessMessageProcessor = toBackendBusinessMessageProcessor;
+        this.processIncomingBusinessMessageFlow = processIncomingBusinessMessageFlow;
 //        this.evidenceMessageProcessor = evidenceMessageProcessor;
     }
 
@@ -54,7 +54,7 @@ public class ToConnectorControllerListener {
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.GATEWAY) {
                 toGatewayBusinessMessageProcessor.processMessage(message);
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.BACKEND) {
-                toBackendBusinessMessageProcessor.processMessage(message);
+                processIncomingBusinessMessageFlow.processMessage(message);
             } else {
                 throw new IllegalStateException("Illegal Message format received!");
             }

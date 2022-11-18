@@ -1,9 +1,9 @@
 package eu.domibus.connector.persistence.testutil;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
+import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
-import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.springframework.boot.WebApplicationType;
@@ -13,7 +13,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 
 @SpringBootApplication(scanBasePackages={"eu.domibus.connector.utils", "eu.domibus.connector.persistence", "eu.domibus.connector.common.persistence"})
 @EnableConfigurationProperties(ConnectorConfigurationProperties.class)
-@Import({ConfigurationPropertyLoaderServiceImpl.class,
+@Import({ConfigurationPropertyManagerServiceImpl.class,
         DCBusinessDomainManagerImpl.class,
         BeanToPropertyMapConverter.class})
 public class SetupPersistenceContext {

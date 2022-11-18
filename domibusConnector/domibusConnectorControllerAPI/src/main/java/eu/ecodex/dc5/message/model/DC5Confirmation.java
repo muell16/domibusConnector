@@ -4,14 +4,13 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 
 import java.util.Arrays;
 
+import eu.ecodex.dc5.core.model.converter.EvidenceTypeConverter;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import org.springframework.lang.Nullable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * This is an object that internally represents the evidences for a message. It
@@ -34,45 +33,14 @@ public class DC5Confirmation {
 
 	@GeneratedValue
 	@Id
-	private long id;
+	private Long id;
 
+	@Convert(converter = EvidenceTypeConverter.class)
 	private DomibusConnectorEvidenceType evidenceType;
+
+	@Lob
 	private @Nullable byte evidence[];
 
-
-
-	public DomibusConnectorEvidenceType getEvidenceType(){
-		return this.evidenceType;
-	}
-
-	/**
-	 * 
-	 * @param evidenceType    evidenceType
-	 */
-	public void setEvidenceType(DomibusConnectorEvidenceType evidenceType){
-		this.evidenceType = evidenceType;
-	}
-
-	public @Nullable  byte[] getEvidence(){
-		return this.evidence;
-	}
-
-	/**
-	 * 
-	 * @param evidence    evidence
-	 */
-	public void setEvidence(@Nullable byte[] evidence){
-		this.evidence = evidence;
-	}
-
-	@Nullable
-	public Long getEvidenceDbId() {
-		return id;
-	}
-
-	public void setEvidenceDbId(@Nullable Long evidenceDbId) {
-		this.id = evidenceDbId;
-	}
 
 	@Override
     public String toString() {
@@ -96,11 +64,4 @@ public class DC5Confirmation {
 		return Arrays.hashCode(evidence);
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 }

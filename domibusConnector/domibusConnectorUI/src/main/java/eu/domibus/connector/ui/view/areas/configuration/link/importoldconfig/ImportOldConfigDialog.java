@@ -15,7 +15,7 @@ import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConver
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
-import eu.domibus.connector.utils.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.ObjectProvider;

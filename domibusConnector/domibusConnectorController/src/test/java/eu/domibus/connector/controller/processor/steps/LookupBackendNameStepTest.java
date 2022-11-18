@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.RoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;

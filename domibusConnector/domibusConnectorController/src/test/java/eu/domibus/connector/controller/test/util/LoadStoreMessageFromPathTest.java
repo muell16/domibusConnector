@@ -43,7 +43,7 @@ public class LoadStoreMessageFromPathTest {
 
         Resource r = new FileSystemResource("./target/testmsg/msg1/");
 
-        DC5Message message = DomainEntityCreator.createEpoMessage();
+        DC5Message message = DomainEntityCreator.createOutgoingEpoFormAMessage();
 
         LoadStoreMessageFromPath.storeMessageTo(r, message);
     }

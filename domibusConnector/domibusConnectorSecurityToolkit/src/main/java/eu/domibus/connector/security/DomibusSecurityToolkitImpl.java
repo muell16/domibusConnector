@@ -512,10 +512,14 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
         }
 
-        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(bigDataRef, identifier);
+        DomibusConnectorMessageAttachment attachment = DomibusConnectorMessageAttachment
+                .builder()
+                .identifier(identifier)
+                .attachment(bigDataRef)
+                .name(documentName)
+                .mimeType(mimeTypeString)
+                .build();
 
-        attachment.setName(documentName);
-        attachment.setMimeType(mimeTypeString);
 
         LOGGER.trace("attachment created with bigDataRef [{}], and identifier [{}], name [{}], mimeTypeString [{}]", bigDataRef, identifier, documentName, mimeTypeString);
 

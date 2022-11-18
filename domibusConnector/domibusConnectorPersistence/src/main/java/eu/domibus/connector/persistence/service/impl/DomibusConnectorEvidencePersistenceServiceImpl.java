@@ -46,10 +46,10 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         if (confirmation == null) {
             throw new IllegalArgumentException("The confirmation is not allowed to be null!");
         }
-        if (confirmation.getEvidenceDbId() == null) {
+        if (confirmation.getId() == null) {
             throw new IllegalArgumentException("The confirmation must already be persisted into DB and also the evidenceDbId must not be null!");
         }
-        evidenceDao.setEvidenceDeliveredToGateway(confirmation.getEvidenceDbId());
+        evidenceDao.setEvidenceDeliveredToGateway(confirmation.getId());
     }
 
     @Override
@@ -57,10 +57,10 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         if (confirmation == null) {
             throw new IllegalArgumentException("The confirmation is not allowed to be null!");
         }
-        if (confirmation.getEvidenceDbId() == null) {
+        if (confirmation.getId() == null) {
             throw new IllegalArgumentException("The confirmation must already be persisted into DB and also the evidenceDbId must not be null!");
         }
-        evidenceDao.setEvidenceDeliveredToBackend(confirmation.getEvidenceDbId());
+        evidenceDao.setEvidenceDeliveredToBackend(confirmation.getId());
     }
 
     @Override
@@ -100,8 +100,8 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         evidenceDao.save(dbEvidence);
 
         //set DB id
-        confirmation.setEvidenceDbId(dbEvidence.getId());
+        confirmation.setId(dbEvidence.getId());
         //set confirmation as related
-        businessMessage.addRelatedMessageConfirmation(confirmation);
+//        businessMessage.addRelatedMessageConfirmation(confirmation);
     }
 }

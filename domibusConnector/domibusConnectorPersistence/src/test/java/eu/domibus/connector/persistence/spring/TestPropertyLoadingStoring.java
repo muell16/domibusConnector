@@ -1,10 +1,9 @@
 package eu.domibus.connector.persistence.spring;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
+import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +25,7 @@ public class TestPropertyLoadingStoring {
     }
 
     @Autowired
-    ConfigurationPropertyLoaderServiceImpl configurationPropertyLoaderService;
+    ConfigurationPropertyManagerServiceImpl configurationPropertyLoaderService;
 
     @Autowired
     DCBusinessDomainManager dcBusinessDomainManager;

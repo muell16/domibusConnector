@@ -2,7 +2,7 @@ package test.eu.domibus.connector.link;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderServiceImpl;
+import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
@@ -43,7 +43,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Import({LinkTestContext.LinkServiceContext.class,
         HelperMethods.class,
         DCKeyStoreService.class,
-        ConfigurationPropertyLoaderServiceImpl.class,
+        ConfigurationPropertyManagerServiceImpl.class,
         DCBusinessDomainManagerImpl.class,
         ConnectorConfigurationProperties.class
 })

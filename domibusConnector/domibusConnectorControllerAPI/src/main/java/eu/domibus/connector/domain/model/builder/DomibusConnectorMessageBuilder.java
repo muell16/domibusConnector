@@ -129,7 +129,7 @@ public final class DomibusConnectorMessageBuilder {
 //        message.getMessageAttachments().addAll(this.messageAttachments);
         message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
         message.getMessageProcessErrors().addAll(this.messageErrors);
-        message.getRelatedMessageConfirmations().addAll(this.relatedMessageConfirmations);
+//        message.getRelatedMessageConfirmations().addAll(this.relatedMessageConfirmations);
 
         this.connectorMessageId = null;
         return message;
@@ -159,11 +159,11 @@ public final class DomibusConnectorMessageBuilder {
                 .collect(Collectors.toList());
 
 
-        this.relatedMessageConfirmations = message.getRelatedMessageConfirmations()
-                .stream()
-                .map(c -> DomibusConnectorMessageConfirmationBuilder.createBuilder()
-                        .copyPropertiesFrom(c).build())
-                .collect(Collectors.toList());
+//        this.relatedMessageConfirmations = message.getRelatedMessageConfirmations()
+//                .stream()
+//                .map(c -> DomibusConnectorMessageConfirmationBuilder.createBuilder()
+//                        .copyPropertiesFrom(c).build())
+//                .collect(Collectors.toList());
 
         return this;
     }

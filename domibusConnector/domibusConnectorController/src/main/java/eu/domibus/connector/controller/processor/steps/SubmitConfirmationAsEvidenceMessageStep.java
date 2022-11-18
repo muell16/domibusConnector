@@ -1,16 +1,13 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
-import eu.domibus.connector.controller.processor.util.ConfirmationCreatorService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.ecodex.dc5.message.model.*;
-import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;

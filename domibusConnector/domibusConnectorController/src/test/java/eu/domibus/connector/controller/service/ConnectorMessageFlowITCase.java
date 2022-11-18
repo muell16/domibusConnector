@@ -5,21 +5,13 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.processor.confirmation.CheckEvidencesTimeoutProcessorImpl;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
-import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5Ebms;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.*;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.management.impl.ActiveMQServerControlImpl;
@@ -31,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
@@ -187,8 +178,8 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "e23_2";
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("e23_2");
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -212,7 +203,7 @@ public class ConnectorMessageFlowITCase {
                     .as("RelayREMMD acceptance message")
                     .isEqualTo(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
             DC5Ebms relayRemmdEvidenceMsgDetails = relayRemmdEvidenceMsg.getEbmsData();
-            assertThat(relayRemmdEvidenceMsgDetails.getRefToMessageId())
+            assertThat(relayRemmdEvidenceMsgDetails.getRefToEbmsMessageId())
                     .as("refToMessageId must be set to the original BusinessMessage EBMS ID")
                     .isEqualTo(EBMS_ID);
             assertThat(relayRemmdEvidenceMsgDetails.getConversationId())
@@ -260,8 +251,8 @@ public class ConnectorMessageFlowITCase {
     @Disabled("unstable on jenkins")
     public void testReceiveMessageFromGw_respondWithDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -362,8 +353,8 @@ public class ConnectorMessageFlowITCase {
     @Disabled("test is unstable on jenkins")
     public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -499,8 +490,8 @@ public class ConnectorMessageFlowITCase {
     @Test
     @Disabled
     public void testReceiveMessageFromGw_respondWithNonDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -597,8 +588,8 @@ public class ConnectorMessageFlowITCase {
     @Test
     @Disabled
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -680,7 +671,7 @@ public class ConnectorMessageFlowITCase {
                     .as("Generated evidence must be longer than 100 bytes! Ensure that there was really a evidence generated!")
                     .hasSizeGreaterThan(100);
             DC5Ebms deliveryEvidenceMessageDetails = retrievalMsg.getEbmsData();
-            assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
+            assertThat(deliveryEvidenceMessageDetails.getRefToEbmsMessageId()).isEqualTo(EBMS_ID);
 //            assertThat(deliveryEvidenceMessageDetails.getFromParty())
 //                    .as("Parties must be switched")
 //                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyDE(), "partyId", "partyIdType", "role");
@@ -726,8 +717,8 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_CertificateFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        final String EBMS_ID = "e25";
-        final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        final EbmsMessageId EBMS_ID = EbmsMessageId.ofString("e25");
+        final DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         final String MSG_FOLDER = "msg3";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -747,7 +738,7 @@ public class ConnectorMessageFlowITCase {
                     .containsOnly(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, DomibusConnectorEvidenceType.NON_DELIVERY);
 
             assertThat(toGwDeliveredMessages)
-                    .extracting(m -> m.getEbmsData().getRefToMessageId())
+                    .extracting(m -> m.getEbmsData().getRefToEbmsMessageId())
                     .as("Evidence Messages transported back to GW must have as refToMessageId the EBMS id")
                     .containsOnly(EBMS_ID, EBMS_ID);
 
@@ -785,8 +776,8 @@ public class ConnectorMessageFlowITCase {
     @Disabled ("not decided yet if user interaction is needed!")
     public void testReceiveMessageFromGw_backendDeliveryFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
-        String EBMS_ID = "e24";
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         //syntetic error on deliver message to backend
@@ -814,7 +805,7 @@ public class ConnectorMessageFlowITCase {
 
 
 
-    private DC5Message deliverMessageFromGw(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID) {
+    private DC5Message deliverMessageFromGw(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID) {
         DC5Message testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
         submitFromGatewayToController(testMessage);
         return testMessage;
@@ -823,7 +814,7 @@ public class ConnectorMessageFlowITCase {
     public static final String FINAL_RECIPIENT = "final_recipient";
     public static final String ORIGINAL_SENDER = "original_sender";
 
-    private DC5Message createTestMessage(String msgFolder, String EBMS_ID, String CONNECTOR_MESSAGE_ID)  {
+    private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID)  {
 //        try {
 //            DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
 //            assertThat(testMessage).isNotNull();
@@ -850,9 +841,9 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void sendMessageFromBackend(TestInfo testInfo) {
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "n1";
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message submittedMessage = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
@@ -1028,22 +1019,23 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void sendMessageFromBackend_rcvEvidences(TestInfo testInfo) {
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "backend_" + testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
+
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message DC5Message = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
             DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
-            String newEbmsId = take.getEbmsData().getEbmsMessageId();
+            EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
 
             DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
             assertThat(toBackendEvidence).isNotNull();
 
             //DO
             DC5Message relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(DC5Message);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_2"));
             this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             //ASSERT
@@ -1077,15 +1069,15 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void sendMessageFromBackend_rcvEvidencesPosThenNegative(TestInfo testInfo) {
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "backend_" + testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message DC5Message = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
             DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
 
-            String newEbmsId = take.getEbmsData().getEbmsMessageId();
+            EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
             LOGGER.info("Message reached toGwDeliveredMessages Queue with id [{}], ebmsid [{}]",take.getConnectorMessageId(), newEbmsId);
 
             DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
@@ -1093,8 +1085,8 @@ public class ConnectorMessageFlowITCase {
 
             //DO
             DC5Message relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(DC5Message);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_2"));
             submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             //ASSERT
@@ -1123,14 +1115,14 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void sendMessageFromBackend_rcvEvidenceRelayDeliveryRetrieval(TestInfo testInfo) {
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "backend_" + testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message DC5Message = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
             DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
-            String newEbmsId = take.getEbmsData().getEbmsMessageId();
+            EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
 
             DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
             assertThat(toBackendEvidence)
@@ -1139,20 +1131,20 @@ public class ConnectorMessageFlowITCase {
 
             //DO
             DC5Message relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(DC5Message);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_2"));
             this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             DC5Message deliveryEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(DC5Message,
                     DomainEntityCreator.createMessageDeliveryConfirmation());
-            deliveryEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            deliveryEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_remote_3");
+            deliveryEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            deliveryEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_3"));
             this.submitFromGatewayToController(deliveryEvidenceForMessage);
 
             DC5Message retrievalEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(DC5Message,
                     DomainEntityCreator.createRetrievalEvidenceMessage());
-            retrievalEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            retrievalEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_remote_4");
+            retrievalEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            retrievalEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_4"));
             this.submitFromGatewayToController(retrievalEvidenceForMessage);
 
             //ASSERT
@@ -1207,18 +1199,18 @@ public class ConnectorMessageFlowITCase {
     @Test
     @Disabled("fails when executed with other tests...")
     public void sendMessageFromBackend_rcvEvidenceRelayNonDeliveryRetrieval(TestInfo testInfo) {
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "backend_" + testInfo.getDisplayName();
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message DC5Message = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
             DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
-            String newEbmsId = take.getEbmsData().getEbmsMessageId();
+            EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
 
             DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
 
-            LOGGER.info("toBackendEvidence [{}], [{}]", toBackendEvidence.getConnectorMessageIdAsString(), toBackendEvidence.getEbmsData().getRefToMessageId());
+            LOGGER.info("toBackendEvidence [{}], [{}]", toBackendEvidence.getConnectorMessageIdAsString(), toBackendEvidence.getEbmsData().getRefToEbmsMessageId());
 
             assertThat(toBackendEvidence)
                     .isNotNull()
@@ -1228,8 +1220,8 @@ public class ConnectorMessageFlowITCase {
             //DO
             //deliver relay remmd acceptance
             DC5Message relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(DC5Message);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_r_2");
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_r_2"));
             this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
 
@@ -1243,8 +1235,8 @@ public class ConnectorMessageFlowITCase {
             //deliver non delivery
             DC5Message nonDeliveryEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(DC5Message,
                     DomainEntityCreator.createMessageNonDeliveryConfirmation());
-            nonDeliveryEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            nonDeliveryEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_r_3");
+            nonDeliveryEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            nonDeliveryEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_r_3"));
             this.submitFromGatewayToController(nonDeliveryEvidenceForMessage);
 
 
@@ -1257,8 +1249,8 @@ public class ConnectorMessageFlowITCase {
             //deliver retrieval - must not reach the backend!
             DC5Message retrievalEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(DC5Message,
                     DomainEntityCreator.createRetrievalEvidenceMessage());
-            retrievalEvidenceForMessage.getEbmsData().setRefToMessageId(newEbmsId);
-            retrievalEvidenceForMessage.getEbmsData().setEbmsMessageId(testInfo.getDisplayName() + "_r_4");
+            retrievalEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
+            retrievalEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_r_4"));
             this.submitFromGatewayToController(retrievalEvidenceForMessage);
 
 
@@ -1299,9 +1291,9 @@ public class ConnectorMessageFlowITCase {
                 .when(domibusConnectorGatewaySubmissionServiceInterceptor)
                 .submitToGateway(Mockito.any(DC5Message.class));
 
-        String EBMS_ID = null;
-        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        String BACKEND_MESSAGE_ID = "n2";
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
@@ -1339,9 +1331,9 @@ public class ConnectorMessageFlowITCase {
     @Test
     @Disabled
     public void sendMessageFromBackend_timeoutRelayRemmd(TestInfo testInfo) {
-        String EBMS_ID = null;
-        final String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
-        final String BACKEND_MESSAGE_ID = "n1";
+        EbmsMessageId EBMS_ID = null;
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
             DC5Message submittedMessage = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
@@ -1392,7 +1384,7 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-    private DC5Message submitMessage(String ebmsId, String connectorMessageId, String backendMessageId) {
+    private DC5Message submitMessage(EbmsMessageId ebmsId, DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
         DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
 //        DC5Message msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
 //                .setConnectorMessageId(connectorMessageId)

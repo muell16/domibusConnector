@@ -7,7 +7,6 @@ import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceServi
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

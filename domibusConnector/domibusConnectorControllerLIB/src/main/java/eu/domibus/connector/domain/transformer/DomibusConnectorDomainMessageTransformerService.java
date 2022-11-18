@@ -469,13 +469,14 @@ public class DomibusConnectorDomainMessageTransformerService {
     @NotNull
     DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @NotNull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
 
-        DomibusConnectorMessageAttachment messageAttachment = new DomibusConnectorMessageAttachment(
-                convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment()),
-                messageAttachmentTO.getIdentifier()
-        );
-        BeanUtils.copyProperties(messageAttachmentTO, messageAttachment);
+        return DomibusConnectorMessageAttachment.builder()
+                .attachment(convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment()))
+                .identifier(messageAttachmentTO.getIdentifier())
+                .name(messageAttachmentTO.getName())
+                .mimeType(messageAttachmentTO.getMimeType())
+                .description(messageAttachmentTO.getDescription())
+                .build();
 
-        return messageAttachment;
     }
 
 
@@ -514,7 +515,10 @@ public class DomibusConnectorDomainMessageTransformerService {
             throw new RuntimeException(e);
         }
 
-        DomibusConnectorMessageAttachment businessXmlAttachment = new DomibusConnectorMessageAttachment(businessXml, "BUSINESS_XML");
+        DomibusConnectorMessageAttachment businessXmlAttachment = DomibusConnectorMessageAttachment.builder()
+                .identifier("BUSINESS_XML")
+                .attachment(businessXml)
+                .build();
 
         //TODO: direction!!
         messageContent.getEcodexContent().setBusinessXml(businessXmlAttachment);

@@ -1,18 +1,8 @@
 package eu.domibus.connector.controller.test.util;
 
-import eu.ecodex.dc5.message.model.DC5Action;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
-import eu.ecodex.dc5.message.model.DC5Ebms;
+import eu.ecodex.dc5.message.model.*;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.ecodex.dc5.message.model.DetachedSignature;
-import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 
@@ -62,16 +52,17 @@ public class ConnectorControllerTestDomainCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
-    
-    public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
 
+    public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
         LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
         inMemory.setBytes("attachment".getBytes());
-        
-        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(inMemory, "identifier");       
-        attachment.setName("name");
-        attachment.setMimeType("application/garbage");
-        return attachment;
+
+        return DomibusConnectorMessageAttachment.builder()
+                .attachment(inMemory)
+                .identifier("identifier")
+                .name("name")
+                .mimeType("application/garbage")
+                .build();
     }
     
 
@@ -79,7 +70,7 @@ public class ConnectorControllerTestDomainCreator {
         
         DC5Ebms messageDetails = new DC5Ebms();
         messageDetails.setConversationId("conversation1");
-        messageDetails.setEbmsMessageId("ebms1");
+        messageDetails.setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 //        DC5Message msg = new DC5Message(messageDetails, messageContent);

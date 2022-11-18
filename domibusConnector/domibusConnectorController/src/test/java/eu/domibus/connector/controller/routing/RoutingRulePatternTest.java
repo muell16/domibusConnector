@@ -12,7 +12,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "serviceType");
         epoMessage.getEbmsData().setService(service);
 
@@ -22,7 +22,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesStartWithServiceName() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "serviceType");
         epoMessage.getEbmsData().setService(service);
 
@@ -32,7 +32,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesStartWithServiceName_noMatch() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "serviceType");
         epoMessage.getEbmsData().setService(service);
 
@@ -42,7 +42,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_shouldFail() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "serviceType");
         epoMessage.getEbmsData().setService(service);
 
@@ -52,7 +52,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_withAnd() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "s:ervice-Type");
         epoMessage.getEbmsData().setService(service);
 
@@ -62,7 +62,7 @@ public class RoutingRulePatternTest {
 
     @Test
     void matchesServiceName_withOr() {
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Service service = new DC5Service("serviceName", "serviceType");
         epoMessage.getEbmsData().setService(service);
 
@@ -73,7 +73,7 @@ public class RoutingRulePatternTest {
     @Test
     public void testAction() {
 
-        DC5Message epoMessage = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
         DC5Action action = new DC5Action("Connector-TEST");
         epoMessage.getEbmsData().setAction(action);
 

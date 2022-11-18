@@ -2,10 +2,7 @@ package eu.ecodex.dc5.message.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,9 +21,11 @@ public class DC5BackendData {
     @Column(name = "CREATED")
     private LocalDateTime created;
 
-    private String backendMessageId;
+    @Convert(converter = BackendMessageIdConverter.class)
+    private BackendMessageId backendMessageId;
 
-    private String refToBackendMessageId;
+    @Convert(converter = BackendMessageIdConverter.class)
+    private BackendMessageId refToBackendMessageId;
 
     private String backendConversationId;
 

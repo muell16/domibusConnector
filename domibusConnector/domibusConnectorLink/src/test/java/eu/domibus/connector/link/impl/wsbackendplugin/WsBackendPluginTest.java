@@ -127,7 +127,7 @@ public class WsBackendPluginTest {
         DomibusConnectorLinkPartner.LinkPartnerName backendName = new DomibusConnectorLinkPartner.LinkPartnerName("backend_bob");
         String connectorAddress = getServerAddress();
 
-        DC5Message epoMessage1 = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage1.setBackendLinkName("backend_bob");
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con1"));
         epoMessage1.getEbmsData().setEbmsMessageId("ebms1");
@@ -135,7 +135,7 @@ public class WsBackendPluginTest {
         step1.setTransportedMessage(epoMessage1);
 
 
-        DC5Message epoMessage2 = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage2.setBackendLinkName("backend_bob");
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con2"));
         epoMessage2.getEbmsData().setEbmsMessageId("ebms2");
@@ -174,7 +174,7 @@ public class WsBackendPluginTest {
         DomibusConnectorLinkPartner.LinkPartnerName backendName = new DomibusConnectorLinkPartner.LinkPartnerName("backend_bob");
         String connectorAddress = getServerAddress();
 
-        DC5Message epoMessage1 = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage1.setBackendLinkName("backend_bob");
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con01"));
         epoMessage1.getEbmsData().setEbmsMessageId("ebms1");
@@ -187,7 +187,7 @@ public class WsBackendPluginTest {
         step1.addTransportStatus(update1);
 
 
-        DC5Message epoMessage2 = DomainEntityCreator.createEpoMessage();
+        DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage2.setBackendLinkName("backend_bob");
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con02"));
         epoMessage2.getEbmsData().setEbmsMessageId("ebms2");

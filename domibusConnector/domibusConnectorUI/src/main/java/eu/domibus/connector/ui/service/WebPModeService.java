@@ -3,7 +3,7 @@ package eu.domibus.connector.ui.service;
 import eu.domibus.configuration.Configuration;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
-import eu.domibus.connector.common.service.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.*;

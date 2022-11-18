@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(DC5CoreJpaConfiguration.class)
+//@Import(DC5CoreJpaConfiguration.class)
 //@ImportAutoConfiguration()
 @EntityScan
 @EnableTransactionManagement(order = 200)
@@ -26,11 +26,13 @@ import java.lang.annotation.*;
                 "eu.ecodex.dc5.core", //
                 "eu.ecodex.dc5.flow", //
                 "eu.ecodex.dc5.events", //
-                "eu.ecodex.dc5.process"
+                "eu.ecodex.dc5.process", //
+                "eu.ecodex.dc5.domain",
+                "eu.domibus.connector.common"
                 }, //
-        additionalPackages = "eu.ecodex.dc5", //
+        additionalPackages = {"eu.ecodex.dc5", "eu.domibus.connector.common"}, //
         useFullyQualifiedModuleNames = true)
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"eu.ecodex.dc5","eu.domibus.connector.common", "eu.domibus.connector.firststartup", "eu.domibus.connector.evidences"})
 public @interface EnableDC5 {
 
 

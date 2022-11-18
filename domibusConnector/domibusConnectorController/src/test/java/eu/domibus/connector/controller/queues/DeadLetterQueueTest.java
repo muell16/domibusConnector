@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.queues;
 
 import eu.domibus.connector.controller.processor.CleanupMessageProcessor;
 //import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
-import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ProcessIncomingBusinessMessageFlow;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
 import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
@@ -62,7 +62,7 @@ public class DeadLetterQueueTest {
 //    ConfirmationMessageProcessingFlow evidenceMessageProcessor;
 
     @MockBean
-    ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
+    ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 
     @MockBean
     ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
@@ -173,7 +173,7 @@ public class DeadLetterQueueTest {
         // Arrange
 //        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(evidenceMessageProcessor).processMessage(any());
         Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toGatewayBusinessMessageProcessor).processMessage(any());
-        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(toBackendBusinessMessageProcessor).processMessage(any());
+        Mockito.doThrow(new RuntimeException("FAIL MESSAGE")).when(processIncomingBusinessMessageFlow).processMessage(any());
 
         DC5Message message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId(new DomibusConnectorMessageId("yxcvyxcvyxcv"));

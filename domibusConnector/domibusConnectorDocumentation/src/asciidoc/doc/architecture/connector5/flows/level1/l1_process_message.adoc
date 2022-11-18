@@ -9,23 +9,23 @@ endif::header[]
 
 = <<process_message,Process Message>>
 
-Process message is actually a abstract process:
+Process message is actually a composed process:
 
 [plantuml]
 ----
 @startuml
 
-abstract ProcessMessage
+class ProcessMessage
 
-ProcessMessage <|-- ProcessIncomingBusinessMessage
-ProcessMessage <|-- ProcessOutgoingBusinessMessage
-ProcessMessage <|-- ProcessConfirmationMessage
+ProcessMessage -- ProcessIncomingBusinessMessage
+ProcessMessage -- ProcessOutgoingBusinessMessage
+ProcessMessage -- ProcessConfirmationMessage
 
 @enduml
 ----
 
 * Incoming Business Message
-* Outgoging Business Message
+* Outgoing Business Message
 * Confirmation Message
 
 == Trigger

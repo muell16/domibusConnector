@@ -64,7 +64,7 @@ class DC5MsgH2Tests {
         // Arrange
         final DC5Message dc5BusinessDocumentMessage = new DC5Message();
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5Ebms.setEbmsMessageId("foo");
+        dc5Ebms.setEbmsMessageId(EbmsMessageId.ofRandom());
         dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
 
         // Act
