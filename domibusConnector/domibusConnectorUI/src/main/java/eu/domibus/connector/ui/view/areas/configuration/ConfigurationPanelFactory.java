@@ -101,7 +101,7 @@ public class ConfigurationPanelFactory {
         private Binder<T> binder;
         private T boundConfigValue;
 
-        private DomainSelect domainSelect;
+        private final DomainSelect domainSelect;
 
         private ConfigurationPanel(FormLayout ecxContainerConfigForm, DomainSelect domainSelect, Class<T> configurationClazz) {
             this.form = ecxContainerConfigForm;

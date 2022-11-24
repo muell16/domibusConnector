@@ -35,6 +35,8 @@ public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpBut
         ConfigurationPanelFactory.ConfigurationPanel<DCEcodexContainerProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, domainSelect, DCEcodexContainerProperties.class);
 
+        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
+
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             ImportEcodexContainerConfig dialog = importEcodexContainerConfig.getObject();

@@ -32,6 +32,8 @@ public class ConnectorMessageProcessingConfigPanel extends DCVerticalLayoutWithT
             ConfigurationPanelFactory.ConfigurationPanel<ConnectorMessageProcessingProperties> configurationPanel
                     = configurationPanelFactory.createConfigurationPanel(form, domainSelect, ConnectorMessageProcessingProperties.class);
 
+            domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
+
             this.add(configurationPanel);
 
         }
