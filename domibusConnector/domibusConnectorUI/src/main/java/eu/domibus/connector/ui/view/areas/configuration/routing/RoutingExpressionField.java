@@ -231,10 +231,11 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
             return webPModeService.getPartyList()
                     .stream().map(p -> p.getPartyIdType()).collect(Collectors.toList());
-        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
-            return webPModeService.getPartyList()
-                    .stream().map(p -> p.getRole()).collect(Collectors.toList());
         }
+//        else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
+//            return webPModeService.getPartyList()
+//                    .stream().map(p -> p.getRole()).collect(Collectors.toList());
+//        }
         return new ArrayList<>();
     }
 

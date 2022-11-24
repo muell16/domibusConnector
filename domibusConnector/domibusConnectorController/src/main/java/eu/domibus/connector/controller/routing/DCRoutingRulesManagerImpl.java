@@ -36,24 +36,24 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     @Override
-    public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
+    public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
         RoutingConfig rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new RoutingConfig();
             routingRuleMap.put(businessDomainId, rc);
         }
 
-        rc.backendRoutingRules.put(routingRule.getRoutingRuleId(), routingRule);
-        LOGGER.debug("Added routing rule [{}]", routingRule);
+        rc.backendRoutingRules.put(linkPartnerRoutingRule.getRoutingRuleId(), linkPartnerRoutingRule);
+        LOGGER.debug("Added routing rule [{}]", linkPartnerRoutingRule);
     }
 
 
     @Override
-    public RoutingRule persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, RoutingRule routingRule) {
-        dcRoutingRulePersistenceService.createRoutingRule(businessDomainId, routingRule);
-        addBackendRoutingRule(businessDomainId, routingRule);
-        routingRule.setConfigurationSource(ConfigurationSource.DB);
-        return routingRule;
+    public LinkPartnerRoutingRule persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
+        dcRoutingRulePersistenceService.createRoutingRule(businessDomainId, linkPartnerRoutingRule);
+        addBackendRoutingRule(businessDomainId, linkPartnerRoutingRule);
+        linkPartnerRoutingRule.setConfigurationSource(ConfigurationSource.DB);
+        return linkPartnerRoutingRule;
     }
 
     @Override
@@ -70,13 +70,13 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
             routingRuleMap.put(businessDomainId, rc);
         }
 
-        RoutingRule remove = rc.backendRoutingRules.remove(routingRuleId);
+        LinkPartnerRoutingRule remove = rc.backendRoutingRules.remove(routingRuleId);
         LOGGER.debug("Removed routing rule [{}]", remove);
     }
 
 
     @Override
-    public Map<String, RoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public Map<String, LinkPartnerRoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
         return dcMessageRoutingConfigurationProperties.backendRoutingRules;
     }
@@ -110,10 +110,10 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
         routingConfig.backendRoutingRules.putAll(rc.backendRoutingRules);
 
         //load db rules, and override existing rules..
-        List<RoutingRule> allRoutingRules = dcRoutingRulePersistenceService.getAllRoutingRules(businessDomainId);
-        Map<String, RoutingRule> collect = allRoutingRules.stream()
+        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = dcRoutingRulePersistenceService.getAllRoutingRules(businessDomainId);
+        Map<String, LinkPartnerRoutingRule> collect = allLinkPartnerRoutingRules.stream()
                 .peek(r -> r.setConfigurationSource(ConfigurationSource.DB))
-                .collect(Collectors.toMap(RoutingRule::getRoutingRuleId, Function.identity()));
+                .collect(Collectors.toMap(LinkPartnerRoutingRule::getRoutingRuleId, Function.identity()));
         routingConfig.backendRoutingRules.putAll(collect);
 
         return routingConfig;
@@ -121,7 +121,7 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     private static class RoutingConfig {
-        private Map<String, RoutingRule> backendRoutingRules = new HashMap<>();
+        private Map<String, LinkPartnerRoutingRule> backendRoutingRules = new HashMap<>();
         private DomibusConnectorLinkPartner.LinkPartnerName defaultBackendLink;
         private boolean routingEnabled;
     }

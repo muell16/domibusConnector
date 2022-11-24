@@ -19,6 +19,7 @@ import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.EbmsMessageId;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -130,7 +131,7 @@ public class WsBackendPluginTest {
         DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage1.setBackendLinkName("backend_bob");
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con1"));
-        epoMessage1.getEbmsData().setEbmsMessageId("ebms1");
+        epoMessage1.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
         step1.setTransportedMessage(epoMessage1);
 
@@ -138,7 +139,7 @@ public class WsBackendPluginTest {
         DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage2.setBackendLinkName("backend_bob");
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con2"));
-        epoMessage2.getEbmsData().setEbmsMessageId("ebms2");
+        epoMessage2.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms2"));
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();
         step2.setTransportedMessage(epoMessage2);
 
@@ -177,7 +178,7 @@ public class WsBackendPluginTest {
         DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage1.setBackendLinkName("backend_bob");
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con01"));
-        epoMessage1.getEbmsData().setEbmsMessageId("ebms1");
+        epoMessage1.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
         step1.setTransportedMessage(epoMessage1);
         TransportStateService.TransportId tid1 = new TransportStateService.TransportId("t1");
@@ -190,7 +191,7 @@ public class WsBackendPluginTest {
         DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
         epoMessage2.setBackendLinkName("backend_bob");
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con02"));
-        epoMessage2.getEbmsData().setEbmsMessageId("ebms2");
+        epoMessage2.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms2"));
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();
         step2.setTransportedMessage(epoMessage2);
         TransportStateService.TransportId tid2 = new TransportStateService.TransportId("t2");

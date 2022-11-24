@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.processor.steps;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
-import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Message;
@@ -31,11 +31,11 @@ class LookupBackendNameStepTest {
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("fooLink");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        routingRules.put("foobarId", routingRule1);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("fooLink");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
@@ -63,11 +63,11 @@ class LookupBackendNameStepTest {
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("fooLink");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        routingRules.put("foobarId", routingRule1);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("fooLink");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
@@ -94,11 +94,11 @@ class LookupBackendNameStepTest {
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("fooLink");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        routingRules.put("foobarId", routingRule1);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("fooLink");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
@@ -133,11 +133,11 @@ class LookupBackendNameStepTest {
 
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("fooLink");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        routingRules.put("foobarId", routingRule1);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("fooLink");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
@@ -163,11 +163,11 @@ class LookupBackendNameStepTest {
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("BACKEND_ASSOCIATED_WITH_RULE");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        routingRules.put("foobarId", routingRule1);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("BACKEND_ASSOCIATED_WITH_RULE");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
@@ -195,18 +195,18 @@ class LookupBackendNameStepTest {
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
         final DCRoutingRulesManagerImpl routingMock = Mockito.mock(DCRoutingRulesManagerImpl.class);
 
-        final HashMap<String, RoutingRule> routingRules = new HashMap<>();
-        final RoutingRule routingRule1 = new RoutingRule();
-        routingRule1.setLinkName("BACKEND_ASSOCIATED_WITH_RULE_LOWER_PRIORITY");
-        routingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        routingRule1.setPriority(-2000);
-        routingRules.put("rule1", routingRule1);
+        final HashMap<String, LinkPartnerRoutingRule> routingRules = new HashMap<>();
+        final LinkPartnerRoutingRule linkPartnerRoutingRule1 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule1.setLinkName("BACKEND_ASSOCIATED_WITH_RULE_LOWER_PRIORITY");
+        linkPartnerRoutingRule1.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        linkPartnerRoutingRule1.setPriority(-2000);
+        routingRules.put("rule1", linkPartnerRoutingRule1);
 
-        final RoutingRule routingRule2 = new RoutingRule();
-        routingRule2.setLinkName("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY");
-        routingRule2.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
-        routingRule2.setPriority(0);
-        routingRules.put("rule2", routingRule2);
+        final LinkPartnerRoutingRule linkPartnerRoutingRule2 = new LinkPartnerRoutingRule();
+        linkPartnerRoutingRule2.setLinkName("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY");
+        linkPartnerRoutingRule2.setMatchClause(new RoutingRulePattern("&(&(equals(Action, 'ConTest_Form'), equals(ServiceName, 'Connector-TEST')), equals(ServiceType, 'urn:e-codex:services:'))"));
+        linkPartnerRoutingRule2.setPriority(0);
+        routingRules.put("rule2", linkPartnerRoutingRule2);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
         Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");

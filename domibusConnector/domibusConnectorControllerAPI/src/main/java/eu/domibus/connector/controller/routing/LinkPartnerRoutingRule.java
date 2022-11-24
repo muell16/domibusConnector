@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.UUID;
 
 @MapNested
-public class RoutingRule {
+public class LinkPartnerRoutingRule {
 
     public static int HIGH_PRIORITY = -2000;
     public static int LOW_PRIORITY = 2000;
@@ -97,9 +97,9 @@ public class RoutingRule {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RoutingRule)) return false;
+        if (!(o instanceof LinkPartnerRoutingRule)) return false;
 
-        RoutingRule that = (RoutingRule) o;
+        LinkPartnerRoutingRule that = (LinkPartnerRoutingRule) o;
 
         return routingRuleId != null ? routingRuleId.equals(that.routingRuleId) : that.routingRuleId == null;
     }
@@ -119,7 +119,7 @@ public class RoutingRule {
     }
 
     // sorts by ascending priority, means 0 comes before -2000.
-    public static Comparator<RoutingRule> getComparator() {
+    public static Comparator<LinkPartnerRoutingRule> getComparator() {
         return (r1, r2) -> Integer.compare(r2.priority, r1.priority);
     }
 }

@@ -114,7 +114,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 e -> {
                     if (editor.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
 //                        domainRepo.delete(editor.getItem()); // TODO what to do here???
-                        domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+                        domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
                     } else {
                         new Notification("Can't delete / edit properties that are not stored in the database!").open();
                     }
@@ -226,7 +226,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
                 domainRepo.createBusinessDomain(binder.getBean());
-                domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+                domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
                 dialog.close();
                 binder.setBean(new DomibusConnectorBusinessDomain()); // as mentioned above, this is very important when using the db entities directly.
             }
@@ -246,6 +246,6 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        domainGrid.setItems(domainRepo.getActiveBusinessDomainIds().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+        domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
     }
 }

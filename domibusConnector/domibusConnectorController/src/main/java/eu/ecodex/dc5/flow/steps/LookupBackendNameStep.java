@@ -2,7 +2,7 @@ package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
-import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -70,9 +70,9 @@ public class LookupBackendNameStep implements MessageProcessStep {
                     dcRoutingConfigManager.getBackendRoutingRules(message.getMessageLaneId())
                     .values()
                     .stream()
-                    .sorted(RoutingRule.getComparator())
+                    .sorted(LinkPartnerRoutingRule.getComparator())
                     .filter(r -> r.getMatchClause().matches(message))
-                    .map(RoutingRule::getLinkName)
+                    .map(LinkPartnerRoutingRule::getLinkName)
                     .findFirst()
                     .map(bName -> {
                         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Looked up backend name [{}] for message", bName);

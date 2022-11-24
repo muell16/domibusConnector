@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.utils;
 
-import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import org.apache.logging.log4j.LogManager;
@@ -28,12 +28,12 @@ public class Connector42RoutingRulesTo43RoutingRulesConfigConverter {
     }
 
 
-    public List<RoutingRule> getRoutingRules() {
-        List<RoutingRule> routingRules = jdbcTemplate.query("SELECT s.DOMIBUS_CONNECTOR_SERVICE_ID, b.BACKEND_NAME FROM " +
+    public List<LinkPartnerRoutingRule> getRoutingRules() {
+        List<LinkPartnerRoutingRule> linkPartnerRoutingRules = jdbcTemplate.query("SELECT s.DOMIBUS_CONNECTOR_SERVICE_ID, b.BACKEND_NAME FROM " +
                         "DOMIBUS_CONNECTOR_BACK_2_S s LEFT JOIN DOMIBUS_CONNECTOR_BACKEND_INFO b ON s.DOMIBUS_CONNECTOR_BACKEND_ID = b.ID",
-                (RowMapper<RoutingRule>) (rs, rowNum) -> {
+                (RowMapper<LinkPartnerRoutingRule>) (rs, rowNum) -> {
                     try {
-                        RoutingRule rr = new RoutingRule();
+                        LinkPartnerRoutingRule rr = new LinkPartnerRoutingRule();
                         String backendName = rs.getString(2);
                         String serviceName = rs.getString(1);
                         rr.setConfigurationSource(ConfigurationSource.DB);
@@ -52,7 +52,7 @@ public class Connector42RoutingRulesTo43RoutingRulesConfigConverter {
                 }).stream()
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-        return routingRules;
+        return linkPartnerRoutingRules;
     }
 
 }

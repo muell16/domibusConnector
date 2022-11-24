@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TransportMessageFlow {
 
-    private final SubmitToLinkService submitToLinkService;
+//    private final SubmitToLinkService submitToLinkService;
     private final DC5MessageRepo dc5MessageRepo;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
@@ -23,7 +23,7 @@ public class TransportMessageFlow {
 
         DC5Message msg = dc5MessageRepo.getById(messageReadyForTransportEvent.getId());
 
-        submitToLinkService.submitToLink(msg);
+//        submitToLinkService.submitToLink(msg);
 
     }
 

@@ -46,7 +46,7 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
         if (DomainModelHelper.isBusinessMessage(message)) {
 
             if (this.enabled) {
-                String ebmsMessageId = message.getEbmsData().getEbmsMessageId();
+//                String ebmsMessageId = message.getEbmsData().getEbmsMessageId();
 
 //                DC5Message deliveryConfirmation = DomibusConnectorMessageBuilder.createBuilder()
 //                        .setMessageDetails(

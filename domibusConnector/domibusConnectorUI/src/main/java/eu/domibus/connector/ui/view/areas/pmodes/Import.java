@@ -5,6 +5,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
@@ -16,6 +17,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
@@ -63,19 +65,12 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
-	ComboBox<DomibusConnectorBusinessDomain.BusinessDomainId> domains = new ComboBox<>();
+	Select<DomibusConnectorBusinessDomain.BusinessDomainId> domains;
 
-	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, DomainSelect domains) {
 		super(HELP_ID, TITLE);
 
-//		domains.setRenderer(new ComponentRenderer<FlexLayout, DC5Domain>(domain -> {
-//			final FlexLayout wrapper = new FlexLayout();
-//			wrapper.setAlignItems(FlexComponent.Alignment.CENTER);
-//
-//			return wrapper;
-//		}));
-		domains.setLabel("PMode is valid in domain:");
-//		domains.setItemLabelGenerator(DC5Domain::getName);
+		this.domains = domains;
 
 		this.pmodeService = pmodeService;
 		
@@ -248,8 +243,6 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
-		domains.setItems(pmodeService.getDomains());
-
 		areaImportResult.removeAll();
 		areaConnectorstoreUploadResult.removeAll();
 		areaPModeFileUploadResult.removeAll();

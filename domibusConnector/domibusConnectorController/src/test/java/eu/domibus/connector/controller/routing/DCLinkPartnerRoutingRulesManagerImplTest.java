@@ -1,19 +1,16 @@
 package eu.domibus.connector.controller.routing;
 
-import eu.domibus.connector.controller.test.util.ITCaseTestAnnotation;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {ITCaseTestContext.class},
         properties = {
@@ -24,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @Disabled
-public class DCRoutingRulesManagerImplTest {
+public class DCLinkPartnerRoutingRulesManagerImplTest {
 
     @Autowired
     private DCRoutingRulesManager routingRulesManager;
@@ -33,7 +30,7 @@ public class DCRoutingRulesManagerImplTest {
 
     @Test
     void addBackendRoutingRule() {
-        RoutingRule rr = new RoutingRule();
+        LinkPartnerRoutingRule rr = new LinkPartnerRoutingRule();
         rr.setRoutingRuleId("abc1");
         rr.setConfigurationSource(ConfigurationSource.ENV);
         rr.setLinkName("backend_bob");

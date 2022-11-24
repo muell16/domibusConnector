@@ -1,15 +1,11 @@
-package eu.domibus.connector.persistence.service;
+package eu.ecodex.dc5.pmode;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
-import eu.ecodex.dc5.message.model.DC5Action;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DC5Service;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +15,7 @@ import java.util.Optional;
  *  and also provides methods to change the current p-mode set
  *  of a message lane
  */
-public interface DomibusConnectorPModeService {
+public interface DC5PmodeService {
 
 
 

@@ -55,7 +55,7 @@ public class DCMessageRoutingConfigurationPropertiesTest {
     public void testProps() {
         CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 
-        Map<String, RoutingRule> backendRules = props.getBackendRules();
+        Map<String, LinkPartnerRoutingRule> backendRules = props.getBackendRules();
 
         String property = ctx.getEnvironment().getProperty("connector.routing.rule.link-name");
 

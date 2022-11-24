@@ -3,6 +3,7 @@ package eu.domibus.connector.ui.view.areas.configuration.security.importoldconfi
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.security.EcxContainerConfigForm;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,8 +23,8 @@ public class ImportEcodexContainerConfig extends AImportOldConfigDialog {
     private final ObjectProvider<EcxContainerConfigForm> formFactory;
 
     public ImportEcodexContainerConfig(ConfigurationPanelFactory configurationPanelFactory,
-                                   ObjectProvider<EcxContainerConfigForm> formFactory) {
-        super(configurationPanelFactory);
+                                       ObjectProvider<EcxContainerConfigForm> formFactory, DomainSelect domainSelect) {
+        super(configurationPanelFactory, domainSelect);
         this.formFactory = formFactory;
     }
 

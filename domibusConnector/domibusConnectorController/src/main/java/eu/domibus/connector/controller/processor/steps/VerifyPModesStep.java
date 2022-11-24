@@ -3,17 +3,12 @@ package eu.domibus.connector.controller.processor.steps;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dc5.message.model.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

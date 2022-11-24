@@ -1,16 +1,16 @@
 package eu.domibus.connector.ui.view.areas.configuration.security;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportBusinessDocConfig;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -30,10 +30,13 @@ public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithT
 
     public BusinessDocumentValidationConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
                                                  ObjectProvider<ImportBusinessDocConfig> importBusinessDocConfig,
-                                                 BusinessDocumentValidationConfigForm form) {
+                                                 BusinessDocumentValidationConfigForm form, DomainSelect domainSelect) {
     	super(HELP_ID, TITLE);
         ConfigurationPanelFactory.ConfigurationPanel<DCBusinessDocumentValidationConfigurationProperties> configurationPanel
-                = configurationPanelFactory.createConfigurationPanel(form, DCBusinessDocumentValidationConfigurationProperties.class);
+                = configurationPanelFactory.createConfigurationPanel(form, domainSelect, DCBusinessDocumentValidationConfigurationProperties.class);
+
+        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
+
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             ImportBusinessDocConfig dialog = importBusinessDocConfig.getObject();

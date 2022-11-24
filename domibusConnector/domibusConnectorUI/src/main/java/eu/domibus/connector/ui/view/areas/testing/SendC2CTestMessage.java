@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.vaadin.flow.component.ClickEvent;
+import eu.ecodex.dc5.pmode.DC5PmodeService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -30,10 +31,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DC5Service;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
@@ -79,7 +77,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
         this.webTestService = webTestService;
         this.pModeService = pModeService;
         this.messageIdGenerator = messageIdGenerator;
-        this.messageForm.setParties(pModeService.getPartyList());
+//        this.messageForm.setParties(pModeService.getPartyList());
 
         VerticalLayout messageDetailsArea = new VerticalLayout();
         messageForm.getStyle().set("margin-top", "25px");
@@ -230,9 +228,9 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateFromParty(WebMessage msg) {
-        DomibusConnectorParty pParty = pModeService.getHomeParty();
+        DC5PmodeService.PModeParty pParty = pModeService.getHomeParty();
         if (pParty != null) {
-            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), pParty.getRole());
+            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), null);
             msg.getMessageInfo().setFrom(homeParty);
             return true;
         } else {
@@ -250,10 +248,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestAction(WebMessage msg) {
-        List<DC5Action> actionList = pModeService.getActionList();
+        List<DC5PmodeService.PModeAction> actionList = pModeService.getActionList();
         if (actionList != null && !actionList.isEmpty()) {
             WebMessageDetail.Action action = webTestService.getTestAction();
-            Optional<DC5Action> testAction = actionList.stream()
+            Optional<DC5PmodeService.PModeAction> testAction = actionList.stream()
                     .filter(p -> (p.getAction().equals(action.getAction())))
                     .findFirst();
             if (testAction.isPresent()) {
@@ -279,10 +277,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestService(WebMessage msg) {
-        List<DC5Service> serviceList = pModeService.getServiceList();
+        List<DC5PmodeService.PModeService> serviceList = pModeService.getServiceList();
         if (serviceList != null && !serviceList.isEmpty()) {
             WebMessageDetail.Service service = webTestService.getTestService();
-            Optional<DC5Service> testService = serviceList.stream()
+            Optional<DC5PmodeService.PModeService> testService = serviceList.stream()
                     .filter(p -> (p.getService().equals(service.getService())))
                     .findFirst();
             if (testService.isPresent()) {

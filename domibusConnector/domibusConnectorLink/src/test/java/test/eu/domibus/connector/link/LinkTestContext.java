@@ -1,7 +1,6 @@
 package test.eu.domibus.connector.link;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.common.persistence.dao.DomibusConnectorBusinessDomainDao;
 import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.common.service.DCKeyStoreService;
@@ -47,7 +46,7 @@ import java.util.concurrent.LinkedBlockingDeque;
         DCBusinessDomainManagerImpl.class,
         ConnectorConfigurationProperties.class
 })
-@ComponentScan(basePackages = {"eu.domibus.connector.common", "eu.domibus.connector.utils"})
+@ComponentScan(basePackages = {"eu.domibus.connector.common", "eu.domibus.connector"})
 public class LinkTestContext {
 
     private static final Logger LOGGER = LogManager.getLogger(LinkTestContext.class);
@@ -60,8 +59,8 @@ public class LinkTestContext {
     @MockBean
     DomibusConnectorLinkPartnerDao dao;
 
-    @MockBean
-    DomibusConnectorBusinessDomainDao domainDao;
+//    @MockBean
+//    DomibusConnectorBusinessDomainDao domainDao;
 
     @MockBean
     DCRoutingRulesManager rulesManager;

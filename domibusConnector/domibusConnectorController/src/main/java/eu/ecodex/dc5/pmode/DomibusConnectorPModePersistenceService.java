@@ -4,22 +4,15 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPModeSetDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 import eu.domibus.connector.persistence.service.impl.ServiceMapper;
 import eu.ecodex.dc5.domain.repo.DomibusConnectorBusinessDomainDao;
-import eu.ecodex.dc5.domain.repo.DC5BusinessDomainJpaEntity;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.ecodex.dc5.message.model.DC5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -329,7 +322,7 @@ public class DomibusConnectorPModePersistenceService  {
 //    }
 
     public Optional<PDomibusConnectorPModeSet> getCurrentDBPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
-        List<PDomibusConnectorPModeSet> currentActivePModeSet = domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
+        List<PDomibusConnectorPModeSet> currentActivePModeSet = new ArrayList<>(); // = domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
         if (currentActivePModeSet.isEmpty()) {
             LOGGER.debug("getCurrentDBPModeSet# no active pMode Set found for message lane [{}]", lane);
         }

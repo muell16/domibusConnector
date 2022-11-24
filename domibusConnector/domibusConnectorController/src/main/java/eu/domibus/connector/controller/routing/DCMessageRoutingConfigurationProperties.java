@@ -3,14 +3,10 @@ package eu.domibus.connector.controller.routing;
 import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @BusinessDomainScoped
@@ -22,9 +18,9 @@ public class DCMessageRoutingConfigurationProperties {
 
     private boolean enabled = true;
 
-    private Map<String, RoutingRule> backendRules = new HashMap<>();
+    private Map<String, LinkPartnerRoutingRule> backendRules = new HashMap<>();
 
-    private Map<String, RoutingRule> gatewayRules = new HashMap<>();
+    private Map<String, LinkPartnerRoutingRule> gatewayRules = new HashMap<>();
 
     @NotBlank
     private String defaultBackendName = DomibusConnectorDefaults.DEFAULT_BACKEND_NAME;
@@ -61,19 +57,19 @@ public class DCMessageRoutingConfigurationProperties {
         this.enabled = enabled;
     }
 
-    public Map<String, RoutingRule> getBackendRules() {
+    public Map<String, LinkPartnerRoutingRule> getBackendRules() {
         return backendRules;
     }
 
-    public void setBackendRules(Map<String, RoutingRule> backendRules) {
+    public void setBackendRules(Map<String, LinkPartnerRoutingRule> backendRules) {
         this.backendRules = backendRules;
     }
 
-    public Map<String, RoutingRule> getGatewayRules() {
+    public Map<String, LinkPartnerRoutingRule> getGatewayRules() {
         return gatewayRules;
     }
 
-    public void setGatewayRules(Map<String, RoutingRule> gatewayRules) {
+    public void setGatewayRules(Map<String, LinkPartnerRoutingRule> gatewayRules) {
         this.gatewayRules = gatewayRules;
     }
 

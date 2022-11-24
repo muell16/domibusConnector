@@ -1,36 +1,19 @@
 package eu.domibus.connector.ui.view.areas.configuration.security;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
-import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
-
-import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportBusinessDocConfig;
 import eu.domibus.connector.ui.view.areas.configuration.security.importoldconfig.ImportEcodexContainerConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 @UIScope
@@ -47,10 +30,12 @@ public class EcxContainerConfigPanel extends DCVerticalLayoutWithTitleAndHelpBut
 
     public EcxContainerConfigPanel(ConfigurationPanelFactory configurationPanelFactory,
                                    ObjectProvider<ImportEcodexContainerConfig> importEcodexContainerConfig,
-                                   EcxContainerConfigForm form) {
+                                   EcxContainerConfigForm form, DomainSelect domainSelect) {
     	super(HELP_ID, TITLE);
         ConfigurationPanelFactory.ConfigurationPanel<DCEcodexContainerProperties> configurationPanel
-                = configurationPanelFactory.createConfigurationPanel(form, DCEcodexContainerProperties.class);
+                = configurationPanelFactory.createConfigurationPanel(form, domainSelect, DCEcodexContainerProperties.class);
+
+        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
 
         Button b = new Button("Import old config");
         b.addClickListener(event -> {

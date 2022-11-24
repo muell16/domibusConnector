@@ -6,7 +6,7 @@ import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
-import eu.domibus.connector.controller.routing.RoutingRule;
+import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -94,16 +94,16 @@ public class TestBackendAutoConfiguration {
      */
     private boolean configureRoutingRules() {
         boolean enabled = false;
-        List<DomibusConnectorBusinessDomain.BusinessDomainId> activeBusinessDomainIds = businessDomainManager.getActiveBusinessDomainIds();
+        List<DomibusConnectorBusinessDomain.BusinessDomainId> activeBusinessDomainIds = businessDomainManager.getValidBusinessDomains();
         for (DomibusConnectorBusinessDomain.BusinessDomainId laneId : activeBusinessDomainIds) {
             ConnectorTestConfigurationProperties c2cTestProperties = configurationPropertyLoaderService.loadConfiguration(laneId, ConnectorTestConfigurationProperties.class);
             enabled = enabled || c2cTestProperties.isEnabled();
             if (c2cTestProperties.isEnabled()) {
                 //create and add rule for this businessDomain
-                RoutingRule routingRule = new RoutingRule();
-                routingRule.setConfigurationSource(ConfigurationSource.IMPL);
-                routingRule.setPriority(RoutingRule.HIGH_PRIORITY); //add routing rule with high priority
-                routingRule.setLinkName(DomibusConnectorDefaults.DEFAULT_TEST_BACKEND);
+                LinkPartnerRoutingRule linkPartnerRoutingRule = new LinkPartnerRoutingRule();
+                linkPartnerRoutingRule.setConfigurationSource(ConfigurationSource.IMPL);
+                linkPartnerRoutingRule.setPriority(LinkPartnerRoutingRule.HIGH_PRIORITY); //add routing rule with high priority
+                linkPartnerRoutingRule.setLinkName(DomibusConnectorDefaults.DEFAULT_TEST_BACKEND);
 
                 String rule = "";
                 if (c2cTestProperties.getAction() != null) {
@@ -123,10 +123,10 @@ public class TestBackendAutoConfiguration {
                 }
                 try {
                     RoutingRulePattern routingRulePattern = new RoutingRulePattern(rule);
-                    routingRule.setDescription("Automatically by Connector2Connector Test created routing rule. To route connector tests messages to testbackend");
-                    routingRule.setMatchClause(routingRulePattern);
-                    LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Adding the routing rule {} to backend routing rules for testbackend on business domain [{}]", routingRule, laneId);
-                    routingRulesManager.addBackendRoutingRule(laneId, routingRule);
+                    linkPartnerRoutingRule.setDescription("Automatically by Connector2Connector Test created routing rule. To route connector tests messages to testbackend");
+                    linkPartnerRoutingRule.setMatchClause(routingRulePattern);
+                    LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Adding the routing rule {} to backend routing rules for testbackend on business domain [{}]", linkPartnerRoutingRule, laneId);
+                    routingRulesManager.addBackendRoutingRule(laneId, linkPartnerRoutingRule);
                 } catch (Exception e) {
                     String error = String.format("Cannot create RoutingRule for ConnectorTests. The routing rule %s is illegal. Check Config of BusinessDomain %s", rule, laneId);
                     throw new IllegalArgumentException(error);
