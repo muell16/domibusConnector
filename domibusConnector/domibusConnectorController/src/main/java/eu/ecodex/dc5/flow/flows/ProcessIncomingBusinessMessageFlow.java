@@ -8,9 +8,10 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
-import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import static eu.ecodex.dc5.message.ConfirmationCreatorService.toDC5Confirmation
 import static eu.ecodex.dc5.message.ConfirmationCreatorService.toMessageParams;
 
 @Component(ProcessIncomingBusinessMessageFlow.GW_TO_BACKEND_MESSAGE_PROCESSOR)
+@RequiredArgsConstructor
 public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessIncomingBusinessMessageFlow.class);
@@ -35,29 +37,12 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 	private final DomibusConnectorEvidencesToolkit evidencesToolkit;
 	private final MessageConfirmationStep messageConfirmationStep;
 	private final ResolveECodexContainerStep resolveECodexContainerStep;
-	private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
-	private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
+//	private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
+	private final SubmitMessageToLinkStep submitMessageToLinkStep;
 	private final LookupBackendNameStep lookupBackendNameStep;
 	private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
 	private final VerifyPModesStep verifyPModesStep;
 
-	public ProcessIncomingBusinessMessageFlow(
-			DomibusConnectorEvidencesToolkit evidencesToolkit,
-			MessageConfirmationStep messageConfirmationStep,
-			ResolveECodexContainerStep resolveECodexContainerStep,
-			CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
-			SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep,
-			SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,
-			LookupBackendNameStep lookupBackendNameStep, VerifyPModesStep verifyPModesStep) {
-		this.evidencesToolkit = evidencesToolkit;
-		this.submitAsEvidenceMessageToLink = submitAsEvidenceMessageToLink;
-		this.messageConfirmationStep = messageConfirmationStep;
-		this.resolveECodexContainerStep = resolveECodexContainerStep;
-		this.createNewBusinessMessageInDBStep = createNewBusinessMessageInDBStep;
-		this.submitMessageToLinkModuleQueueStep = submitMessageToLinkModuleQueueStep;
-		this.lookupBackendNameStep = lookupBackendNameStep;
-		this.verifyPModesStep = verifyPModesStep;
-	}
 
 	@Override
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
@@ -70,9 +55,6 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 			//lookup correct backend name
 			lookupBackendNameStep.executeStep(incomingMessage);
 
-			//persistMessage
-			createNewBusinessMessageInDBStep.executeStep(incomingMessage);
-
 			//process all with this business message transported confirmations
 			messageConfirmationStep.processTransportedConfirmations(incomingMessage);
 
@@ -83,11 +65,14 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 
 			//send confirmation msg back
 			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, relayREMMDEvidence);
+			//TODO: !!!
+
 
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
 
-			submitMessageToLinkModuleQueueStep.submitMessage(incomingMessage);
+			submitMessageToLinkStep.submitMessage(incomingMessage);
+			// TODO: !!
 
 			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",
 					incomingMessage.getEbmsData().getEbmsMessageId(),
@@ -99,7 +84,7 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 			DC5Confirmation negativeEvidence = createNonDeliveryEvidence(incomingMessage);
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
-			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
+//			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
 			LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
 					incomingMessage.getEbmsData().getEbmsMessageId(),
 					incomingMessage.getBackendLinkName()

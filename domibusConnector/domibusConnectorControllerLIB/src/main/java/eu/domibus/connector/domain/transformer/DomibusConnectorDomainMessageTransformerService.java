@@ -6,7 +6,6 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
@@ -19,7 +18,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 
 import javax.activation.DataHandler;
 
@@ -503,8 +501,8 @@ public class DomibusConnectorDomainMessageTransformerService {
 
 
     @NotNull
-    DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+    DC5MessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
+        DC5MessageContent messageContent = new DC5MessageContent();
 
         byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 

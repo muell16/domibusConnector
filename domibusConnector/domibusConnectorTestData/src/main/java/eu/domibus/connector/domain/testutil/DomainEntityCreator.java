@@ -111,6 +111,7 @@ public class DomainEntityCreator {
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
         return DomibusConnectorMessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
+                .identifier("simple_attachment")
                 .build();
     }
 
@@ -158,7 +159,7 @@ public class DomainEntityCreator {
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
         DC5Message msg = DC5Message.builder()
                 .ebmsData(messageDetails)
                 .build();
@@ -172,7 +173,7 @@ public class DomainEntityCreator {
     public static DC5Message createMessage() {
         DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
         
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
@@ -226,8 +227,8 @@ public class DomainEntityCreator {
 //        return message;
     }
 
-    private static DomibusConnectorMessageContent createEpoFormABusinessContent() {
-        return DomibusConnectorMessageContent.builder()
+    private static DC5MessageContent createEpoFormABusinessContent() {
+        return DC5MessageContent.builder()
                 .businessContent(DC5BackendContent.builder()
                         .businessXml(createFormAAttachment())
                         .businessDocument(createSimpleMessageAttachment())
@@ -237,6 +238,7 @@ public class DomainEntityCreator {
 
     private static DomibusConnectorMessageAttachment createFormAAttachment() {
         return DomibusConnectorMessageAttachment.builder()
+                .identifier("Form_A.xml")
                 .attachment(connectorBigDataReferenceFromDataSource("<testxml />")) //better load real form A here!
                 .build();
     }
@@ -244,7 +246,7 @@ public class DomainEntityCreator {
     public static DC5Message createEpoMessageFormAFromGwdomibusRed() {
         DC5Ebms messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
 
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent(); //TODO: should be a asic container
+        DC5MessageContent messageContent = new DC5MessageContent(); //TODO: should be a asic container
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
 
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
@@ -448,9 +450,9 @@ public class DomainEntityCreator {
         return doc;
     }
     
-    public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoSignature()  {
+    public static DC5MessageContent createMessageContentWithDocumentWithNoSignature()  {
 //        try {
-            DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+            DC5MessageContent messageContent = new DC5MessageContent();
 //            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
 //            messageContent.setDocument(createDocumentWithNoSignature());
                         
@@ -460,9 +462,9 @@ public class DomainEntityCreator {
 //        }
     }
 
-    public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoPdfDocument() {
+    public static DC5MessageContent createMessageContentWithDocumentWithNoPdfDocument() {
 //        try {
-            DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+            DC5MessageContent messageContent = new DC5MessageContent();
 //            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
 //            messageContent.setDocument(null);
                         

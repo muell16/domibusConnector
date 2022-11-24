@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * This domain object contains all data of a message. At least the {@link
- * DC5Ebms} and the {@link DomibusConnectorMessageContent}
+ * DC5Ebms} and the {@link DC5MessageContent}
  * must be given at the time of creation as they represent the minimum structure
  * of a message. While the message is processed by the domibusConnector, the data
  * inside this structure changes up to the point where the message is completely
@@ -43,7 +43,7 @@ public class DC5Message implements Serializable {
 
 	@GeneratedValue
 	@Id
-	private long id;
+	private Long id;
 
 	@CheckForNull
 	@Convert(converter = BusinessDomainIdConverter.class)
@@ -80,7 +80,7 @@ public class DC5Message implements Serializable {
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@CheckForNull
-	private DomibusConnectorMessageContent messageContent;
+	private DC5MessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message
 	@OneToMany(cascade = CascadeType.ALL)
@@ -125,7 +125,7 @@ public class DC5Message implements Serializable {
 		this.ebmsData = messageDetails;
 	}
 
-	public DomibusConnectorMessageContent getMessageContent(){
+	public DC5MessageContent getMessageContent(){
 		return this.messageContent;
 	}
 
@@ -240,15 +240,15 @@ public class DC5Message implements Serializable {
         return builder.toString();
 	}
 
-	public void setMessageContent(DomibusConnectorMessageContent messageContent) {
+	public void setMessageContent(DC5MessageContent messageContent) {
 		this.messageContent = messageContent;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

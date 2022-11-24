@@ -68,7 +68,7 @@ public class LoadStoreMessageFromPath {
         }
 
         //store content
-        DomibusConnectorMessageContent messageContent = message.getMessageContent();
+        DC5MessageContent messageContent = message.getMessageContent();
         if (messageContent != null) {
             DomibusConnectorMessageAttachment xmlContent = messageContent.getBusinessContent().getBusinessXml();
             Resource r = basicFolder.createRelative(LoadStoreTransitionMessage.DEFAULT_CONTENT_XML_FILE_NAME);
@@ -216,7 +216,7 @@ public class LoadStoreMessageFromPath {
 
         messageBuilder.setMessageDetails(loadMessageDetailsFromProperties());
 
-        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
+        DC5MessageContent content = new DC5MessageContent();
         content.setBusinessContent(new DC5BackendContent());
         content.setEcodexContent(new DC5EcodexContent());
 

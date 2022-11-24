@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
+import eu.ecodex.dc5.message.model.DC5MessageContent;
 
 /**
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -29,8 +29,8 @@ public final class DomibusConnectorMessageContentBuilder {
 //        return this;
 //    }
 
-    public DomibusConnectorMessageContent build() {
-        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
+    public DC5MessageContent build() {
+        DC5MessageContent content = new DC5MessageContent();
 //        content.setDocument(document);
 //        content.setXmlContent(xmlContent);
         return content;
@@ -40,7 +40,7 @@ public final class DomibusConnectorMessageContentBuilder {
 //        return xmlContent != null && document != null;
 //    }
 
-    public DomibusConnectorMessageContentBuilder copyPropertiesFrom(DomibusConnectorMessageContent content) {
+    public DomibusConnectorMessageContentBuilder copyPropertiesFrom(DC5MessageContent content) {
 //        if (content.getDocument() != null) {
 //            this.document = DomibusConnectorMessageDocumentBuilder.createBuilder()
 //                    .copyPropertiesFrom(content.getDocument())

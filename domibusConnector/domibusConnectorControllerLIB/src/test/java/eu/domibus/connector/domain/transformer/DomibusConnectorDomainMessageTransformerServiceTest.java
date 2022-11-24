@@ -1,7 +1,6 @@
 package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService.CannotBeMappedToTransitionException;
@@ -181,7 +180,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     @Disabled
     public void testTransformMessageContentDomainToTransition() {
         DC5Message domainMessage = DomainEntityCreator.createMessage();
-        DomibusConnectorMessageContent messageContent = domainMessage.getMessageContent();
+        DC5MessageContent messageContent = domainMessage.getMessageContent();
 
 //        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
 //
@@ -220,7 +219,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     @Test
     @Disabled
     public void testTransformMessageContentDomainToTransition_noDetachedSignature() {
-        DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoSignature();
+        DC5MessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoSignature();
 
 //        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
 //
@@ -235,7 +234,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     @Test
     @Disabled
     public void testTransformMessageContentDomainToTransition_noPdfDocument() {
-        DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoPdfDocument();
+        DC5MessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoPdfDocument();
 
 //        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
 //
@@ -404,7 +403,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     public void testTransformMessageContentTransitionToDomain() {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
 
-        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
+        DC5MessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
 
         assertThat(messageContent).isNotNull();
 //        assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
@@ -420,7 +419,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
         messageContentTO.setDocument(null);
 
-        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
+        DC5MessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
 
         assertThat(messageContent).isNotNull();
 //        assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
@@ -432,7 +431,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
         messageContentTO.getDocument().setDetachedSignature(null);
 
-        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
+        DC5MessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
 
         assertThat(messageContent).isNotNull();
 //        assertThat(messageContent.getXmlContent()).isNotNull();

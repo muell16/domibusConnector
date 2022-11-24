@@ -1,16 +1,26 @@
 package eu.ecodex.dc5.flow.flows;
 
+import eu.domibus.connector.controller.processor.steps.VerifyPModesStep;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.firststartup.CreateDefaultBusinessDomainOnFirstStart;
+import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.extern.log4j.Log4j2;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.UUID;
 
 @FlowTestAnnotation
 @Log4j2
@@ -26,6 +36,22 @@ class NewMessageStoredFlowTest {
     @Autowired
     PlatformTransactionManager txManager;
 
+    @MockBean
+    DomibusConnectorSecurityToolkit securityToolkit;
+
+    @MockBean
+    DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    @MockBean
+    VerifyPModesStep verifyPModesStep;
+
+
+    @Before
+    public void before() {
+        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(DomibusConnectorMessageId.ofRandom());
+    }
 
     public DC5Message createMessage() {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);

@@ -72,7 +72,7 @@ public class ConnectorControllerTestDomainCreator {
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
 //        DC5Message msg = new DC5Message(messageDetails, messageContent);
         //msg.setDbMessageId(78L);
         //msg.getMessageDetails().
@@ -85,7 +85,7 @@ public class ConnectorControllerTestDomainCreator {
     public static DC5Message createMessage() {
         DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
         
-        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
 //        messageContent.setXmlContent("xmlContent".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);

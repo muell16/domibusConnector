@@ -26,9 +26,13 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public class DC5Ebms {
 
+	private static Long getNullValue(DC5Ebms instance) {
+		return null;
+	}
 
 	@Id
 	@GeneratedValue
+	@Builder.ObtainVia(method = "getNullValue", isStatic = true)
 	private Long id = null;
 
 	@Column(name = "CREATED")

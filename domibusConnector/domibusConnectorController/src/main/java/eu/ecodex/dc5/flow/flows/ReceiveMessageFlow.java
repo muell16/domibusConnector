@@ -35,7 +35,7 @@ public class ReceiveMessageFlow {
         try {
             DC5Message msg = transformMessageStep.transformMessage(message, transform);
             DC5Message dc5Msg = saveMessageStep.saveNewMessage(msg);
-            eventPublisher.publishEvent(NewMessageStoredEvent.of(dc5Msg.getId()));
+
             return ReceiveMessageFlowResult.getSuccess();
         } catch (StepFailedException stepFailedException) {
             return new ReceiveMessageFlowResult(false,Optional.empty(), Optional.of(stepFailedException));

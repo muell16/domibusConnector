@@ -3,10 +3,7 @@ package eu.domibus.connector.domain.model.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.ecodex.dc5.message.model.DC5Ebms;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+import eu.ecodex.dc5.message.model.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.lang.Nullable;
 
@@ -115,36 +112,22 @@ public class DomainModelHelper {
      * </ul>
      *
      * When the party is switched, the party role type is preserved
-     * so the fromParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#INITIATOR}
-     * and the toParty will always have the role type of {@link DomibusConnectorParty.PartyRoleType#RESPONDER}
      *
      *
      * @param messageDetails
      * @return
      */
     public static DC5Ebms switchMessageDirection(DC5Ebms messageDetails) {
-//        DomibusConnectorMessageDetails details = DomibusConnectorMessageDetailsBuilder.create()
-//                .copyPropertiesFrom(messageDetails)
-//                .build();
-//        DomibusConnectorMessageDirection originalDirection = details.getDirection();
-//        String newFinalRecipient = details.getOriginalSender();
-//        String newOriginalSender = details.getFinalRecipient();
-//
-//        //switching party, but keep Role and RoleType
-//        DomibusConnectorParty newToParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getFromParty()).build();
-//        newToParty.setRoleType(RESPONDER);
-//        newToParty.setRole(details.getToParty().getRole());
-//        //switching party, but keep Role and RoleType
-//        DomibusConnectorParty newFromParty = DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(details.getToParty()).build();
-//        newFromParty.setRoleType(INITIATOR);
-//        newFromParty.setRole(details.getFromParty().getRole());
-//
-//        details.setDirection(DomibusConnectorMessageDirection.fromMessageTargetSource(originalDirection.getTarget(), originalDirection.getSource()));
-//        details.setOriginalSender(newOriginalSender);
-//        details.setFinalRecipient(newFinalRecipient);
-//        details.setFromParty(newFromParty);
-//        details.setToParty(newToParty);
-        return messageDetails;
+        DC5EcxAddress newReceiver = messageDetails.getSender().toBuilder().build();
+        DC5EcxAddress newSender = messageDetails.getReceiver().toBuilder().build();
+
+
+        return messageDetails.toBuilder()
+                .receiver(newReceiver)
+                .sender(newSender)
+                .id(null)
+                .build();
+
     }
 
 

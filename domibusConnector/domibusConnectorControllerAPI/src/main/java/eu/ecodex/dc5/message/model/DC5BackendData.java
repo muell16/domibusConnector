@@ -16,7 +16,7 @@ public class DC5BackendData {
 
     @Id
     @GeneratedValue
-    public long id;
+    public Long id;
 
     @Column(name = "CREATED")
     private LocalDateTime created;

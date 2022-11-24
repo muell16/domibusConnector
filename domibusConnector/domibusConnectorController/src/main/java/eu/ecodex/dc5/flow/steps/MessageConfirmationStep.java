@@ -2,21 +2,15 @@ package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.exception.DCEvidenceNotRelevantException;
 import eu.domibus.connector.controller.exception.ErrorCode;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.ecodex.dc5.flow.api.Step;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5Confirmation;
+import eu.ecodex.dc5.message.model.*;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.exceptions.DuplicateEvidencePersistenceException;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
 
 /**
  * This service is responsible for
@@ -30,6 +24,8 @@ import java.util.Comparator;
 public class MessageConfirmationStep {
 
     private static final Logger LOGGER = LogManager.getLogger(MessageConfirmationStep.class);
+
+    private final DC5BusinessMessageStateMachineFactory stateMachineFactory;
 
     public void processTransportedConfirmations(DC5Message message) {
         if (!DomainModelHelper.isBusinessMessage(message)) {
@@ -49,15 +45,18 @@ public class MessageConfirmationStep {
     @Step(name = "processConfirmationForMessage")
     public void processConfirmationForMessage(DC5Message businessMessage, DC5Confirmation confirmation) {
         try {
-            if (!DomainModelHelper.isBusinessMessage(businessMessage)) {
+
+            if (businessMessage.getMessageContent() == null) {
                 throw new IllegalArgumentException("message must be a business message!");
             }
 
             LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), businessMessage.getConnectorMessageId());
-//            evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
-//            businessMessage.getRelatedMessageConfirmations().add(confirmation);
+            businessMessage.getTransportedMessageConfirmations().add(confirmation);
 
-            this.confirmRejectMessage(confirmation.getEvidenceType(), businessMessage);
+            businessMessage.getMessageContent().getRelatedConfirmations().add(confirmation);
+
+// TODO: change message state!
+            this.confirmRejectMessage(confirmation, businessMessage.getMessageContent());
         } catch (DuplicateEvidencePersistenceException e) {
             throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_DUPLICATE, e);
         }
@@ -70,36 +69,15 @@ public class MessageConfirmationStep {
      *      all evidences of lower priority are ignored
      *      (this means a RELAY_REMMD_REJECTION cannot overwrite a already processed DELIVERY evidence)
      *      also see {@link EvidenceType#getPriority()}
-     * @param evidenceType - the evidence Type
-     * @param originalMessage  - the original Message
+     * @param confirmation - the evidence Type
      */
-    public void confirmRejectMessage(DomibusConnectorEvidenceType evidenceType, DC5Message originalMessage) {
-//        Integer highestEvidencePriority = originalMessage.getRelatedMessageConfirmations()
-//                .stream()
-//                .map(e -> e.getEvidenceType().getPriority())
-//                .max(Comparator.naturalOrder())
-//                .orElse(0);
+    public void confirmRejectMessage(DC5Confirmation confirmation, DC5MessageContent content) {
 
-        Integer highestEvidencePriority = 0;
-        if (evidenceType.getPriority() < highestEvidencePriority) {
-            LOGGER.info("[{}]: Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences",
-                    ErrorCode.EVIDENCE_IGNORED_DUE_HIGHER_PRIORITY.getErrorCode(), evidenceType, originalMessage);
-            throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_HIGHER_PRIORITY);
-        }
+        DC5BusinessMessageStateMachineFactory.DC5BusinessMessageStateMachine dc5BusinessMessageStateMachine = stateMachineFactory.loadStateMachine(content.getCurrentState());
 
-//        if (SUBMISSION_REJECTION == evidenceType || NON_DELIVERY == evidenceType || NON_RETRIEVAL == evidenceType || RELAY_REMMD_REJECTION == evidenceType || RELAY_REMMD_FAILURE == evidenceType) {
-//            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has been rejected by evidence [{}]", originalMessage, evidenceType);
-//            messagePersistenceService.rejectMessage(originalMessage);
-//        }
-//        if (DELIVERY == evidenceType || RETRIEVAL == evidenceType) { //TODO: make a configuration switch to configure which evidence is sufficient to set mesg. into confirmed state!
-//            if (messagePersistenceService.checkMessageRejected(originalMessage)) {
-//                LOGGER.debug( "Message [{}] has already been rejected by an negative evidence!\nThe positive evidence of type [{}] will be ignored!", originalMessage, evidenceType);
-//                throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_MESSAGE_ALREADY_REJECTED);
-//            } else {
-//                messagePersistenceService.confirmMessage(originalMessage);
-//                LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] is confirmed by evidence [{}]", originalMessage, evidenceType);
-//            }
-//        }
+        DC5BusinessMessageState dc5BusinessMessageState = dc5BusinessMessageStateMachine.publishEvent(DC5BusinessMessageState.BusinessMessageEvents.ofEvidenceType(confirmation.getEvidenceType()), confirmation);
+        content.changeCurrentState(dc5BusinessMessageState);
+
     }
 
 }

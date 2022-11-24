@@ -3,6 +3,8 @@ package eu.domibus.connector.controller.processor;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.processor.steps.*;
 import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.flow.steps.SubmitConfirmationAsEvidenceMessageStep;
+import eu.ecodex.dc5.flow.steps.SubmitMessageToLinkStep;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
@@ -32,7 +34,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
     private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
     private final BuildECodexContainerStep buildECodexContainerStep;
-    private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep;
+    private final SubmitMessageToLinkStep submitMessageToLinkStep;
     private final MessageConfirmationStep messageConfirmationStep;
     private final ConfirmationCreatorService confirmationCreatorService;
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
@@ -43,7 +45,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
     public ToGatewayBusinessMessageProcessor(CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep,
                                              BuildECodexContainerStep buildECodexContainerStep,
-                                             SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep,
+                                             SubmitMessageToLinkStep submitMessageToLinkStep,
                                              MessageConfirmationStep messageConfirmationStep,
                                              ConfirmationCreatorService confirmationCreatorService,
                                              SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink,

@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.controller.processor.steps.*;
 import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
+import eu.ecodex.dc5.flow.steps.SubmitConfirmationAsEvidenceMessageStep;
 import eu.ecodex.dc5.flow.steps.ValidateMessageConfirmationStep;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;

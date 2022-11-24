@@ -1,5 +1,6 @@
-package eu.domibus.connector.controller.processor.steps;
+package eu.ecodex.dc5.flow.steps;
 
+import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Ebms;
@@ -11,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
+public class SubmitMessageToLinkStep implements MessageProcessStep {
 
-    private static final Logger LOGGER = LogManager.getLogger(SubmitMessageToLinkModuleQueueStep.class);
+    private static final Logger LOGGER = LogManager.getLogger(SubmitMessageToLinkStep.class);
 
     private final ToLinkQueue toLinkQueue;
 
-    public SubmitMessageToLinkModuleQueueStep(ToLinkQueue toLinkQueue) {
+    public SubmitMessageToLinkStep(ToLinkQueue toLinkQueue) {
         this.toLinkQueue = toLinkQueue;
     }
 
@@ -25,6 +26,8 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitMessageToLinkModuleQueueStep")
     public boolean executeStep(DC5Message DC5Message) {
         submitMessage(DC5Message);
+
+
         return true;
     }
 
@@ -51,6 +54,8 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
         DC5Ebms switchedDetails = DomainModelHelper.switchMessageDirection(originalMessage.getEbmsData());
         DC5Ebms msgDetails = message.getEbmsData();
 
+//        msgDetails.setReceiver();
+//        msgDetails.setSender();
 //        msgDetails.setDirection(switchedDetails.getDirection());
 //        msgDetails.setFromParty(switchedDetails.getFromParty());
 //        msgDetails.setToParty(switchedDetails.getToParty());

@@ -1,6 +1,5 @@
 package eu.ecodex.dc5.message.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import javax.persistence.*;
 @Builder(toBuilder = true)
 @Getter
 @Setter
-public class DomibusConnectorMessageContent {
+public class DC5MessageContent {
 
 	@GeneratedValue
 	@Id
@@ -45,7 +44,11 @@ public class DomibusConnectorMessageContent {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-	@OneToOne(optional = false)
+	@OneToMany(cascade = CascadeType.ALL)
+	@NonNull
+	private List<DC5Confirmation> relatedConfirmations = new ArrayList<>();
+
+	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BusinessMessageState currentState;
 
 	@Override
@@ -55,5 +58,16 @@ public class DomibusConnectorMessageContent {
 		builder.append("ECodexContent", this.ecodexContent);
         return builder.toString();        
     }
-    
+
+	public void changeCurrentState(DC5BusinessMessageState currentState) {
+		if (currentState.getId() == null) {
+			this.currentState = currentState;
+			this.messageStates.add(currentState);
+		} else {
+			throw new IllegalArgumentException("Not a new state!");
+		}
+	}
+
+
+
 }

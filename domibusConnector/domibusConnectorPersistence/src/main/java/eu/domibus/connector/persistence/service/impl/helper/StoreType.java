@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service.impl.helper;
 
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
+import eu.ecodex.dc5.message.model.DC5MessageContent;
 
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public enum StoreType {
-    MESSAGE_CONTENT("domibus_message_content", DomibusConnectorMessageContent.class),
+    MESSAGE_CONTENT("domibus_message_content", DC5MessageContent.class),
     MESSAGE_BUSINESSS_CONTENT_XML("dcm_business_xml", Object.class),
     MESSAGE_BUSINESS_CONTENT_DOCUMENT("dcm_business_document", Object.class),
     MESSAGE_ATTACHMENT("domibus_message_attachment", DomibusConnectorMessageAttachment.class),

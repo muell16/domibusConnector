@@ -24,7 +24,7 @@ import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageAttachment;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageContent;
+import eu.ecodex.dc5.message.model.DC5MessageContent;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
@@ -96,7 +96,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
         if (message.getMessageContent() == null) {
             throw new IllegalArgumentException("messageContent is null!");
         }
-        @Nonnull DomibusConnectorMessageContent messageContent = message.getMessageContent();
+        @Nonnull DC5MessageContent messageContent = message.getMessageContent();
 
         BusinessContent businessContent = new BusinessContent();
 

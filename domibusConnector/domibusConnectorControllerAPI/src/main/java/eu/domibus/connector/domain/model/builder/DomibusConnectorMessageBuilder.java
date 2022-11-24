@@ -17,7 +17,7 @@ public final class DomibusConnectorMessageBuilder {
 
     private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
     private DC5Ebms messageDetails;
-	private DomibusConnectorMessageContent messageContent;
+	private DC5MessageContent messageContent;
 	private List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
 	private List<DC5Confirmation> transportedConfirmations = new ArrayList<>();
 	private List<DomibusConnectorMessageError> messageErrors = new ArrayList<>();
@@ -57,7 +57,7 @@ public final class DomibusConnectorMessageBuilder {
      * @param msgContent the message content
      * @return the builder
      */
-    public DomibusConnectorMessageBuilder setMessageContent(DomibusConnectorMessageContent msgContent) {
+    public DomibusConnectorMessageBuilder setMessageContent(DC5MessageContent msgContent) {
         this.messageContent = msgContent;
         return this;
     }

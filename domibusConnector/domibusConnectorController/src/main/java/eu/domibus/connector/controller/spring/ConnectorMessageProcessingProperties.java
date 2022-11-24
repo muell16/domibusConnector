@@ -41,6 +41,16 @@ public class ConnectorMessageProcessingProperties {
 
     private PModeVerificationMode incomingPModeVerificationMode = PModeVerificationMode.STRICT;
 
+    /**
+     * defines if the RETRIEVAL EVIDENCE is enabled
+     *  if yes timeouts and other actions will also depend on retrieval evidence
+     *  otherwise the connector will just ignore any evidence of type RETRIEVAL
+     *  in respect to message state. But if possible (business message still available)
+     *  the RETRIEVAL will still be forwarded to any backend system
+     *
+     */
+    private boolean retrievalEnabled = false;
+
     public PModeVerificationMode getOutgoingPModeVerificationMode() {
         return outgoingPModeVerificationMode;
     }
@@ -79,6 +89,14 @@ public class ConnectorMessageProcessingProperties {
 
     public void setEbmsIdSuffix(String ebmsIdSuffix) {
         this.ebmsIdSuffix = ebmsIdSuffix;
+    }
+
+    public boolean isRetrievalEnabled() {
+        return retrievalEnabled;
+    }
+
+    public void setRetrievalEnabled(boolean retrievalEnabled) {
+        this.retrievalEnabled = retrievalEnabled;
     }
 
     public static enum PModeVerificationMode {

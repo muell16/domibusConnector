@@ -32,7 +32,11 @@ import java.lang.annotation.*;
                 }, //
         additionalPackages = {"eu.ecodex.dc5", "eu.domibus.connector.common"}, //
         useFullyQualifiedModuleNames = true)
-@SpringBootApplication(scanBasePackages = {"eu.ecodex.dc5","eu.domibus.connector.common", "eu.domibus.connector.firststartup", "eu.domibus.connector.evidences"})
+@SpringBootApplication(scanBasePackages = {"eu.ecodex.dc5",
+        "eu.domibus.connector.common",
+        "eu.domibus.connector.firststartup",
+        "eu.domibus.connector.controller.routing",
+        "eu.domibus.connector.evidences"})
 public @interface EnableDC5 {
 
 

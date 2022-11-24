@@ -8,6 +8,10 @@ public class DCEvidenceNotRelevantException extends DCEvidenceProcessingExceptio
         super(errorCode);
     }
 
+    public DCEvidenceNotRelevantException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
+
     public DCEvidenceNotRelevantException(ErrorCode errorCode, DuplicateEvidencePersistenceException e) {
         super(errorCode, e);
     }
