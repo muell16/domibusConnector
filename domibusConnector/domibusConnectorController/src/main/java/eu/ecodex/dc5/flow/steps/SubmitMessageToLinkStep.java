@@ -16,24 +16,14 @@ public class SubmitMessageToLinkStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitMessageToLinkStep.class);
 
-    private final ToLinkQueue toLinkQueue;
-
-    public SubmitMessageToLinkStep(ToLinkQueue toLinkQueue) {
-        this.toLinkQueue = toLinkQueue;
-    }
-
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitMessageToLinkModuleQueueStep")
     public boolean executeStep(DC5Message DC5Message) {
-        submitMessage(DC5Message);
-
+//        submitMessage(DC5Message);
 
         return true;
     }
 
-    public void submitMessage(DC5Message message) {
-        toLinkQueue.putOnQueue(message);
-    }
 
     /**
      * Submits message to ConnectorToLinkQueue,
@@ -63,7 +53,7 @@ public class SubmitMessageToLinkStep implements MessageProcessStep {
 //        msgDetails.setFinalRecipient(switchedDetails.getFinalRecipient());
         //TODO: repair!!!
         LOGGER.debug("Message Direction attributes are changed to [{}]", msgDetails);
-        submitMessage(message);
+//        submitMessage(message);
     }
 
 

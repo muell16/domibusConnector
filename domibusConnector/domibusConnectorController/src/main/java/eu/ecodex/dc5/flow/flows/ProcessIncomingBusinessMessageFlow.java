@@ -71,7 +71,7 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 			//resolve ecodex-Container
 			resolveECodexContainerStep.executeStep(incomingMessage);
 
-			submitMessageToLinkStep.submitMessage(incomingMessage);
+//			submitMessageToLinkStep.submitMessage(incomingMessage);
 			// TODO: !!
 
 			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",

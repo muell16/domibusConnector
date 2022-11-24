@@ -1,8 +1,11 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.domibus.connector.controller.processor.steps.VerifyPModesStep;
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
@@ -22,6 +25,15 @@ class DC5ReceiveMessageFlowTest {
 
     @MockBean
     DCBusinessDomainManager businessDomainManager;
+
+    @MockBean
+    DomibusConnectorSecurityToolkit securityToolkit;    //TODO: use real IMPL!
+
+    @MockBean
+    VerifyPModesStep verifyPModesStep; //TODO: finish step!!!
+
+    @MockBean
+    SubmitToLinkService submitToLinkService; //TODO: remove mock!
 
     @Autowired
     ReceiveMessageFlow receiveMessageFlow;

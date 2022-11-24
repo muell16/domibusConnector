@@ -5,7 +5,11 @@ import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeEx
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.ecodex.dc5.message.model.DC5Service;
+import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +22,8 @@ import java.util.Optional;
 public interface DomibusConnectorPModeService {
 
 
+
+
     /**
      * Will check if the current p-Mode set for this message lane contains
      * the requested action. Only the action name will be looked up
@@ -27,7 +33,7 @@ public interface DomibusConnectorPModeService {
      * @param action - the action
      * @return a list of services
      */
-    List<DC5Action> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action action);
+    List<PModeAction> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeAction action);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -39,7 +45,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DC5Action> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action action);
+    Optional<PModeAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeAction action);
 
 
     /**
@@ -52,7 +58,7 @@ public interface DomibusConnectorPModeService {
      * @return a list of matching services
      *
      */
-    List<DC5Service> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service DC5Service);
+    List<PModeService> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeService DC5Service);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -64,7 +70,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DC5Service> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service DC5Service);
+    Optional<PModeService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeService DC5Service);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -79,7 +85,7 @@ public interface DomibusConnectorPModeService {
      * @return A list of matching DomibusConnectorParties
      *
      */
-    List<DomibusConnectorParty> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty domibusConnectorParty) throws IncorrectResultSizeException;
+    List<PModeParty> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeParty domibusConnectorParty) throws IncorrectResultSizeException;
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -97,7 +103,7 @@ public interface DomibusConnectorPModeService {
      *
      * @throws  IncorrectResultSizeException if more than one Party was found
      */
-    Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty domibusConnectorParty) throws IncorrectResultSizeException;
+    Optional<PModeParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeParty domibusConnectorParty) throws IncorrectResultSizeException;
 
     /**
      *
@@ -114,5 +120,79 @@ public interface DomibusConnectorPModeService {
 	void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet);
 
 	List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane);
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    class DomibusConnectorPModeSet {
+
+        private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
+
+        //create new class in ConnectorMessageProcessingProperties
+        //PMode
+        private String description;
+        private LocalDateTime createDate;
+        private String principal; //SecurityContext.getPrincipal()
+        private byte[] pModes;
+
+        private List<PModeParty> parties = new ArrayList<>();
+        private List<PModeAction> actions = new ArrayList<>();
+        private List<PModeService> services = new ArrayList<>();
+
+        private DomibusConnectorKeystore connectorstore;
+        private PModeParty homeParty;
+    }
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class PModeAction {
+        String action;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class PModeService {
+        String service;
+        String serviceType;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class PModeParty {
+        String partyId;
+        String partyIdType;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class PModeLeg {
+        String name;
+        PModeAction action;
+        PModeService service;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class PModeProcess {
+        List<PModeLeg> legs;
+        List<PModeParty> initiatorParties;
+        List<PModeParty> responderParties;
+        String responderRole;
+        String initiatorRole;
+    }
 
 }

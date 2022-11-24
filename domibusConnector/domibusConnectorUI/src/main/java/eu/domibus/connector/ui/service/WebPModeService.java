@@ -108,7 +108,7 @@ public class WebPModeService {
             throw new RuntimeException(e);
         }
 
-        DomibusConnectorPModeSet pModeSet;
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModeSet;
 //        try {
 //            pModeSet = mapPModeConfigurationToPModeSet(pmodes, contents, description, store);
 //            this.updatePModeSet(pModeSet);
@@ -181,7 +181,7 @@ public class WebPModeService {
     	EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), EvidencesToolkitConfigurationProperties.class);
     	
     	return getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())
-                .map(DomibusConnectorPModeSet::getParties)
+                .map(DomibusConnectorPModeService.DomibusConnectorPModeSet::getParties)
                 .flatMap(partiesList -> partiesList.stream()
                         .filter(p -> (p.getPartyId().equals(homePartyConfigurationProperties.getIssuerInfo().getAs4Party().getName()) && p.getRoleType().equals(PartyRoleType.INITIATOR)))
                         .findAny()
@@ -206,8 +206,8 @@ public class WebPModeService {
     }
 
 
-    private DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes, byte[] contents, String description, DomibusConnectorKeystore connectorstore) {
-        DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeSet();
+    private DomibusConnectorPModeService.DomibusConnectorPModeSet mapPModeConfigurationToPModeSet(Configuration pmodes, byte[] contents, String description, DomibusConnectorKeystore connectorstore) {
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeService.DomibusConnectorPModeSet();
         pModeSet.setDescription(description);
         pModeSet.setpModes(contents);
         pModeSet.setConnectorstore(connectorstore);
@@ -345,7 +345,7 @@ public class WebPModeService {
     @Transactional(readOnly = false)
     public void deleteParty(DomibusConnectorParty p) {
         LOGGER.trace("#deleteParty: called, use partyDao to delete");
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getParties().remove(p);
         pModes.setDescription(String.format("delete party %s clicked in UI", p));
         updatePModeSet(pModes);
@@ -354,7 +354,7 @@ public class WebPModeService {
     @Transactional(readOnly = false)
     public DomibusConnectorParty updateParty(DomibusConnectorParty oldParty, DomibusConnectorParty updatedParty) {
         LOGGER.trace("#updateParty: called, update party [{}] to party [{}]", oldParty, updatedParty);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getParties().remove(oldParty);
         pModes.getParties().add(updatedParty);
         pModes.setDescription(String.format("updated party %s in UI", updatedParty));
@@ -370,7 +370,7 @@ public class WebPModeService {
     @Transactional
     public DomibusConnectorParty createParty(DomibusConnectorParty party) {
         LOGGER.trace("#createParty: called with party [{}]", party);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getParties().add(party);
         pModes.setDescription(String.format("added party %s in UI", party));
         //find party in new p-modes by equals
@@ -385,7 +385,7 @@ public class WebPModeService {
     @Transactional
     public void deleteAction(DC5Action action) {
         LOGGER.trace("deleteAction: delete Action [{}]", action);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().remove(action);
         pModes.setDescription(String.format("delete action %s clicked in UI", action));
         updatePModeSet(pModes);
@@ -394,7 +394,7 @@ public class WebPModeService {
     @Transactional
     public DC5Action createAction(DC5Action action) {
         LOGGER.trace("#createAction: called with action [{}]", action);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().add(action);
         pModes.setDescription(String.format("added action %s in UI", action));
         //find party in new p-modes by equals
@@ -409,7 +409,7 @@ public class WebPModeService {
     @Transactional(readOnly = false)
     public DC5Action updateAction(DC5Action oldAction, DC5Action updatedAction) {
         LOGGER.trace("updateAction: updateAction with oldAction [{}] and new action [{}]", oldAction, updatedAction);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getActions().remove(oldAction);
         pModes.getActions().add(updatedAction);
         pModes.setDescription(String.format("updated action %s in UI", updatedAction));
@@ -425,7 +425,7 @@ public class WebPModeService {
     @Transactional(readOnly = false)
     public DC5Service createService(DC5Service service) {
         LOGGER.trace("createService: with service [{}]", service);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().add(service);
         pModes.setDescription(String.format("added service %s in UI", service));
         //find party in new p-modes by equals
@@ -440,7 +440,7 @@ public class WebPModeService {
     @Transactional
     public DC5Service updateService(DC5Service oldService, DC5Service updatedService) {
         LOGGER.trace("updateService: with new service [{}]", updatedService);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().remove(oldService);
         pModes.getServices().add(updatedService);
         pModes.setDescription(String.format("updated service %s in UI", updatedService));
@@ -456,13 +456,13 @@ public class WebPModeService {
     @Transactional(readOnly = false)
     public void deleteService(DC5Service service) {
         LOGGER.trace("deleteService: with service [{}]", service);
-        DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
+        DomibusConnectorPModeService.DomibusConnectorPModeSet pModes = this.getCurrentPModeSetOrNewSet();
         pModes.getServices().remove(service);
         pModes.setDescription(String.format("delete service %s clicked in UI", service));
         updatePModeSet(pModes);
     }
 
-    private DomibusConnectorPModeSet updatePModeSet(DomibusConnectorPModeSet pModes) {
+    private DomibusConnectorPModeService.DomibusConnectorPModeSet updatePModeSet(DomibusConnectorPModeService.DomibusConnectorPModeSet pModes) {
         DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getMessageLaneId();
         if (laneId == null) {
             laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
@@ -474,7 +474,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public void updateActivePModeSetDescription(DomibusConnectorPModeSet pModes) {
+    public void updateActivePModeSetDescription(DomibusConnectorPModeService.DomibusConnectorPModeSet pModes) {
     	DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getMessageLaneId();
         if (laneId == null) {
             laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
@@ -485,26 +485,26 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public void updateConnectorstorePassword(DomibusConnectorPModeSet pModes, String newConnectorstorePwd) {
+    public void updateConnectorstorePassword(DomibusConnectorPModeService.DomibusConnectorPModeSet pModes, String newConnectorstorePwd) {
 
     	this.keystorePersistenceService.updateKeystorePassword(pModes.getConnectorstore(), newConnectorstorePwd);
     }
 
-    public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
+    public Optional<DomibusConnectorPModeService.DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
         return this.pModeService.getCurrentPModeSet(laneId);
     }
 
-    public List<DomibusConnectorPModeSet> getInactivePModeSets(){
+    public List<DomibusConnectorPModeService.DomibusConnectorPModeSet> getInactivePModeSets(){
     	final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
 
     	return this.pModeService.getInactivePModeSets(laneId);
     }
 
-    private DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
+    private DomibusConnectorPModeService.DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
         final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
-        Optional<DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(laneId);
+        Optional<DomibusConnectorPModeService.DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(laneId);
         return currentPModeSetOptional.orElseGet(() -> {
-            DomibusConnectorPModeSet set = new DomibusConnectorPModeSet();
+            DomibusConnectorPModeService.DomibusConnectorPModeSet set = new DomibusConnectorPModeService.DomibusConnectorPModeSet();
             set.setMessageLaneId(laneId);
             return set;
         });

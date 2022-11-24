@@ -15,6 +15,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebPModeService;
@@ -51,7 +52,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 	WebPModeService pmodeService;
 	ConfigurationUtil util;
 
-	DomibusConnectorPModeSet activePModeSet;
+	DomibusConnectorPModeService.DomibusConnectorPModeSet activePModeSet;
 
 	LumoLabel uploadedAt;
 	LumoLabel noActivePModeSet;
@@ -74,7 +75,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 	Grid<DC5Action> actionGrid;
 	Grid<DC5Service> serviceGrid;
 
-	Grid<DomibusConnectorPModeSet> pModesGrid;
+	Grid<DomibusConnectorPModeService.DomibusConnectorPModeSet> pModesGrid;
 
 	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		super(HELP_ID, TITLE);
@@ -158,11 +159,11 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		
 		histPModeSetDiv.add(histPModeSetLabel);
 		
-		pModesGrid = new Grid<DomibusConnectorPModeSet>();
+		pModesGrid = new Grid<DomibusConnectorPModeService.DomibusConnectorPModeSet>();
 
 
-		pModesGrid.addColumn(DomibusConnectorPModeSet::getCreateDate).setHeader("Created date").setWidth("500px").setSortable(true).setResizable(true);
-		pModesGrid.addColumn(DomibusConnectorPModeSet::getDescription).setHeader("Description").setWidth("500px").setSortable(true).setResizable(true);
+		pModesGrid.addColumn(DomibusConnectorPModeService.DomibusConnectorPModeSet::getCreateDate).setHeader("Created date").setWidth("500px").setSortable(true).setResizable(true);
+		pModesGrid.addColumn(DomibusConnectorPModeService.DomibusConnectorPModeSet::getDescription).setHeader("Description").setWidth("500px").setSortable(true).setResizable(true);
 		pModesGrid.addComponentColumn(domibusConnectorPModeSet -> createDownloadPModesAnchor(domibusConnectorPModeSet)).setHeader("PModes").setWidth("200px").setSortable(false).setResizable(true);
 		pModesGrid.setWidth("1220px");
 		pModesGrid.setHeight("320px");
@@ -173,7 +174,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		return histPModeSetDiv;
 	}
 	
-	private Anchor createDownloadPModesAnchor(DomibusConnectorPModeSet pModeSet) {
+	private Anchor createDownloadPModesAnchor(DomibusConnectorPModeService.DomibusConnectorPModeSet pModeSet) {
 		LumoLabel downloadPModesButton = new LumoLabel("download");
 		Anchor downloadPModesAnchor = new Anchor();
 
@@ -424,7 +425,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 		}
 
-		List<DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
+		List<DomibusConnectorPModeService.DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
 		pModesGrid.setItems(inactivePModesList);
 
 	}

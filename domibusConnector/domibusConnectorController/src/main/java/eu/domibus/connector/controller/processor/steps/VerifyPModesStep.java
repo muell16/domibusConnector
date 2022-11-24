@@ -7,6 +7,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dc5.message.model.*;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -15,16 +16,13 @@ import org.springframework.util.StringUtils;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class VerifyPModesStep {
 
     private static final Logger LOGGER = LogManager.getLogger(VerifyPModesStep.class);
-    private final DomibusConnectorPModeService pModeService;
+//    private final DomibusConnectorPModeService pModeService;
     private final ConnectorMessageProcessingProperties connectorMessageProcessingProperties;
 
-    public VerifyPModesStep(DomibusConnectorPModeService pModeService, ConnectorMessageProcessingProperties connectorMessageProcessingProperties) {
-        this.pModeService = pModeService;
-        this.connectorMessageProcessingProperties = connectorMessageProcessingProperties;
-    }
 
 
     private boolean executeStep(DC5Message DC5Message,
@@ -35,23 +33,23 @@ public class VerifyPModesStep {
 
         if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.RELAXED) {
 
-            Optional<DC5Action> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
-            if (action.isPresent()) {
-                messageDetails.setAction(action.get());
-            } else {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The action [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getAction());
-                //TODO: improve exception
-                throw new RuntimeException("error, action not configured:" + messageDetails.getAction());
-            }
-
-            Optional<DC5Service> service = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getService());
-            if (service.isPresent()) {
-                messageDetails.setService(service.get());
-            } else {
-                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The service [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getService());
-                //TODO: improve exception
-                throw new RuntimeException("error, service not configured!" + messageDetails.getService());
-            }
+//            Optional<DC5Action> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
+//            if (action.isPresent()) {
+//                messageDetails.setAction(action.get());
+//            } else {
+//                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The action [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getAction());
+//                //TODO: improve exception
+//                throw new RuntimeException("error, action not configured:" + messageDetails.getAction());
+//            }
+//
+//            Optional<DC5Service> service = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getService());
+//            if (service.isPresent()) {
+//                messageDetails.setService(service.get());
+//            } else {
+//                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "The service [{}] is not configured on connector. Check your uploaded p-Modes!", messageDetails.getService());
+//                //TODO: improve exception
+//                throw new RuntimeException("error, service not configured!" + messageDetails.getService());
+//            }
 
 //            if (!StringUtils.hasText(messageDetails.getToParty().getPartyIdType())) {
 //                LOGGER.debug("PMode verification mode is relaxed. Assuming ToParty PartyIdType [{}] as empty!", messageDetails.getToParty().getPartyIdType());

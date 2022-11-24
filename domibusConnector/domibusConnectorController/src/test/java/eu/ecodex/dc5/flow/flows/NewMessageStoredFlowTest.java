@@ -2,6 +2,7 @@ package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.processor.steps.VerifyPModesStep;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.firststartup.CreateDefaultBusinessDomainOnFirstStart;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
@@ -41,6 +42,9 @@ class NewMessageStoredFlowTest {
 
     @MockBean
     DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    @MockBean
+    SubmitToLinkService submitToLinkService;
 
     @MockBean
     VerifyPModesStep verifyPModesStep;

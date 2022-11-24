@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -26,7 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //@Service
-public class DomibusConnectorPModePersistenceService implements DomibusConnectorPModeService {
+//implements DomibusConnectorPModeService
+public class DomibusConnectorPModePersistenceService  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPModePersistenceService.class);
 
@@ -42,7 +42,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         this.keystoreDao = keystoreDao;
     }
 
-    @Override
+    
     public List<DC5Action> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action searchAction) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
@@ -54,7 +54,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return null;
     }
 
-    @Override
+    
     public Optional<DC5Action> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Action searchAction) {
 //        return getConfiguredSingleDB(lane, ActionMapper.mapActionToPersistence(searchAction))
 //                .map(ActionMapper::mapActionToDomain);
@@ -93,13 +93,13 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return stream;
     }
 
-    @Override
+    
     public Optional<DC5Service> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service searchService) {
         return getConfiguredSingleDB(lane, ServiceMapper.mapServiceToPersistence(searchService))
                 .map(ServiceMapper::mapServiceToDomain);
     }
 
-    @Override
+    
     public List<DC5Service> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DC5Service searchService) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
@@ -147,7 +147,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return stream;
     }
 
-    @Override
+    
     public List<DomibusConnectorParty> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty exampleParty) throws IncorrectResultSizeException {
 //        PDomibusConnectorParty searchParty = PartyMapper.mapPartyToPersistence(exampleParty);
 //        Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
@@ -161,7 +161,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return new ArrayList<>();
     }
 
-    @Override
+    
     public Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, DomibusConnectorParty searchParty) throws IncorrectResultSizeException {
 //        return getConfiguredSingleDB(lane, PartyMapper.mapPartyToPersistence(searchParty))
 //                .map(PartyMapper::mapPartyToDomain);
@@ -210,94 +210,94 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return stream;
     }
 
-    @Override
-    @Cacheable
-    public List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane){
-    	if (lane == null) {
-            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
-        }
+    
+//    @Cacheable
+//    public List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane){
+//    	if (lane == null) {
+//            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
+//        }
+//
+//    	List<DomibusConnectorPModeSet> result = new ArrayList<DomibusConnectorPModeSet>();
+//
+//    	List<PDomibusConnectorPModeSet> inactivePModeSets = domibusConnectorPModeSetDao.getInactivePModeSets(lane);
+//
+//    	inactivePModeSets.forEach(s -> {
+//
+//    		result.add(mapToDomain(s));
+//    		});
+//
+//    	return result;
+//    }
 
-    	List<DomibusConnectorPModeSet> result = new ArrayList<DomibusConnectorPModeSet>();
+    
+//    @CacheEvict
+//    @Transactional
+//    public void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet) {
+//        if (connectorPModeSet == null) {
+//            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
+//        }
+//        DomibusConnectorBusinessDomain.BusinessDomainId lane = connectorPModeSet.getMessageLaneId();
+//        if (lane == null) {
+//            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
+//        }
+//        if (connectorPModeSet.getConnectorstore() == null) {
+//            throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
+//        }
+//
+////        connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
+////        connectorPModeSet.getActions().forEach(a -> a.setDbKey(null));
+////        connectorPModeSet.getServices().forEach(s -> s.setDbKey(null));
+//
+//        Optional<DC5BusinessDomainJpaEntity> messageLaneOptional = messageLaneDao.findByName(lane);
+//        DC5BusinessDomainJpaEntity DC5BusinessDomainJpaEntity = messageLaneOptional.orElseThrow(() -> new RuntimeException(String.format("No message lane found with name [%s]", lane)));
+//
+//        PDomibusConnectorPModeSet dbPmodeSet = new PDomibusConnectorPModeSet();
+//        dbPmodeSet.setDescription(connectorPModeSet.getDescription());
+//        dbPmodeSet.setCreated(Timestamp.from(Instant.now()));
+//
+//		dbPmodeSet.setPmodes(connectorPModeSet.getpModes());
+//
+////        dbPmodeSet.setMessageLane(DC5BusinessDomainJpaEntity);
+//        dbPmodeSet.setActions(mapActionListToDb(connectorPModeSet.getActions()));
+//        dbPmodeSet.setServices(mapServiceListToDb(connectorPModeSet.getServices()));
+//        dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
+//        dbPmodeSet.setActive(true);
+//
+//        if (connectorPModeSet.getConnectorstore() == null) {
+//            throw new IllegalArgumentException("You must provide a already persisted keystore!");
+//        }
+//        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstore().getUuid());
+//        if (!connectorstore.isPresent()) {
+//            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstore());
+//            throw new IllegalArgumentException(error);
+//        }
+//
+//        dbPmodeSet.setConnectorstore(connectorstore.get());
+//
+//        List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
+//        currentActivePModeSet.forEach(s -> s.setActive(false));
+//        this.domibusConnectorPModeSetDao.saveAll(currentActivePModeSet);
+//        this.domibusConnectorPModeSetDao.save(dbPmodeSet);
+//
+//    }
 
-    	List<PDomibusConnectorPModeSet> inactivePModeSets = domibusConnectorPModeSetDao.getInactivePModeSets(lane);
-
-    	inactivePModeSets.forEach(s -> {
-
-    		result.add(mapToDomain(s));
-    		});
-
-    	return result;
-    }
-
-    @Override
-    @CacheEvict
-    @Transactional
-    public void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet) {
-        if (connectorPModeSet == null) {
-            throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
-        }
-        DomibusConnectorBusinessDomain.BusinessDomainId lane = connectorPModeSet.getMessageLaneId();
-        if (lane == null) {
-            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
-        }
-        if (connectorPModeSet.getConnectorstore() == null) {
-            throw new IllegalArgumentException("connectorStoreUUID is not allowed to be null!");
-        }
-
-//        connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
-//        connectorPModeSet.getActions().forEach(a -> a.setDbKey(null));
-//        connectorPModeSet.getServices().forEach(s -> s.setDbKey(null));
-
-        Optional<DC5BusinessDomainJpaEntity> messageLaneOptional = messageLaneDao.findByName(lane);
-        DC5BusinessDomainJpaEntity DC5BusinessDomainJpaEntity = messageLaneOptional.orElseThrow(() -> new RuntimeException(String.format("No message lane found with name [%s]", lane)));
-
-        PDomibusConnectorPModeSet dbPmodeSet = new PDomibusConnectorPModeSet();
-        dbPmodeSet.setDescription(connectorPModeSet.getDescription());
-        dbPmodeSet.setCreated(Timestamp.from(Instant.now()));
-
-		dbPmodeSet.setPmodes(connectorPModeSet.getpModes());
-        
-//        dbPmodeSet.setMessageLane(DC5BusinessDomainJpaEntity);
-        dbPmodeSet.setActions(mapActionListToDb(connectorPModeSet.getActions()));
-        dbPmodeSet.setServices(mapServiceListToDb(connectorPModeSet.getServices()));
-        dbPmodeSet.setParties(mapPartiesListToDb(connectorPModeSet.getParties()));
-        dbPmodeSet.setActive(true);
-
-        if (connectorPModeSet.getConnectorstore() == null) {
-            throw new IllegalArgumentException("You must provide a already persisted keystore!");
-        }
-        Optional<PDomibusConnectorKeystore> connectorstore = keystoreDao.findByUuid(connectorPModeSet.getConnectorstore().getUuid());
-        if (!connectorstore.isPresent()) {
-            String error = String.format("There is no JavaKeyStore with id [%s]", connectorPModeSet.getConnectorstore());
-            throw new IllegalArgumentException(error);
-        }
-
-        dbPmodeSet.setConnectorstore(connectorstore.get());
-        
-        List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
-        currentActivePModeSet.forEach(s -> s.setActive(false));
-        this.domibusConnectorPModeSetDao.saveAll(currentActivePModeSet);
-        this.domibusConnectorPModeSetDao.save(dbPmodeSet);
-
-    }
-
-    @Override
-    @Transactional
-    public void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet) {
-        DomibusConnectorBusinessDomain.BusinessDomainId lane = connectorPModeSet.getMessageLaneId();
-        if (lane == null) {
-            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
-        }
-
-    	List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
-
-    	currentActivePModeSet.forEach(s -> {
-    		if(s.isActive()) {
-    			s.setDescription(connectorPModeSet.getDescription());
-    			this.domibusConnectorPModeSetDao.save(s);
-    		}
-    	});
-    }
+    
+//    @Transactional
+//    public void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet) {
+//        DomibusConnectorBusinessDomain.BusinessDomainId lane = connectorPModeSet.getMessageLaneId();
+//        if (lane == null) {
+//            throw new IllegalArgumentException("MessageLaneId is not allowed to be null!");
+//        }
+//
+//    	List<PDomibusConnectorPModeSet> currentActivePModeSet = this.domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
+//
+//    	currentActivePModeSet.forEach(s -> {
+//    		if(s.isActive()) {
+//    			s.setDescription(connectorPModeSet.getDescription());
+//    			this.domibusConnectorPModeSetDao.save(s);
+//    		}
+//    	});
+//    }
 
     private Set<PDomibusConnectorParty> mapPartiesListToDb(List<DomibusConnectorParty> parties) {
 //        return parties.stream()
@@ -321,12 +321,12 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
 
-    @Override
-    @Cacheable
-    @Transactional(readOnly = true)
-    public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
-        return getCurrentDBPModeSet(lane).map(this::mapToDomain);
-    }
+    
+//    @Cacheable
+//    @Transactional(readOnly = true)
+//    public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
+//        return getCurrentDBPModeSet(lane).map(this::mapToDomain);
+//    }
 
     public Optional<PDomibusConnectorPModeSet> getCurrentDBPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
         List<PDomibusConnectorPModeSet> currentActivePModeSet = domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
@@ -340,12 +340,12 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
 
 
-    public DomibusConnectorPModeSet mapToDomain(PDomibusConnectorPModeSet dbPmodes) {
-        DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeSet();
-        pModeSet.setCreateDate(dbPmodes.getCreated());
-        pModeSet.setDescription(dbPmodes.getDescription());
+//    public DomibusConnectorPModeSet mapToDomain(PDomibusConnectorPModeSet dbPmodes) {
+//        DomibusConnectorPModeSet pModeSet = new DomibusConnectorPModeSet();
+//        pModeSet.setCreateDate(dbPmodes.getCreated());
+//        pModeSet.setDescription(dbPmodes.getDescription());
 //        pModeSet.setMessageLaneId(dbPmodes.getMessageLane().getName());
-        pModeSet.setpModes(dbPmodes.getPmodes());
+//        pModeSet.setpModes(dbPmodes.getPmodes());
 
 //        pModeSet.setConnectorstore(KeystoreMapper.mapKeystoreToDomain(dbPmodes.getConnectorstore()));
 
@@ -361,14 +361,14 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 ////                .map(ActionMapper::mapActionToDomain)
 //                .collect(Collectors.toList())
 //        );
-        pModeSet.setServices(
-                dbPmodes.getServices()
-                .stream()
-                .map(ServiceMapper::mapServiceToDomain)
-                .collect(Collectors.toList())
-        );
-
-        return pModeSet;
-    }
+//        pModeSet.setServices(
+//                dbPmodes.getServices()
+//                .stream()
+//                .map(ServiceMapper::mapServiceToDomain)
+//                .collect(Collectors.toList())
+//        );
+//
+//        return pModeSet;
+//    }
 
 }
