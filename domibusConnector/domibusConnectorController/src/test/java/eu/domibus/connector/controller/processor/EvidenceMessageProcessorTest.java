@@ -71,7 +71,7 @@ public class EvidenceMessageProcessorTest {
         //send trigger to evidenceMessageProcessor...
         try {
             //set domain to DefaultDomain
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 
             //prepare test message in DB
             DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
@@ -79,7 +79,7 @@ public class EvidenceMessageProcessorTest {
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
             businessMsg.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
             businessMsg.getBackendData().setBackendMessageId(BackendMessageId.ofRandom());
-            businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+            businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
             DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
@@ -128,7 +128,7 @@ public class EvidenceMessageProcessorTest {
         EbmsMessageId EBMSID = EbmsMessageId.ofString("testDeliverTrigger_evidenceShouldBeSentBack_1");
 
         DomibusConnectorBusinessDomain.BusinessDomainId domain = new DomibusConnectorBusinessDomain.BusinessDomainId();
-        domain.setMessageLaneId("lane1");
+        domain.setBusinessDomainId("lane1");
         //send trigger to evidenceMessageProcessor...
         try {
             //set domain to DefaultDomain

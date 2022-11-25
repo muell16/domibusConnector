@@ -65,7 +65,7 @@ public class DCBusinessDomainPersistenceServiceImpl implements DCBusinessDomainP
     }
 
     private DC5BusinessDomainJpaEntity mapToDb(DomibusConnectorBusinessDomain businessDomain, DC5BusinessDomainJpaEntity dbDomain) {
-        Map<String, String> map = new HashMap<>(businessDomain.getMessageLaneProperties());
+        Map<String, String> map = new HashMap<>(businessDomain.getProperties());
         dbDomain.setProperties(map);
         dbDomain.setDescription(businessDomain.getDescription());
         return dbDomain;
@@ -78,7 +78,7 @@ public class DCBusinessDomainPersistenceServiceImpl implements DCBusinessDomainP
         lane.setConfigurationSource(ConfigurationSource.DB);
         lane.setEnabled(true);
         Map<String, String> p = new HashMap<>(DC5BusinessDomainJpaEntity.getProperties());
-        lane.setMessageLaneProperties(p);
+        lane.setProperties(p);
         return lane;
     }
 

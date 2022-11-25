@@ -7,7 +7,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
-import eu.ecodex.dc5.message.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -54,9 +53,9 @@ public class DomibusConnectorEvidencesToolkitTest {
 
     @BeforeEach
     public void beforeEach() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
-        Mockito.when(dcBusinessDomainManager.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultMessageLane()));
+        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+        Mockito.when(dcBusinessDomainManager.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
     }
 
     @Test

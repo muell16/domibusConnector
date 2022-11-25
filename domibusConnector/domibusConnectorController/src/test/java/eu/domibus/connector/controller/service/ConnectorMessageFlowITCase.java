@@ -1415,8 +1415,8 @@ public class ConnectorMessageFlowITCase {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
-        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
-            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getBusinessDomainId())) {
+            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         }
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
@@ -1430,8 +1430,8 @@ public class ConnectorMessageFlowITCase {
         if (message.getConnectorMessageId() == null) {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
-        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getMessageLaneId())) {
-            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getBusinessDomainId())) {
+            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         }
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));

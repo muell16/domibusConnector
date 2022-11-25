@@ -36,7 +36,7 @@ public class DCLinkPartnerRoutingRulesManagerImplTest {
         rr.setLinkName("backend_bob");
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
 
-        routingRulesManager.addBackendRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rr);
+        routingRulesManager.addBackendRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rr);
 
         
     }

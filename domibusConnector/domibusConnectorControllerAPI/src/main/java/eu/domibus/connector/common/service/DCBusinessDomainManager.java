@@ -34,7 +34,6 @@ public interface DCBusinessDomainManager {
      */
     List<DomibusConnectorBusinessDomain.BusinessDomainId> getAllBusinessDomains();
 
-
     public List<DomibusConnectorBusinessDomain.BusinessDomainId> getValidBusinessDomains();
 
     Optional<DomibusConnectorBusinessDomain> getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);

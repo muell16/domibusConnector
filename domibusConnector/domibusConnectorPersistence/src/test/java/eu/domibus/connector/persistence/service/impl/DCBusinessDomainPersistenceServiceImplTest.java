@@ -25,7 +25,7 @@ class DCBusinessDomainPersistenceServiceImplTest {
     @Test
     @Order(1)
     void testFindById() {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         assertThat(byId).isPresent();
         assertThat(byId).get().extracting(DomibusConnectorBusinessDomain::getConfigurationSource).isEqualTo(ConfigurationSource.DB);
     }
@@ -48,21 +48,21 @@ class DCBusinessDomainPersistenceServiceImplTest {
     @Test
     @Order(3)
     void testUpdate() {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 
         DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = byId.get();
         domibusConnectorBusinessDomain.setDescription("Hallo Welt");
-        domibusConnectorBusinessDomain.getMessageLaneProperties().put("test1", "test1");
-        domibusConnectorBusinessDomain.getMessageLaneProperties().put("prop1", "test2");
-        domibusConnectorBusinessDomain.getMessageLaneProperties().put("prop2.prop2", "test3");
+        domibusConnectorBusinessDomain.getProperties().put("test1", "test1");
+        domibusConnectorBusinessDomain.getProperties().put("prop1", "test2");
+        domibusConnectorBusinessDomain.getProperties().put("prop2.prop2", "test3");
 
         businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
 
-        Optional<DomibusConnectorBusinessDomain> changed = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Optional<DomibusConnectorBusinessDomain> changed = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         DomibusConnectorBusinessDomain changedBd = changed.get();
 
         assertThat(changedBd.getDescription()).isEqualTo("Hallo Welt");
-        assertThat(changedBd.getMessageLaneProperties()).hasSize(3);
+        assertThat(changedBd.getProperties()).hasSize(3);
 
     }
 

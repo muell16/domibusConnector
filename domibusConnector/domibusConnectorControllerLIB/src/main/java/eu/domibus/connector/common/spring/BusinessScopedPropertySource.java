@@ -3,7 +3,6 @@ package eu.domibus.connector.common.spring;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -11,14 +10,10 @@ import org.springframework.boot.context.properties.source.InvalidConfigurationPr
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.NonNullApi;
-import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class BusinessScopedPropertySource extends EnumerablePropertySource<DomibusConnectorBusinessDomain> {
 
@@ -44,7 +39,7 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<Domib
             Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain());
             return businessDomain.orElseThrow(() -> new IllegalArgumentException("No Business Domain found for id" + CurrentBusinessDomain.getCurrentBusinessDomain()));
         } else {
-            return DomibusConnectorBusinessDomain.getDefaultMessageLane();
+            return DomibusConnectorBusinessDomain.getDefaultBusinessDomain();
         }
     }
 
@@ -69,7 +64,7 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<Domib
             DCBusinessDomainManager businessDomainManager = applicationContext.getBean(DCBusinessDomainManager.class);
 
             businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain())
-                    .map(DomibusConnectorBusinessDomain::getMessageLaneProperties)
+                    .map(DomibusConnectorBusinessDomain::getProperties)
                     .orElse(new HashMap<>())
                     .forEach((key, v) -> m.put(ConfigurationPropertyName.of(key), v));
 

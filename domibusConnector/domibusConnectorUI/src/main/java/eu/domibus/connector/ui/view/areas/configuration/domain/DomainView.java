@@ -135,7 +135,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .asRequired("A domain name is required!")
                 .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
                 .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
-                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, DomibusConnectorBusinessDomain.BusinessDomainId::getMessageLaneId)
+                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, DomibusConnectorBusinessDomain.BusinessDomainId::getBusinessDomainId)
                 .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
 
         return grid;
@@ -214,7 +214,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
                 .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
                 .withValidator(s -> !domainRepo.getBusinessDomain(new DomibusConnectorBusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
-                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getMessageLaneId())
+                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getBusinessDomainId())
                 .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
 
         binder.forField(descriptionField)

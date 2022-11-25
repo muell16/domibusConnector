@@ -47,7 +47,7 @@ public class DC5Message implements Serializable {
 
 	@CheckForNull
 	@Convert(converter = BusinessDomainIdConverter.class)
-	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
 
 	@NotNull
 	@Valid

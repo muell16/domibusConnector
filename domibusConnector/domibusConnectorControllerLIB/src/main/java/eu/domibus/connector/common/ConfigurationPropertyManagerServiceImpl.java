@@ -116,7 +116,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     private MapConfigurationPropertySource loadLaneProperties(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
         Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
         if (businessDomain.isPresent()) {
-            MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(businessDomain.get().getMessageLaneProperties());
+            MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(businessDomain.get().getProperties());
             return mapConfigurationPropertySource;
         } else {
             throw new IllegalArgumentException(String.format("No active business domain for id [%s]", laneId));

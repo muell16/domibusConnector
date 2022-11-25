@@ -107,8 +107,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                 return;
             }
 
-            Map<String, String> updatedProperties = updateChangedProperties(domibusConnectorBusinessDomain.getMessageLaneProperties(), properties);
-            domibusConnectorBusinessDomain.setMessageLaneProperties(updatedProperties);
+            Map<String, String> updatedProperties = updateChangedProperties(domibusConnectorBusinessDomain.getProperties(), properties);
+            domibusConnectorBusinessDomain.setProperties(updatedProperties);
 
             businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
         } else {
@@ -137,7 +137,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         lane.setId(messageLaneIdBusinessDomainConfigEntry.getKey());
         lane.setConfigurationSource(ConfigurationSource.ENV);
         Map<String, String> p = new HashMap<>(messageLaneIdBusinessDomainConfigEntry.getValue().getProperties());
-        lane.setMessageLaneProperties(p);
+        lane.setProperties(p);
         return lane;
     }
 

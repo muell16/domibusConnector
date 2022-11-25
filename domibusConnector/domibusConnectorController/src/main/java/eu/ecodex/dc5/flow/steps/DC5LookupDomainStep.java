@@ -20,7 +20,7 @@ public class DC5LookupDomainStep {
     public DC5Message lookupDomain(DC5Message msg) {
         //TODO: implement Business domain matching rules here!
 
-        Optional<DomibusConnectorBusinessDomain> bd = domainManager.getBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        Optional<DomibusConnectorBusinessDomain> bd = domainManager.getBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         if (bd.isPresent()) {
             DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = bd.get();
             CurrentBusinessDomain.setCurrentBusinessDomain(domibusConnectorBusinessDomain.getId());

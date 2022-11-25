@@ -29,7 +29,7 @@ public class DCLinkPartnerRoutingRulePersistenceServiceImplTest {
         rr.setRoutingRuleId("abc");
         rr.setLinkName("backend_bob");
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
-        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rr);
+        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rr);
     }
 
 
@@ -40,9 +40,9 @@ public class DCLinkPartnerRoutingRulePersistenceServiceImplTest {
         rr.setRoutingRuleId("abcd");
         rr.setLinkName("backend_bob");
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
-        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rr);
+        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rr);
 
-        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         LinkPartnerRoutingRule abcd = allLinkPartnerRoutingRules.stream().filter(r -> r.getRoutingRuleId().equals("abcd"))
                 .findFirst()
                 .get();
@@ -53,9 +53,9 @@ public class DCLinkPartnerRoutingRulePersistenceServiceImplTest {
         rrU.setLinkName("backend_alice");
         rrU.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
 
-        routingRulePersistenceService.updateRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rrU);
+        routingRulePersistenceService.updateRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rrU);
 
-        allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         abcd = allLinkPartnerRoutingRules.stream().filter(r -> r.getRoutingRuleId().equals("abcd"))
                 .findFirst()
                 .get();
@@ -65,7 +65,7 @@ public class DCLinkPartnerRoutingRulePersistenceServiceImplTest {
     @Test
     @Order(200)
     void getAllRoutingRules() {
-        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         assertThat(allLinkPartnerRoutingRules).hasSize(1);
     }
 
@@ -76,14 +76,14 @@ public class DCLinkPartnerRoutingRulePersistenceServiceImplTest {
         rr.setRoutingRuleId("xyz");
         rr.setLinkName("backend_bob");
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
-        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), rr);
+        routingRulePersistenceService.createRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rr);
 
-        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        List<LinkPartnerRoutingRule> allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         assertThat(allLinkPartnerRoutingRules).hasSize(2);
 
-        routingRulePersistenceService.deleteRoutingRule(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), "xyz");
+        routingRulePersistenceService.deleteRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), "xyz");
 
-        allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        allLinkPartnerRoutingRules = routingRulePersistenceService.getAllRoutingRules(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
         assertThat(allLinkPartnerRoutingRules).hasSize(1);
     }
 }

@@ -76,14 +76,14 @@ public class ConfigurationPropertyManagerServiceImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultMessageLane()));
+        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
 
     }
 
     @Test
     void loadConfiguration() {
-        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties = propertyLoaderService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties = propertyLoaderService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), EvidenceActionServiceConfigurationProperties.class);
 
         assertThat(evidenceActionServiceConfigurationProperties).isNotNull();
 

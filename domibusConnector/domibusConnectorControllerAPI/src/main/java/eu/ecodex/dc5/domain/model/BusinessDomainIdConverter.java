@@ -4,8 +4,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 
 import javax.annotation.Nullable;
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import java.util.Objects;
 
 
 public class BusinessDomainIdConverter implements AttributeConverter<DomibusConnectorBusinessDomain.BusinessDomainId, String> {
@@ -16,7 +14,7 @@ public class BusinessDomainIdConverter implements AttributeConverter<DomibusConn
         if (attribute == null) {
             return null;
         }
-        return attribute.getMessageLaneId();
+        return attribute.getBusinessDomainId();
     }
 
     @Override

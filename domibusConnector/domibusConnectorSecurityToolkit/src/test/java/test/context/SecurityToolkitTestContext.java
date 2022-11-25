@@ -40,8 +40,8 @@ public class SecurityToolkitTestContext {
     @Bean
     public DCBusinessDomainPersistenceService dcBusinessDomainPersistenceService() {
         DCBusinessDomainPersistenceService mock = Mockito.mock(DCBusinessDomainPersistenceService.class);
-        Mockito.when(mock.findById(eq(DomibusConnectorBusinessDomain.getDefaultMessageLaneId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultMessageLane()));
+        Mockito.when(mock.findById(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
         return mock;
     }
 

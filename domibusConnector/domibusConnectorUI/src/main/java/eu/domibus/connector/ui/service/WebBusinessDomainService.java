@@ -11,7 +11,7 @@ public class WebBusinessDomainService {
     public DomibusConnectorBusinessDomain.BusinessDomainId getCurrentBusinessDomain() {
         //TODO: for IMPL Business Domain Configuration within UI,
         //extend this to retrieve current business Domain
-        return DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+        return DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
     }
 
 }

@@ -53,7 +53,7 @@ public class DCMessageRoutingConfigurationPropertiesTest {
     @Test
 //    @Disabled //properties are not loaded?
     public void testProps() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 
         Map<String, LinkPartnerRoutingRule> backendRules = props.getBackendRules();
 

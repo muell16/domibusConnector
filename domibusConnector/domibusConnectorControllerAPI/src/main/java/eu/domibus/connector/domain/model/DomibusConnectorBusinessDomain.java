@@ -16,20 +16,20 @@ public class DomibusConnectorBusinessDomain {
 
     private boolean enabled;
 
-    private Map<String, String> messageLaneProperties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
 
     private ConfigurationSource configurationSource; // TODO: must be read-only if props are not from db, beause cant change .properties.
 
-    public static DomibusConnectorBusinessDomain getDefaultMessageLane() {
+    public static DomibusConnectorBusinessDomain getDefaultBusinessDomain() {
         DomibusConnectorBusinessDomain defaultMessageLane = new DomibusConnectorBusinessDomain();
         defaultMessageLane.setId(new BusinessDomainId(DEFAULT_LANE_NAME));
         defaultMessageLane.setDescription("default message lane");
-        defaultMessageLane.setMessageLaneProperties(new HashMap<>());
+        defaultMessageLane.setProperties(new HashMap<>());
         return defaultMessageLane;
     }
 
-    public static BusinessDomainId getDefaultMessageLaneId() {
-        return getDefaultMessageLane().getId();
+    public static BusinessDomainId getDefaultBusinessDomainId() {
+        return getDefaultBusinessDomain().getId();
     }
 
     public BusinessDomainId getId() {
@@ -48,12 +48,12 @@ public class DomibusConnectorBusinessDomain {
         this.description = description;
     }
 
-    public Map<String, String> getMessageLaneProperties() {
-        return messageLaneProperties;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    public void setMessageLaneProperties(Map<String, String> messageLaneProperties) {
-        this.messageLaneProperties = messageLaneProperties;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     public boolean isEnabled() {
@@ -92,23 +92,23 @@ public class DomibusConnectorBusinessDomain {
         public BusinessDomainId() {}
 
         public BusinessDomainId(String id) {
-            this.messageLaneId = id;
+            this.businessDomainId = id;
         }
 
         @NotBlank
-        private String messageLaneId;
+        private String businessDomainId;
 
-        public String getMessageLaneId() {
-            return messageLaneId;
+        public String getBusinessDomainId() {
+            return businessDomainId;
         }
 
-        public void setMessageLaneId(String messageLaneId) {
-            this.messageLaneId = messageLaneId;
+        public void setBusinessDomainId(String businessDomainId) {
+            this.businessDomainId = businessDomainId;
         }
 
         @Override
         public String toString() {
-            return String.format("MessageLaneId: [%s]", this.messageLaneId);
+            return String.format("BusinessDomainId: [%s]", this.businessDomainId);
         }
 
         @Override
@@ -118,12 +118,12 @@ public class DomibusConnectorBusinessDomain {
 
             BusinessDomainId that = (BusinessDomainId) o;
 
-            return messageLaneId != null ? messageLaneId.equals(that.messageLaneId) : that.messageLaneId == null;
+            return businessDomainId != null ? businessDomainId.equals(that.businessDomainId) : that.businessDomainId == null;
         }
 
         @Override
         public int hashCode() {
-            return messageLaneId != null ? messageLaneId.hashCode() : 0;
+            return businessDomainId != null ? businessDomainId.hashCode() : 0;
         }
     }
 

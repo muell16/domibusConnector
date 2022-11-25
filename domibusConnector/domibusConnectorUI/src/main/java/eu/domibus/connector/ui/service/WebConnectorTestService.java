@@ -71,13 +71,13 @@ public class WebConnectorTestService {
 	}
 
 	public WebMessageDetail.Service getTestService() {
-		AS4Service testService = connectorTestService.getTestService(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+		AS4Service testService = connectorTestService.getTestService(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 		WebMessageDetail.Service service = new WebMessageDetail.Service(testService.getName(), testService.getServiceType());
 		return service;
 	}
 	
 	public WebMessageDetail.Action getTestAction() {
-		AS4Action testAction = connectorTestService.getTestAction(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+		AS4Action testAction = connectorTestService.getTestAction(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 		WebMessageDetail.Action action = new WebMessageDetail.Action(testAction.getAction());
 		return action;
 	}

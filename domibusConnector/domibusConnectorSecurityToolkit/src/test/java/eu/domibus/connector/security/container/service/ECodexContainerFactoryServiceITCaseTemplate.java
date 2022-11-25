@@ -60,7 +60,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
     @BeforeEach
     public void beforeEach() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
     }
 
     @AfterEach

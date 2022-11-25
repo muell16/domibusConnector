@@ -81,13 +81,13 @@ public class WebPModeServiceTest {
                     .as("example pmodes contains 24 parties")
                     .hasSize(24);
 
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 
 
-            DCEcodexContainerProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), DCEcodexContainerProperties.class);
+            DCEcodexContainerProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), DCEcodexContainerProperties.class);
             assertThat(securityToolkitConfigurationProperties.getSignatureValidation().getTrustStore().getPassword()).isEqualTo("pw");
 
-            ConnectorMessageProcessingProperties props = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultMessageLaneId(), ConnectorMessageProcessingProperties.class);
+            ConnectorMessageProcessingProperties props = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), ConnectorMessageProcessingProperties.class);
             final String expected = props.getpModeFile();
 
             Assertions.assertAll(

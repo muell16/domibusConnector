@@ -2,13 +2,13 @@ package eu.ecodex.dc5.routing;
 
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.service.DCBusinessDomainManager;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.ecodex.dc5.domain.repo.DC5BusinessDomainJpaEntity;
 import eu.domibus.connector.persistence.service.DCRoutingRulePersistenceService;
 import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
-import eu.ecodex.dc5.domain.repo.DomibusConnectorBusinessDomainDao;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCRoutingRulePersistenceServiceImpl.class);
@@ -34,32 +35,38 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
     private static final String DEFAULT_BACKEND_NAME_PROPERTY_NAME = "connector.routing.default-backend-name";
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-    private final DomibusConnectorBusinessDomainDao businessDomainDao;
+//    private final DomibusConnectorBusinessDomainDao businessDomainDao;
     private final BeanToPropertyMapConverter beanToPropertyMapConverter;
+    private final DCBusinessDomainManager domainManager;
 
-    public DCRoutingRulePersistenceServiceImpl(ConfigurationPropertyManagerService configurationPropertyManagerService,
-                                               DomibusConnectorBusinessDomainDao businessDomainDao,
-                                               BeanToPropertyMapConverter beanToPropertyMapConverter) {
-        this.configurationPropertyManagerService = configurationPropertyManagerService;
-        this.businessDomainDao = businessDomainDao;
-        this.beanToPropertyMapConverter = beanToPropertyMapConverter;
-    }
+//    public DCRoutingRulePersistenceServiceImpl(ConfigurationPropertyManagerService configurationPropertyManagerService,
+//                                               DomibusConnectorBusinessDomainDao businessDomainDao,
+//                                               BeanToPropertyMapConverter beanToPropertyMapConverter) {
+//        this.configurationPropertyManagerService = configurationPropertyManagerService;
+//        this.businessDomainDao = businessDomainDao;
+//        this.beanToPropertyMapConverter = beanToPropertyMapConverter;
+//    }
 
 
     @Override
     public void createRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule rr) {
         rr.setConfigurationSource(ConfigurationSource.DB);
-        DC5BusinessDomainJpaEntity DC5BusinessDomainJpaEntity = getBusinessDomain(businessDomainId);
-        Map<String, String> properties = DC5BusinessDomainJpaEntity.getProperties();
+        DomibusConnectorBusinessDomain businessDomain = getBusinessDomain(businessDomainId);
+        Map<String, String> properties = businessDomain.getProperties();
         Map<String, String> stringStringMap = beanToPropertyMapConverter.readBeanPropertiesToMap(rr, "");
         stringStringMap.forEach((key, value) -> {
             properties.put("connector.routing.backend-rules[" + rr.getRoutingRuleId() + "]" + key, value);
         });
-        businessDomainDao.save(DC5BusinessDomainJpaEntity);
+//        businessDomainDao.save(DC5BusinessDomainJpaEntity);
+
+        domainManager.updateConfig(businessDomainId, properties);
     }
 
-    private DC5BusinessDomainJpaEntity getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
-        Optional<DC5BusinessDomainJpaEntity> byName = businessDomainDao.findByName(businessDomainId);
+    private DomibusConnectorBusinessDomain getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+
+        Optional<DomibusConnectorBusinessDomain> byName = domainManager.getBusinessDomain(businessDomainId);
+
+//        Optional<DC5BusinessDomainJpaEntity> byName = businessDomainDao.findByName(businessDomainId);
         if (byName.isPresent()) {
             return byName.get();
         } else {
@@ -69,16 +76,17 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
 
     @Override
     public void deleteRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String ruleId) {
-        DC5BusinessDomainJpaEntity messageLane = getBusinessDomain(businessDomainId);
-        List<String> keys = getAllKeysForRoutingRule(ruleId, messageLane);
+        DomibusConnectorBusinessDomain businessDomain = getBusinessDomain(businessDomainId);
+        List<String> keys = getAllKeysForRoutingRule(ruleId, businessDomain);
 
         //remove all entries key belongs to routing rule with given ruleId
-        keys.forEach(k -> messageLane.getProperties().remove(k));
+        keys.forEach(k -> businessDomain.getProperties().remove(k));
 
-        businessDomainDao.save(messageLane);
+//        businessDomainDao.save(businessDomain);
+        domainManager.updateConfig(businessDomainId, businessDomain.getProperties());
     }
 
-    private List<String> getAllKeysForRoutingRule(String ruleId, DC5BusinessDomainJpaEntity messageLane) {
+    private List<String> getAllKeysForRoutingRule(String ruleId, DomibusConnectorBusinessDomain messageLane) {
         String prefix = getRoutingRuleKey(ruleId);
 
 
@@ -95,7 +103,7 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
 
     @Override
     public List<LinkPartnerRoutingRule> getAllRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
-        DC5BusinessDomainJpaEntity messageLane = getBusinessDomain(businessDomainId);
+        DomibusConnectorBusinessDomain messageLane = getBusinessDomain(businessDomainId);
         Map<String, String> properties = messageLane.getProperties();
         Set<String> routingRuleIds = properties.keySet()
                 .stream()
@@ -118,10 +126,12 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
 
     @Override
     public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
-        DC5BusinessDomainJpaEntity DC5BusinessDomainJpaEntity = getBusinessDomain(businessDomainId);
+        DomibusConnectorBusinessDomain DC5BusinessDomainJpaEntity = getBusinessDomain(businessDomainId);
         Map<String, String> properties = DC5BusinessDomainJpaEntity.getProperties();
         properties.put(DEFAULT_BACKEND_NAME_PROPERTY_NAME, backendName);
-        businessDomainDao.save(DC5BusinessDomainJpaEntity);
+        //businessDomainDao.save(DC5BusinessDomainJpaEntity);
+
+        domainManager.updateConfig(businessDomainId, properties);
     }
 
     public static final String PREFIX = "connector.routing.backend-rules[";

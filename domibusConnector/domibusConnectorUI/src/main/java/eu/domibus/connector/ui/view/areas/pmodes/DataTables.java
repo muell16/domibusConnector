@@ -80,7 +80,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 
 		//CAVE: activePModeSet can be null!!
-		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
+		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId()).orElse(null);
 
 		createActivePmodeSetDiv();
 		
@@ -328,7 +328,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent arg0) {
-		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultMessageLaneId()).orElse(null);
+		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId()).orElse(null);
 
 		areaNoActivePModeSetDiv.removeAll();
 

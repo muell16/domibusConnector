@@ -12,7 +12,6 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.ui.utils.RoleRequired;
@@ -87,7 +86,7 @@ public class ECodexContainerCreatorView extends VerticalLayout {
 
     private void processUploadedFile(MemoryBuffer buffer, Label uploadResultLabel) {
         try {
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
             String fileName = buffer.getFileName();
 
             byte[] bytes = StreamUtils.copyToByteArray(buffer.getInputStream());

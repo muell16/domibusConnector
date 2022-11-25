@@ -37,7 +37,7 @@ public class ConnectorConfigurationProperties {
     private StageConfigurationProperties stage = new StageConfigurationProperties();
 
     @NotNull
-    DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+    DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
 
     /**
      * should the business domains be loaded from

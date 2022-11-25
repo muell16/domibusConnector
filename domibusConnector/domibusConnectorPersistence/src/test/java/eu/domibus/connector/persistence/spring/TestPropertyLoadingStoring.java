@@ -37,7 +37,7 @@ public class TestPropertyLoadingStoring {
     @Order(1)
     public void testPropLoad() {
         try {
-            DomibusConnectorBusinessDomain.BusinessDomainId d1 = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+            DomibusConnectorBusinessDomain.BusinessDomainId d1 = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
             CurrentBusinessDomain.setCurrentBusinessDomain(d1);
 
 
@@ -70,7 +70,7 @@ public class TestPropertyLoadingStoring {
         dcBusinessDomainManager.createBusinessDomain(b);
 
         try {
-            DomibusConnectorBusinessDomain.BusinessDomainId defaultDomain = DomibusConnectorBusinessDomain.getDefaultMessageLaneId();
+            DomibusConnectorBusinessDomain.BusinessDomainId defaultDomain = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
             DomibusConnectorBusinessDomain.BusinessDomainId testDomain2 = bid;
 
             //update properties in default domain

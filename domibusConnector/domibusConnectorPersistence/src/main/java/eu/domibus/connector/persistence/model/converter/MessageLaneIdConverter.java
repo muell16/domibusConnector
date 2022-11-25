@@ -13,7 +13,7 @@ public class MessageLaneIdConverter implements AttributeConverter<DomibusConnect
         if (attribute == null) {
             return null;
         }
-        return attribute.getMessageLaneId();
+        return attribute.getBusinessDomainId();
     }
 
     @Override
