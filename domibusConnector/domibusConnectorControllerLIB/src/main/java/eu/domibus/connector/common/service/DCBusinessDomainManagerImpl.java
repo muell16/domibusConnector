@@ -65,7 +65,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                     .stream()
                     .filter(DomibusConnectorBusinessDomain::isEnabled)
                     .map(DomibusConnectorBusinessDomain::getId)
-                    .filter(id -> !this.validateDomain(id).getErrors().isEmpty())
+                    .filter(id -> this.validateDomain(id).getErrors().isEmpty())
                     .forEach(b -> collect.add(b));
         }
 

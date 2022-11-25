@@ -18,9 +18,8 @@ public class DomainSelect extends Select<DomibusConnectorBusinessDomain.Business
         this.dcBusinessDomainManager = dcBusinessDomainManager;
         this.setLabel("Config applies to domain:");
         this.setEmptySelectionAllowed(false);
-        final List<DomibusConnectorBusinessDomain.BusinessDomainId> activeBusinessDomainIds = dcBusinessDomainManager.getValidBusinessDomains();
+        final List<DomibusConnectorBusinessDomain.BusinessDomainId> activeBusinessDomainIds = dcBusinessDomainManager.getAllBusinessDomains();
         this.setItems(activeBusinessDomainIds);
         this.setValue(activeBusinessDomainIds.get(0));
-        assert !activeBusinessDomainIds.isEmpty();
     }
 }
