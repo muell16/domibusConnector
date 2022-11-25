@@ -88,6 +88,12 @@
         <profile>
             <!-- Production mode is activated using -Pproduction -->
             <id>production</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

@@ -53,6 +53,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                     LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
                 }});
 
+        //TODO: make sure default BusinessDomain is always returned!
+
         return new ArrayList<>(collect);
     }
 

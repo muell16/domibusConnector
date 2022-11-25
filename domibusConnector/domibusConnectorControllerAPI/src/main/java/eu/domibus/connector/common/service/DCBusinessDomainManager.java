@@ -27,7 +27,13 @@ public interface DCBusinessDomainManager {
 
     DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);
 
+    /**
+     *
+     * @return a list of all domains with the minimum length of 1
+     *  The default domain is always included in this List!
+     */
     List<DomibusConnectorBusinessDomain.BusinessDomainId> getAllBusinessDomains();
+
 
     public List<DomibusConnectorBusinessDomain.BusinessDomainId> getValidBusinessDomains();
 
