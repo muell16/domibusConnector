@@ -18,8 +18,8 @@ public class DC5EcxAddress {
     private String ecxAddress;
 
     @Embedded
-    private DC5Party party;
+    private DC5Party party = new DC5Party();
     @Embedded
-    private DC5Role role;
+    private DC5Role role = new DC5Role();
 
 }

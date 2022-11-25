@@ -63,7 +63,8 @@ public class DC5Ebms {
 			@AttributeOverride( name = "role.role", column = @Column(name = "S_ROLE", length = 255)),
 			@AttributeOverride( name = "role.roleType", column = @Column(name = "S_ROLE_TYPE", length = 255)),
 	})
-	private DC5EcxAddress sender; //role type is implicit RESPONDER - do I need a ROLE TYPE here?
+	@Builder.Default
+	private DC5EcxAddress sender = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
 
 	@Embedded
 	@AttributeOverrides({
@@ -73,7 +74,8 @@ public class DC5Ebms {
 			@AttributeOverride( name = "role.role", column = @Column(name = "R_ROLE", length = 255)),
 			@AttributeOverride( name = "role.roleType", column = @Column(name = "R_ROLE_TYPE", length = 255)),
 	})
-	private DC5EcxAddress receiver; //role type is implicit RESPONDER - do I need a ROLE TYPE here?
+	@Builder.Default
+	private DC5EcxAddress receiver = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
 
 
 	@Override

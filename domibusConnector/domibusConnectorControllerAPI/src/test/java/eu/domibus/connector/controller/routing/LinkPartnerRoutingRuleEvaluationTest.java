@@ -51,25 +51,37 @@ public class LinkPartnerRoutingRuleEvaluationTest {
 
 
     private static DC5Message getMessage1() {
-        DC5Message message = new DC5Message();
-        message.setEbmsData(new DC5Ebms());
-        message.getEbmsData().setAction(new DC5Action("OtherAction"));
-        message.getEbmsData().setService(new DC5Service());
-        message.getEbmsData().getService().setService("EPO_SERVICE");
-        message.getEbmsData().getService().setServiceType("urn:e-codex:services:");
-        message.getEbmsData().getReceiver().setParty(DC5Party.builder().partyId("gw01").build());
-        return message;
+        return DC5Message.builder()
+                .ebmsData(DC5Ebms.builder()
+                        .action(new DC5Action("OtherAction"))
+                        .service(DC5Service.builder()
+                                .service("EPO_SERVICE")
+                                .serviceType("urn:e-codex:services:")
+                                .build()
+                        )
+                        .sender(DC5EcxAddress.builder()
+                                .party(DC5Party.builder().partyId("gw01").build())
+                                .build())
+                        .build()
+                )
+                .build();
     }
 
     private static DC5Message getMessage2() {
-        DC5Message message = new DC5Message();
-        message.setEbmsData(new DC5Ebms());
-        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
-        message.getEbmsData().setService(new DC5Service());
-        message.getEbmsData().getService().setService("Connector-TEST");
-        message.getEbmsData().getService().setServiceType("urn:e-codex:services:");
-        message.getEbmsData().getSender().setParty(DC5Party.builder().partyId("gw01").build());
-        return message;
+        return DC5Message.builder()
+                .ebmsData(DC5Ebms.builder()
+                        .action(new DC5Action("ConTest_Form"))
+                        .service(DC5Service.builder()
+                                .service("Connector-TEST")
+                                .serviceType("urn:e-codex:services:")
+                                .build()
+                        )
+                        .sender(DC5EcxAddress.builder()
+                                .party(DC5Party.builder().partyId("gw01").build())
+                                .build())
+                        .build()
+                )
+                .build();
     }
 
 
