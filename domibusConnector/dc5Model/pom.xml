@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.6-bugfix-582-SNAPSHOT</version>
+        <version>5.0.0-alpha1-SNAPSHOT</version>
     </parent>
     <artifactId>dc5Model</artifactId>
     <packaging>jar</packaging>
