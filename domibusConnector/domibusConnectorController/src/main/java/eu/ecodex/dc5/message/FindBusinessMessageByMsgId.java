@@ -8,9 +8,11 @@ import io.micrometer.core.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Example;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -45,5 +47,32 @@ public class FindBusinessMessageByMsgId {
         throw new DomibusConnectorMessageException(refMessage, FindBusinessMessageByMsgId.class, error);
 
     }
+
+    public @NonNull List<DC5Message> findBusinessMsgByConversationId(String s) {
+        final DC5Message example = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId(s).build()).build();
+        return dc5MessageRepo.findAll(Example.of(example));
+    }
+
+    public @NonNull Optional<DC5Message> findBusinessMsgByRefToMsgId(DC5Message msg) {
+
+        // TODO: convert to java stream logic.
+
+        if (msg.getEbmsData().getRefToEbmsMessageId() != null) {
+            final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId().getEbmsMesssageId(), msg.getDirection().getTarget());
+            if (result.isPresent()) {
+                return result;
+            }
+        }
+        final BackendMessageId refToBackendMessageId = msg.getBackendData().getRefToBackendMessageId();
+        if (refToBackendMessageId != null) {
+            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToBackendMessageId.getBackendMessageId(), msg.getDirection().getTarget());
+            if (result2.isPresent()) {
+                return result2;
+            }
+        }
+
+        return Optional.empty();
+    }
+
 
 }
