@@ -3,15 +3,20 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
-import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The routing occurs in the following order:
@@ -32,7 +37,8 @@ public class LookupBackendNameStep implements MessageProcessStep {
     private static final Logger LOGGER = LogManager.getLogger(LookupBackendNameStep.class);
 
     private final DCRoutingRulesManagerImpl dcRoutingConfigManager;
-//    private final DCMessagePersistenceService dcMessagePersistenceService;
+    private final DC5MessageRepo messageRepo; // TODO: replace with a service?
+    private final FindBusinessMessageByMsgId dc5MessageService;
 
 
     @Override
@@ -47,20 +53,17 @@ public class LookupBackendNameStep implements MessageProcessStep {
         //Lookup backend by conversation id
         String conversationId = message.getEbmsData().getConversationId();
         if (StringUtils.hasText(conversationId)) {
-//            List<DC5Message> messagesByConversationId = dcMessagePersistenceService.findMessagesByConversationId(conversationId);
-//            backendName = messagesByConversationId.stream()
-//                    .map(m -> m.getBackendLinkName())
-//                    .filter(s -> StringUtils.hasText(s))
-//                    .findAny().orElse(null);
-
+            final List<DC5Message> listMsg = dc5MessageService.findBusinessMsgByConversationId(conversationId);
+            final Optional<DC5Message> any = listMsg.stream().findAny();
+            if (any.isPresent()) {
+                backendName = any.get().getBackendLinkName();
+            }
         }
         if (backendName != null) {
             LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "ConversationId [{}] is used to set backend to [{}]", conversationId, backendName);
             message.setBackendLinkName(backendName);
             return true;
         }
-
-
 
         //lookup backend by rules and default backend
         String defaultBackendName = dcRoutingConfigManager.getDefaultBackendName(message.getMessageLaneId());
