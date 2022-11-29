@@ -55,7 +55,11 @@ public class FindBusinessMessageByMsgId {
 
     public @NonNull Optional<DC5Message> findBusinessMsgByRefToMsgId(DC5Message msg) {
 
-        // TODO: convert to java stream logic.
+        // needs java 9+
+//        return dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId().getEbmsMesssageId(), msg.getDirection().getTarget())
+//                .or(() ->
+//                        Optional.ofNullable(msg.getBackendData().getRefToBackendMessageId()).flatMap(ref -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(ref.getBackendMessageId(), msg.getDirection().getTarget()))
+//                );
 
         if (msg.getEbmsData().getRefToEbmsMessageId() != null) {
             final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId().getEbmsMesssageId(), msg.getDirection().getTarget());
