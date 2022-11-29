@@ -34,8 +34,9 @@ class DC5LookupDomainStepTest {
     void given_a_message_that_refers_to_another_message_via_ebmsdata_then_the_domain_of_the_referred_message_is_used_when_we_try_to_associate_the_message_with_a_domain_and_we_can_find_the_message() {
 
         // Arrange
+        final String id = String.valueOf(ThreadLocalRandom.current().nextInt());
         final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().refToEbmsMessageId(EbmsMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId("test-domain-id1")).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(id)).build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -44,15 +45,16 @@ class DC5LookupDomainStepTest {
         final DC5Message result = sut.lookupDomain(incomingMsg);
 
         // Assert
-        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo("test-domain-id1");
+        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo(id);
     }
 
     @Test
     void given_a_message_that_refers_to_another_message_via_backenddata_then_the_domain_of_the_referred_message_is_used_when_we_try_to_associate_the_message_with_a_domain_and_we_can_find_the_message() {
 
         // Arrange
+        final String id = String.valueOf(ThreadLocalRandom.current().nextInt());
         final DC5Message incomingMsg = DC5Message.builder().backendData(DC5BackendData.builder().refToBackendMessageId(BackendMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId("test-domain-id2")).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(id)).build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -61,7 +63,7 @@ class DC5LookupDomainStepTest {
         final DC5Message result = sut.lookupDomain(incomingMsg);
 
         // Assert
-        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo("test-domain-id2");
+        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo(id);
     }
 
     // 2. If there are messages with the same ConversationID -> then associate messsage with domain of those messages.
@@ -69,8 +71,9 @@ class DC5LookupDomainStepTest {
     void associate_an_incoming_message_that_has_a_conversation_id_with_domain_of_any_of_those_messages() {
 
         // Arrange
+        final String id = String.valueOf(ThreadLocalRandom.current().nextInt());
         final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId("test-conversation-id").build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId("test-domain-id3")).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(id)).build();
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(Collections.singletonList(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -79,7 +82,7 @@ class DC5LookupDomainStepTest {
         final DC5Message result = sut.lookupDomain(incomingMsg);
 
         // Assert
-        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo("test-domain-id3");
+        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo(id);
     }
 
     // 3. If there are domain routing rules then they should be applied.
