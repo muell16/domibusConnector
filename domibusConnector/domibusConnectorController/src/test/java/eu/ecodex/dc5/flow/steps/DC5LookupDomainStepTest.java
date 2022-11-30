@@ -125,7 +125,7 @@ class DC5LookupDomainStepTest {
 
     // 4. If the message can be associated with multiple domains (see step 3) => Error!
     @Test
-    void if_multiple_domain_routing_rules_can_be_applied_then_a_particual_exception_should_be_thrown() {
+    void if_multiple_domain_routing_rules_can_be_applied_then_a_particular_exception_should_be_thrown() {
 
         // Arrange
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.empty());
