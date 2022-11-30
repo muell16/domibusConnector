@@ -22,6 +22,9 @@ public class DCMessageRoutingConfigurationProperties {
 
     private Map<String, LinkPartnerRoutingRule> gatewayRules = new HashMap<>();
 
+    // String Id of rule,
+    private Map<String, DomainRoutingRule> domainRules = new HashMap<>();
+
     public Map<String, DomainRoutingRule> getDomainRules() {
         return domainRules;
     }
@@ -29,9 +32,6 @@ public class DCMessageRoutingConfigurationProperties {
     public void setDomainRules(Map<String, DomainRoutingRule> domainRules) {
         this.domainRules = domainRules;
     }
-
-    // String Id of rule,
-    private Map<String, DomainRoutingRule> domainRules = new HashMap<>();
 
     @NotBlank
     private String defaultBackendName = DomibusConnectorDefaults.DEFAULT_BACKEND_NAME;

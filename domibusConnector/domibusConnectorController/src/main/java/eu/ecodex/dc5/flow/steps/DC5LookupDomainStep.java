@@ -70,6 +70,6 @@ public class DC5LookupDomainStep {
                 throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, String.format("Multiple domain routing rules apply to msg: %s", rules));
             }
         }
-        throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, "Msg could not be associated with any domain!");
+        throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, "No domain applies!");
     }
 }
