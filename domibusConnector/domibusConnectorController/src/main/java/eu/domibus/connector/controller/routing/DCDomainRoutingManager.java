@@ -28,52 +28,52 @@ public class DCDomainRoutingManager {
     private final ConfigurationPropertyManagerService propertyManager;
     private final DCDomainRoutingRulePersistenceService dcRoutingRulePersistenceService;
 
-    public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
+    public synchronized void addDomainRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
         DCDomainRoutingManager.RoutingConfig rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new DCDomainRoutingManager.RoutingConfig();
             routingRuleMap.put(businessDomainId, rc);
         }
 
-        rc.backendRoutingRules.put(DomainRoutingRule.getRoutingRuleId(), DomainRoutingRule);
+        rc.domainRoutingRules.put(DomainRoutingRule.getRoutingRuleId(), DomainRoutingRule);
         LOGGER.debug("Added routing rule [{}]", DomainRoutingRule);
     }
 
 
-    public DomainRoutingRule persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
+    public DomainRoutingRule persistDomainRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
         dcRoutingRulePersistenceService.createRoutingRule(businessDomainId, DomainRoutingRule);
-        addBackendRoutingRule(businessDomainId, DomainRoutingRule);
+        addDomainRoutingRule(businessDomainId, DomainRoutingRule);
         DomainRoutingRule.setConfigurationSource(ConfigurationSource.DB);
         return DomainRoutingRule;
     }
 
-    public void deleteBackendRoutingRuleFromPersistence(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public void deleteDomainRoutingRuleFromPersistence(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         dcRoutingRulePersistenceService.deleteRoutingRule(businessDomainId, routingRuleId);
-        deleteBackendRoutingRule(businessDomainId, routingRuleId);
+        deleteDomainRoutingRule(businessDomainId, routingRuleId);
     }
 
-    public synchronized void deleteBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public synchronized void deleteDomainRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         DCDomainRoutingManager.RoutingConfig rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new DCDomainRoutingManager.RoutingConfig();
             routingRuleMap.put(businessDomainId, rc);
         }
 
-        DomainRoutingRule remove = rc.backendRoutingRules.remove(routingRuleId);
+        DomainRoutingRule remove = rc.domainRoutingRules.remove(routingRuleId);
         LOGGER.debug("Removed routing rule [{}]", remove);
     }
 
 
     public Map<String, DomainRoutingRule> getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         DCDomainRoutingManager.RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
-        return dcMessageRoutingConfigurationProperties.backendRoutingRules;
+        return dcMessageRoutingConfigurationProperties.domainRoutingRules;
     }
 
-    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+    public void setDefaultDomainName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
         dcRoutingRulePersistenceService.setDefaultBackendName(businessDomainId, backendName);
     }
 
-    public boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public boolean isDomainRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         return true; //always true
     }
 
@@ -84,24 +84,24 @@ public class DCDomainRoutingManager {
 
         routingConfig.routingEnabled = true;
 
-        routingConfig.backendRoutingRules.putAll(routProps.getDomainRules());
+        routingConfig.domainRoutingRules.putAll(routProps.getDomainRules());
 
         DCDomainRoutingManager.RoutingConfig rc = routingRuleMap.getOrDefault(businessDomainId, new DCDomainRoutingManager.RoutingConfig());
-        routingConfig.backendRoutingRules.putAll(rc.backendRoutingRules);
+        routingConfig.domainRoutingRules.putAll(rc.domainRoutingRules);
 
         //load db rules, and override existing rules..
         List<DomainRoutingRule> allDomainRoutingRules = dcRoutingRulePersistenceService.getAllRoutingRules(businessDomainId);
         Map<String, DomainRoutingRule> collect = allDomainRoutingRules.stream()
                 .peek(r -> r.setConfigurationSource(ConfigurationSource.DB))
                 .collect(Collectors.toMap(DomainRoutingRule::getRoutingRuleId, Function.identity()));
-        routingConfig.backendRoutingRules.putAll(collect);
+        routingConfig.domainRoutingRules.putAll(collect);
 
         return routingConfig;
 
     }
 
     private static class RoutingConfig {
-        private Map<String, DomainRoutingRule> backendRoutingRules = new HashMap<>();
+        private Map<String, DomainRoutingRule> domainRoutingRules = new HashMap<>();
         private boolean routingEnabled;
     }
 }

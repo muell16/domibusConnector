@@ -2,6 +2,8 @@ package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +11,8 @@ import java.util.Comparator;
 import java.util.UUID;
 
 @MapNested
+@Getter
+@Setter
 public class DomainRoutingRule {
 
     public static int HIGH_PRIORITY = -2000;
@@ -32,54 +36,6 @@ public class DomainRoutingRule {
 
     public static String generateID() {
         return UUID.randomUUID().toString().substring(0, 8);
-    }
-
-    public RoutingRulePattern getMatchClause() {
-        return matchClause;
-    }
-
-    public void setMatchClause(RoutingRulePattern matchClause) {
-        this.matchClause = matchClause;
-    }
-
-    public ConfigurationSource getConfigurationSource() {
-        return configurationSource;
-    }
-
-    public void setConfigurationSource(ConfigurationSource configurationSource) {
-        this.configurationSource = configurationSource;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getRoutingRuleId() {
-        return routingRuleId;
-    }
-
-    public void setRoutingRuleId(String routingRuleId) {
-        this.routingRuleId = routingRuleId;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
