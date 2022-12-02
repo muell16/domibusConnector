@@ -1,8 +1,8 @@
 package eu.domibus.connector.persistence.spring;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

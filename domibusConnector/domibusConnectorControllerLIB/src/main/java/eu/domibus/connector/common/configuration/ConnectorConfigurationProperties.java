@@ -2,6 +2,7 @@ package eu.domibus.connector.common.configuration;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -42,7 +43,7 @@ public class ConnectorConfigurationProperties {
     /**
      * should the business domains be loaded from
      * Database
-     * @see {@link eu.domibus.connector.common.service.DCBusinessDomainManager}
+     * @see {@link DCBusinessDomainManager}
      */
     boolean loadBusinessDomainsFromDb = true;
 

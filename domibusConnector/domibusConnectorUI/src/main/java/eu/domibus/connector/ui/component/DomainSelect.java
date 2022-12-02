@@ -1,7 +1,7 @@
 package eu.domibus.connector.ui.component;
 
 import com.vaadin.flow.component.select.Select;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

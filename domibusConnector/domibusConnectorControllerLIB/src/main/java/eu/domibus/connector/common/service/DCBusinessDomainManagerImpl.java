@@ -1,17 +1,26 @@
 package eu.domibus.connector.common.service;
 
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.annotations.BusinessDomainConfigurationProperties;
+import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DCBusinessDomainManagerImpl.class);
@@ -19,15 +28,31 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
 
-    public DCBusinessDomainManagerImpl(ConnectorConfigurationProperties businessDomainConfigurationProperties,
-                                       DCBusinessDomainPersistenceService businessDomainPersistenceService) {
-        this.businessDomainConfigurationProperties = businessDomainConfigurationProperties;
-        this.businessDomainPersistenceService = businessDomainPersistenceService;
-    }
+    private final ApplicationContext applicationContext;
 
+    public interface ValidationRule {
+        DomainValidResult validate(DomibusConnectorBusinessDomain.BusinessDomainId id);
+    }
 
     @Override
     public DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
+
+
+
+        Map<String, ValidationRule> beansOfType = applicationContext.getBeansOfType(ValidationRule.class);
+//        for (ValidationRule rule :) {
+//            DomainValidResult validate = rule.validate(id);
+//            //TODO: merge validation results
+//        }
+
+        List<DomainValidResult> collect = beansOfType.values().stream()
+                .map(rule -> rule.validate(id))
+                .collect(Collectors.toList());
+        //TODO: merge collect into one DomainValidResult....
+
+
+
+
         LOGGER.error("MUST BE IMPLEMENTED!!!!!!!"); //TODO: JUEUSW-621
         return DomainValidResult.builder()
                 .warning("This is just warning 1")  //show in UI!

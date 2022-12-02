@@ -1,14 +1,11 @@
-package eu.domibus.connector.common.spring;
+package eu.domibus.connector.domain.model.json.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.config.Scope;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 class BeanStore {
 

@@ -1,7 +1,7 @@
 package eu.domibus.connector.web.service;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;

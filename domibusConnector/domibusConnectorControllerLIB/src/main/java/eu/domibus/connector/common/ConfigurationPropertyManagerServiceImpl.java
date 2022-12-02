@@ -3,6 +3,8 @@ package eu.domibus.connector.common;
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.common.service.*;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;

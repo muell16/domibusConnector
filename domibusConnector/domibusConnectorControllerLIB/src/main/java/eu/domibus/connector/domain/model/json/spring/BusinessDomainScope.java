@@ -1,7 +1,7 @@
-package eu.domibus.connector.common.spring;
+package eu.domibus.connector.domain.model.json.spring;
 
-import eu.domibus.connector.common.service.BusinessDomainConfigurationChange;
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;

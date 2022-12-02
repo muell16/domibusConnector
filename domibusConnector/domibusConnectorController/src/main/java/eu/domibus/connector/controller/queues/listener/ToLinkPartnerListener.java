@@ -1,8 +1,7 @@
 package eu.domibus.connector.controller.queues.listener;
 
 
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.controller.service.SubmitToLinkService;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;

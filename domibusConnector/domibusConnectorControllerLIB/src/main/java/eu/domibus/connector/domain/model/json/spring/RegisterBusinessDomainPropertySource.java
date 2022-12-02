@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.spring;
+package eu.domibus.connector.domain.model.json.spring;
 
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;

@@ -1,9 +1,9 @@
 package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
-import eu.domibus.connector.common.spring.BusinessDomainScopeConfiguration;
+import eu.domibus.connector.domain.model.json.spring.BusinessDomainScopeConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.AfterEach;

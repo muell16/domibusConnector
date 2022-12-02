@@ -3,4 +3,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     eu.domibus.connector.common.configuration.ConnectorConversionServiceAutoConfiguration,\
     eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactoryConfiguration
 org.springframework.context.ApplicationContextInitializer=\
-  eu.domibus.connector.common.spring.RegisterBusinessDomainPropertySource
+  eu.domibus.connector.domain.model.json.spring.RegisterBusinessDomainPropertySource

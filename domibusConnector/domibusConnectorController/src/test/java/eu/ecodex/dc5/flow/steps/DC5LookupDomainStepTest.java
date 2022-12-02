@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.routing.DCDomainRoutingManager;
 import eu.domibus.connector.controller.routing.DomainRoutingRule;

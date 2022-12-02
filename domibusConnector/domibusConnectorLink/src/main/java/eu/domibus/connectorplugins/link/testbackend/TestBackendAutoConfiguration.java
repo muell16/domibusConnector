@@ -3,7 +3,7 @@ package eu.domibus.connectorplugins.link.testbackend;
 import eu.domibus.connector.common.DomibusConnectorDefaults;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;

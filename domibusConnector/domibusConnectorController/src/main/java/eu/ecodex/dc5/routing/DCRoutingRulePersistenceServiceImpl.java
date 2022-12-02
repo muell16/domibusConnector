@@ -2,7 +2,7 @@ package eu.ecodex.dc5.routing;
 
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;

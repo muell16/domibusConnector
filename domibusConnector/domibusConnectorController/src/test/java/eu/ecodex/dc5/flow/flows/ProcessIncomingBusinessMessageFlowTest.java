@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow.flows;
 
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;

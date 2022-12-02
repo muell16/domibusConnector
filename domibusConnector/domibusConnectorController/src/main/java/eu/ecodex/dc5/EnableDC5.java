@@ -1,5 +1,6 @@
 package eu.ecodex.dc5;
 
+import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesValidator;
 import eu.ecodex.dc5.core.DC5CoreJpaConfiguration;
 import org.moduliths.Modulithic;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,6 +42,7 @@ import java.lang.annotation.*;
         "eu.domibus.connector.link",
         "eu.domibus.connector.lib"
 })
+@Import(BusinessScopedConfigurationPropertiesValidator.class)
 public @interface EnableDC5 {
 
 

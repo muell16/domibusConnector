@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;

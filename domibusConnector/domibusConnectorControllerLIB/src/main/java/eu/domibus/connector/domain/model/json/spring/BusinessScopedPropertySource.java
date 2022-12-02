@@ -1,7 +1,7 @@
-package eu.domibus.connector.common.spring;
+package eu.domibus.connector.domain.model.json.spring;
 
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

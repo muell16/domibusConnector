@@ -1,7 +1,7 @@
 package eu.domibus.connector.common;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.common.service.BusinessDomainConfigurationChange;
+import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;

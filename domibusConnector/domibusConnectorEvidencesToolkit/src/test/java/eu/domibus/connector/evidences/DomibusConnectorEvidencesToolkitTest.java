@@ -1,7 +1,7 @@
 package eu.domibus.connector.evidences;
 
-import eu.domibus.connector.common.service.CurrentBusinessDomain;
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;

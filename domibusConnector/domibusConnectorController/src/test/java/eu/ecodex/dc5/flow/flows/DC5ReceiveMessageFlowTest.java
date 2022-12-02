@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.flow.flows;
 
-import eu.domibus.connector.common.service.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.flow.steps.VerifyPModesStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -9,7 +9,6 @@ import eu.domibus.connector.testdata.TransitionCreator;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.TransformMessageException;
-import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Message;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

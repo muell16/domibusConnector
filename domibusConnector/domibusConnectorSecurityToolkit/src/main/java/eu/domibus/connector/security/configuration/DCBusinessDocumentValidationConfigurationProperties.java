@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.configuration;
 
+import eu.domibus.connector.common.annotations.BusinessDomainConfigurationProperties;
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.domibus.connector.common.annotations.MapNested;
 import eu.domibus.connector.common.annotations.UseConverter;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
  */
 @Validated
 @ConfigurationProperties(prefix = DCBusinessDocumentValidationConfigurationProperties.PREFIX)
-@BusinessDomainScoped
+@BusinessDomainConfigurationProperties
 @Component
 @CheckAllowedAdvancedElectronicSystemType
 @MapNested
