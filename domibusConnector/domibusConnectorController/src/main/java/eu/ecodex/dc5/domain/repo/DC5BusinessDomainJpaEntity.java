@@ -51,4 +51,6 @@ public class DC5BusinessDomainJpaEntity {
     @Column(name="PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
+    boolean enabled;
+
 }
