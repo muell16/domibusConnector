@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.view.areas.configuration.domain;
 
 
+import com.vaadin.componentfactory.ToggleButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -10,6 +11,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -32,21 +34,19 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @UIScope
 @Route(value = DomainView.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
 @TabMetadata(title = "Domain Configuration", tabGroup = ConfigurationLayout.TAB_GROUP_NAME)
-@Order(99) // TODO
+@Order(99) // TODO: fix order
 public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     public static final String ROUTE = "domain";
 
     public static final String TITLE = "Domain Configuration";
-    public static final String HELP_ID = "ui/configuration/TODO_NOT_VALID.html"; // TODO
+    public static final String HELP_ID = "ui/configuration/TODO_NOT_VALID.html"; // TODO:
 
     private final DCBusinessDomainManager domainRepo; // TODO: read only
 
@@ -55,12 +55,12 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         this.domainRepo = domainRepo;
 
         domainGrid = initGrid();
-        addCourtDialog = initAddCourtDialog();
-        add(createAddMatrixEntryButtonDiv(), domainGrid);
+        createDomainDialog = createAddDomainLayout();
+        add(createAddDomainButtonDiv(), domainGrid);
     }
 
     private Grid<DomibusConnectorBusinessDomain> domainGrid;
-    private final Dialog addCourtDialog;
+    private final Dialog createDomainDialog;
 
     private Grid<DomibusConnectorBusinessDomain> initGrid() {
         // Grid Settings
@@ -88,6 +88,21 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         .setHeader("Description")
                         .setSortable(true);
 
+        final Grid.Column<DomibusConnectorBusinessDomain> domainEnabledColumn =
+                grid.addComponentColumn(this::createToggleButton)
+                        .setKey("isEnabled")
+                        .setHeader("Domain enabled")
+                        .setAutoWidth(true)
+                        .setSortable(true);
+
+        final Grid.Column<DomibusConnectorBusinessDomain> domainValidColumn =
+                grid.addComponentColumn(this::createValidationInfo)
+                        .setKey("isValid")
+                        .setHeader("Validation Result")
+                        .setAutoWidth(true)
+                        .setSortable(true);
+
+
         final Grid.Column<DomibusConnectorBusinessDomain> domainConfigSource =
                 grid.addColumn(d -> d.getConfigurationSource().toString())
                         .setKey("getConfigurationSource")
@@ -114,7 +129,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 e -> {
                     if (editor.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
 //                        domainRepo.delete(editor.getItem()); // TODO what to do here???
-                        domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+                        domainGrid.setItems(domainRepo.getValidBusinessDomainsAllData());
                     } else {
                         new Notification("Can't delete / edit properties that are not stored in the database!").open();
                     }
@@ -141,20 +156,30 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return grid;
     }
 
-    private Dialog initAddCourtDialog() {
-        final Dialog addCourtDialog;
-        addCourtDialog = new Dialog();
-        addCourtDialog.getElement().setAttribute("aria-label", "Additional Court");
-        addCourtDialog.add(createAddDomainDialog(addCourtDialog));
-        addCourtDialog.setModal(false);
-        addCourtDialog.setDraggable(true);
-        return addCourtDialog;
+    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain) {
+        final ToggleButton toggleButton = new ToggleButton();
+        toggleButton.setValue(domain.isEnabled());
+        toggleButton.addValueChangeListener(event -> {
+            domain.setEnabled(event.getValue());
+            domainRepo.updateDomain(domain);
+        });
+        return toggleButton;
     }
 
-    private Div createAddMatrixEntryButtonDiv() {
-        final Button addEntryButton = new Button("Add Matrix Entry");
+    private Dialog createAddDomainLayout() {
+        final Dialog addDomainDialog;
+        addDomainDialog = new Dialog();
+        addDomainDialog.getElement().setAttribute("aria-label", "Domain");
+        addDomainDialog.add(createAddDomainLayout(addDomainDialog));
+        addDomainDialog.setModal(false);
+        addDomainDialog.setDraggable(true);
+        return addDomainDialog;
+    }
+
+    private Div createAddDomainButtonDiv() {
+        final Button addEntryButton = new Button("Add Domain");
         addEntryButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        addEntryButton.addClickListener(event -> addCourtDialog.open());
+        addEntryButton.addClickListener(event -> createDomainDialog.open());
         final Div div = new Div();
         div.add(addEntryButton);
         return div;
@@ -172,7 +197,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return edit;
     }
 
-    private VerticalLayout createAddDomainDialog(Dialog dialog) {
+    private VerticalLayout createAddDomainLayout(Dialog dialog) {
         H2 headline = new H2("New Domain");
         headline.getStyle().set("margin", "0").set("font-size", "1.5em")
                 .set("font-weight", "bold");
@@ -194,7 +219,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         TextField configurationSourceField = new TextField("Configuration Source");
         configurationSourceField.setReadOnly(true);
 
-        VerticalLayout fieldLayout = new VerticalLayout(nameField, descriptionField,configurationSourceField);
+        VerticalLayout fieldLayout = new VerticalLayout(nameField, descriptionField, configurationSourceField);
 
         fieldLayout.setSpacing(false);
         fieldLayout.setPadding(false);
@@ -226,7 +251,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
                 domainRepo.createBusinessDomain(binder.getBean());
-                domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+                domainGrid.setItems(domainRepo.getValidBusinessDomainsAllData());
                 dialog.close();
                 binder.setBean(new DomibusConnectorBusinessDomain()); // as mentioned above, this is very important when using the db entities directly.
             }
@@ -244,8 +269,28 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return dialogLayout;
     }
 
+    private HorizontalLayout createValidationInfo(DomibusConnectorBusinessDomain domain) {
+        final HorizontalLayout horizontalLayout = new HorizontalLayout();
+        Span validIcon = new Span(createIcon(VaadinIcon.CHECK),
+                new Span("Confirmed"));
+        validIcon.getElement().getThemeList().add("badge success");
+
+        Span invalidIcon = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O),
+                new Span("Denied"));
+        invalidIcon.getElement().getThemeList().add("badge error");
+
+        horizontalLayout.add(domainRepo.validateDomain(domain.getId()).isValid() ? validIcon : invalidIcon);
+        return horizontalLayout;
+    }
+
+    private Icon createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle().set("padding", "var(--lumo-space-xs");
+        return icon;
+    }
+
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        domainGrid.setItems(domainRepo.getValidBusinessDomains().stream().map(id -> domainRepo.getBusinessDomain(id)).map(Optional::get).collect(Collectors.toList()));
+        domainGrid.setItems(domainRepo.getAllBusinessDomainsAllData());
     }
 }

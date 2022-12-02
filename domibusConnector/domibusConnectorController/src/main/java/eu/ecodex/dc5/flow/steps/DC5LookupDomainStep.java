@@ -29,9 +29,9 @@ public class DC5LookupDomainStep {
 
     @Step(name = "LookupDomainStep")
     public DC5Message lookupDomain(DC5Message msg) {
-        //TODO: implement Business domain matching rules here!
 
-        // 1. Ist eine ReftoMessageID vorhanden -> referenzierte Nachricht raussuchen und derselben Domain zuordnen
+        // 1. If the field refToMsgId exists (either in backend or ebms data) then
+        // -> lookup the referred msg and associate incoming message with that domain.
         final Optional<DC5Message> businessMsgByRefToMsgId = msgService.findBusinessMsgByRefToMsgId(msg);
         if (businessMsgByRefToMsgId.isPresent()) {
             final DomibusConnectorBusinessDomain.BusinessDomainId id = businessMsgByRefToMsgId.get().getBusinessDomainId();
@@ -40,7 +40,8 @@ public class DC5LookupDomainStep {
             return msg;
         }
 
-        // 2. Gibt es bereits Nachrichten mit derselben ConversationID -> Nachricht ist derselben Domain zuzuordnen
+        // 2. If there are messages with the same ConversationID
+        // -> then associate messsage with domain of those messages.
         final List<DC5Message> businessMsgByConversationId = msgService.findBusinessMsgByConversationId(msg.getEbmsData().getConversationId());
         final Optional<DC5Message> any = businessMsgByConversationId.stream().findAny();
         if (any.isPresent()) {
@@ -50,11 +51,12 @@ public class DC5LookupDomainStep {
             return msg;
         }
 
-        // 3. Gibt es DomainRoutingRules die zu dieser Nachricht matchen -> diese anwenden
-        final List<DomibusConnectorBusinessDomain.BusinessDomainId> validBusinessDomains = domainManager.getValidBusinessDomains();
-        for (DomibusConnectorBusinessDomain.BusinessDomainId id : validBusinessDomains) {
+        // 3. If there are domain routing rules
+        // -> they should be applied.
+        final List<DomibusConnectorBusinessDomain> validBusinessDomains = domainManager.getValidBusinessDomainsAllData();
+        for (DomibusConnectorBusinessDomain domain : validBusinessDomains) {
 
-            final List<DomainRoutingRule> collect = dcDomainRoutingManager.getDomainRoutingRules(id)
+            final List<DomainRoutingRule> collect = dcDomainRoutingManager.getDomainRoutingRules(domain.getId())
                     .values()
                     .stream()
                     .sorted(DomainRoutingRule.getComparator())
@@ -62,11 +64,13 @@ public class DC5LookupDomainStep {
                     .collect(Collectors.toList());
 
             if (collect.size() == 1) {
-                msg.setBusinessDomainId(id);
-                LOGGER.debug("Associated msg [{}] with domain [{}] by applying rule [{}]", msg, id, collect.get(0));
+                msg.setBusinessDomainId(domain.getId());
+                LOGGER.debug("Associated msg [{}] with domain [{}] by applying rule [{}]", msg, domain, collect.get(0));
                 return msg;
             } else if (collect.size() > 1) {
-                final String rules = collect.stream().map(DomainRoutingRule::toString).reduce("", (acc, next) -> acc + ", " + next.toString());
+                final String rules = collect.stream()
+                        .map(DomainRoutingRule::toString)
+                        .reduce("", (acc, next) -> acc + ", " + next.toString());
                 throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, String.format("Multiple domain routing rules apply to msg: %s", rules));
             }
         }

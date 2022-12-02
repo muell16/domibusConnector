@@ -67,14 +67,55 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                     .stream()
                     .filter(DomibusConnectorBusinessDomain::isEnabled)
                     .map(DomibusConnectorBusinessDomain::getId)
-                    .filter(id -> this.validateDomain(id).getErrors().isEmpty())
+                    .filter(id -> this.validateDomain(id).isValid())
                     .forEach(b -> collect.add(b));
         }
 
         businessDomainConfigurationProperties.getBusinessDomain()
                 .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
                 .map(DomibusConnectorBusinessDomain::getId)
-                .filter(id -> !this.validateDomain(id).getErrors().isEmpty())
+                .filter(id -> !this.validateDomain(id).isValid())
+                .forEach(b -> {if(!collect.add(b)) {
+                    LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
+                }});
+
+        return new ArrayList<>(collect);
+    }
+
+    @Override
+    public List<DomibusConnectorBusinessDomain> getAllBusinessDomainsAllData() {
+        Set<DomibusConnectorBusinessDomain> collect = new HashSet<>();
+        if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
+            collect.addAll(businessDomainPersistenceService
+                    .findAll());
+        }
+
+        businessDomainConfigurationProperties.getBusinessDomain()
+                .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
+                .forEach(b -> {if(!collect.add(b)) {
+                    LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
+                }});
+
+        //TODO: make sure default BusinessDomain is always returned!
+
+        return new ArrayList<>(collect);
+    }
+
+    @Override
+    public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData() {
+        Set<DomibusConnectorBusinessDomain> collect = new HashSet<>();
+        if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
+            businessDomainPersistenceService
+                    .findAll()
+                    .stream()
+                    .filter(DomibusConnectorBusinessDomain::isEnabled)
+                    .filter(d -> this.validateDomain(d.getId()).isValid())
+                    .forEach(b -> collect.add(b));
+        }
+
+        businessDomainConfigurationProperties.getBusinessDomain()
+                .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
+                .filter(d -> !this.validateDomain(d.getId()).isValid())
                 .forEach(b -> {if(!collect.add(b)) {
                     LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
                 }});
@@ -95,6 +136,13 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                     .findAny();
         }
         return db;
+    }
+
+    @Override
+    public void updateDomain(DomibusConnectorBusinessDomain domain) {
+        businessDomainPersistenceService.findById(domain.getId())
+                .filter(d -> d.getConfigurationSource().equals(ConfigurationSource.DB))
+                .ifPresent(d -> businessDomainPersistenceService.update(domain));
     }
 
     @Override
