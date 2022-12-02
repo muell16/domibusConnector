@@ -20,7 +20,11 @@ public interface DCBusinessDomainManager {
         List<Object> warnings = new ArrayList<>();
 
         @Singular
-        List<Object> errors = new ArrayList<>();;
+        List<Object> errors = new ArrayList<>();
+
+        public boolean isValid() {
+            return errors.isEmpty();
+        }
     }
 
     public static final String BUSINESS_DOMAIN_PROPERTY_PREFIX = "connector.businessDomain";
@@ -33,10 +37,14 @@ public interface DCBusinessDomainManager {
      *  The default domain is always included in this List!
      */
     List<DomibusConnectorBusinessDomain.BusinessDomainId> getAllBusinessDomains();
+    List<DomibusConnectorBusinessDomain> getAllBusinessDomainsAllData();
 
     public List<DomibusConnectorBusinessDomain.BusinessDomainId> getValidBusinessDomains();
+    public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData();
 
     Optional<DomibusConnectorBusinessDomain> getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);
+
+    void updateDomain(DomibusConnectorBusinessDomain domain);
 
     void updateConfig(DomibusConnectorBusinessDomain.BusinessDomainId id, Map<String, String> properties);
 

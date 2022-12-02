@@ -52,7 +52,7 @@ public class UploadPModesOnFirstStart {
 
 
         try {
-            if (!dcBusinessDomainManager.getValidBusinessDomains().contains(businessDomainName)) {
+            if (!dcBusinessDomainManager.getValidBusinessDomainsAllData().contains(businessDomainName)) {
                 final DomibusConnectorBusinessDomain businessDomain = new DomibusConnectorBusinessDomain();
                 final DomibusConnectorBusinessDomain.BusinessDomainId id = new DomibusConnectorBusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName());
                 businessDomain.setId(id);
