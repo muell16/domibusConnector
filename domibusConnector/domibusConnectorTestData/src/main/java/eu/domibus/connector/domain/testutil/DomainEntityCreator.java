@@ -514,6 +514,8 @@ public class DomainEntityCreator {
 
     public static DC5Message createIncomingEpoFormAMessage() {
         return DC5Message.builder()
+                .source(MessageTargetSource.GATEWAY)
+                .target(MessageTargetSource.BACKEND)
                 .ebmsData(DC5Ebms.builder()
                         .ebmsMessageId(EbmsMessageId.ofRandom())
                         .service(createServiceEPO())

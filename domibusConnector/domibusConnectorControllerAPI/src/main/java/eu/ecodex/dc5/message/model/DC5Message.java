@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * finished.
  * @author riederb
  */
-@Validated
+@Valid
 @Entity
 
 @Getter
@@ -69,11 +69,11 @@ public class DC5Message implements Serializable {
 	private DC5BackendData backendData = new DC5BackendData();
 
 	@Convert(converter = MessageTargetSourceConverter.class)
-	@NotNull
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction target!")
 	private MessageTargetSource target;
 
 	@Convert(converter = MessageTargetSourceConverter.class)
-	@NotNull
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction source!")
 	private MessageTargetSource source;
 
 	@CheckForNull

@@ -102,18 +102,29 @@ public class SubmitConfirmationAsEvidenceMessageStep {
             DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
             DC5Action evidenceAction = confirmationCreator.createEvidenceAction(evidenceType);
 
-            DC5Ebms.DC5EbmsBuilder ebmsDataBuilder = businessMessage.getEbmsData().toBuilder();
-            ebmsDataBuilder.refToEbmsMessageId(businessMessage.getEbmsData().getEbmsMessageId());
+            DC5Ebms.DC5EbmsBuilder ebmsDataBuilder;
+            if (businessMessage.getEbmsData() != null) {
+                ebmsDataBuilder = businessMessage.getEbmsData().toBuilder();
+                ebmsDataBuilder.refToEbmsMessageId(businessMessage.getEbmsData().getEbmsMessageId());
+            } else {
+                ebmsDataBuilder = DC5Ebms.builder();
+            }
             ebmsDataBuilder.id(null);
             ebmsDataBuilder.ebmsMessageId(null);
             ebmsDataBuilder.conversationId(null);
             ebmsDataBuilder.action(evidenceAction);
 
-            DC5BackendData.DC5BackendDataBuilder dc5BackendDataBuilder = businessMessage.getBackendData().toBuilder()
-                .backendConversationId(null)
+            DC5BackendData.DC5BackendDataBuilder dc5BackendDataBuilder;
+            if (businessMessage.getBackendData() != null) {
+                dc5BackendDataBuilder = businessMessage.getBackendData().toBuilder();
+                dc5BackendDataBuilder.refToBackendMessageId(businessMessage.getBackendData().getBackendMessageId());
+            } else {
+                dc5BackendDataBuilder = DC5BackendData.builder();
+
+            }
+            dc5BackendDataBuilder.backendConversationId(null)
                 .id(null)
-                .backendMessageId(null)
-                .refToBackendMessageId(businessMessage.getBackendData().getBackendMessageId());
+                .backendMessageId(null);
 
             DC5Message.DC5MessageBuilder msgBuilder = DC5Message.builder()
                     .id(null)

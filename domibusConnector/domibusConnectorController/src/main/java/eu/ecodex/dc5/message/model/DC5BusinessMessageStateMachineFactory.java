@@ -27,7 +27,7 @@ public class DC5BusinessMessageStateMachineFactory {
         this.stateTransitionChecker = StateTransitionChecker.<DC5BusinessMessageState.BusinessMessagesStates, DC5BusinessMessageState.BusinessMessageEvents>builder()
                 .initialState(CREATED)
                 .transition(CREATED, SUBMITTED, SUBMISSION_ACCEPTANCE_RCV)
-                .transition(SUBMITTED, RELAYED, SUBMISSION_ACCEPTANCE_RCV)
+                .transition(SUBMITTED, RELAYED, RELAY_REMMD_ACCEPTANCE_RCV)
                 .transition(SUBMITTED, REJECTED, RELAY_REMMD_FAILURE_RCV)
                 .transition(SUBMITTED, REJECTED, RELAY_REMMD_REJECTION_RCV)
                 .transition(CREATED, REJECTED, SUBMISSION_REJECTION_RCV)
@@ -37,7 +37,7 @@ public class DC5BusinessMessageStateMachineFactory {
                 .transition(RELAYED, DELIVERED, DELIVERY_RCV)
                 .transition(DELIVERED, RETRIEVED, RETRIEVAL_RCV)
 //                .throwOnTransition()
-                .throwOnNotAllowedTransition((s, e) -> new DCEvidenceProcessingException(ErrorCode.EVIDENCE_IGNORED, String.format("Cannot move with event [%s] from current state [%s]", s, e)))
+                .throwOnNotAllowedTransition((state, event) -> new DCEvidenceProcessingException(ErrorCode.EVIDENCE_IGNORED, String.format("Cannot move with event [%s] from current state [%s]", event, state)))
                 .build();
     }
 
