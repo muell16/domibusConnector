@@ -176,8 +176,8 @@ class LookupBackendNameStepTest {
 //        final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
         final DC5Message message = DomainEntityCreator.createMessage();
-        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
-        message.getEbmsData().setService(new DC5Service("Connector-TEST", "urn:e-codex:services:"));
+        message.getEbmsData().setAction(DC5Action.builder().action("ConTest_Form").build());
+        message.getEbmsData().setService(DC5Service.builder().service("Connector-TEST").serviceType("urn:e-codex:services:").build());
 
         // Act
 //        sut.executeStep(message);
@@ -215,8 +215,8 @@ class LookupBackendNameStepTest {
 //        final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
 
         final DC5Message message = DomainEntityCreator.createMessage();
-        message.getEbmsData().setAction(new DC5Action("ConTest_Form"));
-        message.getEbmsData().setService(new DC5Service("Connector-TEST", "urn:e-codex:services:"));
+        message.getEbmsData().setAction(DC5Action.builder().action("ConTest_Form").build());
+        message.getEbmsData().setService(DC5Service.builder().service("Connector-TEST").serviceType("urn:e-codex:services:").build());
 
         // Act
 //        sut.executeStep(message);

@@ -11,11 +11,10 @@ public class ServiceMapper {
 	public DC5Service mapServiceToDomain(@Nullable PDomibusConnectorService persistenceService) {
         if (persistenceService != null) {
             DC5Service service
-                    = new DC5Service(
-                    persistenceService.getService(),
-                    persistenceService.getServiceType()
-            );
-//            service.setDbKey(persistenceService.getId());
+                    = DC5Service.builder().service(
+                    persistenceService.getService()).serviceType(
+                    persistenceService.getServiceType()).build();
+
             return service;
         }
         return null;

@@ -11,12 +11,14 @@ import java.util.Optional;
 @Builder(toBuilder = true)
 public class MessageTransportEvent {
 
+    @NonNull
     private final long id; //message
     @NonNull
     private final String linkName;
 
     private final long transportId; // transport id
 
+    @NonNull
     private TransportState state;
 
     private final Optional<String> remoteTransportId = Optional.empty();

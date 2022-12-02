@@ -4,18 +4,18 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
-import io.micrometer.core.lang.NonNullApi;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-@NonNullApi
 public class FindBusinessMessageByMsgId {
 
     private static final Logger LOGGER = LogManager.getLogger(FindBusinessMessageByMsgId.class);

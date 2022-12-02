@@ -10,6 +10,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 
+import javax.annotation.CheckForNull;
 import java.util.List;
 
 /**
@@ -47,7 +48,8 @@ public interface DomibusConnectorEvidencesToolkit {
 		@NonNull private final String nationalMessageId;
 		@NonNull private final String ebmsMessageId;
 		@NonNull private final List<Evidence> relatedEvidences;
-		@NonNull
+
+		@CheckForNull
 		private final DomibusConnectorEvidencesToolkit.HashValue businessDocumentHash;
 
 		@Builder(toBuilder = true)
@@ -59,13 +61,16 @@ public interface DomibusConnectorEvidencesToolkit {
 						  HashValue businessDocumentHash) {
 			this.senderAddress = checkNotNullOrBlank("senderAddress", senderAddress);
 			this.recipientAddress = checkNotNullOrBlank("recipienAddress", recipientAddress);
-			this.nationalMessageId = checkNotNullOrBlank("nationalMessageId", nationalMessageId);
-			this.ebmsMessageId = checkNotNullOrBlank("ebmsMessageId", ebmsMessageId);
+			this.nationalMessageId = nationalMessageId; //checkNotNullOrBlank("nationalMessageId", nationalMessageId);
+			this.ebmsMessageId = ebmsMessageId; //checkNotNullOrBlank("ebmsMessageId", ebmsMessageId);
+			if (StringUtils.isBlank(ebmsMessageId) && StringUtils.isBlank(nationalMessageId)) {
+				throw new IllegalArgumentException("Either national or ebms message id must be set!");
+			}
 			if (relatedEvidences == null) {
 				throw new IllegalArgumentException("relatedEvidences is null!");
 			}
 			this.relatedEvidences = relatedEvidences;
-			if (businessDocumentHash == null) {
+			if (businessDocumentHash == null && relatedEvidences.isEmpty()) {
 				throw new IllegalArgumentException("businessDocumentHash is null!");
 			}
 			this.businessDocumentHash = businessDocumentHash;

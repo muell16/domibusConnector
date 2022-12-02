@@ -2,6 +2,7 @@ package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
@@ -82,6 +83,8 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 //        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
         DC5Message evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
 //        submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
+//        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), )
+
     }
 
 

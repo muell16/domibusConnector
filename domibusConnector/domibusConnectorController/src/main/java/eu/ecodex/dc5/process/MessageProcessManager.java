@@ -22,7 +22,7 @@ public class MessageProcessManager {
 
     public MessageProcessManager(DC5MsgProcessRepo msgProcessRepo) {
         this.msgProcessRepo = msgProcessRepo;
-        this.messageIdGenerator = () -> new DomibusConnectorMessageId(UUID.randomUUID().toString());
+        this.messageIdGenerator = () -> DomibusConnectorMessageId.ofString(UUID.randomUUID().toString());
     }
 
 //    public static MessageProcessId getCurrentProcessId() {

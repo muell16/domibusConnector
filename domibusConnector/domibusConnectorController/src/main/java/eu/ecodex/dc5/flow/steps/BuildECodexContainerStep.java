@@ -1,5 +1,6 @@
-package eu.domibus.connector.controller.processor.steps;
+package eu.ecodex.dc5.flow.steps;
 
+import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;

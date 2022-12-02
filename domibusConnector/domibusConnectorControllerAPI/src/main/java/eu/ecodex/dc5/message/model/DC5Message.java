@@ -13,6 +13,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
+import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
+import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
@@ -55,13 +57,15 @@ public class DC5Message implements Serializable {
 	private DomibusConnectorMessageId connectorMessageId;
 
 	@Valid
-	@NotNull
-	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have EBMS data!")
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+	@CheckForNull
 	private DC5Ebms ebmsData = new DC5Ebms();
 
 	@Valid
-	@NotNull
-	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, optional = false)
+//	@NotNull
+	@CheckForNull
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	private DC5BackendData backendData = new DC5BackendData();
 
 	@Convert(converter = MessageTargetSourceConverter.class)
@@ -80,6 +84,7 @@ public class DC5Message implements Serializable {
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@CheckForNull
+	@NotNull(groups = IncomingBusinessMesssageRules.class, message = "A incoming business message must have a message content")
 	private DC5MessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message

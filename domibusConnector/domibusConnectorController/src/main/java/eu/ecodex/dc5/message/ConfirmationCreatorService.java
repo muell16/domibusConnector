@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class ConfirmationCreatorService {
@@ -91,16 +93,34 @@ public class ConfirmationCreatorService {
     }
 
     public static DomibusConnectorEvidencesToolkit.MessageParameters toMessageParams(DC5Message originalMessage) {
-        return DomibusConnectorEvidencesToolkit.MessageParameters.builder()
-                .ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId())
-                .nationalMessageId(originalMessage.getBackendData().getBackendMessageId().toString())
-                .businessDocumentHash(DomibusConnectorEvidencesToolkit.HashValue.builder()
+        DomibusConnectorEvidencesToolkit.MessageParameters.MessageParametersBuilder builder = DomibusConnectorEvidencesToolkit.MessageParameters.builder();
+        if (originalMessage.getEbmsData() != null && originalMessage.getEbmsData().getEbmsMessageId() != null) {
+            builder = builder.ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId())
+                    .senderAddress(originalMessage.getEbmsData().getSender().getEcxAddress())
+                    .recipientAddress(originalMessage.getEbmsData().getReceiver().getEcxAddress());
+
+        }
+        if (originalMessage.getBackendData() != null && originalMessage.getBackendData().getBackendMessageId() != null) {
+            builder = builder.nationalMessageId(originalMessage.getBackendData().getBackendMessageId().toString());
+        }
+        if (originalMessage.getMessageContent() != null && originalMessage.getMessageContent().getBusinessContent() != null) {
+             builder = builder.businessDocumentHash(DomibusConnectorEvidencesToolkit.HashValue.builder()
                         .hash(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHash())
-                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHash())
-                        .build())
-                .recipientAddress(originalMessage.getEbmsData().getReceiver().getEcxAddress())
-                .senderAddress(originalMessage.getEbmsData().getSender().getEcxAddress())
-                .build();
+                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHashAlgorithm())
+                     .build());
+        }
+        if (originalMessage.getMessageContent() != null) {
+            builder.relatedEvidences(originalMessage.getMessageContent().getRelatedConfirmations()
+                    .stream()
+                    .map(c ->
+                        DomibusConnectorEvidencesToolkit.Evidence.builder()
+                                .type(c.getEvidenceType())
+                                .evidence(c.getEvidence())
+                                .build())
+                    .collect(Collectors.toList()));
+        }
+
+        return builder.build();
     }
 
 

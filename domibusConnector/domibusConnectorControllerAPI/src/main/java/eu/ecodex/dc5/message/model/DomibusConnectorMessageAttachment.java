@@ -28,7 +28,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class DomibusConnectorMessageAttachment implements Serializable {
+public class DomibusConnectorMessageAttachment {
 
 	@GeneratedValue
 	@Id
@@ -46,7 +46,11 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 
 	private String storageReference;
 
+	@NonNull
 	private String hash;
+
+	@NonNull
+	private String hashAlgorithm;
 
 	private long size = -1;
 

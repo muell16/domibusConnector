@@ -1,9 +1,7 @@
-package eu.domibus.connector.controller.processor.steps;
+package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
-import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -18,15 +16,13 @@ public class VerifyPModesStep {
 //    private final DomibusConnectorPModeService pModeService;
     private final ConnectorMessageProcessingProperties connectorMessageProcessingProperties;
 
-
-
-    private boolean executeStep(DC5Message DC5Message,
-                                ConnectorMessageProcessingProperties.PModeVerificationMode verificationMode) {
-        LOGGER.debug("Verifying PModes with verification mode [{}]", verificationMode);
-        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DC5Message.getMessageLaneId();
-        DC5Ebms messageDetails = DC5Message.getEbmsData();
-
-        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.RELAXED) {
+//    private boolean executeStep(DC5Message DC5Message,
+//                                ConnectorMessageProcessingProperties.PModeVerificationMode verificationMode) {
+//        LOGGER.debug("Verifying PModes with verification mode [{}]", verificationMode);
+//        DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DC5Message.getMessageLaneId();
+//        DC5Ebms messageDetails = DC5Message.getEbmsData();
+//
+//        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.RELAXED) {
 
 //            Optional<DC5Action> action = pModeService.getConfiguredSingle(businessDomainId, messageDetails.getAction());
 //            if (action.isPresent()) {
@@ -82,37 +78,43 @@ public class VerifyPModesStep {
 //                //TODO: improve exception
 //                throw new RuntimeException("error, party not configured:" + messageDetails.getFromParty());
 //            }
-        }
-        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE) {
-            LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE + " is not supported!");
-        }
-        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT) {
-            LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT + " is experimental feature!");
-        }
+//        }
+//        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE) {
+//            LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.CREATE + " is not supported!");
+//        }
+//        if (verificationMode == ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT) {
+//            LOGGER.warn("PMode verification mode " + ConnectorMessageProcessingProperties.PModeVerificationMode.STRICT + " is experimental feature!");
+//        }
+//
+//        return true;
+//    }
 
-        return true;
-    }
 
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
-    public void verifyOutgoing(DC5Message message) {
+
+    @Step(name = "VerifyPModesOutgoing")
+    public DC5Message verifyOutgoing(DC5Message message) {
+        LOGGER.warn("NOT IMPLEMENTED YET!!!!!");
 //        if (message.getEbmsData().getFromParty().getRoleType() == null) {
 //            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
 //        }
 //        if (message.getEbmsData().getToParty().getRoleType() == null) {
 //            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
 //        }
-        executeStep(message, connectorMessageProcessingProperties.getOutgoingPModeVerificationMode());
+//        executeStep(message, connectorMessageProcessingProperties.getOutgoingPModeVerificationMode());
+        return message;
     }
 
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
-    public void verifyIncoming(DC5Message message) {
+    @Step(name = "VerifyPModesIncoming")
+    public DC5Message verifyIncoming(DC5Message message) {
+        LOGGER.warn("NOT IMPLEMENTED YET!!!!!");
 //        if (message.getEbmsData().getFromParty().getRoleType() == null) {
 //            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
 //        }
 //        if (message.getEbmsData().getToParty().getRoleType() == null) {
 //            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
 //        }
-        executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
+//        executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
+        return message;
     }
 
 }

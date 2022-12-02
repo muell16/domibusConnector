@@ -23,6 +23,8 @@ public class NewMessageStoredFlow {
     private final ConfirmationMessageFlow confirmationMessageFlow;
     private final ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 
+    private final ToGatewayBusinessMessageProcessor outgoingBusinessMessageFlow;
+
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleNewMessageStoredEvent(NewMessageStoredEvent newMessageStoredEvent) {
         processManager.startProcess();
@@ -31,17 +33,20 @@ public class NewMessageStoredFlow {
             String error = String.format("Unable to find message with id [%s] in MessageRepository", newMessageStoredEvent.getMessageId());
             throw new IllegalStateException(error);
         }
-        DC5Message msg = byId.get();
 
+        DC5Message msg = byId.get();
         msg = lookupDomainStep.lookupDomain(msg);
 
         if (MessageModelHelper.isEvidenceTriggerMessage(msg) || MessageModelHelper.isEvidenceMessage(msg)) {
             confirmationMessageFlow.processMessage(msg);
+        } else if (DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND.equals(msg.getDirection() )) {
+            processIncomingBusinessMessageFlow.processMessage(msg);
+        } else if (DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY.equals(msg.getDirection())) {
+            outgoingBusinessMessageFlow.processMessage(msg);
+        } else {
+            throw new IllegalArgumentException("Message cannot be processed!");
         }
 
-        if (DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND.equals(msg.getDirection() )) {
-            processIncomingBusinessMessageFlow.processMessage(msg);
-        }
         //if message is a business message to backend
         //run gateway2backend flow
 

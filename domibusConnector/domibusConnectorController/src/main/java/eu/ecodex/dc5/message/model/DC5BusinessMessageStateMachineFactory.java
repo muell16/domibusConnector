@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.ecodex.dc5.statemachine.StateTransitionChecker;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,7 @@ public class DC5BusinessMessageStateMachineFactory {
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public class DC5BusinessMessageStateMachine {
 
+        @NonNull
         private final DC5BusinessMessageState currentState;
 
         public DC5BusinessMessageState publishEvent(DC5BusinessMessageState.BusinessMessageEvents event, DC5Confirmation dc5Confirmation) {

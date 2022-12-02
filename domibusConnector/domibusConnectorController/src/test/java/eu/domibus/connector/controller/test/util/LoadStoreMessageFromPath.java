@@ -475,7 +475,7 @@ public class LoadStoreMessageFromPath {
     private DC5Ebms loadMessageDetailsFromProperties() {
 
         return DC5Ebms.builder()
-                .action(new DC5Action(messageProperties.getProperty("action")))
+                .action(DC5Action.builder().action(messageProperties.getProperty("action")).build())
                 .service(DC5Service.builder()
                                         .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
                                         .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))

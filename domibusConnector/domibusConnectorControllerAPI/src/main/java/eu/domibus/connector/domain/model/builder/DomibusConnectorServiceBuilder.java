@@ -32,7 +32,7 @@ public final class DomibusConnectorServiceBuilder {
         if (service == null) {
             throw new IllegalArgumentException("Service must be set!");
         }
-        return new DC5Service(service, serviceType);
+        return DC5Service.builder().service(service).serviceType(serviceType).build();
     }
 
     public DomibusConnectorServiceBuilder copyPropertiesFrom(DC5Service service) {

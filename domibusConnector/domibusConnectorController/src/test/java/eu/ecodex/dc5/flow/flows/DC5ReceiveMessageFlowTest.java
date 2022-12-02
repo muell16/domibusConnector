@@ -1,8 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.common.service.DCBusinessDomainManager;
-import eu.domibus.connector.controller.processor.steps.VerifyPModesStep;
-import eu.domibus.connector.controller.service.SubmitToLinkService;
+import eu.ecodex.dc5.flow.steps.VerifyPModesStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
@@ -32,8 +31,8 @@ class DC5ReceiveMessageFlowTest {
     @MockBean
     VerifyPModesStep verifyPModesStep; //TODO: finish step!!!
 
-    @MockBean
-    SubmitToLinkService submitToLinkService; //TODO: remove mock!
+//    @MockBean
+//    SubmitToLinkService submitToLinkService; //TODO: remove mock!
 
     @Autowired
     ReceiveMessageFlow receiveMessageFlow;
@@ -65,7 +64,7 @@ class DC5ReceiveMessageFlowTest {
         @Override
         public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
             DC5Message m = DomainEntityCreator.createOutgoingEpoFormAMessage();
-            m.getEbmsData().setAction(new DC5Action(null));
+//            m.getEbmsData().setAction(DC5Action.builder().action("").build());
             return m;
         }
     };

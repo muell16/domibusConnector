@@ -53,7 +53,7 @@ public class LinkPartnerRoutingRuleEvaluationTest {
     private static DC5Message getMessage1() {
         return DC5Message.builder()
                 .ebmsData(DC5Ebms.builder()
-                        .action(new DC5Action("OtherAction"))
+                        .action(DC5Action.builder().action("OtherAction").build())
                         .service(DC5Service.builder()
                                 .service("EPO_SERVICE")
                                 .serviceType("urn:e-codex:services:")
@@ -70,7 +70,7 @@ public class LinkPartnerRoutingRuleEvaluationTest {
     private static DC5Message getMessage2() {
         return DC5Message.builder()
                 .ebmsData(DC5Ebms.builder()
-                        .action(new DC5Action("ConTest_Form"))
+                        .action(DC5Action.builder().action("ConTest_Form").build())
                         .service(DC5Service.builder()
                                 .service("Connector-TEST")
                                 .serviceType("urn:e-codex:services:")
