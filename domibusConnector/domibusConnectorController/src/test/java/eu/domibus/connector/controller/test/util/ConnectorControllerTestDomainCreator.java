@@ -23,21 +23,18 @@ public class ConnectorControllerTestDomainCreator {
     }
     
     public static DC5Action createActionForm_A() {
-        DC5Action a = new DC5Action("Form_A");
+        DC5Action a = DC5Action.builder().action("Form_A").build();
 //        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);
         return a;                
     }
     
     public static DC5Action createActionRelayREMMDAcceptanceRejection() {
-        DC5Action a = new DC5Action("RelayREMMDAcceptanceRejection");
+        DC5Action a = DC5Action.builder().action("RelayREMMDAcceptanceRejection").build();
 //        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection", true); 
         return a;
     }
     
-    public static DC5Service createServiceEPO() {
-        DC5Service s = new DC5Service("EPO", "urn:e-codex:services:");
-        return s;
-    }
+
     
     public static DC5Confirmation createMessageDeliveryConfirmation() {
         DC5Confirmation confirmation = new DC5Confirmation();

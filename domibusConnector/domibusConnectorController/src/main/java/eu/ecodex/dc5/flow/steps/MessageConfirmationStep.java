@@ -50,12 +50,11 @@ public class MessageConfirmationStep {
                 throw new IllegalArgumentException("message must be a business message!");
             }
 
-            LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), businessMessage.getConnectorMessageId());
-            businessMessage.getTransportedMessageConfirmations().add(confirmation);
+//            LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), businessMessage.getConnectorMessageId());
+//            businessMessage.getTransportedMessageConfirmations().add(confirmation);
+//
+//            businessMessage.getMessageContent().getRelatedConfirmations().add(confirmation);
 
-            businessMessage.getMessageContent().getRelatedConfirmations().add(confirmation);
-
-// TODO: change message state!
             this.confirmRejectMessage(confirmation, businessMessage.getMessageContent());
         } catch (DuplicateEvidencePersistenceException e) {
             throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_DUPLICATE, e);

@@ -114,7 +114,9 @@ public class EvidenceActionServiceConfigurationProperties {
         }
 
         public DC5Action getConnectorAction() {
-            return new DC5Action(this.action);
+            return DC5Action.builder()
+                    .action(this.action)
+                    .build();
         }
     }
 
@@ -156,7 +158,7 @@ public class EvidenceActionServiceConfigurationProperties {
         }
 
         public DC5Service getConnectorService() {
-            return new DC5Service(this.name, this.serviceType);
+            return DC5Service.builder().service(this.name).serviceType(this.serviceType).build();
         }
     }
 

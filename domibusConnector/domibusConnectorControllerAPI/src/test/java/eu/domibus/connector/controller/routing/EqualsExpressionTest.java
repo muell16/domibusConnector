@@ -16,7 +16,7 @@ class EqualsExpressionTest {
 
         DC5Message message = new DC5Message();
         message.setEbmsData(new DC5Ebms());
-        message.getEbmsData().setAction(new DC5Action(ACTION));
+        message.getEbmsData().setAction(DC5Action.builder().action(ACTION).build());
 
         boolean result = equalsExpression.evaluate(message);
         assertThat(result).isTrue();
@@ -29,7 +29,7 @@ class EqualsExpressionTest {
 
         DC5Message message = new DC5Message();
         message.setEbmsData(new DC5Ebms());
-        message.getEbmsData().setAction(new DC5Action("OtherAction"));
+        message.getEbmsData().setAction(DC5Action.builder().action("OtherAction").build());
 
         boolean result = equalsExpression.evaluate(message);
         assertThat(result).isFalse();

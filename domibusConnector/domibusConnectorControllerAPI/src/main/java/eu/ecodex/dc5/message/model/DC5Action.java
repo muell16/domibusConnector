@@ -1,13 +1,10 @@
 package eu.ecodex.dc5.message.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import eu.ecodex.dc5.message.validation.IncomingMessageRules;
+import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -16,17 +13,24 @@ import javax.validation.constraints.NotNull;
  * @author riederb
  * @version 1.0
  */
-@Embeddable
-
+//@Embeddable
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class DC5Action {
+
+	@Id
+	@GeneratedValue
+	private Long id = null;
 
 	@NotNull
 	@NotBlank
 	@Column(nullable=false)
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS Action")
+	@NotBlank(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS Action")
 	private String action;
 
 	public String getAction(){

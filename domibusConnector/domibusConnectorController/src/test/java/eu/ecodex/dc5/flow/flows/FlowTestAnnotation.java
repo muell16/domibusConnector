@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 
 @AutoConfigureTestDatabase
 @SpringBootTest(classes = eu.ecodex.dc5.DC5FlowModule.class)
-@ActiveProfiles("small")
+@ActiveProfiles({"small", "flow-test"})
 public @interface FlowTestAnnotation {
 }

@@ -13,7 +13,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesServiceName() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "serviceType");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("serviceType").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(ServiceName, 'serviceName')");
@@ -23,7 +23,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesStartWithServiceName() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "serviceType");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("serviceType").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'serv')");
@@ -33,7 +33,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesStartWithServiceName_noMatch() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "serviceType");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("serviceType").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("startswith(ServiceName, 'aserv')");
@@ -43,7 +43,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesServiceName_shouldFail() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "serviceType");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("serviceType").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(ServiceName, 'service')");
@@ -53,7 +53,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesServiceName_withAnd() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "s:ervice-Type");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("s:ervice-Type").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("&(equals(ServiceName, 'serviceName'),equals(ServiceType, 's:ervice-Type'))");
@@ -63,7 +63,7 @@ public class LinkPartnerRoutingRulePatternTest {
     @Test
     void matchesServiceName_withOr() {
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Service service = new DC5Service("serviceName", "serviceType");
+        DC5Service service = DC5Service.builder().service("serviceName").serviceType("serviceType").build();
         epoMessage.getEbmsData().setService(service);
 
         RoutingRulePattern pattern = new RoutingRulePattern("|(equals(ServiceName, 'serviceName'),equals(ServiceName, 'serName'))");
@@ -74,7 +74,7 @@ public class LinkPartnerRoutingRulePatternTest {
     public void testAction() {
 
         DC5Message epoMessage = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        DC5Action action = new DC5Action("Connector-TEST");
+        DC5Action action = DC5Action.builder().action("Connector-TEST").build();
         epoMessage.getEbmsData().setAction(action);
 
         RoutingRulePattern pattern = new RoutingRulePattern("equals(Action, 'Connector-TEST')");

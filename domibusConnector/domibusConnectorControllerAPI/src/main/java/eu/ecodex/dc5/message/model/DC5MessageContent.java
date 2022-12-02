@@ -2,11 +2,14 @@ package eu.ecodex.dc5.message.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -36,6 +39,7 @@ public class DC5MessageContent {
 	public long id;
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@NotNull(groups = IncomingBusinessMesssageRules.class, message = "A incoming business message must have a ecodex content")
 	private DC5EcodexContent ecodexContent;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -44,13 +48,23 @@ public class DC5MessageContent {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@NonNull
-	@Builder.Default
-	private List<DC5Confirmation> relatedConfirmations = new ArrayList<>();
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@NonNull
+//	@Builder.Default
+//	private List<DC5Confirmation> relatedConfirmations = new ArrayList<>();
 
 	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BusinessMessageState currentState;
+
+	@PrePersist
+	public void prePersist() {
+		if (currentState == null) {
+			currentState = DC5BusinessMessageState.builder()
+					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
+					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
+					.build();
+		}
+	}
 
 	@Override
     public String toString() {
@@ -69,6 +83,11 @@ public class DC5MessageContent {
 		}
 	}
 
+	public List<DC5Confirmation> getRelatedConfirmations() {
+		return this.messageStates.stream()
+				.map(DC5BusinessMessageState::getConfirmation)
+				.collect(Collectors.toList());
+	}
 
 
 }

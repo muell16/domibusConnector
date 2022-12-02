@@ -38,7 +38,8 @@ import java.lang.annotation.*;
         "eu.domibus.connector.controller.routing",
         "eu.domibus.connector.evidences",
         "eu.domibus.connector.controller.spring",
-        "eu.domibus.connector.link"
+        "eu.domibus.connector.link",
+        "eu.domibus.connector.lib"
 })
 public @interface EnableDC5 {
 

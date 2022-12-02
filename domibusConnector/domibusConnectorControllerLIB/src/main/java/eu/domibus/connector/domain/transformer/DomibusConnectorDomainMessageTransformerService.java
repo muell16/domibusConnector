@@ -583,14 +583,13 @@ public class DomibusConnectorDomainMessageTransformerService {
         DomibusConnectorActionType actionTO = messageDetailsTO.getAction();
 
         DC5Action action =
-//                new DomibusConnectorAction(actionTO.getAction(), true); //default mapping is assumed true!
-        		new DC5Action(actionTO.getAction());
+                DC5Action.builder().action(actionTO.getAction()).build();
         messageDetails.setAction(action);
 
         //map service
         DomibusConnectorServiceType serviceTO = messageDetailsTO.getService();
         DC5Service service =
-                new DC5Service(serviceTO.getService(), serviceTO.getServiceType());
+                DC5Service.builder().service(serviceTO.getService()).serviceType(serviceTO.getServiceType()).build();
         messageDetails.setService(service);
 
         //map partyTO

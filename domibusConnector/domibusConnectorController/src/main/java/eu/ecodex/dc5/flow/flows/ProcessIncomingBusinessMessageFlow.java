@@ -1,19 +1,21 @@
 package eu.ecodex.dc5.flow.flows;
 
 
-import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
-import eu.domibus.connector.controller.processor.steps.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
+import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
+import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
@@ -23,12 +25,18 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static eu.ecodex.dc5.message.ConfirmationCreatorService.toDC5Confirmation;
 import static eu.ecodex.dc5.message.ConfirmationCreatorService.toMessageParams;
 
 @Component(ProcessIncomingBusinessMessageFlow.GW_TO_BACKEND_MESSAGE_PROCESSOR)
 @RequiredArgsConstructor
-public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessageProcessor {
+public class ProcessIncomingBusinessMessageFlow {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessIncomingBusinessMessageFlow.class);
 
@@ -37,16 +45,26 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 	private final DomibusConnectorEvidencesToolkit evidencesToolkit;
 	private final MessageConfirmationStep messageConfirmationStep;
 	private final ResolveECodexContainerStep resolveECodexContainerStep;
-//	private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
-	private final SubmitMessageToLinkStep submitMessageToLinkStep;
 	private final LookupBackendNameStep lookupBackendNameStep;
 	private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
 	private final VerifyPModesStep verifyPModesStep;
+	private final ApplicationEventPublisher eventPublisher;
+
+	private final Validator validator;
 
 
-	@Override
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(final DC5Message incomingMessage) {
+		Set<ConstraintViolation<DC5Message>> validate = validator.validate(incomingMessage, IncomingMessageRules.class, IncomingBusinessMesssageRules.class);
+
+		if (!validate.isEmpty()) {
+			throw new IllegalArgumentException("Message is not valid due: " + validate
+					.stream()
+					.map(ConstraintViolation::getMessage)
+					.collect(Collectors.joining("\n")));
+		}
+
+
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId())) {
 
 			//verify pModes
@@ -74,17 +92,20 @@ public class ProcessIncomingBusinessMessageFlow implements DomibusConnectorMessa
 //			submitMessageToLinkStep.submitMessage(incomingMessage);
 			// TODO: !!
 
-			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",
-					incomingMessage.getEbmsData().getEbmsMessageId(),
-					incomingMessage.getBackendLinkName()
-			);
+//			LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] on to Link Queue",
+//					incomingMessage.getEbmsData().getEbmsMessageId(),
+//					incomingMessage.getBackendLinkName()
+//			);
+//			return incomingMessage;
+			MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(incomingMessage.getId(), incomingMessage.getBackendLinkName());
+			eventPublisher.publishEvent(messageReadyForTransportEvent); //publish message
 
 		} catch (DomibusConnectorSecurityException e) {
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
 			DC5Confirmation negativeEvidence = createNonDeliveryEvidence(incomingMessage);
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
-//			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
+			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
 			LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
 					incomingMessage.getEbmsData().getEbmsMessageId(),
 					incomingMessage.getBackendLinkName()

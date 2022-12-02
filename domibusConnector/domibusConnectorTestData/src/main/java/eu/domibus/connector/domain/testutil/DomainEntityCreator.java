@@ -25,6 +25,36 @@ import java.util.Date;
  */
 public class DomainEntityCreator {
 
+    public static DC5EcxAddress defaultSender() {
+        return DC5EcxAddress.builder()
+                .party(defaultSenderParty())
+                .role(DC5Role.builder().role("urn:e-codex:role:initiator").roleType(DC5RoleType.INITIATOR).build())
+                .ecxAddress("sender")
+                .build();
+    }
+
+    public static DC5EcxAddress defaultRecipient() {
+        return DC5EcxAddress.builder()
+                .party(defaultRecipientParty())
+                .role(DC5Role.builder().role("urn:e-codex:role:responder").roleType(DC5RoleType.RESPONDER).build())
+                .ecxAddress("recipient")
+                .build();
+    }
+
+    public static DC5Party defaultSenderParty() {
+        return DC5Party.builder()
+                .partyId("gw01")
+                .partyIdType("urn:e-codex:services:party")
+                .build();
+    }
+
+    public static DC5Party defaultRecipientParty() {
+        return DC5Party.builder()
+                .partyId("gw02")
+                .partyIdType("urn:e-codex:services:party")
+                .build();
+    }
+
     public static DomibusConnectorParty createPartyATasInitiator() {
         DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
         p.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
@@ -43,25 +73,19 @@ public class DomainEntityCreator {
     }
 
     public static DomibusConnectorParty createPartyDomibusBlue() {
-        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-        return p;
+        return new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
     }
     
     public static DC5Action createActionForm_A() {
-        DC5Action a = new DC5Action("Form_A");
-//        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);
-        return a;                
+        return DC5Action.builder().action("Form_A").build();
     }
     
     public static DC5Action createActionRelayREMMDAcceptanceRejection() {
-        DC5Action a = new DC5Action("RelayREMMDAcceptanceRejection");
-//        DomibusConnectorAction a = new DomibusConnectorAction("RelayREMMDAcceptanceRejection", true);
-        return a;
+        return DC5Action.builder().action("RelayREMMDAcceptanceRejection").build();
     }
     
     public static DC5Service createServiceEPO() {
-        DC5Service s = new DC5Service("EPO", "urn:e-codex:services:");
-        return s;
+        return DC5Service.builder().service("EPO").serviceType("urn:e-codex:services:").build();
     }
 
     public static DC5Confirmation createMessageSubmissionAcceptanceConfirmation() {
@@ -240,6 +264,8 @@ public class DomainEntityCreator {
         return DomibusConnectorMessageAttachment.builder()
                 .identifier("Form_A.xml")
                 .attachment(connectorBigDataReferenceFromDataSource("<testxml />")) //better load real form A here!
+                .hashAlgorithm("sha1")
+                .hash("21321")
                 .build();
     }
 
@@ -426,29 +452,31 @@ public class DomainEntityCreator {
 
     public static DomibusConnectorMessageAttachment createMessageAttachment() {
                 
-        return DomibusConnectorMessageAttachmentBuilder.createBuilder()
-                .setAttachment(connectorBigDataReferenceFromDataSource("attachment"))
-                .setIdentifier("identifier")
+        return DomibusConnectorMessageAttachment.builder()
+                .attachment(connectorBigDataReferenceFromDataSource("attachment"))
+                .identifier("identifier")
+                .hash("12134")
+                .hashAlgorithm("sha1")
                 .build(); 
     }
 
-    public static DomibusConnectorMessageDocument createDocumentWithNoSignature() {
-        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdf.pdf");
-        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
-                .setName("name")
-                .setContent(connectorBigDataReferenceFromDataSource(pdf))
-                .build();
-        return doc;
-    }
+//    public static DomibusConnectorMessageDocument createDocumentWithNoSignature() {
+//        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdf.pdf");
+//        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
+//                .setName("name")
+//                .setContent(connectorBigDataReferenceFromDataSource(pdf))
+//                .build();
+//        return doc;
+//    }
 
-    public static DomibusConnectorMessageDocument createDocumentWithSignature() {
-        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdfSigned.pdf");
-        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
-                .setName("name")
-                .setContent(connectorBigDataReferenceFromDataSource(pdf))
-                .build();
-        return doc;
-    }
+//    public static DomibusConnectorMessageDocument createDocumentWithSignature() {
+//        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdfSigned.pdf");
+//        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
+//                .setName("name")
+//                .setContent(connectorBigDataReferenceFromDataSource(pdf))
+//                .build();
+//        return doc;
+//    }
     
     public static DC5MessageContent createMessageContentWithDocumentWithNoSignature()  {
 //        try {
@@ -484,4 +512,28 @@ public class DomainEntityCreator {
         }
     }
 
+    public static DC5Message createIncomingEpoFormAMessage() {
+        return DC5Message.builder()
+                .ebmsData(DC5Ebms.builder()
+                        .ebmsMessageId(EbmsMessageId.ofRandom())
+                        .service(createServiceEPO())
+                        .action(createActionForm_A())
+                        .sender(defaultSender())
+                        .receiver(defaultRecipient())
+                        .build()
+                )
+                .messageContent(DC5MessageContent.builder()
+                        .ecodexContent(DC5EcodexContent.builder()
+                                .asicContainer(createMessageAttachment())   //just a simple attachment Improve by using correct signed asic-s
+                                .trustTokenXml(createMessageAttachment())   //just a simple attachment Improve by using correct signed xml
+                                .businessXml(createFormAAttachment())       //just a simple attachment Improve by using correct xml
+                                .build())
+                        .build()
+                )
+                .transportedMessageConfirmation(DC5Confirmation.builder()
+                        .evidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE)
+                        .evidence("<evidence/>".getBytes()) //just a simple evidence Improve by using correct created and signed evidence xml
+                        .build())
+                .build();
+    }
 }

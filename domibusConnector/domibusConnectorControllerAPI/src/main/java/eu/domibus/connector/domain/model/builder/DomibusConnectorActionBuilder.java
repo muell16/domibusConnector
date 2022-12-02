@@ -31,8 +31,9 @@ public final class DomibusConnectorActionBuilder {
         if (action == null) {
             throw new IllegalArgumentException("action is required!");
         }
-        return new DC5Action(action);
-//        return new DomibusConnectorAction(action, documentRequired);
+        return DC5Action.builder()
+                .action(action)
+                .build();
     }
 
     public DomibusConnectorActionBuilder copyPropertiesFrom(DC5Action action) {
@@ -40,7 +41,6 @@ public final class DomibusConnectorActionBuilder {
             throw new IllegalArgumentException("Action cannot be null here!");
         }
         this.action = action.getAction();
-//        this.documentRequired = action.isDocumentRequired();
         return this;
     }
 

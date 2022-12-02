@@ -1,19 +1,22 @@
 package eu.ecodex.dc5.message.model;
 
+import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.core.style.ToStringCreator;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
  * @author riederb
  * @version 1.0
  */
-@Embeddable
+@Entity
 
 @Getter
 @AllArgsConstructor
@@ -21,7 +24,15 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 public class DC5Service {
 
+	@Id
+	@GeneratedValue
+	private long id;
+
+	@NotBlank(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS ServiceName")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS ServiceName")
 	private String service;
+	@NotBlank(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS ServiceType")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS ServiceType")
 	private String serviceType;
 
 	public String getService(){

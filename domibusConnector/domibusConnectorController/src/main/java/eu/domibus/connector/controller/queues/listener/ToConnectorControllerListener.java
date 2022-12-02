@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.queues.listener;
 import eu.domibus.connector.common.service.CurrentBusinessDomain;
 //import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.ecodex.dc5.flow.flows.ProcessIncomingBusinessMessageFlow;
-import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ToGatewayBusinessMessageProcessor;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.model.DC5Message;

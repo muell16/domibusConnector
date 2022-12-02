@@ -1,6 +1,8 @@
-package eu.domibus.connector.controller.processor.steps;
+package eu.ecodex.dc5.flow.steps;
 
+import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
+import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -14,7 +16,7 @@ import org.springframework.util.StringUtils;
  *
  */
 @Component
-public class LookupGatewayNameStep implements MessageProcessStep {
+public class LookupGatewayNameStep {
 
     private static final Logger LOGGER = LogManager.getLogger(LookupGatewayNameStep.class);
 
@@ -24,15 +26,15 @@ public class LookupGatewayNameStep implements MessageProcessStep {
         this.dcMessageRoutingConfigurationProperties = dcMessageRoutingConfigurationProperties;
     }
 
-    @Override
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupGatewayNameStep")
-    public boolean executeStep(DC5Message message) {
+    @Step(name = "LookupGatewayNameStep")
+    public DC5Message executeStep(DC5Message message) {
+        LOGGER.debug("Connector currently only supports ONE gateway per domain!");
         if (StringUtils.hasText(message.getGatewayLinkName())) {
             //return when already set
-            return true;
+            return message;
         }
         message.setGatewayLinkName(dcMessageRoutingConfigurationProperties.getDefaultGatewayName());
-        return true;
+        return message;
     }
 
 }
