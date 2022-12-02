@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model.json.spring;
+package eu.ecodex.dc5.domain.scope;
 
 import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;

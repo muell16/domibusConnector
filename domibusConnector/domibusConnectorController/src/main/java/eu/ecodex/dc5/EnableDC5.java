@@ -1,7 +1,7 @@
 package eu.ecodex.dc5;
 
-import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesValidator;
-import eu.ecodex.dc5.core.DC5CoreJpaConfiguration;
+import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
+import eu.ecodex.dc5.domain.scope.BusinessDomainScopeConfiguration;
 import org.moduliths.Modulithic;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -40,9 +40,10 @@ import java.lang.annotation.*;
         "eu.domibus.connector.evidences",
         "eu.domibus.connector.controller.spring",
         "eu.domibus.connector.link",
-        "eu.domibus.connector.lib"
+        "eu.domibus.connector.lib",
+        "eu.domibus.connector.common.service"
 })
-@Import(BusinessScopedConfigurationPropertiesValidator.class)
+@Import({BusinessScopedConfigurationPropertiesRegistrar.class, BusinessDomainScopeConfiguration.class})
 public @interface EnableDC5 {
 
 

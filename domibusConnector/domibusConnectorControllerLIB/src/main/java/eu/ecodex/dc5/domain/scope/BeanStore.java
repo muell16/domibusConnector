@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model.json.spring;
+package eu.ecodex.dc5.domain.scope;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

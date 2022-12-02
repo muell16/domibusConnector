@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.model.json.spring;
+package eu.ecodex.dc5.domain.scope;
 
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
