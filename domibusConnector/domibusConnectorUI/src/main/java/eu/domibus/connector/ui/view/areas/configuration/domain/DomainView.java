@@ -76,13 +76,13 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         .setFlexGrow(0)
                         .setTextAlign(ColumnTextAlign.CENTER);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> nameColumn =
+        final Grid.Column<DomibusConnectorBusinessDomain> domainIdColumn =
                 grid.addColumn(DomibusConnectorBusinessDomain::getId)
                         .setKey("getId")
                         .setHeader("Domain Name / ID")
                         .setSortable(true);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainMsgLaneIdColumn =
+        final Grid.Column<DomibusConnectorBusinessDomain> domainDescriptionColumn =
                 grid.addColumn(DomibusConnectorBusinessDomain::getDescription)
                         .setKey("getDescription")
                         .setHeader("Description")
@@ -117,7 +117,18 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         editor.setBuffered(true);
 
         editor.addSaveListener(e -> {
-            domainRepo.createBusinessDomain(e.getItem());
+            if (e.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
+                final DomibusConnectorBusinessDomain item = e.getItem();
+                if (DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(item.getId()) && !item.isEnabled()) {
+                    new Notification("Can't disable default domain!", 5000, Notification.Position.MIDDLE).open();
+                    e.getItem().setEnabled(true);
+                } else {
+                    domainRepo.updateDomain(item);
+                    grid.setItems(domainRepo.getAllBusinessDomainsAllData());
+                }
+            } else {
+                new Notification("Changing configurations that are not stored in the database is forbidden!", 5000, Notification.Position.MIDDLE).open();
+            }
         });
 
         Button saveButton = new Button(VaadinIcon.CHECK.create(), e -> {
@@ -125,39 +136,36 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         });
         Button cancelButton = new Button(VaadinIcon.CLOSE.create(),
                 e -> editor.cancel());
-        Button deleteButton = new Button(VaadinIcon.TRASH.create(),
-                e -> {
-                    if (editor.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
-//                        domainRepo.delete(editor.getItem()); // TODO what to do here???
-                        domainGrid.setItems(domainRepo.getValidBusinessDomainsAllData());
-                    } else {
-                        new Notification("Can't delete / edit properties that are not stored in the database!").open();
-                    }
-                    editor.cancel();
-                });
+
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-        HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton, deleteButton);
+        HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
         actions.setPadding(false);
         editColumn.setEditorComponent(actions);
 
-        TextField nameField = new TextField();
+        TextField descriptionField = new TextField();
+        final ToggleButton enabledToggle = new ToggleButton();
 
-        nameColumn.setEditorComponent(nameField);
+        binder.forField(enabledToggle)
+                .bind(DomibusConnectorBusinessDomain::isEnabled, DomibusConnectorBusinessDomain::setEnabled);
 
-        binder.forField(nameField)
-                .asRequired("A domain name is required!")
-                .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
-                .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
-                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, DomibusConnectorBusinessDomain.BusinessDomainId::getBusinessDomainId)
-                .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
+        binder.forField(descriptionField)
+                .bind(DomibusConnectorBusinessDomain::getDescription, DomibusConnectorBusinessDomain::setDescription);
+
+        domainEnabledColumn.setEditorComponent(enabledToggle);
+        domainDescriptionColumn.setEditorComponent(descriptionField);
 
         return grid;
     }
 
+    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain, boolean readOnly) {
+        final ToggleButton toggleButton = createToggleButton(domain);
+        toggleButton.setReadOnly(readOnly);
+        return toggleButton;
+    }
     private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain) {
         final ToggleButton toggleButton = new ToggleButton();
+        toggleButton.setReadOnly(true);
         toggleButton.setValue(domain.isEnabled());
         toggleButton.addValueChangeListener(event -> {
             domain.setEnabled(event.getValue());
