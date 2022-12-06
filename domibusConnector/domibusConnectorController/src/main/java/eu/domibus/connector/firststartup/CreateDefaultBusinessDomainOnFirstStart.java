@@ -33,6 +33,7 @@ public class CreateDefaultBusinessDomainOnFirstStart {
             DC5BusinessDomainJpaEntity newLane = new DC5BusinessDomainJpaEntity();
             newLane.setDescription("The default business message domain");
             newLane.setName(new DomibusConnectorBusinessDomain.BusinessDomainId(DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME));
+            newLane.setEnabled(true);
             messageLaneDao.save(newLane);
         }
     }
