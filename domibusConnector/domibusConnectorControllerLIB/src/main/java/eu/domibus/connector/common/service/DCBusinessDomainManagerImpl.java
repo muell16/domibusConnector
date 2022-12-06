@@ -5,11 +5,9 @@ import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
-import eu.ecodex.dc5.domain.DomainValidationRule;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,35 +21,12 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
     private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
+    private final DCDomainValidationService domainValidationService;
 
-//    private final List<DCBusinessDomainManagerImpl.ValidationRule> validationRules;
-
-    private final ApplicationContext applicationContext;
 
     @Override
     public DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
-
-
-
-        Map<String, DomainValidationRule> beansOfType = applicationContext.getBeansOfType(DomainValidationRule.class);
-//        for (ValidationRule rule :) {
-//            DomainValidResult validate = rule.validate(id);
-//            //TODO: merge validation results
-//        }
-
-        List<DomainValidResult> collect = beansOfType.values().stream()
-                .map(rule -> rule.validate(id))
-                .collect(Collectors.toList());
-        //TODO: merge collect into one DomainValidResult....
-
-
-
-
-        LOGGER.error("MUST BE IMPLEMENTED!!!!!!!"); //TODO: JUEUSW-621
-        return DomainValidResult.builder()
-                .warning("This is just warning 1")  //show in UI!
-                .warning("This is just warning 2")
-                .build();
+        return domainValidationService.validateDomain(id);
     }
 
     @Override
