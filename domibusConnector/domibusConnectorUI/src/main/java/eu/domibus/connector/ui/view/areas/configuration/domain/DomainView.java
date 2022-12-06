@@ -126,8 +126,6 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                     domainRepo.updateDomain(item);
                     grid.setItems(domainRepo.getAllBusinessDomainsAllData());
                 }
-            } else {
-                new Notification("Changing configurations that are not stored in the database is forbidden!", 5000, Notification.Position.MIDDLE).open();
             }
         });
 
@@ -200,7 +198,13 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
             if (editor.isOpen()) {
                 editor.cancel();
             }
-            editor.editItem(competence);
+            if (competence.getConfigurationSource().equals(ConfigurationSource.DB)) {
+                editor.editItem(competence);
+            } else {
+                editor.cancel();
+                new Notification("Changing configurations that are not stored in the database is forbidden!", 5000, Notification.Position.MIDDLE).open();
+            }
+
         });
         return edit;
     }
