@@ -183,6 +183,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         DomibusConnectorBusinessDomain lane = new DomibusConnectorBusinessDomain();
         lane.setDescription(messageLaneIdBusinessDomainConfigEntry.getValue().getDescription());
         lane.setId(messageLaneIdBusinessDomainConfigEntry.getKey());
+        lane.setEnabled(messageLaneIdBusinessDomainConfigEntry.getValue().isEnabled());
         lane.setConfigurationSource(ConfigurationSource.ENV);
         Map<String, String> p = new HashMap<>(messageLaneIdBusinessDomainConfigEntry.getValue().getProperties());
         lane.setProperties(p);
