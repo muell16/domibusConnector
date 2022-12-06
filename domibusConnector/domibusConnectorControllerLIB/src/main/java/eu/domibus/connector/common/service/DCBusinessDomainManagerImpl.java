@@ -138,7 +138,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                 .filter(d -> d.getConfigurationSource().equals(ConfigurationSource.DB))
                 .ifPresent(d -> {
                     final boolean alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain =
-                            d.isEnabled() || DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(d.getId());
+                            domain.isEnabled() || !DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(domain.getId());
                     if (alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain) {
                         businessDomainPersistenceService.update(domain);
                     }
