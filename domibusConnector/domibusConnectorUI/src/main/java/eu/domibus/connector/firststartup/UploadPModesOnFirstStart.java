@@ -18,6 +18,7 @@ import java.io.IOException;
 //@EnableConfigurationProperties(UploadPModesOnFirstStartConfigurationProperties.class)
 //@DependsOn(CreateDefaultBusinessDomainOnFirstStart.BEAN_NAME)
 //@ConditionalOnProperty(prefix = UploadPModesOnFirstStartConfigurationProperties.PREFIX, name = "enabled", havingValue = "true")
+//TODO: figure out what to do with this
 public class UploadPModesOnFirstStart {
 
     private static final Logger LOGGER = LogManager.getLogger(UploadPModesOnFirstStart.class);
