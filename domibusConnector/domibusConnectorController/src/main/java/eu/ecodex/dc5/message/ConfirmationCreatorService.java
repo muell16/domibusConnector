@@ -107,8 +107,8 @@ public class ConfirmationCreatorService {
         }
         if (originalMessage.getMessageContent() != null && originalMessage.getMessageContent().getBusinessContent() != null) {
              builder = builder.businessDocumentHash(DomibusConnectorEvidencesToolkit.HashValue.builder()
-                        .hash(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHash())
-                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHashAlgorithm())
+                        .hash(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getDigest().getDigestValue())
+                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getDigest().getDigestAlgorithm())
                      .build());
         }
         if (originalMessage.getMessageContent() != null) {

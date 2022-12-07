@@ -1,9 +1,7 @@
-package eu.domibus.connector.persistence.spring;
+package eu.ecodex.dc5.payload;
 
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
+//import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,7 +17,7 @@ public class DomibusConnectorFilesystemPersistenceProperties {
 
     /**
      * Property to configure the storage location on filesystem
-     *  under this folder the {@link LargeFilePersistenceServiceFilesystemImpl}
+     *  under this folder the LargeFilePersistenceServiceFilesystemImpl
      *  is managing the data
      */
     @NotNull

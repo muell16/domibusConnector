@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.activation.DataSource;
 import javax.validation.constraints.NotNull;
 
+import eu.ecodex.dc5.message.model.Digest;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 
@@ -39,6 +40,7 @@ public class LargeFileReference implements DataSource, Serializable {
 
     private Long size = -1l;
 
+    private Digest digest;
     private String text = "";
 
     private ZonedDateTime creationDate;
@@ -59,6 +61,7 @@ public class LargeFileReference implements DataSource, Serializable {
         this.mimetype = ref.mimetype;
         this.size = ref.size;
         this.text = ref.text;
+        this.digest = ref.digest;
         this.creationDate = ref.creationDate;
     }
 
@@ -141,6 +144,18 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public void setCreationDate(ZonedDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    public Digest getDigest() {
+        return digest;
+    }
+
+    public void setDigest(Digest digest) {
+        this.digest = digest;
     }
 
     @Override

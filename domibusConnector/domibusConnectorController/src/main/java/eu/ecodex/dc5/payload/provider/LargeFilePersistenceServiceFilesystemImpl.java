@@ -1,12 +1,13 @@
-package eu.domibus.connector.persistence.largefiles.provider;
+package eu.ecodex.dc5.payload.provider;
 
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
-import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
-import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
+import eu.ecodex.dc5.payload.DomibusConnectorFilesystemPersistenceProperties;
+import eu.ecodex.dc5.payload.DomibusConnectorPersistenceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;

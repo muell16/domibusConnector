@@ -1,8 +1,9 @@
-package eu.domibus.connector.persistence.largefiles.provider;
+package eu.ecodex.dc5.payload;
 
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
+import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceJpaImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dbunit.database.DatabaseDataSourceConnection;

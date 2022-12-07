@@ -10,9 +10,11 @@ import eu.domibus.connector.domain.model.builder.*;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.ecodex.dc5.message.model.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nullable;
@@ -88,8 +90,8 @@ public class LoadStoreMessageFromPath {
                 if (messageDocument.getIdentifier() != null ) {
                     messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_NAME_PROP_NAME, messageDocument.getIdentifier());
                 }
-                if (messageDocument.getHash() != null) {
-                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_HASH_PROP_NAME, messageDocument.getHash());
+                if (messageDocument.getDigest() != null) {
+                    messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_HASH_PROP_NAME, messageDocument.getDigest());
                 }
 
                 DetachedSignature detachedSignature = messageDocument.getDetachedSignature();
@@ -238,6 +240,7 @@ public class LoadStoreMessageFromPath {
             content.getEcodexContent().setBusinessXml(DomibusConnectorMessageAttachment
                     .builder()
                     .attachment(largeFileReference)
+                    .digest(largeFileReference.getDigest())
                     .identifier("BUSINESS_XML")
                     .build());
 
@@ -362,11 +365,18 @@ public class LoadStoreMessageFromPath {
     public static LargeFileReference loadResourceAsBigDataRef(Resource resource) {
         try {
             InputStream inputStream = resource.getInputStream();
+            byte[] bytes = StreamUtils.copyToByteArray(inputStream);
+            String hash = DigestUtils.md5DigestAsHex(bytes);
+            Digest digest = Digest.builder()
+                    .digestAlgorithm("md5")
+                    .digestValue(hash)
+                    .build();
 
             LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
-            inMemory.setBytes(StreamUtils.copyToByteArray(inputStream));
+            inMemory.setBytes(bytes);
             inMemory.setReadable(true);
             inMemory.setStorageIdReference(UUID.randomUUID().toString());
+            inMemory.setDigest(digest);
             return inMemory;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -474,19 +484,23 @@ public class LoadStoreMessageFromPath {
 
     private DC5Ebms loadMessageDetailsFromProperties() {
 
-        return DC5Ebms.builder()
+        DC5Ebms.DC5EbmsBuilder builder = DC5Ebms.builder()
                 .action(DC5Action.builder().action(messageProperties.getProperty("action")).build())
                 .service(DC5Service.builder()
-                                        .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
-                                        .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
-                                                .build())
-                .ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)))
-                .conversationId(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME))
-                .refToEbmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME)))
-                .sender(loadEcxAddress(SENDER_PREFIX))
-                .receiver(loadEcxAddress(RECEIVER_PREFIX))
-                .build();
-
+                        .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
+                        .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
+                        .build());
+                if(!StringUtils.isBlank(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME))) {
+                    builder.ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)));
+                }
+                if (!StringUtils.isBlank(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME))) {
+                    builder.conversationId(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME));
+                }
+                if (!StringUtils.isBlank(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME))) {
+                    builder.refToEbmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_MESSAGE_ID_PROP_NAME)));
+                }
+                builder.sender(loadEcxAddress(SENDER_PREFIX));
+                return builder.build();
     }
 
     private DC5EcxAddress loadEcxAddress(String senderPrefix) {

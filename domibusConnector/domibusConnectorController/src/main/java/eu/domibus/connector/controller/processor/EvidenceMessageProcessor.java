@@ -21,12 +21,12 @@ public class EvidenceMessageProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger(EvidenceMessageProcessor.class);
 
-    private final EvidenceTriggerStep evidenceTriggerStep;
-    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
-    private final MessageConfirmationStep messageConfirmationStep;
-    private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
-    private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
-    private final ToCleanupQueue cleanupQueue;
+//    private final EvidenceTriggerStep evidenceTriggerStep;
+//    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
+//    private final MessageConfirmationStep messageConfirmationStep;
+//    private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
+//    private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
+//    private final ToCleanupQueue cleanupQueue;
 
 //    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "EvidenceMessageProcessor")
 //    public void processMessage(DomibusConnectorMessage message) {

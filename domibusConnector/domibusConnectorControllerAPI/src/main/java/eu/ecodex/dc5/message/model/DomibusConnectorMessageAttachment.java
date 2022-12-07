@@ -1,7 +1,5 @@
 package eu.ecodex.dc5.message.model;
 
-import java.io.Serializable;
-
 import eu.domibus.connector.domain.model.LargeFileReference;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
@@ -47,10 +45,8 @@ public class DomibusConnectorMessageAttachment {
 	private String storageReference;
 
 	@NonNull
-	private String hash;
-
-	@NonNull
-	private String hashAlgorithm;
+	@Convert(converter = DigestConverter.class)
+	private Digest digest;
 
 	private long size = -1;
 

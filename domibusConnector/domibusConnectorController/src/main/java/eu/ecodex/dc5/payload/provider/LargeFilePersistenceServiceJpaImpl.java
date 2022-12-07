@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.largefiles.provider;
+package eu.ecodex.dc5.payload.provider;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,8 +12,9 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
-import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
+import eu.ecodex.dc5.payload.DomibusConnectorPersistenceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.persistence.dao.DomibusConnectorBigDataDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
+import eu.ecodex.dc5.payload.provider.jpa.DomibusConnectorBigDataDao;
+import eu.ecodex.dc5.payload.model.PDomibusConnectorBigData;
 
 
 /**

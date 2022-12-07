@@ -1,11 +1,12 @@
-package eu.domibus.connector.persistence.largefiles.provider;
+package eu.ecodex.dc5.payload.provider;
 
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference;
-import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
+
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
 
+import eu.ecodex.dc5.payload.DomibusConnectorFilesystemPersistenceProperties;
+import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -109,14 +110,14 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
         File f = new File(testStorageLocation + File.separator + storageIdReference);
         assertThat(f.exists()).as(String.format("A file <%s> should exist", f.getAbsolutePath())).isTrue();
 
-        FileBasedLargeFileReference fRef = (FileBasedLargeFileReference) largeFileReference;
+        LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference fRef = (LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference) largeFileReference;
         System.out.println("key: " + fRef.getEncryptionKey() + " iv: " + fRef.getInitVector() + " cipher-suite: " + fRef.getCipherSuite());
     }
 
 
     @Test
     public void readEncryptedBigDataReference() throws IOException {
-        FileBasedLargeFileReference fRef = new FileBasedLargeFileReference(filesystemImpl);
+        LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference fRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference(filesystemImpl);
         fRef.setEncryptionKey("AES#@#kC6lanKld+xuiVfarsZNLQ==");
         fRef.setInitVector("cO+U0ufVjzCheGnXYkfvXg==");
         fRef.setCipherSuite("AES/CBC/PKCS5Padding");
@@ -133,7 +134,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
     @Test
     public void deleteDomibusConnectorBigDataReference() {
         String msgId = "testmsg2";
-        FileBasedLargeFileReference fsRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference(filesystemImpl);
+        LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference fsRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference(filesystemImpl);
         String storageRef = msgId + File.separator + "file1";
         fsRef.setStorageIdReference(storageRef);
 

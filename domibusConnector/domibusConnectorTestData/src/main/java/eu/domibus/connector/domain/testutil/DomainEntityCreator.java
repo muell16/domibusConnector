@@ -142,8 +142,7 @@ public class DomainEntityCreator {
         return DomibusConnectorMessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
                 .identifier("simple_attachment")
-                .hash("213213")
-                .hashAlgorithm("sha1")
+                .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
                 .build();
     }
 
@@ -285,8 +284,7 @@ public class DomainEntityCreator {
         return DomibusConnectorMessageAttachment.builder()
                 .identifier("Form_A.xml")
                 .attachment(connectorBigDataReferenceFromDataSource("<testxml />")) //better load real form A here!
-                .hashAlgorithm("sha1")
-                .hash("21321")
+                .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
                 .build();
     }
 
@@ -495,8 +493,7 @@ public class DomainEntityCreator {
         return DomibusConnectorMessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
                 .identifier("identifier")
-                .hash("12134")
-                .hashAlgorithm("sha1")
+                .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
                 .build(); 
     }
 

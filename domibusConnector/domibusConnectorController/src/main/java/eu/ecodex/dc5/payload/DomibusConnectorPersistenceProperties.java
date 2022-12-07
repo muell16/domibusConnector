@@ -1,8 +1,9 @@
-package eu.domibus.connector.persistence.spring;
+package eu.ecodex.dc5.payload;
 
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceJpaImpl;
+//import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
+//import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceJpaImpl;
+import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;

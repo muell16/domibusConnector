@@ -1,7 +1,7 @@
-package eu.domibus.connector.persistence.largefiles.provider;
+package eu.ecodex.dc5.payload;
 
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
-import org.junit.jupiter.api.BeforeEach;
+import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceJpaImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

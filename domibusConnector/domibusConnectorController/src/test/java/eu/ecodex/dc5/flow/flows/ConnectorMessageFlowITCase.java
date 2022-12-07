@@ -1,10 +1,15 @@
 
-package eu.domibus.connector.controller.service;
+package eu.ecodex.dc5.flow.flows;
 
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
+import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.processor.confirmation.CheckEvidencesTimeoutProcessorImpl;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.service.SubmitToConnector;
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
+import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.*;
@@ -12,6 +17,8 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.ecodex.dc5.message.model.*;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.management.impl.ActiveMQServerControlImpl;
@@ -19,11 +26,18 @@ import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
@@ -36,6 +50,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -54,27 +69,48 @@ import static org.assertj.core.api.Assertions.assertThat;
  * WITHOUT
  * backendlink
  * gatewaylink
- *
- *
- *  Check Action, Service of EvidenceMessages, is not necessary because
- *  this checks are done by the EvidenceBuilder checks
- *
+ * <p>
+ * <p>
+ * Check Action, Service of EvidenceMessages, is not necessary because
+ * this checks are done by the EvidenceBuilder checks
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@SpringBootTest(classes = {ITCaseTestContext.class},
-        properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
+//@SpringBootTest(classes = {ITCaseTestContext.class},
+//        properties = { "connector.controller.evidence.timeoutActive=false", //deactivate the evidence timeout checking timer job during this test
 //                "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED",
 //                "spring.jta.enabled=true"
 //                "logging.level.eu.domibus=TRACE"
 
-}
-)
-@Commit
-@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
+//}
+//)
+//@Commit
+//@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 //@Disabled("failing on CI")
+
+
+@AutoConfigureTestDatabase
+@SpringBootTest(classes = {eu.ecodex.dc5.DC5FlowModule.class, ConnectorMessageFlowITCase.MySubmitToLink.class})
+@ActiveProfiles({"flow-test"})
+
+@Log4j2
 public class ConnectorMessageFlowITCase {
+
+    @Primary
+    @Component
+    @Getter
+    public static class MySubmitToLink implements SubmitToLinkService {
+
+        @Override
+        public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
+            System.out.println("SUBMIT TO LINK CALLED");
+        }
+
+        BlockingQueue<DC5Message> toGwDeliveredMessages = new ArrayBlockingQueue<>(50);
+
+        BlockingQueue<DC5Message> toBackendDeliveredMessages = new ArrayBlockingQueue<>(50);
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
 
@@ -93,27 +129,34 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     DomibusConnectorMessageIdGenerator messageIdGenerator;
 
-    @Autowired
-    ITCaseTestContext.DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor;
-
-    @Autowired
-    ITCaseTestContext.DomibusConnectorBackendDeliveryServiceInterceptor backendInterceptor;
 
     BlockingQueue<DC5Message> toGwDeliveredMessages;
 
     BlockingQueue<DC5Message> toBackendDeliveredMessages;
 
+//    @Autowired
+//    ITCaseTestContext.DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor;
+
+//    @Autowired
+//    ITCaseTestContext.DomibusConnectorBackendDeliveryServiceInterceptor backendInterceptor;
+
     @Autowired
-    SubmitToConnector submitToConnector;
+    MySubmitToLink mySubmitToLink;
+
+//    @Autowired
+//    SubmitToConnector submitToConnector;
 
 //    @Autowired
 //    DCMessagePersistenceService messagePersistenceService;
 
-    @Autowired
-    ITCaseTestContext.QueueBasedDomibusConnectorGatewaySubmissionService fromConnectorToGwSubmissionService;
+//    @Autowired
+//    ITCaseTestContext.QueueBasedDomibusConnectorGatewaySubmissionService fromConnectorToGwSubmissionService;
+//
+//    @Autowired
+//    ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService fromConnectorToBackendDeliveryService;
 
-    @Autowired
-    ITCaseTestContext.QueueBasedDomibusConnectorBackendDeliveryService fromConnectorToBackendDeliveryService;
+//    @MockBean
+//    SubmitToLinkService submitToLinkService;
 
     @Autowired
     EmbeddedActiveMQ embeddedActiveMQ;
@@ -134,8 +177,8 @@ public class ConnectorMessageFlowITCase {
             System.out.println("Removed all messages from artemis queue " + qName);
         }
 
-        this.toGwDeliveredMessages.clear();
-        this.toBackendDeliveredMessages.clear();
+//        this.toGwDeliveredMessages.clear();
+//        this.toBackendDeliveredMessages.clear();
 
 
     }
@@ -151,18 +194,22 @@ public class ConnectorMessageFlowITCase {
         simpleDateFormatter.setPattern("yyyy-MM-dd-hh-mm");
         testDateAsString = simpleDateFormatter.print(new Date(), Locale.ENGLISH);
 
+
+//        Mockito.when(submitToLinkService.submitToLink(Mockito.any())).thenAnswer(new Answer<Object>() {
+//        });
+
         //clear gw submission interceptor mock
-        Mockito.reset(domibusConnectorGatewaySubmissionServiceInterceptor);
+//        Mockito.reset(domibusConnectorGatewaySubmissionServiceInterceptor);
         //clear backend interceptor mock
-        Mockito.reset(backendInterceptor);
+//        Mockito.reset(backendInterceptor);
 
         //clear to backend lists
-        fromConnectorToBackendDeliveryService.clearQueue();
-        this.toBackendDeliveredMessages = fromConnectorToBackendDeliveryService.getQueue();
-
-        //clear to gw list
-        fromConnectorToGwSubmissionService.clearQueue();
-        this.toGwDeliveredMessages = fromConnectorToGwSubmissionService.getQueue();
+//        fromConnectorToBackendDeliveryService.clearQueue();
+//        this.toBackendDeliveredMessages = fromConnectorToBackendDeliveryService.getQueue();
+//
+//        //clear to gw list
+//        fromConnectorToGwSubmissionService.clearQueue();
+//        this.toGwDeliveredMessages = fromConnectorToGwSubmissionService.getQueue();
 
 
     }
@@ -170,10 +217,9 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *
-     *   -) Backend must have received MSG
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
      */
     @Test
     public void testReceiveMessageFromGw(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
@@ -185,20 +231,20 @@ public class ConnectorMessageFlowITCase {
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
             DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
-            testMessage.getEbmsData().getService().setService("service2");
+//            testMessage.getEbmsData().getService().setService("service2");
             submitFromGatewayToController(testMessage);
 
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
-            DC5Message toBackendDelivered = toBackendDeliveredMessages.take(); //wait until a message is put into queue
-            assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
+            DC5Message toBackendDelivered = mySubmitToLink.toBackendDeliveredMessages.take(); //wait until a message is put into queue
+            assertThat(mySubmitToLink.toBackendDeliveredMessages).hasSize(0); //queue should be empty!
             assertThat(toBackendDelivered).isNotNull();
             assertThat(toBackendDelivered.getBackendLinkName())
                     .as("service2 should delivered to backend2")
                     .isEqualTo("backend2");
 
-            DC5Message relayRemmdEvidenceMsg = toGwDeliveredMessages.take();
+            DC5Message relayRemmdEvidenceMsg = mySubmitToLink.toGwDeliveredMessages.take();
             assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmations().get(0).getEvidenceType())
                     .as("RelayREMMD acceptance message")
                     .isEqualTo(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
@@ -235,17 +281,15 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *
-     *   -) Backend must have received MSG
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *
-     *   -) test responds with DELIVERY Trigger
-     *
-     *   -) GW must have received DELIVERY_EVIDENCE
-     *
-     *   -) Backend must have rcv DELIVERY_EVIDENCE
-     *
-     *
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * -) test responds with DELIVERY Trigger
+     * <p>
+     * -) GW must have received DELIVERY_EVIDENCE
+     * <p>
+     * -) Backend must have rcv DELIVERY_EVIDENCE
      */
     @Test
     @Disabled("unstable on jenkins")
@@ -336,18 +380,16 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *
-     *   -) Backend must have received MSG
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *
-     *   -) test responds with DELIVERY Trigger
-     *   -) test responds with a 2nd DELIVERY Trigger
-     *
-     *   -) GW must have received only one DELIVERY_EVIDENCE
-     *
-     *   -) Backend must have rcv only one DELIVERY_EVIDENCE
-     *
-     *
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * -) test responds with DELIVERY Trigger
+     * -) test responds with a 2nd DELIVERY Trigger
+     * <p>
+     * -) GW must have received only one DELIVERY_EVIDENCE
+     * <p>
+     * -) Backend must have rcv only one DELIVERY_EVIDENCE
      */
     @Test
     @Disabled("test is unstable on jenkins")
@@ -476,16 +518,15 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *
-     *   -) Backend must have received MSG
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *
-     *   -) test responds with NON_DELIVERY Trigger
-     *
-     *   -) GW must have received NON_DELIVERY_EVIDENCE
-     *
-     *   -) Message must be in rejected state
-     *
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * -) test responds with NON_DELIVERY Trigger
+     * <p>
+     * -) GW must have received NON_DELIVERY_EVIDENCE
+     * <p>
+     * -) Message must be in rejected state
      */
     @Test
     @Disabled
@@ -553,7 +594,6 @@ public class ConnectorMessageFlowITCase {
 //                    .isEqualToComparingOnlyGivenFields(DomainEntityCreator.createPartyATasInitiator(), "partyId", "partyIdType", "role");
 
 
-
 //            DC5Message messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
 //            assertThat(messagePersistenceService.checkMessageRejected(messageByConnectorMessageId))
 //                    .as("Message must be in rejected state")
@@ -570,20 +610,19 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *
-     *   -) Backend must have received MSG
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *
-     *   -) test responds with DELIVERY Trigger
-     *   -) test responds with RETRIEVAL Trigger
-     *
-     *   -) GW must have received RETRIEVAL_EVIDENCE
-     *
-     *   -) Backend must have RCV DELIVERY Evidence
-     *   -) Backend must have RCV RETRIEVAL Evidence
-     *
-     *   -) message must be in confirmed state
-     *
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * -) test responds with DELIVERY Trigger
+     * -) test responds with RETRIEVAL Trigger
+     * <p>
+     * -) GW must have received RETRIEVAL_EVIDENCE
+     * <p>
+     * -) Backend must have RCV DELIVERY Evidence
+     * -) Backend must have RCV RETRIEVAL Evidence
+     * <p>
+     * -) message must be in confirmed state
      */
     @Test
     @Disabled
@@ -632,7 +671,6 @@ public class ConnectorMessageFlowITCase {
 //            submitFromBackendToController(deliveryTriggerMessage);
 //            //take delivery from queue
 //            DC5Message deliveryEvidenceMessage = toGwDeliveredMessages.take();
-
 
 
 //            DC5Message retrievalTriggerMessage = DomibusConnectorMessageBuilder
@@ -704,15 +742,13 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *  but cannot verify ASIC-S container
-     *
-     *
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *   -) GW must have received NON_DELIVERY
-     *   -) From and to Party are switched, within the evidence messages
-     *   -) refToMessageId of the evidence messages are the EBMS id of the RCV message
-     *
-     *
+     * but cannot verify ASIC-S container
+     * <p>
+     * <p>
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * -) GW must have received NON_DELIVERY
+     * -) From and to Party are switched, within the evidence messages
+     * -) refToMessageId of the evidence messages are the EBMS id of the RCV message
      */
     @Test
     public void testReceiveMessageFromGw_CertificateFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
@@ -765,15 +801,14 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * RCV message from GW
-     *  but cannot deliver to backend
-     *
-     *
-     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
-     *   -) GW must have received NON_DELIVERY
-     *
+     * but cannot deliver to backend
+     * <p>
+     * <p>
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * -) GW must have received NON_DELIVERY
      */
     @Test
-    @Disabled ("not decided yet if user interaction is needed!")
+    @Disabled("not decided yet if user interaction is needed!")
     public void testReceiveMessageFromGw_backendDeliveryFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
@@ -781,9 +816,9 @@ public class ConnectorMessageFlowITCase {
         String MSG_FOLDER = "msg2";
 
         //syntetic error on deliver message to backend
-        Mockito.doThrow(new RuntimeException("error"))
-                .when(backendInterceptor)
-                .deliveryToBackend(Mockito.any(DC5Message.class));
+//        Mockito.doThrow(new RuntimeException("error"))
+//                .when(backendInterceptor)
+//                .deliveryToBackend(Mockito.any(DC5Message.class));
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
@@ -803,8 +838,6 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-
-
     private DC5Message deliverMessageFromGw(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID) {
         DC5Message testMessage = createTestMessage(msgFolder, EBMS_ID, CONNECTOR_MESSAGE_ID);
         submitFromGatewayToController(testMessage);
@@ -814,30 +847,29 @@ public class ConnectorMessageFlowITCase {
     public static final String FINAL_RECIPIENT = "final_recipient";
     public static final String ORIGINAL_SENDER = "original_sender";
 
-    private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID)  {
-//        try {
-//            DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
-//            assertThat(testMessage).isNotNull();
+    private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID) {
+        try {
+            DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
+            assertThat(testMessage).isNotNull();
 //            testMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 //            testMessage.getEbmsData().setFinalRecipient(FINAL_RECIPIENT);
 //            testMessage.getEbmsData().setOriginalSender(ORIGINAL_SENDER);
 //            testMessage.getEbmsData().setEbmsMessageId(EBMS_ID);
 //            testMessage.getEbmsData().setBackendMessageId(null);
 //            testMessage.setConnectorMessageId(new DomibusConnectorMessageId(CONNECTOR_MESSAGE_ID));
-//            return testMessage;
-//        } catch (IOException ioe) {
-//            throw new RuntimeException(ioe);
-//        }
-        return null;
+            return testMessage;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+//        return null;
     }
 
 
     /**
      * Send message from Backend to GW
-     *
-     *   -) Backend must have received SUBMISSION_ACCEPTANCE
-     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
+     * <p>
+     * -) Backend must have received SUBMISSION_ACCEPTANCE
+     * -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
      */
     @Test
     public void sendMessageFromBackend(TestInfo testInfo) {
@@ -904,10 +936,9 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * Send message from Backend to GW with no BusinessContent (only business XML is provided!)
-     *
-     *   -) Backend must have received SUBMISSION_ACCEPTANCE
-     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
+     * <p>
+     * -) Backend must have received SUBMISSION_ACCEPTANCE
+     * -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
      */
     @Test
     public void sendMessageFromBackend_noBusinessDoc(TestInfo testInfo) {
@@ -1001,21 +1032,18 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-
-
     /**
      * Send message from Backend to GW and RCV evidences for the message
-     *
-     *  PRE
-     *   -) Backend has received SUBMISSION_ACCEPTANCE
-     *   -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
-     *   DO:
-     *   -) Generate evidence RELAY_REMMD_ACCEPTANCE
-     *
-     *  ASSERT:
-     *   -) backend has received RELAY_REMMD_ACCEPTANCE
-     *
+     * <p>
+     * PRE
+     * -) Backend has received SUBMISSION_ACCEPTANCE
+     * -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     * <p>
+     * DO:
+     * -) Generate evidence RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * ASSERT:
+     * -) backend has received RELAY_REMMD_ACCEPTANCE
      */
     @Test
     public void sendMessageFromBackend_rcvEvidences(TestInfo testInfo) {
@@ -1051,21 +1079,20 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * Send message from Backend to GW and RCV evidences for the message
-     *      but first receive a negative confirmation and afterwards a positive confirmation
-     *
-     *  PRE
-     *   -) Backend has received SUBMISSION_ACCEPTANCE
-     *   -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
-     *   DO:
-     *   -) Generate evidence RELAY_REMMD_REJECTION
-     *   -) Generate evidence DELIVERY
-     *
-     *  ASSERT:
-     *   -) backend has received RELAY_REMMD_REJECTION
-     *   -) backend has NOT received any more confirmations
-     *   -) message state in connector is rejected!
-     *
+     * but first receive a negative confirmation and afterwards a positive confirmation
+     * <p>
+     * PRE
+     * -) Backend has received SUBMISSION_ACCEPTANCE
+     * -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     * <p>
+     * DO:
+     * -) Generate evidence RELAY_REMMD_REJECTION
+     * -) Generate evidence DELIVERY
+     * <p>
+     * ASSERT:
+     * -) backend has received RELAY_REMMD_REJECTION
+     * -) backend has NOT received any more confirmations
+     * -) message state in connector is rejected!
      */
     @Test
     public void sendMessageFromBackend_rcvEvidencesPosThenNegative(TestInfo testInfo) {
@@ -1078,7 +1105,7 @@ public class ConnectorMessageFlowITCase {
             DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
 
             EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
-            LOGGER.info("Message reached toGwDeliveredMessages Queue with id [{}], ebmsid [{}]",take.getConnectorMessageId(), newEbmsId);
+            LOGGER.info("Message reached toGwDeliveredMessages Queue with id [{}], ebmsid [{}]", take.getConnectorMessageId(), newEbmsId);
 
             DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
             assertThat(toBackendEvidence).isNotNull();
@@ -1099,19 +1126,18 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * Send message from Backend to GW and RCV evidences for the message
-     *
-     *  PRE
-     *   -) Backend has received SUBMISSION_ACCEPTANCE
-     *   -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
-     *   DO:
-     *   -) Generate evidence RELAY_REMMD_ACCEPTANCE
-     *   -) Generate evidence DELIVERY_EVIDENCE
-     *   -) Generate evidence RETRIEVAL
-     *
-     *  ASSERT:
-     *   -) backend has received RELAY_REMMD_ACCEPTANCE, DELIVERY, RETRIEVAL
-     *
+     * <p>
+     * PRE
+     * -) Backend has received SUBMISSION_ACCEPTANCE
+     * -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     * <p>
+     * DO:
+     * -) Generate evidence RELAY_REMMD_ACCEPTANCE
+     * -) Generate evidence DELIVERY_EVIDENCE
+     * -) Generate evidence RETRIEVAL
+     * <p>
+     * ASSERT:
+     * -) backend has received RELAY_REMMD_ACCEPTANCE, DELIVERY, RETRIEVAL
      */
     @Test
     public void sendMessageFromBackend_rcvEvidenceRelayDeliveryRetrieval(TestInfo testInfo) {
@@ -1154,7 +1180,6 @@ public class ConnectorMessageFlowITCase {
                     .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage).isEqualTo(RELAY_REMMD_ACCEPTANCE);
 
 
-
             DC5Message deliveryEvidenceMsg = toBackendDeliveredMessages.take();
             assertThat(deliveryEvidenceMsg)
                     .isNotNull()
@@ -1179,22 +1204,21 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * Send message from Backend to GW and RCV evidences for the message
-     *
-     *  PRE
-     *   -) Backend has received SUBMISSION_ACCEPTANCE
-     *   -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
-     *   DO:
-     *   -) Generate evidence RELAY_REMMD_ACCEPTANCE
-     *   -) Generate evidence NON_DELIVERY_EVIDENCE
-     *   -) Generate evidence RETRIEVAL
-     *
-     *  ASSERT:
-     *   -) backend has received RELAY_REMMD_ACCEPTANCE, NON_DELIVERY
-     *   -) backend has NOT received any RETRIEVAL evidence!
-     *
-     *   -) message is still in rejected state
-     *
+     * <p>
+     * PRE
+     * -) Backend has received SUBMISSION_ACCEPTANCE
+     * -) GW must has received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     * <p>
+     * DO:
+     * -) Generate evidence RELAY_REMMD_ACCEPTANCE
+     * -) Generate evidence NON_DELIVERY_EVIDENCE
+     * -) Generate evidence RETRIEVAL
+     * <p>
+     * ASSERT:
+     * -) backend has received RELAY_REMMD_ACCEPTANCE, NON_DELIVERY
+     * -) backend has NOT received any RETRIEVAL evidence!
+     * <p>
+     * -) message is still in rejected state
      */
     @Test
     @Disabled("fails when executed with other tests...")
@@ -1277,19 +1301,18 @@ public class ConnectorMessageFlowITCase {
 
     /**
      * Send message from Backend to GW
-     *
-     *   -) Backend must have received SUBMISSION_REJECTION
-     *   -) GW receives nothing
-     *
+     * <p>
+     * -) Backend must have received SUBMISSION_REJECTION
+     * -) GW receives nothing
      */
     @Test
     @Disabled("Todo repair test")
     public void sendMessageFromBackend_submitToGwFails(TestInfo testInfo) throws DomibusConnectorGatewaySubmissionException {
 
         //syntetic error on submitting message...
-        Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("error"))
-                .when(domibusConnectorGatewaySubmissionServiceInterceptor)
-                .submitToGateway(Mockito.any(DC5Message.class));
+//        Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("error"))
+//                .when(domibusConnectorGatewaySubmissionServiceInterceptor)
+//                .submitToGateway(Mockito.any(DC5Message.class));
 
         EbmsMessageId EBMS_ID = null;
         DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
@@ -1316,17 +1339,15 @@ public class ConnectorMessageFlowITCase {
     }
 
 
-
     /**
      * Send message from Backend to GW and test if relayRemmd timeout works
-     *
-     *   -) Backend must have received SUBMISSION_ACCEPTANCE
-     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
-     *
-     *   -) EvidenceTimoutProcessor is started
-     *
-     *   -) Backend must have RCV RelayRemmdFailure due timeout (set to 1s for test)
-     *
+     * <p>
+     * -) Backend must have received SUBMISSION_ACCEPTANCE
+     * -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     * <p>
+     * -) EvidenceTimoutProcessor is started
+     * <p>
+     * -) Backend must have RCV RelayRemmdFailure due timeout (set to 1s for test)
      */
     @Test
     @Disabled
@@ -1353,7 +1374,7 @@ public class ConnectorMessageFlowITCase {
 
             assertThat(toBackendRelayRemmdFailure.getTransportedMessageConfirmations().get(0).getEvidence())
                     .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
-                            .hasSizeGreaterThan(100);
+                    .hasSizeGreaterThan(100);
 
 //            assertThat(toBackendEvidenceMsgDetails.getDirection())
 //                    .as("Direction must be set!")
@@ -1421,7 +1442,7 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
         testLink.setLinkType(LinkType.BACKEND);
-        submitToConnector.submitToConnector(message, testLink);
+//        submitToConnector.submitToConnector(message, testLink);
     }
 
 
@@ -1436,6 +1457,6 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));
         testLink.setLinkType(LinkType.GATEWAY);
-        submitToConnector.submitToConnector(message, testLink);
+//        submitToConnector.submitToConnector(message, testLink);
     }
 }

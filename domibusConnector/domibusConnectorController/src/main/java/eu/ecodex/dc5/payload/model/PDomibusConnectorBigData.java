@@ -1,9 +1,9 @@
-package eu.domibus.connector.persistence.model;
+package eu.ecodex.dc5.payload.model;
 
+import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.Date;
 
 @Entity

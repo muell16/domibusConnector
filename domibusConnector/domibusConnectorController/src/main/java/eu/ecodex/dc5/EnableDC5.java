@@ -41,7 +41,10 @@ import java.lang.annotation.*;
         "eu.domibus.connector.controller.spring",
         "eu.domibus.connector.link",
         "eu.domibus.connector.lib",
-        "eu.domibus.connector.common.service"
+        "eu.domibus.connector.common.service",
+        "eu.domibus.connector.security",
+        "eu.domibus.connector.dss",
+        "eu.domibus.connector.controller.processor"
 })
 @Import({BusinessScopedConfigurationPropertiesRegistrar.class, BusinessDomainScopeConfiguration.class})
 public @interface EnableDC5 {
