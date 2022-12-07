@@ -23,7 +23,7 @@ public class NewMessageStoredFlow {
     private final ConfirmationMessageFlow confirmationMessageFlow;
     private final ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 
-    private final ToGatewayBusinessMessageProcessor outgoingBusinessMessageFlow;
+    private final ProcessOutgoingBusinessMessageFlow outgoingBusinessMessageFlow;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleNewMessageStoredEvent(NewMessageStoredEvent newMessageStoredEvent) {
@@ -46,12 +46,6 @@ public class NewMessageStoredFlow {
         } else {
             throw new IllegalArgumentException("Message cannot be processed!");
         }
-
-        //if message is a business message to backend
-        //run gateway2backend flow
-
-        //if message is a confirmation message
-        //run confirmation message flow
 
     }
 

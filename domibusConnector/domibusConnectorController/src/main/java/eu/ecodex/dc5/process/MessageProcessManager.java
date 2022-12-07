@@ -44,6 +44,16 @@ public class MessageProcessManager {
         return msgProcessRepo.save(dc5MsgProcess);
     }
 
+//    public CloseableMessageProcess startProcessC() {
+//        MessageProcessId messageProcessId = new MessageProcessId(messageIdGenerator.generateDomibusConnectorMessageId().toString());
+//        DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
+//        dc5MsgProcess.setProcessId(messageProcessId.getProcessId());
+//        threadLocalMsgProcess.set(dc5MsgProcess);
+//        dc5MsgProcess.setCreated(LocalDateTime.now());
+//        CloseableMessageProcess c = new CloseableMessageProcess();
+//
+//    }
+
 //    public DC5ProcessStep startStep(DC5MsgProcess dc5MsgProcess, Class<?> step) {
 //        DC5ProcessStep processStep = new DC5ProcessStep();
 //        processStep.setCreated(LocalDateTime.now());

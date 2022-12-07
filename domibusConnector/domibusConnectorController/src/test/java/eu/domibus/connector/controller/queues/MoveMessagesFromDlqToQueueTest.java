@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.queues;
 import eu.domibus.connector.controller.processor.CleanupMessageProcessor;
 //import eu.ecodex.dc5.flow.flows.ConfirmationMessageProcessingFlow;
 import eu.ecodex.dc5.flow.flows.ProcessIncomingBusinessMessageFlow;
-import eu.ecodex.dc5.flow.flows.ToGatewayBusinessMessageProcessor;
+import eu.ecodex.dc5.flow.flows.ProcessOutgoingBusinessMessageFlow;
 import eu.domibus.connector.controller.queues.listener.ToLinkPartnerListener;
 import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
 import eu.domibus.connector.controller.queues.producer.ToConnectorQueue;
@@ -84,7 +84,7 @@ public class MoveMessagesFromDlqToQueueTest {
     ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 
     @MockBean
-    ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
+    ProcessOutgoingBusinessMessageFlow processOutgoingBusinessMessageFlow;
 
     @MockBean
     ToLinkPartnerListener toLinkPartnerListener;

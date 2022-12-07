@@ -15,11 +15,12 @@ import javax.validation.constraints.NotNull;
  */
 //@Embeddable
 @Entity
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 public class DC5Action {
 
 	@Id

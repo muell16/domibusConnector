@@ -1,8 +1,10 @@
 package eu.ecodex.dc5.flow.flows;
 
-import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
-import eu.domibus.connector.controller.processor.steps.*;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
+import eu.ecodex.dc5.flow.api.StepFailedException;
+import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -13,6 +15,7 @@ import eu.domibus.connector.tools.logging.LoggingMarker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
@@ -27,27 +30,24 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
  */
 @Component
 @RequiredArgsConstructor
-public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessageProcessor {
+public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessageProcessor {
 
     public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "ToGatewayBusinessMessageProcessor";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ToGatewayBusinessMessageProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessOutgoingBusinessMessageFlow.class);
 
-//    private final CreateNewBusinessMessageInDBStep createNewBusinessMessageInDBStep;
     private final BuildECodexContainerStep buildECodexContainerStep;
-//    private final SubmitMessageToLinkStep submitMessageToLinkStep;
     private final MessageConfirmationStep messageConfirmationStep;
     private final ConfirmationCreatorService confirmationCreatorService;
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
     private final LookupGatewayNameStep lookupGatewayNameStep;
-//    private final GenerateEbmsIdStep generateEbmsIdStep;
     private final VerifyPModesStep verifyPModesStep;
-//    private final ConfigurationPropertyManagerService configurationPropertyManagerService;
 
+    private final ApplicationEventPublisher eventPublisher;
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DC5Message message) {
-        try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId().toString())){
+        try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId().toString())) {
 
             //verify p-Modes step
 
@@ -71,8 +71,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
             //create confirmation
             DC5Confirmation submissionAcceptanceConfirmation = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
-            //process created confirmation for message
-            messageConfirmationStep.processConfirmationForMessage(message, submissionAcceptanceConfirmation);
+
             //append confirmation to message
             message.getTransportedMessageConfirmations().add(submissionAcceptanceConfirmation);
 
@@ -82,22 +81,40 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             //TODO: do this after submitMessage was successfull! offload into extra queue
 //            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
-            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put message with backendId [{}] to Gateway Link [{}] on toLink Queue.",
-                    message.getBackendData().getBackendMessageId(),
-                    message.getGatewayLinkName());
+//            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put message with backendId [{}] to Gateway Link [{}] on toLink Queue.",
+//                    message.getBackendData().getBackendMessageId(),
+//                    message.getGatewayLinkName());
+
+            MessageReadyForTransportEvent messageReadyForTransportEvent =
+                    MessageReadyForTransportEvent.of(message.getId(), message.getGatewayLinkName(), MessageTargetSource.GATEWAY);
+            eventPublisher.publishEvent(messageReadyForTransportEvent);
+        } catch (StepFailedException secEcx) {
+            DomibusConnectorEvidenceType evidenceType = DomibusConnectorEvidenceType.SUBMISSION_REJECTION;
+            LOGGER.error("Could not process message [{}]! Rejecting message with [{}]",  message, evidenceType);
+
+            DC5Confirmation submissionRejction = confirmationCreatorService.createConfirmation(evidenceType, message, DomibusConnectorRejectionReason.OTHER, "");
+            messageConfirmationStep.processConfirmationForMessage(message, submissionRejction);
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionRejction);
+
+//            DomibusConnectorMessageExceptionBuilder.createBuilder()
+//                    .setMessage(message)
+//                    .setText("Could not generate evidence submission acceptance! ")
+//                    .setSource(this.getClass())
+//                    .setCause(secEcx)
+//                    .buildAndThrow();
 
         } catch (DomibusConnectorEvidencesToolkitException ete) {
             LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
-            DC5Confirmation submissionRejction = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER, "");
-            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionRejction);
+            DC5Confirmation submissionRejection = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER, "");
+            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionRejection);
 
-            DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not generate evidence submission acceptance! ")
-                    .setSource(this.getClass())
-                    .setCause(ete)
-                    .buildAndThrow();
+//            DomibusConnectorMessageExceptionBuilder.createBuilder()
+//                    .setMessage(message)
+//                    .setText("Could not generate evidence submission acceptance! ")
+//                    .setSource(this.getClass())
+//                    .setCause(ete)
+//                    .buildAndThrow();
         }
     }
 

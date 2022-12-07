@@ -2,8 +2,8 @@ package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
-import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -60,8 +59,25 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
     public void submitSameDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
-        DC5Message evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        DC5Message.DC5MessageBuilder evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
 //        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
+        DC5Message build = evidenceMessage.build();
+        DC5Message msg = messageRepo.save(build);
+
+        String linkName = getLinkName(businessMessage, businessMessage.getDirection().getTarget());
+
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), linkName, businessMessage.getTarget());
+        eventPublisher.publishEvent(messageReadyForTransportEvent);
+    }
+
+    private String getLinkName(DC5Message businessMessage, MessageTargetSource target) {
+        if (target == MessageTargetSource.BACKEND) {
+            return businessMessage.getBackendLinkName();
+        } else if (target == MessageTargetSource.GATEWAY) {
+            return businessMessage.getGatewayLinkName();
+        } else {
+            throw new IllegalArgumentException("MessageTargetSource not known!");
+        }
     }
 
     /**
@@ -80,16 +96,25 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
     public void submitOppositeDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
-//        DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(businessMessage.getMessageDetails().getDirection());
-        DC5Message evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
-//        submitMessageToLinkModuleQueueStep.submitMessageOpposite(businessMessage, evidenceMessage);
-//        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), )
+
+        DC5Message.DC5MessageBuilder dc5MessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        DC5Message msg = dc5MessageBuilder
+                .gatewayLinkName(businessMessage.getBackendLinkName())
+                .target(businessMessage.getSource())
+                .source(businessMessage.getTarget())
+                .backendLinkName(businessMessage.getGatewayLinkName())
+                .build();
+        msg = messageRepo.save(msg);
+        String linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
+
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), linkName, businessMessage.getDirection().getSource());
+        eventPublisher.publishEvent(messageReadyForTransportEvent);
 
     }
 
 
 
-    private DC5Message buildEvidenceMessage(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+    private DC5Message.DC5MessageBuilder buildEvidenceMessage(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
 
         if (messageId == null) {
             messageId = messageIdGenerator.generateDomibusConnectorMessageId();
@@ -133,12 +158,13 @@ public class SubmitConfirmationAsEvidenceMessageStep {
                     .backendData(dc5BackendDataBuilder.build())
                     .backendLinkName(businessMessage.getBackendLinkName())
                     .gatewayLinkName(businessMessage.getGatewayLinkName());
+            return msgBuilder;
 
-            DC5Message msg = messageRepo.save(msgBuilder.build());
-            NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(msg.getId());
-            eventPublisher.publishEvent(newMessageStoredEvent);
 
-            return msg;
+//            NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(msg.getId());
+//            eventPublisher.publishEvent(newMessageStoredEvent);
+
+//            return msg;
 
 //            DC5Ebms messageDetails = DomibusConnectorMessageDetailsBuilder.create()
 //                    .copyPropertiesFrom(businessMessage.getEbmsData())

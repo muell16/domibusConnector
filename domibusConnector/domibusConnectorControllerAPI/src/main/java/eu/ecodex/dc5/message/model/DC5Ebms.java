@@ -27,16 +27,33 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 public class DC5Ebms {
 
-	private static Long getNullValue(DC5Ebms instance) {
-		return null;
+	public DC5Ebms.DC5EbmsBuilder toBuilder() {
+		DC5EbmsBuilder b = DC5Ebms
+				.builder()
+				.created(this.created)
+				.conversationId(this.conversationId)
+				.ebmsMessageId(this.ebmsMessageId)
+				.refToEbmsMessageId(this.refToEbmsMessageId);
+		if (this.action != null) {
+			b.action(this.action.toBuilder().build());
+		}
+		if (this.service != null) {
+			b.service(this.service.toBuilder().build());
+		}
+		if (this.sender != null) {
+			b.sender(this.sender.toBuilder().build());
+		}
+		if (this.receiver != null) {
+			b.receiver(this.receiver.toBuilder().build());
+		}
+		return b;
 	}
 
 	@Id
 	@GeneratedValue
-	@Builder.ObtainVia(method = "getNullValue", isStatic = true)
 	private Long id = null;
 
 	@Column(name = "CREATED")

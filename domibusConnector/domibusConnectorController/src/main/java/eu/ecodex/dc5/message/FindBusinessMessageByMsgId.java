@@ -27,7 +27,7 @@ public class FindBusinessMessageByMsgId {
 
         Optional<EbmsMessageId> refToEbmsId = Optional.ofNullable(refMessage.getEbmsData())
                 .map(DC5Ebms::getEbmsMessageId);
-        Optional<DC5Message> messageByEbmsIdOrBackendIdAndDirection = refToEbmsId.flatMap(r -> dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(r.getEbmsMesssageId(), direction.getTarget()));
+        Optional<DC5Message> messageByEbmsIdOrBackendIdAndDirection = refToEbmsId.flatMap(r -> dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(r, direction.getTarget()));
 
         if (messageByEbmsIdOrBackendIdAndDirection.isPresent()) {
             LOGGER.debug("Successfully used refToMessageId [{}] to find business msg", refToEbmsId);
@@ -37,7 +37,7 @@ public class FindBusinessMessageByMsgId {
         Optional<BackendMessageId> refToBackendId = Optional.ofNullable(refMessage.getBackendData())
                 .map(DC5BackendData::getRefToBackendMessageId);
 
-        messageByEbmsIdOrBackendIdAndDirection = refToBackendId.flatMap(r -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(r.getBackendMessageId(), direction.getTarget()));
+        messageByEbmsIdOrBackendIdAndDirection = refToBackendId.flatMap(refToBackend -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, refToBackend, direction.getTarget()));
         if (messageByEbmsIdOrBackendIdAndDirection.isPresent()) {
             LOGGER.debug("Successfully used refToBackendMessageId [{}] to find business msg", refToBackendId);
             return messageByEbmsIdOrBackendIdAndDirection.get();
@@ -62,14 +62,14 @@ public class FindBusinessMessageByMsgId {
 //                );
 
         if (msg.getEbmsData().getRefToEbmsMessageId() != null) {
-            final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId().getEbmsMesssageId(), msg.getDirection().getTarget());
+            final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId(), msg.getDirection().getTarget());
             if (result.isPresent()) {
                 return result;
             }
         }
         final BackendMessageId refToBackendMessageId = msg.getBackendData().getRefToBackendMessageId();
         if (refToBackendMessageId != null) {
-            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToBackendMessageId.getBackendMessageId(), msg.getDirection().getTarget());
+            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, refToBackendMessageId, msg.getDirection().getTarget());
             if (result2.isPresent()) {
                 return result2;
             }
