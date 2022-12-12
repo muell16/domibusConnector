@@ -25,6 +25,7 @@ public class DomibusConnectorBusinessDomain {
         defaultMessageLane.setId(new BusinessDomainId(DEFAULT_LANE_NAME));
         defaultMessageLane.setDescription("default message lane");
         defaultMessageLane.setProperties(new HashMap<>());
+        defaultMessageLane.setEnabled(true);
         return defaultMessageLane;
     }
 

@@ -138,7 +138,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                 .filter(d -> d.getConfigurationSource().equals(ConfigurationSource.DB))
                 .ifPresent(d -> {
                     final boolean alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain =
-                            d.isEnabled() || DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(d.getId());
+                            domain.isEnabled() || !DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(domain.getId());
                     if (alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain) {
                         businessDomainPersistenceService.update(domain);
                     }
@@ -183,6 +183,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         DomibusConnectorBusinessDomain lane = new DomibusConnectorBusinessDomain();
         lane.setDescription(messageLaneIdBusinessDomainConfigEntry.getValue().getDescription());
         lane.setId(messageLaneIdBusinessDomainConfigEntry.getKey());
+        lane.setEnabled(messageLaneIdBusinessDomainConfigEntry.getValue().isEnabled());
         lane.setConfigurationSource(ConfigurationSource.ENV);
         Map<String, String> p = new HashMap<>(messageLaneIdBusinessDomainConfigEntry.getValue().getProperties());
         lane.setProperties(p);
