@@ -117,7 +117,7 @@ public class ProcessIncomingBusinessMessageFlow {
 		if (!validate.isEmpty()) {
 			throw new IllegalArgumentException("Message is not valid due: " + validate
 					.stream()
-					.map(ConstraintViolation::getMessage)
+					.map(v -> v.getPropertyPath() + " : " + v.getMessage())
 					.collect(Collectors.joining("\n")));
 		}
 	}

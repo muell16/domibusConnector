@@ -1,8 +1,10 @@
 package eu.ecodex.dc5.message.repo;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.model.BackendMessageId;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.model.EbmsMessageId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +22,6 @@ public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
     @Query("SELECT m FROM DC5Message m WHERE m.ebmsData.ebmsMessageId = ?1 AND m.target = ?2 ")
     public Optional<DC5Message> findOneByEbmsMessageIdAndDirectionTarget(EbmsMessageId id, MessageTargetSource directionTarget);
 
+    @Query("SELECT m FROM DC5Message m WHERE m.connectorMessageId = ?1")
+    DC5Message getByConnectorMessageId(DomibusConnectorMessageId take);
 }

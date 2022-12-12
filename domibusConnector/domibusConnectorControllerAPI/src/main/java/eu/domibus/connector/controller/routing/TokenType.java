@@ -13,7 +13,7 @@ public enum TokenType {
     AS4_FINAL_RECIPIENT("FinalRecipient"),
     AS4_FROM_PARTY_ID("FromPartyId"),
     AS4_FROM_PARTY_ID_TYPE("FromPartyIdType"),
-    AS4_FROM_PARTY_ROLE("FromPartyRole"),
+//    AS4_FROM_PARTY_ROLE("FromPartyRole"),
     AS4_ACTION("Action"),
     OR("\\|", "|"),
     AND("&", "&"),
@@ -35,8 +35,8 @@ public enum TokenType {
             AS4_FINAL_RECIPIENT,
             AS4_ACTION,
             AS4_FROM_PARTY_ID,
-            AS4_FROM_PARTY_ID_TYPE,
-            AS4_FROM_PARTY_ROLE
+            AS4_FROM_PARTY_ID_TYPE
+//            AS4_FROM_PARTY_ROLE
             ).collect(Collectors.toList());
 
     public static final List<TokenType> COMPARE_OPERATOR_TOKEN_TYPES =

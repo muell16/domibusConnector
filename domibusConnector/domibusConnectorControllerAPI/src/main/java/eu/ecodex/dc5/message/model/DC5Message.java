@@ -15,6 +15,7 @@ import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
+import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +52,7 @@ public class DC5Message implements Serializable {
 	@Convert(converter = BusinessDomainIdConverter.class)
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
 
-	@NotNull
+	@NotNull(message = "A message must have a connectorMessageId!")
 	@Valid
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
@@ -63,7 +64,7 @@ public class DC5Message implements Serializable {
 	private DC5Ebms ebmsData = new DC5Ebms();
 
 	@Valid
-//	@NotNull
+	@NotNull(groups = OutgoingMessageRules.class, message = "A outgoing message must have backendData!")
 	@CheckForNull
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	private DC5BackendData backendData = new DC5BackendData();
@@ -88,7 +89,7 @@ public class DC5Message implements Serializable {
 	private DC5MessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message
-	@OneToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@Singular("transportedMessageConfirmation")
 	@NotNull
 	private List<DC5Confirmation> transportedMessageConfirmations = new ArrayList<>();

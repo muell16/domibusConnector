@@ -93,8 +93,8 @@ public class DC5EventManager {
                 //publish event again to spring....
                 eventPublisher.publishEvent(originalEvent);
             } catch (Throwable e) {
-
-                log.error("Error occured cannot continue.", e);
+                String error = String.format("Error occured cannot continue processing event [%s]", originalEvent);
+                log.error(error, e);
                 //TODO: add exception handler here!
                 //ERROR handling...
                 //?? exception behaviour?

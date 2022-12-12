@@ -25,6 +25,7 @@ public class DC5EcxAddress {
     @Embedded
     @NotNull(groups = IncomingMessageRules.class, message = "A incoming message mus have a ecx addr")
     private DC5Party party = new DC5Party();
+
     @Embedded
     private DC5Role role = new DC5Role();
 

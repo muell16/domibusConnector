@@ -59,6 +59,7 @@ public class CertificateSourceFromKeyStoreCreator {
     }
 
     public SignatureConnectionAndPrivateKeyEntry createSignatureConnectionFromStore(KeyAndKeyStoreConfigurationProperties keyAndKeyStoreConfigurationProperties) {
+        Objects.requireNonNull(keyAndKeyStoreConfigurationProperties.getKeyStore(), "KeyStore of KeyAndKeyStoreConfigurationProperties must be set!");
         StoreConfigurationProperties storeConfigurationProperties = keyAndKeyStoreConfigurationProperties.getKeyStore();
         LOGGER.debug("Using keystore location [{}], password [{}], type [{}]", storeConfigurationProperties.getPath(),
                 LoggingUtils.logPassword(LOGGER, storeConfigurationProperties.getPassword()),

@@ -3,23 +3,24 @@ package eu.domibus.connector.testdata;
 
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.xml.transform.*;
+import javax.annotation.Nullable;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 /**
  * Load and store a Transition Message to the FileSystem
@@ -67,6 +68,11 @@ public class LoadStoreTransitionMessage {
     public static final String BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME = "backend.ref-to-message-id";
     public static final String BACKEND_MESSAGE_ID_PROP_NAME = "backend.message-id";
     public static final String BACKEND_MESSAGE_CONTENT_PROP_NAME = "backend.content.xml";
+    public static final String BACKEND_MESSAGE_DOC_CONTENT_PROP_NAME = "backend.content.doc";
+
+    public static final String ECX_ASIC_S_CONTENT_PROP_NAME = "ecx.asics";
+    public static final String ECX_XML_TOKEN_PROP_NAME = "ecx.token.xml";
+    public static final String ECX_XML_BUSINESS_DOC = "ecx.business.xml";
 
 
     private Path basicFolder;
@@ -232,6 +238,8 @@ public class LoadStoreTransitionMessage {
         }
     }
 
+
+
     private void storeMessageContent(DomibusConnectorMessageContentType content) throws IOException {
         if (content == null) {
             return;
@@ -340,6 +348,20 @@ public class LoadStoreTransitionMessage {
 
         message.setMessageDetails(loadMessageDetails());
 
+        loadMsgContent(message);
+
+
+        //load attachments
+        message.getMessageAttachments().addAll(loadMessageAttachments());
+
+        //load confirmations
+        message.getMessageConfirmations().addAll(loadMessageConfirmations());
+
+
+        return message;
+    }
+
+    private void loadMsgContent(DomibusConnectorMessageType message) {
         Resource contentResource = createRelativeResource(messageProperties.getProperty(MESSAGE_CONTENT_XML_PROP_NAME));
         if (contentResource != null && contentResource.exists()) {
             DomibusConnectorMessageContentType content = new DomibusConnectorMessageContentType();
@@ -384,16 +406,6 @@ public class LoadStoreTransitionMessage {
             }
 
         }
-
-
-        //load attachments
-        message.getMessageAttachments().addAll(loadMessageAttachments());
-
-        //load confirmations
-        message.getMessageConfirmations().addAll(loadMessageConfirmations());
-
-
-        return message;
     }
 
     private List<? extends DomibusConnectorMessageConfirmationType> loadMessageConfirmations() {

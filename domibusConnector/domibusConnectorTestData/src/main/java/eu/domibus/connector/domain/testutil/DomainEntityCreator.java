@@ -24,10 +24,18 @@ import java.util.stream.Stream;
  */
 public class DomainEntityCreator {
 
+    public static DC5Role getDefaultInitiatorRole() {
+        return DC5Role.builder().role("urn:e-codex:role:initiator").roleType(DC5RoleType.INITIATOR).build();
+    }
+
+    public static DC5Role getDefaultResponderRole() {
+        return DC5Role.builder().role("urn:e-codex:role:responder").roleType(DC5RoleType.RESPONDER).build();
+    }
+
     public static DC5EcxAddress defaultSender() {
         return DC5EcxAddress.builder()
                 .party(defaultSenderParty())
-                .role(DC5Role.builder().role("urn:e-codex:role:initiator").roleType(DC5RoleType.INITIATOR).build())
+                .role(getDefaultInitiatorRole())
                 .ecxAddress("sender")
                 .build();
     }
@@ -35,7 +43,7 @@ public class DomainEntityCreator {
     public static DC5EcxAddress defaultRecipient() {
         return DC5EcxAddress.builder()
                 .party(defaultRecipientParty())
-                .role(DC5Role.builder().role("urn:e-codex:role:responder").roleType(DC5RoleType.RESPONDER).build())
+                .role(getDefaultResponderRole())
                 .ecxAddress("recipient")
                 .build();
     }
@@ -575,6 +583,7 @@ public class DomainEntityCreator {
                         .build())
                 .build();
     }
+
 
 
 }
