@@ -95,16 +95,6 @@ public class DC5Message implements Serializable {
 	private List<DC5Confirmation> transportedMessageConfirmations = new ArrayList<>();
 
 
-//	//holds all message confirmations which are related to this business message
-//	@Transient
-//	@Singular
-//	@OneToMany()
-//	@NotNull
-//	private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
-
-
-	//holds all errors which occured during message processing...
-
 	@Transient //TODO: move to process
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 

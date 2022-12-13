@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.model.LargeFileReference;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -36,13 +37,11 @@ public class DomibusConnectorMessageAttachment {
 	@NonNull
 	private String identifier;
 
-	@Transient
+	@Convert(converter = StorageReferenceConverter.class)
 	private LargeFileReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
-
-	private String storageReference;
 
 	@NonNull
 	@Convert(converter = DigestConverter.class)
@@ -52,6 +51,25 @@ public class DomibusConnectorMessageAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private DetachedSignature detachedSignature;
+
+	public static class StorageReferenceConverter implements AttributeConverter<LargeFileReference, String> {
+
+		@Override
+		public String convertToDatabaseColumn(LargeFileReference attribute) {
+			if (attribute == null) {
+				return null;
+			}
+			return LargeFileReference.mapToString(attribute);
+		}
+
+		@Override
+		public LargeFileReference convertToEntityAttribute(String dbData) {
+			if (dbData == null) {
+				return null;
+			}
+			return LargeFileReference.mapFromString(dbData);
+		}
+	}
 
 
 	public String getIdentifier(){

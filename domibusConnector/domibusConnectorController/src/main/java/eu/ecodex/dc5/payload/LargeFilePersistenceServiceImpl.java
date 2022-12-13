@@ -110,6 +110,7 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     private LargeFilePersistenceProvider getProviderByLargeFileReference(LargeFileReference bigDataReference) {
+        Objects.requireNonNull(bigDataReference, "Data reference cannot be null!");
         String storageProviderName = bigDataReference.getStorageProviderName();
         LOGGER.debug("Looking up Storage provider for largeFileReference [{}] with name [{}]",
                 bigDataReference.getStorageIdReference(),

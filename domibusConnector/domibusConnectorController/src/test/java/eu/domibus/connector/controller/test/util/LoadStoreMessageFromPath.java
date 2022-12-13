@@ -183,15 +183,17 @@ public class LoadStoreMessageFromPath {
 
         DC5MessageContent.DC5MessageContentBuilder contentBuilder = DC5MessageContent.builder();
 
-        if (messageProperties.containsKey(BACKEND_MESSAGE_DOC_CONTENT_PROP_NAME)) {
+        if (messageProperties.containsKey(BACKEND_MESSAGE_DOC_CONTENT_PROP_NAME + ATTACHMENT_FILENAME_POSTFIX)) {
             contentBuilder.businessContent(loadBackendContent().build());
         }
-        if (messageProperties.containsKey(ECX_MESSAGE_ASIC_CONTENT_PROP_NAME)) {
+        if (messageProperties.containsKey(ECX_MESSAGE_ASIC_CONTENT_PROP_NAME + ATTACHMENT_FILENAME_POSTFIX)) {
             contentBuilder.ecodexContent(loadEcodexContent().build());
         }
+        if (messageProperties.containsKey(BACKEND_MESSAGE_DOC_CONTENT_PROP_NAME + ATTACHMENT_FILENAME_POSTFIX)
+                || messageProperties.containsKey(ECX_MESSAGE_ASIC_CONTENT_PROP_NAME + ATTACHMENT_FILENAME_POSTFIX)) {
+            builder.messageContent(contentBuilder.build());
+        }
 
-
-        builder.messageContent(contentBuilder.build());
         builder.ebmsData(loadEcxDatailsFromProperties().build());
         builder.backendData(loadBackendDetailsFromProperties().build());
 

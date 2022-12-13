@@ -69,23 +69,8 @@ public class DC5MessageContent {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-//	@OneToMany(cascade = CascadeType.ALL)
-//	@NonNull
-//	@Builder.Default
-//	private List<DC5Confirmation> relatedConfirmations = new ArrayList<>();
-
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	private DC5BusinessMessageState currentState;
-
-//	@PrePersist
-//	public void prePersist() {
-//		if (currentState == null) {
-//			changeCurrentState(DC5BusinessMessageState.builder()
-//					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
-//					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
-//					.build());
-//		}
-//	}
 
 	@Override
     public String toString() {

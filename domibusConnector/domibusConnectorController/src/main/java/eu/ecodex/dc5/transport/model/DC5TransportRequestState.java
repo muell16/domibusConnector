@@ -2,9 +2,7 @@ package eu.ecodex.dc5.transport.model;
 
 
 import eu.domibus.connector.domain.enums.TransportState;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Entity;
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 
 @Entity
 public class DC5TransportRequestState {

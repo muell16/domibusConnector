@@ -23,6 +23,9 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public static LargeFileReference mapFromString(String s) {
         String[] split = s.split("::");
+        if (split.length != 2) {
+            throw new IllegalArgumentException("Illegals storage reference id. Must follow the format: '<storageprovider>::<storageid>' but it is: [" + s + "]");
+        }
         LargeFileReference r = new LargeFileReference();
         r.setStorageProviderName(split[0]);
         r.setStorageIdReference(split[1]);

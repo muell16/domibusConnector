@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static eu.ecodex.dc5.message.model.MessageModelHelper.isIncomingBusinessMessage;
+
 @Service
 @RequiredArgsConstructor
 public class NewMessageStoredFlow {
@@ -41,9 +43,9 @@ public class NewMessageStoredFlow {
 
         if (MessageModelHelper.isEvidenceTriggerMessage(msg) || MessageModelHelper.isEvidenceMessage(msg)) {
             confirmationMessageFlow.processMessage(msg);
-        } else if (DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND.equals(msg.getDirection() )) {
+        } else if (MessageModelHelper.isIncomingBusinessMessage(msg)) {
             processIncomingBusinessMessageFlow.processMessage(msg);
-        } else if (DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY.equals(msg.getDirection())) {
+        } else if (MessageModelHelper.isOutgoingBusinessMessage(msg)) {
             outgoingBusinessMessageFlow.processMessage(msg);
         } else {
             throw new IllegalArgumentException("Message cannot be processed!");

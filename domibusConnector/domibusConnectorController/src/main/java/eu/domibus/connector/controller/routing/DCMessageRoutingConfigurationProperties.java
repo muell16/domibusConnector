@@ -121,6 +121,7 @@ public class DCMessageRoutingConfigurationProperties {
         //align routing rule id to key
         backendRules.forEach((key, value) -> value.setRoutingRuleId(key));
         gatewayRules.forEach((key, value) -> value.setRoutingRuleId(key));
+        domainRules.forEach((key, value) -> value.setRoutingRuleId(key));
     }
 
 }
