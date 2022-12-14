@@ -22,7 +22,7 @@ public class BusinessScopedConfigurationPropertiesValidationRule implements Doma
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final BusinessScopedConfigurationPropertiesRegistrar.BusinessScopedConfigurationPropertiesListHolder holder;
-    public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain.BusinessDomainId id) {
+    public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
 
         final List<? extends ConstraintViolation<?>> hibernateConstraintViolations = holder.getBusinessScopeConfigurationPropertyBeanNames().stream()
                 .map((s) -> {
@@ -32,8 +32,8 @@ public class BusinessScopedConfigurationPropertiesValidationRule implements Doma
                         throw new RuntimeException(e);
                     }
                 })
-                .map(clazz -> configurationPropertyManagerService.loadConfiguration(id, clazz))
-                .map(obj -> configurationPropertyManagerService.validateConfiguration(id, obj))
+                .map(clazz -> configurationPropertyManagerService.loadConfigurationOnlyFromMap(domain.getProperties(), clazz))
+                .map(configurationPropertyManagerService::validateConfiguration)
                 .flatMap(Collection::stream)
                 .peek(v -> LOGGER.info("Domain Validation Error!"))
                 .peek(v -> LOGGER.info("Message: " + v.getMessage()))

@@ -8,14 +8,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.link.utils.Connector42LinkConfigTo43LinkConfigConverter;
-import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkConfigurationField;
 import eu.domibus.connector.ui.view.areas.configuration.link.DCLinkPartnerField;
-import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,7 +45,6 @@ public abstract class ImportOldConfigDialog extends Dialog {
     Upload upload = new Upload(buffer);
     //upload result area
     VerticalLayout resultArea = new VerticalLayout();
-    private ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback;
 
     public ImportOldConfigDialog(ObjectProvider<DCLinkConfigurationField> linkConfigurationFieldObjectProvider,
                                  ObjectProvider<DCLinkPartnerField> linkPartnerFieldObjectProvider,
@@ -125,17 +123,6 @@ public abstract class ImportOldConfigDialog extends Dialog {
         } catch (Exception e) {
             LOGGER.warn("Exception occured while importing old config", e);
             Notification.show("Error during import!");
-        }
-    }
-
-    public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {
-        this.dialogCloseCallback = dialogCloseCallback;
-    }
-
-    public void setOpened(boolean opened) {
-        super.setOpened(opened);
-        if (!opened && dialogCloseCallback != null) {
-            dialogCloseCallback.dialogHasBeenClosed();
         }
     }
 

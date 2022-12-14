@@ -31,8 +31,13 @@ class DCDomainValidationServiceTest {
 
         final DCDomainValidationService sut = new DCDomainValidationService(context);
 
+        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
+        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        domain.setId(anyId);
+
+
         // Act
-        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(new DomibusConnectorBusinessDomain.BusinessDomainId("any id"));
+        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(domain);
 
         // Assert
         assertThat(validationResult.isValid()).isFalse();
@@ -49,8 +54,12 @@ class DCDomainValidationServiceTest {
 
         final DCDomainValidationService sut = new DCDomainValidationService(context);
 
+        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
+        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        domain.setId(anyId);
+
         // Act
-        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(new DomibusConnectorBusinessDomain.BusinessDomainId("any id"));
+        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(domain);
 
         // Assert
         assertThat(validationResult.isValid()).isTrue();

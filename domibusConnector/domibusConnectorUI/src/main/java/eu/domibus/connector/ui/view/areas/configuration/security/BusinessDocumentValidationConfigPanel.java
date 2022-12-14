@@ -42,7 +42,7 @@ public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithT
             ImportBusinessDocConfig dialog = importBusinessDocConfig.getObject();
 //          due some reason dialogCloseActionListener does not work
 //            dialog.addDialogCloseActionListener((ComponentEventListener<Dialog.DialogCloseActionEvent>) event1 -> configurationPanel.refreshUI());
-            dialog.setDialogCloseCallback(configurationPanel::refreshUI);
+            dialog.addOpenedChangeListener(e->configurationPanel.refreshUI());
             dialog.open();
         });
         this.add(b);

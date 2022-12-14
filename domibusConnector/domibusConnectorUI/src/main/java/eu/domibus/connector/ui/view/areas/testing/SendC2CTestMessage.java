@@ -1,18 +1,6 @@
 package eu.domibus.connector.ui.view.areas.testing;
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.vaadin.flow.component.ClickEvent;
-import eu.ecodex.dc5.pmode.DC5PmodeService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -29,9 +17,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
@@ -42,6 +28,18 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.pmode.DC5PmodeService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @UIScope
@@ -228,7 +226,8 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateFromParty(WebMessage msg) {
-        DC5PmodeService.PModeParty pParty = pModeService.getHomeParty();
+        // TODO: this must now be read from the properties instead!
+        DC5PmodeService.PModeParty pParty = null; //pModeService.getHomeParty();
         if (pParty != null) {
             WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), null);
             msg.getMessageInfo().setFrom(homeParty);

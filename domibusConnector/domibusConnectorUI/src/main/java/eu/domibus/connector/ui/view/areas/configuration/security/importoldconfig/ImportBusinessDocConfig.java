@@ -4,6 +4,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.security.configuration.DCBusinessDocumentValidationConfigurationProperties;
 import eu.domibus.connector.ui.component.DomainSelect;
+import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
 import eu.domibus.connector.ui.view.areas.configuration.security.BusinessDocumentValidationConfigForm;
 import org.springframework.beans.factory.ObjectProvider;
@@ -21,9 +22,9 @@ public class ImportBusinessDocConfig extends AImportOldConfigDialog {
 
     private final ObjectProvider<BusinessDocumentValidationConfigForm> formFactory;
 
-    public ImportBusinessDocConfig(ConfigurationPanelFactory configurationPanelFactory,
+    public ImportBusinessDocConfig(ChangedPropertiesDialogFactory dialogFactory, ConfigurationPanelFactory configurationPanelFactory,
                                    ObjectProvider<BusinessDocumentValidationConfigForm> formFactory, DomainSelect domainSelect) {
-        super(configurationPanelFactory, domainSelect);
+        super(dialogFactory, domainSelect);
         this.formFactory = formFactory;
     }
 

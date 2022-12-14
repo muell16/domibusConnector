@@ -23,7 +23,7 @@ class DCDomainValidationServiceITTest {
     static class Rule1Test implements DomainValidationRule {
 
         @Override
-        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain.BusinessDomainId id) {
+        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
             return DCBusinessDomainManager.DomainValidResult.builder().warning("test warning").build();
         }
     }
@@ -32,7 +32,7 @@ class DCDomainValidationServiceITTest {
     static class Rule2Test implements DomainValidationRule {
 
         @Override
-        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain.BusinessDomainId id) {
+        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
             return DCBusinessDomainManager.DomainValidResult.builder().errors(Collections.singletonList("an error")).build();
         }
     }
@@ -46,9 +46,14 @@ class DCDomainValidationServiceITTest {
     void given_the_validation_rules_raise_an_error_then_the_domain_validation_result_will_be_false() {
         // Arrange
         final DCDomainValidationService sut = new DCDomainValidationService(context);
+        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
+        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        domain.setId(anyId);
+
 
         // Act
-        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(new DomibusConnectorBusinessDomain.BusinessDomainId("any id"));
+
+        final DCBusinessDomainManager.DomainValidResult validationResult = sut.validateDomain(domain);
 
         // Assert
         assertThat(validationResult.isValid()).isFalse();
