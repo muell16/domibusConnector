@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="bruno labenv01 h2" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="bruno labenv01 h2 load failing rule" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="fail-always-rule" />
     <additionalParameters>
       <param>
         <option name="enabled" value="true" />
