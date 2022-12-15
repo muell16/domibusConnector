@@ -58,7 +58,7 @@ public class DC5BusinessMessageState {
 
     private String principal;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private DC5Confirmation confirmation;
 
     @NonNull

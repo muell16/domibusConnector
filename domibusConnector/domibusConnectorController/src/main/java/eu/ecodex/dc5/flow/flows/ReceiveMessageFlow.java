@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.exception.ErrorCode;
+import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
 import eu.ecodex.dc5.flow.api.StepFailedException;
@@ -31,15 +32,17 @@ public class ReceiveMessageFlow {
 
     @Transactional
     public <T> ReceiveMessageFlowResult receiveMessage(T message, DC5TransformToDomain<T> transform) {
-        messageProcessManager.startProcess();   //TODO: put into aspect?
-        try {
+        try (MessageProcessManager.CloseableMessageProcess process = messageProcessManager.startProcess();){
             DC5Message msg = transformMessageStep.transformMessage(message, transform);
             DC5Message dc5Msg = saveMessageStep.saveNewMessage(msg);
-
+            eventPublisher.publishEvent(NewMessageStoredEvent.of(dc5Msg.getId()));
             return ReceiveMessageFlowResult.getSuccess();
         } catch (StepFailedException stepFailedException) {
             return new ReceiveMessageFlowResult(false,Optional.empty(), Optional.of(stepFailedException));
+        } finally {
+
         }
+
     }
 
     @Getter
@@ -51,6 +54,10 @@ public class ReceiveMessageFlow {
 
         public static ReceiveMessageFlowResult getSuccess() {
             return new ReceiveMessageFlowResult(true, Optional.empty(), Optional.empty());
+        }
+
+        public boolean isSuccess() {
+            return this.success;
         }
 
         @Override

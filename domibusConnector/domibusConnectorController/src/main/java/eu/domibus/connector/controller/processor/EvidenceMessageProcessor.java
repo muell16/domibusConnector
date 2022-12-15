@@ -1,15 +1,5 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
-import eu.ecodex.dc5.flow.steps.SubmitConfirmationAsEvidenceMessageStep;
-import eu.ecodex.dc5.flow.steps.ValidateMessageConfirmationStep;
-import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
-import eu.domibus.connector.controller.queues.producer.ToCleanupQueue;
-//import eu.domibus.connector.domain.enums.MessageTargetSource;
-//import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-//import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-//import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.ecodex.dc5.flow.steps.EvidenceTriggerStep;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,12 +11,12 @@ public class EvidenceMessageProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger(EvidenceMessageProcessor.class);
 
-    private final EvidenceTriggerStep evidenceTriggerStep;
-    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
-    private final MessageConfirmationStep messageConfirmationStep;
-    private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
-    private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
-    private final ToCleanupQueue cleanupQueue;
+//    private final EvidenceTriggerStep evidenceTriggerStep;
+//    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
+//    private final MessageConfirmationStep messageConfirmationStep;
+//    private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
+//    private final SubmitConfirmationAsEvidenceMessageStep submitConfirmationAsEvidenceMessageStep;
+//    private final ToCleanupQueue cleanupQueue;
 
 //    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "EvidenceMessageProcessor")
 //    public void processMessage(DomibusConnectorMessage message) {

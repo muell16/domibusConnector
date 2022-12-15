@@ -17,12 +17,17 @@ import javax.validation.constraints.NotNull;
  * @version 1.0
  */
 @Entity
-
 @Getter
-@AllArgsConstructor
-@Builder(toBuilder = true)
+
+
 @NoArgsConstructor
 public class DC5Service {
+
+	@Builder(toBuilder = true)
+	private DC5Service(String service, String serviceType) {
+		this.service = service;
+		this.serviceType = serviceType;
+	}
 
 	@Id
 	@GeneratedValue

@@ -20,7 +20,6 @@ public class DomainModeJsonObjectMapperFactoryConfiguration {
         SimpleModule largeFileReferenceModule = new SimpleModule();
         largeFileReferenceModule.addSerializer(LargeFileReference.class, new LargeFileReferenceSerializer(LargeFileReference.class));
         largeFileReferenceModule.addDeserializer(LargeFileReference.class, new LargeFileDeserializer(LargeFileReference.class));
-
         mapper.registerModule(largeFileReferenceModule);
         mapper.registerModule(new JavaTimeModule());
         return mapper;

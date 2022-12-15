@@ -1,16 +1,20 @@
 package eu.ecodex.dc5.flow.flows;
 
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
+import eu.ecodex.dc5.flow.steps.MessageConfirmationStep;
 import eu.ecodex.dc5.flow.steps.ValidateMessageConfirmationStep;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.ecodex.dc5.flow.steps.EvidenceTriggerStep;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
-import eu.ecodex.dc5.message.model.BackendMessageId;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.EbmsMessageId;
-import eu.ecodex.dc5.message.model.MessageModelHelper;
+import eu.ecodex.dc5.message.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,10 +22,13 @@ import org.springframework.stereotype.Service;
 public class ConfirmationMessageFlow {
 
 
-//    private final ConfirmationCreatorService confirmationCreatorService;
     private final EvidenceTriggerStep evidenceTriggerStep;
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
     private final ValidateMessageConfirmationStep validateMessageConfirmationStep;
+    private final MessageConfirmationStep messageConfirmationStep;
+
+
+    private final ApplicationEventPublisher eventPublisher;
 
     public void processMessage(DC5Message message) {
         // validate message
@@ -41,6 +48,10 @@ public class ConfirmationMessageFlow {
         //set ref to backend message id (backendId of business message)
         BackendMessageId businessMessageBackendId = businessMsg.getBackendData().getBackendMessageId();
         log.debug("Setting refToBackendMessageId to [{}]", businessMessageBackendId);
+        if (message.getBackendData() == null) {
+            message.setBackendData(DC5BackendData.builder()
+                    .build());
+        }
         message.getBackendData().setRefToBackendMessageId(businessMessageBackendId);
 
         //set ref to message id (EBMSID of business message)
@@ -51,10 +62,22 @@ public class ConfirmationMessageFlow {
 
 
         validateMessageConfirmationStep.executeStep(message);
+
+        List<DC5Confirmation> transportedConfirmations = message.getTransportedMessageConfirmations();
+        for (DC5Confirmation c : transportedConfirmations) {
+            messageConfirmationStep.processConfirmationForMessage(businessMsg, c);
+        }
+
+
+        MessageReadyForTransportEvent messageReadyForTransportEvent =
+                MessageReadyForTransportEvent.of(message.getId(), message.getGatewayLinkName(), message.getTarget());
+        eventPublisher.publishEvent(messageReadyForTransportEvent);
+
+
 //
 //            DomibusConnectorMessageConfirmation transportedConfirmation = message.getTransportedMessageConfirmations().get(0);
 //
-//            messageConfirmationStep.processConfirmationForMessage(businessMsg, transportedConfirmation);
+//
 //
 //            //if business message is rejected, confirmed trigger cleanup routine
 //            if (businessMsg.getMessageDetails().getConfirmed() != null || businessMsg.getMessageDetails().getRejected() != null) {

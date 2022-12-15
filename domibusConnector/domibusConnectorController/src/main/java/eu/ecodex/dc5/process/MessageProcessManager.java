@@ -25,24 +25,41 @@ public class MessageProcessManager {
         this.messageIdGenerator = () -> DomibusConnectorMessageId.ofString(UUID.randomUUID().toString());
     }
 
-//    public static MessageProcessId getCurrentProcessId() {
-//        return new MessageProcessId(threadLocalMsgProcess.get().getProcessId());
-//    }
-
     private CloseableMessageProcess setCurrentProcessId(DC5MsgProcess p) {
         threadLocalMsgProcess.set(p);
-        return () -> threadLocalMsgProcess.remove();
+        return new CloseableMessageProcess() {
+            @Override
+            public void close() {
+                threadLocalMsgProcess.remove();
+            }
+
+            @Override
+            public DC5MsgProcess getProcess() {
+                return threadLocalMsgProcess.get();
+            }
+        };
     }
 
 
-    public DC5MsgProcess startProcess() {
+    public CloseableMessageProcess startProcess() {
         MessageProcessId messageProcessId = new MessageProcessId(messageIdGenerator.generateDomibusConnectorMessageId().toString());
         DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
         dc5MsgProcess.setProcessId(messageProcessId.getProcessId());
         threadLocalMsgProcess.set(dc5MsgProcess);
         dc5MsgProcess.setCreated(LocalDateTime.now());
-        return msgProcessRepo.save(dc5MsgProcess);
+        DC5MsgProcess p = msgProcessRepo.save(dc5MsgProcess);
+        return setCurrentProcessId(p);
     }
+
+//    public CloseableMessageProcess startProcessC() {
+//        MessageProcessId messageProcessId = new MessageProcessId(messageIdGenerator.generateDomibusConnectorMessageId().toString());
+//        DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
+//        dc5MsgProcess.setProcessId(messageProcessId.getProcessId());
+//        threadLocalMsgProcess.set(dc5MsgProcess);
+//        dc5MsgProcess.setCreated(LocalDateTime.now());
+//        CloseableMessageProcess c = new CloseableMessageProcess();
+//
+//    }
 
 //    public DC5ProcessStep startStep(DC5MsgProcess dc5MsgProcess, Class<?> step) {
 //        DC5ProcessStep processStep = new DC5ProcessStep();
@@ -95,6 +112,8 @@ public class MessageProcessManager {
 
     public static interface CloseableMessageProcess extends Closeable {
         public void close();
+
+        public DC5MsgProcess getProcess();
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,26 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class DC5MessageContent {
 
+	public static DC5MessageContentBuilder builder() {
+		return new CustomDC5MessageContentBuilder();
+	}
+
+	private static class CustomDC5MessageContentBuilder extends DC5MessageContentBuilder {
+
+		public DC5MessageContent build() {
+			DC5MessageContent content = super.build();
+			if (content.getCurrentState() == null && CollectionUtils.isEmpty(content.getMessageStates())) { //set initial state
+				content.changeCurrentState(DC5BusinessMessageState.builder()
+					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
+					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
+					.build());
+			} else if (content.getCurrentState() == null) {
+				content.setCurrentState(content.getMessageStates().get(content.getMessageStates().size() - 1)); //set to last state in list
+			}
+			return content;
+		}
+	}
+
 	@GeneratedValue
 	@Id
 	public long id;
@@ -48,23 +69,8 @@ public class DC5MessageContent {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-//	@OneToMany(cascade = CascadeType.ALL)
-//	@NonNull
-//	@Builder.Default
-//	private List<DC5Confirmation> relatedConfirmations = new ArrayList<>();
-
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	private DC5BusinessMessageState currentState;
-
-	@PrePersist
-	public void prePersist() {
-		if (currentState == null) {
-			currentState = DC5BusinessMessageState.builder()
-					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
-					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
-					.build();
-		}
-	}
 
 	@Override
     public String toString() {
@@ -77,7 +83,10 @@ public class DC5MessageContent {
 	public void changeCurrentState(DC5BusinessMessageState currentState) {
 		if (currentState.getId() == null) {
 			this.currentState = currentState;
-			this.messageStates.add(currentState);
+			if (messageStates == null) {
+				messageStates = new ArrayList<>();
+			}
+			messageStates.add(currentState);
 		} else {
 			throw new IllegalArgumentException("Not a new state!");
 		}

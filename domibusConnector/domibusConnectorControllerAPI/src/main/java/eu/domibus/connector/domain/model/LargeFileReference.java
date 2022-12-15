@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.activation.DataSource;
 import javax.validation.constraints.NotNull;
 
+import eu.ecodex.dc5.message.model.Digest;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 
@@ -14,7 +15,7 @@ import org.springframework.lang.Nullable;
  * Represents a reference to a storage system for big files
  *
  */
-public class LargeFileReference implements DataSource, Serializable {
+public class LargeFileReference implements DataSource {
 
     public static String mapToString(LargeFileReference r) {
         return r.getStorageProviderName() + "::" + r.getStorageIdReference();
@@ -22,6 +23,9 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public static LargeFileReference mapFromString(String s) {
         String[] split = s.split("::");
+        if (split.length != 2) {
+            throw new IllegalArgumentException("Illegals storage reference id. Must follow the format: '<storageprovider>::<storageid>' but it is: [" + s + "]");
+        }
         LargeFileReference r = new LargeFileReference();
         r.setStorageProviderName(split[0]);
         r.setStorageIdReference(split[1]);
@@ -39,6 +43,7 @@ public class LargeFileReference implements DataSource, Serializable {
 
     private Long size = -1l;
 
+    private Digest digest;
     private String text = "";
 
     private ZonedDateTime creationDate;
@@ -59,6 +64,7 @@ public class LargeFileReference implements DataSource, Serializable {
         this.mimetype = ref.mimetype;
         this.size = ref.size;
         this.text = ref.text;
+        this.digest = ref.digest;
         this.creationDate = ref.creationDate;
     }
 
@@ -141,6 +147,18 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public void setCreationDate(ZonedDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    public Digest getDigest() {
+        return digest;
+    }
+
+    public void setDigest(Digest digest) {
+        this.digest = digest;
     }
 
     @Override

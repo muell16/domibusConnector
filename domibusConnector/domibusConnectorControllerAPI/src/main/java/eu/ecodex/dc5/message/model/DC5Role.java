@@ -1,12 +1,10 @@
 package eu.ecodex.dc5.message.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
 
@@ -14,23 +12,26 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
+@ToString
 public class DC5Role {
     private String role;
     private DC5RoleType roleType;
 
-    public String getRole() {
-        return role;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DC5Role)) return false;
+
+        DC5Role dc5Role = (DC5Role) o;
+
+        if (!Objects.equals(role, dc5Role.role)) return false;
+        return roleType == dc5Role.roleType;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public DC5RoleType getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(DC5RoleType roleType) {
-        this.roleType = roleType;
+    @Override
+    public int hashCode() {
+        int result = role != null ? role.hashCode() : 0;
+        result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
+        return result;
     }
 }

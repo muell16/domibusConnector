@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.flow.events;
 
 
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import lombok.*;
 
@@ -17,6 +18,8 @@ public class MessageTransportEvent {
     private final String linkName;
 
     private final long transportId; // transport id
+
+    private final MessageTargetSource target;
 
     @NonNull
     private TransportState state;

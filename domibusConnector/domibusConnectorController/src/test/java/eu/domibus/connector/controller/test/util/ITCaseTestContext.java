@@ -83,10 +83,10 @@ public class ITCaseTestContext {
         return new LargeFileProviderMemoryImpl();
     }
 
-    @Bean
-    public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
-        return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
-    }
+//    @Bean
+//    public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
+//        return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
+//    }
 
     @Bean
     public DomibusConnectorBackendDeliveryServiceInterceptor domibusConnectorBackendDeliveryServiceInterceptor() {
@@ -192,15 +192,15 @@ public class ITCaseTestContext {
         @Autowired
         TransportStateService transportStateService;
 
-        @Autowired
-        DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
+//        @Autowired
+//        DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
 
 //        @Autowired
 //        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DC5Message> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
 
         public synchronized void submitToGateway(DC5Message message) throws DomibusConnectorGatewaySubmissionException {
-            interceptor.submitToGateway(message);
+//            interceptor.submitToGateway(message);
             LOGGER.info("Delivered Message [{}] to Gateway", message);
 
             TransportStateService.TransportId dummyGW = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));

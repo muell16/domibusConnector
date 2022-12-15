@@ -82,12 +82,12 @@ public class MessageGrid extends Grid<Message> {
 
     private String getConnectorId(Message msg) {
         String result = null;
-        try {
-            final DC5Message DC5Message = (DC5Message) queueController.getConverter().fromMessage(msg);
-            result = DC5Message.getConnectorMessageId().getConnectorMessageId();
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            final DC5Message DC5Message = (DC5Message) queueController.getConverter().fromMessage(msg);
+//            result = DC5Message.getConnectorMessageId().getConnectorMessageId();
+//        } catch (JMSException e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 }
