@@ -1,7 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
-import eu.domibus.connector.controller.queues.producer.ToLinkQueue;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;

@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.steps.DC5LookupDomainStep;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static eu.ecodex.dc5.message.model.MessageModelHelper.isIncomingBusinessMessage;
+
 @Service
 @RequiredArgsConstructor
 public class NewMessageStoredFlow {
@@ -23,11 +26,11 @@ public class NewMessageStoredFlow {
     private final ConfirmationMessageFlow confirmationMessageFlow;
     private final ProcessIncomingBusinessMessageFlow processIncomingBusinessMessageFlow;
 
-    private final ToGatewayBusinessMessageProcessor outgoingBusinessMessageFlow;
+    private final ProcessOutgoingBusinessMessageFlow outgoingBusinessMessageFlow;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleNewMessageStoredEvent(NewMessageStoredEvent newMessageStoredEvent) {
-        processManager.startProcess();
+//        processManager.startProcess();
         Optional<DC5Message> byId = messageRepo.findById(newMessageStoredEvent.getMessageId()); //load message
         if (!byId.isPresent()) {
             String error = String.format("Unable to find message with id [%s] in MessageRepository", newMessageStoredEvent.getMessageId());
@@ -36,22 +39,17 @@ public class NewMessageStoredFlow {
 
         DC5Message msg = byId.get();
         msg = lookupDomainStep.lookupDomain(msg);
+        CurrentBusinessDomain.setCurrentBusinessDomain(msg.getBusinessDomainId());
 
         if (MessageModelHelper.isEvidenceTriggerMessage(msg) || MessageModelHelper.isEvidenceMessage(msg)) {
             confirmationMessageFlow.processMessage(msg);
-        } else if (DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND.equals(msg.getDirection() )) {
+        } else if (MessageModelHelper.isIncomingBusinessMessage(msg)) {
             processIncomingBusinessMessageFlow.processMessage(msg);
-        } else if (DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY.equals(msg.getDirection())) {
+        } else if (MessageModelHelper.isOutgoingBusinessMessage(msg)) {
             outgoingBusinessMessageFlow.processMessage(msg);
         } else {
             throw new IllegalArgumentException("Message cannot be processed!");
         }
-
-        //if message is a business message to backend
-        //run gateway2backend flow
-
-        //if message is a confirmation message
-        //run confirmation message flow
 
     }
 

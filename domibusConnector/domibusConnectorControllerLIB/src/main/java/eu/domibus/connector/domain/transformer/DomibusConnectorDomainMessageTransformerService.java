@@ -535,13 +535,20 @@ public class DomibusConnectorDomainMessageTransformerService {
             DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
 
             if (detachedSignatureTO != null) {
-                DetachedSignature detachedSignature = new DetachedSignature(
-                        Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
-                        detachedSignatureTO.getDetachedSignatureName(),
-                        //                eu.ecodex.dc5.message.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
-                        DomibusConnectorDomainDetachedSignatureEnumTransformer
-                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
-                );
+//                DetachedSignature detachedSignature = new DetachedSignature(
+//                        Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
+//                        detachedSignatureTO.getDetachedSignatureName(),
+//                        //                eu.ecodex.dc5.message.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
+//                        DomibusConnectorDomainDetachedSignatureEnumTransformer
+//                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
+//                );
+                DetachedSignature detachedSignature = DetachedSignature.builder()
+                        .detachedSignature(Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length))
+                        .detachedSignatureName(detachedSignatureTO.getDetachedSignatureName())
+                        .mimeType(DomibusConnectorDomainDetachedSignatureEnumTransformer
+                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType()))
+                        .build();
+
                 documentBuilder.withDetachedSignature(detachedSignature);
             }
             documentBuilder.setAttachment(convertDataHandlerToBigFileReference(documentTO.getDocument()));

@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.test.util;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 
+import eu.ecodex.dc5.message.model.Digest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -20,17 +21,16 @@ public class LoadStoreMessageFromPathTest {
 
 
     @Test
-    public void testLoadMsg() throws IOException {
+    public void testLoadMsg1() throws IOException {
 
-        Resource r = new ClassPathResource("testmessages/msg2/");
+        Resource r = new ClassPathResource("testmessages/msg1/");
 
-        DC5Message message = LoadStoreMessageFromPath.loadMessageFrom(r);
-
+        DC5Message message = LoadStoreMessageFromPath.loadMessageFrom(r, null);
 
         assertThat(message).isNotNull();
 
-//        assertThat(message.getMessageAttachments()).hasSize(2);
         assertThat(message.getTransportedMessageConfirmations()).hasSize(1);
+        assertThat(message.getMessageContent().getEcodexContent().getAsicContainer().getDigest()).isEqualTo(Digest.ofString("md5:73015d41fca60756451e184aec1c516e"));
 
     }
 
@@ -45,7 +45,7 @@ public class LoadStoreMessageFromPathTest {
 
         DC5Message message = DomainEntityCreator.createOutgoingEpoFormAMessage();
 
-        LoadStoreMessageFromPath.storeMessageTo(r, message);
+        LoadStoreMessageFromPath.storeMessageTo(r, null, message);
     }
 
 

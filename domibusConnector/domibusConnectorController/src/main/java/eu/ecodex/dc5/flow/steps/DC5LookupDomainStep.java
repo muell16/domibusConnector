@@ -36,7 +36,7 @@ public class DC5LookupDomainStep {
         if (businessMsgByRefToMsgId.isPresent()) {
             final DomibusConnectorBusinessDomain.BusinessDomainId id = businessMsgByRefToMsgId.get().getBusinessDomainId();
             msg.setBusinessDomainId(id);
-            LOGGER.debug("Associated msg [{}] with domain [{}].", msg, id);
+            LOGGER.info("Associated msg [{}] with domain [{}].", msg, id);
             return msg;
         }
 
@@ -47,7 +47,7 @@ public class DC5LookupDomainStep {
         if (any.isPresent()) {
             final DomibusConnectorBusinessDomain.BusinessDomainId id = any.get().getBusinessDomainId();
             msg.setBusinessDomainId(id);
-            LOGGER.debug("Associated msg [{}] with domain [{}].", msg, id);
+            LOGGER.info("Associated msg [{}] with domain [{}].", msg, id);
             return msg;
         }
 
@@ -65,7 +65,7 @@ public class DC5LookupDomainStep {
 
             if (collect.size() == 1) {
                 msg.setBusinessDomainId(domain.getId());
-                LOGGER.debug("Associated msg [{}] with domain [{}] by applying rule [{}]", msg, domain, collect.get(0));
+                LOGGER.info("Associated msg [{}] with domain [{}] by applying rule [{}]", msg, domain, collect.get(0));
                 return msg;
             } else if (collect.size() > 1) {
                 final String rules = collect.stream()

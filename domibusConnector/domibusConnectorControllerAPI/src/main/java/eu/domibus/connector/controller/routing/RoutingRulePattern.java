@@ -64,8 +64,8 @@ public class RoutingRulePattern {
             return details.getSender().getParty().getPartyIdType();
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
             return details.getSender().getParty().getPartyId();
-        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
-            return details.getSender().getRole().toString();
+//        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
+//            return details.getSender().getRole().toString();
         } else {
             throw new RuntimeException("Unsupported AS4 Attribute to match!");
         }

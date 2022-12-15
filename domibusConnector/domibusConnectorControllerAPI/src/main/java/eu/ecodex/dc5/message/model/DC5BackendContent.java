@@ -27,11 +27,12 @@ public class DC5BackendContent {
      * but it has to be supported by ecodex container
      *
      */
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(cascade = CascadeType.ALL)
     @NotNull
     private DomibusConnectorMessageAttachment businessDocument;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @Singular
     private List<DomibusConnectorMessageAttachment> attachments;
 
     @OneToOne(cascade = CascadeType.ALL)

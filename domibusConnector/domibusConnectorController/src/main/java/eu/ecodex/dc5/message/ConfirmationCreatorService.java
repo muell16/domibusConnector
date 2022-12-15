@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -95,23 +96,25 @@ public class ConfirmationCreatorService {
     public static DomibusConnectorEvidencesToolkit.MessageParameters toMessageParams(DC5Message originalMessage) {
         DomibusConnectorEvidencesToolkit.MessageParameters.MessageParametersBuilder builder = DomibusConnectorEvidencesToolkit.MessageParameters.builder();
         if (originalMessage.getEbmsData() != null && originalMessage.getEbmsData().getEbmsMessageId() != null) {
-            builder = builder.ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId())
-                    .senderAddress(originalMessage.getEbmsData().getSender().getEcxAddress())
+            builder = builder.ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId());
+        }
+        if (originalMessage.getEbmsData() != null) {
+            builder.senderAddress(originalMessage.getEbmsData().getSender().getEcxAddress())
                     .recipientAddress(originalMessage.getEbmsData().getReceiver().getEcxAddress());
-
         }
         if (originalMessage.getBackendData() != null && originalMessage.getBackendData().getBackendMessageId() != null) {
             builder = builder.nationalMessageId(originalMessage.getBackendData().getBackendMessageId().toString());
         }
         if (originalMessage.getMessageContent() != null && originalMessage.getMessageContent().getBusinessContent() != null) {
              builder = builder.businessDocumentHash(DomibusConnectorEvidencesToolkit.HashValue.builder()
-                        .hash(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHash())
-                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getHashAlgorithm())
+                        .hash(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getDigest().getDigestValue())
+                        .algorithm(originalMessage.getMessageContent().getBusinessContent().getBusinessDocument().getDigest().getDigestAlgorithm())
                      .build());
         }
         if (originalMessage.getMessageContent() != null) {
             builder.relatedEvidences(originalMessage.getMessageContent().getRelatedConfirmations()
                     .stream()
+                    .filter(Objects::nonNull)
                     .map(c ->
                         DomibusConnectorEvidencesToolkit.Evidence.builder()
                                 .type(c.getEvidenceType())

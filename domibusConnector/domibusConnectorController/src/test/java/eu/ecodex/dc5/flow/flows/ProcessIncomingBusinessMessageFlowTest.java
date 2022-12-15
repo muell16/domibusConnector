@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
+import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
@@ -14,11 +15,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @FlowTestAnnotation
 @Log4j2
+@RecordApplicationEvents
 class ProcessIncomingBusinessMessageFlowTest {
 
     @Autowired
@@ -38,6 +46,9 @@ class ProcessIncomingBusinessMessageFlowTest {
 
     @Autowired
     MessageProcessManager messageProcessManager;
+
+    @Autowired
+    private ApplicationEvents applicationEvents;
 
     @Before
     public void before() {
@@ -71,6 +82,21 @@ class ProcessIncomingBusinessMessageFlowTest {
             return msg;
         });
 
+
+        txTemplate.executeWithoutResult(s -> {
+            DC5Message msg = messageRepo.getById(msgId);
+
+
+            //TODO: verify!!!
+            assertThat(msg.getMessageContent().getCurrentState().getState())
+                    .as("Message state must be relayed")
+                    .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
+        });
+
+
+        System.out.println("events: \n" + applicationEvents.stream()
+                .map(e -> e.toString())
+                .collect(Collectors.joining("\n")));
 
     }
 

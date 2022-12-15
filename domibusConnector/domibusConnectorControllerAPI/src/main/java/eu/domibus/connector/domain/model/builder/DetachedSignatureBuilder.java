@@ -71,7 +71,8 @@ public final class DetachedSignatureBuilder {
         if (mimeType == null) {
             throw new IllegalArgumentException("mimeType is mandatory!");
         }
-        return new DetachedSignature(detachedSignature, detachedSignatureName, mimeType);
+//        return new DetachedSignature(detachedSignature, detachedSignatureName, mimeType);
+        throw new RuntimeException("NOT IMPLEMENTED!!!!");
     }
     
     

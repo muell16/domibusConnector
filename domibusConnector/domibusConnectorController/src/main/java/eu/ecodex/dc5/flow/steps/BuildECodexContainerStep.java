@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
+import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BuildECodexContainerStep implements MessageProcessStep {
+public class BuildECodexContainerStep {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildECodexContainerStep.class);
 
@@ -21,12 +22,11 @@ public class BuildECodexContainerStep implements MessageProcessStep {
         this.securityToolkit = securityToolkit;
     }
 
-    @Override
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "BuildECodexContainerStep")
-    public boolean executeStep(DC5Message DC5Message) {
-        securityToolkit.buildContainer(DC5Message);
+    @Step(name = "BuildECodexContainerStep")
+    public DC5Message executeStep(DC5Message msg) {
+        securityToolkit.buildContainer(msg);
         LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully crated e-Codex Container");
-        return true;
+        return msg;
     }
 
 }

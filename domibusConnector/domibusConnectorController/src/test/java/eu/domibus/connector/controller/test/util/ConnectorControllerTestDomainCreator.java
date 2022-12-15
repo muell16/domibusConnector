@@ -80,12 +80,14 @@ public class ConnectorControllerTestDomainCreator {
     
     
     public static DC5Message createMessage() {
-        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
-        
+
         DC5MessageContent messageContent = new DC5MessageContent();
-//        messageContent.setXmlContent("xmlContent".getBytes());
-        
-        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+
+        DetachedSignature detachedSignature = DetachedSignature.builder()
+                .detachedSignatureName("signaturename")
+                .detachedSignature("detachedSignature".getBytes())
+                .mimeType(DetachedSignatureMimeType.BINARY)
+                .build();
 
         LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
         inMemory.setBytes("documentbytes".getBytes());

@@ -15,6 +15,7 @@ import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
+import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,7 @@ import javax.validation.constraints.NotNull;
  * finished.
  * @author riederb
  */
-@Validated
+@Valid
 @Entity
 
 @Getter
@@ -51,7 +52,7 @@ public class DC5Message implements Serializable {
 	@Convert(converter = BusinessDomainIdConverter.class)
 	private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
 
-	@NotNull
+	@NotNull(message = "A message must have a connectorMessageId!")
 	@Valid
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
@@ -63,17 +64,17 @@ public class DC5Message implements Serializable {
 	private DC5Ebms ebmsData = new DC5Ebms();
 
 	@Valid
-//	@NotNull
+	@NotNull(groups = OutgoingMessageRules.class, message = "A outgoing message must have backendData!")
 	@CheckForNull
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	private DC5BackendData backendData = new DC5BackendData();
 
 	@Convert(converter = MessageTargetSourceConverter.class)
-	@NotNull
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction target!")
 	private MessageTargetSource target;
 
 	@Convert(converter = MessageTargetSourceConverter.class)
-	@NotNull
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction source!")
 	private MessageTargetSource source;
 
 	@CheckForNull
@@ -88,21 +89,11 @@ public class DC5Message implements Serializable {
 	private DC5MessageContent messageContent;
 
 	//holds all message confirmations which are transported with this message
-	@OneToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@Singular("transportedMessageConfirmation")
 	@NotNull
 	private List<DC5Confirmation> transportedMessageConfirmations = new ArrayList<>();
 
-
-//	//holds all message confirmations which are related to this business message
-//	@Transient
-//	@Singular
-//	@OneToMany()
-//	@NotNull
-//	private List<DC5Confirmation> relatedMessageConfirmations = new ArrayList<>();
-
-
-	//holds all errors which occured during message processing...
 
 	@Transient //TODO: move to process
 	private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();

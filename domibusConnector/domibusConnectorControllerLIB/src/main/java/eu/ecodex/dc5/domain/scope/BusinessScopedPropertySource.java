@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.domain.scope;
 
+import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;

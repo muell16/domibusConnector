@@ -2,6 +2,7 @@ package eu.ecodex.dc5.flow.flows;
 
 
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -55,14 +56,8 @@ public class ProcessIncomingBusinessMessageFlow {
 
 	@MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(final DC5Message incomingMessage) {
-		Set<ConstraintViolation<DC5Message>> validate = validator.validate(incomingMessage, IncomingMessageRules.class, IncomingBusinessMesssageRules.class);
 
-		if (!validate.isEmpty()) {
-			throw new IllegalArgumentException("Message is not valid due: " + validate
-					.stream()
-					.map(ConstraintViolation::getMessage)
-					.collect(Collectors.joining("\n")));
-		}
+		validateIncomingBusinessMessage(incomingMessage);
 
 
 		try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_EBMS_MESSAGE_ID_PROPERTY_NAME, incomingMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId())) {
@@ -97,7 +92,10 @@ public class ProcessIncomingBusinessMessageFlow {
 //					incomingMessage.getBackendLinkName()
 //			);
 //			return incomingMessage;
-			MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(incomingMessage.getId(), incomingMessage.getBackendLinkName());
+			MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(incomingMessage.getId(),
+					incomingMessage.getBackendLinkName(),
+					MessageTargetSource.BACKEND);
+
 			eventPublisher.publishEvent(messageReadyForTransportEvent); //publish message
 
 		} catch (DomibusConnectorSecurityException e) {
@@ -113,7 +111,18 @@ public class ProcessIncomingBusinessMessageFlow {
 		}
 	}
 
-	
+	private void validateIncomingBusinessMessage(DC5Message incomingMessage) {
+		Set<ConstraintViolation<DC5Message>> validate = validator.validate(incomingMessage, IncomingMessageRules.class, IncomingBusinessMesssageRules.class);
+
+		if (!validate.isEmpty()) {
+			throw new IllegalArgumentException("Message is not valid due: " + validate
+					.stream()
+					.map(v -> v.getPropertyPath() + " : " + v.getMessage())
+					.collect(Collectors.joining("\n")));
+		}
+	}
+
+
 	private DC5Confirmation createNonDeliveryEvidence(DC5Message originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 

@@ -10,7 +10,8 @@ public class ErrorCode {
     public static ErrorCode LINK_PARTNER_NOT_FOUND = new ErrorCode("L104", "The requested LinkPartner is not configured");
     public static ErrorCode LINK_PARTNER_NOT_ACTIVE = new ErrorCode("L101", "The requested LinkPartner is not active");
 
-    public static ErrorCode DOMAIN_MATCHING_ERROR = new ErrorCode("D101", "The msg could not be associated with a domain (multiple or no matches):");
+    public static ErrorCode DOMAIN_MATCHING_ERROR = new ErrorCode("D101", "The msg could not be associated with a domain because no domain matched!");
+    public static ErrorCode MULTIPLE_DOMAIN_MATCHING_ERROR = new ErrorCode("D102", "The msg could not be associated with a domain because multiple domains will match!");
 
     private final String errorCode;
     private final String description;
