@@ -26,12 +26,12 @@ public class DC5TransportRequest {
 
     private String remoteMessageId;
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DC5TransportRequestState currentState;
 
     private String transportSystemId;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<DC5TransportRequestState> states = new ArrayList<>();
 
     public void changeCurrentState(DC5TransportRequestState currentState) {

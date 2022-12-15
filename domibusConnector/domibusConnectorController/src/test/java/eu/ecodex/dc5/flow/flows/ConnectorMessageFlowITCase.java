@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.Getter;
@@ -102,6 +103,8 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     private DC5MessageRepo messageRepo;
 
+    @Autowired
+    private LargeFilePersistenceService largeFilePersistenceService;
 
     @Primary
     @Component
@@ -887,7 +890,7 @@ public class ConnectorMessageFlowITCase {
 //
     private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID) {
         try {
-            DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"));
+            DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"), largeFilePersistenceService);
             assertThat(testMessage).isNotNull();
 //            testMessage.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultMessageLaneId());
 //            testMessage.getEbmsData().setFinalRecipient(FINAL_RECIPIENT);

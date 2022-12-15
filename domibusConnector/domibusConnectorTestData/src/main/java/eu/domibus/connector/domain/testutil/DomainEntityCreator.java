@@ -204,8 +204,7 @@ public class DomainEntityCreator {
                 .build();
 
         msg.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        //msg.setDbMessageId(78L);
-        //msg.getMessageDetails().
+
         return msg;
     }
     
@@ -213,9 +212,12 @@ public class DomainEntityCreator {
         DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
         
         DC5MessageContent messageContent = new DC5MessageContent();
-//        messageContent.setXmlContent("<xmlContent/>".getBytes());
-        
-        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+
+        DetachedSignature detachedSignature = DetachedSignature.builder()
+                .detachedSignature("detachedSignature".getBytes())
+                .detachedSignatureName("signaturename")
+                .mimeType(DetachedSignatureMimeType.BINARY)
+                .build();
                 
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
                         
@@ -302,7 +304,11 @@ public class DomainEntityCreator {
         DC5MessageContent messageContent = new DC5MessageContent(); //TODO: should be a asic container
 //        messageContent.setXmlContent("<xmlContent/>".getBytes());
 
-        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+        DetachedSignature detachedSignature = DetachedSignature.builder()
+                .detachedSignature("detachedSignature".getBytes())
+                .detachedSignatureName("signaturename")
+                .mimeType(DetachedSignatureMimeType.BINARY)
+                .build();
 
         DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
 //        messageContent.setDocument(messageDocument);

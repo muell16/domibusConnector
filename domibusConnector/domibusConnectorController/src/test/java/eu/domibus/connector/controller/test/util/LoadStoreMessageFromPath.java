@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.ecodex.dc5.message.model.*;
 import lombok.SneakyThrows;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.MimeType;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nullable;
@@ -53,16 +55,19 @@ public class LoadStoreMessageFromPath {
     public static final String ATTACHMENT_FILENAME_POSTFIX = ".filename";
 
     private final Resource basicFolder;
+    private final LargeFilePersistenceService largeFilePersistenceService;
 
     private Properties messageProperties;
+    private DomibusConnectorMessageId id;
 
 
-    public static void storeMessageTo(Resource resource, DC5Message message) throws IOException {
-        LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource);
+    public static void storeMessageTo(Resource resource, LargeFilePersistenceService largeFilePersistenceService, DC5Message message) throws IOException {
+        LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource, largeFilePersistenceService);
         loadStoreMessageFromPath.storeMessage(message);
     }
 
-    private LoadStoreMessageFromPath(Resource basicFolder) {
+    private LoadStoreMessageFromPath(Resource basicFolder, LargeFilePersistenceService largeFilePersistenceService) {
+        this.largeFilePersistenceService = largeFilePersistenceService;
         this.basicFolder = basicFolder;
         this.messageProperties = new Properties();
     }
@@ -162,8 +167,8 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    public static DC5Message loadMessageFrom(Resource resource) throws IOException {
-        LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource);
+    public static DC5Message loadMessageFrom(Resource resource, LargeFilePersistenceService largeFilePersistenceService) throws IOException {
+        LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource, largeFilePersistenceService);
         DC5Message message = loadStoreMessageFromPath.loadMessage();
 
         return message;
@@ -171,6 +176,8 @@ public class LoadStoreMessageFromPath {
 
     private DC5Message loadMessage() throws IOException {
         DC5Message.DC5MessageBuilder builder = DC5Message.builder();
+        this.id = DomibusConnectorMessageId.ofRandom();
+        builder.connectorMessageId(id);
 
         Resource propertiesResource = basicFolder.createRelative("message.properties");
         if (!propertiesResource.exists()) {
@@ -197,55 +204,6 @@ public class LoadStoreMessageFromPath {
         builder.ebmsData(loadEcxDatailsFromProperties().build());
         builder.backendData(loadBackendDetailsFromProperties().build());
 
-
-//        Resource contentResource = createRelativeResource(messageProperties.getProperty(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME));
-//        if (contentResource != null && contentResource.exists()) {
-//
-//            LargeFileReference largeFileReference = loadResourceAsBigDataRef(contentResource);
-//
-//            content.getEcodexContent().setBusinessXml(DomibusConnectorMessageAttachment
-//                    .builder()
-//                    .attachment(largeFileReference)
-//                    .digest(largeFileReference.getDigest())
-//                    .identifier("BUSINESS_XML")
-//                    .build());
-//
-//            messageBuilder.setMessageContent(content);
-//            //load document
-//            String docFileName = messageProperties.getProperty("message.content.document.file");
-//            if (docFileName != null) {
-//                DomibusConnectorMessageAttachmentBuilder documentBuilder = DomibusConnectorMessageAttachmentBuilder.createBuilder();
-//                Resource r = basicFolder.createRelative(docFileName);
-//                LargeFileReference bigDataReferenceDocument = loadResourceAsBigDataRef(r);
-//                documentBuilder.setAttachment(bigDataReferenceDocument);
-//                String docName = messageProperties.getProperty("message.content.document.name");
-//                documentBuilder.setIdentifier(docName);
-//
-//                //load signature
-//                String signatureFileName = messageProperties.getProperty("message.content.document.signature.file");
-//                if (signatureFileName != null) {
-//
-//                    DetachedSignatureMimeType mimeType = DetachedSignatureMimeType.valueOf(messageProperties.getProperty("message.content.document.signature.type"));
-//                    String name = messageProperties.getProperty("message.content.document.signature.name");
-//                    Resource fResource = basicFolder.createRelative(signatureFileName);
-//                    byte[] signatureBytes = loadResourceAsByteArray(fResource);
-//
-//                    DetachedSignature detachedSignature = DetachedSignatureBuilder.createBuilder()
-//                            .setMimeType(mimeType)
-//                            .setName(name)
-//                            .setSignature(signatureBytes)
-//                            .build();
-//                    documentBuilder.withDetachedSignature(detachedSignature);
-//                }
-//
-//                content.getBusinessContent().setBusinessDocument(documentBuilder.build());
-//
-//            }
-//
-//        }
-
-//        messageBuilder.addAttachments(loadAttachments());
-//        messageBuilder.addTransportedConfirmations(loadConfirmations());
         builder.transportedMessageConfirmations(loadConfirmations());
 
         String connid = messageProperties.getProperty("message.connector-id", null);
@@ -378,7 +336,7 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    public static LargeFileReference loadResourceAsBigDataRef(Resource resource) {
+    private LargeFileReference loadResourceAsBigDataRef(DomibusConnectorMessageId id, Resource resource) {
         try {
             InputStream inputStream = resource.getInputStream();
             byte[] bytes = StreamUtils.copyToByteArray(inputStream);
@@ -388,12 +346,18 @@ public class LoadStoreMessageFromPath {
                     .digestValue(hash)
                     .build();
 
-            LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
-            inMemory.setBytes(bytes);
-            inMemory.setReadable(true);
-            inMemory.setStorageIdReference(UUID.randomUUID().toString());
-            inMemory.setDigest(digest);
-            return inMemory;
+            String filename = resource.getFilename();
+            if (largeFilePersistenceService != null) {
+                LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceService.createDomibusConnectorBigDataReference(id, filename, "application/octet-stream");
+                return domibusConnectorBigDataReference;
+            } else {
+                LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
+                inMemory.setBytes(bytes);
+                inMemory.setReadable(true);
+                inMemory.setStorageIdReference(UUID.randomUUID().toString());
+                inMemory.setDigest(digest);
+                return inMemory;
+            }
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
@@ -442,7 +406,7 @@ public class LoadStoreMessageFromPath {
             filename = getFileNameFromPrefix(propertyPrefix);
         }
 
-        LargeFileReference largeFileReference = loadResourceAsBigDataRef(basicFolder.createRelative(filename));
+        LargeFileReference largeFileReference = loadResourceAsBigDataRef(id, basicFolder.createRelative(filename));
 
         return DomibusConnectorMessageAttachment.builder()
                 .name(messageProperties.getProperty(propertyPrefix + ATTACHMENT_NAME_POSTFIX))

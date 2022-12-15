@@ -1,5 +1,7 @@
 package eu.ecodex.dc5.message.model;
 
+import lombok.*;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,6 +14,12 @@ import java.io.Serializable;
  * @version 1.0
  */
 @Entity
+
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class DetachedSignature implements Serializable {
 
 	@GeneratedValue
@@ -23,30 +31,5 @@ public class DetachedSignature implements Serializable {
 	private String detachedSignatureName;
 	private DetachedSignatureMimeType mimeType;
 
-	public DetachedSignature() {}
-
-	/**
-	 * 
-	 * @param detachedSignature detachedSignature
-	 * @param detachedSignatureName detachedSignatureName
-	 * @param mimeType    mimeType
-	 */
-	public DetachedSignature(final byte[] detachedSignature, final String detachedSignatureName, final DetachedSignatureMimeType mimeType){
-	   this.detachedSignature = detachedSignature;
-	   this.detachedSignatureName = detachedSignatureName;
-	   this.mimeType = mimeType;
-	}
-
-	public byte[] getDetachedSignature(){
-		return this.detachedSignature;
-	}
-
-	public String getDetachedSignatureName(){
-		return this.detachedSignatureName;
-	}
-
-	public DetachedSignatureMimeType getMimeType(){
-		return this.mimeType;
-	}
 
 }

@@ -15,7 +15,7 @@ import org.springframework.lang.Nullable;
  * Represents a reference to a storage system for big files
  *
  */
-public class LargeFileReference implements DataSource, Serializable {
+public class LargeFileReference implements DataSource {
 
     public static String mapToString(LargeFileReference r) {
         return r.getStorageProviderName() + "::" + r.getStorageIdReference();

@@ -3,6 +3,7 @@ package eu.domibus.connector.testdata;
 
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -74,6 +75,7 @@ public class LoadStoreTransitionMessage {
     public static final String ECX_XML_TOKEN_PROP_NAME = "ecx.token.xml";
     public static final String ECX_XML_BUSINESS_DOC = "ecx.business.xml";
 
+    private LargeFilePersistenceService largeFilePersistenceService = null;
 
     private Path basicFolder;
 
@@ -323,10 +325,6 @@ public class LoadStoreTransitionMessage {
 //        } catch (TransformerException e) {
 //            throw new RuntimeException(e);
 //        }
-    }
-
-
-    private LoadStoreTransitionMessage() {
     }
 
     private LoadStoreTransitionMessage(Path basicFolder) {

@@ -25,7 +25,7 @@ public class LoadStoreMessageFromPathTest {
 
         Resource r = new ClassPathResource("testmessages/msg1/");
 
-        DC5Message message = LoadStoreMessageFromPath.loadMessageFrom(r);
+        DC5Message message = LoadStoreMessageFromPath.loadMessageFrom(r, null);
 
         assertThat(message).isNotNull();
 
@@ -45,7 +45,7 @@ public class LoadStoreMessageFromPathTest {
 
         DC5Message message = DomainEntityCreator.createOutgoingEpoFormAMessage();
 
-        LoadStoreMessageFromPath.storeMessageTo(r, message);
+        LoadStoreMessageFromPath.storeMessageTo(r, null, message);
     }
 
 

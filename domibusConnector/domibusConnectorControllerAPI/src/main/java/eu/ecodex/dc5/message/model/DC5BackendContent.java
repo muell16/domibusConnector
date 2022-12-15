@@ -32,6 +32,7 @@ public class DC5BackendContent {
     private DomibusConnectorMessageAttachment businessDocument;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @Singular
     private List<DomibusConnectorMessageAttachment> attachments;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,6 +1,13 @@
 package eu.ecodex.dc5.message.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.domibus.connector.domain.model.LargeFileReference;
+import eu.domibus.connector.domain.model.json.LargeFileDeserializer;
+import eu.domibus.connector.domain.model.json.LargeFileReferenceSerializer;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
@@ -38,6 +45,7 @@ public class DomibusConnectorMessageAttachment {
 	private String identifier;
 
 	@Convert(converter = StorageReferenceConverter.class)
+	@Lob
 	private LargeFileReference attachment;
 	private String name;
 	private String mimeType;
@@ -54,12 +62,28 @@ public class DomibusConnectorMessageAttachment {
 
 	public static class StorageReferenceConverter implements AttributeConverter<LargeFileReference, String> {
 
+		private final ObjectMapper mapper;
+
+		public StorageReferenceConverter() {
+			mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			SimpleModule largeFileReferenceModule = new SimpleModule();
+			largeFileReferenceModule.addSerializer(LargeFileReference.class, new LargeFileReferenceSerializer(LargeFileReference.class));
+			largeFileReferenceModule.addDeserializer(LargeFileReference.class, new LargeFileDeserializer(LargeFileReference.class));
+			mapper.registerModule(largeFileReferenceModule);
+			mapper.registerModule(new JavaTimeModule());
+		}
+
 		@Override
 		public String convertToDatabaseColumn(LargeFileReference attribute) {
 			if (attribute == null) {
 				return null;
 			}
-			return LargeFileReference.mapToString(attribute);
+			try {
+				return mapper.writeValueAsString(attribute);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		@Override
@@ -67,8 +91,13 @@ public class DomibusConnectorMessageAttachment {
 			if (dbData == null) {
 				return null;
 			}
-			return LargeFileReference.mapFromString(dbData);
+			try {
+				return mapper.readValue(dbData, LargeFileReference.class);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
 		}
+
 	}
 
 

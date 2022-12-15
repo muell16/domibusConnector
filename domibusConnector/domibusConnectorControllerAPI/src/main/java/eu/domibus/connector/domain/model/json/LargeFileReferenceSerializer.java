@@ -17,7 +17,7 @@ public class LargeFileReferenceSerializer extends StdSerializer<LargeFileReferen
     public static final String TEXT_FIELD_NAME = "text";
     public static final String SIZE_FIELD_NAME = "size";
 
-    protected LargeFileReferenceSerializer(Class<LargeFileReference> t) {
+    public LargeFileReferenceSerializer(Class<LargeFileReference> t) {
         super(t);
     }
 

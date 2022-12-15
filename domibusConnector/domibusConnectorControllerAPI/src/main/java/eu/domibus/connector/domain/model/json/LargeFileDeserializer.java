@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class LargeFileDeserializer extends StdDeserializer<LargeFileReference> {
 
-    protected LargeFileDeserializer(Class<?> vc) {
+    public LargeFileDeserializer(Class<?> vc) {
         super(vc);
     }
 
