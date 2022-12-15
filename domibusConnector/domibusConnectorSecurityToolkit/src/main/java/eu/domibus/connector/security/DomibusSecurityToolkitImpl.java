@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -382,16 +383,18 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
             MessageDigest digest = getDigest();
             try (InputStream inputStream = container.getBusinessDocument().openStream();
-                 InputStream digestInputStream = new DigestInputStream(inputStream, digest);
+                 DigestInputStream digestInputStream = new DigestInputStream(inputStream, digest);
                  OutputStream outputStream = bigDataRef.getOutputStream()) {
                 StreamUtils.copy(digestInputStream, outputStream);
+                businessDocumentBuilder.attachment(bigDataRef);
+                businessDocumentBuilder.digest(Digest.ofMessageDigest(digestInputStream.getMessageDigest()));
             } catch (IOException ioe) {
                 throw new DomibusConnectorSecurityException("Could not read business document!", ioe);
             }
 
 //                                documentBuilder.setContent(bigDataRef);
 //                        businessDocBuilder.setAttachment(bigDataRef);
-            businessDocumentBuilder.attachment(bigDataRef);
+
 //                        businessDocumentBuilder.digest()
 
             LOGGER.trace("recieveContainerContents: check if MimeType.PDF [{}] equals to [{}]",
@@ -506,9 +509,10 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
 //        
         LOGGER.debug("Copy input stream from dss document to output stream of big data reference");
         try (InputStream inputStream = document.openStream();
-             OutputStream outputStream = bigDataRef.getOutputStream()) {
-            int bytesCopied = StreamUtils.copy(inputStream, outputStream);
-            inputStream.close();
+             DigestOutputStream digestOutputStream = new DigestOutputStream(bigDataRef.getOutputStream(), getDigest()) ) {
+            long bytesCopied = StreamUtils.copy(inputStream, digestOutputStream);
+            bigDataRef.setDigest(Digest.ofMessageDigest(digestOutputStream.getMessageDigest()));
+            bigDataRef.setSize(bytesCopied);
             if (bytesCopied == 0) {
                 throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");
                 //TODO: delete bigDataRef from database!
@@ -526,6 +530,8 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 .builder()
                 .identifier(identifier)
                 .attachment(bigDataRef)
+                .digest(bigDataRef.getDigest())
+                .size(bigDataRef.getSize())
                 .name(documentName)
                 .mimeType(mimeTypeString)
                 .build();

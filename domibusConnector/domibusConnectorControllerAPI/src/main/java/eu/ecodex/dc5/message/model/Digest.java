@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Hex;
+
+import java.security.MessageDigest;
 
 @Getter
 @RequiredArgsConstructor
@@ -34,6 +37,13 @@ public class Digest {
         return Digest.builder()
                 .digestAlgorithm(dbData.substring(0, index))
                 .digestValue(dbData.substring(index + 1))
+                .build();
+    }
+
+    public static Digest ofMessageDigest(MessageDigest messageDigest) {
+        return Digest.builder()
+                .digestAlgorithm(messageDigest.getAlgorithm())
+                .digestValue(Hex.encodeHexString(messageDigest.digest()))
                 .build();
     }
 

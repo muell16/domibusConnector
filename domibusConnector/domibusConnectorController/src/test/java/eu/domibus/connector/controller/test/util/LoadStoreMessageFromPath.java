@@ -11,6 +11,7 @@ import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.ecodex.dc5.message.model.*;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -349,6 +350,9 @@ public class LoadStoreMessageFromPath {
             String filename = resource.getFilename();
             if (largeFilePersistenceService != null) {
                 LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceService.createDomibusConnectorBigDataReference(id, filename, "application/octet-stream");
+                OutputStream os = domibusConnectorBigDataReference.getOutputStream();
+                StreamUtils.copy(bytes, os);
+                os.close();
                 return domibusConnectorBigDataReference;
             } else {
                 LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
