@@ -15,16 +15,14 @@ import java.util.Map;
 class DCDomainValidationService {
     private final ApplicationContext applicationContext;
 
-
-
-    DCBusinessDomainManager.DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
+    public DCBusinessDomainManager.DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {
         Map<String, DomainValidationRule> beansOfType = applicationContext.getBeansOfType(DomainValidationRule.class);
 
         final ArrayList<Object> errors = new ArrayList<>();
         final ArrayList<Object> warnings = new ArrayList<>();
 
         for (DomainValidationRule rule : beansOfType.values()) {
-            final DCBusinessDomainManager.DomainValidResult validationResult = rule.validate(id);
+            final DCBusinessDomainManager.DomainValidResult validationResult = rule.validate(domain);
             errors.addAll(validationResult.getErrors());
             warnings.addAll(validationResult.getWarnings());
         }

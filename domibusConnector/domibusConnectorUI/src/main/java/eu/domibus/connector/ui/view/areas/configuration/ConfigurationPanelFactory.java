@@ -4,9 +4,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,12 +14,10 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.utils.binder.SpringBeanValidationBinderFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,68 +26,22 @@ public class ConfigurationPanelFactory {
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final SpringBeanValidationBinderFactory springBeanValidationBinderFactory;
 
+    private final ChangedPropertiesDialogFactory dialogFactory;
 
     public ConfigurationPanelFactory(ConfigurationPropertyManagerService configurationPropertyManagerService,
-                                     SpringBeanValidationBinderFactory springBeanValidationBinderFactory) {
+                                     SpringBeanValidationBinderFactory springBeanValidationBinderFactory, ChangedPropertiesDialogFactory dialogFactory) {
         this.configurationPropertyManagerService = configurationPropertyManagerService;
         this.springBeanValidationBinderFactory = springBeanValidationBinderFactory;
+        this.dialogFactory = dialogFactory;
     }
 
     public <T> ConfigurationPanel<T> createConfigurationPanel(FormLayout form, DomainSelect domainSelect, Class<T> configurationClazz) {
         return new ConfigurationPanel<>(form, domainSelect, configurationClazz);
     }
 
-    public interface DialogCloseCallback {
-        public void dialogHasBeenClosed();
-    }
-    public Dialog showChangedPropertiesDialog(Object boundConfigValue, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
-        return showChangedPropertiesDialog(boundConfigValue, domainId, null);
-    }
 
-    public Dialog showChangedPropertiesDialog(Object boundConfigValue, DomibusConnectorBusinessDomain.BusinessDomainId domainId, DialogCloseCallback dialogCloseCallback) {
-        Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(domainId,
-                boundConfigValue);
 
-        //use custom callback with overwriting setOpened because, addDialogCloseActionListener does not work
-        final Dialog d = new Dialog() {
-            public void setOpened(boolean opened) {
-                super.setOpened(opened);
-                if (!opened && dialogCloseCallback != null) {
-                    dialogCloseCallback.dialogHasBeenClosed();
-                }
-            }
-        };
 
-        Grid<Map.Entry<String, String>> g = new Grid<>();
-        g.setItems(updatedConfiguration.entrySet());
-        g.addColumn(Map.Entry::getKey).setHeader("key");
-        g.addColumn(Map.Entry::getValue).setHeader("value");
-
-        Button saveButton = new Button(VaadinIcon.CHECK.create());
-        saveButton.addClickListener(clickEvent -> saveUpdatedProperties(d, boundConfigValue.getClass(), updatedConfiguration, domainId));
-
-        Button discardButton = new Button(VaadinIcon.CLOSE.create());
-        discardButton.addClickListener(ev -> d.close());
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(saveButton, discardButton);
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.add(horizontalLayout);
-        verticalLayout.add(g);
-
-        d.add(verticalLayout);
-        d.setCloseOnEsc(true);
-        d.setSizeFull();
-        d.open();
-        return d;
-    }
-
-    //save changed properties and close dialog
-    private void saveUpdatedProperties(Dialog d, Class<?> configurationClazz, Map<String, String> updatedConfiguration, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
-        configurationPropertyManagerService.updateConfiguration(domainId,
-                configurationClazz, updatedConfiguration);
-        d.close();
-    }
 
     public class ConfigurationPanel<T> extends VerticalLayout implements AfterNavigationObserver {
 
@@ -163,7 +113,8 @@ public class ConfigurationPanelFactory {
                     throw new RuntimeException(e);
                 }
 
-                showChangedPropertiesDialog(boundConfigValue, domainSelect.getValue());
+                final Dialog changedPropertiesDialog = dialogFactory.createChangedPropertiesDialog(boundConfigValue, domainSelect.getValue());
+                changedPropertiesDialog.addOpenedChangeListener(e -> this.refreshUI());
 
             } else {
                 Notification.show("Error, cannot save due:\n" + validate.getBeanValidationErrors()

@@ -50,6 +50,8 @@ public class DCDomainRoutingRulePersistenceService {
         });
 //        businessDomainDao.save(DC5BusinessDomainJpaEntity);
 
+        // TODO: return map before update.
+
         domainManager.updateConfig(businessDomainId, properties);
     }
 

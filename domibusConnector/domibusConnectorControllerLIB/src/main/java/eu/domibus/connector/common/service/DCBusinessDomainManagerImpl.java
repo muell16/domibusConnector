@@ -26,8 +26,15 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
     @Override
     public DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
-        return domainValidationService.validateDomain(id);
+        final Optional<DomibusConnectorBusinessDomain> businessDomain = this.getBusinessDomain(id);
+        return validateDomain(businessDomain.get());
     }
+
+    @Override
+    public DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {
+        return domainValidationService.validateDomain(domain);
+    }
+
 
     @Override
     public List<DomibusConnectorBusinessDomain.BusinessDomainId> getAllBusinessDomains() {

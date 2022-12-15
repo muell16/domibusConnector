@@ -114,6 +114,12 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
         return propertyMapToBeanConverter.loadConfigurationOnlyFromMap(map, clazz, prefix);
     }
 
+    @Override
+    public <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz) {
+        String prefix = getPrefixFromAnnotation(clazz);
+        return propertyMapToBeanConverter.loadConfigurationOnlyFromMap(map, clazz, prefix);
+    }
+
 
     private MapConfigurationPropertySource loadLaneProperties(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
         Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
@@ -127,10 +133,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
 
 
     @Override
-    public <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz) {
-        if (laneId == null) {
-            throw new IllegalArgumentException("LaneId is not allowed to be null!");
-        }
+    public <T> Set<ConstraintViolation<T>> validateConfiguration(T updatedConfigClazz) {
         return validator.validate(updatedConfigClazz);
     }
 
@@ -148,7 +151,9 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
      */
     @Override
     public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
-        Map<String, String> diffProps = getUpdatedConfiguration(laneId, updatedConfigClazz);
+        final ArrayList<Object> updatedClazzes = new ArrayList<>();
+        updatedClazzes.add(updatedConfigClazz);
+        Map<String, String> diffProps = getUpdatedConfiguration(laneId, updatedClazzes);
         updateConfiguration(laneId, updatedConfigClazz.getClass(), diffProps);
     }
 
@@ -161,20 +166,23 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     }
 
     @Override
-    public Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
+    public Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes) {
         if (laneId == null) {
             throw new IllegalArgumentException("LaneId is not allowed to be null!");
         }
 
-        Object currentConfig = this.loadConfiguration(laneId, updatedConfigClazz.getClass());
-        Map<String, String> previousProps = createPropertyMap(currentConfig); //collect current active properties
-        Map<String, String> props = createPropertyMap(updatedConfigClazz); //collect updated properties
-
-        //only collect differences
         Map<String, String> diffProps = new HashMap<>();
-        props.entrySet().stream()
-                .filter(entry -> !Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
-                .forEach(e -> diffProps.put(e.getKey().toString(), e.getValue()));
+
+        for (Object o : updatedConfigClazzes) {
+            Object currentConfig = this.loadConfiguration(laneId, o.getClass());
+            Map<String, String> previousProps = createPropertyMap(currentConfig); //collect current active properties
+            Map<String, String> props = createPropertyMap(o); //collect updated properties
+            //only collect differences
+            props.entrySet().stream()
+                    .filter(entry -> !Objects.equals(previousProps.get(entry.getKey()), entry.getValue()))
+                    .forEach(e -> diffProps.put(e.getKey().toString(), e.getValue()));
+        }
+
         return diffProps;
     }
 

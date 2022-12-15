@@ -30,6 +30,7 @@ public interface DCBusinessDomainManager {
     public static final String BUSINESS_DOMAIN_PROPERTY_PREFIX = "connector.businessDomain";
 
     DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);
+    DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain);
 
     /**
      *

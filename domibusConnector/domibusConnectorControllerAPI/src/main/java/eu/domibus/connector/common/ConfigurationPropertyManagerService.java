@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,7 +45,9 @@ public interface ConfigurationPropertyManagerService {
 
     <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz, String prefix);
 
-    <T> Set<ConstraintViolation<T>> validateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, T updatedConfigClazz);
+    <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz);
+
+    <T> Set<ConstraintViolation<T>> validateConfiguration(T updatedConfigClazz);
 
     /**
      *
@@ -58,5 +61,5 @@ public interface ConfigurationPropertyManagerService {
 
     void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps);
 
-    Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId defaultMessageLaneId, Object boundConfigValue);
+    Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes);
 }

@@ -4,7 +4,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.domibus.connector.ui.component.DomainSelect;
-import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
+import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
 import eu.domibus.connector.ui.view.areas.configuration.evidences.EvidencesToolkitConfigurationPropertiesForm;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,9 +22,8 @@ public class ImportOldEvidenceConfigDialog extends AImportOldConfigDialog {
 
     private final ObjectProvider<EvidencesToolkitConfigurationPropertiesForm> formFactory;
 
-    public ImportOldEvidenceConfigDialog(ConfigurationPanelFactory configurationPanelFactory,
-                                         ObjectProvider<EvidencesToolkitConfigurationPropertiesForm> formFactory, DomainSelect domainSelect) {
-        super(configurationPanelFactory, domainSelect);
+    public ImportOldEvidenceConfigDialog(ChangedPropertiesDialogFactory dialogFactory, ObjectProvider<EvidencesToolkitConfigurationPropertiesForm> formFactory, DomainSelect domainSelect) {
+        super(dialogFactory, domainSelect);
         this.formFactory = formFactory;
     }
 

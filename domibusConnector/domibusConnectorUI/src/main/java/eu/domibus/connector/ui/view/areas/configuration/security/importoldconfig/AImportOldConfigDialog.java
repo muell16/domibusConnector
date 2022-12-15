@@ -9,7 +9,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.ui.component.DomainSelect;
-import eu.domibus.connector.ui.view.areas.configuration.ConfigurationPanelFactory;
+import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,11 +23,7 @@ import java.util.stream.Collectors;
 public abstract class AImportOldConfigDialog extends Dialog {
 
     private static final Logger LOGGER = LogManager.getLogger(AImportOldConfigDialog.class);
-
-    private final ConfigurationPanelFactory configurationPanelFactory;
-
-    private ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback;
-
+    private final ChangedPropertiesDialogFactory dialogFactory;
     private VerticalLayout layout = new VerticalLayout();
     //upload result area
     private VerticalLayout resultArea = new VerticalLayout();
@@ -37,8 +33,8 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     private DomainSelect domainSelect;
 
-    public AImportOldConfigDialog(ConfigurationPanelFactory configurationPanelFactory, DomainSelect domainSelect) {
-        this.configurationPanelFactory = configurationPanelFactory;
+    public AImportOldConfigDialog(ChangedPropertiesDialogFactory dialogFactory, DomainSelect domainSelect) {
+        this.dialogFactory = dialogFactory;
         this.domainSelect = domainSelect;
         this.setWidth("80%");
         this.setHeightFull();
@@ -51,7 +47,7 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
         this.setCloseOnEsc(true);
         this.setCloseOnOutsideClick(true);
-        this.addDialogCloseActionListener(event -> this.close());
+        this.addOpenedChangeListener(event -> this.close());
     }
 
     private void uploadSucceeded(SucceededEvent succeededEvent) {
@@ -85,18 +81,7 @@ public abstract class AImportOldConfigDialog extends Dialog {
     protected abstract Object showImportedConfig(Div div, Map<String, String> p);
 
     protected void save(Object configClass, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
-        configurationPanelFactory.showChangedPropertiesDialog(configClass, domainId, AImportOldConfigDialog.this::close);
-    }
-
-    public void setDialogCloseCallback(ConfigurationPanelFactory.DialogCloseCallback dialogCloseCallback) {
-        this.dialogCloseCallback = dialogCloseCallback;
-    }
-
-    public void setOpened(boolean opened) {
-        super.setOpened(opened);
-        if (!opened && dialogCloseCallback != null) {
-            dialogCloseCallback.dialogHasBeenClosed();
-        }
+        dialogFactory.createChangedPropertiesDialog(configClass, domainId);
     }
 
 }

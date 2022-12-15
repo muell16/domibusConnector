@@ -35,7 +35,7 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
 
     public static final List<TokenType> MATCH_ATTRIBUTES = Stream
             .of(TokenType.AS4_FINAL_RECIPIENT, TokenType.AS4_ACTION,
-                    TokenType.AS4_FROM_PARTY_ID, TokenType.AS4_FROM_PARTY_ROLE,
+                    TokenType.AS4_FROM_PARTY_ID,
                     TokenType.AS4_FROM_PARTY_ID_TYPE,
                     TokenType.AS4_SERVICE_NAME, TokenType.AS4_SERVICE_TYPE, TokenType.AS4_ACTION)
             .collect(Collectors.toList());
@@ -212,7 +212,7 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
 
     private static final List<TokenType> USE_SELECT_FIELD = Stream.of(
             TokenType.AS4_ACTION, TokenType.AS4_SERVICE_NAME, TokenType.AS4_SERVICE_TYPE,
-            TokenType.AS4_FROM_PARTY_ID, TokenType.AS4_FROM_PARTY_ID_TYPE, TokenType.AS4_FROM_PARTY_ROLE
+            TokenType.AS4_FROM_PARTY_ID, TokenType.AS4_FROM_PARTY_ID_TYPE
     ).collect(Collectors.toList());
 
     private List<String> loadValidItems(TokenType as4Attribute) {
