@@ -70,6 +70,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-config-templates</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/env/</directory>
+                                    <filtered>true</filtered>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>

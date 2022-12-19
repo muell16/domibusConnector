@@ -56,9 +56,6 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
     DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Autowired
-    DCMessagePersistenceService messagePersistenceService;
-
-    @Autowired
     DCActiveLinkManagerService linkManager;
 
     @Autowired

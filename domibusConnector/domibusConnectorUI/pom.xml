@@ -127,6 +127,13 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorTestData</artifactId>
+            <version>${project.version}</version>
+            <classifier>testkeystores</classifier>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <!--    <build>-->
     <!--        <plugins>-->

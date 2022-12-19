@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.exception;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 
 public class DomibusConnectorMessageTransportException extends RuntimeException {
 
@@ -9,6 +10,10 @@ public class DomibusConnectorMessageTransportException extends RuntimeException 
     private DomibusConnectorRejectionReason reason;
     private boolean retryable = false;
     private ErrorCode errorCode;
+
+    public DomibusConnectorMessageTransportException(DC5TransportRequest.TransportRequestId transportRequestId, String errorMessage) {
+        super(errorMessage);
+    }
 
     public DomibusConnectorMessageTransportException(DC5Message message, DomibusConnectorRejectionReason reason) {
         this.connectorMessage = message;

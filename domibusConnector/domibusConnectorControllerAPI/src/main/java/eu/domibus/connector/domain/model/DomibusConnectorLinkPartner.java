@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.model;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.Valid;
@@ -112,6 +113,14 @@ public class DomibusConnectorLinkPartner {
     public static class LinkPartnerName {
         @NotBlank
         private String linkName;
+
+        public static LinkPartnerName of(String name) {
+            Objects.requireNonNull(name, "Link partner name cannot be null!");
+            if (StringUtils.isBlank(name)) {
+                throw new IllegalArgumentException("Link partner name is not allowed to be empty!");
+            }
+            return new LinkPartnerName(name);
+        }
 
         public LinkPartnerName(String linkName) {
             this.linkName = linkName;

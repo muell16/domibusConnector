@@ -44,14 +44,11 @@ public class MerlinPropertiesFactory {
         p.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         p.put("org.apache.wss4j.crypto.merlin.keystore.type", keyStore.getType());
         p.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStore.getPassword());
-        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", keyStore.getPath());
-        try {
-//            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPathUrlAsString());
-            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPath());
-        } catch (Exception e) {
-            throw new RuntimeException("Error with property: [" + prefix + ".config.key-store.path]\n" +
-                    "value is [" + keyStore.getPath() + "]");
-        }
+
+        String propertyName = "org.apache.wss4j.crypto.merlin.keystore.file";
+        String keyStorePath = keyStore.getPath();
+        setPath(prefix + ".config.key-store.path", keyStore, p, propertyName, keyStorePath);
+
         p.put("org.apache.wss4j.crypto.merlin.keystore.alias", config.getPrivateKey().getAlias());
         p.put("org.apache.wss4j.crypto.merlin.keystore.private.password", config.getPrivateKey().getPassword());
 
@@ -59,14 +56,10 @@ public class MerlinPropertiesFactory {
         StoreConfigurationProperties trustStore = config.getTrustStore();
         p.put("org.apache.wss4j.crypto.merlin.truststore.type", trustStore.getType());
         p.put("org.apache.wss4j.crypto.merlin.truststore.password", trustStore.getPassword());
-        try {
-            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", trustStore.getPath());
-            p.put("org.apache.wss4j.crypto.merlin.truststore.file", trustStore.getPath());
-        } catch (Exception e) {
-            LOGGER.info("Trust Store Property: [" + prefix + ".config.trust-store.path]" +
-                            "\n cannot be processed. Using the configured key store [{}] as trust store",
-                    p.get("org.apache.wss4j.crypto.merlin.keystore.file"));
-        }
+
+        String trustStorePathPropertyName = "org.apache.wss4j.crypto.merlin.truststore.file";
+        String trustStorePath = trustStore.getPath();
+        setPath(prefix + "config.trust-store.path", keyStore, p, trustStorePathPropertyName, trustStorePath);
 
         if (config instanceof CxfTrustKeyStoreConfigurationProperties) {
             CxfTrustKeyStoreConfigurationProperties cxfConfig = (CxfTrustKeyStoreConfigurationProperties) config;
@@ -75,6 +68,19 @@ public class MerlinPropertiesFactory {
         }
 
         return p;
+    }
+
+    private static void setPath(String prefix, StoreConfigurationProperties keyStore, Properties p, String propertyName, String keyStorePath) {
+        try {
+            if (keyStorePath.startsWith("classpath:")) {
+                keyStorePath = keyStorePath.substring("classpath:".length());
+            }
+            LOGGER.debug("setting [{}}={}]", propertyName, keyStore.getPath());
+            p.put(propertyName, keyStorePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error with property: [" + prefix + "]\n" +
+                    "value is [" + keyStore.getPath() + "]");
+        }
     }
 
 }
