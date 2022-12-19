@@ -18,6 +18,7 @@ import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import eu.ecodex.dc5.transport.model.DC5TransportRequestState;
 import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class TransportMessageFlow {
 
     private final SubmitToLinkService submitToLinkService;
@@ -42,13 +44,21 @@ public class TransportMessageFlow {
 
         DC5TransportRequest transportRequest = new DC5TransportRequest();
         transportRequest.setMessage(msg);
+        transportRequest.setLinkName(messageReadyForTransportEvent.getLinkName());
+        transportRequest.setTransportRequestId(DC5TransportRequest.TransportRequestId.ofRandom());
         transportRequest.changeCurrentState(DC5TransportRequestState.builder()
                     .created(LocalDateTime.now())
                     .transportState(TransportState.PENDING)
                 .build());
         dc5TransportRequestRepo.save(transportRequest);
+        log.info("Created Transport Request [{}]", transportRequest.getTransportRequestId());
 
-        submitToLinkService.submitToLink(msg);
+        SubmitToLinkService.SubmitToLinkEvent build = SubmitToLinkService.SubmitToLinkEvent.builder()
+                .transportRequestId(transportRequest.getTransportRequestId())
+                .linkName(messageReadyForTransportEvent.getLinkName())
+                .target(messageReadyForTransportEvent.getTarget())
+                .build();
+        submitToLinkService.submitToLink(build);
 
     }
 

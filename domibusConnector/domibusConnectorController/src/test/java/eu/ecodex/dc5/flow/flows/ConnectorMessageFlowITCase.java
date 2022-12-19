@@ -20,6 +20,8 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
+import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -45,10 +47,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -109,21 +108,26 @@ public class ConnectorMessageFlowITCase {
     @Primary
     @Component
     @Getter
+    @Log4j2
     public static class MySubmitToLink implements SubmitToLinkService {
 
         @Autowired
         private DC5MessageRepo messageRepo;
 
+        @Autowired
+        private DC5TransportRequestRepo transportRequestRepo;
+
         @Override
-        public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
-            Objects.requireNonNull(message);
-            Objects.requireNonNull(message.getConnectorMessageId(), "connector messageId cannot be null!");
+        @Transactional
+        public void submitToLink(SubmitToLinkEvent event) throws DomibusConnectorSubmitToLinkException {
+            DC5TransportRequest byTransportRequestId = transportRequestRepo.findByTransportRequestId(event.getTransportRequestId()).get();
+            DC5Message message = byTransportRequestId.getMessage();
 
             try {
                 if (message.getTarget() == MessageTargetSource.GATEWAY) {
-                    toGwDeliveredMessages.put(message.getConnectorMessageId());
+                    toGwDeliveredMessages.put(byTransportRequestId.getTransportRequestId());
                 } else if (message.getTarget() == MessageTargetSource.BACKEND) {
-                    toBackendDeliveredMessages.put(message.getConnectorMessageId());
+                    toBackendDeliveredMessages.put(byTransportRequestId.getTransportRequestId());
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -132,24 +136,42 @@ public class ConnectorMessageFlowITCase {
 
         @SneakyThrows
         public DC5Message takeToGwMessage() {
-            DomibusConnectorMessageId take = toGwDeliveredMessages.take();
-            return messageRepo.getByConnectorMessageId(take);
+            DC5TransportRequest.TransportRequestId take = toGwDeliveredMessages.take();
+            DC5TransportRequest transportRequest = transportRequestRepo.findByTransportRequestId(take).get();
+            return transportRequest.getMessage();
         }
 
         @SneakyThrows
         public DC5Message takeToBackendMessage() {
-            DomibusConnectorMessageId take = toBackendDeliveredMessages.take();
-            return messageRepo.getByConnectorMessageId(take);
+            DC5TransportRequest.TransportRequestId take = toBackendDeliveredMessages.take();
+            DC5TransportRequest transportRequest = transportRequestRepo.findByTransportRequestId(take).get();
+            return transportRequest.getMessage();
         }
 
-        BlockingQueue<DomibusConnectorMessageId> toGwDeliveredMessages = new ArrayBlockingQueue<>(50);
+        @SneakyThrows
+        public DC5TransportRequest takeToGwTransport() {
+            DC5TransportRequest.TransportRequestId take = toGwDeliveredMessages.take();
+            DC5TransportRequest transportRequest = transportRequestRepo.findByTransportRequestId(take).get();
+            return transportRequest;
+        }
 
-        BlockingQueue<DomibusConnectorMessageId> toBackendDeliveredMessages = new ArrayBlockingQueue<>(50);
+        @SneakyThrows
+        public DC5TransportRequest takeToBackendTransport() {
+            DC5TransportRequest.TransportRequestId take = toBackendDeliveredMessages.take();
+            DC5TransportRequest transportRequest = transportRequestRepo.findByTransportRequestId(take).get();
+            return transportRequest;
+        }
+
+        BlockingQueue<DC5TransportRequest.TransportRequestId> toGwDeliveredMessages = new ArrayBlockingQueue<>(50);
+
+        BlockingQueue<DC5TransportRequest.TransportRequestId> toBackendDeliveredMessages = new ArrayBlockingQueue<>(50);
 
         public void clear() {
             toBackendDeliveredMessages.clear();
             toGwDeliveredMessages.clear();
         }
+
+
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
@@ -347,8 +369,9 @@ public class ConnectorMessageFlowITCase {
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
             DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
+            submitFromGatewayToController(testMessage);
 
-            LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
+//            LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
             txTemplate.executeWithoutResult((state) -> {
                 DC5Message businessMsg = mySubmitToLink.takeToBackendMessage(); //wait until a message is put into queue

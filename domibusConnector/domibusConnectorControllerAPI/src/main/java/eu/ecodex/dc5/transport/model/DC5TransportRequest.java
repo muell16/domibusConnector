@@ -1,0 +1,97 @@
+package eu.ecodex.dc5.transport.model;
+
+import eu.ecodex.dc5.message.model.DC5Message;
+import lombok.*;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+
+@Entity
+public class DC5TransportRequest {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne(optional = false)
+    private DC5Message message;
+
+    private String remoteMessageId;
+
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    private DC5TransportRequestState currentState;
+
+    private String transportSystemId;
+
+    @Convert(converter = TransportIdConverter.class)
+    private TransportRequestId transportRequestId;
+
+    private String linkName;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<DC5TransportRequestState> states = new ArrayList<>();
+
+    public void changeCurrentState(DC5TransportRequestState currentState) {
+        if (currentState.getId() == null) {
+            this.currentState = currentState;
+            if (states == null) {
+                states = new ArrayList<>();
+            }
+            states.add(currentState);
+        } else {
+            throw new IllegalArgumentException("Not a new state!");
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor(staticName = "of")
+    public static class TransportRequestId {
+
+        @NonNull
+        private final String transportId;
+
+        public static TransportRequestId ofRandom() {
+            return new TransportRequestId(UUID.randomUUID().toString());
+        }
+
+        public static TransportRequestId ofString(String id) {
+            return new TransportRequestId(id);
+        }
+
+        public static TransportRequestId ofId(TransportRequestId id) {
+            return new TransportRequestId(id.getTransportId());
+        }
+
+        public String toString() {
+            return "TransportId: [" +
+                    this.transportId +
+                    "]";
+        }
+    }
+
+    public static class TransportIdConverter implements AttributeConverter<TransportRequestId, String> {
+
+        @Override
+        public String convertToDatabaseColumn(TransportRequestId attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.getTransportId();
+        }
+
+        @Override
+        public TransportRequestId convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return TransportRequestId.of(dbData);
+        }
+    }
+
+}

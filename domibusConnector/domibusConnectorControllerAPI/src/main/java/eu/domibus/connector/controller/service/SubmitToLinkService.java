@@ -1,7 +1,12 @@
 package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * Will be called by the connector
@@ -11,6 +16,15 @@ import eu.ecodex.dc5.message.model.DC5Message;
  */
 public interface SubmitToLinkService {
 
-    public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException;
+    void submitToLink(SubmitToLinkEvent event) throws DomibusConnectorSubmitToLinkException;
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public class SubmitToLinkEvent {
+        private DC5TransportRequest.TransportRequestId transportRequestId;
+        private String linkName;
+        private MessageTargetSource target;
+    }
 
 }

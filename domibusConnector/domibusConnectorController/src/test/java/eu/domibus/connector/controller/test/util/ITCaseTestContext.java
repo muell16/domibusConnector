@@ -108,36 +108,36 @@ public class ITCaseTestContext {
         return new ConcurrentTaskScheduler();
     }
 
-    @Bean
-    public SubmitToLinkService submitToLinkService() {
-        return new QueueBasedSubmitToLinkService();
-    }
+//    @Bean
+//    public SubmitToLinkService submitToLinkService() {
+//        return new QueueBasedSubmitToLinkService();
+//    }
 
-    public static class QueueBasedSubmitToLinkService implements SubmitToLinkService {
-
-        @Autowired
-        QueueBasedDomibusConnectorBackendDeliveryService queueBasedDomibusConnectorBackendDeliveryService;
-        @Autowired
-        QueueBasedDomibusConnectorGatewaySubmissionService queueBasedDomibusConnectorGatewaySubmissionService;
-
-        @Override
-        public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
-            if (message.getConnectorMessageId() == null) {
-                throw new IllegalArgumentException("connectorMessageId is null!");
-            }
-            try {
-                MessageTargetSource target = message.getDirection().getTarget();
-                if (target == MessageTargetSource.GATEWAY) {
-                    queueBasedDomibusConnectorGatewaySubmissionService.submitToGateway(message);
-                } else if (target == MessageTargetSource.BACKEND) {
-                    queueBasedDomibusConnectorBackendDeliveryService.deliverMessageToBackend(message);
-                }
-            } catch (Exception e) {
-                throw new DomibusConnectorSubmitToLinkException(message, DomibusConnectorRejectionReason.OTHER, e);
-            }
-        }
-
-    }
+//    public static class QueueBasedSubmitToLinkService implements SubmitToLinkService {
+//
+//        @Autowired
+//        QueueBasedDomibusConnectorBackendDeliveryService queueBasedDomibusConnectorBackendDeliveryService;
+//        @Autowired
+//        QueueBasedDomibusConnectorGatewaySubmissionService queueBasedDomibusConnectorGatewaySubmissionService;
+//
+//        @Override
+//        public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
+//            if (message.getConnectorMessageId() == null) {
+//                throw new IllegalArgumentException("connectorMessageId is null!");
+//            }
+//            try {
+//                MessageTargetSource target = message.getDirection().getTarget();
+//                if (target == MessageTargetSource.GATEWAY) {
+//                    queueBasedDomibusConnectorGatewaySubmissionService.submitToGateway(message);
+//                } else if (target == MessageTargetSource.BACKEND) {
+//                    queueBasedDomibusConnectorBackendDeliveryService.deliverMessageToBackend(message);
+//                }
+//            } catch (Exception e) {
+//                throw new DomibusConnectorSubmitToLinkException(message, DomibusConnectorRejectionReason.OTHER, e);
+//            }
+//        }
+//
+//    }
 
 
     public static class QueueBasedDomibusConnectorBackendDeliveryService {
