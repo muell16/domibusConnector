@@ -1,32 +1,44 @@
 package eu.ecodex.dc5.message.model;
 
 
+import eu.ecodex.dc5.message.validation.ConfirmationMessageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
+import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.*;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Embeddable
+//@Embeddable
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+
+@Entity
 public class DC5EcxAddress {
 
-    @NotBlank(groups = IncomingMessageRules.class, message = "A incoming message mus have a ecx addr")
-    @NotNull(groups = IncomingMessageRules.class, message = "A incoming message mus have a ecx addr")
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Builder(toBuilder = true)
+    public DC5EcxAddress(String ecxAddress, DC5Party party) {
+        this.party = party;
+        this.ecxAddress = ecxAddress;
+    }
+
+    @NotBlank(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a ecx addr")
+    @NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a ecx addr")
+    @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a ecx addr")
     private String ecxAddress;
 
-    @Embedded
-    @NotNull(groups = IncomingMessageRules.class, message = "A incoming message mus have a ecx addr")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming message must have a not null party")
+    @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a valid party")
     private DC5Party party = new DC5Party();
-
-    @Embedded
-    private DC5Role role = new DC5Role();
 
 }

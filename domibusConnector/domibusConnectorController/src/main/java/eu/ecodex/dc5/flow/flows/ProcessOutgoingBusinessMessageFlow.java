@@ -12,6 +12,10 @@ import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
+import eu.ecodex.dc5.message.validation.IncomingMessageRules;
+import eu.ecodex.dc5.message.validation.OutgoingBusinessMessageRules;
+import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +26,11 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Takes a originalMessage from backend and creates evidences for it
@@ -42,6 +51,7 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
     private final SubmitConfirmationAsEvidenceMessageStep submitAsEvidenceMessageToLink;
     private final LookupGatewayNameStep lookupGatewayNameStep;
     private final VerifyPModesStep verifyPModesStep;
+    private final Validator validator;
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -50,6 +60,8 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
         try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId().toString())) {
 
             //verify p-Modes step
+
+            validateOutgoingMessage(message);
 
 //            ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
             verifyPModesStep.verifyOutgoing(message);
@@ -115,6 +127,17 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
 //                    .setSource(this.getClass())
 //                    .setCause(ete)
 //                    .buildAndThrow();
+        }
+    }
+
+    private void validateOutgoingMessage(DC5Message message) {
+        Set<ConstraintViolation<DC5Message>> validate = validator.validate(message, OutgoingMessageRules.class, OutgoingBusinessMessageRules.class);
+
+        if (!validate.isEmpty()) {
+            throw new IllegalArgumentException("Message is not valid due: " + validate
+                    .stream()
+                    .map(v -> v.getPropertyPath() + " : " + v.getMessage())
+                    .collect(Collectors.joining("\n")));
         }
     }
 

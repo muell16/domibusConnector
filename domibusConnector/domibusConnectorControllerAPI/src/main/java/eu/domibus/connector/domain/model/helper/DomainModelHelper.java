@@ -117,18 +117,18 @@ public class DomainModelHelper {
      * @param messageDetails
      * @return
      */
-    public static DC5Ebms switchMessageDirection(DC5Ebms messageDetails) {
-        DC5EcxAddress newReceiver = messageDetails.getSender().toBuilder().build();
-        DC5EcxAddress newSender = messageDetails.getReceiver().toBuilder().build();
-
-
-        return messageDetails.toBuilder()
-                .receiver(newReceiver)
-                .sender(newSender)
-                .id(null)
-                .build();
-
-    }
+//    public static DC5Ebms switchMessageDirection(DC5Ebms messageDetails) {
+//        DC5EcxAddress newReceiver = messageDetails.getBackendAddress().toBuilder().build();
+//        DC5EcxAddress newSender = messageDetails.getGatewayAddress().toBuilder().build();
+//
+//
+//        return messageDetails.toBuilder()
+////                .receiver(newReceiver)
+////                .sender(newSender)
+//                .id(null)
+//                .build();
+//
+//    }
 
 
 }

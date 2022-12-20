@@ -13,6 +13,7 @@ import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +33,7 @@ public class EvidenceTriggerStep {
 
     private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
     private final ConfirmationCreatorService confirmationCreatorService;
+    private final DC5MessageRepo messageRepo;
 
 
     @Step(name = "EvidenceTriggerStep")
@@ -55,19 +57,32 @@ public class EvidenceTriggerStep {
         evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
                 .setEvidence(confirmation.getEvidence());
 
+        evidenceTriggerMsg.setRefToConnectorMessageId(businessMsg.getConnectorMessageId());
+        evidenceTriggerMsg.setMessageLaneId(businessMsg.getMessageLaneId());
+
         DC5Ebms evidenceTriggerMsgDetails = evidenceTriggerMsg.getEbmsData();
+        if (evidenceTriggerMsgDetails == null) {
+            evidenceTriggerMsgDetails = new DC5Ebms();
+            evidenceTriggerMsg.setEbmsData(evidenceTriggerMsgDetails);
+            evidenceTriggerMsg = messageRepo.save(evidenceTriggerMsg);
+            evidenceTriggerMsgDetails = evidenceTriggerMsg.getEbmsData();
+        }
+
+        evidenceTriggerMsgDetails.setRefToEbmsMessageId(businessMsgDetails.getEbmsMessageId());
 
         //set correct action for evidence message
         evidenceTriggerMsgDetails.setAction(confirmationCreatorService.createEvidenceAction(confirmation.getEvidenceType()));
         //set correct service derived from business msg
-        evidenceTriggerMsgDetails.setService(businessMsgDetails.getService());
+        evidenceTriggerMsgDetails.setService(businessMsgDetails.getService().toBuilder().build());
 
-        //set correct original sender / final recipient
-//        evidenceTriggerMsgDetails.setOriginalSender(businessMsgDetails.getFinalRecipient());
-//        evidenceTriggerMsgDetails.setFinalRecipient(businessMsgDetails.getOriginalSender());
-        //set correct from/to party
-//        evidenceTriggerMsgDetails.setFromParty(businessMsgDetails.getToParty());
-//        evidenceTriggerMsgDetails.setToParty(businessMsgDetails.getFromParty());
+        //change sender / receiver
+        evidenceTriggerMsgDetails.setGatewayAddress(businessMsgDetails.getGatewayAddress().toBuilder().build());
+        evidenceTriggerMsgDetails.setBackendAddress(businessMsgDetails.getBackendAddress().toBuilder().build());
+        evidenceTriggerMsgDetails.setResponderRole(businessMsgDetails.getResponderRole().toBuilder().build());
+        evidenceTriggerMsgDetails.setInitiatorRole(businessMsgDetails.getInitiatorRole().toBuilder().build());
+//        //preserve ebms roles
+//        evidenceTriggerMsgDetails.getBackendAddress().setRole(businessMsgDetails.getBackendAddress().getRole().toBuilder().build());
+//        evidenceTriggerMsgDetails.getGatewayAddress().setRole(businessMsgDetails.getGatewayAddress().getRole().toBuilder().build());
 
         return evidenceTriggerMsg;
     }

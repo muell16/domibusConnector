@@ -35,7 +35,7 @@ public class DomainEntityCreator {
     public static DC5EcxAddress defaultSender() {
         return DC5EcxAddress.builder()
                 .party(defaultSenderParty())
-                .role(getDefaultInitiatorRole())
+//                .role(getDefaultInitiatorRole())
                 .ecxAddress("sender")
                 .build();
     }
@@ -43,7 +43,7 @@ public class DomainEntityCreator {
     public static DC5EcxAddress defaultRecipient() {
         return DC5EcxAddress.builder()
                 .party(defaultRecipientParty())
-                .role(getDefaultResponderRole())
+//                .role(getDefaultResponderRole())
                 .ecxAddress("recipient")
                 .build();
     }
@@ -333,8 +333,8 @@ public class DomainEntityCreator {
 
         dc5EbmsBuilder.action(createActionRelayREMMDAcceptanceRejection());
 
-        dc5EbmsBuilder.receiver(message.getEbmsData().getSender());
-        dc5EbmsBuilder.sender(message.getEbmsData().getReceiver());
+        dc5EbmsBuilder.backendAddress(message.getEbmsData().getBackendAddress());
+        dc5EbmsBuilder.gatewayAddress(message.getEbmsData().getGatewayAddress());
 
         DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdRejectConfirmation();
 
@@ -354,8 +354,8 @@ public class DomainEntityCreator {
 
         dc5EbmsBuilder.action(createActionRelayREMMDAcceptanceRejection());
 
-        dc5EbmsBuilder.receiver(message.getEbmsData().getSender());
-        dc5EbmsBuilder.sender(message.getEbmsData().getReceiver());
+//        dc5EbmsBuilder.receiver(message.getEbmsData().getBackendAddress());
+//        dc5EbmsBuilder.sender(message.getEbmsData().getGatewayAddress());
 
         DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
 
@@ -374,8 +374,8 @@ public class DomainEntityCreator {
 
         ebmsBuilder.conversationId(message.getEbmsData().getConversationId());
         ebmsBuilder.ebmsMessageId(null);
-        ebmsBuilder.receiver(message.getEbmsData().getReceiver());
-        ebmsBuilder.sender(message.getEbmsData().getSender());
+//        ebmsBuilder.receiver(message.getEbmsData().getGatewayAddress());
+//        ebmsBuilder.sender(message.getEbmsData().getBackendAddress());
         ebmsBuilder.refToEbmsMessageId(message.getEbmsData().getEbmsMessageId());     //reference the previous message
 
         ebmsBuilder.action(createActionForm_A());
@@ -393,8 +393,8 @@ public class DomainEntityCreator {
 
         ebmsBuilder.conversationId(message.getEbmsData().getConversationId());
         ebmsBuilder.ebmsMessageId(null);
-        ebmsBuilder.receiver(message.getEbmsData().getReceiver());
-        ebmsBuilder.sender(message.getEbmsData().getSender());
+//        ebmsBuilder.receiver(message.getEbmsData().getGatewayAddress());
+//        ebmsBuilder.sender(message.getEbmsData().getBackendAddress());
         ebmsBuilder.refToEbmsMessageId(message.getEbmsData().getEbmsMessageId());     //reference the previous message
 
         ebmsBuilder.action(createActionForm_A());
@@ -412,8 +412,8 @@ public class DomainEntityCreator {
         DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
         ebmsBuilder.conversationId(null);      //first message no conversation set yet!
 
-        ebmsBuilder.receiver(createAtReceiver());
-        ebmsBuilder.sender(createDeSender());
+//        ebmsBuilder.receiver(createAtReceiver());
+//        ebmsBuilder.sender(createDeSender());
         ebmsBuilder.refToEbmsMessageId(null);     //is the first message
 
         ebmsBuilder.action(createActionForm_A());
@@ -432,7 +432,7 @@ public class DomainEntityCreator {
     private static DC5EcxAddress createDeSender() {
         return DC5EcxAddress.builder()
                 .party(new DC5Party("DE", "ecodex"))
-                .role(new DC5Role("GW", DC5RoleType.INITIATOR))
+//                .role(new DC5Role("GW", DC5RoleType.INITIATOR))
                 .ecxAddress("originalSender")
                 .build();
     }
@@ -440,7 +440,7 @@ public class DomainEntityCreator {
     private static DC5EcxAddress createAtReceiver() {
         return DC5EcxAddress.builder()
                 .party(new DC5Party("AT", "ecodex"))
-                .role(new DC5Role("GW", DC5RoleType.RESPONDER))
+//                .role(new DC5Role("GW", DC5RoleType.RESPONDER))
                 .ecxAddress("finalRecipient")
                 .build();
     }
@@ -571,8 +571,8 @@ public class DomainEntityCreator {
                         .ebmsMessageId(EbmsMessageId.ofRandom())
                         .service(createServiceEPO())
                         .action(createActionForm_A())
-                        .sender(defaultSender())
-                        .receiver(defaultRecipient())
+                        .gatewayAddress(defaultSender())
+                        .backendAddress(defaultRecipient())
                         .build()
                 )
                 .messageContent(DC5MessageContent.builder()
@@ -589,7 +589,5 @@ public class DomainEntityCreator {
                         .build())
                 .build();
     }
-
-
 
 }

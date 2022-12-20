@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.MessageTargetSourceConverter;
 import lombok.*;
+import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -99,6 +100,16 @@ public class DC5TransportRequest {
             }
             return TransportRequestId.of(dbData);
         }
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringCreator(this)
+                .append("transportRequestId", this.transportRequestId)
+                .append("linkName", this.linkName)
+                .append("linkType", this.linkType)
+                .append("messageId", this.message.getConnectorMessageId())
+                .toString();
     }
 
 }
