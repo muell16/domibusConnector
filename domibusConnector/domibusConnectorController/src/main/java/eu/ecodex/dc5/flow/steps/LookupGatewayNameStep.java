@@ -2,6 +2,7 @@ package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.lib.logging.MDC;
@@ -29,11 +30,11 @@ public class LookupGatewayNameStep {
     @Step(name = "LookupGatewayNameStep")
     public DC5Message executeStep(DC5Message message) {
         LOGGER.debug("Connector currently only supports ONE gateway per domain!");
-        if (StringUtils.hasText(message.getGatewayLinkName())) {
+        if (message.getGatewayLinkName() != null) {
             //return when already set
             return message;
         }
-        message.setGatewayLinkName(dcMessageRoutingConfigurationProperties.getDefaultGatewayName());
+        message.setGatewayLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of(dcMessageRoutingConfigurationProperties.getDefaultGatewayName()));
         return message;
     }
 

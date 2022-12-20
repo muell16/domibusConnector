@@ -2,6 +2,7 @@ package eu.ecodex.dc5.message;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 
@@ -14,6 +15,7 @@ import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -61,19 +63,30 @@ public class FindBusinessMessageByMsgId {
 //                        Optional.ofNullable(msg.getBackendData().getRefToBackendMessageId()).flatMap(ref -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(ref.getBackendMessageId(), msg.getDirection().getTarget()))
 //                );
 
-        if (msg.getEbmsData().getRefToEbmsMessageId() != null) {
+        if (msg.getEbmsData() != null && msg.getEbmsData().getRefToEbmsMessageId() != null) {
             final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId(), msg.getDirection().getTarget());
             if (result.isPresent()) {
                 return result;
             }
         }
-        final BackendMessageId refToBackendMessageId = msg.getBackendData().getRefToBackendMessageId();
-        if (refToBackendMessageId != null) {
-            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, refToBackendMessageId, msg.getDirection().getTarget());
-            if (result2.isPresent()) {
-                return result2;
-            }
+        final MessageTargetSource target = msg.getDirection().getTarget();
+        Objects.requireNonNull(target, "message target cannot be null!");
+
+        final Optional<DC5Message> result3 = Optional.ofNullable(msg.getBackendData())
+                .flatMap(b -> Optional.ofNullable(b.getBackendMessageId()))
+                .flatMap(backendMessageId -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, backendMessageId, target));
+
+        if (result3.isPresent()) {
+            LOGGER.debug("Found related business message [{}] via backend message id", result3.get());
+            return result3;
         }
+
+//        if (msg.getBackendData() != null && msg.getBackendData().getRefToBackendMessageId() != null) {
+//            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, msg.getBackendData().getRefToBackendMessageId(), msg.getDirection().getTarget());
+//            if (result2.isPresent()) {
+//                return result2;
+//            }
+//        }
 
         return Optional.empty();
     }

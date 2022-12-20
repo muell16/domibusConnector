@@ -4,6 +4,7 @@ import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Service;
@@ -45,7 +46,7 @@ class LookupBackendNameStepTest {
 
         final DC5Message message = DomainEntityCreator.createMessage();
         message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
-        message.setBackendLinkName("BACKEND_ON_THE_MESSAGE");
+        message.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_ON_THE_MESSAGE"));
 
         // Act
 //        sut.executeStep(message);
@@ -127,7 +128,7 @@ class LookupBackendNameStepTest {
         List<DC5Message> messagesByConversationId = new ArrayList<>();
         final DC5Message otherMessageWithConvId = DomainEntityCreator.createMessage();
         otherMessageWithConvId.getEbmsData().setConversationId("fooConvId");
-        otherMessageWithConvId.setBackendLinkName("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
+        otherMessageWithConvId.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID"));
         messagesByConversationId.add(otherMessageWithConvId);
         Mockito.when(peristenceMock.findMessagesByConversationId(any())).thenReturn(messagesByConversationId);
 

@@ -6,8 +6,10 @@ import eu.domibus.connector.domain.enums.LinkType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.persistence.AttributeConverter;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.ws.rs.core.Link;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,10 +112,32 @@ public class DomibusConnectorLinkPartner {
         this.properties = properties;
     }
 
+    public static class LinkPartnerNameConverter implements AttributeConverter<LinkPartnerName, String> {
+
+        @Override
+        public String convertToDatabaseColumn(LinkPartnerName attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.getLinkName();
+        }
+
+        @Override
+        public LinkPartnerName convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return LinkPartnerName.of(dbData);
+        }
+    }
+
     public static class LinkPartnerName {
         @NotBlank
         private String linkName;
 
+        public static LinkPartnerName of(LinkPartnerName name) {
+            return name;
+        }
         public static LinkPartnerName of(String name) {
             Objects.requireNonNull(name, "Link partner name cannot be null!");
             if (StringUtils.isBlank(name)) {

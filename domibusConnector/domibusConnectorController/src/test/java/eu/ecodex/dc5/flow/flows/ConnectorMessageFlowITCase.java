@@ -12,17 +12,21 @@ import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
+import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Component;
@@ -40,6 +46,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
@@ -105,33 +112,45 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     private LargeFilePersistenceService largeFilePersistenceService;
 
+    @Data
+    public static class AddToQueueEvent {
+        DC5TransportRequest.TransportRequestId id;
+        MessageTargetSource target;
+    }
+
     @Primary
     @Component
     @Getter
     @Log4j2
+    @RequiredArgsConstructor
     public static class MySubmitToLink implements SubmitToLinkService {
 
-        @Autowired
-        private DC5MessageRepo messageRepo;
 
-        @Autowired
-        private DC5TransportRequestRepo transportRequestRepo;
+        private final DC5MessageRepo messageRepo;
+        private final DC5TransportRequestRepo transportRequestRepo;
+        private final ApplicationEventPublisher eventPublisher;
 
-        @Override
-        @Transactional
-        public void submitToLink(SubmitToLinkEvent event) throws DomibusConnectorSubmitToLinkException {
-            DC5TransportRequest byTransportRequestId = transportRequestRepo.findByTransportRequestId(event.getTransportRequestId()).get();
-            DC5Message message = byTransportRequestId.getMessage();
+        @TransactionalEventListener
+        public void handleAddToQueueEvent(AddToQueueEvent event) {
 
             try {
-                if (message.getTarget() == MessageTargetSource.GATEWAY) {
-                    toGwDeliveredMessages.put(byTransportRequestId.getTransportRequestId());
-                } else if (message.getTarget() == MessageTargetSource.BACKEND) {
-                    toBackendDeliveredMessages.put(byTransportRequestId.getTransportRequestId());
+                if (event.getTarget() == MessageTargetSource.GATEWAY) {
+                    toGwDeliveredMessages.put(event.getId());
+                } else if (event.getTarget() == MessageTargetSource.BACKEND) {
+                    toBackendDeliveredMessages.put(event.getId());
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public void submitToLink(SubmitToLinkEvent event) throws DomibusConnectorSubmitToLinkException {
+            //use events to add to queue AFTER TX completed
+            AddToQueueEvent e = new AddToQueueEvent();
+            e.setId(event.getTransportRequestId());
+            e.setTarget(event.getTarget());
+            eventPublisher.publishEvent(e);
         }
 
         @SneakyThrows
@@ -172,6 +191,24 @@ public class ConnectorMessageFlowITCase {
         }
 
 
+        public void acceptTransport(DC5TransportRequest transportRequest, TransportState transportState, BackendMessageId backendMessageId) {
+            acceptTransport(transportRequest, transportState, backendMessageId.getBackendMessageId());
+        }
+
+        public void acceptTransport(DC5TransportRequest transportRequest, TransportState transportState, EbmsMessageId backendMessageId) {
+            acceptTransport(transportRequest, transportState, backendMessageId.getEbmsMesssageId());
+        }
+
+        private void acceptTransport(DC5TransportRequest transportRequest, TransportState transportState, String remoteMessageId) {
+            MessageTransportEvent messageTransportEvent = MessageTransportEvent.builder()
+                    .transportId(transportRequest.getTransportRequestId())
+                    .state(transportState)
+                    .linkName(transportRequest.getLinkName())
+                    .remoteTransportId(remoteMessageId)
+                    .build();
+            eventPublisher.publishEvent(messageTransportEvent);
+        }
+
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
@@ -193,6 +230,9 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    @Autowired
+    DC5TransportRequestRepo transportRequestRepo;
 
 
 //    BlockingQueue<DC5Message> toGwDeliveredMessages;
@@ -283,9 +323,7 @@ public class ConnectorMessageFlowITCase {
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
 
             DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
-//            testMessage.getEbmsData().getService().setService("service2");
             submitFromGatewayToController(testMessage);
-
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
@@ -295,7 +333,7 @@ public class ConnectorMessageFlowITCase {
                 assertThat(toBackendDelivered).isNotNull();
                 assertThat(toBackendDelivered.getBackendLinkName())
                         .as("service2 should delivered to backend2")
-                        .isEqualTo("backend2");
+                        .isEqualTo(DomibusConnectorLinkPartner.LinkPartnerName.of("backend2"));
             });
 
 
@@ -322,25 +360,18 @@ public class ConnectorMessageFlowITCase {
                         .as("Must be initiator")
                             .isEqualTo(DomainEntityCreator.getDefaultInitiatorRole());
 
-
-
-//            assertThat(relayRemmdEvidenceMsgDetails.getToParty())
-//                    .as("Parties must be switched")
-//                    .isEqualTo(DomibusConnectorPartyBuilder.createBuilder().copyPropertiesFrom(testMessage.getEbmsData().getFromParty())
-//                            .setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER)
-//                            .build());
             });
 
 
-
-//
-//
             //message status confirmed
             txTemplate.executeWithoutResult((state) -> {
                 DC5Message persistedMessage = messageRepo.getByConnectorMessageId(CONNECTOR_MESSAGE_ID);
-                assertThat(persistedMessage.getMessageContent().getCurrentState().getState()).isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
-//                        .as("Message is currently neither confirmed nor rejected")
-//                        .isFalse();
+                assertThat(persistedMessage.getMessageContent().getCurrentState().getState())
+                        .as("Message must be in state confirmed!")
+                        .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
+                assertThat(persistedMessage.getMessageLaneId())
+                        .as("Should assigned to default domain!")
+                        .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
             });
 
 
@@ -364,6 +395,7 @@ public class ConnectorMessageFlowITCase {
 
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
         DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -371,35 +403,47 @@ public class ConnectorMessageFlowITCase {
             DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
             submitFromGatewayToController(testMessage);
 
-//            LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
 
+            final DC5TransportRequest transportRequest = mySubmitToLink.takeToBackendTransport();//wait until something transported to Backend
             txTemplate.executeWithoutResult((state) -> {
-                DC5Message businessMsg = mySubmitToLink.takeToBackendMessage(); //wait until a message is put into queue
-                assertThat(mySubmitToLink.toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-                assertThat(businessMsg).isNotNull();
+                DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(transportRequest.getTransportRequestId());
+                DC5Message m = byTransportRequestId.getMessage();
+                assertThat(m.getMessageLaneId()).isNotNull();
+
             });
 
-            txTemplate.executeWithoutResult((state) -> {
-                DC5Message relayRemmdEvidenceMsg = mySubmitToLink.takeToGwMessage(); //wait until a message is put into queue
-                assertThat(mySubmitToLink.toGwDeliveredMessages).hasSize(0); //queue should be empty!
-                assertThat(relayRemmdEvidenceMsg).isNotNull();
-            });
+            BackendMessageId backendMessageId = BackendMessageId.ofRandom();
+            mySubmitToLink.acceptTransport(transportRequest, TransportState.ACCEPTED, backendMessageId);
+
+            EbmsMessageId ebmsId = EbmsMessageId.ofRandom();
+            DC5TransportRequest toGW = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
+            mySubmitToLink.acceptTransport(toGW, TransportState.ACCEPTED, ebmsId);
 
 
-
+            //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
-
-                    .connectorMessageId(DomibusConnectorMessageId.ofString(CONNECTOR_MESSAGE_ID + "_ev1"))
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
                     )
                     .backendData(DC5BackendData.builder()
-//                            .refToBackendMessageId()
+                            .backendMessageId(deliveryTriggerBackendId)
+                            .refToBackendMessageId(backendMessageId)
                             .build())
-
                     .build();
             submitFromBackendToController(deliveryTriggerMessage);
+
+            //wait for Confirmation Message RCV on GW
+            EbmsMessageId ebmsId2 = EbmsMessageId.ofRandom();
+            DC5TransportRequest toGW2 = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
+            mySubmitToLink.acceptTransport(toGW2, TransportState.ACCEPTED, ebmsId2);
+            //TODO: verify message
+
+            //wait for Confirmation Message RCV on backend
+            BackendMessageId backendId2 = BackendMessageId.ofRandom();
+            DC5TransportRequest toBackend2 = mySubmitToLink.takeToGwTransport();//wait until something transported to Backend
+            mySubmitToLink.acceptTransport(toBackend2, TransportState.ACCEPTED, backendId2);
+            //TODO: verify message
 
 
 //            DC5Message deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
@@ -1505,7 +1549,7 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
         testLink.setLinkType(LinkType.BACKEND);
-//        submitToConnector.submitToConnector(message, testLink);
+        submitToConnector.submitToConnector(message, testLink);
     }
 
 

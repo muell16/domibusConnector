@@ -2,6 +2,7 @@ package eu.ecodex.dc5.domain;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import lombok.*;
+import org.springframework.core.style.ToStringCreator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,13 @@ public interface DCBusinessDomainManager {
 
         public boolean isValid() {
             return errors.isEmpty();
+        }
+
+        public String toString() {
+            return new ToStringCreator(this)
+                    .append("containsErrors", !errors.isEmpty())
+                    .append(errors)
+                    .toString();
         }
     }
 

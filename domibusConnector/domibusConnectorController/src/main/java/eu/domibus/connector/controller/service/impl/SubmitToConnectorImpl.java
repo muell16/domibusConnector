@@ -22,11 +22,11 @@ public class SubmitToConnectorImpl implements SubmitToConnector {
         ReceiveMessageFlow.ReceiveMessageFlowResult receiveMessageFlowResult;
         if (linkType == LinkType.GATEWAY) {
             message.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-            message.setGatewayLinkName(linkPartner.getLinkName());
+            message.setGatewayLinkName(linkPartner);
             receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
         } else if (linkType == LinkType.BACKEND) {
             message.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-            message.setBackendLinkName(linkPartner.getLinkName());
+            message.setBackendLinkName(linkPartner);
             receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
         } else {
             throw new RuntimeException("linkType not known!");

@@ -1,6 +1,9 @@
 package eu.ecodex.dc5.transport.model;
 
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.MessageTargetSourceConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,7 +35,11 @@ public class DC5TransportRequest {
     @Convert(converter = TransportIdConverter.class)
     private TransportRequestId transportRequestId;
 
-    private String linkName;
+    @Convert(converter = DomibusConnectorLinkPartner.LinkPartnerNameConverter.class)
+    private DomibusConnectorLinkPartner.LinkPartnerName linkName;
+
+    @Convert(converter = MessageTargetSourceConverter.class)
+    private MessageTargetSource linkType;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<DC5TransportRequestState> states = new ArrayList<>();

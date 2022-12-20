@@ -42,8 +42,10 @@ public class DC5LookupDomainStep {
 
         // 2. If there are messages with the same ConversationID
         // -> then associate messsage with domain of those messages.
-        final List<DC5Message> businessMsgByConversationId = msgService.findBusinessMsgByConversationId(msg.getEbmsData().getConversationId());
-        final Optional<DC5Message> any = businessMsgByConversationId.stream().findAny();
+        final Optional<DC5Message> any = Optional.ofNullable(msg.getEbmsData())
+                .flatMap(ebmsData -> Optional.ofNullable(ebmsData.getConversationId()))
+                .flatMap(s -> msgService.findBusinessMsgByConversationId(s).stream().findFirst());
+
         if (any.isPresent()) {
             final DomibusConnectorBusinessDomain.BusinessDomainId id = any.get().getBusinessDomainId();
             msg.setBusinessDomainId(id);
@@ -60,6 +62,7 @@ public class DC5LookupDomainStep {
                     .values()
                     .stream()
                     .sorted(DomainRoutingRule.getComparator())
+//                    .peek(rule -> LOGGER.debug("Checking if rule [{}] does match", rule))
                     .filter(r -> r.getMatchClause().matches(msg))
                     .collect(Collectors.toList());
 

@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.flow.events;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.events.DC5Event;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 public class MessageReadyForTransportEvent extends DC5Event {
 
     private long id;
-    private String linkName;
+    private DomibusConnectorLinkPartner.LinkPartnerName linkName;
     private MessageTargetSource target;
 
 }

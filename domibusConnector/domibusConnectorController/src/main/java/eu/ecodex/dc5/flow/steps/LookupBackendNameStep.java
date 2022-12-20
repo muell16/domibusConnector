@@ -3,6 +3,7 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
@@ -44,11 +45,11 @@ public class LookupBackendNameStep implements MessageProcessStep {
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "LookupBackendNameStep")
     public boolean executeStep(DC5Message message) {
-        if (StringUtils.hasText(message.getBackendLinkName())) {
+        if (message.getBackendLinkName() != null) {
             //return when already set
             return true;
         }
-        String backendName = null;
+        DomibusConnectorLinkPartner.LinkPartnerName backendName = null;
 
         //Lookup backend by conversation id
         String conversationId = message.getEbmsData().getConversationId();
@@ -66,7 +67,7 @@ public class LookupBackendNameStep implements MessageProcessStep {
         }
 
         //lookup backend by rules and default backend
-        String defaultBackendName = dcRoutingConfigManager.getDefaultBackendName(message.getMessageLaneId());
+        DomibusConnectorLinkPartner.LinkPartnerName defaultBackendName = DomibusConnectorLinkPartner.LinkPartnerName.of(dcRoutingConfigManager.getDefaultBackendName(message.getMessageLaneId()));
         if (dcRoutingConfigManager.isBackendRoutingEnabled(message.getMessageLaneId())) {
             LOGGER.debug("Backend routing is enabled");
             message.setBackendLinkName(
@@ -79,7 +80,7 @@ public class LookupBackendNameStep implements MessageProcessStep {
                     .findFirst()
                     .map(bName -> {
                         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Looked up backend name [{}] for message", bName);
-                        return bName;
+                        return DomibusConnectorLinkPartner.LinkPartnerName.of(bName);
                     })
                     .orElseGet(() -> {
                         LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "No backend rule pattern has matched! Applying default backend name [{}]!");

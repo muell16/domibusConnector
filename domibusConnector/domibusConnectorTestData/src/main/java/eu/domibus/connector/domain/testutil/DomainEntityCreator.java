@@ -231,7 +231,7 @@ public class DomainEntityCreator {
 
     }
 
-    public static final String EPO_BACKEND = "epo_backend";
+    public static final DomibusConnectorLinkPartner.LinkPartnerName EPO_BACKEND = DomibusConnectorLinkPartner.LinkPartnerName.of("epo_backend");
 
     public static DC5Message createOutgoingEpoFormAMessage() {
         return createOutgoingEpoFormAMessage(DomibusConnectorMessageId.ofRandom(), BackendMessageId.ofRandom()).build();
@@ -241,8 +241,8 @@ public class DomainEntityCreator {
         return createOutgoingEpoFormAMessage(DomibusConnectorMessageId.ofRandom(), BackendMessageId.ofRandom())
                 .target(MessageTargetSource.GATEWAY)
                 .source(MessageTargetSource.BACKEND)
-                .gatewayLinkName("gateway")
-                .backendLinkName("backend")
+                .gatewayLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("gateway"))
+                .backendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("backend"))
                 .ebmsData(createOutgoingEpoFormAMessageEbmsData()
                         .ebmsMessageId(EbmsMessageId.ofRandom())
                         .build())
@@ -342,7 +342,7 @@ public class DomainEntityCreator {
                 .ebmsData(dc5EbmsBuilder.build())
                 .target(MessageTargetSource.BACKEND)
                 .source(MessageTargetSource.GATEWAY)
-                .gatewayLinkName("gateway")
+                .gatewayLinkName((DomibusConnectorLinkPartner.LinkPartnerName.of("gateway")))
                 .transportedMessageConfirmation(messageDeliveryConfirmation)
                 .build();
     }
@@ -363,7 +363,7 @@ public class DomainEntityCreator {
                 .ebmsData(dc5EbmsBuilder.build())
                 .target(MessageTargetSource.BACKEND)
                 .source(MessageTargetSource.GATEWAY)
-                .gatewayLinkName("gateway")
+                .gatewayLinkName((DomibusConnectorLinkPartner.LinkPartnerName.of("gateway")))
                 .transportedMessageConfirmation(messageDeliveryConfirmation)
                 .build();
 

@@ -20,7 +20,9 @@ import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -44,8 +46,10 @@ public class TransportMessageFlow {
 
         DC5TransportRequest transportRequest = new DC5TransportRequest();
         transportRequest.setMessage(msg);
+        transportRequest.setLinkType(messageReadyForTransportEvent.getTarget());
         transportRequest.setLinkName(messageReadyForTransportEvent.getLinkName());
         transportRequest.setTransportRequestId(DC5TransportRequest.TransportRequestId.ofRandom());
+
         transportRequest.changeCurrentState(DC5TransportRequestState.builder()
                     .created(LocalDateTime.now())
                     .transportState(TransportState.PENDING)
@@ -62,7 +66,10 @@ public class TransportMessageFlow {
 
     }
 
-    @DC5EventListener
+//    @DC5EventListener
+    //TODO: restore correct Message Process here...
+    @EventListener
+    @Transactional
     public void handleMessageTransportEvent(MessageTransportEvent messageTransportEvent) {
 
         DC5TransportRequestState.DC5TransportRequestStateBuilder transportStateBuilder = DC5TransportRequestState.builder()
@@ -79,14 +86,15 @@ public class TransportMessageFlow {
 
         Optional<String> remoteTransportId = messageTransportEvent.getRemoteTransportId();
         if (remoteTransportId.isPresent()) {
-            if (messageTransportEvent.getTarget() == MessageTargetSource.GATEWAY) {
+
+            if (transportRequest.getLinkType() == MessageTargetSource.GATEWAY) {
                 //should be ebms id
                 EbmsMessageId ebmsMessageId = EbmsMessageId.ofString(remoteTransportId.get());
                 if (transportRequest.getMessage().getEbmsData() == null) {
                     transportRequest.getMessage().setEbmsData(new DC5Ebms());
                 }
                 transportRequest.getMessage().getEbmsData().setEbmsMessageId(ebmsMessageId);
-            } else if (messageTransportEvent.getTarget() == MessageTargetSource.BACKEND) {
+            } else if (transportRequest.getLinkType() == MessageTargetSource.BACKEND) {
                 //should be backend id
                 BackendMessageId backendMessageId = BackendMessageId.ofString(remoteTransportId.get());
                 if (transportRequest.getMessage().getBackendData() == null) {

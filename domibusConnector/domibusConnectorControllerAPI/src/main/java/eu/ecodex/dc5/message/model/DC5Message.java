@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
 import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
@@ -78,10 +79,12 @@ public class DC5Message implements Serializable {
 	private MessageTargetSource source;
 
 	@CheckForNull
-	private String gatewayLinkName;
+	@Convert(converter = DomibusConnectorLinkPartner.LinkPartnerNameConverter.class)
+	private DomibusConnectorLinkPartner.LinkPartnerName gatewayLinkName;
 
 	@CheckForNull
-	private String backendLinkName;
+	@Convert(converter = DomibusConnectorLinkPartner.LinkPartnerNameConverter.class)
+	private DomibusConnectorLinkPartner.LinkPartnerName backendLinkName;
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
 	@CheckForNull

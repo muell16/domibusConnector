@@ -14,4 +14,7 @@ public interface DC5TransportRequestRepo extends JpaRepository<DC5TransportReque
     @Query("SELECT r FROM DC5TransportRequest r WHERE r.transportRequestId = ?1 ")
     Optional<DC5TransportRequest> findByTransportRequestId(DC5TransportRequest.TransportRequestId transportRequestId);
 
+    @Query("SELECT r FROM DC5TransportRequest r WHERE r.transportRequestId = ?1 ")
+    DC5TransportRequest getById(DC5TransportRequest.TransportRequestId transportRequestId);
+
 }

@@ -62,13 +62,13 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         DC5Message build = evidenceMessage.build();
         DC5Message msg = messageRepo.save(build);
 
-        String linkName = getLinkName(businessMessage, businessMessage.getDirection().getTarget());
+        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getTarget());
 
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), linkName, businessMessage.getTarget());
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getTarget());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
     }
 
-    private String getLinkName(DC5Message businessMessage, MessageTargetSource target) {
+    private DomibusConnectorLinkPartner.LinkPartnerName getLinkName(DC5Message businessMessage, MessageTargetSource target) {
         if (target == MessageTargetSource.BACKEND) {
             return businessMessage.getBackendLinkName();
         } else if (target == MessageTargetSource.GATEWAY) {
@@ -119,9 +119,9 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         msg.getEbmsData().setSender(sender);
 
         msg = messageRepo.save(msg);
-        String linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
+        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
 
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), linkName, businessMessage.getDirection().getSource());
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getDirection().getSource());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
 
     }
