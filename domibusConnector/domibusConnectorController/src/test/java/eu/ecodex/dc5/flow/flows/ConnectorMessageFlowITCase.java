@@ -213,7 +213,7 @@ public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
 
-    public static final Duration TEST_TIMEOUT = Duration.ofSeconds(60);
+    public static final Duration TEST_TIMEOUT = Duration.ofSeconds(6000);
 
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private File testResultsFolder;
@@ -409,12 +409,18 @@ public class ConnectorMessageFlowITCase {
                 DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(transportRequest.getTransportRequestId());
                 DC5Message m = byTransportRequestId.getMessage();
                 assertThat(m.getMessageLaneId()).isNotNull();
-
             });
 
-            BackendMessageId backendMessageId = BackendMessageId.ofRandom();
-            mySubmitToLink.acceptTransport(transportRequest, TransportState.ACCEPTED, backendMessageId);
+            BackendMessageId backendMessageId = BackendMessageId.ofString("BACKEND_businessmessageid_" + testInfo.getDisplayName());
+            mySubmitToLink.acceptTransport(transportRequest, TransportState.ACCEPTED, backendMessageId);    //Accept transport to backend and assign backend messageid
+            txTemplate.executeWithoutResult((state) -> {
+                DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(transportRequest.getTransportRequestId());
+                DC5Message m = byTransportRequestId.getMessage();
+                assertThat(m.getBackendData().getBackendMessageId()).isEqualTo(backendMessageId);
+            });
 
+
+            // confirm message to gw RELAY_REMMD_ACCEPTANCE
             EbmsMessageId ebmsId = EbmsMessageId.ofRandom();
             DC5TransportRequest toGW = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
             mySubmitToLink.acceptTransport(toGW, TransportState.ACCEPTED, ebmsId);

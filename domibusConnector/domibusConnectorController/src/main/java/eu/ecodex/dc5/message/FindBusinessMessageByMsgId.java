@@ -57,37 +57,45 @@ public class FindBusinessMessageByMsgId {
 
     public @NonNull Optional<DC5Message> findBusinessMsgByRefToMsgId(DC5Message msg) {
 
-        // needs java 9+
-//        return dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId().getEbmsMesssageId(), msg.getDirection().getTarget())
-//                .or(() ->
-//                        Optional.ofNullable(msg.getBackendData().getRefToBackendMessageId()).flatMap(ref -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(ref.getBackendMessageId(), msg.getDirection().getTarget()))
-//                );
 
-        if (msg.getEbmsData() != null && msg.getEbmsData().getRefToEbmsMessageId() != null) {
-            final Optional<DC5Message> result = dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(msg.getEbmsData().getRefToEbmsMessageId(), msg.getDirection().getTarget());
-            if (result.isPresent()) {
-                return result;
-            }
+        final MessageTargetSource target = msg.getSource();
+        Objects.requireNonNull(target, "message source cannot be null!");
+
+        final Optional<DC5Message> result0 = Optional.ofNullable(msg.getRefToConnectorMessageId())
+                .flatMap(msgId -> {
+                    LOGGER.debug("Trying to find related message with ConnectorMessageId: [{}]", msgId);
+                    return dc5MessageRepo.findOneByConnectorMessageId(msgId);
+                });
+        if (result0.isPresent()) {
+            LOGGER.debug("Found related business message [{}] via ref to connector message id", result0.get());
+            return result0;
         }
-        final MessageTargetSource target = msg.getDirection().getTarget();
-        Objects.requireNonNull(target, "message target cannot be null!");
+
+        final Optional<DC5Message> result1 = Optional.ofNullable(msg.getEbmsData())
+                .flatMap(e -> Optional.ofNullable(e.getEbmsMessageId()))
+                .flatMap(ebmsMessageId -> {
+                    LOGGER.debug("Trying to find related message with EBMSMessageId: [{}]", ebmsMessageId);
+                    return dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, target);
+                });
+        if (result1.isPresent()) {
+            LOGGER.debug("Found related business message [{}] via ebms message id", result1.get());
+            return result1;
+        }
+
 
         final Optional<DC5Message> result3 = Optional.ofNullable(msg.getBackendData())
                 .flatMap(b -> Optional.ofNullable(b.getBackendMessageId()))
-                .flatMap(backendMessageId -> dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, backendMessageId, target));
+                .flatMap(backendMessageId -> {
+                    LOGGER.debug("Trying to find related message with BackendMessageId: [{}]", backendMessageId);
+                    return dc5MessageRepo.findOneByBackendMessageIdAndDirectionTarget(backendMessageId, target);
+                });
 
         if (result3.isPresent()) {
             LOGGER.debug("Found related business message [{}] via backend message id", result3.get());
             return result3;
         }
 
-//        if (msg.getBackendData() != null && msg.getBackendData().getRefToBackendMessageId() != null) {
-//            final Optional<DC5Message> result2 = dc5MessageRepo.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(null, msg.getBackendData().getRefToBackendMessageId(), msg.getDirection().getTarget());
-//            if (result2.isPresent()) {
-//                return result2;
-//            }
-//        }
-
+        LOGGER.debug("Found no related business message!");
         return Optional.empty();
     }
 

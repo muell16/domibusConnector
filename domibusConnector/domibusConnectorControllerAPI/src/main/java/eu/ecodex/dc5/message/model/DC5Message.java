@@ -58,6 +58,9 @@ public class DC5Message implements Serializable {
 	@Convert(converter = DomibusConnectorMessageIdConverter.class)
 	private DomibusConnectorMessageId connectorMessageId;
 
+	@Convert(converter = DomibusConnectorMessageIdConverter.class)
+	private DomibusConnectorMessageId refToConnectorMessageId;
+
 	@Valid
 	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have EBMS data!")
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
