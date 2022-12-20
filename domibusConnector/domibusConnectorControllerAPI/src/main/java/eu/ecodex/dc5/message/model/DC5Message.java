@@ -282,4 +282,12 @@ public class DC5Message implements Serializable {
         return DomibusConnectorMessageDirection.fromMessageTargetSource(this.source, this.target);
     }
 
+    public boolean isConfirmationMessage() {
+        return MessageModelHelper.isEvidenceMessage(this);
+    }
+
+    public boolean isConfirmationTriggerMessage() {
+        return MessageModelHelper.isEvidenceTriggerMessage(this);
+    }
+
 }

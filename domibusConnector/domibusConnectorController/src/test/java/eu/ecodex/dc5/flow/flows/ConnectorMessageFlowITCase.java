@@ -53,6 +53,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -344,17 +345,12 @@ public class ConnectorMessageFlowITCase {
                             .as("Conversation ID must be the same as the business message")
                             .isEqualTo(testMessage.getEbmsData().getConversationId());
 
-                    assertThat(testMessage.getEbmsData().getGatewayAddress())
+                    assertThat(testMessage.getEbmsData().getBackendAddress())
                         .as("Parties must be switched")
                             .usingRecursiveComparison().ignoringFields("role")
                             .isEqualTo(relayRemmdEvidenceMsgDetails.getBackendAddress());
 
-//                    assertThat(relayRemmdEvidenceMsgDetails.getBackendAddress().getRole())
-//                        .as("Must be initiator")
-//                            .isEqualTo(DomainEntityCreator.getDefaultInitiatorRole());
-
             });
-
 
             //message status confirmed
             txTemplate.executeWithoutResult((state) -> {
@@ -410,13 +406,6 @@ public class ConnectorMessageFlowITCase {
                 mySubmitToLink.acceptTransport(transportRequest, TransportState.ACCEPTED, businessMsgBackendMsgId);    //Accept transport to backend and assign backend messageid
             }, "Should not take so long to rcv incoming business msg and ack it!");
 
-//            DomibusConnectorMessageId conId = txTemplate.execute((state) -> {
-//                DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(transportRequest.getTransportRequestId());
-//                DC5Message m = byTransportRequestId.getMessage();
-//                assertThat(m.getBackendData().getBackendMessageId()).isEqualTo(backendMessageId);
-//                return m.getConnectorMessageId();
-//            });
-
 
             // confirm message to gw RELAY_REMMD_ACCEPTANCE
             EbmsMessageId ebmsId = EbmsMessageId.ofRandom();
@@ -442,13 +431,21 @@ public class ConnectorMessageFlowITCase {
             EbmsMessageId ebmsId2 = EbmsMessageId.ofRandom();
             DC5TransportRequest toGW2 = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
             mySubmitToLink.acceptTransport(toGW2, TransportState.ACCEPTED, ebmsId2);
-            //TODO: verify message
+            txTemplate.executeWithoutResult((state) -> {
+                DC5Message msg = transportRequestRepo.getById(toGW2.getTransportRequestId()).getMessage();
+                assertThat(msg.isConfirmationMessage()).as("must be a confirmation message").isTrue();
+            });
+
+
 
             //wait for Confirmation Message RCV on backend
             BackendMessageId backendId2 = BackendMessageId.ofRandom();
             DC5TransportRequest toBackend2 = mySubmitToLink.takeToBackendTransport();//wait until something transported to Backend
             mySubmitToLink.acceptTransport(toBackend2, TransportState.ACCEPTED, backendId2);
-//            //TODO: verify message
+            txTemplate.executeWithoutResult((state) -> {
+                DC5Message msg = transportRequestRepo.getById(toBackend2.getTransportRequestId()).getMessage();
+                assertThat(msg.isConfirmationMessage()).as("must be a confirmation message").isTrue();
+            });
 
 
             //message status delivered
@@ -464,141 +461,100 @@ public class ConnectorMessageFlowITCase {
 
         });
     }
-//
-//
-//    /**
-//     * RCV message from GW
-//     * <p>
-//     * -) Backend must have received MSG
-//     * -) GW must have received RELAY_REMMD_ACCEPTANCE
-//     * <p>
-//     * -) test responds with DELIVERY Trigger
-//     * -) test responds with a 2nd DELIVERY Trigger
-//     * <p>
-//     * -) GW must have received only one DELIVERY_EVIDENCE
-//     * <p>
-//     * -) Backend must have rcv only one DELIVERY_EVIDENCE
-//     */
-//    @Test
-//    @Disabled("test is unstable on jenkins")
-//    public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-//
-//        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-//        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
-//        String MSG_FOLDER = "msg2";
-//
-//        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
-//
-//            DC5Message testMessage = deliverMessageFromGw(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
-//
-//            LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
-//
-//            DC5Message businessMsg = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS); //wait until a message is put into queue
-//            assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-//            assertThat(businessMsg).isNotNull();
-//
-//            DC5Message relayRemmdEvidenceMsg = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
-//            assertThat(relayRemmdEvidenceMsg).isNotNull();
-//
-////            DC5Message deliveryTriggerMessage = DomibusConnectorMessageBuilder
-////                    .createBuilder()
-////                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID + "_ev1")
-////                    .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder
-////                            .createBuilder()
-////                            .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-////                            .setEvidence(new byte[0])
-////                            .build()
-////                    )
-////                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
-////                            .create()
-////                            .withRefToMessageId(businessMsg.getEbmsData().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
-////                            .withEbmsMessageId(null) //
-////                            .withAction("")
-////                            .withService("", "")
-////                            .withBackendMessageId("")
-////                            .withConversationId("")
-////                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
-////                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
-////                            .withFinalRecipient("")
-////                            .withOriginalSender("")
-////                            .build())
-////                    .build();
-////            submitFromBackendToController(deliveryTriggerMessage);
-//
-////            DC5Message deliveryTriggerMessage2 = DomibusConnectorMessageBuilder
-////                    .createBuilder()
-////                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID + "_ev1_1")
-////                    .addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder
-////                            .createBuilder()
-////                            .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
-////                            .setEvidence(new byte[0])
-////                            .build()
-////                    )
-////                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
-////                            .create()
-////                            .withRefToMessageId(businessMsg.getEbmsData().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
-////                            .withEbmsMessageId(null) //
-////                            .withAction("")
-////                            .withService("", "")
-////                            .withBackendMessageId("")
-////                            .withConversationId("")
-////                            .withFromParty(DomainEntityCreator.createPartyATasInitiator()) //hier auch leer!
-////                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
-////                            .withFinalRecipient("")
-////                            .withOriginalSender("")
-////                            .build())
-////                    .build();
-////            submitFromBackendToController(deliveryTriggerMessage2);
-//
-//
-//            DC5Message deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
-//            assertThat(deliveryEvidenceMessage)
-//                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
-//                    .as("Message must be evidence message of type Delivery")
-//                    .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
-//            assertThat(deliveryEvidenceMessage.getTransportedMessageConfirmations().get(0).getEvidence())
-//                    .as("Generated evidence must be longer than 100 bytes! Ensure that there was really a evidence generated!")
-//                    .hasSizeGreaterThan(100);
-////            DC5Ebms deliveryEvidenceMessageDetails = deliveryEvidenceMessage.getEbmsData();
-////            assertThat(deliveryEvidenceMessageDetails).isNotNull();
-////            assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
-////            assertThat(deliveryEvidenceMessageDetails.getFromParty())
-////                    .as("Parties must be switched")
-////                    .isEqualTo(DomainEntityCreator.createPartyDE());
-////            assertThat(deliveryEvidenceMessageDetails.getToParty())
-////                    .as("Parties must be switched")
-////                    .isEqualTo(DomainEntityCreator.createPartyATasInitiator());
-//
-//            DC5Message deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
-//            assertThat(deliveryEvidenceToBackendMessage)
-//                    .isNotNull()
-//                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
-//                    .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
-////            assertThat(deliveryEvidenceToBackendMessage.getEbmsData().getRefToMessageId())
-////                    .as("The refToMessageId must match the EBMSID of the original message!")
-////                    .isEqualTo(businessMsg.getEbmsData().getEbmsMessageId());
-////            assertThat(deliveryEvidenceToBackendMessage.getEbmsData().getRefToBackendMessageId())
-////                    .as("The backend ref to message id must match the backend message id of the original message!")
-////                    .isEqualTo(businessMsg.getEbmsData().getBackendMessageId());
-////            assertThat(deliveryEvidenceToBackendMessage.getEbmsData().getDirection().getTarget())
-////                    .isEqualTo(MessageTargetSource.BACKEND);
-//
-////            DC5Message messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
-////            assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))
-////                    .as("Message must be in confirmed state")
-////                    .isTrue();
-//
-//            DC5Message deliveryEvidenceMessage2 = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
-//            assertThat(deliveryEvidenceMessage2)
-//                    .as("No more delivery messages must be transported to GW")
-//                    .isNull();
-//            DC5Message deliveryEvidenceToBackendMessage2 = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
-//            assertThat(deliveryEvidenceToBackendMessage2)
-//                    .as("No more delivery messages must be transported to Backend")
-//                    .isNull();
-//
-//        });
-//    }
+
+
+    /**
+     * RCV message from GW
+     * <p>
+     * -) Backend must have received MSG
+     * -) GW must have received RELAY_REMMD_ACCEPTANCE
+     * <p>
+     * -) test responds with DELIVERY Trigger
+     * -) test responds with a 2nd DELIVERY Trigger
+     * <p>
+     * -) GW must have received only one DELIVERY_EVIDENCE
+     * <p>
+     * -) Backend must have rcv only one DELIVERY_EVIDENCE
+     */
+    @Test
+    public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
+        EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
+        String MSG_FOLDER = "msg2";
+
+        final BackendMessageId businessMsgBackendMsgId = BackendMessageId.ofString("BACKEND_businessmessageid_" + testInfo.getDisplayName());
+
+        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
+
+            DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
+            submitFromGatewayToController(testMessage);
+
+            Assertions.assertTimeout(Duration.ofSeconds(30), () -> {
+                final DC5TransportRequest transportRequest = mySubmitToLink.takeToBackendTransport();//wait until something transported to Backend
+                txTemplate.executeWithoutResult((state) -> {
+                    DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(transportRequest.getTransportRequestId());
+                    DC5Message m = byTransportRequestId.getMessage();
+                    assertThat(m.getMessageLaneId()).isNotNull();
+                });
+
+                mySubmitToLink.acceptTransport(transportRequest, TransportState.ACCEPTED, businessMsgBackendMsgId);    //Accept transport to backend and assign backend messageid
+            }, "Should not take so long to rcv incoming business msg and ack it!");
+
+
+            // confirm message to gw RELAY_REMMD_ACCEPTANCE
+            EbmsMessageId ebmsId = EbmsMessageId.ofRandom();
+            DC5TransportRequest toGW = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
+            mySubmitToLink.acceptTransport(toGW, TransportState.ACCEPTED, ebmsId);
+
+
+            //create confirmation trigger message...
+            DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .transportedMessageConfirmation(DC5Confirmation.builder()
+                            .evidenceType(DELIVERY)
+                            .build()
+                    )
+                    .backendData(DC5BackendData.builder()
+                            .backendMessageId(deliveryTriggerBackendId)
+                            .refToBackendMessageId(businessMsgBackendMsgId)
+                            .build())
+                    .build();
+            submitFromBackendToController(deliveryTriggerMessage);
+
+            //wait for Confirmation Message RCV on GW
+            EbmsMessageId ebmsId2 = EbmsMessageId.ofRandom();
+            DC5TransportRequest toGW2 = mySubmitToLink.takeToGwTransport(); //wait until something transported to GW
+            mySubmitToLink.acceptTransport(toGW2, TransportState.ACCEPTED, ebmsId2);
+
+            //wait for Confirmation Message RCV on backend
+            BackendMessageId backendId2 = BackendMessageId.ofRandom();
+            DC5TransportRequest toBackend2 = mySubmitToLink.takeToBackendTransport(); //wait until something transported to Backend
+            mySubmitToLink.acceptTransport(toBackend2, TransportState.ACCEPTED, backendId2);
+
+
+            //send 2nd trigger
+            DC5Message deliveryTriggerMessage2 = DC5Message.builder()
+                    .transportedMessageConfirmation(DC5Confirmation.builder()
+                            .evidenceType(DELIVERY)
+                            .build()
+                    )
+                    .backendData(DC5BackendData.builder()
+                            .backendMessageId(deliveryTriggerBackendId)
+                            .refToBackendMessageId(businessMsgBackendMsgId)
+                            .build())
+                    .build();
+            submitFromBackendToController(deliveryTriggerMessage2);
+
+            mySubmitToLink.toGwDeliveredMessages.poll(10, TimeUnit.SECONDS); //wait 10 seconds
+            assertThat(mySubmitToLink.toGwDeliveredMessages).isEmpty();
+
+            mySubmitToLink.toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS); //wait 10 seconds
+            assertThat(mySubmitToLink.toBackendDeliveredMessages).isEmpty();
+
+        });
+
+    }
+
 //
 //
 //    //was ist mit DELIVERY danach NON_RETRIEVAL?
