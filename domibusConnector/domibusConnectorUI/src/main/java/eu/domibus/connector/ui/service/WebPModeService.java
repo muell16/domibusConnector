@@ -8,6 +8,7 @@ import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProp
 import eu.domibus.connector.controller.routing.DomainRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
+import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
@@ -177,6 +178,7 @@ public class WebPModeService {
         final Map<String, DomainRoutingRule> currentRules = msgRoutingConfig.getDomainRules();
         for (Configuration.BusinessProcesses.Services.Service s : pmodes.getBusinessProcesses().getServices().getService()) {
             final DomainRoutingRule rule = new DomainRoutingRule();
+            rule.setConfigurationSource(ConfigurationSource.DB);
             rule.setMatchClause(new RoutingRulePattern(String.format("equals(ServiceName,'%s')", s.getValue())));
             // TODO: also match service type?
             currentRules.put(rule.getRoutingRuleId(), rule);
