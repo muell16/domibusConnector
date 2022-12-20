@@ -12,11 +12,14 @@
             <list>
               <option value="clean" />
               <option value="install" />
+              <option value="-DskipTests=true" />
             </list>
           </option>
           <option name="pomFileName" />
           <option name="profilesMap">
-            <map />
+            <map>
+              <entry key="production" value="true" />
+            </map>
           </option>
           <option name="resolveToWorkspace" value="false" />
           <option name="workingDirPath" value="$PROJECT_DIR$" />
