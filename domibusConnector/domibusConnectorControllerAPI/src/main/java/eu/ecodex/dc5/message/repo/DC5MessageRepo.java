@@ -22,6 +22,13 @@ public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
     @Query("SELECT m FROM DC5Message m WHERE m.ebmsData.ebmsMessageId = ?1 AND m.target = ?2 ")
     public Optional<DC5Message> findOneByEbmsMessageIdAndDirectionTarget(EbmsMessageId id, MessageTargetSource directionTarget);
 
+    @Query("SELECT m FROM DC5Message m WHERE m.backendData.backendMessageId = ?1 AND m.target = ?2 ")
+    public Optional<DC5Message> findOneByBackendMessageIdAndDirectionTarget(BackendMessageId id, MessageTargetSource directionTarget);
+
     @Query("SELECT m FROM DC5Message m WHERE m.connectorMessageId = ?1")
     DC5Message getByConnectorMessageId(DomibusConnectorMessageId take);
+
+    @Query("SELECT m FROM DC5Message m WHERE m.connectorMessageId = ?1")
+    Optional<DC5Message> findOneByConnectorMessageId(DomibusConnectorMessageId msgId);
+
 }

@@ -5,6 +5,8 @@ import eu.ecodex.dc5.message.model.DC5Ebms;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.CheckForNull;
+
 /**
  *
  *
@@ -49,25 +51,29 @@ public class RoutingRulePattern {
         return this.expression.evaluate(message);
     }
 
-
+    @CheckForNull
     static String extractAs4Value(DC5Message message, TokenType as4Attribute) {
         DC5Ebms details = message.getEbmsData();
-        if (as4Attribute == TokenType.AS4_SERVICE_NAME) {
-            return details.getService().getService();
-        } else if (as4Attribute == TokenType.AS4_SERVICE_TYPE) {
-            return details.getService().getServiceType();
-        } else if (as4Attribute == TokenType.AS4_ACTION) {
-            return details.getAction().getAction();
-        } else if (as4Attribute == TokenType.AS4_FINAL_RECIPIENT) {
-            return details.getReceiver().getEcxAddress();
-        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
-            return details.getSender().getParty().getPartyIdType();
-        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
-            return details.getSender().getParty().getPartyId();
+        if (details != null) {
+            if (as4Attribute == TokenType.AS4_SERVICE_NAME) {
+                return details.getService().getService();
+            } else if (as4Attribute == TokenType.AS4_SERVICE_TYPE) {
+                return details.getService().getServiceType();
+            } else if (as4Attribute == TokenType.AS4_ACTION) {
+                return details.getAction().getAction();
+            } else if (as4Attribute == TokenType.AS4_FINAL_RECIPIENT) {
+                return details.getReceiver().getEcxAddress();
+            } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
+                return details.getSender().getParty().getPartyIdType();
+            } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
+                return details.getSender().getParty().getPartyId();
 //        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
 //            return details.getSender().getRole().toString();
+            } else {
+                throw new RuntimeException("Unsupported AS4 Attribute to match!");
+            }
         } else {
-            throw new RuntimeException("Unsupported AS4 Attribute to match!");
+            return null;
         }
     }
 

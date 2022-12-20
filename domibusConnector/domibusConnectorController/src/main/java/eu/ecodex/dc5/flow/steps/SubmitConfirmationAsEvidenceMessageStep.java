@@ -109,19 +109,20 @@ public class SubmitConfirmationAsEvidenceMessageStep {
                         .build())
                 .build();
 
-        DC5Message.DC5MessageBuilder dc5MessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
-        DC5Message msg = dc5MessageBuilder
+        DC5Message.DC5MessageBuilder dc5EvidenceMessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
+        DC5Message evidenceMessage = dc5EvidenceMessageBuilder
                 .connectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
                 .target(businessMessage.getSource())
                 .source(businessMessage.getTarget())
+                .refToConnectorMessageId(businessMessage.getConnectorMessageId())
                 .build();
-        msg.getEbmsData().setReceiver(receiver);
-        msg.getEbmsData().setSender(sender);
+        evidenceMessage.getEbmsData().setReceiver(receiver);
+        evidenceMessage.getEbmsData().setSender(sender);
 
-        msg = messageRepo.save(msg);
+        evidenceMessage = messageRepo.save(evidenceMessage);
         DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
 
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getDirection().getSource());
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getDirection().getSource());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
 
     }
@@ -174,6 +175,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 //                    .backendData(dc5BackendDataBuilder.build())
                     .backendLinkName(businessMessage.getBackendLinkName())
                     .gatewayLinkName(businessMessage.getGatewayLinkName())
+                    .refToConnectorMessageId(businessMessage.getRefToConnectorMessageId())
                     .transportedMessageConfirmation(confirmation);
             return msgBuilder;
 
