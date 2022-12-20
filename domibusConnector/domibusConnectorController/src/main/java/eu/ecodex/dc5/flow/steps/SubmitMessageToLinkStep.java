@@ -39,21 +39,21 @@ public class SubmitMessageToLinkStep implements MessageProcessStep {
      * @param originalMessage
      * @param message
      */
-    public void submitMessageOpposite(DC5Message originalMessage, DC5Message message) {
-        DC5Ebms switchedDetails = DomainModelHelper.switchMessageDirection(originalMessage.getEbmsData());
-        DC5Ebms msgDetails = message.getEbmsData();
-
-//        msgDetails.setReceiver();
-//        msgDetails.setSender();
-//        msgDetails.setDirection(switchedDetails.getDirection());
-//        msgDetails.setFromParty(switchedDetails.getFromParty());
-//        msgDetails.setToParty(switchedDetails.getToParty());
-//        msgDetails.setOriginalSender(switchedDetails.getOriginalSender());
-//        msgDetails.setFinalRecipient(switchedDetails.getFinalRecipient());
-        //TODO: repair!!!
-        LOGGER.debug("Message Direction attributes are changed to [{}]", msgDetails);
-//        submitMessage(message);
-    }
+//    public void submitMessageOpposite(DC5Message originalMessage, DC5Message message) {
+//        DC5Ebms switchedDetails = DomainModelHelper.switchMessageDirection(originalMessage.getEbmsData());
+//        DC5Ebms msgDetails = message.getEbmsData();
+//
+////        msgDetails.setReceiver();
+////        msgDetails.setSender();
+////        msgDetails.setDirection(switchedDetails.getDirection());
+////        msgDetails.setFromParty(switchedDetails.getFromParty());
+////        msgDetails.setToParty(switchedDetails.getToParty());
+////        msgDetails.setOriginalSender(switchedDetails.getOriginalSender());
+////        msgDetails.setFinalRecipient(switchedDetails.getFinalRecipient());
+//        //TODO: repair!!!
+//        LOGGER.debug("Message Direction attributes are changed to [{}]", msgDetails);
+////        submitMessage(message);
+//    }
 
 
 }

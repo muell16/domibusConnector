@@ -95,19 +95,19 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         validateParameters(businessMessage);
 
 //        DC5Ebms.DC5EbmsBuilder ebmsData = businessMessage.getEbmsData().toBuilder();
-
-        DC5EcxAddress sender = businessMessage.getEbmsData().getReceiver()
-                .toBuilder()
-                .role(businessMessage.getEbmsData().getSender().getRole()
-                        .toBuilder()
-                        .build())
-                .build();
-        DC5EcxAddress receiver = businessMessage.getEbmsData().getSender()
-                .toBuilder()
-                .role(businessMessage.getEbmsData().getReceiver().getRole()
-                        .toBuilder()
-                        .build())
-                .build();
+//
+//        DC5EcxAddress sender = businessMessage.getEbmsData().getGatewayAddress()
+//                .toBuilder()
+////                .role(businessMessage.getEbmsData().getBackendAddress().getRole()
+////                        .toBuilder()
+////                        .build())
+//                .build();
+//        DC5EcxAddress receiver = businessMessage.getEbmsData().getBackendAddress()
+//                .toBuilder()
+////                .role(businessMessage.getEbmsData().getGatewayAddress().getRole()
+////                        .toBuilder()
+////                        .build())
+//                .build();
 
         DC5Message.DC5MessageBuilder dc5EvidenceMessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
         DC5Message evidenceMessage = dc5EvidenceMessageBuilder
@@ -116,8 +116,8 @@ public class SubmitConfirmationAsEvidenceMessageStep {
                 .source(businessMessage.getTarget())
                 .refToConnectorMessageId(businessMessage.getConnectorMessageId())
                 .build();
-        evidenceMessage.getEbmsData().setReceiver(receiver);
-        evidenceMessage.getEbmsData().setSender(sender);
+//        evidenceMessage.getEbmsData().setGatewayAddress(receiver);
+//        evidenceMessage.getEbmsData().setBackendAddress(sender);
 
         evidenceMessage = messageRepo.save(evidenceMessage);
         DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
@@ -148,7 +148,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
             } else {
                 ebmsDataBuilder = DC5Ebms.builder();
             }
-            ebmsDataBuilder.id(null);
+//            ebmsDataBuilder.id(null);
             ebmsDataBuilder.ebmsMessageId(null);
             ebmsDataBuilder.conversationId(null);
             ebmsDataBuilder.action(evidenceAction);

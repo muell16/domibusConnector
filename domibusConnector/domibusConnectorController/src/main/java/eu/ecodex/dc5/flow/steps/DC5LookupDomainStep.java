@@ -74,9 +74,9 @@ public class DC5LookupDomainStep {
                 final String rules = collect.stream()
                         .map(DomainRoutingRule::toString)
                         .reduce("", (acc, next) -> acc + ", " + next.toString());
-                throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, String.format("Multiple domain routing rules apply to msg: %s", rules));
+                throw new DomainMatchingException(msg.getConnectorMessageId(), ErrorCode.MULTIPLE_DOMAIN_MATCHING_ERROR, String.format("Multiple domain routing rules [%s] apply to msg: [%s]", rules, msg));
             }
         }
-        throw new DomainMatchingException(ErrorCode.DOMAIN_MATCHING_ERROR, "No domain applies!");
+        throw new DomainMatchingException(msg.getConnectorMessageId(), ErrorCode.DOMAIN_MATCHING_ERROR, String.format("No domain apply to msg: [%s]", msg));
     }
 }

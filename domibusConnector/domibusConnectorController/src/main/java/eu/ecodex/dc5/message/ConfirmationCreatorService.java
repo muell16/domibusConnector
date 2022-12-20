@@ -99,8 +99,8 @@ public class ConfirmationCreatorService {
             builder = builder.ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId());
         }
         if (originalMessage.getEbmsData() != null) {
-            builder.senderAddress(originalMessage.getEbmsData().getSender().getEcxAddress())
-                    .recipientAddress(originalMessage.getEbmsData().getReceiver().getEcxAddress());
+            builder.senderAddress(originalMessage.getEbmsData().getSender(originalMessage.getTarget()).getOriginalSender())
+                    .recipientAddress(originalMessage.getEbmsData().getReceiver(originalMessage.getTarget()).getFinalRecipient());
         }
         if (originalMessage.getBackendData() != null && originalMessage.getBackendData().getBackendMessageId() != null) {
             builder = builder.nationalMessageId(originalMessage.getBackendData().getBackendMessageId().toString());

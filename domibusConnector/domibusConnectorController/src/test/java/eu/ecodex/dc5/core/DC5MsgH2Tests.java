@@ -1,6 +1,5 @@
 package eu.ecodex.dc5.core;
 
-import eu.ecodex.dc5.core.model.*;
 import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
 import eu.ecodex.dc5.core.repository.DC5PayloadRepo;
 import eu.ecodex.dc5.message.model.*;
@@ -79,20 +78,20 @@ class DC5MsgH2Tests {
     public void can_persist_ebms_entity() {
         // Arrange
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5Ebms.setSender(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO"), new DC5Role("SENDER", DC5RoleType.INITIATOR)));
-        dc5Ebms.setReceiver(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ"), new DC5Role("RECEIVER", DC5RoleType.RESPONDER)));
+        dc5Ebms.setBackendAddress(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO")));
+        dc5Ebms.setGatewayAddress(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ")));
 
         // Act
         final Long id = ebmsRepo.save(dc5Ebms).getId();
         final DC5Ebms save = ebmsRepo.findById(id).get();
 
         // Assert
-        Assertions.assertThat(save.getReceiver().getEcxAddress()).isEqualTo("ecxAddrRec");
-        Assertions.assertThat(save.getReceiver().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
-        Assertions.assertThat(save.getReceiver().getRole().getRoleType()).isEqualTo(DC5RoleType.RESPONDER);
+        Assertions.assertThat(save.getGatewayAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
+        Assertions.assertThat(save.getGatewayAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
+//        Assertions.assertThat(save.getGatewayAddress().getRole().getRoleType()).isEqualTo(DC5RoleType.RESPONDER);
 
-        Assertions.assertThat(save.getSender().getEcxAddress()).isEqualTo("ecxAddrSend");
-        Assertions.assertThat(save.getSender().getParty().getPartyId()).isEqualTo("ID_SENDER");
-        Assertions.assertThat(save.getSender().getRole().getRoleType()).isEqualTo(DC5RoleType.INITIATOR);
+        Assertions.assertThat(save.getBackendAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
+        Assertions.assertThat(save.getBackendAddress().getParty().getPartyId()).isEqualTo("ID_SENDER");
+//        Assertions.assertThat(save.getBackendAddress().getRole().getRoleType()).isEqualTo(DC5RoleType.INITIATOR);
     }
 }

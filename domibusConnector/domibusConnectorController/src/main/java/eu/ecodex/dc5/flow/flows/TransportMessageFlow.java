@@ -55,7 +55,7 @@ public class TransportMessageFlow {
                     .transportState(TransportState.PENDING)
                 .build());
         dc5TransportRequestRepo.save(transportRequest);
-        log.info("Created Transport Request [{}]", transportRequest.getTransportRequestId());
+        log.info("Created Transport Request [{}]", transportRequest);
 
         SubmitToLinkService.SubmitToLinkEvent build = SubmitToLinkService.SubmitToLinkEvent.builder()
                 .transportRequestId(transportRequest.getTransportRequestId())

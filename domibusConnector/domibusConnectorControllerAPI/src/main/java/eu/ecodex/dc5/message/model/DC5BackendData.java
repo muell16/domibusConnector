@@ -1,6 +1,7 @@
 package eu.ecodex.dc5.message.model;
 
 import lombok.*;
+import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,5 +29,13 @@ public class DC5BackendData {
     private BackendMessageId refToBackendMessageId;
 
     private String backendConversationId;
+
+    public String toString() {
+        return new ToStringCreator(this)
+                .append("backendMessageId", backendMessageId)
+                .append("refToBackendMessageId", refToBackendMessageId)
+//                .append("backendConversationId", backendConversationId)
+                .toString();
+    }
 
 }
