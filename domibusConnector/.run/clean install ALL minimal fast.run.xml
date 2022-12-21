@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="install minimal fast" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="clean install ALL minimal fast" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -19,7 +19,6 @@
               <option value="!:domibusConnectorBuilderDeployable" />
               <option value="-pl" />
               <option value="!:domibusConnectorDistribution" />
-              <option value="clean" />
               <option value="install" />
             </list>
           </option>

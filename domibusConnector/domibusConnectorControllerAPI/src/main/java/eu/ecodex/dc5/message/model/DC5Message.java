@@ -1,9 +1,5 @@
 package eu.ecodex.dc5.message.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -25,6 +21,10 @@ import javax.annotation.CheckForNull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This domain object contains all data of a message. At least the {@link
@@ -110,6 +110,9 @@ public class DC5Message implements Serializable {
 
     @Transient  //TODO: move to process
     private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
+
+    @NotNull
+    private LocalDateTime created = LocalDateTime.now();
 
 
     @JsonProperty

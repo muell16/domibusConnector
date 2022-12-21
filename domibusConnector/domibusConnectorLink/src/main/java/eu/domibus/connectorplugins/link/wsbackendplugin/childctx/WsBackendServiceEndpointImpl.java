@@ -7,8 +7,6 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -16,10 +14,14 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseTyp
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.ws.backend.webservice.*;
+import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
+import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
+import eu.domibus.connector.ws.backend.webservice.GetMessageByIdRequest;
+import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginActiveLinkPartner;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
@@ -36,7 +38,9 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -131,7 +135,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                     try(MDC.MDCCloseable mdc = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkPartnerName().getLinkName())) {
 
                         DC5Message msg = transformerService.transformTransitionToDomain(submitMessageRequest, domibusConnectorMessageId);
-                        msg.setBackendLinkName(linkPartner.getLinkPartnerName().getLinkName());
+                        msg.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of(linkPartner.getLinkPartnerName().getLinkName()));
                         LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
 
                         submitToConnector.submitToConnector(msg, linkPartner);

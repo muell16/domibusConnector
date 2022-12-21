@@ -3,7 +3,6 @@ package eu.domibus.connector.ui.forms;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-
 import eu.domibus.connector.ui.dto.WebMessage;
 
 public class ConnectorMessageForm extends FormLayout {
@@ -35,6 +34,7 @@ public class ConnectorMessageForm extends FormLayout {
 
 	private void fillForm() {
 		binder.bindInstanceFields(this);
+		// TODO: bind instance fields
 
 		addFormItem(connectorMessageId, "Connector Message ID");
 		addFormItem(backendMessageId, "Backend Message ID");

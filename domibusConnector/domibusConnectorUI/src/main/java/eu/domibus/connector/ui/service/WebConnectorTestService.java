@@ -1,26 +1,10 @@
 package eu.domibus.connector.ui.service;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.activation.DataHandler;
-import javax.xml.transform.Source;
-
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
-import org.apache.commons.lang3.StringUtils;
-
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
-import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDocumentAESType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageAttachmentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDetailsType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
-import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
+import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
 import eu.domibus.connector.ui.dto.WebMessage;
@@ -29,9 +13,15 @@ import eu.domibus.connector.ui.dto.WebMessageDetail.Party;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.europa.esig.dss.model.MimeType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StreamUtils;
+
+import javax.activation.DataHandler;
+import javax.xml.transform.Source;
+import java.io.IOException;
+import java.util.Optional;
 
 
 public class WebConnectorTestService {

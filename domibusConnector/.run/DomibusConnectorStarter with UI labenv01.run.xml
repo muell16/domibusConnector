@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="DomibusConnectorStarter with UI labenv01" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <option name="ACTIVE_PROFILES" />
     <module name="domibusConnectorUI" />
     <selectedOptions>
       <option name="environmentVariables" />

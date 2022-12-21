@@ -1,12 +1,5 @@
 package eu.domibus.connector.ui.view.areas.messages;
 
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -15,12 +8,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.ui.component.WebMessagesGrid;
 import eu.domibus.connector.ui.dto.WebMessage;
-import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebMessagePersistenceService;
+import eu.domibus.connector.ui.persistence.service.impl.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 @Component
 @UIScope
@@ -133,7 +130,7 @@ public class Search extends VerticalLayout {
 	private void addGridWithData(WebMessage example) {
 		main.removeAll();
 		
-		WebMessagesGrid grid = new WebMessagesGrid(details, dcMessagePersistenceService, example);
+		WebMessagesGrid grid = new WebMessagesGrid(details, dcMessagePersistenceService);
 		grid.reloadList();
 		
 		grid.setVisible(true);

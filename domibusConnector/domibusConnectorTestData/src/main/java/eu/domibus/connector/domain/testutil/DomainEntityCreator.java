@@ -14,6 +14,7 @@ import org.springframework.util.StreamUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -225,6 +226,7 @@ public class DomainEntityCreator {
 
         return DC5Message.builder()
                         .transportedMessageConfirmation(createMessageDeliveryConfirmation())
+                .created(LocalDateTime.now())
                 .ebmsData(messageDetails)
                 .messageContent(messageContent)
                 .build();

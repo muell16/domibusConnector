@@ -44,11 +44,11 @@
     <option name="DEBUG_MODE" value="true" />
     <option name="ENABLE_JMX_AGENT" value="false" />
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-    <module name="domibusConnectorBuilderStandalone" />
+    <module name="domibusConnectorUI" />
     <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="eu.domibus.connector.starter.DomibusConnectorStarter" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../../ecodex-labhome-dev/labenv01/domibus-connector" />
+    <option name="VM_PARAMETERS" value="-Dspring.config.location=file:///$MODULE_DIR$/../domibusConnectorTestData/src/main/env/labenv01/config/connector.properties" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

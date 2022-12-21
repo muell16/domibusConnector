@@ -129,7 +129,7 @@ public class WsBackendPluginTest {
         String connectorAddress = getServerAddress();
 
         DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        epoMessage1.setBackendLinkName("backend_bob");
+        epoMessage1.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("backend_bob"));
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con1"));
         epoMessage1.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
@@ -137,7 +137,7 @@ public class WsBackendPluginTest {
 
 
         DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        epoMessage2.setBackendLinkName("backend_bob");
+        epoMessage2.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("backend_bob"));
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con2"));
         epoMessage2.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms2"));
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();
@@ -176,7 +176,7 @@ public class WsBackendPluginTest {
         String connectorAddress = getServerAddress();
 
         DC5Message epoMessage1 = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        epoMessage1.setBackendLinkName("backend_bob");
+        epoMessage1.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("backend_bob"));
         epoMessage1.setConnectorMessageId(new DomibusConnectorMessageId("con01"));
         epoMessage1.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
@@ -189,7 +189,7 @@ public class WsBackendPluginTest {
 
 
         DC5Message epoMessage2 = DomainEntityCreator.createOutgoingEpoFormAMessage();
-        epoMessage2.setBackendLinkName("backend_bob");
+        epoMessage2.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("backend_bob"));
         epoMessage2.setConnectorMessageId(new DomibusConnectorMessageId("con02"));
         epoMessage2.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString("ebms2"));
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();

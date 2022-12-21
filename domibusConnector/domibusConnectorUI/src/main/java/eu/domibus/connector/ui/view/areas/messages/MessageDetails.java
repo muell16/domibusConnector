@@ -103,13 +103,13 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 			optionalMessage = messageService.getMessageByBackendMessageId(connectorMessage.getBackendMessageId());
 		}
 
-		if ((!optionalMessage.isPresent()) && !StringUtils.isEmpty(connectorMessage.getEbmsMessageId())) {
-			LOGGER.debug("MessageDetails loaded with ebmsMessageId [{}]", connectorMessage.getEbmsMessageId());
-			optionalMessage = messageService.getMessageByEbmsId(connectorMessage.getEbmsMessageId());
+		if ((!optionalMessage.isPresent()) && !StringUtils.isEmpty(connectorMessage.getEbmsId())) {
+			LOGGER.debug("MessageDetails loaded with ebmsMessageId [{}]", connectorMessage.getEbmsId());
+			optionalMessage = messageService.getMessageByEbmsId(connectorMessage.getEbmsId());
 		}
 
 		if (!optionalMessage.isPresent()) {
-			String errorMessage = String.format("No message found within database with connectorMessageId [%s], ebmsMessageId [%s] or backendMessageId [%s] !", connectorMessage.getConnectorMessageId(), connectorMessage.getEbmsMessageId(), connectorMessage.getBackendMessageId());
+			String errorMessage = String.format("No message found within database with connectorMessageId [%s], ebmsMessageId [%s] or backendMessageId [%s] !", connectorMessage.getConnectorMessageId(), connectorMessage.getEbmsId(), connectorMessage.getBackendMessageId());
 			LOGGER.warn(errorMessage);
 			Notification.show(errorMessage);
 		}
@@ -176,8 +176,7 @@ public class MessageDetails extends VerticalLayout implements HasUrlParameter<St
 	}
 
 	@Override
-	public void setParameter(BeforeEvent event
-			, @OptionalParameter String parameter) {
+	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		if(parameter!=null) {
 			WebMessage webMessage = new WebMessage();
 			webMessage.setConnectorMessageId(parameter);

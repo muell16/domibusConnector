@@ -28,6 +28,7 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.ecodex.dc5.message.model.BackendMessageId;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.pmode.DC5PmodeService;
 import org.apache.commons.lang3.StringUtils;
@@ -201,7 +202,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
         resultArea.removeAll();
 
         DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
-        msg.setBackendMessageId(domibusConnectorMessageId.getConnectorMessageId());
+        msg.setBackendMessageId(BackendMessageId.ofRandom().getBackendMessageId());
 
         boolean actionSet = loadAndValidateTestAction(msg);
 
