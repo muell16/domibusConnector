@@ -8,20 +8,27 @@ import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.availability.AvailabilityChangeEvent;
+import org.springframework.boot.availability.LivenessState;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
+public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager, HealthIndicator {
 
     private static final Logger LOGGER = LogManager.getLogger(DCBusinessDomainManagerImpl.class);
 
     private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
     private final DCDomainValidationService domainValidationService;
+    private final ApplicationContext context;
 
 
     @Override
@@ -87,39 +94,21 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                 .collect(Collectors.toList());
     }
 
+    private Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
+        return getAllBusinessDomainsAllData().stream()
+                .collect(Collectors.toMap(Function.identity(), this::validateDomain));
+    }
+
     @Override
     public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData() {
-        List<DomibusConnectorBusinessDomain> collect = getAllBusinessDomainsAllData().stream()
-                .filter(domain -> this.validateDomain(domain).isValid())
+        List<DomibusConnectorBusinessDomain> collect = getAllBusinessDomainsValidations().entrySet().stream()
+                .filter(e -> e.getValue().isValid())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-
         if (collect.isEmpty()) {
             LOGGER.warn("#getValidBusinessDomainsAllData: returned no valid business domains! Check your configuration!");
         }
         return collect;
-
-//        Set<DomibusConnectorBusinessDomain> collect = new HashSet<>();
-//        if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
-//            businessDomainPersistenceService
-//                    .findAll()
-//                    .stream()
-//                    .filter(DomibusConnectorBusinessDomain::isEnabled)
-//                    .filter(d -> this.validateDomain(d.getId()).isValid())
-//                    .forEach(b -> collect.add(b));
-//        }
-//
-//        businessDomainConfigurationProperties.getBusinessDomain()
-//                .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
-//                .filter(d -> !this.validateDomain(d.getId()).isValid())
-//                .forEach(b -> {
-//                    if (!collect.add(b)) {
-//                        LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
-//                    }
-//                });
-//
-
-//
-//        return new ArrayList<>(collect);
     }
 
     @Override
@@ -195,4 +184,26 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         return lane;
     }
 
+    @Override
+    public Health health() {
+        Map<DomibusConnectorBusinessDomain, DomainValidResult> allBusinessDomainsValidations = getAllBusinessDomainsValidations();
+        long overallDomains = allBusinessDomainsValidations.size();
+        long validDomains = allBusinessDomainsValidations.values().stream().filter(r -> r.isValid()).count();
+        long warningDomains = allBusinessDomainsValidations.values().stream().filter(r -> r.isValid() && !r.getWarnings().isEmpty()).count();
+        long invalidDomains = overallDomains - validDomains;
+
+        Health.Builder h;
+
+        if (validDomains > 0) {
+            h = Health.up();
+        } else {
+            h = Health.down();
+        }
+        h.withDetail("overallDomainsCount", overallDomains);
+        h.withDetail("validDomainsCount", validDomains);
+        h.withDetail("warningDomainsCount", warningDomains);
+        h.withDetail("invalidDomains", invalidDomains);
+
+        return h.build();
+    }
 }
