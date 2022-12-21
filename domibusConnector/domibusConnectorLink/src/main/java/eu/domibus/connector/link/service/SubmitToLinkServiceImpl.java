@@ -35,12 +35,12 @@ public class SubmitToLinkServiceImpl implements SubmitToLinkService {
             if (StringUtils.isEmpty(message.getBackendLinkName())) {
                 throw new DomibusConnectorSubmitToLinkException(message, "The backendClientName is empty!");
             }
-            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getBackendLinkName());
+            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getBackendLinkName());
         } else if (direction.getTarget() == MessageTargetSource.GATEWAY) {
             if (StringUtils.isEmpty(message.getGatewayLinkName())) {
                 throw new DomibusConnectorSubmitToLinkException(message, "The gatewayName is empty!");
             }
-            linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(message.getGatewayLinkName());
+            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getGatewayLinkName());
         } else {
             throw new IllegalArgumentException("MessageTarget not valid!");
         }

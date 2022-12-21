@@ -31,6 +31,7 @@ public class DC5BusinessMessageState {
         RELAY_REMMD_REJECTION_RCV(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION),
         DELIVERY_RCV(DomibusConnectorEvidenceType.DELIVERY),
         RETRIEVAL_RCV(DomibusConnectorEvidenceType.RETRIEVAL),
+        NON_RETRIEVAL_RCV(DomibusConnectorEvidenceType.NON_RETRIEVAL),
         ADMIN_ABORT(null),
         NEW_MSG(null);
 

@@ -131,7 +131,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                     try(MDC.MDCCloseable mdc = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkPartnerName().getLinkName())) {
 
                         DC5Message msg = transformerService.transformTransitionToDomain(submitMessageRequest, domibusConnectorMessageId);
-                        msg.setBackendLinkName(linkPartner.getLinkPartnerName().getLinkName());
+                        msg.setBackendLinkName(linkPartner.getLinkPartnerName());
                         LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
 
                         submitToConnector.submitToConnector(msg, linkPartner);

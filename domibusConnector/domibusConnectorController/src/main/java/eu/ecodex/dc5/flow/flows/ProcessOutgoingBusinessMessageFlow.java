@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessageProcessor {
 
-    public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "ToGatewayBusinessMessageProcessor";
+    public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "OutgoingBusinessMessageFlow";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessOutgoingBusinessMessageFlow.class);
 

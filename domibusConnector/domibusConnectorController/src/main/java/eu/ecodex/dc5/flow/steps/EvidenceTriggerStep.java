@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
+import com.mchange.v1.util.ArrayUtils;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
@@ -17,6 +18,7 @@ import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.util.Arrays;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,16 +48,24 @@ public class EvidenceTriggerStep {
         DC5Message businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(evidenceTriggerMsg, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         DC5Ebms businessMsgDetails = businessMsg.getEbmsData();
 
-        DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
-        //create evidence
-        DC5Confirmation confirmation = confirmationCreatorService.createConfirmation(evidenceType, businessMsg, DomibusConnectorRejectionReason.OTHER, "");
-        LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
+        //bypasss if confirmation is already set
+        boolean confirmationTriggerMessageAlreadyHasConfirmation = !Arrays.isNullOrEmpty(evidenceTriggerMsg.getTransportedMessageConfirmations().get(0).getEvidence());
+        DC5Confirmation confirmation;
+        if (confirmationTriggerMessageAlreadyHasConfirmation) {
+            confirmation = evidenceTriggerMsg.getTransportedMessageConfirmations().get(0);
+        } else {
+            DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
-        //set generated evidence into the trigger message
-//        ConfirmationCreatorService.DomibusConnectorMessageConfirmationWrapper evidenceWrapper = confirmation.build();
-        evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
-                .setEvidence(confirmation.getEvidence());
+            //create evidence
+            confirmation = confirmationCreatorService.createConfirmation(evidenceType, businessMsg, DomibusConnectorRejectionReason.OTHER, "");
+            LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
+
+            //set generated evidence into the trigger message
+            evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
+                    .setEvidence(confirmation.getEvidence());
+        }
+
 
         evidenceTriggerMsg.setRefToConnectorMessageId(businessMsg.getConnectorMessageId());
         evidenceTriggerMsg.setMessageLaneId(businessMsg.getMessageLaneId());
@@ -70,7 +80,7 @@ public class EvidenceTriggerStep {
 
         evidenceTriggerMsgDetails.setRefToEbmsMessageId(businessMsgDetails.getEbmsMessageId());
 
-        //set correct action for evidence message
+        //set correct action for evidence messages if
         evidenceTriggerMsgDetails.setAction(confirmationCreatorService.createEvidenceAction(confirmation.getEvidenceType()));
         //set correct service derived from business msg
         evidenceTriggerMsgDetails.setService(businessMsgDetails.getService().toBuilder().build());
@@ -88,13 +98,15 @@ public class EvidenceTriggerStep {
     }
 
     private void isEvidenceTriggeringAllowed(DC5Message evidenceTriggerMsg) {
-        if (!DomainModelHelper.isEvidenceTriggerMessage(evidenceTriggerMsg)) {
-            throwException(evidenceTriggerMsg, "The message is not an evidence trigger message!");
-        }
-        MessageTargetSource source = evidenceTriggerMsg.getDirection().getSource();
-        if (source != MessageTargetSource.BACKEND) {
-            throwException(evidenceTriggerMsg, "Only backend can generate trigger messages");
-        }
+// TODO: needs refactoring
+//        if (!DomainModelHelper.isEvidenceTriggerMessage(evidenceTriggerMsg)) {
+//            throwException(evidenceTriggerMsg, "The message is not an evidence trigger message!");
+//        }
+//        MessageTargetSource source = evidenceTriggerMsg.getDirection().getSource();
+//        if (source != MessageTargetSource.BACKEND) {
+//            throwException(evidenceTriggerMsg, "Only backend can generate trigger messages");
+//        }
+
     }
 
     private void throwException(DC5Message evidenceTriggerMsg, String s) {

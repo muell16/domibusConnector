@@ -60,6 +60,7 @@ public class DC5Message implements Serializable {
     @Convert(converter = DomibusConnectorMessageIdConverter.class)
     private DomibusConnectorMessageId connectorMessageId;
 
+    @CheckForNull
     @Convert(converter = DomibusConnectorMessageIdConverter.class)
     @NotNull(groups = ConfirmationMessageRules.class, message= "A confirmation message must already have a ref to connector message id!")
     private DomibusConnectorMessageId refToConnectorMessageId;
@@ -79,10 +80,12 @@ public class DC5Message implements Serializable {
 
     @Convert(converter = MessageTargetSourceConverter.class)
     @NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction target!")
+    @NotNull(groups = OutgoingMessageRules.class, message = "A outgoing message must have direction target!")
     private MessageTargetSource target;
 
     @Convert(converter = MessageTargetSourceConverter.class)
     @NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have direction source!")
+    @NotNull(groups = OutgoingMessageRules.class, message = "A outgoing message must have direction source!")
     private MessageTargetSource source;
 
     @CheckForNull
@@ -278,7 +281,7 @@ public class DC5Message implements Serializable {
         this.setTarget(gatewayToBackend.getTarget());
     }
 
-    public DomibusConnectorMessageDirection getDirection() {
+    public @NotNull DomibusConnectorMessageDirection getDirection() {
         return DomibusConnectorMessageDirection.fromMessageTargetSource(this.source, this.target);
     }
 

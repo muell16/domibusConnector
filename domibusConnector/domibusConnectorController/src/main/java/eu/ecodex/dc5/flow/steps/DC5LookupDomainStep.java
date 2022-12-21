@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.exception.ErrorCode;
@@ -29,7 +30,12 @@ public class DC5LookupDomainStep {
 
     @Step(name = "LookupDomainStep")
     public DC5Message lookupDomain(DC5Message msg) {
-
+        DomibusConnectorBusinessDomain.BusinessDomainId currentBusinessDomain = CurrentBusinessDomain.getCurrentBusinessDomain();
+        if (currentBusinessDomain != null) {
+            msg.setBusinessDomainId(currentBusinessDomain);
+            LOGGER.info("Associated msg [{}] with domain [{}] from ThreadContext.", msg, currentBusinessDomain);
+            return msg;
+        }
         // 1. If the field refToMsgId exists (either in backend or ebms data) then
         // -> lookup the referred msg and associate incoming message with that domain.
         final Optional<DC5Message> businessMsgByRefToMsgId = msgService.findBusinessMsgByRefToMsgId(msg);

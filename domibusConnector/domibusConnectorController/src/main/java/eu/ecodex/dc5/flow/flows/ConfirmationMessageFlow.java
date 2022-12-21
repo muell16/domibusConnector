@@ -44,7 +44,7 @@ public class ConfirmationMessageFlow {
         // validate message
 
         boolean isEvidenceTriggerMessage = MessageModelHelper.isEvidenceTriggerMessage(message);
-        if (isEvidenceTriggerMessage) {
+        if (isEvidenceTriggerMessage || message.getEbmsData() == null) {
 //            confirmationCreatorService.createConfirmation()
             validateEvidenceTriggerMessage(message);
             message = evidenceTriggerStep.executeStep(message);
