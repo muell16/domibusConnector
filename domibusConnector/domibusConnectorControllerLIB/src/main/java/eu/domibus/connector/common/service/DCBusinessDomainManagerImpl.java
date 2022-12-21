@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager, HealthIndicator {
+public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DCBusinessDomainManagerImpl.class);
 
@@ -94,7 +94,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager, Hea
                 .collect(Collectors.toList());
     }
 
-    private Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
+    Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
         return getAllBusinessDomainsAllData().stream()
                 .collect(Collectors.toMap(Function.identity(), this::validateDomain));
     }
@@ -184,26 +184,5 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager, Hea
         return lane;
     }
 
-    @Override
-    public Health health() {
-        Map<DomibusConnectorBusinessDomain, DomainValidResult> allBusinessDomainsValidations = getAllBusinessDomainsValidations();
-        long overallDomains = allBusinessDomainsValidations.size();
-        long validDomains = allBusinessDomainsValidations.values().stream().filter(r -> r.isValid()).count();
-        long warningDomains = allBusinessDomainsValidations.values().stream().filter(r -> r.isValid() && !r.getWarnings().isEmpty()).count();
-        long invalidDomains = overallDomains - validDomains;
 
-        Health.Builder h;
-
-        if (validDomains > 0) {
-            h = Health.up();
-        } else {
-            h = Health.down();
-        }
-        h.withDetail("overallDomainsCount", overallDomains);
-        h.withDetail("validDomainsCount", validDomains);
-        h.withDetail("warningDomainsCount", warningDomains);
-        h.withDetail("invalidDomains", invalidDomains);
-
-        return h.build();
-    }
 }
