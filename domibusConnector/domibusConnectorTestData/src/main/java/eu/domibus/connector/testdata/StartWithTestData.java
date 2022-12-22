@@ -50,6 +50,8 @@ public class StartWithTestData {
                                     .build()
                     );
                     m.setMessageContent(messageContentWithDocumentWithNoPdfDocument);
+                    m.getMessageContent().changeCurrentState(DC5BusinessMessageState.builder().state(DC5BusinessMessageState.BusinessMessagesStates.CREATED).build());
+                    m.getMessageContent().changeCurrentState(DC5BusinessMessageState.builder().state(DC5BusinessMessageState.BusinessMessagesStates.CONFIRMED).build());
                 })
                 .peek(m->{
                     validator.validate(m).forEach(System.out::println);

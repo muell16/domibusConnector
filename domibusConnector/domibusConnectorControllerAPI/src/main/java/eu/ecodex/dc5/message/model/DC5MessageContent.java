@@ -1,9 +1,5 @@
 package eu.ecodex.dc5.message.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
@@ -11,6 +7,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -66,10 +65,11 @@ public class DC5MessageContent {
 	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BackendContent businessContent;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	// TODO: use a fetch graph instead
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-	@OneToOne(cascade = CascadeType.ALL, optional = false)
+	@OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
 	private DC5BusinessMessageState currentState;
 
 	@Override

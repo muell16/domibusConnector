@@ -19,6 +19,9 @@ public class WebMessage {
 	}
 
 	private String connectorMessageId;
+
+	private String fromParty;
+	private String toParty;
 	private String ebmsId;
 	private String backendMessageId;
 	private String conversationId;
@@ -27,6 +30,7 @@ public class WebMessage {
 	private String msgDirection;
 
 	private String msgContentState;
+	private String prvStates;
 
 	// TODO: decide what to do with below
 	private LocalDateTime deliveredToNationalSystem;

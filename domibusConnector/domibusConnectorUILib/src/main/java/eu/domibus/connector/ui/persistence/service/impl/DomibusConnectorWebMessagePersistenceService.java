@@ -11,7 +11,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceService {
@@ -77,18 +76,29 @@ public class DomibusConnectorWebMessagePersistenceService {
 
             message.setCreated(pMessage.getCreated());
 
-            message.setMsgContentState(
-                    Optional.ofNullable(pMessage.getMessageContent())
-                            .map(DC5MessageContent::getMessageStates)
-                            .orElseGet(Collections::emptyList)
-                            .stream().map(DC5BusinessMessageState::toString)
-                            .collect(Collectors.joining("->")));
-//                    pMessage.getMessageContent().getMessageStates()
-//                            .stream()
-//                            .map(DC5BusinessMessageState::toString)
-//                            .collect(Collectors.joining(",")));
 
+            final List<DC5BusinessMessageState> prvStates = Optional.ofNullable(pMessage.getMessageContent())
+                    .map(DC5MessageContent::getMessageStates)
+                    .orElseGet(Collections::emptyList);
 
+            StringBuilder prvStatesPresentation = new StringBuilder();
+            for (int i = prvStates.size() - 1; i >= 0; i--) {
+                prvStatesPresentation.append(prvStates.get(i));
+                if (i != 0) {
+                    prvStatesPresentation.append("->");
+                }
+            }
+            message.setPrvStates(prvStatesPresentation.toString());
+//            message.setMsgContentState(
+//                    Optional.ofNullable(pMessage.getMessageContent())
+//                            .map(DC5MessageContent::getMessageStates)
+//                            .orElseGet(Collections::emptyList)
+//                            .stream().map(DC5BusinessMessageState::toString)
+//                            .collect(Collectors.joining("->")));
+
+            message.setMsgContentState(pMessage.getMessageContent() != null
+                    ? pMessage.getMessageContent().getCurrentState().getState().toString()
+                    : null);
             // TODO: calculate the rest of the data and decide what additional data should be transported to UI
 
 //			message.setDeliveredToNationalSystem(pMessage.getDeliveredToNationalSystem()!=null?ZonedDateTime.ofInstant(pMessage.getDeliveredToNationalSystem().toInstant(), ZoneId.systemDefault()):null);

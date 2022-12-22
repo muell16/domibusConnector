@@ -48,10 +48,6 @@ public class WebMessagesGrid extends Grid<WebMessage> {
 		setMultiSort(false);
 		setWidth("100%");
 		addSortListener(this::handleSortEvent);
-
-//		callbackDataProvider
-//			= new CallbackDataProvider<WebMessage, WebMessage>(this::fetchCallback, this::countCallback);
-//		setDataProvider(callbackDataProvider);
 	}
 
 	private void addAllColumns(){
@@ -65,8 +61,8 @@ public class WebMessagesGrid extends Grid<WebMessage> {
 				.setHeader("To Party").setWidth("70px").setKey("messageInfo.to.partyId").setSortable(true);
 
 		addHideableColumn(WebMessage::getConnectorMessageId, "Connector Message ID", "450px", "connectorMessageId", false, true);
-		addHideableColumn(WebMessage::getEbmsId, "ebMS Message ID", "450px", "ebmsMessageId", false, false);
-		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false, false);
+		addHideableColumn(WebMessage::getEbmsId, "ebMS Message ID", "450px", "ebmsMessageId", false, true);
+		addHideableColumn(WebMessage::getBackendMessageId, "Backend Message ID", "450px", "backendMessageId", false, true);
 		addHideableColumn(WebMessage::getConversationId, "Conversation ID", "450px", "conversationId", false, false);
 		addHideableColumn(
 				webMessage -> webMessage.getMessageInfo()!=null?webMessage.getMessageInfo().getOriginalSender():""
@@ -85,10 +81,10 @@ public class WebMessagesGrid extends Grid<WebMessage> {
 		addHideableColumn(msg-> msg.getMsgDirection().toString(), "direction", "150px", "direction", false, false);
 		addHideableColumn(WebMessage::getDeliveredToNationalSystem, "delivered backend", "300px", "deiliveredToNationalSystem", true, false);
 		addHideableColumn(WebMessage::getDeliveredToGateway, "delivered gateway", "300px", "deliveredToGateway", true, false);
-		addHideableColumn(WebMessage::getCreated, "created", "300px", "created", true, true);
+		addHideableColumn(WebMessage::getCreated, "created", "300px", "created", true, false);
 		addHideableColumn(WebMessage::getConfirmed, "confirmed", "300px", "confirmed", true, false);
 		addHideableColumn(WebMessage::getRejected, "rejected", "300px", "rejected", true, false);
-		addHideableColumn(WebMessage::getMsgContentState, "state of content", "300px", "contentState", true, false);
+		addHideableColumn(WebMessage::getMsgContentState, "contentState", "300px", "contentState", true, true);
 
 	}
 
