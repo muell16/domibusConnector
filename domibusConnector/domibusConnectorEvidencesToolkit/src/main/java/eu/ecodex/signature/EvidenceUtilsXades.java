@@ -4,6 +4,7 @@ package eu.ecodex.signature;
 //import eu.europa.esig.dss.client.http.DataLoader;
 //import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
 //import eu.europa.esig.dss.client.http.commons.FileCacheDataLoader;
+
 import eu.europa.esig.dss.enumerations.DigestAlgorithm;
 import eu.europa.esig.dss.enumerations.SignatureLevel;
 import eu.europa.esig.dss.enumerations.SignaturePackaging;
@@ -16,43 +17,43 @@ import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
 import eu.europa.esig.dss.signature.DocumentSignatureService;
 import eu.europa.esig.dss.spi.client.http.DataLoader;
-import eu.europa.esig.dss.token.KSPrivateKeyEntry;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
-//import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.dss.xades.XAdESSignatureParameters;
 import eu.europa.esig.dss.xades.XAdESTimestampParameters;
 import eu.europa.esig.dss.xades.signature.XAdESService;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.core.io.Resource;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.*;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static eu.domibus.connector.tools.logging.LoggingUtils.logPassword;
+import java.util.Objects;
 
 
 public class EvidenceUtilsXades extends EvidenceUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsXades.class);
 
-    public EvidenceUtilsXades(Resource javaKeyStorePath, String javaKeyStoreType, String javaKeyStorePassword, String alias, String keyPassword) {
-        super(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+    public EvidenceUtilsXades(KeyPairProvider keyStoreProvider) {
+        super(keyStoreProvider);
     }
+
+//    public EvidenceUtilsXades(Resource javaKeyStorePath, String javaKeyStoreType, String javaKeyStorePassword, String alias, String keyPassword) {
+//        super(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+//    }
 
     @Override
     public byte[] signByteArray(byte[] xmlData) {
@@ -70,19 +71,17 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 
     private byte[] createAndVerifySignature(byte[] xmlData) throws Exception {
         LOG.info("Xades Signer started");
-        //
 
-        KeyInfos keyInfos = getKeyInfosFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
-        if (keyInfos == null) {
-            throw new RuntimeException(String.format("Was not able to load keyInfo from javaKeyStorePath=[%s], javaKeyStoreType=[%s], javaKeyStorePassword=[%s], alias=[%s], keyPassword=[%s]",
-                    javaKeyStorePath, javaKeyStoreType, logPassword(LOGGER, javaKeyStorePassword), alias, logPassword(LOGGER, keyPassword)));
-        }
+
+        KeyInfos keyInfos = getKeyInfosFromKeyStore(this.keyPairProvider);
 
         PrivateKey privKey = keyInfos.getPrivKey();
 
         java.security.cert.X509Certificate cert = keyInfos.getCert();
+        Objects.requireNonNull(cert, "cert must not be null!");
 
         java.security.cert.Certificate[] certArray = {cert};
+
 
         PrivateKeyEntry privKeyEntry = new PrivateKeyEntry(privKey, certArray);
         //KSPrivateKeyEntry pke = new KSPrivateKeyEntry("", privKeyEntry);
@@ -195,49 +194,17 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     }
 
     //TODO: refactor: use key store service
-    protected synchronized static KeyInfos getKeyInfosFromKeyStore(Resource store, String keyStoreType, String storePass, String alias, String keyPass) throws MalformedURLException {
-        LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
-        KeyStore ks;
-        InputStream kfis = null;
+    protected synchronized static KeyInfos getKeyInfosFromKeyStore(KeyPairProvider keyStoreProvider) throws MalformedURLException {
+        LOG.debug("Loading KeyPair from Java KeyStore(" + keyStoreProvider.getKeyStore() + ")");
+
         KeyInfos keyInfos = new KeyInfos();
-
-
-        Key key = null;
         PrivateKey privateKey = null;
-        try {
-            ks = KeyStore.getInstance(keyStoreType);
+        KeyStore ks = null;
 
-            kfis = store.getInputStream();
-            ks.load(kfis, (storePass == null) ? null : storePass.toCharArray());
-
-            if (ks.containsAlias(alias)) {
-                key = ks.getKey(alias, keyPass.toCharArray());
-                if (key instanceof PrivateKey) {
-                    X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-
-                    keyInfos.setCert(cert);
-                    privateKey = (PrivateKey) key;
-                    keyInfos.setPrivKey(privateKey);
-                } else {
-                    //keyInfos = null;
-                    throw new IllegalArgumentException(String.format("The provided alias [%s] in store [%s] is not a private key", alias, store));
-                }
-
-                try {
-                    keyInfos.setCertChain(ks.getCertificateChain(alias));
-                } catch (ClassCastException e) {
-                    LOG.error(e.getMessage());
-                }
-
-            } else {
-//                keyInfos = null;
-                throw new RuntimeException(String.format("The provided store [%s] does not contain an alias [%s]", store, alias));
-            }
-        } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(kfis);
-        }
+        KeyPair keyPair = keyStoreProvider.getKeyPair();
+        keyInfos.setPrivKey(keyPair.getPrivate());
+        keyInfos.setCertChain(keyStoreProvider.getCertificateChain());
+        keyInfos.setCert(keyStoreProvider.getCertificate());
 
         return keyInfos;
     }
@@ -266,7 +233,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 class KeyInfos {
     private PrivateKey privKey;
     private X509Certificate cert;
-    private ArrayList<X509Certificate> certChain;
+    private List<X509Certificate> certChain;
 
     public PrivateKey getPrivKey() {
         return privKey;
@@ -284,11 +251,11 @@ class KeyInfos {
         this.cert = cert;
     }
 
-    public ArrayList<X509Certificate> getCertChain() {
+    public List<X509Certificate> getCertChain() {
         return certChain;
     }
 
-    public void setCertChain(ArrayList<X509Certificate> certChain) {
+    public void setCertChain(List<X509Certificate> certChain) {
         this.certChain = certChain;
     }
 
@@ -299,7 +266,7 @@ class KeyInfos {
         return certChain.add(cert);
     }
 
-    public boolean setCertChain(Certificate[] certs) throws ClassCastException {
+    private boolean setCertChain(Certificate[] certs) throws ClassCastException {
 
         X509Certificate[] x509Certs = KeyInfos.convert(certs, X509Certificate.class);
 
@@ -310,7 +277,7 @@ class KeyInfos {
         return true;
     }
 
-    public static <T> T[] convert(Object[] objects, Class type) throws ClassCastException {
+    private static <T> T[] convert(Object[] objects, Class type) throws ClassCastException {
         T[] convertedObjects = (T[]) Array.newInstance(type, objects.length);
 
         try {

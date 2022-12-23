@@ -1,12 +1,22 @@
 package eu.ecodex.dc5.flow.steps;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.pmode.BusinessScopedPModeService;
+import eu.ecodex.dc5.pmode.DC5PmodeService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties.PModeVerificationMode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -15,6 +25,7 @@ public class VerifyPModesStep {
     private static final Logger LOGGER = LogManager.getLogger(VerifyPModesStep.class);
 //    private final DomibusConnectorPModeService pModeService;
     private final ConnectorMessageProcessingProperties connectorMessageProcessingProperties;
+    private final BusinessScopedPModeService businessScopedPModeService;
 
 //    private boolean executeStep(DC5Message DC5Message,
 //                                ConnectorMessageProcessingProperties.PModeVerificationMode verificationMode) {
@@ -93,28 +104,110 @@ public class VerifyPModesStep {
 
     @Step(name = "VerifyPModesOutgoing")
     public DC5Message verifyOutgoing(DC5Message message) {
-        LOGGER.warn("NOT IMPLEMENTED YET!!!!!");
-//        if (message.getEbmsData().getFromParty().getRoleType() == null) {
-//            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-//        }
-//        if (message.getEbmsData().getToParty().getRoleType() == null) {
-//            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-//        }
-//        executeStep(message, connectorMessageProcessingProperties.getOutgoingPModeVerificationMode());
+        ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
+
+        if (outgoingPModeVerificationMode == RELAXED) {
+            verifyRelaxed(message);
+        } else if (outgoingPModeVerificationMode == CREATE) {
+            //DO nothing...
+        } else {
+            throw new IllegalArgumentException("Unknown pModeVerification Mode!");
+        }
         return message;
+    }
+
+    private void verifyRelaxed(DC5Message message) {
+        DC5Ebms ebmsData = message.getEbmsData();
+        DC5Service service = ebmsData.getService();
+        DC5Action action = ebmsData.getAction();
+        service = lookupService(service);
+
+        DC5PmodeService.PModeLeg leg = verifyLeg(service, action);
+        DC5PmodeService.PModeProcess businessProcess = leg.getBusinessProcess();
+
+        if (ebmsData.getInitiatorRole() == null) {
+            ebmsData.setInitiatorRole(DC5Role.builder()
+                            .role(businessProcess.getInitiatorRole())
+                            .roleType(DC5RoleType.INITIATOR)
+                    .build());
+        }
+
+        if (ebmsData.getResponderRole() == null) {
+            ebmsData.setResponderRole(DC5Role.builder()
+                    .role(businessProcess.getInitiatorRole())
+                    .roleType(DC5RoleType.RESPONDER)
+                    .build());
+        }
+
+
+
+
+    }
+
+    private DC5PmodeService.PModeLeg verifyLeg(DC5Service service, DC5Action action) {
+        List<DC5PmodeService.PModeLeg> collect = businessScopedPModeService.getCurrentPModeSet().getLegs()
+                .stream().filter(l ->
+                        StringUtils.equals(l.getAction().getAction(), action.getAction()) &&
+                                StringUtils.equals(l.getService().getService(), service.getService()) &&
+                                StringUtils.equals(l.getService().getServiceType(), service.getServiceType())
+                ).collect(Collectors.toList());
+        if (collect.size() == 1) {
+            return collect.get(0);
+        } else {
+            String error = String.format("The provided information for service and action is not sufficient, found %d results", collect.size());
+            throw new PModeVerificationException(ErrorCode.P_MODE_SERVICE_ACTION_LEG_NOT_FOUND, error);
+        }
+
+
+    }
+
+    private DC5Service lookupService(DC5Service service) {
+        List<DC5PmodeService.PModeService> availableServices = businessScopedPModeService
+                .getCurrentPModeSet()
+                .getServices();
+        List<DC5PmodeService.PModeService> collect = businessScopedPModeService
+                .getCurrentPModeSet()
+                .getServices()
+                .stream()
+                .filter(s ->
+                        (StringUtils.isBlank(service.getService()) || StringUtils.equals(service.getService(), s.getService()) ) &&
+                        (StringUtils.isBlank(service.getServiceType()) || StringUtils.equals(service.getServiceType(), s.getServiceType()))
+                )
+                .collect(Collectors.toList());
+        if (collect.size() == 1) {
+            DC5PmodeService.PModeService s = collect.get(0);
+            service.setService(s.getService());
+            service.setServiceType(s.getServiceType());
+            return service;
+        } else {
+            String error = String.format("The provided information for service [%s] is not sufficient, found %d results in available services [%s]",
+                    service,
+                    collect.size(),
+                    availableServices.stream().map(Object::toString).collect(Collectors.joining(","))
+                    );
+            throw new PModeVerificationException(ErrorCode.P_MODE_SERVICE_NOT_FOUND, error);
+        }
     }
 
     @Step(name = "VerifyPModesIncoming")
     public DC5Message verifyIncoming(DC5Message message) {
-        LOGGER.warn("NOT IMPLEMENTED YET!!!!!");
-//        if (message.getEbmsData().getFromParty().getRoleType() == null) {
-//            message.getEbmsData().getFromParty().setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-//        }
-//        if (message.getEbmsData().getToParty().getRoleType() == null) {
-//            message.getEbmsData().getToParty().setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-//        }
-//        executeStep(message, connectorMessageProcessingProperties.getIncomingPModeVerificationMode());
+        ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
+
+        if (outgoingPModeVerificationMode == RELAXED) {
+            verifyRelaxed(message);
+        } else if (outgoingPModeVerificationMode == CREATE) {
+            //DO nothing...
+        } else {
+            throw new IllegalArgumentException("Unknown pModeVerification Mode!");
+        }
         return message;
+    }
+
+    public static class PModeVerificationException extends DomibusConnectorControllerException {
+
+        public PModeVerificationException(ErrorCode errorCode, String msg) {
+            super(errorCode, msg);
+        }
     }
 
 }

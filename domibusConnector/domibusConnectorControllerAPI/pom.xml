@@ -102,6 +102,41 @@
         </dependency>
     </dependencies>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>PModes</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemas>
+                                <schema>
+                                    <dependencyResource>
+                                        <groupId>eu.domibus</groupId>
+                                        <artifactId>domibus-MSH</artifactId>
+                                        <!--  Version of the artifact. May be omitted.
+                                        The plugin will then try to find the version using
+                                        the dependencyManagement and dependencies of the project. -->
+                                        <version>5.0.1</version>
+                                        <!-- Path of the resource within the artifact. -->
+                                        <resource>schemas/domibus-pmode.xsd</resource>
+                                    </dependencyResource>
+                                </schema>
+                            </schemas>
+                            <strict>true</strict>
+                            <extension>true</extension>
+                            <args>
+                                <arg>-no-header</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <filtering>false</filtering>

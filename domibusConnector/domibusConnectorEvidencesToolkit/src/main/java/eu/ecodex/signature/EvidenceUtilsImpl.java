@@ -2,7 +2,6 @@ package eu.ecodex.signature;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyException;
@@ -36,7 +35,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -44,10 +42,10 @@ public class EvidenceUtilsImpl extends EvidenceUtils {
 
 	private static final Logger LOGGER = LogManager.getLogger(EvidenceUtilsImpl.class);
 
-	public EvidenceUtilsImpl(Resource javaKeyStorePath, String javaKeyStoreType,
-							 String javaKeyStorePassword, String alias, String keyPassword) {
-		super(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+	public EvidenceUtilsImpl(KeyPairProvider keyStoreProvider) {
+		super(keyStoreProvider);
 	}
+
 
 	@Override
 	public byte[] signByteArray(byte[] xmlData) {
@@ -76,9 +74,10 @@ public class EvidenceUtilsImpl extends EvidenceUtils {
 					SignatureMethod.RSA_SHA1, null), Collections
 					.singletonList(ref));
 
-			// Load KeyPair from Java Key Store
-			KeyPair kp = getKeyPairFromKeyStore(javaKeyStorePath,
-					javaKeyStorePassword, alias, keyPassword);
+//			// Load KeyPair from Java Key Store
+//			KeyPair kp = getKeyPairFromKeyStore(javaKeyStorePath,
+//					javaKeyStorePassword, alias, keyPassword);
+			KeyPair kp = this.keyPairProvider.getKeyPair();
 
 			// Create a KeyValue containing the PublicKey that was generated
 			KeyInfoFactory kif = fac.getKeyInfoFactory();

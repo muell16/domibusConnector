@@ -21,6 +21,7 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
+import eu.ecodex.SubmissionAcceptanceRejectionTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,6 +58,8 @@ public class EvidenceUtilsImplTest {
     String keyPassword = "test123";
     String javaKeyStoreType = "JKS";
 
+    EvidenceUtils.KeyPairProvider keyPairProvider = SubmissionAcceptanceRejectionTest.createKeyPairProvider(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+
     @BeforeAll
     public static void setUpTestEnv() throws IOException {
         File testDir = Paths.get(PATH_OUTPUT_FILES).toFile();
@@ -75,7 +78,7 @@ public class EvidenceUtilsImplTest {
     @Test
     public void testEvidenceUtilsImpl() throws Exception {
 
-        EvidenceUtilsImpl result = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl result = new EvidenceUtilsImpl(keyPairProvider);
         // add additional test code here
         assertNotNull(result);
     }
@@ -137,37 +140,6 @@ public class EvidenceUtilsImplTest {
     //
     // }
 
-    // private method to get the keypair
-    private KeyPair getKeyPairFromKeyStore(Resource store, String keyStoreType, String storePass, String alias, String keyPass) throws Exception {
-        KeyStore ks;
-        InputStream kfis;
-        KeyPair keyPair = null;
-
-        Key key = null;
-        PublicKey publicKey = null;
-        PrivateKey privateKey = null;
-
-        ks = KeyStore.getInstance(keyStoreType);
-//        final URL ksLocation = new URL(store);
-
-        kfis = store.getInputStream();
-        ks.load(kfis, (storePass == null) ? null : storePass.toCharArray());
-
-        if (ks.containsAlias(alias)) {
-            key = ks.getKey(alias, keyPass.toCharArray());
-            if (key instanceof PrivateKey) {
-                X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-                publicKey = cert.getPublicKey();
-                privateKey = (PrivateKey) key;
-                keyPair = new KeyPair(publicKey, privateKey);
-            } else {
-                keyPair = null;
-            }
-        } else {
-            keyPair = null;
-        }
-        return keyPair;
-    }
 
     /**
      * Run the byte[] signByteArray(byte[]) method test.
@@ -181,7 +153,7 @@ public class EvidenceUtilsImplTest {
         // create signature with methode signByteArray
         InputStream xmlFileInputStream = new ClassPathResource("ConvertIntoEvidenceTypetestFileA.xml").getInputStream();
         byte[] xmlData = StreamUtils.copyToByteArray(xmlFileInputStream);
-        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(keyPairProvider);
 
         byte[] signedxmlData = fixture.signByteArray(xmlData);
 
@@ -196,7 +168,7 @@ public class EvidenceUtilsImplTest {
         Document document;
         document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
-        KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+        KeyPair keypair = keyPairProvider.getKeyPair();
 
         PublicKey publicKey = keypair.getPublic();
 
@@ -252,7 +224,7 @@ public class EvidenceUtilsImplTest {
      */
     @Test
     public void testVerifySignature() throws Exception {
-        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+        EvidenceUtilsImpl fixture = new EvidenceUtilsImpl(keyPairProvider);
         byte[] xmlData = new byte[]{};
 
         boolean result = fixture.verifySignature(xmlData);

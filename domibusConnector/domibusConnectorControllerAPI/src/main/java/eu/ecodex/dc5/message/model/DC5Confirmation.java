@@ -10,6 +10,7 @@ import org.springframework.core.style.ToStringCreator;
 
 import org.springframework.lang.Nullable;
 
+import javax.annotation.CheckForNull;
 import javax.persistence.*;
 
 /**
@@ -39,7 +40,15 @@ public class DC5Confirmation {
 	private DomibusConnectorEvidenceType evidenceType;
 
 	@Lob
-	private @Nullable byte evidence[];
+	private @CheckForNull byte evidence[];
+
+	private String evidenceIdentifier;
+
+	@CheckForNull
+	private String rejectionCode;
+
+	@CheckForNull
+	private String rejectionDetails;
 
 
 	@Override

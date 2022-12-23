@@ -16,7 +16,8 @@ public enum DomibusConnectorRejectionReason {
     GW_REJECTION("E201", "The gateway or gateway application rejected the message"),
     RELAY_REMMD_TIMEOUT("E301", "The maximum wait time for a RELAY_REMMD_ACCEPTANCE/RELAY_REMMD_REJECTION evidence has been reached!"),
     DELIVERY_EVIDENCE_TIMEOUT("E300", "The maximum wait time for a NON_DELIVERY/DELIVERY evidence has been reached!"),
-    UNREACHABLE("E404", "");
+    UNREACHABLE("E404", ""),
+    SECURITY_REJECTION("S100","Rejecting message because sending side is not a trusted party" );
 
     private final String reasonText;
     private final String errorCode;

@@ -2,12 +2,24 @@ package eu.domibus.connector.controller.spring;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.CheckForNull;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Component
 @BusinessDomainScoped
 @ConfigurationProperties(prefix = ConnectorMessageProcessingProperties.PREFIX)
+@Valid
+
+@Getter
+@Setter
 public class ConnectorMessageProcessingProperties {
 
     public static final String PREFIX = "processing";
@@ -35,11 +47,11 @@ public class ConnectorMessageProcessingProperties {
 
     private String ebmsIdSuffix = "ecodex.eu";
 
-    private String pModeFile;   //TODO: JUEUSW-597
+    private PModeConfig pModeConfig;
 
     private PModeVerificationMode outgoingPModeVerificationMode = PModeVerificationMode.RELAXED;
 
-    private PModeVerificationMode incomingPModeVerificationMode = PModeVerificationMode.STRICT;
+    private PModeVerificationMode incomingPModeVerificationMode = PModeVerificationMode.CREATE;
 
     /**
      * defines if the RETRIEVAL EVIDENCE is enabled
@@ -51,63 +63,25 @@ public class ConnectorMessageProcessingProperties {
      */
     private boolean retrievalEnabled = false;
 
-    public PModeVerificationMode getOutgoingPModeVerificationMode() {
-        return outgoingPModeVerificationMode;
-    }
-
-    public void setOutgoingPModeVerificationMode(PModeVerificationMode outgoingPModeVerificationMode) {
-        this.outgoingPModeVerificationMode = outgoingPModeVerificationMode;
-    }
-
-    public PModeVerificationMode getIncomingPModeVerificationMode() {
-        return incomingPModeVerificationMode;
-    }
-
-    public void setIncomingPModeVerificationMode(PModeVerificationMode incomingPModeVerificationMode) {
-        this.incomingPModeVerificationMode = incomingPModeVerificationMode;
-    }
-
-    public boolean isSendGeneratedEvidencesToBackend() {
-        return sendGeneratedEvidencesToBackend;
-    }
-
-    public void setSendGeneratedEvidencesToBackend(boolean sendGeneratedEvidencesToBackend) {
-        this.sendGeneratedEvidencesToBackend = sendGeneratedEvidencesToBackend;
-    }
-
-    public boolean isEbmsIdGeneratorEnabled() {
-        return ebmsIdGeneratorEnabled;
-    }
-
-    public void setEbmsIdGeneratorEnabled(boolean ebmsIdGeneratorEnabled) {
-        this.ebmsIdGeneratorEnabled = ebmsIdGeneratorEnabled;
-    }
-
-    public String getEbmsIdSuffix() {
-        return ebmsIdSuffix;
-    }
-
-    public void setEbmsIdSuffix(String ebmsIdSuffix) {
-        this.ebmsIdSuffix = ebmsIdSuffix;
-    }
-
-    public boolean isRetrievalEnabled() {
-        return retrievalEnabled;
-    }
-
-    public void setRetrievalEnabled(boolean retrievalEnabled) {
-        this.retrievalEnabled = retrievalEnabled;
-    }
 
     public static enum PModeVerificationMode {
-        CREATE, RELAXED, STRICT;
+        CREATE, RELAXED;
     }
 
-    public String getpModeFile() {
-        return pModeFile;
+    @Getter
+    @Setter
+    public static class PModeConfig {
+        public static final String PREFIX = ConnectorMessageProcessingProperties.PREFIX + ".p-mode-config";
+        @NotBlank
+        @NotNull
+        private String pModeLocation;
+        @CheckForNull
+        private String description;
+        @CheckForNull
+        private LocalDateTime uploadDate;
+        @CheckForNull
+        private String changedBy;
     }
 
-    public void setpModeFile(String pModeFile) {
-        this.pModeFile = pModeFile;
-    }
+
 }

@@ -20,6 +20,7 @@ public class DC5BackendContent {
     private long id;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @NotNull(message = "BusinessXML is not allowed to be null!")
     private DomibusConnectorMessageAttachment businessXml;
 
     /**
@@ -28,7 +29,7 @@ public class DC5BackendContent {
      *
      */
     @OneToOne(cascade = CascadeType.ALL)
-    @NotNull
+    @NotNull(message = "BusinessDocument is not allowed to be null!") //ensure at mapping, that
     private DomibusConnectorMessageAttachment businessDocument;
 
     @OneToMany(cascade = CascadeType.ALL)

@@ -41,6 +41,7 @@ public class LoadStoreTransitionMessage {
     public static final String SERVICE_NAME_PROP_NAME = "service";
     public static final String SERVICE_TYPE_PROP_NAME = "service.type";
     public static final String EBMS_ID_PROP_NAME = "message.ebms-id";
+    public static final String REF_TO_EBMS_ID_PROP_NAME = "message.ref-to-ebms-id";
     public static final String BACKEND_CLIENT_NAME_PROP_NAME = "message.backend-client-name";
     public static final String MESSAGE_CONTENT_XML_PROP_NAME = "message.content.xml";
     public static final String DEFAULT_CONTENT_XML_FILE_NAME = "content.xml";
@@ -63,6 +64,7 @@ public class LoadStoreTransitionMessage {
     public static final String REF_TO_MESSAGE_ID_PROP_NAME = "message.ref-to-msg.id";
 
     public static String MESSAGE_CONFIRMATIONS_PREFIX = "message.confirmation";
+    public static String MESSAGE_STATE_PREFIX = "message.state";
     public static String MESSAGE_ATTACHMENT_PREFIX = "message.attachment";
 
     public static final String BACKEND_CONVERSATION_ID_PROP_NAME = "backend.conversation-id";

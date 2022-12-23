@@ -1,18 +1,24 @@
 package eu.ecodex.dc5.flow.flows;
 
 
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
+import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
+import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
@@ -40,6 +46,8 @@ public class TransportMessageFlow {
     private final ConfirmationCreatorService confirmationCreatorService;
     private final ApplicationEventPublisher eventPublisher;
     private final ConnectorMessageProcessingProperties processingProperties;
+    private final DomibusConnectorEvidencesToolkit evidencesToolkit;
+    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleMessageReadyForTransport(MessageReadyForTransportEvent messageReadyForTransportEvent) {
@@ -156,6 +164,19 @@ public class TransportMessageFlow {
                     submitConfirmationMsg(transportedMessage, submissionAcceptance);
                     //submit trigger message...
                 }
+// DOES NOT WORK, cannot create NON_DELIVERY AFTER RELAY_REMMD_REJECTION
+//                boolean isOutgoingRelayRemmdRejectionConfirmationMsg = MessageModelHelper.isEvidenceMessage(transportedMessage) && transportedMessage.getTarget() == MessageTargetSource.GATEWAY &&
+//                        !transportedMessage.getTransportedMessageConfirmations().isEmpty() &&
+//                        transportedMessage.getTransportedMessageConfirmations().get(0).getEvidenceType() == DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION;
+//                if (isOutgoingRelayRemmdRejectionConfirmationMsg) {
+//                    Optional<DC5Message> businessMsgByRefToMsgId = findBusinessMessageByMsgId.findBusinessMsgByRefToMsgId(transportedMessage);
+//                    if (!businessMsgByRefToMsgId.isPresent()) {
+//                        throw new IllegalStateException("A confirmation message must be related to a business message!");
+//                    }
+//                    DC5Confirmation nonDeliveryEvidence = createNonDeliveryEvidence(businessMsgByRefToMsgId.get());
+//                    submitConfirmationMsg(businessMsgByRefToMsgId.get(), nonDeliveryEvidence);
+//                }
+
 
             }
 

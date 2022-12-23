@@ -52,13 +52,20 @@ public class MessageConfirmationStep {
 
 //            LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), businessMessage.getConnectorMessageId());
 //            businessMessage.getTransportedMessageConfirmations().add(confirmation);
-//
 //            businessMessage.getMessageContent().getRelatedConfirmations().add(confirmation);
+
+            this.processConfirmation(confirmation);
 
             this.confirmRejectMessage(confirmation, businessMessage.getMessageContent());
         } catch (DuplicateEvidencePersistenceException e) {
             throw new DCEvidenceNotRelevantException(ErrorCode.EVIDENCE_IGNORED_DUE_DUPLICATE, e);
         }
+
+    }
+
+    private void processConfirmation(DC5Confirmation confirmation) {
+        byte[] evidence = confirmation.getEvidence();
+        //TODO: parse evidence...
 
     }
 

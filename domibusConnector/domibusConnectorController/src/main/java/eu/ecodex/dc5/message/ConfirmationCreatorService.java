@@ -2,6 +2,7 @@ package eu.ecodex.dc5.message;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -10,7 +11,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,18 @@ public class ConfirmationCreatorService {
 
     private final DomibusConnectorEvidencesToolkit evidencesToolkit;
     private final ConfigurationPropertyManagerService configurationPropertyLoaderService;
+
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    public static class CreateConfirmationRequest {
+        @NonNull
+        private final DomibusConnectorEvidenceType evidenceType;
+        @NonNull
+        private final DC5Message businessMsg;
+        private final DomibusConnectorRejectionReason reason;
+        private final String details;
+    }
 
     public DC5Action createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
 
@@ -61,8 +74,15 @@ public class ConfirmationCreatorService {
                 return evidenceActionServiceConfigurationProperties
                         .getSubmissionRejection().getConnectorAction();
             default:
-                throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
+                throw new DomibusConnectorControllerException(ErrorCode.OTHER,"Illegal Evidence type " + type + "! No Action found!");
         }
+    }
+
+    public DC5Confirmation createConfirmation(CreateConfirmationRequest request) {
+        return toDC5Confirmation(evidencesToolkit.createEvidence(request.getEvidenceType(),
+                toMessageParams(request.getBusinessMsg()),
+                request.getReason(),
+                request.getDetails()));
     }
 
     public DC5Confirmation createConfirmation(DomibusConnectorEvidenceType evidenceType, DC5Message businessMsg, DomibusConnectorRejectionReason reason, String details) {
@@ -81,11 +101,6 @@ public class ConfirmationCreatorService {
         return toDC5Confirmation(evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, toMessageParams(originalMessage), deliveryEvidenceTimeout, deliveryEvidenceTimeout.getReasonText()));
     }
 
-    public DC5Confirmation createDelivery(DC5Message originalMessage) {
-
-        return toDC5Confirmation(evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY, toMessageParams(originalMessage), null, null));
-    }
-
     public static DC5Confirmation toDC5Confirmation(DomibusConnectorEvidencesToolkit.Evidence evidence) {
         return DC5Confirmation.builder()
                 .evidence(evidence.getEvidence())
@@ -93,7 +108,7 @@ public class ConfirmationCreatorService {
                 .build();
     }
 
-    public static DomibusConnectorEvidencesToolkit.MessageParameters toMessageParams(DC5Message originalMessage) {
+    static DomibusConnectorEvidencesToolkit.MessageParameters toMessageParams(DC5Message originalMessage) {
         DomibusConnectorEvidencesToolkit.MessageParameters.MessageParametersBuilder builder = DomibusConnectorEvidencesToolkit.MessageParameters.builder();
         if (originalMessage.getEbmsData() != null && originalMessage.getEbmsData().getEbmsMessageId() != null) {
             builder = builder.ebmsMessageId(originalMessage.getEbmsData().getEbmsMessageId().getEbmsMesssageId());
