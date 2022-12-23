@@ -69,7 +69,7 @@ public class BusinessScopedPModeService {
         }
     }
 
-    public DC5PmodeService.DomibusConnectorPModeSet getCurrentPModeSet() {
+    public synchronized DC5PmodeService.DomibusConnectorPModeSet getCurrentPModeSet() {
         if (this.currentPModeSet == null) {
             Map<String, DC5PmodeService.PModeService> services = getServices();
             Map<String, DC5PmodeService.PModeAction> actions = getActions();
@@ -84,6 +84,7 @@ public class BusinessScopedPModeService {
                     .services(new ArrayList<>(services.values()))
                     .actions(new ArrayList<>(actions.values()))
                     .businessProcess(getBusinessProcess(pModeParties, legs))
+                    .legs(new ArrayList<>(legs.values()))
 //                .connectorstore(loadConnectorStore())
                     .build();
         }

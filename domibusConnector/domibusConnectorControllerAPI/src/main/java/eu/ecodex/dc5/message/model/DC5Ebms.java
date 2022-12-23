@@ -122,9 +122,11 @@ public class DC5Ebms {
 	private DC5EcxAddress gatewayAddress = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS initiator Role!")
 	private DC5Role initiatorRole = new DC5Role();
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS responder Role!")
 	private DC5Role responderRole = new DC5Role();
 
 	public EbmsSender getSender(MessageTargetSource target) {

@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
 import lombok.*;
 
+import javax.annotation.CheckForNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,24 +32,35 @@ public interface DC5PmodeService {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
     class DomibusConnectorPModeSet {
 
         private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
 
         //create new class in ConnectorMessageProcessingProperties
         //PMode
+        @CheckForNull
         private String description;
+        @CheckForNull
         private LocalDateTime createDate;
+        @CheckForNull
         private String principal; //SecurityContext.getPrincipal()
+        @CheckForNull
         private byte[] pModes;
 
+        @NonNull
         private List<PModeParty> parties = new ArrayList<>();
+        @NonNull
         private List<PModeAction> actions = new ArrayList<>();
+        @NonNull
         private List<PModeService> services = new ArrayList<>();
+        @NonNull
         private List<PModeProcess> businessProcess = new ArrayList<>();
+        @NonNull
         private List<PModeLeg> legs = new ArrayList<>();
-
+        @CheckForNull
         private DomibusConnectorKeystore connectorstore;
+        @CheckForNull
         private PModeParty homeParty;
     }
 
@@ -57,6 +69,7 @@ public interface DC5PmodeService {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     public class PModeAction {
         String action;
     }
@@ -65,6 +78,7 @@ public interface DC5PmodeService {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     class PModeService {
         String service;
         String serviceType;
@@ -74,6 +88,7 @@ public interface DC5PmodeService {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     class PModeParty {
         String name;
         String partyId;
@@ -84,6 +99,7 @@ public interface DC5PmodeService {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     class PModeLeg {
         String name;
         PModeAction action;
@@ -95,6 +111,7 @@ public interface DC5PmodeService {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     class PModeProcess {
         List<PModeLeg> legs;
         List<PModeParty> initiatorParties;

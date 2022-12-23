@@ -26,11 +26,11 @@ public class DC5Role {
     private Long id;
 
     @NonNull
-    @NotNull
-    @NotBlank
+    @NotNull(message = "The role value of a Role is not allowed to be null!")
+    @NotBlank(message = "The role value of a Role is not allowed to be blank!")
     private String role;
     @NonNull
-    @NotNull
+    @NotNull(message = "The role type of a Role is not allowed to be null!")
     @Convert(converter = DC5RoleTypeConverter.class)
     private DC5RoleType roleType;
 
@@ -62,6 +62,9 @@ public class DC5Role {
 
         @Override
         public String convertToDatabaseColumn(DC5RoleType attribute) {
+            if (attribute == null) {
+                return null;
+            }
             return attribute.name();
         }
 

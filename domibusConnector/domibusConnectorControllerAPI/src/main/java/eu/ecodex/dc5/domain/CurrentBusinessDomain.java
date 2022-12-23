@@ -1,10 +1,13 @@
 package eu.ecodex.dc5.domain;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import org.slf4j.MDC;
 
 import java.io.Closeable;
 
 public class CurrentBusinessDomain {
+
+    public static final String BUSINESS_DOMAIN_MDC_KEY = "domain";
 
     private static final ThreadLocal<DomibusConnectorBusinessDomain.BusinessDomainId> currentMessageLaneId = new ThreadLocal<>();
 
@@ -14,11 +17,15 @@ public class CurrentBusinessDomain {
 
     public static void setCurrentBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         currentMessageLaneId.set(businessDomainId);
+        MDC.put(BUSINESS_DOMAIN_MDC_KEY, businessDomainId.getBusinessDomainId());
     }
 
     public static CloseAbleBusinessDomain setCloseAbleCurrentBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         currentMessageLaneId.set(businessDomainId);
-        return () -> currentMessageLaneId.remove();
+        return () -> {
+            currentMessageLaneId.remove();
+            MDC.remove(BUSINESS_DOMAIN_MDC_KEY);
+        };
     }
 
     public interface CloseAbleBusinessDomain extends Closeable {
