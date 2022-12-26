@@ -5,7 +5,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.ecodex.dc5.message.model.*;
 import lombok.SneakyThrows;
@@ -178,13 +177,13 @@ public class DomainEntityCreator {
     }
     
     public static DC5Message createEvidenceNonDeliveryMessage() {
-        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
-        DC5Confirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
+//        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
+//        DC5Confirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
         
-        DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
-                .setConnectorMessageId("id1")
-                .setMessageDetails(messageDetails)
-                .addTransportedConfirmations(nonDeliveryConfirmation)
+        DC5Message msg = DC5Message.builder()
+//                .connectorMessageId(DomibusConnectorMessageId.of("id1"))
+//                .setMessageDetails(messageDetails)
+//                .addTransportedConfirmations(nonDeliveryConfirmation)
                 .build();
         
         return msg;
@@ -298,32 +297,6 @@ public class DomainEntityCreator {
                 .build();
     }
 
-    public static DC5Message createEpoMessageFormAFromGwdomibusRed() {
-        DC5Ebms messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
-
-        DC5MessageContent messageContent = new DC5MessageContent(); //TODO: should be a asic container
-//        messageContent.setXmlContent("<xmlContent/>".getBytes());
-
-        DetachedSignature detachedSignature = DetachedSignature.builder()
-                .detachedSignature("detachedSignature".getBytes())
-                .detachedSignatureName("signaturename")
-                .mimeType(DetachedSignatureMimeType.BINARY)
-                .build();
-
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
-//        messageContent.setDocument(messageDocument);
-
-        DC5Message message = DomibusConnectorMessageBuilder.createBuilder()
-                .addAttachment(createSimpleMessageAttachment())
-                .setMessageDetails(messageDetails)
-                .setMessageContent(messageContent)
-                .build();
-
-        message.addTransportedMessageConfirmation(createMessageSubmissionAcceptanceConfirmation());
-
-
-        return message;
-    }
 
 
     public static DC5Message createRelayRemmdRejectEvidenceForMessage(DC5Message message) {
@@ -590,4 +563,56 @@ public class DomainEntityCreator {
                 .build();
     }
 
+    public static DC5EcxAddress createEpoAddressDE() {
+        return DC5EcxAddress.builder()
+                .ecxAddress("egvp-2231")
+                .party(DomainEntityCreator.createEpoPartyDE())
+                .build();
+
+    }
+
+    private static DC5Party createEpoPartyDE() {
+        return DC5Party.builder()
+                .partyId("DE")
+                .partyIdType("urn:oasis:names:tc:ebcore:partyid-type:ecodex")
+                .build();
+    }
+
+    public static DC5EcxAddress createEpoAddressAT() {
+        return DC5EcxAddress.builder()
+                .ecxAddress("R213312")
+                .party(DomainEntityCreator.createEpoPartyAT())
+                .build();
+
+    }
+
+    private static DC5Party createEpoPartyAT() {
+        return DC5Party.builder()
+                .partyId("AT")
+                .partyIdType("urn:oasis:names:tc:ebcore:partyid-type:ecodex")
+                .build();
+    }
+
+    public static DC5Role getEpoInitiatorRole() {
+        return DC5Role.builder()
+                .roleType(DC5RoleType.INITIATOR)
+                .role("GW")
+                .build();
+    }
+
+    public static DC5Role getEpoResponderRole() {
+        return DC5Role.builder()
+                .roleType(DC5RoleType.RESPONDER)
+                .role("GW")
+                .build();
+    }
+
+    public static DomibusConnectorMessageAttachment createMessageAttachment_FormA_XML() {
+        //TODO: create correct attachment!
+        return createSimpleMessageAttachment();
+    }
+
+    public static DomibusConnectorBusinessDomain.BusinessDomainId getEpoBusinessDomain() {
+        return DomibusConnectorBusinessDomain.BusinessDomainId.of("epo_domain");
+    }
 }

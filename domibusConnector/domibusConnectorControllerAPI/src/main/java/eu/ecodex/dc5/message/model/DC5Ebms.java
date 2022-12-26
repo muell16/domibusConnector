@@ -46,12 +46,25 @@ public class DC5Ebms {
 		this.conversationId = conversationId;
 		this.ebmsMessageId = ebmsMessageId;
 		this.refToEbmsMessageId = refToEbmsMessageId;
-		this.action = action;
-		this.service = service;
-		this.backendAddress = backendAddress;
-		this.gatewayAddress = gatewayAddress;
-		this.initiatorRole = initiatorRole;
-		this.responderRole = responderRole;
+		if (action != null) {
+			this.action = action.toBuilder().build();
+		}
+		if (service != null) {
+			this.service = service.toBuilder().build();
+		}
+		if (backendAddress != null) {
+			this.backendAddress = backendAddress.toBuilder().build();
+		}
+		if (gatewayAddress != null) {
+			this.gatewayAddress = gatewayAddress.toBuilder().build();
+		}
+		if (initiatorRole != null) {
+			this.initiatorRole = initiatorRole.toBuilder().build();
+		}
+		if (responderRole != null) {
+			this.responderRole = responderRole.toBuilder().build();
+		}
+
 	}
 
 	@Id

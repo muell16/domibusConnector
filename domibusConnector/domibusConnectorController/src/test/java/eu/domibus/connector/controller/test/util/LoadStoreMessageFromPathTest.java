@@ -29,7 +29,7 @@ public class LoadStoreMessageFromPathTest {
 
         assertThat(message).isNotNull();
 
-        assertThat(message.getTransportedMessageConfirmations()).hasSize(1);
+        assertThat(message.getTransportedMessageConfirmation()).isNotNull();
         assertThat(message.getMessageContent().getEcodexContent().getAsicContainer().getDigest()).isEqualTo(Digest.ofString("md5:73015d41fca60756451e184aec1c516e"));
 
     }

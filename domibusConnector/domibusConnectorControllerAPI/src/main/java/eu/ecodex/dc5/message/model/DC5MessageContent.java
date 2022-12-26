@@ -2,6 +2,7 @@ package eu.ecodex.dc5.message.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
@@ -95,7 +96,12 @@ public class DC5MessageContent {
 	public List<DC5Confirmation> getRelatedConfirmations() {
 		return this.messageStates.stream()
 				.map(DC5BusinessMessageState::getConfirmation)
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
+	}
+
+	void setCurrentState(DC5BusinessMessageState currentState) {
+		this.currentState = currentState;
 	}
 
 

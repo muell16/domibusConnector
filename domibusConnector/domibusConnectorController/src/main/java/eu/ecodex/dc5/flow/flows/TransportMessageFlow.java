@@ -17,6 +17,7 @@ import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
+import eu.ecodex.dc5.flow.events.OutgoingBusinessMessageTransportEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
@@ -121,20 +122,28 @@ public class TransportMessageFlow {
                 }
             }
 
+            if (MessageModelHelper.isOutgoingBusinessMessage(transportedMessage)) {
+                eventPublisher.publishEvent(OutgoingBusinessMessageTransportEvent.builder()
+                        .transportState(messageTransportEvent.getState())
+                        .message(transportRequest.getMessage())
+                        .transportRequest(transportRequest)
+                        .build());
+            }
+
 
             if (messageTransportEvent.getState() == TransportState.FAILED) {
                 //TODO: make behaviour configureable!!
 
-                if (MessageModelHelper.isOutgoingBusinessMessage(transportedMessage)) {
-                    //message failed to be transported to gw
-                    DC5Confirmation submissionRejection = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
-                            transportedMessage,
-                            DomibusConnectorRejectionReason.GW_REJECTION,
-                            "");
-
-                    submitConfirmationMsg(transportedMessage, submissionRejection);
-                    //submit trigger message...
-                }
+//                if (MessageModelHelper.isOutgoingBusinessMessage(transportedMessage)) {
+//                    //message failed to be transported to gw
+//                    DC5Confirmation submissionRejection = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
+//                            transportedMessage,
+//                            DomibusConnectorRejectionReason.GW_REJECTION,
+//                            "");
+//
+//                    submitConfirmationMsg(transportedMessage, submissionRejection);
+//                    //submit trigger message...
+//                }
 
                 if (MessageModelHelper.isIncomingBusinessMessage(transportedMessage)) {
                     //message failed to be transported to backend
@@ -156,14 +165,14 @@ public class TransportMessageFlow {
             if (messageTransportEvent.getState() == TransportState.ACCEPTED) {
 
 
-                if (MessageModelHelper.isOutgoingBusinessMessage(transportedMessage) && processingProperties.isSendGeneratedEvidencesToBackend()) {
-                    DC5Confirmation submissionAcceptance = transportedMessage.getTransportedMessageConfirmations().get(0); //should be submission acceptance
-                    if (submissionAcceptance.getEvidenceType() != DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE) {
-                        throw new IllegalStateException("Cannot continue, the wrong evidence has been packed into outgoing business message!");
-                    }
-                    submitConfirmationMsg(transportedMessage, submissionAcceptance);
-                    //submit trigger message...
-                }
+//                if (MessageModelHelper.isOutgoingBusinessMessage(transportedMessage) && processingProperties.isSendGeneratedEvidencesToBackend()) {
+//                    DC5Confirmation submissionAcceptance = transportedMessage.getTransportedMessageConfirmations().get(0); //should be submission acceptance
+//                    if (submissionAcceptance.getEvidenceType() != DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE) {
+//                        throw new IllegalStateException("Cannot continue, the wrong evidence has been packed into outgoing business message!");
+//                    }
+//                    submitConfirmationMsg(transportedMessage, submissionAcceptance);
+//                    //submit trigger message...
+//                }
 // DOES NOT WORK, cannot create NON_DELIVERY AFTER RELAY_REMMD_REJECTION
 //                boolean isOutgoingRelayRemmdRejectionConfirmationMsg = MessageModelHelper.isEvidenceMessage(transportedMessage) && transportedMessage.getTarget() == MessageTargetSource.GATEWAY &&
 //                        !transportedMessage.getTransportedMessageConfirmations().isEmpty() &&
@@ -203,6 +212,7 @@ public class TransportMessageFlow {
                 .transportedMessageConfirmation(confirmation)
                 .businessDomainId(businessMessage.getBusinessDomainId())
                 .refToConnectorMessageId(businessMessage.getConnectorMessageId())
+                .connectorMessageId(DomibusConnectorMessageId.ofRandom())
                 .build();
         dc5MessageRepo.save(evidenceMessage);
         NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());

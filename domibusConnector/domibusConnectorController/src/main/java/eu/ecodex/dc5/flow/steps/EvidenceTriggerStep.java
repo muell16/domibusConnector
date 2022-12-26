@@ -12,7 +12,6 @@ import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DC5Ebms;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +49,10 @@ public class EvidenceTriggerStep {
 
 
         //bypasss if confirmation is already set
-        boolean confirmationTriggerMessageAlreadyHasConfirmation = !Arrays.isNullOrEmpty(evidenceTriggerMsg.getTransportedMessageConfirmations().get(0).getEvidence());
+        boolean confirmationTriggerMessageAlreadyHasConfirmation = !Arrays.isNullOrEmpty(evidenceTriggerMsg.getTransportedMessageConfirmation().getEvidence());
         DC5Confirmation confirmation;
         if (confirmationTriggerMessageAlreadyHasConfirmation) {
-            confirmation = evidenceTriggerMsg.getTransportedMessageConfirmations().get(0);
+            confirmation = evidenceTriggerMsg.getTransportedMessageConfirmation();
         } else {
             DomibusConnectorEvidenceType evidenceType = getEvidenceType(evidenceTriggerMsg);
 
@@ -62,7 +61,7 @@ public class EvidenceTriggerStep {
             LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully created evidence [{}] for evidence trigger", evidenceType);
 
             //set generated evidence into the trigger message
-            evidenceTriggerMsg.getTransportedMessageConfirmations().get(0)
+            evidenceTriggerMsg.getTransportedMessageConfirmation()
                     .setEvidence(confirmation.getEvidence());
         }
 
@@ -114,10 +113,10 @@ public class EvidenceTriggerStep {
     }
 
     private DomibusConnectorEvidenceType getEvidenceType(DC5Message evidenceTriggerMsg) {
-        if (!DomainModelHelper.isEvidenceTriggerMessage(evidenceTriggerMsg)) {
+        if (!evidenceTriggerMsg.isConfirmationTriggerMessage()) {
             throw new DomibusConnectorMessageException(evidenceTriggerMsg, EvidenceTriggerStep.class, "The message is not an evidence trigger msg!");
         }
-        DC5Confirmation msgConfirmation = evidenceTriggerMsg.getTransportedMessageConfirmations().get(0);
+        DC5Confirmation msgConfirmation = evidenceTriggerMsg.getTransportedMessageConfirmation();
         return msgConfirmation.getEvidenceType();
     }
 

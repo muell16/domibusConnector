@@ -9,16 +9,13 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.enums.*;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.testutils.LargeFileMemoryProviderConfiguration;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.model.*;
@@ -55,6 +52,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -62,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LOCAL_DATE_TIME;
 
 /**
  * Tests the message flow in the connector
@@ -313,7 +312,7 @@ public class ConnectorMessageFlowITCase {
             DC5Message testMessage = createTestMessage(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
             submitFromGatewayToController(testMessage);
 
-            LOGGER.info("message with confirmations: [{}]", testMessage.getTransportedMessageConfirmations());
+            LOGGER.info("message with confirmation: [{}]", testMessage.getTransportedMessageConfirmation());
 
             txTemplate.executeWithoutResult((state) -> {
                 DC5Message toBackendDelivered = mySubmitToLink.takeToBackendMessage(); //wait until a message is put into queue
@@ -327,8 +326,8 @@ public class ConnectorMessageFlowITCase {
 
             txTemplate.executeWithoutResult((state) -> {
                 DC5Message relayRemmdEvidenceMsg = mySubmitToLink.takeToGwMessage();
-                assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmations()).hasSize(1);
-                assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmation()).isNotNull();
+                assertThat(relayRemmdEvidenceMsg.getTransportedMessageConfirmation().getEvidenceType())
                         .as("RelayREMMD acceptance message")
                         .isEqualTo(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
                 DC5Ebms relayRemmdEvidenceMsgDetails = relayRemmdEvidenceMsg.getEbmsData();
@@ -338,11 +337,6 @@ public class ConnectorMessageFlowITCase {
                 assertThat(relayRemmdEvidenceMsgDetails.getConversationId())
                         .as("Conversation ID must be the same as the business message")
                         .isEqualTo(testMessage.getEbmsData().getConversationId());
-
-                assertThat(testMessage.getEbmsData().getBackendAddress())
-                        .as("Parties must be switched")
-                        .usingRecursiveComparison().ignoringFields("role")
-                        .isEqualTo(relayRemmdEvidenceMsgDetails.getBackendAddress());
 
             });
 
@@ -865,9 +859,9 @@ public class ConnectorMessageFlowITCase {
      * <p>
      * <p>
      * -) GW must have received RELAY_REMMD_REJECTION
-//     * -) GW must have received NON_DELIVERY
-//     * -) From and to Party are switched, within the evidence messages
-//     * -) refToMessageId of the evidence messages are the EBMS id of the RCV message
+     * //     * -) GW must have received NON_DELIVERY
+     * //     * -) From and to Party are switched, within the evidence messages
+     * //     * -) refToMessageId of the evidence messages are the EBMS id of the RCV message
      */
     @Test
     public void testReceiveMessageFromGw_CertificateFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
@@ -907,7 +901,7 @@ public class ConnectorMessageFlowITCase {
 //                            DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW.get(0).getTransportRequestId());
 //                            DC5Message m = byTransportRequestId.getMessage();
 //                            assertThat(m.getMessageLaneId()).isNotNull();
-//                            assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+//                            assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
 //                                    .as("Expecting NON_DELIVERY")
 //                                    .isEqualTo(NON_DELIVERY);
 //                        });
@@ -917,7 +911,7 @@ public class ConnectorMessageFlowITCase {
                             DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW.get(0).getTransportRequestId());
                             DC5Message m = byTransportRequestId.getMessage();
                             assertThat(m.getMessageLaneId()).isNotNull();
-                            assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                            assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
                                     .as("Expecting RELAY_REMMD_REJECTION")
                                     .isEqualTo(RELAY_REMMD_REJECTION);
                         });
@@ -925,7 +919,6 @@ public class ConnectorMessageFlowITCase {
             );
 
             saveMessageToDisk(testMessage.getConnectorMessageId());
-
 
 
         });
@@ -988,7 +981,7 @@ public class ConnectorMessageFlowITCase {
                 DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW1.getTransportRequestId());
                 DC5Message m = byTransportRequestId.getMessage();
                 assertThat(m.getMessageLaneId()).isNotNull();
-                assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
                         .as("Expecting RELAY_REMMD_ACCEPTANCE")
                         .isEqualTo(RELAY_REMMD_ACCEPTANCE);
             });
@@ -1003,7 +996,7 @@ public class ConnectorMessageFlowITCase {
                 DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW1.getTransportRequestId());
                 DC5Message m = byTransportRequestId.getMessage();
                 assertThat(m.getMessageLaneId()).isNotNull();
-                assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
                         .as("Expecting NON_DELIVERY")
                         .isEqualTo(NON_DELIVERY);
             });
@@ -1059,7 +1052,7 @@ public class ConnectorMessageFlowITCase {
                 DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW1.getTransportRequestId());
                 DC5Message m = byTransportRequestId.getMessage();
                 assertThat(m.getMessageLaneId()).isNotNull();
-                assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
                         .as("Expecting SUBMISSION_ACCEPTANCE")
                         .isEqualTo(SUBMISSION_ACCEPTANCE);
             });
@@ -1072,6 +1065,8 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     private ConfirmationCreatorService confirmationCreatorService;
 
+
+    public static final DomibusConnectorLinkPartner.LinkPartnerName LP_GW1 = DomibusConnectorLinkPartner.LinkPartnerName.of("gateway1");
 
     /**
      * Send message from Backend to GW and RCV evidences for the message
@@ -1091,78 +1086,317 @@ public class ConnectorMessageFlowITCase {
 
         DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
-
+        EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
+        Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
 
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
-            DC5Message DC5Message = submitMessage(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
+            DC5Message dc5Message = submitMessage(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
 
-            //wait for outgoing EcodexBusinessMsg on GW
 
-            EbmsMessageId ebmsId = EbmsMessageId.ofRandom();
             DC5TransportRequest toGW1 = mySubmitToLink.takeToGwTransport();//wait until something transported to GW
-            mySubmitToLink.acceptTransport(toGW1, TransportState.ACCEPTED, ebmsId);
 
-            DC5TransportRequest toBackend1 = mySubmitToLink.takeToGwTransport();  //wait until something transported to Backend
-            mySubmitToLink.acceptTransport(toBackend1, TransportState.ACCEPTED, BackendMessageId.ofRandom());
-            txTemplate.executeWithoutResult((state) -> {
-                DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toBackend1.getTransportRequestId());
-                DC5Message m = byTransportRequestId.getMessage();
-                assertThat(m.getMessageLaneId()).isNotNull();
-                assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
-                        .as("Expecting SUBMISSION_ACCEPTANCE")
+            txTemplate.executeWithoutResult((txState) -> {
+                DC5Message m = messageRepo.getByConnectorMessageId(dc5Message.getConnectorMessageId());
+                assertThat(m.getMessageContent().getRelatedConfirmations())
+                        .as("No evidence is allowed to be yet related to this message!")
+                        .isEmpty();
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
+                        .as("Expecting SUBMISSION_ACCEPTANCE as transported with this message!")
                         .isEqualTo(SUBMISSION_ACCEPTANCE);
-
-                confirmationCreatorService.createConfirmation(RELAY_REMMD_ACCEPTANCE, m, null, "");
             });
 
+            //ACK message on GW
+            mySubmitToLink.acceptTransport(toGW1, TransportState.ACCEPTED, ebmsId);
 
             txTemplate.executeWithoutResult((state) -> {
                 DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toGW1.getTransportRequestId());
                 DC5Message m = byTransportRequestId.getMessage();
                 assertThat(m.getMessageLaneId()).isNotNull();
-                assertThat(m.getTransportedMessageConfirmations().get(0).getEvidenceType())
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
                         .as("Expecting SUBMISSION_ACCEPTANCE")
                         .isEqualTo(SUBMISSION_ACCEPTANCE);
             });
+            // CHECK that GW ACK has been processed on Connector
+            Assertions.assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+                transportRequestMap.put("toBackend1", mySubmitToLink.takeToBackendTransport());  //wait until something transported to Backend1
+            }, "Failed to retrieve back travelling SUBMISSION_ACCEPTANCE");
 
 
+            //Create RELAY_REMMD_ACCEPTANCE as response from GW
+            final DC5Message.DC5MessageBuilder builder = DC5Message.builder();
+            txTemplate.executeWithoutResult((txState) -> {
+                DC5Message m = messageRepo.getByConnectorMessageId(dc5Message.getConnectorMessageId());
+                builder.ebmsData(m.getEbmsData().toBuilder()
+                        .refToEbmsMessageId(m.getEbmsData().getEbmsMessageId())
+                        .ebmsMessageId(EbmsMessageId.ofRandom())
+                        .action(DC5Action.builder().action("RelayREMMDAcceptanceRejection").build())
+                        .build());
+                DC5Confirmation confirmation = confirmationCreatorService.createConfirmation(RELAY_REMMD_ACCEPTANCE, m, null, "");
+                builder.transportedMessageConfirmation(confirmation);
+            });
+            submitFromGatewayToController(builder.build());
 
 
+            DC5Message toBackendRelayAcc = mySubmitToLink.takeToBackendMessage();
+            txTemplate.executeWithoutResult((txState) -> {
+                DC5Message m = messageRepo.getByConnectorMessageId(toBackendRelayAcc.getConnectorMessageId());
+                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
+                        .as("RELAY_REMMD_ACCEPTANCE should be rcv by backend")
+                        .isEqualTo(RELAY_REMMD_ACCEPTANCE);
+            });
+            txTemplate.executeWithoutResult((txState) -> {
+                DC5Message m = messageRepo.getByConnectorMessageId(dc5Message.getConnectorMessageId());
+                assertThat(m.getMessageContent().getRelatedConfirmations())
+                        .as("Expecting 2 evidences")
+                        .hasSize(2);
+                assertThat(m.getMessageContent().getCurrentState().getState())
+                        .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
+            });
 
+
+            //            DC5TransportRequest toGW = transportRequestMap.get("toBackend1");
+//            mySubmitToLink.acceptTransport(toBackend1, TransportState.ACCEPTED, BackendMessageId.ofRandom());
+//            txTemplate.executeWithoutResult((state) -> {
+//                DC5TransportRequest byTransportRequestId = transportRequestRepo.getById(toBackend1.getTransportRequestId());
+//                DC5Message m = byTransportRequestId.getMessage();
+//                assertThat(m.getMessageLaneId()).isNotNull();
+//                assertThat(m.getTransportedMessageConfirmation().getEvidenceType())
+//                        .as("Expecting SUBMISSION_ACCEPTANCE")
+//                        .isEqualTo(SUBMISSION_ACCEPTANCE);
+//
+//                confirmationCreatorService.createConfirmation(RELAY_REMMD_ACCEPTANCE, m, null, "");
+//            });
 
 
             //create relay remmd and send back...
-
 
 
         });
 
 
     }
-//
-//            DC5Message take = toGwDeliveredMessages.take(); //wait until a message is put into queue
-//            EbmsMessageId newEbmsId = take.getEbmsData().getEbmsMessageId();
-//
-//            DC5Message toBackendEvidence = toBackendDeliveredMessages.take();
-//            assertThat(toBackendEvidence).isNotNull();
-//
-//            //DO
-//            DC5Message relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(DC5Message);
-//            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setRefToEbmsMessageId(newEbmsId);
-//            relayRemmdAcceptanceEvidenceForMessage.getEbmsData().setEbmsMessageId(EbmsMessageId.ofString(testInfo.getDisplayName() + "_remote_2"));
-//            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
-//
-//            //ASSERT
-//            DC5Message relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
-//            assertThat(relayReemdEvidenceMsg)
-//                    .isNotNull();
-////            assertThat(relayReemdEvidenceMsg.getEbmsData().getRefToBackendMessageId())
-////                    .isEqualTo(BACKEND_MESSAGE_ID);
-//
-//
-//        });
-//    }
+
+    public static final DomibusConnectorLinkPartner.LinkPartnerName LP_BACKEND_EPO = DomibusConnectorLinkPartner.LinkPartnerName.of("epo_backend");
+    public static final DomibusConnectorLinkPartner.LinkPartnerName LP_GW_EPO = DomibusConnectorLinkPartner.LinkPartnerName.of("gw_epo");
+
+    /**
+     * Create message on connector
+     * <p>
+     * -) send relay_remmd_acceptance message
+     * verify message is in state relayed
+     * <p>
+     * -) send delivery message
+     * verify message is in delivered state
+     *
+     * @param testInfo
+     */
+    @Test
+    public void rcv_relayRemmd_delivery(TestInfo testInfo) {
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
+        EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
+        Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
+
+        createMessageOnConnector(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID, ebmsId);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, RELAY_REMMD_ACCEPTANCE);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.RELAYED, RELAY_REMMD_ACCEPTANCE);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, DELIVERY);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.DELIVERED, DELIVERY);
+
+    }
+
+    /**
+     * Create message on connector
+     * <p>
+     * -) send relay_remmd_acceptance message
+     * verify message is in state relayed
+     * <p>
+     * -) send NON_DELIVERY message
+     * verify message is in rejected state
+     *
+     * @param testInfo
+     */
+    @Test
+    public void rcv_relayRemmd_non_delivery(TestInfo testInfo) {
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
+        EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
+        Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
+
+        createMessageOnConnector(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID, ebmsId);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, RELAY_REMMD_ACCEPTANCE);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.RELAYED, RELAY_REMMD_ACCEPTANCE);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, NON_DELIVERY);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.REJECTED, NON_DELIVERY);
+
+    }
+
+    /**
+     * Create message on connector
+     * <p>
+     * -) send RELAY_REMMD_REJECTION message
+     * verify message is in state rejected
+     *
+     * @param testInfo
+     */
+    @Test
+    public void rcv_relayRemmdRejection(TestInfo testInfo) {
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
+        EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
+        Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
+
+        createMessageOnConnector(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID, ebmsId);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, RELAY_REMMD_REJECTION);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.REJECTED, RELAY_REMMD_REJECTION);
+
+    }
+
+    private void createMessageOnConnector(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID, BackendMessageId BACKEND_MESSAGE_ID, EbmsMessageId ebmsId) {
+        LocalDateTime created = LocalDateTime.now();
+
+        DC5Message.DC5MessageBuilder businessMsgBuilder = DC5Message.builder();
+        businessMsgBuilder.connectorMessageId(CONNECTOR_MESSAGE_ID);
+        businessMsgBuilder.businessDomainId(DomainEntityCreator.getEpoBusinessDomain());
+        businessMsgBuilder.target(MessageTargetSource.GATEWAY);
+        businessMsgBuilder.source(MessageTargetSource.BACKEND);
+        businessMsgBuilder.backendLinkName(LP_BACKEND_EPO);
+        businessMsgBuilder.gatewayLinkName(LP_GW_EPO);
+        businessMsgBuilder.ebmsData(DC5Ebms.builder()
+                .action(DomainEntityCreator.createActionForm_A())
+                .service(DomainEntityCreator.createServiceEPO())
+                .gatewayAddress(DomainEntityCreator.createEpoAddressDE())
+                .backendAddress(DomainEntityCreator.createEpoAddressAT())
+                .initiatorRole(DomainEntityCreator.getEpoInitiatorRole())
+                .responderRole(DomainEntityCreator.getEpoResponderRole())
+                .ebmsMessageId(ebmsId)
+                .build());
+        businessMsgBuilder.backendData(DC5BackendData.builder()
+                .backendMessageId(BACKEND_MESSAGE_ID)
+                .created(created)
+                .build()
+        );
+        businessMsgBuilder.messageContent(DC5MessageContent.builder()
+                .businessContent(DC5BackendContent.builder()
+//                                .businessXml(DomainEntityCreator.createMessageAttachment_FormA_XML())
+                                .businessDocument(DomainEntityCreator.createSimpleMessageAttachment())
+                                .build()
+                )
+                .ecodexContent(DC5EcodexContent.builder()
+                        .asicContainer(DomainEntityCreator.createSimpleMessageAttachment())
+                        .trustTokenXml(DomainEntityCreator.createSimpleMessageAttachment())
+                        .build())
+                .build());
+
+
+        DC5Message businessMsg = businessMsgBuilder.build();
+
+
+        try (CurrentBusinessDomain.CloseAbleBusinessDomain x = CurrentBusinessDomain.setCloseAbleCurrentBusinessDomain(DomainEntityCreator.getEpoBusinessDomain());) {
+            DC5Confirmation submission_acc = confirmationCreatorService.createConfirmation(ConfirmationCreatorService.CreateConfirmationRequest.builder()
+                    .evidenceType(SUBMISSION_ACCEPTANCE)
+                    .businessMsg(businessMsg)
+                    .build());
+            businessMsg.getMessageContent().changeCurrentState(DC5BusinessMessageState.builder()
+                    .state(DC5BusinessMessageState.BusinessMessagesStates.SUBMITTED)
+                    .event(DC5BusinessMessageState.BusinessMessageEvents.SUBMISSION_ACCEPTANCE_RCV)
+                    .confirmation(submission_acc)
+                    .created(created)
+                    .build());
+            businessMsg = messageRepo.save(businessMsg);
+        }
+    }
+
+    private void sendVerifyEvidenceMessage(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID, EbmsMessageId ebmsId, DomibusConnectorEvidenceType evidenceType) {
+        //Create RELAY_REMMD_ACCEPTANCE as response from GW
+        final DC5Message.DC5MessageBuilder deliveryMsgBuilder = DC5Message.builder();
+        txTemplate.executeWithoutResult((txState) -> {
+            DC5Message m = messageRepo.getByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            deliveryMsgBuilder
+                    .source(MessageTargetSource.GATEWAY)
+                    .target(MessageTargetSource.BACKEND)
+                    .ebmsData(DC5Ebms.builder()
+                            .refToEbmsMessageId(ebmsId)
+                            .ebmsMessageId(EbmsMessageId.ofRandom())
+                            .action(DomainEntityCreator.createActionRelayREMMDAcceptanceRejection())
+                            .service(DomainEntityCreator.createServiceEPO())
+                            .gatewayAddress(DomainEntityCreator.createEpoAddressDE())
+                            .backendAddress(DomainEntityCreator.createEpoAddressAT())
+                            .initiatorRole(DomainEntityCreator.getEpoInitiatorRole())
+                            .responderRole(DomainEntityCreator.getEpoResponderRole())
+                            .build());
+            try (CurrentBusinessDomain.CloseAbleBusinessDomain x = CurrentBusinessDomain.setCloseAbleCurrentBusinessDomain(DomainEntityCreator.getEpoBusinessDomain());) {
+                DC5Confirmation deliveryEvidence = confirmationCreatorService.createConfirmation(ConfirmationCreatorService.CreateConfirmationRequest.builder()
+                        .evidenceType(evidenceType)
+                        .reason(DomibusConnectorRejectionReason.OTHER)
+                        .details("some details")
+                        .businessMsg(m)
+                        .build());
+                deliveryMsgBuilder.transportedMessageConfirmation(deliveryEvidence);
+            }
+        });
+        submitFromGatewayToController(deliveryMsgBuilder.build());
+
+        //wait for receive RELAY_REMMD_ACCEPTANCE
+        mySubmitToLink.takeToBackendTransport();
+
+    }
+
+    private void verifyMessageState(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID,
+                                    DC5BusinessMessageState.BusinessMessagesStates state,
+                                    DomibusConnectorEvidenceType evidenceType) {
+        //Verify Message State
+        txTemplate.executeWithoutResult((txState) -> {
+            DC5Message m = messageRepo.getByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            if (evidenceType != null) {
+                assertThat(m.getMessageContent().getCurrentState().getConfirmation().getEvidenceType())
+                        .isEqualTo(evidenceType);
+            }
+            if (state != null) {
+                assertThat(m.getMessageContent().getCurrentState().getState())
+                        .isEqualTo(state);
+            }
+        });
+    }
+
+
+
+
+    /**
+     * Create message on connector
+     * <p>
+     * -) send RELAY_REMMD_REJECTION message
+     *      verify message is in state rejected
+     * <p>
+     * -) send RELAY_REMMD_ACCEPTANCE message
+     *      verify message is still in state rejected
+     *
+     *
+     * @param testInfo
+     */
+    @Test
+    public void rcv_relayRemmdRejection_thenDelivery(TestInfo testInfo) {
+        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
+        EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
+        Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
+
+        createMessageOnConnector(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID, ebmsId);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, RELAY_REMMD_REJECTION);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.REJECTED, RELAY_REMMD_REJECTION);
+
+        sendVerifyEvidenceMessage(CONNECTOR_MESSAGE_ID, ebmsId, RELAY_REMMD_ACCEPTANCE);
+        verifyMessageState(CONNECTOR_MESSAGE_ID, DC5BusinessMessageState.BusinessMessagesStates.REJECTED, RELAY_REMMD_REJECTION);
+
+    }
+
 //
 //    /**
 //     * Send message from Backend to GW and RCV evidences for the message
@@ -1453,13 +1687,13 @@ public class ConnectorMessageFlowITCase {
 //            checkEvidencesTimeoutProcessor.checkEvidencesTimeout();
 //
 //            DC5Message toBackendRelayRemmdFailure = toBackendDeliveredMessages.take(); //should be relayRemmdFailure
-//            assertThat(toBackendRelayRemmdFailure.getTransportedMessageConfirmations().get(0).getEvidenceType())
+//            assertThat(toBackendRelayRemmdFailure.getTransportedMessageConfirmation().getEvidenceType())
 //                    .isEqualTo(RELAY_REMMD_FAILURE);
 //
 //            assertThat(toBackendRelayRemmdFailure).isNotNull();
 //            DC5Ebms toBackendEvidenceMsgDetails = toBackendRelayRemmdFailure.getEbmsData();
 //
-//            assertThat(toBackendRelayRemmdFailure.getTransportedMessageConfirmations().get(0).getEvidence())
+//            assertThat(toBackendRelayRemmdFailure.getTransportedMessageConfirmation().getEvidence())
 //                    .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
 //                    .hasSizeGreaterThan(100);
 //
@@ -1499,7 +1733,7 @@ public class ConnectorMessageFlowITCase {
     }
 
     private DC5Message createTestMessage1(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
-        return  DC5Message.builder()
+        return DC5Message.builder()
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()
                         .backendMessageId(backendMessageId)
@@ -1520,7 +1754,7 @@ public class ConnectorMessageFlowITCase {
     }
 
     private DC5Message createTestMessage2(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
-        return  DC5Message.builder()
+        return DC5Message.builder()
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()
                         .backendMessageId(backendMessageId)

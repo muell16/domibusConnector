@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.Order;
@@ -173,7 +172,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
             MessageDetails.navigateTo(connectorMessageId);
         });
         layout.add(gotoBusinessMessageButton);
-        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DomainModelHelper::isBusinessMessage).orElse(false));
+        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DC5Message::isBusinessMessage).orElse(false));
 
         //retry message
         Button retryMessageButton = new Button(VaadinIcon.ROTATE_LEFT.create());

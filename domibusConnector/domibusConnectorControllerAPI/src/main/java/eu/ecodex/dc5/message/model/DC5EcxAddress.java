@@ -27,7 +27,7 @@ public class DC5EcxAddress {
 
     @Builder(toBuilder = true)
     public DC5EcxAddress(String ecxAddress, DC5Party party) {
-        this.party = party;
+        this.party = party.toBuilder().build();
         this.ecxAddress = ecxAddress;
     }
 

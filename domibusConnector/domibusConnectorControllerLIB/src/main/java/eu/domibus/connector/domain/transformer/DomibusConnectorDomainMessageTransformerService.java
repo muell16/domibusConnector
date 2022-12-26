@@ -106,12 +106,18 @@ public class DomibusConnectorDomainMessageTransformerService {
         TOMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
 
         //map message confirmations
-        List<DC5Confirmation> messageConfirmations = domainMessage.getTransportedMessageConfirmations();
-        LOGGER.trace("#transformDomainToTransition: transform messageConfirmations [{}] to transition", messageConfirmations);
-        for (DC5Confirmation msgConfirm : messageConfirmations) {
+        if (domainMessage.getTransportedMessageConfirmation() != null) {
             TOMessageType.getMessageConfirmations()
-                    .add(transformMessageConfirmationDomainToTransition(msgConfirm));
+                    .add(transformMessageConfirmationDomainToTransition(domainMessage.getTransportedMessageConfirmation()));
         }
+
+//
+//        List<DC5Confirmation> messageConfirmations = domainMessage.getTransportedMessageConfirmation();
+//        LOGGER.trace("#transformDomainToTransition: transform messageConfirmations [{}] to transition", messageConfirmations);
+//        for (DC5Confirmation msgConfirm : messageConfirmations) {
+//            TOMessageType.getMessageConfirmations()
+//                    .add(transformMessageConfirmationDomainToTransition(msgConfirm));
+//        }
 
         //map messageContent business XML
         if (domainMessage.getDirection().getTarget() == MessageTargetSource.GATEWAY) {

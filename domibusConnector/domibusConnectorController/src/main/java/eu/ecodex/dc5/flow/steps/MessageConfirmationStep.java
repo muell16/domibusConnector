@@ -4,7 +4,6 @@ import eu.domibus.connector.controller.exception.DCEvidenceNotRelevantException;
 import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.model.*;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.exceptions.DuplicateEvidencePersistenceException;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,11 @@ public class MessageConfirmationStep {
     private final DC5BusinessMessageStateMachineFactory stateMachineFactory;
 
     public void processTransportedConfirmations(DC5Message message) {
-        if (!DomainModelHelper.isBusinessMessage(message)) {
+        if (!message.isBusinessMessage()) {
             throw new IllegalArgumentException("message must be a business message!");
         }
-        for (DC5Confirmation c : message.getTransportedMessageConfirmations()) {
-            processConfirmationForMessage(message, c);
-        }
+        processConfirmationForMessage(message, message.getTransportedMessageConfirmation());
+
     }
 
     /**
@@ -49,10 +47,6 @@ public class MessageConfirmationStep {
             if (businessMessage.getMessageContent() == null) {
                 throw new IllegalArgumentException("message must be a business message!");
             }
-
-//            LOGGER.debug("Adding confirmation of type [{}] to business message [{}]", confirmation.getEvidenceType(), businessMessage.getConnectorMessageId());
-//            businessMessage.getTransportedMessageConfirmations().add(confirmation);
-//            businessMessage.getMessageContent().getRelatedConfirmations().add(confirmation);
 
             this.processConfirmation(confirmation);
 

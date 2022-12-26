@@ -3,7 +3,6 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Ebms;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;

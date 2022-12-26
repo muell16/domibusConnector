@@ -127,8 +127,8 @@ public class EvidenceMessageProcessorTest {
     public void testDeliverTrigger_evidenceShouldBeSentBack() throws InterruptedException {
         EbmsMessageId EBMSID = EbmsMessageId.ofString("testDeliverTrigger_evidenceShouldBeSentBack_1");
 
-        DomibusConnectorBusinessDomain.BusinessDomainId domain = new DomibusConnectorBusinessDomain.BusinessDomainId();
-        domain.setBusinessDomainId("lane1");
+        DomibusConnectorBusinessDomain.BusinessDomainId domain = DomibusConnectorBusinessDomain.BusinessDomainId.of("lane1");
+
         //send trigger to evidenceMessageProcessor...
         try {
             //set domain to DefaultDomain

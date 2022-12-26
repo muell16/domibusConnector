@@ -2,19 +2,14 @@ package eu.domibus.connector.controller.test.util;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
-import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.BackendMessageId;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.lib.logging.aspects.MDCSetterAspectConfiguration;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
+import eu.ecodex.dc5.message.model.BackendMessageId;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.EbmsMessageId;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -169,12 +164,12 @@ public class ITCaseTestContext {
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToBackendClientStatus(transportId, state);
 
-            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
-                    .copyPropertiesFrom(message)
-                    .build();
-            msg.getBackendData().setBackendMessageId(new BackendMessageId(backendMsgId));
-
-            toBackendDeliveredMessages.add(msg);
+//            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
+//                    .copyPropertiesFrom(message)
+//                    .build();
+//            msg.getBackendData().setBackendMessageId(new BackendMessageId(backendMsgId));
+//
+//            toBackendDeliveredMessages.add(msg);
 
         }
 
@@ -213,12 +208,12 @@ public class ITCaseTestContext {
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToGatewayStatus(dummyGW , state);
 
-            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
-                    .copyPropertiesFrom(message)
-                    .build();
-            msg.getEbmsData().setEbmsMessageId(ebmsId);
+//            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
+//                    .copyPropertiesFrom(message)
+//                    .build();
+//            msg.getEbmsData().setEbmsMessageId(ebmsId);
 
-            toGatewayDeliveredMessages.add(msg);
+//            toGatewayDeliveredMessages.add(msg);
         }
 
         synchronized public void clearQueue() {

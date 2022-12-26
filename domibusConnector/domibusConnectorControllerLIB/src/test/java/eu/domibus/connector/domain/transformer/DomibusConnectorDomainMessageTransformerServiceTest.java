@@ -340,7 +340,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getEbmsData()).as("message details must not be null!").isNotNull();
         assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
-        assertThat(domainMessage.getTransportedMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
+        assertThat(domainMessage.getTransportedMessageConfirmation()).as("message confirmations contains 1!").isNotNull();
         assertThat(domainMessage.getMessageProcessErrors()).as("message errors contains 1!").hasSize(1);
 //        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1); //TODO
     }
@@ -354,7 +354,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getEbmsData()).as("message details must not be null!").isNotNull();
         assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
-        assertThat(domainMessage.getTransportedMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
+        assertThat(domainMessage.getTransportedMessageConfirmation()).as("message confirmations contains 1!").isNotNull();
         assertThat(domainMessage.getMessageProcessErrors()).as("message errors contains 1!").hasSize(1);
 //        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1); //TODO
     }
@@ -394,7 +394,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getEbmsData()).as("message details must not be null!").isNotNull();
         assertThat(domainMessage.getMessageContent()).as("message content must be null!").isNull();
-        assertThat(domainMessage.getTransportedMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
+        assertThat(domainMessage.getTransportedMessageConfirmation()).as("message confirmations contains 1!").isNotNull();
         assertThat(domainMessage.getMessageProcessErrors()).as("message errors contains 1!").hasSize(1);
 //        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1); //TODO
     }

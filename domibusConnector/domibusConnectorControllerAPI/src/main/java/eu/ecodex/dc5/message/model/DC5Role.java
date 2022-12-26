@@ -12,7 +12,6 @@ import java.util.Objects;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @ToString
 
@@ -70,6 +69,9 @@ public class DC5Role {
 
         @Override
         public DC5RoleType convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return null;
+            }
             return DC5RoleType.valueOf(dbData);
         }
     }

@@ -24,6 +24,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Should load test messages from directory
@@ -110,7 +111,7 @@ public class LoadStoreMessageFromPath {
 
 
         //store confirmations
-        storeMessageConfirmations(message.getTransportedMessageConfirmations());
+        storeMessageConfirmations(Stream.of(message.getTransportedMessageConfirmation()).collect(Collectors.toList()));
 
         //store confirmations
         storeMessageStates(message.getMessageContent().getMessageStates());
@@ -260,7 +261,10 @@ public class LoadStoreMessageFromPath {
         builder.ebmsData(loadEcxDatailsFromProperties().build());
         builder.backendData(loadBackendDetailsFromProperties().build());
 
-        builder.transportedMessageConfirmations(loadConfirmations());
+        List<DC5Confirmation> list = loadConfirmations();
+        if (list.size() == 1) {
+            builder.transportedMessageConfirmation(list.get(0));
+        }
 
         String connid = messageProperties.getProperty("message.connector-id", null);
         if (connid != null) {

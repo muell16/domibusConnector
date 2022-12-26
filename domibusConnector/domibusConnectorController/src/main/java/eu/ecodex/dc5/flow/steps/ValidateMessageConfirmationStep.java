@@ -35,11 +35,9 @@ public class ValidateMessageConfirmationStep {
 
     @Step(name = "ValidateMessageConfirmationStep")
     public DC5Message executeStep(final DC5Message msg) {
-        msg
-                .getTransportedMessageConfirmations()
-                .forEach(c -> this.validateConfirmation(msg, c));
 
-        if (msg.getTransportedMessageConfirmations().size() == 1) {
+        this.validateConfirmation(msg, msg.getTransportedMessageConfirmation());
+        if (msg.getTransportedMessageConfirmation() != null) {
             validateActionService(msg);
         }
         return msg;
@@ -50,7 +48,7 @@ public class ValidateMessageConfirmationStep {
                 configurationPropertyLoaderService.loadConfiguration(DC5Message.getMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
         boolean enforcing = evidenceActionServiceConfigurationProperties.isEnforceServiceActionNames();
 
-        DC5Confirmation confirmation = DC5Message.getTransportedMessageConfirmations().get(0);
+        DC5Confirmation confirmation = DC5Message.getTransportedMessageConfirmation();
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
         DC5Action requiredEvidenceAction = confirmationCreatorService.createEvidenceAction(evidenceType);
 
