@@ -13,6 +13,7 @@ import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -63,6 +64,11 @@ class ProcessOutgoingBusinessMessageFlowTest {
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
     }
 
+    @AfterEach
+    public void afterEach() {
+        CurrentBusinessDomain.clear();
+    }
+
 
     public DomibusConnectorMessageId createMessage() {
 
@@ -80,27 +86,28 @@ class ProcessOutgoingBusinessMessageFlowTest {
         DomibusConnectorMessageId msgId = createMessage();
 
 
-        messageProcessManager.startProcess();
+        try (MessageProcessManager.CloseableMessageProcess p = messageProcessManager.startProcess()) {
 
 //        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 
-        txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-            processOutgoingBusinessMessageFlow.processMessage(msg);
-            return msg;
-        });
+            txTemplate.execute(state -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
+                CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                processOutgoingBusinessMessageFlow.processMessage(msg);
+                return msg;
+            });
 
 
-        txTemplate.executeWithoutResult(s -> {
-            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
+            txTemplate.executeWithoutResult(s -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
 
 
-            //TODO: verify!!!
-            assertThat(msg.getMessageContent().getCurrentState().getState())
-                    .as("Message state must be created")
-                    .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.CREATED);
-        });
+                //TODO: verify!!!
+                assertThat(msg.getMessageContent().getCurrentState().getState())
+                        .as("Message state must be created")
+                        .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.CREATED);
+            });
+        }
     }
 
     @Test

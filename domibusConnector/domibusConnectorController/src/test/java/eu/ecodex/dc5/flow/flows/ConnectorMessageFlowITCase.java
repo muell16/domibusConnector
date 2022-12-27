@@ -41,6 +41,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Component;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
@@ -83,6 +84,8 @@ import static org.assertj.core.api.Assertions.assertThat;
         ConnectorMessageFlowITCase.MySubmitToLink.class,
         LargeFileMemoryProviderConfiguration.class})
 @ActiveProfiles({"flow-test", "test"})
+
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS, hierarchyMode = DirtiesContext.HierarchyMode.EXHAUSTIVE)
 
 @Log4j2
 public class ConnectorMessageFlowITCase {
@@ -1675,6 +1678,8 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));
         testLink.setLinkType(LinkType.GATEWAY);
+        message.setTarget(MessageTargetSource.BACKEND);
+        message.setSource(MessageTargetSource.GATEWAY);
         message.setGatewayLinkName(testLink.getLinkPartnerName());
         submitToConnector.receiveMessage(message, (m, p) -> {
             return m;

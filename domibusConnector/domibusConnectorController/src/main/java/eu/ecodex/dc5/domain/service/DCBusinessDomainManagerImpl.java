@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
@@ -25,7 +25,6 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     private final ConnectorConfigurationProperties businessDomainConfigurationProperties;
     private final DCBusinessDomainPersistenceService businessDomainPersistenceService;
     private final DCDomainValidationService domainValidationService;
-    private final ApplicationContext context;
 
 
     @Override
@@ -91,7 +90,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
                 .collect(Collectors.toList());
     }
 
-    Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
+    @Override
+    public Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
         return getAllBusinessDomainsAllData().stream()
                 .collect(Collectors.toMap(Function.identity(), this::validateDomain));
     }

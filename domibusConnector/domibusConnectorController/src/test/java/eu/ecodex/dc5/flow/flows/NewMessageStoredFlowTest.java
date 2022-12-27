@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.flow.flows;
 
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.ecodex.dc5.flow.steps.VerifyPModesStep;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -9,6 +10,7 @@ import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -21,8 +23,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @FlowTestAnnotation
 @Log4j2
-@Import({CreateDefaultBusinessDomainOnFirstStart.class})
 class NewMessageStoredFlowTest {
+
+    @Autowired
+    MessageProcessManager messageProcessManager;
 
     @Autowired
     NewMessageStoredFlow newMessageStoredFlow;
@@ -39,8 +43,8 @@ class NewMessageStoredFlowTest {
     @MockBean
     DomibusConnectorMessageIdGenerator messageIdGenerator;
 
-//    @MockBean
-//    SubmitToLinkService submitToLinkService;
+    @MockBean
+    SubmitToLinkService submitToLinkService;
 
     @MockBean
     VerifyPModesStep verifyPModesStep;
@@ -68,8 +72,8 @@ class NewMessageStoredFlowTest {
 
         DC5Message m = createMessage();
         NewMessageStoredEvent event = NewMessageStoredEvent.of(m.getId());
-
-        newMessageStoredFlow.handleNewMessageStoredEvent(event);
-
+        try (MessageProcessManager.CloseableMessageProcess closeableMessageProcess = messageProcessManager.startProcess();) {
+            newMessageStoredFlow.handleNewMessageStoredEvent(event);
+        }
     }
 }

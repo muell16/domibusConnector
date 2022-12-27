@@ -3,11 +3,11 @@ package eu.domibus.connector.common;
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
 import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
-import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.utils.service.MyTestProperties;
 import eu.domibus.connector.utils.service.MyTestProperties2;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +69,7 @@ public class ConfigurationPropertyManagerServiceImplTest {
     MyTestProperties2 myTestProperties2;
 
     @MockBean
-    DCBusinessDomainManagerImpl dcBusinessDomainManagerImpl;
+    DCBusinessDomainManager dcBusinessDomainManagerImpl;
 
     private static BusinessDomainConfigurationChange lastChange;
 

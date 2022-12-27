@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;

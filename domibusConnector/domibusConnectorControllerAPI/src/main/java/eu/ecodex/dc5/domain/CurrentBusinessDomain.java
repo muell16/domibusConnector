@@ -25,6 +25,10 @@ public class CurrentBusinessDomain {
         }
     }
 
+    public static void clear() {
+        setCurrentBusinessDomain(null);
+    }
+
     public static CloseAbleBusinessDomain setCloseAbleCurrentBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
         currentMessageLaneId.set(businessDomainId);
         return () -> {

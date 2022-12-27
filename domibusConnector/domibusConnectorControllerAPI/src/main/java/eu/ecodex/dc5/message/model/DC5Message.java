@@ -122,6 +122,7 @@ public class DC5Message implements Serializable {
     private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
 
     //TODO: move to process
+    @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
     @Column(name="PROPERTY_VALUE", length = 2048)
@@ -135,7 +136,9 @@ public class DC5Message implements Serializable {
     @PreUpdate
     @PrePersist
     public void saveDCMessageProcessSettings() {
-        messageProcessingProperties.putAll(this.dcMessageProcessSettings.toProperties());
+        if (this.dcMessageProcessSettings != null) {
+            messageProcessingProperties.putAll(this.dcMessageProcessSettings.toProperties());
+        }
     }
 
     @JsonProperty

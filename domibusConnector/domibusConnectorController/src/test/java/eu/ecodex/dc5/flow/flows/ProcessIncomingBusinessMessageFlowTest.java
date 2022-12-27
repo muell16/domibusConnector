@@ -12,6 +12,7 @@ import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @FlowTestAnnotation
 @Log4j2
-@RecordApplicationEvents
 class ProcessIncomingBusinessMessageFlowTest {
 
     @Autowired
@@ -48,13 +48,18 @@ class ProcessIncomingBusinessMessageFlowTest {
     @Autowired
     MessageProcessManager messageProcessManager;
 
-    @Autowired
-    private ApplicationEvents applicationEvents;
+//    @Autowired
+//    private ApplicationEvents applicationEvents;
 
     @Before
     public void before() {
         Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        CurrentBusinessDomain.clear();
     }
 
     public DomibusConnectorMessageId createMessage() {
@@ -71,34 +76,35 @@ class ProcessIncomingBusinessMessageFlowTest {
 
     @Test
     public void testIncomingBusinessMessage() {
-        messageProcessManager.startProcess();
+        try (MessageProcessManager.CloseableMessageProcess process = messageProcessManager.startProcess(); ){
 
-        DomibusConnectorMessageId msgId = createMessage();
+            DomibusConnectorMessageId msgId = createMessage();
 
-        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
+            TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 
-        txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-            processIncomingBusinessMessageFlow.processMessage(msg);
-            return msg;
-        });
-
-
-        txTemplate.executeWithoutResult(s -> {
-            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
+            txTemplate.execute(state -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
+                CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                processIncomingBusinessMessageFlow.processMessage(msg);
+                return msg;
+            });
 
 
-            //TODO: verify!!!
-            assertThat(msg.getMessageContent().getCurrentState().getState())
-                    .as("Message state must be relayed")
-                    .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
-        });
+            txTemplate.executeWithoutResult(s -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
 
 
-        System.out.println("events: \n" + applicationEvents.stream()
-                .map(e -> e.toString())
-                .collect(Collectors.joining("\n")));
+                //TODO: verify!!!
+                assertThat(msg.getMessageContent().getCurrentState().getState())
+                        .as("Message state must be relayed")
+                        .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
+            });
+
+
+//        System.out.println("events: \n" + applicationEvents.stream()
+//                .map(e -> e.toString())
+//                .collect(Collectors.joining("\n")));
+        }
 
     }
 

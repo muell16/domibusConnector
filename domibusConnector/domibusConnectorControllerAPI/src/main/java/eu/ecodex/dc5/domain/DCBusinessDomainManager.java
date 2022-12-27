@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface DCBusinessDomainManager {
 
+
+
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,6 +38,8 @@ public interface DCBusinessDomainManager {
     }
 
     public static final String BUSINESS_DOMAIN_PROPERTY_PREFIX = "connector.businessDomain";
+
+    Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations();
 
     DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id);
     DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain);

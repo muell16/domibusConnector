@@ -3,6 +3,7 @@ package eu.ecodex.dc5.payload;
 import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -20,6 +21,7 @@ import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 public abstract class CommonLargeFilePersistenceProviderITCase {
 
     @Autowired

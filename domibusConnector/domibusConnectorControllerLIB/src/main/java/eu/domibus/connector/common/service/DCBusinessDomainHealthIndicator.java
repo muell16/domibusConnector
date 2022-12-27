@@ -13,7 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DCBusinessDomainHealthIndicator implements HealthIndicator {
 
-    private final DCBusinessDomainManagerImpl businessDomainManager;
+    private final DCBusinessDomainManager businessDomainManager;
 
     @Override
     public Health health() {

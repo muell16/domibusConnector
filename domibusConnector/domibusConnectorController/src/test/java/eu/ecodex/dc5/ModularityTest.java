@@ -18,18 +18,18 @@ public class ModularityTest {
     Documenter documenter = new Documenter(DC5FlowModule.class);
 
 
-    @Test
-    @Disabled
-    void drawModuleGraph() throws IOException {
-
-        String customOutputFolder = "target/moduliths";
-
-        documenter.withOutputFolder(customOutputFolder)
-                .writeModuleCanvases();
-        documenter.withOutputFolder(customOutputFolder)
-                .writeModulesAsPlantUml(Documenter.Options.defaults().withTargetFileName("components.plantuml"));
-
-    }
+//    @Test
+//    @Disabled
+//    void drawModuleGraph() throws IOException {
+//
+//        String customOutputFolder = "target/moduliths";
+//
+//        documenter.withOutputFolder(customOutputFolder)
+//                .writeModuleCanvases();
+//        documenter.withOutputFolder(customOutputFolder)
+//                .writeModulesAsPlantUml(Documenter.Options.defaults().withTargetFileName("components.plantuml"));
+//
+//    }
 
 
 }

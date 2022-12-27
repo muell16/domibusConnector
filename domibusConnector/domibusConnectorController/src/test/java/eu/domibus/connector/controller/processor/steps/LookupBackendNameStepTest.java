@@ -27,6 +27,7 @@ class LookupBackendNameStepTest {
     //regel 1: ist ein backend in der msg gesetzt? (dann lasse es wie es ist)
     @Test
     void given_a_message_that_has_a_specified_backend_then_the_message_should_be_sent_there() {
+        DomibusConnectorLinkPartner.LinkPartnerName backendName = DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_ON_THE_MESSAGE");
         // Arrange
         final ConfigurationPropertyManagerService configMock = Mockito.mock(ConfigurationPropertyManagerService.class);
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
@@ -46,19 +47,20 @@ class LookupBackendNameStepTest {
 
         final DC5Message message = DomainEntityCreator.createMessage();
         message.getEbmsData().setService(DomainEntityCreator.createServiceEPO());
-        message.setBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_ON_THE_MESSAGE"));
+        message.setBackendLinkName(backendName);
 
         // Act
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ON_THE_MESSAGE");
+        assertThat(message.getBackendLinkName()).isEqualTo(backendName);
     }
 
 
     //regel4: setze das default backend
     @Test
     void given_a_message_without_a_specified_backend_and_no_conversation_id_when_backend_routing_is_enabled_but_not_route_matches_then_the_message_is_sent_to_the_default_backend() {
+        DomibusConnectorLinkPartner.LinkPartnerName backendName = DomibusConnectorLinkPartner.LinkPartnerName.of("DEFAULT_BACKEND");
         // Arrange
         final ConfigurationPropertyManagerService configMock = Mockito.mock(ConfigurationPropertyManagerService.class);
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
@@ -71,7 +73,7 @@ class LookupBackendNameStepTest {
         routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
-        Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
+        Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn(backendName.getLinkName());
         Mockito.when(routingMock.isBackendRoutingEnabled(any())).thenReturn(true);
 
 //        final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
@@ -84,12 +86,13 @@ class LookupBackendNameStepTest {
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("DEFAULT_BACKEND");
+        assertThat(message.getBackendLinkName()).isEqualTo(backendName);
     }
 
     //regel4: setze das default backend
     @Test
     void given_a_message_without_a_specified_backend_and_no_conversation_id_when_backend_routing_is_disabled_then_the_message_is_sent_to_the_default_backend() {
+        DomibusConnectorLinkPartner.LinkPartnerName backendName = DomibusConnectorLinkPartner.LinkPartnerName.of("DEFAULT_BACKEND");
         // Arrange
         final ConfigurationPropertyManagerService configMock = Mockito.mock(ConfigurationPropertyManagerService.class);
         final DCMessagePersistenceService peristenceMock = Mockito.mock(DCMessagePersistenceService.class);
@@ -102,7 +105,7 @@ class LookupBackendNameStepTest {
         routingRules.put("foobarId", linkPartnerRoutingRule1);
 
         Mockito.when(routingMock.getBackendRoutingRules(any())).thenReturn(routingRules);
-        Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn("DEFAULT_BACKEND");
+        Mockito.when(routingMock.getDefaultBackendName(any())).thenReturn(backendName.getLinkName());
         Mockito.when(routingMock.isBackendRoutingEnabled(any())).thenReturn(false);
 
 //        final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, peristenceMock, configMock);
@@ -115,7 +118,7 @@ class LookupBackendNameStepTest {
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("DEFAULT_BACKEND");
+        assertThat(message.getBackendLinkName()).isEqualTo(backendName);
     }
 
     //regel2: gibt es eine Nachricht mit der gleichen ConversationId, die ein Backend gesetzt hat? Wenn ja nimm das.
@@ -153,7 +156,7 @@ class LookupBackendNameStepTest {
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID");
+        assertThat(message.getBackendLinkName()).isEqualTo(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_OF_ANOTHER_MSG_WITH_SAME_CONV_ID"));
     }
 
     //regel3: Werte die Routing Rules aus, die erste  Routing Rule die matched gewinnt. Matching geht nach routing rule priorität.
@@ -184,7 +187,7 @@ class LookupBackendNameStepTest {
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE");
+        assertThat(message.getBackendLinkName()).isEqualTo(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_ASSOCIATED_WITH_RULE"));
     }
 
     //regel3: Werte die Routing Rules aus, die erste  Routing Rule die matched gewinnt. Matching geht nach routing rule priorität.
@@ -223,7 +226,7 @@ class LookupBackendNameStepTest {
 //        sut.executeStep(message);
 
         // Assert
-        assertThat(message.getBackendLinkName()).isEqualTo("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY");
+        assertThat(message.getBackendLinkName()).isEqualTo(DomibusConnectorLinkPartner.LinkPartnerName.of("BACKEND_ASSOCIATED_WITH_RULE_HIGHER_PRIORITY"));
     }
 }
 

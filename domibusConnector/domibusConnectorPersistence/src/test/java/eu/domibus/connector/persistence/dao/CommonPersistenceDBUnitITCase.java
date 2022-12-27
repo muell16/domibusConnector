@@ -1,7 +1,6 @@
 
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.junit.jupiter.api.AfterAll;
@@ -28,10 +27,10 @@ public abstract class CommonPersistenceDBUnitITCase {
 
     @BeforeAll
     public static void beforeClass() {
-        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
-        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
-        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
+//        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
+//        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
+//        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
+//        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
     }
 
     @AfterAll
