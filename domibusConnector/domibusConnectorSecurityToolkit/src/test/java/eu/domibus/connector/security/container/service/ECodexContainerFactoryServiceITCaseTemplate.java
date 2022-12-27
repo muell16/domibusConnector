@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
@@ -42,7 +44,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
     private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCaseTemplate.class);
     public static final String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private static File TEST_RESULTS_FOLDER;
-
+    
     @Autowired
     ECodexContainerFactoryService eCodexContainerFactoryService;
 

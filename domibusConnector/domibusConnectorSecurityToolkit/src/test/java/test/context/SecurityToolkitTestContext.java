@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,11 +38,23 @@ import static org.mockito.ArgumentMatchers.eq;
 @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
 public class SecurityToolkitTestContext {
 
+    private static DomibusConnectorBusinessDomain businessDomain =  DomibusConnectorBusinessDomain.builder()
+//            .properties()
+            .build();
+
 
     @Bean
     public LargeFilePersistenceService bigDataPersistenceService() {
         LargeFilePersistenceServicePassthroughImpl service = new LargeFilePersistenceServicePassthroughImpl();
         return Mockito.spy(service);
+    }
+
+    @Bean
+    public DCBusinessDomainManager dcBusinessDomainManager() {
+        DCBusinessDomainManager mock = Mockito.mock(DCBusinessDomainManager.class);
+        Mockito.when(mock.getValidBusinessDomainsAllData()).thenReturn(Stream.of(businessDomain).collect(Collectors.toList()));
+        Mockito.when(mock.getBusinessDomain(Mockito.any())).thenReturn(Optional.of(businessDomain));
+        return mock;
     }
 
     @Bean
