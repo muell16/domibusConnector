@@ -16,8 +16,13 @@ public class CurrentBusinessDomain {
     }
 
     public static void setCurrentBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
-        currentMessageLaneId.set(businessDomainId);
-        MDC.put(BUSINESS_DOMAIN_MDC_KEY, businessDomainId.getBusinessDomainId());
+        if (businessDomainId == null) {
+            MDC.remove(BUSINESS_DOMAIN_MDC_KEY);
+            currentMessageLaneId.remove();
+        } else {
+            currentMessageLaneId.set(businessDomainId);
+            MDC.put(BUSINESS_DOMAIN_MDC_KEY, businessDomainId.getBusinessDomainId());
+        }
     }
 
     public static CloseAbleBusinessDomain setCloseAbleCurrentBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {

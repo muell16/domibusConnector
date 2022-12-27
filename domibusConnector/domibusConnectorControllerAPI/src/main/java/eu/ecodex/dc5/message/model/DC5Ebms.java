@@ -199,11 +199,13 @@ public class DC5Ebms {
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-		builder.append("sender", this.backendAddress);
-		builder.append("receiver", this.gatewayAddress);
+		builder.append("backendAddress", this.backendAddress);
+		builder.append("gatewayAddress", this.gatewayAddress);
         builder.append("ebmsMessageId", this.ebmsMessageId);
         builder.append("refToMessageId", this.refToEbmsMessageId);
         builder.append("conversationId", this.conversationId);
+		builder.append("service", this.service);
+		builder.append("action", this.action);
 
         return builder.toString();        
     }

@@ -1,6 +1,9 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -11,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class DomibusConnectorBusinessDomain {
 
     public static final String DEFAULT_LANE_NAME = "defaultBusinessDomain";
