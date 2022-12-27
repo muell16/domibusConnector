@@ -1657,7 +1657,10 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
         testLink.setLinkType(LinkType.BACKEND);
-        submitToConnector.submitToConnector(message, testLink);
+        message.setBackendLinkName(testLink.getLinkPartnerName());
+        submitToConnector.receiveMessage(message, (m, p) -> {
+            return m;
+        });
     }
 
 
@@ -1672,7 +1675,10 @@ public class ConnectorMessageFlowITCase {
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));
         testLink.setLinkType(LinkType.GATEWAY);
-        submitToConnector.submitToConnector(message, testLink);
+        message.setGatewayLinkName(testLink.getLinkPartnerName());
+        submitToConnector.receiveMessage(message, (m, p) -> {
+            return m;
+        });
     }
 
     @Primary
