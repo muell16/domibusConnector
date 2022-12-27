@@ -542,6 +542,7 @@ public class DomainEntityCreator {
         return DC5Message.builder()
                 .source(MessageTargetSource.GATEWAY)
                 .target(MessageTargetSource.BACKEND)
+                .gatewayLinkName(getDefaultGatewayName())
                 .ebmsData(DC5Ebms.builder()
                         .ebmsMessageId(EbmsMessageId.ofRandom())
                         .service(createServiceEPO())
@@ -563,6 +564,10 @@ public class DomainEntityCreator {
                         .evidence("<evidence/>".getBytes()) //just a simple evidence Improve by using correct created and signed evidence xml
                         .build())
                 .build();
+    }
+
+    private static DomibusConnectorLinkPartner.LinkPartnerName getDefaultGatewayName() {
+        return DomibusConnectorLinkPartner.LinkPartnerName.of("default_gw");
     }
 
     public static DC5EcxAddress createEpoAddressDE() {
