@@ -1,5 +1,6 @@
 package eu.ecodex.dc5;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.moduliths.docs.Documenter;
 import org.moduliths.test.*;
@@ -18,6 +19,7 @@ public class ModularityTest {
 
 
     @Test
+    @Disabled
     void drawModuleGraph() throws IOException {
 
         String customOutputFolder = "target/moduliths";

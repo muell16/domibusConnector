@@ -1,7 +1,10 @@
 package eu.domibus.connector.lib.spring.configuration;
 
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,6 +15,7 @@ import javax.validation.constraints.NotNull;
  *  key in a key store
  *   a alias and a optional password
  */
+@Log4j2
 public class KeyConfigurationProperties {
 
     public KeyConfigurationProperties() {}
@@ -50,6 +54,18 @@ public class KeyConfigurationProperties {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    public String toString() {
+        ToStringCreator append = new ToStringCreator(this)
+                .append("alias", this.alias);
+        if (log.getLevel().isMoreSpecificThan(Level.TRACE)) {
+            append.append("password", "****");
+        } else {
+            append.append("password", this.password);
+        }
+        return append.toString();
     }
 
 }

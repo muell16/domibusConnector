@@ -5,13 +5,10 @@ import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.availability.AvailabilityChangeEvent;
-import org.springframework.boot.availability.LivenessState;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 

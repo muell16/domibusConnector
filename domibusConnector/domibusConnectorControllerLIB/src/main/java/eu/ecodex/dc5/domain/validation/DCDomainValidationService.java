@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.validation;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;

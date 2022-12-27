@@ -2,6 +2,7 @@ package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

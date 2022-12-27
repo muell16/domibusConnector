@@ -1,6 +1,7 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.validation;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
+import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
