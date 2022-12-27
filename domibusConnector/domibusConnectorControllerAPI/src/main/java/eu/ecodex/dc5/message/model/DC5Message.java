@@ -275,4 +275,12 @@ public class DC5Message implements Serializable {
         return MessageModelHelper.isOutgoingBusinessMessage(this) || MessageModelHelper.isIncomingBusinessMessage(this);
     }
 
+    public boolean isOutgoingBusinessMessage() {
+        return MessageModelHelper.isOutgoingBusinessMessage(this);
+    }
+
+    public boolean isIncomingBusinessMessage() {
+        return MessageModelHelper.isIncomingBusinessMessage(this);
+    }
+
 }

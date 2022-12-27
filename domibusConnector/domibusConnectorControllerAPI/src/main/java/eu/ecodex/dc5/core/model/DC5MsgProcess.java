@@ -1,6 +1,9 @@
 package eu.ecodex.dc5.core.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,20 +13,16 @@ import java.util.Map;
 
 
 @Entity(name = DC5MsgProcess.TABLE_NAME)
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class DC5MsgProcess {
 
     public static final String TABLE_NAME = "DC5_MSG_PROCESS";
 
     @Id
     @Column(name = "ID", nullable = false)
-//    @TableGenerator(name = "seq" + TABLE_NAME,
-//            table = DC5PersistenceSettings.SEQ_STORE_TABLE_NAME,
-//            pkColumnName = DC5PersistenceSettings.SEQ_NAME_COLUMN_NAME,
-//            pkColumnValue = TABLE_NAME + ".ID",
-//            valueColumnName = DC5PersistenceSettings.SEQ_VALUE_COLUMN_NAME,
-//            initialValue = DC5PersistenceSettings.INITIAL_VALUE,
-//            allocationSize = DC5PersistenceSettings.ALLOCATION_SIZE)
     @GeneratedValue
     private Long id;
 
@@ -46,9 +45,7 @@ public class DC5MsgProcess {
     private List<DC5ProcessStep> procStepList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + DC5PersistenceSettings.PROPERTY_SUFFIX,
-            joinColumns = @JoinColumn(name = TABLE_NAME,
-                    referencedColumnName = "ID"))
+    @CollectionTable
     @MapKeyColumn(name = "PROPERTY_NAME", nullable = false)
     @Column(name = "PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties;

@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorBackendDelivery
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
@@ -130,16 +131,21 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                     DomibusConnectorLinkPartner linkPartner = backendClientInfoByName.get();
                     try(MDC.MDCCloseable mdc = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkPartnerName().getLinkName())) {
 
-                        DC5Message msg = transformerService.transformTransitionToDomain(submitMessageRequest, domibusConnectorMessageId);
-                        msg.setBackendLinkName(linkPartner.getLinkPartnerName());
-                        LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
+                        SubmitToConnector.ReceiveMessageFlowResult receiveMessageFlowResult = submitToConnector.receiveMessage(submitMessageRequest, (m, process) -> {
+                            DC5Message msg = transformerService.transformTransitionToDomain(MessageTargetSource.GATEWAY,
+                                    linkPartner.getLinkPartnerName(),
+                                    m,
+                                    domibusConnectorMessageId);
+                            msg.setBackendLinkName(linkPartner.getLinkPartnerName());
+                            LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
+                            return msg;
+                        });
 
-                        submitToConnector.submitToConnector(msg, linkPartner);
-                        answer.setResult(true);
-                        answer.setMessageId(msg.getConnectorMessageIdAsString());
+                        answer.setResult(receiveMessageFlowResult.isSuccess());
+                        answer.setMessageId(receiveMessageFlowResult.getMessage().getConnectorMessageId().toString());
                     }
                 } else {
-                    java.lang.String error = java.lang.String.format("The requested backend user is not available on connector!\nCheck server logs for details!");
+                    java.lang.String error = java.lang.String.format("The requested backend user is not available on connector!%nCheck server logs for details!");
                     throw new RuntimeException(error);
                 }
 

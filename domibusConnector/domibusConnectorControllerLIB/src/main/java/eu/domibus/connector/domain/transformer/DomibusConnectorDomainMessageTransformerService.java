@@ -1,15 +1,18 @@
 package eu.domibus.connector.domain.transformer;
 
+import org.apache.commons.io.input.CountingInputStream;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
+import eu.domibus.connector.domain.transition.tools.TransitionHelper;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.ecodex.dc5.message.model.*;
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -25,8 +28,14 @@ import javax.validation.constraints.NotNull;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -91,67 +100,52 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @return - the transformed message (transition model)
      * @throws CannotBeMappedToTransitionException if a
      */
-    public  @NotNull
+    public @NotNull
     DomibusConnectorMessageType transformDomainToTransition(final @NotNull DC5Message domainMessage) throws CannotBeMappedToTransitionException {
         LOGGER.debug("transformDomainToTransition: with domainMessage [{}]", domainMessage);
-        if (domainMessage == null) {
-            throw new CannotBeMappedToTransitionException("domainMessage is not allowed to be null!");
-        }
         if (domainMessage.getEbmsData() == null) {
             throw new CannotBeMappedToTransitionException("DomibusConnectorMessage.getMessageDetails() is not allowed to be null!");
         }
-        DomibusConnectorMessageType TOMessageType = new DomibusConnectorMessageType();
+        DomibusConnectorMessageType toMessageType = new DomibusConnectorMessageType();
 
         //map messageDetails
-        TOMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
+        toMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
 
         //map message confirmations
         if (domainMessage.getTransportedMessageConfirmation() != null) {
-            TOMessageType.getMessageConfirmations()
+            toMessageType.getMessageConfirmations()
                     .add(transformMessageConfirmationDomainToTransition(domainMessage.getTransportedMessageConfirmation()));
         }
 
-//
-//        List<DC5Confirmation> messageConfirmations = domainMessage.getTransportedMessageConfirmation();
-//        LOGGER.trace("#transformDomainToTransition: transform messageConfirmations [{}] to transition", messageConfirmations);
-//        for (DC5Confirmation msgConfirm : messageConfirmations) {
-//            TOMessageType.getMessageConfirmations()
-//                    .add(transformMessageConfirmationDomainToTransition(msgConfirm));
-//        }
-
-        //map messageContent business XML
-        if (domainMessage.getDirection().getTarget() == MessageTargetSource.GATEWAY) {
-            TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getEcodexContent().getBusinessXml()));
-
-            //map ASIC-S
-            ;
-
-            //map Token-XML
-            domainMessage.getMessageContent().getEcodexContent().getTrustTokenXml();
-
-            TOMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), ASICS_CONTAINER_IDENTIFIER));
-            TOMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), TOKEN_XML_IDENTIFIER));
+        if (domainMessage.isOutgoingBusinessMessage()) {
+            Objects.requireNonNull(domainMessage.getMessageContent(), "A business message must have a business content!");
+            Objects.requireNonNull(domainMessage.getMessageContent().getEcodexContent(), "A business message to GW must have a eCodex Content!");
+            //map business XML
+            toMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getEcodexContent().getBusinessXml()));
+            //map asic-s container
+            toMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), ASICS_CONTAINER_IDENTIFIER));
+            //map xml-token
+            toMessageType.getMessageAttachments().add(mapAttachment(domainMessage.getMessageContent().getEcodexContent().getAsicContainer(), TOKEN_XML_IDENTIFIER));
         }
 
-
-        if (domainMessage.getDirection().getTarget() == MessageTargetSource.BACKEND) {
-            TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getBusinessXml()));
-
+        if (domainMessage.isIncomingBusinessMessage()) {
+            Objects.requireNonNull(domainMessage.getMessageContent(), "A business message must have a business content!");
+            Objects.requireNonNull(domainMessage.getMessageContent().getBusinessContent(), "A business message to Backend must have a Backend Content!");
+            //map business xml
+            toMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getBusinessXml()));
+            //map trust token xml
+            toMessageType.getMessageAttachments().add(transformMessageAttachmentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getTrustTokenXml()));
+            //map trust token PDF
+            toMessageType.getMessageAttachments().add(transformMessageAttachmentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getTrustTokenPDF()));
+            //map attachements from asic-s container
             for (DomibusConnectorMessageAttachment msgAttach : domainMessage.getMessageContent().getBusinessContent().getAttachments()) {
-                TOMessageType.getMessageAttachments()
-                    .add(transformMessageAttachmentDomainToTransition(msgAttach));
+                toMessageType.getMessageAttachments()
+                        .add(transformMessageAttachmentDomainToTransition(msgAttach));
             }
-
         }
 
-        //map message errors
-        LOGGER.trace("#transformDomainToTransition: transform messageErrors [{}] to transition", domainMessage.getMessageProcessErrors());
-        for (DomibusConnectorMessageError msgError : domainMessage.getMessageProcessErrors()) {
-            TOMessageType.getMessageErrors()
-                    .add(transformMessageErrorDomainToTransition(msgError));
-        }
 
-        return TOMessageType;
+        return toMessageType;
     }
 
     private DomibusConnectorMessageAttachmentType mapAttachment(DomibusConnectorMessageAttachment asicContainer, String asicsContainerIdentifier) {
@@ -227,8 +221,10 @@ public class DomibusConnectorDomainMessageTransformerService {
         if (messageAttachment.getIdentifier() == null) {
             throw new CannotBeMappedToTransitionException("identifier is not allowed to be null!");
         }
-        BeanUtils.copyProperties(messageAttachment, attachmentTO);
-
+        attachmentTO.setName(messageAttachment.getName());
+        attachmentTO.setIdentifier(messageAttachment.getIdentifier());
+        attachmentTO.setMimeType(messageAttachment.getMimeType());
+        attachmentTO.setDescription(messageAttachment.getDescription());
 
         attachmentTO.setAttachment(convertBigDataReferenceToDataHandler(messageAttachment.getAttachment(), messageAttachment.getMimeType()));
         return attachmentTO;
@@ -242,7 +238,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      */
     @Nullable
     DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DomibusConnectorMessageAttachment businessXml
-                                                                        ) {
+    ) {
         if (businessXml == null) {
             return null;
         }
@@ -257,7 +253,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         StreamSource streamSource = null;
         try {
             streamSource = new StreamSource(            //byte[] is copied because domain model is not immutable
-    //                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)
+                    //                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)
                     largeFilePersistenceService.getReadableDataSource(businessXml.getAttachment()).getInputStream()
             );
         } catch (IOException e) {
@@ -309,145 +305,191 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-
     @NotNull
     DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @NotNull DC5Message message) {
-        DC5Ebms messageDetails = message.getEbmsData();
-        LOGGER.debug("transformMessageDetailsDomaintToTransition: messageDetails are [{}]", messageDetails);
-        if (messageDetails == null) {
+        DC5Ebms ebmsData = message.getEbmsData();
+        LOGGER.debug("transformMessageDetailsDomaintToTransition: messageDetails are [{}]", ebmsData);
+        if (ebmsData == null) {
             throw new CannotBeMappedToTransitionException("messageDetails are not allowed to be null!");
         }
-        DomibusConnectorMessageDetailsType TODetailsType = new DomibusConnectorMessageDetailsType();
+        DomibusConnectorMessageDetailsType toDetailsType = new DomibusConnectorMessageDetailsType();
 
-//        if (messageDetails.getFinalRecipient() == null) {
-//            throw new CannotBeMappedToTransitionException("final recipient is mandatory!");
-//        }
-//        if (messageDetails.getOriginalSender() == null) {
-//            throw new CannotBeMappedToTransitionException("original sender is mandatory!");
-//        }
-//        //map all properties with same name and type: backendMessageId, conversationId, finalRecipient, originalSender, refToMessageId
-//        BeanUtils.copyProperties(messageDetails, TODetailsType);
+        //map action
+        DomibusConnectorActionType action = new DomibusConnectorActionType();
+        action.setAction(ebmsData.getAction().getAction());
+        toDetailsType.setAction(action);
 
-//        //map action
-//        if (messageDetails.getAction() == null) {
-//            throw new CannotBeMappedToTransitionException("action is mandatory in messageDetails!");
-//        }
-//        DomibusConnectorActionType actionTO = new DomibusConnectorActionType();
-//        BeanUtils.copyProperties(messageDetails.getAction(), actionTO);
-//        TODetailsType.setAction(actionTO);
-//
-//        //map fromParty
-//        if (messageDetails.getFromParty() == null) {
-//            throw new CannotBeMappedToTransitionException("fromParty is mandatory in messageDetails");
-//        }
-//        DomibusConnectorPartyType fromPartyTO = new DomibusConnectorPartyType();
-//        BeanUtils.copyProperties(messageDetails.getFromParty(), fromPartyTO);
-//        TODetailsType.setFromParty(fromPartyTO);
-//
-//        //map toParty
-//        if (messageDetails.getToParty() == null) {
-//            throw new CannotBeMappedToTransitionException("toParty is mandatory in messageDetails");
-//        }
-//        DomibusConnectorPartyType toPartyTO = new DomibusConnectorPartyType();
-//        BeanUtils.copyProperties(messageDetails.getToParty(), toPartyTO);
-//        TODetailsType.setToParty(toPartyTO);
-//
-//        //map service
-//        if (messageDetails.getService() == null) {
-//            throw new CannotBeMappedToTransitionException("service is mandatory in messageDetails");
-//        }
-//        DomibusConnectorServiceType serviceTO = new DomibusConnectorServiceType();
-//        BeanUtils.copyProperties(messageDetails.getService(), serviceTO);
-//        TODetailsType.setService(serviceTO);
-//
-//        //map ref to message id
-//        TODetailsType.setRefToMessageId(message.getEbmsData().getRefToMessageId());
-//        //map backendMessageId
-//        if (DomainModelHelper.isEvidenceMessage(message)) {
-//            LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());
-//            TODetailsType.setBackendMessageId(messageDetails.getRefToBackendMessageId());
-//            //only use refToBackendMessageId if is going to backend and it is not empty
-//            if (message.getEbmsData().getDirection().getTarget() == MessageTargetSource.BACKEND &&
-//                    !StringUtils.isEmpty(messageDetails.getRefToBackendMessageId())) {
-//                TODetailsType.setRefToMessageId(messageDetails.getRefToBackendMessageId());
-//            }
-//        }
+        //map service
+        DomibusConnectorServiceType service = new DomibusConnectorServiceType();
+        service.setServiceType(ebmsData.getService().getServiceType());
+        service.setService(ebmsData.getService().getService());
+        toDetailsType.setService(service);
 
-        return TODetailsType;
+        //map ebms id
+        toDetailsType.setEbmsMessageId(ebmsData.getEbmsMessageId().toString());
+
+        //map conversation id
+        toDetailsType.setConversationId(ebmsData.getConversationId());
+
+        //map
+        if (message.getTarget() == MessageTargetSource.GATEWAY) {
+            toDetailsType.setRefToMessageId(ebmsData.getRefToEbmsMessageId().toString());
+
+        } else if (message.getTarget() == MessageTargetSource.BACKEND) {
+            boolean messageHasBackendMessageId = message.getBackendData() != null && message.getBackendData().getBackendMessageId() != null;
+            if (messageHasBackendMessageId) {
+                toDetailsType.setRefToMessageId(message.getBackendData().getBackendMessageId().toString());
+            }
+            boolean messageHasBackendConversationId = message.getBackendData() != null && message.getBackendData().getBackendConversationId() != null;
+            if (messageHasBackendConversationId) {
+                toDetailsType.setConversationId(message.getBackendData().getBackendConversationId());
+            }
+        }
+
+        //map backend id
+        boolean messageHasBackendMessageId = message.getBackendData() != null && message.getBackendData().getBackendMessageId() != null;
+        if (messageHasBackendMessageId) {
+            toDetailsType.setBackendMessageId(message.getBackendData().getBackendMessageId().toString());
+        }
+
+        //map sender/fromParty
+        DC5Ebms.EbmsSender sender = ebmsData.getSender(message.getTarget());
+        toDetailsType.setOriginalSender(sender.getOriginalSender());
+        DomibusConnectorPartyType fromParty = new DomibusConnectorPartyType();
+        fromParty.setRole(sender.getRole().getRole());
+        fromParty.setPartyId(sender.getParty().getPartyId());
+        fromParty.setPartyIdType(sender.getParty().getPartyIdType());
+        toDetailsType.setFromParty(fromParty);
+
+        //map recipient/toParty
+        DC5Ebms.EbmsReceiver receiver = ebmsData.getReceiver(message.getTarget());
+        toDetailsType.setFinalRecipient(receiver.getFinalRecipient());
+        DomibusConnectorPartyType toParty = new DomibusConnectorPartyType();
+        toParty.setRole(receiver.getRole().getRole());
+        toParty.setPartyId(receiver.getParty().getPartyId());
+        toParty.setPartyIdType(receiver.getParty().getPartyIdType());
+        toDetailsType.setFromParty(toParty);
+
+
+        return toDetailsType;
     }
 
 
-
     /**
-     * @param transitionMessage - the TransitionMessage
+     * @param toMessage - the TransitionMessage
      * @return the domainModel message
      */
-    public  @NotNull
-    DC5Message transformTransitionToDomain(final @NotNull DomibusConnectorMessageType transitionMessage, final @NotNull DomibusConnectorMessageId messageId) {
+    public @NotNull
+    DC5Message transformTransitionToDomain(final @NotNull MessageTargetSource target,
+                                           final @NotNull DomibusConnectorLinkPartner.LinkPartnerName sourcePartner,
+                                           final @NotNull DomibusConnectorMessageType toMessage,
+                                           final @NotNull DomibusConnectorMessageId messageId) {
+        Objects.requireNonNull(target, "MessageTarget must not be null!");
+
         messageIdThreadLocal.set(messageId);
         try {
-            LOGGER.trace("#transformTransitionToDomain: transforming transition message object [{}] to domain message object", transitionMessage);
-            DomibusConnectorMessageDetailsType messageDetailsTO = transitionMessage.getMessageDetails();
-            DC5Ebms messageDetails = transformMessageDetailsTransitionToDomain(messageDetailsTO);
+            LOGGER.trace("#transformTransitionToDomain: transforming transition message object [{}] to domain message object", toMessage);
+            DomibusConnectorMessageDetailsType messageDetailsTO = toMessage.getMessageDetails();
+
+
+            DC5Ebms ebmsData = transformMessageDetailsTransitionToDomain(target, messageDetailsTO);
+            DC5BackendData backendData = transformMessageDetailsToBackendData(target, messageDetailsTO);
+
             //DomibusConnectorMessage
-            DC5Message DC5Message = null;
+            DC5Message.DC5MessageBuilder dc5MessageBuilder = DC5Message.builder();
+            dc5MessageBuilder.source(target.getOpposite());
+            dc5MessageBuilder.target(target);
+            dc5MessageBuilder.connectorMessageId(messageId);
+            if (target == MessageTargetSource.GATEWAY) {
+                dc5MessageBuilder.gatewayLinkName(sourcePartner);
+            } else if (target == MessageTargetSource.BACKEND) {
+                dc5MessageBuilder.backendLinkName(sourcePartner);
+            }
+
+            //map ebms data
+            dc5MessageBuilder.ebmsData(ebmsData);
+
+            //map backend data
+            dc5MessageBuilder.backendData(backendData);
 
             //map confirmations
-            LOGGER.trace("#transformTransitionToDomain: transitionMessage has [{}] confirmations", transitionMessage.getMessageConfirmations().size());
-            List<DC5Confirmation> confirmations =
-                    transitionMessage.getMessageConfirmations().stream().map(c -> transformMessageConfirmationTransitionToDomain(c)).collect(Collectors.toList());
-
-            if (transitionMessage.getMessageContent() == null && confirmations.size() > 0) {
-                LOGGER.trace("#transformTransitionToDomain: transforming message is a confirmation message");
-                DC5Confirmation confirmation = confirmations.remove(0);
-//                DC5Message = new DC5Message(messageDetails, confirmation);
-//                LOGGER.trace("#transformTransitionToDomain: added [{}] additional confirmations to confirmation message", confirmations);
-//                for (DC5Confirmation c : confirmations) {
-//                    DC5Message.addTransportedMessageConfirmation(c);
-//                }
-
-
-            } else if (transitionMessage.getMessageContent() != null) {
-//                LOGGER.trace("#transformTransitionToDomain: transforming message is a business message");
-//                //DomibusConnectorMessageContentType messageContent = transitionMessage.getMessageContent();
-//                DomibusConnectorMessageContent messageContent = transformMessageContentTransitionToDomain(transitionMessage.getMessageContent());
-//                DC5Message = new DC5Message(messageDetails, messageContent);
-//                LOGGER.trace("#transformTransitionToDomain: added [{}] confirmations to message", confirmations);
-//                for (DC5Confirmation c : confirmations) {
-//                    DC5Message.addTransportedMessageConfirmation(c);
-//                }
-
-            } else {
-                //should not end up here!
-                throw new IllegalArgumentException("cannot map provided transition model!");
+            int numberOfConfirmations = toMessage.getMessageConfirmations().size();
+            LOGGER.trace("#transformTransitionToDomain: transitionMessage has [{}] confirmations", numberOfConfirmations);
+            if (numberOfConfirmations > 1) {
+                throw new CannotBeMappedToTransitionException("A message is only allowed to transport 1 confirmation!");
+            }
+            if (numberOfConfirmations == 1) {
+                dc5MessageBuilder.transportedMessageConfirmation(transformMessageConfirmationTransitionToDomain(toMessage.getMessageConfirmations().get(0)));
             }
 
-            //map message errors
-            for (DomibusConnectorMessageErrorType error : transitionMessage.getMessageErrors()) {
-                DC5Message.addError(
-                        transformMessageErrorTransitionToDomain(error));
+            //map attachemnts, content
+            boolean isBusinessMessage = !TransitionHelper.isConfirmationMessage(toMessage);
+            if (isBusinessMessage) {
+                DC5MessageContent.DC5MessageContentBuilder messageContentBuilder = DC5MessageContent.builder();
+//                DC5MessageContent.DC5MessageContentBuilder contentBuilder = DC5MessageContent.builder();
+                if (target == MessageTargetSource.GATEWAY) {
+                    DC5BackendContent.DC5BackendContentBuilder backendContentBuilder = DC5BackendContent.builder();
+                    backendContentBuilder.businessXml(transformMessageXmlContentToDomain(toMessage.getMessageContent()));
+                    backendContentBuilder.businessDocument(transformBusinessContentToDomain(toMessage.getMessageContent()));
+                    backendContentBuilder.attachments(transformAttachmentsToDomain(toMessage));
+
+                    messageContentBuilder.businessContent(backendContentBuilder.build());
+                }
+                if (target == MessageTargetSource.BACKEND) {
+                    DC5EcodexContent.DC5EcodexContentBuilder ecodexContentBuilder = DC5EcodexContent.builder();
+                    ecodexContentBuilder.businessXml(transformMessageXmlContentToDomain(toMessage.getMessageContent()));
+                    ecodexContentBuilder.trustTokenXml(transformMessageContentToTrustTokenDomain(toMessage));
+                    ecodexContentBuilder.asicContainer(transformMessageToAsicContainerDomain(toMessage));
+
+                }
+                dc5MessageBuilder.messageContent(messageContentBuilder.build());
+
             }
 
-            //map message attachments
-            LOGGER.trace("#transformTransitionToDomain: transform messageAttachments [{}]", transitionMessage.getMessageAttachments());
-            //TODO:!!!
-//            for (DomibusConnectorMessageAttachmentType attachment : transitionMessage.getMessageAttachments()) {
-//                domibusConnectorMessage.addAttachment(
-//                        transformMessageAttachmentTransitionToDomain(attachment));
-//            }
-//            LOGGER.trace("#transformTransitionToDomain: Sucessfully transformed [{}] message attachments", domibusConnectorMessage.getMessageAttachments());
-
-            LOGGER.trace("#transformTransitionToDomain: Sucessfully transformed message to [{}]", DC5Message);
-
-            DC5Message.setConnectorMessageId(messageIdThreadLocal.get());
-
-            setMessageProcessProperties(DC5Message, transitionMessage);
-
-            return DC5Message;
+            return dc5MessageBuilder.build();
 
         } finally {
             messageIdThreadLocal.remove();
         }
+    }
+
+    private DomibusConnectorMessageAttachment transformMessageToAsicContainerDomain(DomibusConnectorMessageType toMessage) {
+        DomibusConnectorMessageAttachmentType messageAttachmentType = toMessage.getMessageAttachments().stream()
+                .filter(a -> StringUtils.equals(a.getIdentifier(), ASIC_S_IDENTIFIER))
+                .findAny()
+                .orElseThrow(() -> new CannotBeMappedToTransitionException("Message contains no TrustXML attachment (identifier name: [" + ASIC_S_IDENTIFIER + "])"));
+
+        return transformMessageAttachmentTransitionToDomain(messageAttachmentType);
+    }
+
+    public static final String TRUST_TOKEN_XML_IDENTIFIER = "tokenXML";
+    public static final String ASIC_S_IDENTIFIER = "ASIC-S";
+
+    private DomibusConnectorMessageAttachment transformMessageContentToTrustTokenDomain(DomibusConnectorMessageType toMessage) {
+        DomibusConnectorMessageAttachmentType messageAttachmentType = toMessage.getMessageAttachments().stream()
+                .filter(a -> StringUtils.equals(a.getIdentifier(), TRUST_TOKEN_XML_IDENTIFIER))
+                .findAny()
+                .orElseThrow(() -> new CannotBeMappedToTransitionException("Message contains no TrustXML attachment (identifier name: [" + TRUST_TOKEN_XML_IDENTIFIER + "])"));
+
+        return transformMessageAttachmentTransitionToDomain(messageAttachmentType);
+    }
+
+    private Collection<? extends DomibusConnectorMessageAttachment> transformAttachmentsToDomain(DomibusConnectorMessageType toMessage) {
+        return toMessage.getMessageAttachments().stream()
+                .map(this::transformMessageAttachmentTransitionToDomain)
+                .collect(Collectors.toList());
+    }
+
+    private DC5BackendData transformMessageDetailsToBackendData(MessageTargetSource target, DomibusConnectorMessageDetailsType messageDetailsTO) {
+        DC5BackendData.DC5BackendDataBuilder backendDataBuilder = DC5BackendData.builder();
+
+        backendDataBuilder.backendMessageId(BackendMessageId.ofString(messageDetailsTO.getBackendMessageId()));
+        if (target == MessageTargetSource.GATEWAY) {
+            backendDataBuilder.refToBackendMessageId(BackendMessageId.ofString(messageDetailsTO.getRefToMessageId()));
+            backendDataBuilder.backendConversationId(messageDetailsTO.getConversationId());
+        }
+
+        return backendDataBuilder.build();
     }
 
     private void setMessageProcessProperties(DC5Message DC5Message, DomibusConnectorMessageType transitionMessage) {
@@ -464,7 +506,7 @@ public class DomibusConnectorDomainMessageTransformerService {
             AdvancedElectronicSystemType advancedElectronicSystemType = AdvancedElectronicSystemType.valueOf(aesType.name());
 
             DC5Message.getDcMessageProcessSettings()
-                .setValidationServiceName(advancedElectronicSystemType);
+                    .setValidationServiceName(advancedElectronicSystemType);
             LOGGER.trace("#transformTransitionToDomain: setting AES type to ", advancedElectronicSystemType);
         }
     }
@@ -473,12 +515,15 @@ public class DomibusConnectorDomainMessageTransformerService {
     @NotNull
     DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @NotNull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
 
+        @NotNull LargeFileReference ref = convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment());
         return DomibusConnectorMessageAttachment.builder()
-                .attachment(convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment()))
+                .attachment(ref)
                 .identifier(messageAttachmentTO.getIdentifier())
                 .name(messageAttachmentTO.getName())
                 .mimeType(messageAttachmentTO.getMimeType())
                 .description(messageAttachmentTO.getDescription())
+                .size(ref.getSize())
+                .digest(ref.getDigest())
                 .build();
 
     }
@@ -506,125 +551,157 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-    @NotNull
-    DC5MessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
-        DC5MessageContent messageContent = new DC5MessageContent();
+    public static final String BUSINESS_XML_DEFAULT_NAME = "BUSINESS_XML";
+    public static final String BUSINESS_XML_DEFAULT_IDENTIFIER = "BUSINESS_XML";
+    public static final String BUSINESS_XML_DEFAULT_MIME_TYPE = MimeTypeUtils.TEXT_XML_VALUE;
+    public static final String BUSINSS_DOC_DEFAULT_IDENTIFIER = "BUSINESS_DOC";
+    public static final String DEFAULT_MIMETYPE = MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE;
+
+    DomibusConnectorMessageAttachment transformBusinessContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
+        DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder attachmentBuilder = DomibusConnectorMessageAttachment.builder();
+
+        Objects.requireNonNull(messageContentTO.getDocument(), "Document must not be null!");
+
+        if (messageContentTO.getDocument().getDetachedSignature() != null) {
+            attachmentBuilder.detachedSignature(DetachedSignature.builder()
+                            .detachedSignature(messageContentTO.getDocument().getDetachedSignature().getDetachedSignature())
+                            .detachedSignatureName(messageContentTO.getDocument().getDetachedSignature().getDetachedSignatureName())
+                            .mimeType(DetachedSignatureMimeType.fromCode(messageContentTO.getDocument().getDetachedSignature().getMimeType().value()))
+                    .build());
+        }
+
+        attachmentBuilder.name(messageContentTO.getDocument().getDocumentName());
+
+        LargeFileReference largeFileReference = convertDataHandlerToBigFileReference(messageContentTO.getDocument().getDocument());
+        largeFileReference.setName(messageContentTO.getDocument().getDocumentName());
+        attachmentBuilder.size(largeFileReference.getSize());
+        attachmentBuilder.digest(largeFileReference.getDigest());
+        attachmentBuilder.identifier(BUSINSS_DOC_DEFAULT_IDENTIFIER);
+        attachmentBuilder.mimeType(largeFileReference.getMimetype());
+
+        return attachmentBuilder.build();
+    }
+
+    DomibusConnectorMessageAttachment transformMessageXmlContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
+        DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder attachmentBuilder = DomibusConnectorMessageAttachment.builder();
 
         byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
-        LargeFileReference businessXml = largeFilePersistenceService.createDomibusConnectorBigDataReference(this.messageIdThreadLocal.get(), "BUSINESS_XML", MimeTypeUtils.TEXT_XML_VALUE);
-        try ( OutputStream os = businessXml.getOutputStream()) {
-            StreamUtils.copy(result, os);
+        LargeFileReference businessXml = largeFilePersistenceService.createDomibusConnectorBigDataReference(this.messageIdThreadLocal.get(), BUSINESS_XML_DEFAULT_NAME, BUSINESS_XML_DEFAULT_MIME_TYPE);
+
+
+        try (OutputStream os = businessXml.getOutputStream();
+             CountingOutputStream countingOutputStream = new CountingOutputStream(os);
+             DigestOutputStream digestOutputStream = new DigestOutputStream(countingOutputStream, getDefaultMessageDigest());) {
+            StreamUtils.copy(result, digestOutputStream);
+            attachmentBuilder.attachment(businessXml);
+            attachmentBuilder.digest(Digest.ofMessageDigest(digestOutputStream.getMessageDigest()));
+            attachmentBuilder.identifier(BUSINESS_XML_DEFAULT_IDENTIFIER);
+            attachmentBuilder.name(BUSINESS_XML_DEFAULT_NAME);
+            attachmentBuilder.size(countingOutputStream.getByteCount());
+
+            return attachmentBuilder.build();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        DomibusConnectorMessageAttachment businessXmlAttachment = DomibusConnectorMessageAttachment.builder()
-                .identifier("BUSINESS_XML")
-                .attachment(businessXml)
-                .build();
-
-        //TODO: direction!!
-        messageContent.getEcodexContent().setBusinessXml(businessXmlAttachment);
-        messageContent.getBusinessContent().setBusinessXml(businessXmlAttachment);
-
-        if(LOGGER.isTraceEnabled()) {
-        	LOGGER.trace("Business content XML after transformed from stream: {}", new String(result));
-        }
-
-        //maps Document of messageContent
-        DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
-
-        if (documentTO != null) {
-            DomibusConnectorMessageAttachmentBuilder documentBuilder = DomibusConnectorMessageAttachmentBuilder.createBuilder();
-            //maps signature of document     
-            DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
-
-            if (detachedSignatureTO != null) {
-//                DetachedSignature detachedSignature = new DetachedSignature(
-//                        Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
-//                        detachedSignatureTO.getDetachedSignatureName(),
-//                        //                eu.ecodex.dc5.message.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
-//                        DomibusConnectorDomainDetachedSignatureEnumTransformer
-//                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
-//                );
-                DetachedSignature detachedSignature = DetachedSignature.builder()
-                        .detachedSignature(Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length))
-                        .detachedSignatureName(detachedSignatureTO.getDetachedSignatureName())
-                        .mimeType(DomibusConnectorDomainDetachedSignatureEnumTransformer
-                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType()))
-                        .build();
-
-                documentBuilder.withDetachedSignature(detachedSignature);
-            }
-            documentBuilder.setAttachment(convertDataHandlerToBigFileReference(documentTO.getDocument()));
-            documentBuilder.setIdentifier(documentTO.getDocumentName());
-
-//            messageContent.setDocument(documentBuilder.build());
-            messageContent.getBusinessContent().setBusinessDocument(documentBuilder.build());
-        }
-
-        return messageContent;
     }
 
+    private MessageDigest getDefaultMessageDigest() {
+        try {
+            return MessageDigest.getInstance("SHA256"); //TODO: put into configuration properties!
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @NotNull
     LargeFileReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
-//        LargeFileHandlerBacked bigDataReference = new LargeFileHandlerBacked();
-//        bigDataReference.setDataHandler(dataHandler);
-//        return bigDataReference;
         DomibusConnectorMessageId domibusConnectorMessageId = messageIdThreadLocal.get();
-        LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceService.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
+        LargeFileReference dataRef = largeFilePersistenceService.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
         try (InputStream is = dataHandler.getInputStream();
-            OutputStream os = domibusConnectorBigDataReference.getOutputStream() ) {
-            StreamUtils.copy(is, os);
+             DigestInputStream digestInputStream = new DigestInputStream(is, getDefaultMessageDigest());
+             CountingInputStream countingInputStream = new CountingInputStream(digestInputStream);
+             OutputStream os = dataRef.getOutputStream()) {
+            StreamUtils.copy(countingInputStream, os);
+            dataRef.setSize(countingInputStream.getByteCount());
+            dataRef.setDigest(Digest.ofMessageDigest(digestInputStream.getMessageDigest()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return domibusConnectorBigDataReference;
+        return dataRef;
 
     }
 
     @NotNull
-    DC5Ebms transformMessageDetailsTransitionToDomain(final @NotNull DomibusConnectorMessageDetailsType messageDetailsTO) {
-        DC5Ebms messageDetails = new DC5Ebms();
+    DC5Ebms transformMessageDetailsTransitionToDomain(
+            final @NotNull MessageTargetSource target,
+            final @NotNull DomibusConnectorMessageDetailsType messageDetailsTO) {
 
-        //map all properties with same name and type: backendMessageId, conversationId, finalRecipient, originalSender, refToMessageId
-        BeanUtils.copyProperties(messageDetailsTO, messageDetails);
-
-        //map action
-        DomibusConnectorActionType actionTO = messageDetailsTO.getAction();
-
-        DC5Action action =
-                DC5Action.builder().action(actionTO.getAction()).build();
-        messageDetails.setAction(action);
+        DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
 
         //map service
-        DomibusConnectorServiceType serviceTO = messageDetailsTO.getService();
-        DC5Service service =
-                DC5Service.builder().service(serviceTO.getService()).serviceType(serviceTO.getServiceType()).build();
-        messageDetails.setService(service);
+        ebmsBuilder.service(DC5Service.builder()
+                .service(messageDetailsTO.getService().getService())
+                .serviceType(messageDetailsTO.getService().getServiceType())
+                .build());
+        //map action
+        ebmsBuilder.action(DC5Action.builder()
+                .action(messageDetailsTO.getAction().getAction())
+                .build());
 
-        //map partyTO
-        DomibusConnectorPartyType toPartyTO = messageDetailsTO.getToParty();
-        if (toPartyTO == null) {
-            throw new IllegalArgumentException("toParty in messageDetails is not allowed to be null!");
+
+        DomibusConnectorPartyType fromParty = messageDetailsTO.getFromParty();
+        ebmsBuilder.initiatorRole(DC5Role.builder()
+                .role(fromParty.getRole())
+                .roleType(DC5RoleType.INITIATOR)
+                .build());
+        DomibusConnectorPartyType toParty = messageDetailsTO.getFromParty();
+        ebmsBuilder.initiatorRole(DC5Role.builder()
+                .role(toParty.getRole())
+                .roleType(DC5RoleType.RESPONDER)
+                .build());
+
+        DC5EcxAddress.DC5EcxAddressBuilder fromAddrBuilder = DC5EcxAddress.builder()
+                .party(DC5Party.builder()
+                        .partyId(fromParty.getPartyId())
+                        .partyIdType(fromParty.getPartyIdType())
+                        .build());
+
+        DC5EcxAddress.DC5EcxAddressBuilder toAddrBuilder = DC5EcxAddress.builder()
+                .party(DC5Party.builder()
+                        .partyId(fromParty.getPartyId())
+                        .partyIdType(fromParty.getPartyIdType())
+                        .build());
+
+        if (target == MessageTargetSource.GATEWAY) {
+            ebmsBuilder.gatewayAddress(toAddrBuilder
+                    .ecxAddress(messageDetailsTO.getFinalRecipient())
+                    .build());
+            ebmsBuilder.backendAddress(fromAddrBuilder
+                    .ecxAddress(messageDetailsTO.getOriginalSender())
+                    .build());
         }
-        DomibusConnectorParty toParty =
-                new DomibusConnectorParty(toPartyTO.getPartyId(), toPartyTO.getPartyIdType(), toPartyTO.getRole());
-//        messageDetails.setToParty(toParty);
-
-        //map partyFrom
-        DomibusConnectorPartyType fromPartyTO = messageDetailsTO.getFromParty();
-        if (fromPartyTO == null) {
-            throw new IllegalArgumentException("fromParty in messageDetails is not allowed to be null!");
+        if (target == MessageTargetSource.BACKEND) {
+            ebmsBuilder.gatewayAddress(fromAddrBuilder
+                    .ecxAddress(messageDetailsTO.getOriginalSender())
+                    .build());
+            ebmsBuilder.backendAddress(toAddrBuilder
+                    .ecxAddress(messageDetailsTO.getFinalRecipient())
+                    .build());
         }
-        DomibusConnectorParty fromParty =
-                new DomibusConnectorParty(fromPartyTO.getPartyId(), fromPartyTO.getPartyIdType(), fromPartyTO.getRole());
-//        messageDetails.setFromParty(fromParty);
 
+        //map ebms id
+        ebmsBuilder.ebmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getEbmsMessageId()));
+        //map refToEbmsId if message comes from GW
+        if (target == MessageTargetSource.BACKEND) {
+            ebmsBuilder.refToEbmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getRefToMessageId()));
+        }
+        //map conversation id
+        ebmsBuilder.conversationId(messageDetailsTO.getConversationId());
 
-        return messageDetails;
+        return ebmsBuilder.build();
+
     }
 
 }

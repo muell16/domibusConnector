@@ -37,4 +37,14 @@ public enum MessageTargetSource {
     public String getDbName() {
         return dbName;
     }
+
+    public MessageTargetSource getOpposite() {
+        if (this == BACKEND) {
+            return GATEWAY;
+        } else if (this == GATEWAY) {
+            return BACKEND;
+        } else {
+            throw new IllegalStateException("Does not know this MessageTargetSource!");
+        }
+    }
 }
