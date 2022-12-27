@@ -27,9 +27,9 @@ public class WebMessage {
 	private String conversationId;
 
 	private String backendName;
-	private String msgDirection;
+	private String messageDirection;
 
-	private String msgContentState;
+	private String messageContentState;
 	private String prvStates;
 
 	// TODO: decide what to do with below

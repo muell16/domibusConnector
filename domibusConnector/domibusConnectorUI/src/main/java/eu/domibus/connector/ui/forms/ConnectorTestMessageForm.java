@@ -33,8 +33,6 @@ public class ConnectorTestMessageForm extends FormLayout {
 
     private void fillForm() {
 
-        binder.bindInstanceFields(this);
-
         binder.forField(conversationId)
                 .bind(WebMessage::getConversationId, WebMessage::setConversationId);
         addFormItem(conversationId, "Conversation ID");
@@ -115,6 +113,9 @@ public class ConnectorTestMessageForm extends FormLayout {
                             webMessage.getMessageInfo().setFrom(fromParty);
                         });
         fromParty.setReadOnly(true);
+
+        binder.bindInstanceFields(this);
+
 
         addFormItem(fromParty, "From Party");
 

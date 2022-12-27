@@ -16,15 +16,21 @@ import java.util.stream.Collectors;
  * The DomibusConnectorMessageContent holds the main content of a message. This is
  * the XML data of the main Form of the message and the printable document that
  * most of the {@link DC5Action} require.
- *
+ * <p>
  * A message is a business message only if a messageContent is
  * present
- *
  *
  * @author riederb
  * @version 1.0
  * updated 29-Dez-2017 10:12:49
  */
+@NamedEntityGraph(
+		name = "content-entity-graph",
+		attributeNodes = {
+				@NamedAttributeNode("messageStates"),
+//				@NamedAttributeNode("currentState")
+		}
+)
 @Entity
 
 @AllArgsConstructor
@@ -44,9 +50,9 @@ public class DC5MessageContent {
 			DC5MessageContent content = super.build();
 			if (content.getCurrentState() == null && CollectionUtils.isEmpty(content.getMessageStates())) { //set initial state
 				content.changeCurrentState(DC5BusinessMessageState.builder()
-					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
-					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
-					.build());
+						.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
+						.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
+						.build());
 			} else if (content.getCurrentState() == null) {
 				content.setCurrentState(content.getMessageStates().get(content.getMessageStates().size() - 1)); //set to last state in list
 			}
@@ -66,19 +72,19 @@ public class DC5MessageContent {
 	private DC5BackendContent businessContent;
 
 	// TODO: use a fetch graph instead
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
-	@OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	private DC5BusinessMessageState currentState;
 
 	@Override
-    public String toString() {
-        ToStringCreator builder = new ToStringCreator(this);
-        builder.append("BusinessContent", this.businessContent);
+	public String toString() {
+		ToStringCreator builder = new ToStringCreator(this);
+		builder.append("BusinessContent", this.businessContent);
 		builder.append("ECodexContent", this.ecodexContent);
-        return builder.toString();        
-    }
+		return builder.toString();
+	}
 
 	public void changeCurrentState(DC5BusinessMessageState currentState) {
 		if (currentState.getId() == null) {

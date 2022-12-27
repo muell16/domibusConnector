@@ -15,7 +15,6 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.message.model.*;
@@ -354,7 +353,7 @@ public class ConnectorMessageFlowITCase {
 
             //message status confirmed
             txTemplate.executeWithoutResult((state) -> {
-                DC5Message persistedMessage = messageRepo.getByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+                DC5Message persistedMessage = messageRepo.findByConnectorMessageId(CONNECTOR_MESSAGE_ID);
                 assertThat(persistedMessage.getMessageContent().getCurrentState().getState())
                         .as("Message must be in state confirmed!")
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
@@ -450,7 +449,7 @@ public class ConnectorMessageFlowITCase {
 
             //message status delivered
             txTemplate.executeWithoutResult((state) -> {
-                DC5Message persistedMessage = messageRepo.getByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+                DC5Message persistedMessage = messageRepo.findByConnectorMessageId(CONNECTOR_MESSAGE_ID);
                 assertThat(persistedMessage.getMessageContent().getCurrentState().getState())
                         .as("Message must be in state delivered!")
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.DELIVERED);

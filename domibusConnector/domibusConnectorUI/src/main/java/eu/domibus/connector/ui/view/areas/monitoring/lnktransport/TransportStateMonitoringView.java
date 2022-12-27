@@ -1,23 +1,5 @@
 package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
-import org.vaadin.klaudeta.PaginatedGrid;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -32,13 +14,11 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import eu.domibus.connector.ui.component.OpenHelpButtonFactory;
@@ -46,6 +26,24 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
 import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
+import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
+import org.vaadin.klaudeta.PaginatedGrid;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @UIScope
@@ -169,8 +167,9 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
 
         //goto business message button
         Button gotoBusinessMessageButton = new Button(VaadinIcon.ENVELOPE.create());
-        gotoBusinessMessageButton.addClickListener((e) -> {
-            MessageDetails.navigateTo(connectorMessageId);
+        gotoBusinessMessageButton.addClickListener(e -> {
+            gotoBusinessMessageButton.getUI().ifPresent(ui->
+                    ui.navigate(MessageDetails.class, connectorMessageId.getConnectorMessageId()));
         });
         layout.add(gotoBusinessMessageButton);
         gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DomainModelHelper::isBusinessMessage).orElse(false));

@@ -38,6 +38,10 @@ public class DomibusConnectorWebMessagePersistenceService {
         return mapDbMessageToWebMessage(messageRepo.findOneByBackendMessageIdAndDirectionTarget(BackendMessageId.ofString(backendMessageId), backendToGateway.getTarget()));
     }
 
+    public List<WebMessage> findByConversationId(String conversationId) {
+        return mapDbMessagesToWebMessages(messageRepo.findAllByEbmsData_ConversationId(conversationId));
+    }
+
     private static class DBMessageToWebMessageConverter implements Converter<DC5Message, WebMessage> {
 
         @Nullable
@@ -72,7 +76,7 @@ public class DomibusConnectorWebMessagePersistenceService {
                     .map(DomibusConnectorLinkPartner.LinkPartnerName::getLinkName)
                     .orElse(null));
 
-            message.setMsgDirection(pMessage.getDirection().toString());
+            message.setMessageDirection(pMessage.getDirection().toString());
 
             message.setCreated(pMessage.getCreated());
 
@@ -82,9 +86,9 @@ public class DomibusConnectorWebMessagePersistenceService {
                     .orElseGet(Collections::emptyList);
 
             StringBuilder prvStatesPresentation = new StringBuilder();
-            for (int i = prvStates.size() - 1; i >= 0; i--) {
-                prvStatesPresentation.append(prvStates.get(i));
-                if (i != 0) {
+            for (int i = 0; i < prvStates.size(); i++) {
+                prvStatesPresentation.append(prvStates.get(i).getState());
+                if (i != prvStates.size()-1) {
                     prvStatesPresentation.append("->");
                 }
             }
@@ -96,7 +100,7 @@ public class DomibusConnectorWebMessagePersistenceService {
 //                            .stream().map(DC5BusinessMessageState::toString)
 //                            .collect(Collectors.joining("->")));
 
-            message.setMsgContentState(pMessage.getMessageContent() != null
+            message.setMessageContentState(pMessage.getMessageContent() != null
                     ? pMessage.getMessageContent().getCurrentState().getState().toString()
                     : null);
             // TODO: calculate the rest of the data and decide what additional data should be transported to UI
@@ -127,7 +131,7 @@ public class DomibusConnectorWebMessagePersistenceService {
         }
     }
 
-    private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<DC5Message> messages) {
+    private List<WebMessage> mapDbMessagesToWebMessages(Iterable<DC5Message> messages) {
         LinkedList<WebMessage> webMessages = new LinkedList<WebMessage>();
         Iterator<DC5Message> msgIt = messages.iterator();
         while (msgIt.hasNext()) {
