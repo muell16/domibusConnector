@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.core;
 
+import eu.ecodex.dc5.message.MessageJpaConfiguration;
 import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
 import eu.ecodex.dc5.core.repository.DC5PayloadRepo;
 import eu.ecodex.dc5.message.model.*;
@@ -12,7 +13,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
@@ -22,17 +26,17 @@ import org.springframework.test.context.TestPropertySource;
         "spring.jpa.show-sql=true",
         "spring.liquibase.enabled=false"
 })
-@Disabled
 class DC5MsgH2Tests {
 
     @SpringBootApplication
+    @Import({MessageJpaConfiguration.class})
     public static class TestConfiguration {}
 
     @Autowired
     private DC5MessageRepo msgRepo;
 
-    @Autowired
-    private DC5PayloadRepo payloadRepo;
+//    @Autowired
+//    private DC5PayloadRepo payloadRepo;
     @Autowired
     private DC5EbmsRepo ebmsRepo;
 
@@ -40,6 +44,7 @@ class DC5MsgH2Tests {
 
     @Test
     public void contextLoads() {
+        assertThat(msgRepo).isNotNull();
     }
 
     // TODO: test query performance
@@ -56,7 +61,7 @@ class DC5MsgH2Tests {
         final DC5Message save = msgRepo.save(dc5BusinessDocumentMessage);
 
         // Assert
-        Assertions.assertThat(save.getId()).isGreaterThan(1000L);
+        assertThat(save.getId()).isNotNull();
     }
 
     @Test
@@ -64,7 +69,7 @@ class DC5MsgH2Tests {
         // Arrange
         final DC5Message dc5BusinessDocumentMessage = new DC5Message();
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5Ebms.setEbmsMessageId(EbmsMessageId.ofRandom());
+        dc5Ebms.setEbmsMessageId(EbmsMessageId.ofString("foo"));
         dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
 
         // Act
@@ -72,7 +77,7 @@ class DC5MsgH2Tests {
 
         // Assert
 //        Assertions.assertThat(Optional.empty()).isPresent(); // see it fail
-        Assertions.assertThat(ebmsRepo.findByEbmsMessageId("foo")).isPresent();
+        assertThat(ebmsRepo.findByEbmsMessageId(EbmsMessageId.ofString("foo"))).isPresent();
     }
 
     @Test
@@ -87,12 +92,10 @@ class DC5MsgH2Tests {
         final DC5Ebms save = ebmsRepo.findById(id).get();
 
         // Assert
-        Assertions.assertThat(save.getGatewayAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
-        Assertions.assertThat(save.getGatewayAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
-//        Assertions.assertThat(save.getGatewayAddress().getRole().getRoleType()).isEqualTo(DC5RoleType.RESPONDER);
+        assertThat(save.getGatewayAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
+        assertThat(save.getGatewayAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
 
-        Assertions.assertThat(save.getBackendAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
-        Assertions.assertThat(save.getBackendAddress().getParty().getPartyId()).isEqualTo("ID_SENDER");
-//        Assertions.assertThat(save.getBackendAddress().getRole().getRoleType()).isEqualTo(DC5RoleType.INITIATOR);
+        assertThat(save.getBackendAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
+        assertThat(save.getBackendAddress().getParty().getPartyId()).isEqualTo("ID_SENDER");
     }
 }

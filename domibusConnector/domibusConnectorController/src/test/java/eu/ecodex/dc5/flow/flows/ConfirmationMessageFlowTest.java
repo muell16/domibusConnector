@@ -12,6 +12,7 @@ import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,11 +44,9 @@ class ConfirmationMessageFlowTest {
     @Autowired
     MessageProcessManager messageProcessManager;
 
-
-    @Before
-    public void before() {
-//        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
-//        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+    @AfterEach
+    public void afterEachTest() {
+        CurrentBusinessDomain.clear();
     }
 
 

@@ -4,9 +4,11 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.test.util.ConnectorControllerTestDomainCreator;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,11 @@ import static org.mockito.ArgumentMatchers.eq;
 @ContextConfiguration(classes = {StoreMessageExceptionIntoDatabaseAspectTest.TestContextConfiguration.class})
 @DirtiesContext(classMode=ClassMode.AFTER_EACH_TEST_METHOD)
 public class StoreMessageExceptionIntoDatabaseAspectTest {
+
+    @AfterEach
+    public void afterEachTest() {
+        CurrentBusinessDomain.clear();
+    }
     
     @Configuration
     @EnableAspectJAutoProxy
