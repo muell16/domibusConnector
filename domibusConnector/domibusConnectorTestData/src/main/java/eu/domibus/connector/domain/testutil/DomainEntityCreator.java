@@ -385,10 +385,12 @@ public class DomainEntityCreator {
         DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
         ebmsBuilder.conversationId(null);      //first message no conversation set yet!
 
-//        ebmsBuilder.receiver(createAtReceiver());
-//        ebmsBuilder.sender(createDeSender());
-        ebmsBuilder.refToEbmsMessageId(null);     //is the first message
+        ebmsBuilder.backendAddress(createEpoAddressAT());
+        ebmsBuilder.gatewayAddress(createEpoAddressDE());
+        ebmsBuilder.initiatorRole(getEpoInitiatorRole());
+        ebmsBuilder.responderRole(getEpoResponderRole());
 
+        ebmsBuilder.refToEbmsMessageId(null);     //is the first message
         ebmsBuilder.action(createActionForm_A());
         ebmsBuilder.service(createServiceEPO());
 

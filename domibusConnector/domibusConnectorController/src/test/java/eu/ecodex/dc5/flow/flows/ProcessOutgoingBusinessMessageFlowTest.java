@@ -3,29 +3,31 @@ package eu.ecodex.dc5.flow.flows;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.persistence.testutils.LargeFileMemoryProviderConfiguration;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @FlowTestAnnotation
 @Log4j2
@@ -48,36 +50,42 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
     @Autowired
     MessageProcessManager messageProcessManager;
+    private TransactionTemplate txTemplate;
 
 
-    @Before
+    @BeforeEach
     public void before() {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        this.txTemplate = new TransactionTemplate(txManager, definition);
+
         Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
     }
 
 
-    public DC5Message createMessage() {
-        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
+    public DomibusConnectorMessageId createMessage() {
+
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createOutgoingEpoFormAMessage();
             dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-            DC5Message m = messageRepo.save(dc5Message);
-            return m;
+            DC5Message m = messageRepo.saveAndFlush(dc5Message);
+            return dc5Message.getConnectorMessageId();
         });
     }
 
     @Test
     void processMessage() {
 
+        DomibusConnectorMessageId msgId = createMessage();
+
+
         messageProcessManager.startProcess();
 
-        Long msgId = createMessage().getId();
-
-        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
+//        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 
         txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getById(msgId);
+            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
             processOutgoingBusinessMessageFlow.processMessage(msg);
             return msg;
@@ -85,7 +93,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
 
         txTemplate.executeWithoutResult(s -> {
-            DC5Message msg = messageRepo.getById(msgId);
+            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
 
 
             //TODO: verify!!!
@@ -97,33 +105,31 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
     @Test
     void processMessageWithSecurityError() {
+        DomibusConnectorMessageId msgId = createMessage();
 
         Mockito.clearInvocations(securityToolkit);
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenThrow(new DomibusConnectorSecurityException());
 
-        messageProcessManager.startProcess();
+        try (MessageProcessManager.CloseableMessageProcess c = messageProcessManager.startProcess();) {
 
-        Long msgId = createMessage().getId();
-
-        TransactionTemplate txTemplate = new TransactionTemplate(txManager);
-
-        txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getById(msgId);
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-            processOutgoingBusinessMessageFlow.processMessage(msg);
-            return msg;
-        });
+            txTemplate.execute(state -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
+                CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                processOutgoingBusinessMessageFlow.processMessage(msg);
+                return msg;
+            });
 
 
-        txTemplate.executeWithoutResult(s -> {
-            DC5Message msg = messageRepo.getById(msgId);
+            txTemplate.executeWithoutResult(s -> {
+                DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
 
 
-            //TODO: verify!!!
-            assertThat(msg.getMessageContent().getCurrentState().getState())
-                    .as("Message state must be rejected")
-                    .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.REJECTED);
-        });
+                //TODO: verify!!!
+                assertThat(msg.getMessageContent().getCurrentState().getState())
+                        .as("Message state must be rejected")
+                        .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.REJECTED);
+            });
+        }
 
 
     }

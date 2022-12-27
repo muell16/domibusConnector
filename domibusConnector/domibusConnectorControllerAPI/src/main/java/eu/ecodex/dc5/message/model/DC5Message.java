@@ -91,10 +91,12 @@ public class DC5Message implements Serializable {
 
     @CheckForNull
     @Convert(converter = DomibusConnectorLinkPartner.LinkPartnerNameConverter.class)
+    @NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a gateway link name!")
     private DomibusConnectorLinkPartner.LinkPartnerName gatewayLinkName;
 
     @CheckForNull
     @Convert(converter = DomibusConnectorLinkPartner.LinkPartnerNameConverter.class)
+    @NotNull(groups = IncomingMessageRules.class, message = "A outgoing message must have a backend link name!")
     private DomibusConnectorLinkPartner.LinkPartnerName backendLinkName;
 
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
