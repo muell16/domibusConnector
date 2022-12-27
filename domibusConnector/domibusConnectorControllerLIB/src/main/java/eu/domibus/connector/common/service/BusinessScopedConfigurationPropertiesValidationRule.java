@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintViolation;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Component
@@ -21,10 +23,13 @@ public class BusinessScopedConfigurationPropertiesValidationRule implements Doma
     private static final Logger LOGGER = LogManager.getLogger(BusinessScopedConfigurationPropertiesValidationRule.class);
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
-    private final BusinessScopedConfigurationPropertiesRegistrar.BusinessScopedConfigurationPropertiesListHolder holder;
+    private final Optional<BusinessScopedConfigurationPropertiesRegistrar.BusinessScopedConfigurationPropertiesListHolder> holder;
     public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
 
-        final List<? extends ConstraintViolation<?>> hibernateConstraintViolations = holder.getBusinessScopeConfigurationPropertyBeanNames().stream()
+        Stream<? extends ConstraintViolation<?>> hibernateConstraintViolations = holder
+                .map(h -> h.getBusinessScopeConfigurationPropertyBeanNames().stream())
+                .orElse(Stream.empty())
+
                 .map((s) -> {
                     try {
                         return Class.forName(s);
@@ -34,13 +39,21 @@ public class BusinessScopedConfigurationPropertiesValidationRule implements Doma
                 })
                 .map(clazz -> configurationPropertyManagerService.loadConfigurationOnlyFromMap(domain.getProperties(), clazz))
                 .map(configurationPropertyManagerService::validateConfiguration)
-                .flatMap(Collection::stream)
-                .peek(v -> LOGGER.info("Domain Validation Error!"))
-                .peek(v -> LOGGER.info("Message: " + v.getMessage()))
-                .peek(v -> LOGGER.info("Invalid Value: " + v.getInvalidValue()))
-                .peek(v -> LOGGER.info("Property Path: " + v.getPropertyPath()))
-                .collect(Collectors.toList());
+                .flatMap(Collection::stream);
+        if (LOGGER.isDebugEnabled()) {
+            hibernateConstraintViolations = hibernateConstraintViolations.map(v -> {
+                LOGGER.debug("Domain Validation Error!\n" +
+                        "\tMessage: [{}]\n" +
+                        "\tInvalid Value: [{}]\n" +
+                        "\tProperty Path: [{}]\n",
+                v.getMessage(), v.getInvalidValue(), v.getPropertyPath());
+                return v;
+            });
+        }
 
-        return DCBusinessDomainManager.DomainValidResult.builder().errors(hibernateConstraintViolations).build();
+        return DCBusinessDomainManager.DomainValidResult
+                .builder()
+                .errors(hibernateConstraintViolations.collect(Collectors.toList()))
+                .build();
     }
 }

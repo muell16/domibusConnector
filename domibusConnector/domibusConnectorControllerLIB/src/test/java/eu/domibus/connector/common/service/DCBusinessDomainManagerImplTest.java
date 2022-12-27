@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {DCBusinessDomainManagerImpl.class, ConnectorConfigurationProperties.class})
+@SpringBootTest(classes = {DCBusinessDomainManagerImpl.class, ConnectorConfigurationProperties.class, DCDomainValidationService.class})
 class DCBusinessDomainManagerImplTest {
 
     @Autowired

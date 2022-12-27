@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-class DCDomainValidationService {
+public class DCDomainValidationService {
     private final ApplicationContext applicationContext;
 
     public DCBusinessDomainManager.DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {

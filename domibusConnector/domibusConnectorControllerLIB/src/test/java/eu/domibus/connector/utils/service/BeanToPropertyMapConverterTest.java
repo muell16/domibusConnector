@@ -1,6 +1,7 @@
 package eu.domibus.connector.utils.service;
 
 import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.common.service.DCDomainValidationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 
 import java.time.Duration;
@@ -17,7 +19,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
-        classes = {BeanToPropertyMapConverterTest.TestContext.class}
+        classes = {BeanToPropertyMapConverterTest.TestContext.class, BeanToPropertyMapConverter.class}
 )
 class BeanToPropertyMapConverterTest {
 

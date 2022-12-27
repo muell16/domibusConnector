@@ -1,6 +1,7 @@
 package eu.domibus.connector.common;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
+import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
 import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
 import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
@@ -40,7 +41,7 @@ import static org.mockito.ArgumentMatchers.eq;
         "test.example2.list[0]=abc",
         "test.example2.list[1]=def"
 },
-        classes = ConfigurationPropertyManagerServiceImplTest.TestContext.class
+        classes = {ConfigurationPropertyManagerServiceImplTest.TestContext.class, BusinessScopedConfigurationPropertiesRegistrar.class}
 )
 
 public class ConfigurationPropertyManagerServiceImplTest {
