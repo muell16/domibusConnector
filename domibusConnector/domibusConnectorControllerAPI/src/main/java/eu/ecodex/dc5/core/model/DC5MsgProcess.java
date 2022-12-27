@@ -26,12 +26,6 @@ public class DC5MsgProcess {
     @GeneratedValue
     private Long id;
 
-//    @OneToOne(cascade = CascadeType.ALL, optional = true, orphanRemoval = true)
-//    private DC5Msg message;
-
-//    @OneToOne(optional = true)
-//    private DC5Domain domain;
-
     @Column(name = "PROCESS_ID")
     private String processId;
 

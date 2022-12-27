@@ -108,9 +108,8 @@ public class ECodexContainerFactoryService {
 
     private AdvancedSystemType getAdvancedSystemType(DC5Message message) {
         Objects.requireNonNull(message, "message is not allowed to be null");
-//        Objects.requireNonNull(message.getDcMessageProcessSettings(), "messageProcess settings are not allowed to be null!");
-        AdvancedElectronicSystemType validationServiceName = null; //message.getDcMessageProcessSettings().getValidationServiceName();
-
+        Objects.requireNonNull(message.getDcMessageProcessSettings(), "messageProcess settings are not allowed to be null!");
+        AdvancedElectronicSystemType validationServiceName = message.getDcMessageProcessSettings().getValidationServiceName();
 
         if (validationServiceName != null) {
             LOGGER.debug("Using AdvancedSystemType [{}] from message", validationServiceName);

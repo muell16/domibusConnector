@@ -1,13 +1,16 @@
 package eu.ecodex.dc5.message.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
@@ -108,21 +111,37 @@ public class DC5Message implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @CheckForNull
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a transport confirmation!")
-    private DC5Confirmation transportedMessageConfirmation; //= new ArrayList<>();
+    private DC5Confirmation transportedMessageConfirmation;
 
 
     @Transient //TODO: move to process
     private final List<DomibusConnectorMessageError> messageProcessErrors = new ArrayList<>();
 
     @Transient  //TODO: move to process
+    @Builder.Default
     private DCMessageProcessSettings dcMessageProcessSettings = new DCMessageProcessSettings();
 
+    //TODO: move to process
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
+    @Column(name="PROPERTY_VALUE", length = 2048)
+    private Map<String, String> messageProcessingProperties = new HashMap<String, String>();
+
+    @PostLoad
+    public void loadDCMessageProcessSettings() {
+        dcMessageProcessSettings = DCMessageProcessSettings.of(this.messageProcessingProperties);
+    }
+
+    @PreUpdate
+    @PrePersist
+    public void saveDCMessageProcessSettings() {
+        messageProcessingProperties.putAll(this.dcMessageProcessSettings.toProperties());
+    }
 
     @JsonProperty
     public DomibusConnectorMessageId getConnectorMessageId() {
         return connectorMessageId;
     }
-
 
     @JsonProperty
     public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
@@ -150,36 +169,6 @@ public class DC5Message implements Serializable {
     }
 
 
-//    /**
-//     * Method to add a new {@link DC5Confirmation} to the
-//     * collection. This collection holds only Confirmations which are transported
-//     * with this message. In case of a business message they are also related
-//     * to it.
-//     * The collection is initialized, so no new collection needs to be
-//     * created or set.
-//     *
-//     * @param confirmation confirmation
-//     */
-//    public boolean addTransportedMessageConfirmation(final DC5Confirmation confirmation) {
-//        if (!this.transportedMessageConfirmations.contains(confirmation)) {
-//            return this.transportedMessageConfirmations.add(confirmation);
-//        } else {
-//            return false; //duplicate
-//        }
-//    }
-
-    public DCMessageProcessSettings getDcMessageProcessSettings() {
-        return dcMessageProcessSettings;
-    }
-
-    public void setDcMessageProcessSettings(DCMessageProcessSettings dcMessageProcessSettings) {
-        this.dcMessageProcessSettings = dcMessageProcessSettings;
-    }
-
-    @JsonIgnore
-    public List<DomibusConnectorMessageError> getMessageProcessErrors() {
-        return this.messageProcessErrors;
-    }
 
     /**
      * Method to add a new {@link DomibusConnectorMessageError} to the collection.

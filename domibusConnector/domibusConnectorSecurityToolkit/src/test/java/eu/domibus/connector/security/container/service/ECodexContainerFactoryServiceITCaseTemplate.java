@@ -109,13 +109,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
         DCMessageProcessSettings settings = new DCMessageProcessSettings();
         settings.setValidationServiceName(AdvancedElectronicSystemType.AUTHENTICATION_BASED);
-        DC5Message msg = DC5Message.builder().build();
-
-//                DomibusConnectorMessageBuilder.createBuilder()
-//                .setMessageDetails(DomibusConnectorMessageDetailsBuilder.create()
-//                        .withOriginalSender("originalSender")
-//                        .build())
-//                .build();
+        DC5Message msg = DomainEntityCreator.createOutgoingEpoFormAMessage();
         msg.setDcMessageProcessSettings(settings);
 
         ECodexContainerService eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(msg);
@@ -145,7 +139,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
 
 
-        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(DomainEntityCreator.createOutgoingEpoFormAMessage());
+        eCodexContainerService = getECodexContainerFactoryService().createECodexContainerService(msg);
         eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
 
         JAXBContext jaxbContext = JAXBContext.newInstance(Token.class);
