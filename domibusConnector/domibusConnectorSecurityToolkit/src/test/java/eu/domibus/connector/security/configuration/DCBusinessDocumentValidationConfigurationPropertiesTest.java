@@ -1,8 +1,10 @@
 package eu.domibus.connector.security.configuration;
 
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.dss.configuration.SignatureValidationConfigurationProperties;
 import eu.domibus.connector.common.service.BeanToPropertyMapConverter;
+import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,11 +18,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest(classes = DCBusinessDocumentValidationConfigurationPropertiesTest.TestContext.class)
+@SpringBootTest(classes = {BeanToPropertyMapConverter.class, DCBusinessDocumentValidationConfigurationPropertiesTest.TestContext.class})
 @ActiveProfiles({"test", "seclib-test"})
 class DCBusinessDocumentValidationConfigurationPropertiesTest {
 
-    @SpringBootApplication(scanBasePackages = "eu.domibus.connector.utils")
+    @SpringBootApplication
     @EnableConfigurationProperties(ConnectorConfigurationProperties.class)
     public static class TestContext {
 
