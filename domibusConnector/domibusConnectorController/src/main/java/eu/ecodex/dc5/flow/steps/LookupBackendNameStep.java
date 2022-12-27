@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.processor.steps.MessageProcessStep;
-import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
+import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.logging.MDC;
@@ -9,7 +9,6 @@ import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +36,7 @@ public class LookupBackendNameStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(LookupBackendNameStep.class);
 
-    private final DCRoutingRulesManagerImpl dcRoutingConfigManager;
-    private final DC5MessageRepo messageRepo; // TODO: replace with a service?
+    private final DCRoutingRulesManager dcRoutingConfigManager;
     private final FindBusinessMessageByMsgId dc5MessageService;
 
 

@@ -21,7 +21,7 @@ import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
+
 public abstract class CommonLargeFilePersistenceProviderITCase {
 
     @Autowired
@@ -30,7 +30,7 @@ public abstract class CommonLargeFilePersistenceProviderITCase {
     @Autowired
     TransactionTemplate transactionTemplate;
 
-    @Test
+//    @Test
     public void testPersistLargeFile() {
         final String CONNECTOR_ID = "myid001";
 
@@ -68,7 +68,7 @@ public abstract class CommonLargeFilePersistenceProviderITCase {
 
     }
 
-    @Test
+//    @Test
     public void testFindReferences() {
         final String CONNECTOR_ID = "myid006";
 
