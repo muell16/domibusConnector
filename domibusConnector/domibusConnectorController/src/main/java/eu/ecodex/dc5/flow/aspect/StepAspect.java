@@ -56,7 +56,7 @@ public class StepAspect {
             processStep.setError(e.getMessage());
             log.warn("executing step: [{}] :: failure [{}] (for stack-trace enable log level debug)", stepAnnotation.name(), e.getMessage());
             log.debug("executing step: [{}] :: tracelog:\n [{}]\n", stepAnnotation.name(), ExceptionUtils.getStackTrace(e));
-            throw e; //new StepFailedException("Failed step: [" + stepAnnotation.name() + "]", e);
+            throw new StepFailedException("Failed step: [" + stepAnnotation.name() + "]", e);
         }
 
     }

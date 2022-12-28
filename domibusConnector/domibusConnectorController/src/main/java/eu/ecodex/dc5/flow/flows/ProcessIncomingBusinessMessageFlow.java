@@ -7,6 +7,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.flow.api.StepFailedException;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
@@ -82,18 +83,20 @@ public class ProcessIncomingBusinessMessageFlow {
 					MessageTargetSource.BACKEND);
 			eventPublisher.publishEvent(messageReadyForTransportEvent); //publish transport request
 
-		} catch (DomibusConnectorSecurityException e) {
+		} catch (StepFailedException stepFailedException) {
 			//DomibusConnectorSecurityException
-
-			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
-			DC5Confirmation negativeEvidence = createRelayREMMDEvidence(incomingMessage, false, e);    //create rejection...
-			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
-			//respond with negative evidence...
-			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
-			LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
-					incomingMessage.getEbmsData().getEbmsMessageId(),
-					incomingMessage.getBackendLinkName()
-			);
+			if (stepFailedException.getCause() instanceof DomibusConnectorSecurityException) {
+				DomibusConnectorSecurityException e = (DomibusConnectorSecurityException) stepFailedException.getCause();
+				LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
+				DC5Confirmation negativeEvidence = createRelayREMMDEvidence(incomingMessage, false, e);    //create rejection...
+				messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
+				//respond with negative evidence...
+				submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
+				LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Rejected processed incoming Business Message with EBMS ID [{}] from GW to Backend Link [{}] due security exception",
+						incomingMessage.getEbmsData().getEbmsMessageId(),
+						incomingMessage.getBackendLinkName()
+				);
+			}
 
 		}
 	}
