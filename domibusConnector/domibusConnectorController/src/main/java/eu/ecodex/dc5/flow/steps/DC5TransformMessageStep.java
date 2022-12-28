@@ -3,7 +3,7 @@ package eu.ecodex.dc5.flow.steps;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.core.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.flow.api.Step;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

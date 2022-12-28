@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.core.model;
 
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.core.repository;
 
-import eu.ecodex.dc5.core.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

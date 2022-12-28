@@ -2,8 +2,8 @@ package eu.ecodex.dc5.process;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.ecodex.dc5.message.model.DC5MessageId;
-import eu.ecodex.dc5.core.model.DC5MsgProcess;
-import eu.ecodex.dc5.core.model.DC5ProcessStep;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.DC5ProcessStep;
 import eu.ecodex.dc5.core.repository.DC5MsgProcessRepo;
 import org.springframework.stereotype.Service;
 

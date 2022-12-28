@@ -1,12 +1,10 @@
 package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.ErrorCode;
-import eu.ecodex.dc5.core.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.message.model.DC5Message;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.CheckForNull;

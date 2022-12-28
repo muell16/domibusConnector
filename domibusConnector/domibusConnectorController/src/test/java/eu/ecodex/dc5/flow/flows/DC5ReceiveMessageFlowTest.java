@@ -8,7 +8,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.testdata.TransitionCreator;
-import eu.ecodex.dc5.core.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.message.model.DC5Message;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.exception.ExceptionUtils;

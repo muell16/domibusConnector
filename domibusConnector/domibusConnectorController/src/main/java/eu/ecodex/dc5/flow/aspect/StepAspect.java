@@ -2,7 +2,7 @@ package eu.ecodex.dc5.flow.aspect;
 
 import eu.ecodex.dc5.process.MessageProcessManager;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.ecodex.dc5.core.model.DC5ProcessStep;
+import eu.ecodex.dc5.process.model.DC5ProcessStep;
 import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.flow.api.StepFailedException;
 import lombok.extern.log4j.Log4j2;

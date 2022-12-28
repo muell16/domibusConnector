@@ -1,6 +1,5 @@
-package eu.ecodex.dc5.core.model;
+package eu.ecodex.dc5.process.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
