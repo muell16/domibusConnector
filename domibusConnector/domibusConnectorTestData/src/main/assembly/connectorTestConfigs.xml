@@ -3,13 +3,12 @@
     <id>testconfig</id>
     <formats>
         <format>zip</format>
-        <format>jar</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
             <includes>
-                <include>connector.properties</include>
+                <include>**/*</include>
             </includes>
             <directory>${project.basedir}/src/main/env</directory>
             <outputDirectory>properties</outputDirectory>
