@@ -83,8 +83,10 @@ public class ProcessIncomingBusinessMessageFlow {
 			eventPublisher.publishEvent(messageReadyForTransportEvent); //publish transport request
 
 		} catch (DomibusConnectorSecurityException e) {
+			//DomibusConnectorSecurityException
+
 			LOGGER.warn("Security Exception occured! Responding with RelayRemmdRejection ConfirmationMessage", e);
-			DC5Confirmation negativeEvidence = createRelayREMMDEvidence(incomingMessage, false, e);	//create rejection...
+			DC5Confirmation negativeEvidence = createRelayREMMDEvidence(incomingMessage, false, e);    //create rejection...
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, negativeEvidence);
 			//respond with negative evidence...
 			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, negativeEvidence);
@@ -92,6 +94,7 @@ public class ProcessIncomingBusinessMessageFlow {
 					incomingMessage.getEbmsData().getEbmsMessageId(),
 					incomingMessage.getBackendLinkName()
 			);
+
 		}
 	}
 
