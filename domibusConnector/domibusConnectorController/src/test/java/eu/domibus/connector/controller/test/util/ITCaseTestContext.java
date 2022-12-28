@@ -147,31 +147,31 @@ public class ITCaseTestContext {
 //        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DC5Message> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
 
-        public synchronized void deliverMessageToBackend(DC5Message message) throws DomibusConnectorControllerException {
-            interceptor.deliveryToBackend(message);
-
-            LOGGER.info("Delivered Message [{}] to Backend", message);
-
-
-            TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
-            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-            state.setConnectorTransportId(transportId);
-            state.setStatus(TransportState.ACCEPTED);
-
-
-            java.lang.String backendMsgId = "BACKEND_" + UUID.randomUUID().toString();
-            state.setRemoteMessageId(backendMsgId); //assigned backend message id
-            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStateService.updateTransportToBackendClientStatus(transportId, state);
-
-//            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
-//                    .copyPropertiesFrom(message)
-//                    .build();
-//            msg.getBackendData().setBackendMessageId(new BackendMessageId(backendMsgId));
+//        public synchronized void deliverMessageToBackend(DC5Message message) throws DomibusConnectorControllerException {
+//            interceptor.deliveryToBackend(message);
 //
-//            toBackendDeliveredMessages.add(msg);
-
-        }
+//            LOGGER.info("Delivered Message [{}] to Backend", message);
+//
+//
+//            TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+//            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
+//            state.setConnectorTransportId(transportId);
+//            state.setStatus(TransportState.ACCEPTED);
+//
+//
+//            java.lang.String backendMsgId = "BACKEND_" + UUID.randomUUID().toString();
+//            state.setRemoteMessageId(backendMsgId); //assigned backend message id
+//            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
+//            transportStateService.updateTransportToBackendClientStatus(transportId, state);
+//
+////            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
+////                    .copyPropertiesFrom(message)
+////                    .build();
+////            msg.getBackendData().setBackendMessageId(new BackendMessageId(backendMsgId));
+////
+////            toBackendDeliveredMessages.add(msg);
+//
+//        }
 
         synchronized public void clearQueue() {
             toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);
@@ -194,27 +194,27 @@ public class ITCaseTestContext {
 //        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DC5Message> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
 
-        public synchronized void submitToGateway(DC5Message message) throws DomibusConnectorGatewaySubmissionException {
-//            interceptor.submitToGateway(message);
-            LOGGER.info("Delivered Message [{}] to Gateway", message);
-
-            TransportStateService.TransportId dummyGW = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));
-            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-            state.setConnectorTransportId(dummyGW);
-//            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
-            state.setStatus(TransportState.ACCEPTED);
-            EbmsMessageId ebmsId = EbmsMessageId.ofString("EBMS_" + UUID.randomUUID());
-            state.setRemoteMessageId(ebmsId.getEbmsMesssageId()); //assigned EBMS ID
-            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStateService.updateTransportToGatewayStatus(dummyGW , state);
-
-//            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
-//                    .copyPropertiesFrom(message)
-//                    .build();
-//            msg.getEbmsData().setEbmsMessageId(ebmsId);
-
-//            toGatewayDeliveredMessages.add(msg);
-        }
+//        public synchronized void submitToGateway(DC5Message message) throws DomibusConnectorGatewaySubmissionException {
+////            interceptor.submitToGateway(message);
+//            LOGGER.info("Delivered Message [{}] to Gateway", message);
+//
+//            TransportStateService.TransportId dummyGW = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));
+//            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
+//            state.setConnectorTransportId(dummyGW);
+////            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
+//            state.setStatus(TransportState.ACCEPTED);
+//            EbmsMessageId ebmsId = EbmsMessageId.ofString("EBMS_" + UUID.randomUUID());
+//            state.setRemoteMessageId(ebmsId.getEbmsMesssageId()); //assigned EBMS ID
+//            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
+//            transportStateService.updateTransportToGatewayStatus(dummyGW , state);
+//
+////            DC5Message msg = DomibusConnectorMessageBuilder.createBuilder()
+////                    .copyPropertiesFrom(message)
+////                    .build();
+////            msg.getEbmsData().setEbmsMessageId(ebmsId);
+//
+////            toGatewayDeliveredMessages.add(msg);
+//        }
 
         synchronized public void clearQueue() {
             toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
