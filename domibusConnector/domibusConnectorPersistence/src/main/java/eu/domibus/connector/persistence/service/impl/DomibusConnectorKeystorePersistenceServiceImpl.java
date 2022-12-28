@@ -1,8 +1,8 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
-import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
-import eu.domibus.connector.persistence.model.DC5ConfigItem;
+import eu.ecodex.dc5.util.repository.DC5ConfigItemDao;
+import eu.ecodex.dc5.util.model.DC5ConfigItem;
 import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersistenceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
 
 	
 	@Autowired
-    DomibusConnectorKeystoreDao keystoreDao;
+	DC5ConfigItemDao keystoreDao;
 
 	@Override
 	@Transactional

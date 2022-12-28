@@ -1,6 +1,6 @@
-package eu.domibus.connector.persistence.dao;
+package eu.ecodex.dc5.link.repository;
 
-import eu.domibus.connector.persistence.model.DC5LinkConfigJpaEntity;
+import eu.ecodex.dc5.link.model.DC5LinkConfigJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

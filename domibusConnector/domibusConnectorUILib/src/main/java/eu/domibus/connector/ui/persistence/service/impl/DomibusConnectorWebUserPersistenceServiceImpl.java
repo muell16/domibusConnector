@@ -13,14 +13,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
+import eu.ecodex.dc5.util.repository.DC5UserPasswordDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.util.CollectionUtils;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
-import eu.domibus.connector.persistence.model.DC5User;
-import eu.domibus.connector.persistence.model.DC5UserPassword;
+import eu.ecodex.dc5.util.repository.DC5UserDao;
+import eu.ecodex.dc5.util.model.DC5User;
+import eu.ecodex.dc5.util.model.DC5UserPassword;
 import eu.domibus.connector.ui.dto.WebUser;
 import eu.domibus.connector.ui.enums.UserRole;
 import eu.domibus.connector.ui.exception.InitialPasswordException;
@@ -30,14 +30,14 @@ import eu.domibus.connector.ui.persistence.service.DomibusConnectorWebUserPersis
 @org.springframework.stereotype.Service("webUserPersistenceService")
 public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusConnectorWebUserPersistenceService {
 
-	private DomibusConnectorUserDao userDao;
-	private DomibusConnectorUserPasswordDao passwordDao;
+	private DC5UserDao userDao;
+	private DC5UserPasswordDao passwordDao;
 
 	/*
      * DAO SETTER  
      */
     @Autowired
-	public void setUserDao(DomibusConnectorUserDao userDao) {
+	public void setUserDao(DC5UserDao userDao) {
 		this.userDao = userDao;
 	}
 
@@ -45,7 +45,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
      * DAO SETTER  
      */
     @Autowired
-	public void setPasswordDao(DomibusConnectorUserPasswordDao passwordDao) {
+	public void setPasswordDao(DC5UserPasswordDao passwordDao) {
 		this.passwordDao = passwordDao;
 	}
 

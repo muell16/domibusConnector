@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.spring;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
-import eu.domibus.connector.persistence.model.DC5ConfigItem;
+import eu.ecodex.dc5.util.repository.DC5ConfigItemDao;
+import eu.ecodex.dc5.util.model.DC5ConfigItem;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,10 @@ public class DatabaseResourceLoader {
 
     public static final String DB_URL_PREFIX = "dbkeystore:";
 
-    private final DomibusConnectorKeystoreDao keystoreDao;
+    private final DC5ConfigItemDao keystoreDao;
 
     public DatabaseResourceLoader(
-            DomibusConnectorKeystoreDao keystoreDao) {
+            DC5ConfigItemDao keystoreDao) {
         this.keystoreDao = keystoreDao;
     }
 

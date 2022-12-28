@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.ecodex.dc5.util.model.DC5ConfigItem;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;

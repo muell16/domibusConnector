@@ -25,8 +25,8 @@ public class StoreMessageExceptionIntoDatabaseAspect {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StoreMessageExceptionIntoDatabaseAspect.class);
     
-    @Autowired
-    DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
+//    @Autowired
+//    DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 
     @Around(value="@annotation(eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase) && @annotation(annot)",            
             argNames="annot")
@@ -73,7 +73,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
                                         
             DomibusConnectorMessageError messageError = messageErrorBuilder.build();
                     
-            messageErrorPersistenceService.persistMessageError(message.getConnectorMessageId().getConnectorMessageId(), messageError);
+//            messageErrorPersistenceService.persistMessageError(message.getConnectorMessageId().getConnectorMessageId(), messageError);
 
             
         } else {

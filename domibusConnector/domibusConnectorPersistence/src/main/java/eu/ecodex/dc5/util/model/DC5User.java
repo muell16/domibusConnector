@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.model;
+package eu.ecodex.dc5.util.model;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import eu.domibus.connector.persistence.model.enums.UserRole;

@@ -1,7 +1,8 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.persistence.model.DC5LinkPartnerJpaEntity;
+import eu.ecodex.dc5.link.model.DC5LinkPartnerJpaEntity;
+import eu.ecodex.dc5.link.repository.DomibusConnectorLinkPartnerDao;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -27,10 +27,7 @@ public class ConfigurationUtil {
 
 	@Autowired
 	Environment env;
-	
-	@Autowired
-	DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
-	
+
 	@Autowired
 	ConfigurationProperties configurationProperties;
 	
@@ -146,7 +143,7 @@ public class ConfigurationUtil {
 					((TextField)c).setValue(contextValue);
 			}
 		}
-		propertiesPersistenceService.resetProperties(configurationProperties.getProperties());
+//		propertiesPersistenceService.resetProperties(configurationProperties.getProperties());
 		configurationProperties.clearChanges();
 	}
 	
@@ -166,7 +163,7 @@ public class ConfigurationUtil {
 	}
 	
 	public void saveConfiguration() {
-		propertiesPersistenceService.saveProperties(configurationProperties.getProperties());
+//		propertiesPersistenceService.saveProperties(configurationProperties.getProperties());
 		for(String componentId: configurationProperties.getChangedcomponents().keySet()) {
 			com.vaadin.flow.component.Component c = configurationProperties.getChangedcomponents().get(componentId);
 			Object value = null;

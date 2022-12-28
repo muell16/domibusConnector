@@ -13,6 +13,7 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+@Deprecated
 public interface TransportStepPersistenceService {
 
     DomibusConnectorTransportStep createNewTransportStep(DomibusConnectorTransportStep transportStep);

@@ -28,8 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
+
+@Deprecated
 public class TransportStepPersistenceServiceImpl implements TransportStepPersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(TransportStepPersistenceServiceImpl.class);
