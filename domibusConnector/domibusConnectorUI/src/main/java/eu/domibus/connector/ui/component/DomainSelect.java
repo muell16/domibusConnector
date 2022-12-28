@@ -24,5 +24,6 @@ public class DomainSelect extends Select<DomibusConnectorBusinessDomain.Business
                         .stream().map(d -> d.getId()).collect(Collectors.toList());
         this.setItems(activeBusinessDomainIds);
         this.setValue(activeBusinessDomainIds.get(0));
+        this.setRequired(true);
     }
 }

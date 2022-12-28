@@ -12,25 +12,24 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.domain.model.*;
-import eu.ecodex.dc5.message.model.DC5Party;
-import eu.ecodex.dc5.pmode.DC5PmodeService;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
-import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.service.WebKeystoreService.CertificateInfo;
+import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
-
 import eu.ecodex.dc5.message.model.DC5Action;
+import eu.ecodex.dc5.message.model.DC5Party;
 import eu.ecodex.dc5.message.model.DC5Service;
+import eu.ecodex.dc5.pmode.DC5PmodeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 @Component
 @UIScope
@@ -46,6 +45,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 	WebPModeService pmodeService;
 	ConfigurationUtil util;
+	private DomainSelect domainSelect;
 
 	DC5PmodeService.DomibusConnectorPModeSet activePModeSet;
 
@@ -72,12 +72,13 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 	Grid<DC5PmodeService.DomibusConnectorPModeSet> pModesGrid;
 
-	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+	public DataTables(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, DomainSelect domainSelect) {
 		super(HELP_ID, TITLE);
 		
 		this.pmodeService = pmodeService;
 		this.util = util;
-
+		this.domainSelect = domainSelect;
+		domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> this.refreshUI());
 
 		//CAVE: activePModeSet can be null!!
 		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId()).orElse(null);
@@ -103,7 +104,9 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		activePModeSetLayout.add(areaNoActivePModeSetDiv);
 
 		LumoLabel activePModeSetLabel = createChapterText("Active PMode Set data:");
-		
+
+		activePModeSetLayout.add(domainSelect);
+
 		activePModeSetLayout.add(activePModeSetLabel);
 
 		LumoLabel uploadedAtHeader = new LumoLabel("Active PMode Set uploaded at: ");
@@ -326,9 +329,8 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		return label;
 	}
 
-	@Override
-	public void afterNavigation(AfterNavigationEvent arg0) {
-		activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId()).orElse(null);
+	private void refreshUI() {
+		activePModeSet = this.pmodeService.getCurrentPModeSet(domainSelect.getValue()).orElse(null);
 
 		areaNoActivePModeSetDiv.removeAll();
 
@@ -423,6 +425,11 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		List<DC5PmodeService.DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
 		pModesGrid.setItems(inactivePModesList);
 
+	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent arg0) {
+		refreshUI();
 	}
 
 }

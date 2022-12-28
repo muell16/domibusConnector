@@ -341,7 +341,6 @@ public class WebPModeService {
 
 
     public List<DC5PmodeService.PModeParty> getPartyList() {
-
         return getCurrentPModeSetOrNewSet().getParties();
     }
 
