@@ -1120,7 +1120,6 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>${jacoco.agent.ut.arg}</argLine>
                             <includes>
                                 <include>**/*Test.java</include>
                             </includes>
@@ -1165,9 +1164,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <argLine>${jacoco.agent.it.arg}</argLine>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -1197,7 +1193,6 @@
                                     <goal>integration-test</goal>
                                 </goals>
                                 <configuration>
-                                    <argLine>${jacoco.agent.it.arg}</argLine>
                                     <includes>
                                         <include>**/*DBUnit.java</include>
                                     </includes>
