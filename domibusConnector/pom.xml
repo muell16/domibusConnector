@@ -71,6 +71,8 @@
         <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
         <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
+        <com.github.fge.jackson-coreutils.version>1.8</com.github.fge.jackson-coreutils.version>
+        <jod-time.joda-time.version>2.10.10</jod-time.joda-time.version>
         <!-- if a proxy is used during build or test configure this properties 
 			by overwriting them in your settings.xml file -->
         <https.proxy.enabled>false</https.proxy.enabled>
@@ -162,6 +164,16 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-spring-boot-starter</artifactId>
                 <version>${vaadin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fge</groupId>
+                <artifactId>jackson-coreutils</artifactId>
+                <version>${com.github.fge.jackson-coreutils.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.ecodex.utils</groupId>
