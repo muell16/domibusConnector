@@ -1,9 +1,5 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
-import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
@@ -12,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.util.stream.IntStream;
 
 /**
  * Test the persistence of multiple messages

@@ -106,7 +106,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
         if (message.getMessageContent().getBusinessContent().getBusinessDocument() != null) {
             //
 //            DomibusConnectorMessageDocument document = messageContent.getDocument();
-            DomibusConnectorMessageAttachment businessPdf = message.getMessageContent().getBusinessContent().getBusinessDocument();
+            DC5MessageAttachment businessPdf = message.getMessageContent().getBusinessContent().getBusinessDocument();
             //TODO add MimeType to Document!
             //we are still assuming that the bussiness document is always a pdf!
             String pdfName = StringUtils.isEmpty(businessPdf.getName()) ? MAIN_DOCUMENT_NAME
@@ -119,7 +119,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
         } else if (message.getMessageContent().getBusinessContent().getBusinessXml() != null) {
 //            byte[] content = message.getMessageContent().getBusinessContent().getBusinessXml();
 //            dssDocument = new InMemoryDocument(content, MAIN_DOCUMENT_NAME + ".xml", MimeType.XML);
-            DomibusConnectorMessageAttachment businessXml = message.getMessageContent().getBusinessContent().getBusinessXml();
+            DC5MessageAttachment businessXml = message.getMessageContent().getBusinessContent().getBusinessXml();
             dssDocument = createLargeFileBasedDssDocument(businessXml, MAIN_DOCUMENT_NAME + ".xml", MimeType.XML);
         } else {
             LOGGER.error("No content found for container!");
@@ -145,7 +145,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
 //            businessContent.setDetachedSignature(detachedSignature);
 //        }
 
-        for (DomibusConnectorMessageAttachment attachment : message.getMessageContent().getBusinessContent().getAttachments()) {
+        for (DC5MessageAttachment attachment : message.getMessageContent().getBusinessContent().getAttachments()) {
 
 
             MimeType mimeType = MimeType.fromMimeTypeString(attachment.getMimeType());
@@ -202,7 +202,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 DSSDocument asicDocument = container.getAsicDocument();
                 if (asicDocument != null) {
                     LOGGER.trace("converting asicDocument [{}] to asic message attachment and appending it to message", asicDocument);
-                    DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
+                    DC5MessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
                     eCodexContentBuilder.asicContainer(asicAttachment);
 
                 }
@@ -212,7 +212,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                     LOGGER.trace("converting tokenXml {[{}] to message attachment and appending it to message", tokenXML);
                     tokenXML.setName(TOKEN_XML_FILE_NAME);
                     tokenXML.setMimeType(MimeType.XML);
-                    DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
+                    DC5MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
                     eCodexContentBuilder.trustTokenXml(tokenAttachment);
                 }
                 message.getMessageContent().setEcodexContent(eCodexContentBuilder.build());
@@ -253,8 +253,8 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             throw new DomibusConnectorSecurityException("The provided message is incomplete!", npe);
         }
 
-        DomibusConnectorMessageAttachment asicsAttachment = message.getMessageContent().getEcodexContent().getAsicContainer();
-        DomibusConnectorMessageAttachment tokenXMLAttachment = message.getMessageContent().getEcodexContent().getTrustTokenXml();
+        DC5MessageAttachment asicsAttachment = message.getMessageContent().getEcodexContent().getAsicContainer();
+        DC5MessageAttachment tokenXMLAttachment = message.getMessageContent().getEcodexContent().getTrustTokenXml();
 
         try (
                 InputStream asicInputStream = getAsicsContainerInputStream(asicsAttachment);
@@ -282,7 +282,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 throw new DomibusConnectorSecurityException("The resolved container is null!");
             }
 
-            DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder businessDocumentFromContainer
+            DC5MessageAttachment.DC5MessageAttachmentBuilder businessDocumentFromContainer
                     = retreiveBusinessDocumentFromContainer(message.getConnectorMessageId(), container);
             backendContent.businessDocument(businessDocumentFromContainer.build());
 
@@ -290,7 +290,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
                 for (DSSDocument businessAttachment : container.getBusinessAttachments()) {
                     try {
-                        DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(
+                        DC5MessageAttachment attachment = convertDocumentToMessageAttachment(
                                 message,
                                 businessAttachment,
                                 businessAttachment.getName());
@@ -306,7 +306,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 try {
                     tokenPDF.setMimeType(MimeType.PDF);
                     tokenPDF.setName(TOKEN_PDF_FILE_NAME);
-                    DomibusConnectorMessageAttachment pdfTokenAttachment = convertDocumentToMessageAttachment(message, tokenPDF, TOKEN_PDF_IDENTIFIER);
+                    DC5MessageAttachment pdfTokenAttachment = convertDocumentToMessageAttachment(message, tokenPDF, TOKEN_PDF_IDENTIFIER);
                     backendContent.trustTokenPDF(pdfTokenAttachment);
                 } catch (IOException e) {
                     LOGGER.error("Could not read Token PDF!", e);
@@ -318,7 +318,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 try {
                     tokenXML.setMimeType(MimeType.XML);
                     tokenXML.setName(TOKEN_XML_FILE_NAME);
-                    DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
+                    DC5MessageAttachment attachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
                     backendContent.trustTokenXml(attachment);
                 } catch (IOException e) {
                     LOGGER.error("Could not read Token XML!", e);
@@ -332,11 +332,11 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
 
     }
 
-    private DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder retreiveBusinessDocumentFromContainer(DomibusConnectorMessageId messageMessageId, ECodexContainer container) {
+    private DC5MessageAttachment.DC5MessageAttachmentBuilder retreiveBusinessDocumentFromContainer(DC5MessageId messageMessageId, ECodexContainer container) {
         LOGGER.trace("recieveContainerContents: check if businessContent contains detachedSignature [{}]",
                 container.getBusinessContent().getDetachedSignature() != null);
 
-        DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder businessDocumentBuilder = DomibusConnectorMessageAttachment.builder();
+        DC5MessageAttachment.DC5MessageAttachmentBuilder businessDocumentBuilder = DC5MessageAttachment.builder();
         DetachedSignature.DetachedSignatureBuilder detachedSignatureBuilder = DetachedSignature.builder();
 
         if (container.getBusinessContent().getDetachedSignature() != null) {
@@ -443,7 +443,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
         }
     }
 
-    private InputStream getAsicsContainerInputStream(DomibusConnectorMessageAttachment asicsAttachment) {
+    private InputStream getAsicsContainerInputStream(DC5MessageAttachment asicsAttachment) {
         LargeFileReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
         InputStream asicInputStream;
         try {
@@ -458,7 +458,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
         }
     }
 
-    private InputStream getTokenXmlStream(DomibusConnectorMessageAttachment tokenXMLAttachment) {
+    private InputStream getTokenXmlStream(DC5MessageAttachment tokenXMLAttachment) {
         LargeFileReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
         InputStream tokenStream;
         try {
@@ -490,7 +490,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
     }
 
 
-    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DC5Message message, DSSDocument document, String identifier) //, String name, String mimeType)
+    private DC5MessageAttachment convertDocumentToMessageAttachment(DC5Message message, DSSDocument document, String identifier) //, String name, String mimeType)
             throws IOException {
         LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
 
@@ -526,7 +526,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
         }
 
-        DomibusConnectorMessageAttachment attachment = DomibusConnectorMessageAttachment
+        DC5MessageAttachment attachment = DC5MessageAttachment
                 .builder()
                 .identifier(identifier)
                 .attachment(bigDataRef)
@@ -552,7 +552,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
      * @return the created InMemoryDocument
      */
     @Deprecated
-    DSSDocument createLargeFileBasedDssDocument(DomibusConnectorMessageAttachment attachment, String name, MimeType mimeType) {
+    DSSDocument createLargeFileBasedDssDocument(DC5MessageAttachment attachment, String name, MimeType mimeType) {
         LargeFileReference dataRef = attachment.getAttachment();
         LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
         try (InputStream inputStream = readableDataSource.getInputStream()) {

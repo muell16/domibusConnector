@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.controller.service;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +19,6 @@ public interface DomibusConnectorMessageIdGenerator {
      * @return the message id
      */
     @NotNull
-    public DomibusConnectorMessageId generateDomibusConnectorMessageId();
+    public DC5MessageId generateDomibusConnectorMessageId();
 
 }

@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
@@ -17,12 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,12 +58,12 @@ class ProcessIncomingBusinessMessageFlowTest {
         CurrentBusinessDomain.clear();
     }
 
-    public DomibusConnectorMessageId createMessage() {
+    public DC5MessageId createMessage() {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createIncomingEpoFormAMessage();
             dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-            dc5Message.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
+            dc5Message.setConnectorMessageId(DC5MessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
             return dc5Message.getConnectorMessageId();
         });
@@ -78,7 +74,7 @@ class ProcessIncomingBusinessMessageFlowTest {
     public void testIncomingBusinessMessage() {
         try (MessageProcessManager.CloseableMessageProcess process = messageProcessManager.startProcess(); ){
 
-            DomibusConnectorMessageId msgId = createMessage();
+            DC5MessageId msgId = createMessage();
 
             TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 

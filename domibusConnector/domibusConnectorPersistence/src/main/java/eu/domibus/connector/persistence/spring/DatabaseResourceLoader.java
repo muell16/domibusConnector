@@ -1,18 +1,11 @@
 package eu.domibus.connector.persistence.spring;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+import eu.domibus.connector.persistence.model.DC5ConfigItem;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Optional;
 
 @Component
@@ -32,7 +25,7 @@ public class DatabaseResourceLoader {
 //            DomibusConnectorKeystoreDao databaseResourceDao =
 //                    this.keystoreDao.getBean(DomibusConnectorKeystoreDao.class);
             String resourceName = location.substring(DB_URL_PREFIX.length());
-            Optional<PDomibusConnectorKeystore> byUuid = keystoreDao.findByUuid(resourceName);
+            Optional<DC5ConfigItem> byUuid = keystoreDao.findByUuid(resourceName);
             if (byUuid.isPresent()) {
                 return new DatabaseResource(byUuid.get().getKeystore(), "Database Resource: [" + resourceName + "]", location);
             }

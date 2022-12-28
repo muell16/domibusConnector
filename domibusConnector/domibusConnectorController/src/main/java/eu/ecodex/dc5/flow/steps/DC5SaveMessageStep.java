@@ -1,12 +1,9 @@
 package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.flow.api.Step;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

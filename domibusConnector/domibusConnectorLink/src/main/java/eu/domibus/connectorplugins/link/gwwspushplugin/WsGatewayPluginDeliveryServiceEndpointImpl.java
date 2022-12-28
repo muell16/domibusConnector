@@ -4,8 +4,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -36,7 +35,7 @@ public class WsGatewayPluginDeliveryServiceEndpointImpl implements DomibusConnec
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         String linkName = linkPartner.getLinkPartnerName().getLinkName();
         DomibsConnectorAcknowledgementType ret = new DomibsConnectorAcknowledgementType();
-        DomibusConnectorMessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        DC5MessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         try (MDC.MDCCloseable mdc = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkName);
                 MDC.MDCCloseable conId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId.getConnectorMessageId())
         ) {

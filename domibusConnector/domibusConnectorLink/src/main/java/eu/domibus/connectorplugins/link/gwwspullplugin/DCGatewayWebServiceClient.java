@@ -3,14 +3,11 @@ package eu.domibus.connectorplugins.link.gwwspullplugin;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.*;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
-import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.PullFromLinkPartner;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
@@ -26,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 
 public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromLinkPartner {
@@ -89,7 +85,7 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
 
     private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, java.lang.String remoteMessageId) {
 
-        DomibusConnectorMessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        DC5MessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId);
             MDC.MDCCloseable conMsgId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId.getConnectorMessageId());
         ) {

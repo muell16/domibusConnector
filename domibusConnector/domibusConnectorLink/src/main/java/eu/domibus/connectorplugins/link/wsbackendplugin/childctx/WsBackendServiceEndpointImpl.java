@@ -22,7 +22,7 @@ import eu.domibus.connector.ws.backend.webservice.GetMessageByIdRequest;
 import eu.domibus.connector.ws.backend.webservice.ListPendingMessageIdsResponse;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginActiveLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
@@ -122,8 +122,8 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Override
     public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType submitMessageRequest) {
-        DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
-        try (MDC.MDCCloseable conId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, domibusConnectorMessageId.getConnectorMessageId())
+        DC5MessageId DC5MessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        try (MDC.MDCCloseable conId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, DC5MessageId.getConnectorMessageId())
         ) {
             DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
             try {
@@ -139,7 +139,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
                             DC5Message msg = transformerService.transformTransitionToDomain(MessageTargetSource.GATEWAY,
                                     linkPartner.getLinkPartnerName(),
                                     m,
-                                    domibusConnectorMessageId);
+                                    DC5MessageId);
                             msg.setBackendLinkName(linkPartner.getLinkPartnerName());
                             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
                             return msg;

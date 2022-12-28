@@ -77,7 +77,7 @@ public class EvidenceMessageProcessorTest {
             DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
             businessMsg.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
-            businessMsg.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
+            businessMsg.setConnectorMessageId(DC5MessageId.ofRandom());
             businessMsg.getBackendData().setBackendMessageId(BackendMessageId.ofRandom());
             businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
@@ -138,7 +138,7 @@ public class EvidenceMessageProcessorTest {
             DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
 //            businessMsg.getEbmsData().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
-            businessMsg.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
+            businessMsg.setConnectorMessageId(DC5MessageId.ofRandom());
 //            businessMsg.getEbmsData().setBackendMessageId(UUID.randomUUID().toString());
             businessMsg.setMessageLaneId(domain);
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);

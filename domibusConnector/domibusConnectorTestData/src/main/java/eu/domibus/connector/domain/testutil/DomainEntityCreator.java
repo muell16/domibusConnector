@@ -62,27 +62,6 @@ public class DomainEntityCreator {
                 .build();
     }
 
-    public static DomibusConnectorParty createPartyATasInitiator() {
-        DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-        p.setRoleType(DomibusConnectorParty.PartyRoleType.INITIATOR);
-        return p;
-    }
-    
-    public static DomibusConnectorParty createPartyDE() {
-        DomibusConnectorParty p = new DomibusConnectorParty("DE", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-        p.setRoleType(DomibusConnectorParty.PartyRoleType.RESPONDER);
-        return p;
-    }
-
-    public static DomibusConnectorParty createPartyDomibusRed() {
-        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-        return p;
-    }
-
-    public static DomibusConnectorParty createPartyDomibusBlue() {
-        return new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-    }
-    
     public static DC5Action createActionForm_A() {
         return DC5Action.builder().action("Form_A").build();
     }
@@ -146,8 +125,8 @@ public class DomainEntityCreator {
         return confirmation;
     }
     
-    public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
-        return DomibusConnectorMessageAttachment.builder()
+    public static DC5MessageAttachment createSimpleMessageAttachment() {
+        return DC5MessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
                 .identifier("simple_attachment")
                 .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
@@ -213,15 +192,11 @@ public class DomainEntityCreator {
         
         DC5MessageContent messageContent = new DC5MessageContent();
 
-        DetachedSignature detachedSignature = DetachedSignature.builder()
-                .detachedSignature("detachedSignature".getBytes())
-                .detachedSignatureName("signaturename")
-                .mimeType(DetachedSignatureMimeType.BINARY)
-                .build();
-                
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
-                        
-//        messageContent.setDocument(messageDocument);
+//        DetachedSignature detachedSignature = DetachedSignature.builder()
+//                .detachedSignature("detachedSignature".getBytes())
+//                .detachedSignatureName("signaturename")
+//                .mimeType(DetachedSignatureMimeType.BINARY)
+//                .build();
 
         return DC5Message.builder()
                         .transportedMessageConfirmation(createMessageDeliveryConfirmation())
@@ -235,11 +210,11 @@ public class DomainEntityCreator {
     public static final DomibusConnectorLinkPartner.LinkPartnerName EPO_BACKEND = DomibusConnectorLinkPartner.LinkPartnerName.of("epo_backend");
 
     public static DC5Message createOutgoingEpoFormAMessage() {
-        return createOutgoingEpoFormAMessage(DomibusConnectorMessageId.ofRandom(), BackendMessageId.ofRandom()).build();
+        return createOutgoingEpoFormAMessage(DC5MessageId.ofRandom(), BackendMessageId.ofRandom()).build();
     }
 
     public static DC5Message createAlreadyOutgoneEpoFormAMessage() {
-        return createOutgoingEpoFormAMessage(DomibusConnectorMessageId.ofRandom(), BackendMessageId.ofRandom())
+        return createOutgoingEpoFormAMessage(DC5MessageId.ofRandom(), BackendMessageId.ofRandom())
                 .target(MessageTargetSource.GATEWAY)
                 .source(MessageTargetSource.BACKEND)
                 .gatewayLinkName(DomibusConnectorLinkPartner.LinkPartnerName.of("gateway"))
@@ -270,7 +245,7 @@ public class DomainEntityCreator {
                 .build();
     }
 
-    public static DC5Message.DC5MessageBuilder createOutgoingEpoFormAMessage(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
+    public static DC5Message.DC5MessageBuilder createOutgoingEpoFormAMessage(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
                 .backendData(createOutgoingEpoFormAMessageBackendData(backendMessageId))
                 .ebmsData(createOutgoingEpoFormAMessageEbmsData().build())
@@ -291,8 +266,8 @@ public class DomainEntityCreator {
 
     }
 
-    private static DomibusConnectorMessageAttachment createFormAAttachment() {
-        return DomibusConnectorMessageAttachment.builder()
+    private static DC5MessageAttachment createFormAAttachment() {
+        return DC5MessageAttachment.builder()
                 .identifier("Form_A.xml")
                 .attachment(connectorBigDataReferenceFromDataSource("<testxml />")) //better load real form A here!
                 .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
@@ -479,9 +454,9 @@ public class DomainEntityCreator {
                 .build();
     }
 
-    public static DomibusConnectorMessageAttachment createMessageAttachment() {
+    public static DC5MessageAttachment createMessageAttachment() {
                 
-        return DomibusConnectorMessageAttachment.builder()
+        return DC5MessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
                 .identifier("identifier")
                 .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
@@ -616,7 +591,7 @@ public class DomainEntityCreator {
                 .build();
     }
 
-    public static DomibusConnectorMessageAttachment createMessageAttachment_FormA_XML() {
+    public static DC5MessageAttachment createMessageAttachment_FormA_XML() {
         //TODO: create correct attachment!
         return createSimpleMessageAttachment();
     }

@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep.TABLE_NAME;
 
-@Entity
-@Table(name = TABLE_NAME)
+//@Entity
+//@Table(name = TABLE_NAME)
 public class PDomibusConnectorTransportStep {
 
     public static final String TABLE_NAME = "DC_TRANSPORT_STEP";

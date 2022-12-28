@@ -1,20 +1,16 @@
 package eu.ecodex.dc5.payload.provider;
 
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.ecodex.dc5.payload.DomibusConnectorFilesystemPersistenceProperties;
-import eu.ecodex.dc5.payload.DomibusConnectorPersistenceProperties;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 
@@ -209,12 +205,12 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     }
 
     @Override
-    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+    public Map<DC5MessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Path storagePath = getStoragePath();
         try (Stream<Path> files = Files.list(storagePath)){
             return files.filter(p -> !p.startsWith(".")) //exclude hidden files on Unix
                     .collect(Collectors.toMap(
-                            path -> new DomibusConnectorMessageId(path.getFileName().toString()),
+                            path -> new DC5MessageId(path.getFileName().toString()),
                             this::listReferences
                     ));
         } catch (IOException e) {

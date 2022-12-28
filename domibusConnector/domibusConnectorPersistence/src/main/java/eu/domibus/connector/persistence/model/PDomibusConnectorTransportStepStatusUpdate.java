@@ -9,9 +9,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
-@Entity
-@Table(name = PDomibusConnectorTransportStepStatusUpdate.TABLE_NAME)
-@IdClass(PDomibusConnectorTransportStepStatusUpdateIdClass.class)
+//@Entity
+//@Table(name = PDomibusConnectorTransportStepStatusUpdate.TABLE_NAME)
+//@IdClass(PDomibusConnectorTransportStepStatusUpdateIdClass.class)
 public class PDomibusConnectorTransportStepStatusUpdate {
 
     public static final java.lang.String TABLE_NAME = "DC_TRANSPORT_STEP_STATUS";

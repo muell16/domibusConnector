@@ -12,8 +12,6 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.transport.DCTransportRetryService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -22,19 +20,15 @@ import eu.domibus.connector.link.service.DCLinkFacade;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import eu.domibus.connector.ui.component.OpenHelpButtonFactory;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
-import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.messages.MessageDetails;
-import eu.domibus.connector.ui.view.areas.monitoring.MonitoringLayout;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
 import org.vaadin.klaudeta.PaginatedGrid;
 
 import java.util.HashSet;
@@ -162,7 +156,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
         HorizontalLayout layout = new HorizontalLayout();
 
         Optional<DC5Message> msg = step.getTransportedMessage();
-        DomibusConnectorMessageId connectorMessageId = step.getConnectorMessageId();
+        DC5MessageId connectorMessageId = step.getConnectorMessageId();
 
         //goto business message button
         Button gotoBusinessMessageButton = new Button(VaadinIcon.ENVELOPE.create());

@@ -2,7 +2,7 @@
 package eu.domibus.connector.controller.exception;
 
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -17,7 +17,7 @@ public class DomibusConnectorMessageExceptionBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessageExceptionBuilder.class);
 
     private DC5Message message;
-    private DomibusConnectorMessageId messageId;
+    private DC5MessageId messageId;
     private Class<?> source;
     private Throwable cause;
     private String text;
@@ -34,7 +34,7 @@ public class DomibusConnectorMessageExceptionBuilder {
         return this;
     }
 
-    public DomibusConnectorMessageExceptionBuilder setMessage(DomibusConnectorMessageId message) {
+    public DomibusConnectorMessageExceptionBuilder setMessage(DC5MessageId message) {
         this.messageId = message;
         return this;
     }

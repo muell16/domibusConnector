@@ -3,13 +3,12 @@ package eu.domibus.connector.controller.exception.handling;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
-import eu.domibus.connector.controller.test.util.ConnectorControllerTestDomainCreator;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -82,7 +81,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     @Test
     public void testIfExceptionIsPersisted() {
         DC5Message message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId(DomibusConnectorMessageId.ofString("testid"));
+        message.setConnectorMessageId(DC5MessageId.ofString("testid"));
         try {
             passExceptionProcessor.processMessage(message);
         } catch (DomibusConnectorMessageException ex) {
@@ -98,7 +97,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     public void testPassException() {
         Assertions.assertThrows(DomibusConnectorMessageException.class, () -> {
             DC5Message message = DomainEntityCreator.createMessage();
-            message.setConnectorMessageId(DomibusConnectorMessageId.ofString("testid"));
+            message.setConnectorMessageId(DC5MessageId.ofString("testid"));
             passExceptionProcessor.processMessage(message);
         });
     }
@@ -106,7 +105,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     @Test
     public void testAspectNotPassException() {
         DC5Message message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId(DomibusConnectorMessageId.ofString("testid"));
+        message.setConnectorMessageId(DC5MessageId.ofString("testid"));
         noPassExceptionProcessor.processMessage(message);
         
         //test if persistence service was called

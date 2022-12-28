@@ -1,8 +1,5 @@
 package eu.domibus.connector.persistence.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
@@ -11,11 +8,11 @@ import java.util.Set;
 import javax.persistence.*;
 
 
-@Entity
-@Table(name = PDomibusConnectorPModeSet.TABLE_NAME)
-
-@Setter
-@Getter
+//@Entity
+//@Table(name = PDomibusConnectorPModeSet.TABLE_NAME)
+//
+//@Setter
+//@Getter
 public class PDomibusConnectorPModeSet {
 
     public static final String TABLE_NAME = "DC_PMODE_SET";
@@ -61,7 +58,7 @@ public class PDomibusConnectorPModeSet {
     
     @ManyToOne
     @JoinColumn(name = "FK_CONNECTORSTORE", referencedColumnName = "ID")
-    private PDomibusConnectorKeystore connectorstore;
+    private DC5ConfigItem connectorstore;
 
 
 	@PrePersist

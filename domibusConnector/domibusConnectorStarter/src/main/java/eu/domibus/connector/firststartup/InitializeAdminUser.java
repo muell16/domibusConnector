@@ -2,8 +2,8 @@ package eu.domibus.connector.firststartup;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorUser;
-import eu.domibus.connector.persistence.model.PDomibusConnectorUserPassword;
+import eu.domibus.connector.persistence.model.DC5User;
+import eu.domibus.connector.persistence.model.DC5UserPassword;
 import eu.domibus.connector.persistence.model.enums.UserRole;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.transaction.Transactional;
@@ -23,7 +22,6 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
 
 /**
  * This bean will be run on first startup (for details see FirstStartupCondition)
@@ -68,14 +66,14 @@ public class InitializeAdminUser {
     public void checkAdminUser(ContextRefreshedEvent contextRefreshedEvent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String adminUserName = initializeAdminUserProperties.getInitialUserName();
 
-        PDomibusConnectorUser adminUser = userDao.findOneByUsernameIgnoreCase(adminUserName);
+        DC5User adminUser = userDao.findOneByUsernameIgnoreCase(adminUserName);
         if (adminUser != null) {
             LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Admin user [{}] already exists in DB", adminUser.getUsername());
             return;
         }
         String newUserPassword = initializeAdminUserProperties.getInitialUserPassword();
 
-        PDomibusConnectorUser newAdminUser = new PDomibusConnectorUser();
+        DC5User newAdminUser = new DC5User();
         newAdminUser.setUsername(adminUserName);
         newAdminUser.setLocked(false);
         newAdminUser.setRole(UserRole.ADMIN);
@@ -84,7 +82,7 @@ public class InitializeAdminUser {
 
         String dbPassword = generatePasswordHashWithSaltOnlyPW(newUserPassword, salt);
 
-        PDomibusConnectorUserPassword userPassword = new PDomibusConnectorUserPassword();
+        DC5UserPassword userPassword = new DC5UserPassword();
         userPassword.setInitialPassword(initializeAdminUserProperties.isInitialChangeRequired());
         userPassword.setCurrentPassword(true);
         userPassword.setPassword(dbPassword);

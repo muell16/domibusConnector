@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
@@ -33,12 +33,12 @@ class TransportStepPersistenceServiceImplITCase {
     @Test
     void createNewTransportStep() {
         DC5Message m = DomainEntityCreator.createMessage();
-        m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
+        m.setConnectorMessageId(new DC5MessageId("id002"));
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
         DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName("link2");
 
-        step.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
+        step.setConnectorMessageId(new DC5MessageId("id002"));
         step.setTransportedMessage(m);
         step.setTransportId(new TransportStateService.TransportId("msg2_link2_1"));
         step.setAttempt(1);
@@ -50,7 +50,7 @@ class TransportStepPersistenceServiceImplITCase {
     @Test
     void createNewTransportStepSetPending() {
         DC5Message m = DomainEntityCreator.createMessage();
-        m.setConnectorMessageId(new DomibusConnectorMessageId("id002"));
+        m.setConnectorMessageId(new DC5MessageId("id002"));
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
         DomibusConnectorLinkPartner.LinkPartnerName lp = new DomibusConnectorLinkPartner.LinkPartnerName("link4");

@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
@@ -25,7 +24,6 @@ import javax.annotation.CheckForNull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +62,11 @@ public class DC5Message implements Serializable {
     @NotNull(message = "A message must have a connectorMessageId!")
     @Valid
     @Convert(converter = DomibusConnectorMessageIdConverter.class)
-    private DomibusConnectorMessageId connectorMessageId;
+    private DC5MessageId connectorMessageId;
 
     @CheckForNull
     @Convert(converter = DomibusConnectorMessageIdConverter.class)
-    private DomibusConnectorMessageId refToConnectorMessageId;
+    private DC5MessageId refToConnectorMessageId;
 
     @Valid
     @NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have EBMS data!")
@@ -146,12 +144,12 @@ public class DC5Message implements Serializable {
     }
 
     @JsonProperty
-    public DomibusConnectorMessageId getConnectorMessageId() {
+    public DC5MessageId getConnectorMessageId() {
         return connectorMessageId;
     }
 
     @JsonProperty
-    public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
+    public void setConnectorMessageId(DC5MessageId messageId) {
         this.connectorMessageId = messageId;
     }
 
@@ -201,7 +199,7 @@ public class DC5Message implements Serializable {
     @Deprecated
     @JsonIgnore
     public void setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
+        this.connectorMessageId = new DC5MessageId(connectorMessageId);
     }
 
     @Override

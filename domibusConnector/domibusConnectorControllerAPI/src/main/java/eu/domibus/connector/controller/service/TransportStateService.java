@@ -3,8 +3,7 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 
@@ -84,7 +83,7 @@ public interface TransportStateService {
 
     public static class DomibusConnectorTransportState {
         private TransportId connectorTransportId; //may be the same as the connectorMessageId but must not...
-        private DomibusConnectorMessageId connectorMessageId;
+        private DC5MessageId connectorMessageId;
         private java.lang.String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
         private java.lang.String remoteMessageId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
         private TransportState status;
@@ -116,11 +115,11 @@ public interface TransportStateService {
             this.connectorTransportId = connectorTransportId;
         }
 
-        public DomibusConnectorMessageId getConnectorMessageId() {
+        public DC5MessageId getConnectorMessageId() {
             return connectorMessageId;
         }
 
-        public void setConnectorMessageId(DomibusConnectorMessageId connectorMessageId) {
+        public void setConnectorMessageId(DC5MessageId connectorMessageId) {
             this.connectorMessageId = connectorMessageId;
         }
 

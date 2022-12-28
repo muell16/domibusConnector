@@ -2,7 +2,7 @@ package eu.domibus.connector.persistence.service;
 
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 
 /**
  *
@@ -33,5 +33,5 @@ public interface DomibusConnectorEvidencePersistenceService {
      *                     with the value from DB
      *
      */
-    void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DomibusConnectorMessageId transportId, DC5Confirmation confirmation);
+    void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DC5MessageId transportId, DC5Confirmation confirmation);
 }

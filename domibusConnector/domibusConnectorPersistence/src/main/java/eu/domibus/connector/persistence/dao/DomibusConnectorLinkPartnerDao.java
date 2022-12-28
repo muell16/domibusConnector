@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
+import eu.domibus.connector.persistence.model.DC5LinkPartnerJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DomibusConnectorLinkPartnerDao extends JpaRepository<PDomibusConnectorLinkPartner, Long> {
+public interface DomibusConnectorLinkPartnerDao extends JpaRepository<DC5LinkPartnerJpaEntity, Long> {
 
-    Optional<PDomibusConnectorLinkPartner> findOneBackendByLinkNameAndEnabledIsTrue(String name);
+    Optional<DC5LinkPartnerJpaEntity> findOneBackendByLinkNameAndEnabledIsTrue(String name);
 
-    Optional<PDomibusConnectorLinkPartner> findOneByLinkName(String linkName);
+    Optional<DC5LinkPartnerJpaEntity> findOneByLinkName(String linkName);
 
-    @Query("SELECT max(e.id) from PDomibusConnectorLinkPartner e")
+    @Query("SELECT max(e.id) from DC5LinkPartnerJpaEntity e")
     Long findHighestId();
 
-    List<PDomibusConnectorLinkPartner> findAllByEnabledIsTrue();
+    List<DC5LinkPartnerJpaEntity> findAllByEnabledIsTrue();
 }

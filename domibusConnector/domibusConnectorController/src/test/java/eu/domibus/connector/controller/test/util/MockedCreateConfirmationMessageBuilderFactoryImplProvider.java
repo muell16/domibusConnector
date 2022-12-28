@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.test.util;
 
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
@@ -63,7 +63,7 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
 //        createConfirmationMessageBuilderFactory.setEvidencesToolkit(this.evidencesToolkit);
 //        createConfirmationMessageBuilderFactory.setMessageIdGenerator(this.messageIdGenerator);
 
-        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessageId(UUID.randomUUID().toString() + "@mockedid"));
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DC5MessageId(UUID.randomUUID().toString() + "@mockedid"));
 
     }
 

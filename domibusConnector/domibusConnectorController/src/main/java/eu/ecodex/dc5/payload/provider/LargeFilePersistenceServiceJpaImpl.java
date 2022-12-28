@@ -13,7 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.payload.DomibusConnectorPersistenceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,14 +221,14 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     @Override
-    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+    public Map<DC5MessageId, List<LargeFileReference>> getAllAvailableReferences() {
 
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
+        Map<DC5MessageId, List<LargeFileReference>> map = new HashMap<>();
 
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
             String messageId = bigData.getConnectorMessageId();
-            DomibusConnectorMessageId connectorMessageId = new DomibusConnectorMessageId(messageId);
+            DC5MessageId connectorMessageId = new DC5MessageId(messageId);
 
             if (!map.containsKey(connectorMessageId)) {
                 map.put(connectorMessageId, new ArrayList<>());

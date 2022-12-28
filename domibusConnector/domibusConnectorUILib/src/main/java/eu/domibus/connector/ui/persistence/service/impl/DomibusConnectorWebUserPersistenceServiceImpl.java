@@ -16,12 +16,11 @@ import javax.xml.bind.DatatypeConverter;
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.IncorrectResultSetColumnCountException;
 import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorUser;
-import eu.domibus.connector.persistence.model.PDomibusConnectorUserPassword;
+import eu.domibus.connector.persistence.model.DC5User;
+import eu.domibus.connector.persistence.model.DC5UserPassword;
 import eu.domibus.connector.ui.dto.WebUser;
 import eu.domibus.connector.ui.enums.UserRole;
 import eu.domibus.connector.ui.exception.InitialPasswordException;
@@ -52,18 +51,18 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 
 	@Override
 	public WebUser login(String username, String password) throws UserLoginException, InitialPasswordException {
-		PDomibusConnectorUser user = getAndCheckGivenUser(username, password);
+		DC5User user = getAndCheckGivenUser(username, password);
 		return mapDbUserToWebUser(user);
 	}
 
-	private PDomibusConnectorUser getAndCheckGivenUser(String username, String password)
+	private DC5User getAndCheckGivenUser(String username, String password)
 			throws UserLoginException, InitialPasswordException {
-		PDomibusConnectorUser user = userDao.findOneByUsernameIgnoreCase(username);
+		DC5User user = userDao.findOneByUsernameIgnoreCase(username);
 		if(user!=null) {
 			if(user.isLocked())
 				throw new UserLoginException("The user is locked! Please contact your administrator!");
 			
-			PDomibusConnectorUserPassword currentPassword = null;
+			DC5UserPassword currentPassword = null;
 			try {
 				currentPassword = this.passwordDao.findCurrentByUser(user);
 				
@@ -115,7 +114,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	
 	@Override
 	public WebUser changePassword(String username, String oldPassword, String newPassword) throws UserLoginException {
-		PDomibusConnectorUser user = null;
+		DC5User user = null;
 		try {
 			user = getAndCheckGivenUser(username, oldPassword);
 		} catch (InitialPasswordException e) {
@@ -124,9 +123,9 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		}
 		
 		if(user!=null) {
-			PDomibusConnectorUserPassword currentPassword = this.passwordDao.findCurrentByUser(user);
+			DC5UserPassword currentPassword = this.passwordDao.findCurrentByUser(user);
 			
-			PDomibusConnectorUserPassword newDbPassword = new PDomibusConnectorUserPassword();
+			DC5UserPassword newDbPassword = new DC5UserPassword();
 			newDbPassword.setUser(user);
 			newDbPassword.setCurrentPassword(true);
 			newDbPassword.setInitialPassword(false);
@@ -161,13 +160,13 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 
 	@Override
 	public List<WebUser> listAllUsers() {
-		Iterable<PDomibusConnectorUser> allUsers = this.userDao.findAll();
+		Iterable<DC5User> allUsers = this.userDao.findAll();
 		return mapUsersToDto(allUsers);
 	}
 	
 	@Override
 	public WebUser resetUserPassword(WebUser user, String newInitialPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		PDomibusConnectorUser dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
+		DC5User dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
 		
 		createNewInitialPasswordAndInvalidateOthers(dbUser, newInitialPassword);
 		
@@ -176,7 +175,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	
 	@Override
 	public WebUser createNewUser(WebUser newUser) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		PDomibusConnectorUser dbUser = new PDomibusConnectorUser();
+		DC5User dbUser = new DC5User();
 		
 		dbUser.setCreated(new Date());
 		dbUser.setRole(eu.domibus.connector.persistence.model.enums.UserRole.valueOf(newUser.getRole().name()));
@@ -184,7 +183,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		
 		dbUser = userDao.save(dbUser);
 		
-		PDomibusConnectorUserPassword newPwd = createNewInitialPasswordAndInvalidateOthers(dbUser, newUser.getPassword());
+		DC5UserPassword newPwd = createNewInitialPasswordAndInvalidateOthers(dbUser, newUser.getPassword());
 		
 		dbUser.getPasswords().add(newPwd);
 		
@@ -195,7 +194,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	
 	@Override
 	public WebUser updateUser(WebUser user) {
-		PDomibusConnectorUser dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
+		DC5User dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
 		
 		boolean changed = false;
 		
@@ -215,9 +214,9 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		return mapDbUserToWebUser(dbUser);
 	}
 	
-	private PDomibusConnectorUserPassword createNewInitialPasswordAndInvalidateOthers(PDomibusConnectorUser dbUser, String newInitialPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
+	private DC5UserPassword createNewInitialPasswordAndInvalidateOthers(DC5User dbUser, String newInitialPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		if (!CollectionUtils.isEmpty(dbUser.getPasswords())) {
-			for(PDomibusConnectorUserPassword pwd:dbUser.getPasswords()) {
+			for(DC5UserPassword pwd:dbUser.getPasswords()) {
 				if(pwd.isCurrentPassword()) {
 					pwd.setCurrentPassword(false);
 					passwordDao.save(pwd);
@@ -226,7 +225,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 			}
 		}
 		
-		PDomibusConnectorUserPassword newPwd = new PDomibusConnectorUserPassword();
+		DC5UserPassword newPwd = new DC5UserPassword();
 		
 		newPwd.setCreated(new Date());
 		newPwd.setUser(dbUser);
@@ -242,11 +241,11 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		return passwordDao.save(newPwd);
 	}
 	
-	private List<WebUser> mapUsersToDto(Iterable<PDomibusConnectorUser> allUsers){
+	private List<WebUser> mapUsersToDto(Iterable<DC5User> allUsers){
 		List<WebUser> users = new LinkedList<WebUser>();
-		Iterator<PDomibusConnectorUser> usrIt = allUsers.iterator();
+		Iterator<DC5User> usrIt = allUsers.iterator();
 		while(usrIt.hasNext()) {
-			PDomibusConnectorUser pUser = usrIt.next();
+			DC5User pUser = usrIt.next();
 			
 			WebUser user = mapDbUserToWebUser(pUser);
 			
@@ -256,7 +255,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		return users;
 	}
 
-	private WebUser mapDbUserToWebUser(PDomibusConnectorUser pUser) {
+	private WebUser mapDbUserToWebUser(DC5User pUser) {
 		WebUser user = new WebUser();
 		
 		user.setUsername(pUser.getUsername());
@@ -267,8 +266,8 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 		return user;
 	}
 	
-	private PDomibusConnectorUser mapWebUserToDbUser(WebUser webUser) {
-		PDomibusConnectorUser dbUser = new PDomibusConnectorUser();
+	private DC5User mapWebUserToDbUser(WebUser webUser) {
+		DC5User dbUser = new DC5User();
 		dbUser.setUsername(webUser.getUsername());
 		
 		return dbUser;

@@ -1,18 +1,14 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME;
-
-@Table(name = PDomibusConnectorLinkConfiguration.TABLE_NAME)
+@Table(name = DC5LinkConfigJpaEntity.TABLE_NAME)
 @Entity
-public class PDomibusConnectorLinkConfiguration {
+public class DC5LinkConfigJpaEntity {
 
-    public static final String TABLE_NAME = "DC_LINK_CONFIGURATION";
+    public static final String TABLE_NAME = "DC5_LINK_CONFIG";
 
     @Id
     @Column(name="ID")

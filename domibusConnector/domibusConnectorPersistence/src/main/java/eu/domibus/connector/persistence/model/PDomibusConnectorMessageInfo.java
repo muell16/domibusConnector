@@ -6,8 +6,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = PDomibusConnectorMessageInfo.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorMessageInfo.TABLE_NAME)
 public class PDomibusConnectorMessageInfo {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MESSAGE_INFO";

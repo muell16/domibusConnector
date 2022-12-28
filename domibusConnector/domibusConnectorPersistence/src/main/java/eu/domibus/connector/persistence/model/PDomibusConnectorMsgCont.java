@@ -20,8 +20,8 @@ import javax.persistence.*;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Entity
-@Table(name="DOMIBUS_CONNECTOR_MSG_CONT")
+//@Entity
+//@Table(name="DOMIBUS_CONNECTOR_MSG_CONT")
 public class PDomibusConnectorMsgCont {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MSG_CONT";

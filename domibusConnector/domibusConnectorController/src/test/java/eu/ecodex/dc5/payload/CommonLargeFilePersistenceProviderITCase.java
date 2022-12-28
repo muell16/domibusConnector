@@ -1,10 +1,8 @@
 package eu.ecodex.dc5.payload;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -88,11 +86,11 @@ public abstract class CommonLargeFilePersistenceProviderITCase {
             return d;
         });
 
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> references = transactionTemplate.execute((TransactionStatus status) -> {
+        Map<DC5MessageId, List<LargeFileReference>> references = transactionTemplate.execute((TransactionStatus status) -> {
             return largeFilePersistenceService.getAllAvailableReferences();
         });
 
-        assertThat(references.get(new DomibusConnectorMessageId(CONNECTOR_ID)))
+        assertThat(references.get(new DC5MessageId(CONNECTOR_ID)))
                 .hasSize(1);
 
     }

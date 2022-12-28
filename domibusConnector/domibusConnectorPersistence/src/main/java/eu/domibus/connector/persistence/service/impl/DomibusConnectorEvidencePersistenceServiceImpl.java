@@ -2,7 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
@@ -64,7 +64,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     @Override
-    public void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DomibusConnectorMessageId transportId, DC5Confirmation confirmation) {
+    public void persistEvidenceMessageToBusinessMessage(DC5Message businessMessage, DC5MessageId transportId, DC5Confirmation confirmation) {
         String connectorMessageId = businessMessage.getConnectorMessageId().getConnectorMessageId();
         Optional<PDomibusConnectorMessage> optionalMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
         if (!optionalMessage.isPresent()) {

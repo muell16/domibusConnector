@@ -1,9 +1,6 @@
 package eu.ecodex.dc5.flow.flows;
 
 
-import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -11,7 +8,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.events.DC5EventListener;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
@@ -212,7 +208,7 @@ public class TransportMessageFlow {
                 .transportedMessageConfirmation(confirmation)
                 .businessDomainId(businessMessage.getBusinessDomainId())
                 .refToConnectorMessageId(businessMessage.getConnectorMessageId())
-                .connectorMessageId(DomibusConnectorMessageId.ofRandom())
+                .connectorMessageId(DC5MessageId.ofRandom())
                 .build();
         dc5MessageRepo.save(evidenceMessage);
         NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());

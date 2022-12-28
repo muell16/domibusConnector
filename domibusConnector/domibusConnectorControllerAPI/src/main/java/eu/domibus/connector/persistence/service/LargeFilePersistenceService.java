@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
@@ -55,11 +55,11 @@ public interface LargeFilePersistenceService {
      *      but closed INPUT stream
      *
      */
-    LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType);
+    LargeFileReference createDomibusConnectorBigDataReference(DC5MessageId connectorMessageId, String documentName, String documentContentType);
 
     @Deprecated
     default LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
-        return createDomibusConnectorBigDataReference(new DomibusConnectorMessageId(connectorMessageId), documentName, documentContentType);
+        return createDomibusConnectorBigDataReference(new DC5MessageId(connectorMessageId), documentName, documentContentType);
     }
     
     /**
@@ -72,7 +72,7 @@ public interface LargeFilePersistenceService {
     /**
      * Returns a map of ALL currently not deleted bigDataReferences
      */
-    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
+    public Map<DC5MessageId, List<LargeFileReference>> getAllAvailableReferences();
 
     boolean isStorageProviderAvailable(LargeFileReference toCopy);
 

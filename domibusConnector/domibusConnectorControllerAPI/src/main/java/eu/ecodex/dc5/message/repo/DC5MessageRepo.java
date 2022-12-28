@@ -4,7 +4,7 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.BackendMessageId;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.message.model.EbmsMessageId;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,12 +40,12 @@ public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
     //@EntityGraph(value = "msg-view-data-graph", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT m FROM DC5Message m WHERE m.connectorMessageId = ?1")
-    DC5Message findByConnectorMessageId(DomibusConnectorMessageId take);
+    DC5Message findByConnectorMessageId(DC5MessageId take);
 
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
     //@EntityGraph(value = "msg-view-data-graph", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT m FROM DC5Message m WHERE m.connectorMessageId = ?1")
-    Optional<DC5Message> findOneByConnectorMessageId(DomibusConnectorMessageId msgId);
+    Optional<DC5Message> findOneByConnectorMessageId(DC5MessageId msgId);
 
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
     //@EntityGraph(value = "msg-view-data-graph", type = EntityGraph.EntityGraphType.LOAD)
@@ -57,5 +57,5 @@ public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
     List<DC5Message> findAllByEbmsData_ConversationId(String conversationId);
 
-    DC5Message getByConnectorMessageId(DomibusConnectorMessageId msgId);
+    DC5Message getByConnectorMessageId(DC5MessageId msgId);
 }

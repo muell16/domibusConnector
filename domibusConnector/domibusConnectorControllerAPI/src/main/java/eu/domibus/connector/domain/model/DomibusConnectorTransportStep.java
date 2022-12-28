@@ -3,7 +3,7 @@ package eu.domibus.connector.domain.model;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ public class DomibusConnectorTransportStep {
     private TransportStateService.TransportId transportId;
     @Nullable
     private DC5Message transportedMessage = null;
-    private DomibusConnectorMessageId connectorMessageIdOfTransportedMsg;
+    private DC5MessageId connectorMessageIdOfTransportedMsg;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
     private java.lang.String transportSystemMessageId;
@@ -91,7 +91,7 @@ public class DomibusConnectorTransportStep {
         this.statusUpdates.add(u);
     }
 
-    public DomibusConnectorMessageId getConnectorMessageId() {
+    public DC5MessageId getConnectorMessageId() {
         return this.connectorMessageIdOfTransportedMsg;
     }
 
@@ -155,7 +155,7 @@ public class DomibusConnectorTransportStep {
         return this.statusUpdates.peek();
     }
 
-    public void setConnectorMessageId(DomibusConnectorMessageId transportedMessageConnectorMessageId) {
+    public void setConnectorMessageId(DC5MessageId transportedMessageConnectorMessageId) {
         this.connectorMessageIdOfTransportedMsg = transportedMessageConnectorMessageId;
         if (this.transportedMessage != null
                 && this.transportedMessage.getConnectorMessageId() != null

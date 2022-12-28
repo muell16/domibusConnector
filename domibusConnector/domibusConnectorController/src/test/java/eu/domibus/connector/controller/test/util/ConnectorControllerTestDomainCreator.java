@@ -12,16 +12,6 @@ import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
  */
 public class ConnectorControllerTestDomainCreator {
 
-    public static DomibusConnectorParty createPartyAT() {
-        DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
-        return p;
-    }
-    
-    public static DomibusConnectorParty createPartyDE() {
-        DomibusConnectorParty p = new DomibusConnectorParty("DE", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");        
-        return p;
-    }
-    
     public static DC5Action createActionForm_A() {
         DC5Action a = DC5Action.builder().action("Form_A").build();
 //        DomibusConnectorAction a = new DomibusConnectorAction("Form_A", true);
@@ -50,11 +40,11 @@ public class ConnectorControllerTestDomainCreator {
         return confirmation;
     }
 
-    public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
+    public static DC5MessageAttachment createSimpleMessageAttachment() {
         LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
         inMemory.setBytes("attachment".getBytes());
 
-        return DomibusConnectorMessageAttachment.builder()
+        return DC5MessageAttachment.builder()
                 .attachment(inMemory)
                 .identifier("identifier")
                 .name("name")
@@ -77,52 +67,6 @@ public class ConnectorControllerTestDomainCreator {
         return null;
     }
     
-    
-    
-    public static DC5Message createMessage() {
-
-        DC5MessageContent messageContent = new DC5MessageContent();
-
-        DetachedSignature detachedSignature = DetachedSignature.builder()
-                .detachedSignatureName("signaturename")
-                .detachedSignature("detachedSignature".getBytes())
-                .mimeType(DetachedSignatureMimeType.BINARY)
-                .build();
-
-        LargeFileReferenceGetSetBased inMemory = new LargeFileReferenceGetSetBased();
-        inMemory.setBytes("documentbytes".getBytes());
-        inMemory.setReadable(true);
-               
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(inMemory, "Document1.pdf", detachedSignature);
-                        
-//        messageContent.setDocument(messageDocument);
-        
-//        DC5Message msg = new DC5Message(messageDetails, messageContent);
-//        msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
-////        msg.addAttachment(createSimpleMessageAttachment());
-//        msg.addError(createMessageError());
-//        return msg;
-        return null;
-    }
-    
-    public static DC5Ebms createDomibusConnectorMessageDetails() {
-//        DC5Ebms messageDetails = new DC5Ebms();
-//        messageDetails.setConversationId("conversation1");
-//        messageDetails.setEbmsMessageId("ebms1");
-//        messageDetails.setBackendMessageId("national1");
-//        messageDetails.setFinalRecipient("finalRecipient");
-//        messageDetails.setOriginalSender("originalSender");
-//        messageDetails.setRefToMessageId("refToMessageId");
-//
-//        messageDetails.setAction(createActionForm_A());
-//        messageDetails.setService(createServiceEPO());
-//        messageDetails.setToParty(createPartyAT());
-//        messageDetails.setFromParty(createPartyDE());
-//
-//        return messageDetails;
-        return null;
-    }
-
 
     /**
      * creates a error message with

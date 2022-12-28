@@ -1,16 +1,16 @@
 package eu.domibus.connector.domain.model.jpa;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class DomibusConnectorMessageIdConverter implements AttributeConverter<DomibusConnectorMessageId, String> {
+public class DomibusConnectorMessageIdConverter implements AttributeConverter<DC5MessageId, String> {
 
 
     @Override
-    public String convertToDatabaseColumn(DomibusConnectorMessageId attribute) {
+    public String convertToDatabaseColumn(DC5MessageId attribute) {
         if (attribute == null) {
             return null;
         }
@@ -18,10 +18,10 @@ public class DomibusConnectorMessageIdConverter implements AttributeConverter<Do
     }
 
     @Override
-    public DomibusConnectorMessageId convertToEntityAttribute(String dbData) {
+    public DC5MessageId convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;
         }
-        return DomibusConnectorMessageId.ofString(dbData);
+        return DC5MessageId.ofString(dbData);
     }
 }

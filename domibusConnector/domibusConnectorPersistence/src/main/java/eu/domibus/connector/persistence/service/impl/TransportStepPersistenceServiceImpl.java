@@ -8,7 +8,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
@@ -127,7 +127,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
 
     @Override
-    public List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId) {
+    public List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DC5MessageId messageId) {
         return transportStepDao.findByConnectorMessageId(messageId.getConnectorMessageId())
                 .stream()
                 .map(this::mapTransportStepToDomain)
@@ -161,7 +161,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
         step.setFinalStateReached(dbTransportStep.getFinalStateReached());
         step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
-        step.setConnectorMessageId(new DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
+        step.setConnectorMessageId(new DC5MessageId(dbTransportStep.getConnectorMessageId()));
 
         List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
                 .getStatusUpdates()

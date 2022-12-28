@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.process;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
 import eu.ecodex.dc5.core.model.DC5ProcessStep;
 import eu.ecodex.dc5.core.repository.DC5MsgProcessRepo;
@@ -22,7 +22,7 @@ public class MessageProcessManager {
 
     public MessageProcessManager(DC5MsgProcessRepo msgProcessRepo) {
         this.msgProcessRepo = msgProcessRepo;
-        this.messageIdGenerator = () -> DomibusConnectorMessageId.ofString(UUID.randomUUID().toString());
+        this.messageIdGenerator = () -> DC5MessageId.ofString(UUID.randomUUID().toString());
     }
 
     private CloseableMessageProcess setCurrentProcessId(DC5MsgProcess p) {

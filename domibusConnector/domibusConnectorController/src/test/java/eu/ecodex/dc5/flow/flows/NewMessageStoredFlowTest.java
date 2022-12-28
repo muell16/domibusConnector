@@ -8,7 +8,7 @@ import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.steps.VerifyPModesStep;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
@@ -58,7 +58,7 @@ class NewMessageStoredFlowTest {
     public void before() {
         Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
-        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(DomibusConnectorMessageId.ofRandom());
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(DC5MessageId.ofRandom());
     }
 
     public DC5Message createMessage() {

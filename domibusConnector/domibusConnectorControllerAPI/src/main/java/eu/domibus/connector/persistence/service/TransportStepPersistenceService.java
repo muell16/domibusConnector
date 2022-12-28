@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public interface TransportStepPersistenceService {
      */
     Page<DomibusConnectorTransportStep> findLastAttemptStepByLastStateIsOneOf(Set<TransportState> states, Set<DomibusConnectorLinkPartner.LinkPartnerName> linkPartnerNames, Pageable pageable);
 
-    List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DomibusConnectorMessageId messageId);
+    List<DomibusConnectorTransportStep> findStepByConnectorMessageId(DC5MessageId messageId);
 
     /**
      * @return a list of all LinkPartnerNames used in the transport

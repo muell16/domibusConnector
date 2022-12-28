@@ -2,8 +2,6 @@ package eu.ecodex.dc5.message.model;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
@@ -12,14 +10,14 @@ import java.util.UUID;
 
 @Validated
 @Getter
-public final class DomibusConnectorMessageId {
+public final class DC5MessageId {
 
     @NotBlank
     @NonNull
     private final String connectorMessageId;
 
     @Deprecated //use static ofString method instead!
-    public DomibusConnectorMessageId(String s) {
+    public DC5MessageId(String s) {
         Objects.requireNonNull(s, "ConnectorMessageId is not allowed to be null!");
         if (s.length() < 1) {
             throw new IllegalArgumentException("ConnectorMessageId is not allowed to be empty!");
@@ -28,20 +26,20 @@ public final class DomibusConnectorMessageId {
     }
 
 
-    public static DomibusConnectorMessageId ofRandom() {
-        return new DomibusConnectorMessageId(UUID.randomUUID().toString());
+    public static DC5MessageId ofRandom() {
+        return new DC5MessageId(UUID.randomUUID().toString());
     }
 
-    public static DomibusConnectorMessageId ofString(String s) {
-        return new DomibusConnectorMessageId(s);
+    public static DC5MessageId ofString(String s) {
+        return new DC5MessageId(s);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DomibusConnectorMessageId)) return false;
+        if (!(o instanceof DC5MessageId)) return false;
 
-        DomibusConnectorMessageId that = (DomibusConnectorMessageId) o;
+        DC5MessageId that = (DC5MessageId) o;
 
         return connectorMessageId.equals(that.connectorMessageId);
     }

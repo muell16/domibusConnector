@@ -4,8 +4,8 @@ import eu.ecodex.dc5.message.model.DetachedSignatureMimeType;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = PDomibusConnectorDetachedSignature.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorDetachedSignature.TABLE_NAME)
 public class PDomibusConnectorDetachedSignature {
 
     public static final String TABLE_NAME = "DC_MSGCNT_DETSIG";

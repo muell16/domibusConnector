@@ -22,10 +22,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import eu.domibus.connector.persistence.model.enums.UserRole;
 
 @Entity
-@Table(name = PDomibusConnectorUser.TABLE_NAME)
-public class PDomibusConnectorUser {
+@Table(name = DC5User.TABLE_NAME)
+public class DC5User {
 
-	public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_USER";
+	public static final String TABLE_NAME = "DC5_USER";
 
 	@Id
 	@Column(name="ID")
@@ -59,7 +59,7 @@ public class PDomibusConnectorUser {
     private Date created;
     
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<PDomibusConnectorUserPassword> passwords = new HashSet<>();
+    private Set<DC5UserPassword> passwords = new HashSet<>();
 
     @PrePersist
     public void prePersist() {
@@ -153,11 +153,11 @@ public class PDomibusConnectorUser {
 
 
 
-	public Set<PDomibusConnectorUserPassword> getPasswords() {
+	public Set<DC5UserPassword> getPasswords() {
 		return passwords;
 	}
 
-	public void setPasswords(Set<PDomibusConnectorUserPassword> passwords) {
+	public void setPasswords(Set<DC5UserPassword> passwords) {
 		this.passwords = passwords;
 	}
 

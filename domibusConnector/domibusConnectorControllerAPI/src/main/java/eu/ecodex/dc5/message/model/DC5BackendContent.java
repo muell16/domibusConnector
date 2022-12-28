@@ -21,7 +21,7 @@ public class DC5BackendContent {
 
     @OneToOne(cascade = CascadeType.ALL)
     @NotNull(message = "BusinessXML is not allowed to be null!")
-    private DomibusConnectorMessageAttachment businessXml;
+    private DC5MessageAttachment businessXml;
 
     /**
      * The business document here can be of any type,
@@ -30,17 +30,17 @@ public class DC5BackendContent {
      */
     @OneToOne(cascade = CascadeType.ALL)
     @NotNull(message = "BusinessDocument is not allowed to be null!") //ensure at mapping, that
-    private DomibusConnectorMessageAttachment businessDocument;
+    private DC5MessageAttachment businessDocument;
 
     @OneToMany(cascade = CascadeType.ALL)
     @Singular
-    private List<DomibusConnectorMessageAttachment> attachments;
+    private List<DC5MessageAttachment> attachments;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private DomibusConnectorMessageAttachment trustTokenXml;
+    private DC5MessageAttachment trustTokenXml;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private DomibusConnectorMessageAttachment trustTokenPDF;
+    private DC5MessageAttachment trustTokenPDF;
 
 
 }

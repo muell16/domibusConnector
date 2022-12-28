@@ -4,8 +4,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = PDomibusConnectorService.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorService.TABLE_NAME)
 public class PDomibusConnectorService {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_SERVICE";

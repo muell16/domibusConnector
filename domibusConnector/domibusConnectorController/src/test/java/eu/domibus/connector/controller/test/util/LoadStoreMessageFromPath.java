@@ -68,7 +68,7 @@ public class LoadStoreMessageFromPath {
     private final LargeFilePersistenceService largeFilePersistenceService;
 
     private Properties messageProperties;
-    private DomibusConnectorMessageId id;
+    private DC5MessageId id;
 
 
     public static void storeMessageTo(Resource resource, LargeFilePersistenceService largeFilePersistenceService, DC5Message message) throws IOException {
@@ -190,10 +190,10 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    private void storeMessageAttachments(List<DomibusConnectorMessageAttachment> attachments, String prefix) {
+    private void storeMessageAttachments(List<DC5MessageAttachment> attachments, String prefix) {
         if (attachments != null) {
             for (int i = 0; i < attachments.size(); i++) {
-                DomibusConnectorMessageAttachment a = attachments.get(i);
+                DC5MessageAttachment a = attachments.get(i);
                 String p = calculatePrefixFromIndex(prefix, i);
                 storeResource(a, p);
             }
@@ -230,7 +230,7 @@ public class LoadStoreMessageFromPath {
         DC5Message.DC5MessageBuilder builder = DC5Message.builder();
         messagePropertiesResource = this.messageFolder;
 
-        this.id = DomibusConnectorMessageId.ofRandom();
+        this.id = DC5MessageId.ofRandom();
         builder.connectorMessageId(id);
 
         Resource propertiesResource = messagePropertiesResource.createRelative("message.properties");
@@ -268,7 +268,7 @@ public class LoadStoreMessageFromPath {
 
         String connid = messageProperties.getProperty("message.connector-id", null);
         if (connid != null) {
-            builder.connectorMessageId(DomibusConnectorMessageId.ofString(connid));
+            builder.connectorMessageId(DC5MessageId.ofString(connid));
         }
 
         return builder.build();
@@ -277,10 +277,10 @@ public class LoadStoreMessageFromPath {
 
     private void loadMessageData(DC5Message.DC5MessageBuilder builder) {
         if (messageProperties.get(CONNECTOR_MESSAGE_ID_PROP_NAME) != null) {
-            builder.connectorMessageId(DomibusConnectorMessageId.ofString(messageProperties.get(CONNECTOR_MESSAGE_ID_PROP_NAME).toString()));
+            builder.connectorMessageId(DC5MessageId.ofString(messageProperties.get(CONNECTOR_MESSAGE_ID_PROP_NAME).toString()));
         }
         if (messageProperties.get(REF_TO_CONNECTOR_MESSAGE_ID_PROP_NAME) != null) {
-            builder.refToConnectorMessageId(DomibusConnectorMessageId.ofString(messageProperties.get(REF_TO_CONNECTOR_MESSAGE_ID_PROP_NAME).toString()));
+            builder.refToConnectorMessageId(DC5MessageId.ofString(messageProperties.get(REF_TO_CONNECTOR_MESSAGE_ID_PROP_NAME).toString()));
         }
         if (messageProperties.get(MESSAGE_TARGET_PROP_NAME) != null) {
             builder.target(MessageTargetSource.valueOf(messageProperties.get(MESSAGE_TARGET_PROP_NAME).toString()));
@@ -308,9 +308,9 @@ public class LoadStoreMessageFromPath {
             builder.trustTokenPDF(loadResource(BACKEND_MESSAGE_TRUST_TOKEN_PDF_PROP_NAME).build());
         }
 
-        List<DomibusConnectorMessageAttachment> domibusConnectorMessageAttachments = loadAttachments(BACKEND_MESSAGE_ATTACHMENTS_PREFIX);
+        List<DC5MessageAttachment> DC5MessageAttachments = loadAttachments(BACKEND_MESSAGE_ATTACHMENTS_PREFIX);
 
-        return builder.attachments(domibusConnectorMessageAttachments);
+        return builder.attachments(DC5MessageAttachments);
 
     }
 
@@ -349,7 +349,7 @@ public class LoadStoreMessageFromPath {
         storeIfNotNull(content.getTrustTokenXml(), ECX_MESSAGE_TOKEN_XML_CONTENT_PROP_NAME);
     }
 
-    private void storeIfNotNull(DomibusConnectorMessageAttachment a, String prefix) {
+    private void storeIfNotNull(DC5MessageAttachment a, String prefix) {
         if (a != null) {
             storeResource(a, prefix);
         }
@@ -384,7 +384,7 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    private List<DomibusConnectorMessageAttachment> loadAttachments(String attachmentPrefix) {
+    private List<DC5MessageAttachment> loadAttachments(String attachmentPrefix) {
 
         return messageProperties.stringPropertyNames()
                 .stream()
@@ -393,7 +393,7 @@ public class LoadStoreMessageFromPath {
                 .map((k) -> k.split("]")[0] + "]")
                 .distinct()
                 .map(this::loadResource)
-                .map(DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder::build)
+                .map(DC5MessageAttachment.DomibusConnectorMessageAttachmentBuilder::build)
                 .collect(Collectors.toList());
     }
 
@@ -410,7 +410,7 @@ public class LoadStoreMessageFromPath {
     }
 
 
-    private LargeFileReference loadResourceAsBigDataRef(DomibusConnectorMessageId id, Resource resource) {
+    private LargeFileReference loadResourceAsBigDataRef(DC5MessageId id, Resource resource) {
         try {
             InputStream inputStream = resource.getInputStream();
             byte[] bytes = StreamUtils.copyToByteArray(inputStream);
@@ -477,7 +477,7 @@ public class LoadStoreMessageFromPath {
 
 
     @SneakyThrows
-    private DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder loadResource(String propertyPrefix) {
+    private DC5MessageAttachment.DomibusConnectorMessageAttachmentBuilder loadResource(String propertyPrefix) {
         String filename = messageProperties.getProperty(propertyPrefix + ATTACHMENT_FILENAME_POSTFIX);
         if (filename == null) {
             filename = getFileNameFromPrefix(propertyPrefix);
@@ -485,7 +485,7 @@ public class LoadStoreMessageFromPath {
 
         LargeFileReference largeFileReference = loadResourceAsBigDataRef(id, messagePropertiesResource.createRelative(filename));
 
-        return DomibusConnectorMessageAttachment.builder()
+        return DC5MessageAttachment.builder()
                 .name(messageProperties.getProperty(propertyPrefix + ATTACHMENT_NAME_POSTFIX))
                 .identifier(messageProperties.getProperty(propertyPrefix + ATTACHMENT_IDENTIFIER_POSTFIX))
                 .digest(Digest.ofString(messageProperties.getProperty(propertyPrefix + ATTACHMENT_DIGEST_POSTFIX)))
@@ -497,7 +497,7 @@ public class LoadStoreMessageFromPath {
         return filename;
     }
 
-    private void storeResource(DomibusConnectorMessageAttachment a, String propertyPrefix) {
+    private void storeResource(DC5MessageAttachment a, String propertyPrefix) {
         if (a.getAttachment() == null) {
             return;
         }

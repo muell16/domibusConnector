@@ -55,7 +55,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      * @param confirmation    the confirmation
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
-    public void submitSameDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+    public void submitSameDirection(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
         DC5Message.DC5MessageBuilder evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
 //        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
@@ -91,7 +91,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      * @param confirmation    the confirmation
      */
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#oppositeDirection")
-    public void submitOppositeDirection(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+    public void submitOppositeDirection(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
 
 //        DC5Ebms.DC5EbmsBuilder ebmsData = businessMessage.getEbmsData().toBuilder();
@@ -127,7 +127,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     }
 
 
-    private DC5Message.DC5MessageBuilder buildEvidenceMessage(DomibusConnectorMessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+    private DC5Message.DC5MessageBuilder buildEvidenceMessage(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
 
         if (messageId == null) {
             messageId = messageIdGenerator.generateDomibusConnectorMessageId();

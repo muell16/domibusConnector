@@ -4,7 +4,6 @@ import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcesso
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
-import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dc5.flow.api.StepFailedException;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
@@ -15,12 +14,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.LoggingMarker;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.message.model.MessageModelHelper;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
-import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
-import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import eu.ecodex.dc5.message.validation.OutgoingBusinessMessageRules;
 import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +26,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
@@ -113,7 +108,7 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
                 .transportedMessageConfirmation(confirmation)
                 .businessDomainId(businessMessage.getBusinessDomainId())
                 .refToConnectorMessageId(businessMessage.getConnectorMessageId())
-                .connectorMessageId(DomibusConnectorMessageId.ofRandom())
+                .connectorMessageId(DC5MessageId.ofRandom())
                 .build();
         messageRepo.save(evidenceMessage);
         NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());

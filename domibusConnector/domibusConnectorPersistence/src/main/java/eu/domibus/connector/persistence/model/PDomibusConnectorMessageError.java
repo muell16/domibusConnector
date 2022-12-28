@@ -8,8 +8,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = PDomibusConnectorMessageError.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorMessageError.TABLE_NAME)
 public class PDomibusConnectorMessageError {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MSG_ERROR";

@@ -1,13 +1,12 @@
 package test.eu.domibus.connector.link.impl.wsplugin;
 
-import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
+import eu.domibus.connector.persistence.model.DC5LinkConfigJpaEntity;
+import eu.domibus.connector.persistence.model.DC5LinkPartnerJpaEntity;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +65,8 @@ public class DCWsGatewayPluginTestContext {
     }
 
 
-    public static PDomibusConnectorLinkConfiguration getWsGatewayLinkConfig() {
-        PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
+    public static DC5LinkConfigJpaEntity getWsGatewayLinkConfig() {
+        DC5LinkConfigJpaEntity linkConfig = new DC5LinkConfigJpaEntity();
 //        linkConfig.setLinkImpl(DCWsGatewayPlugin.IMPL_NAME);
         linkConfig.setConfigName("wsgateway");
 
@@ -94,9 +93,9 @@ public class DCWsGatewayPluginTestContext {
         return linkConfig;
     }
 
-    public static PDomibusConnectorLinkPartner getWsGwLinkInfo() {
+    public static DC5LinkPartnerJpaEntity getWsGwLinkInfo() {
 
-        PDomibusConnectorLinkPartner linkPartner1 = new PDomibusConnectorLinkPartner();
+        DC5LinkPartnerJpaEntity linkPartner1 = new DC5LinkPartnerJpaEntity();
         String linkName1 = "cn=gw";
 
         linkPartner1.setLinkName(linkName1);

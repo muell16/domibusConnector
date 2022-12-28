@@ -3,15 +3,11 @@ package test.eu.domibus.connector.link;
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.domibus.connector.common.service.DCKeyStoreService;
-import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.lib.spring.configuration.validation.HelperMethods;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
@@ -25,7 +21,6 @@ import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceSer
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,7 +75,7 @@ public class LinkTestContext {
     @Bean
     @ConditionalOnMissingBean
     DomibusConnectorMessageIdGenerator DomibusConnectorMessageIdGenerator() {
-        return () -> new DomibusConnectorMessageId("testcon_" + UUID.randomUUID().toString());
+        return () -> new DC5MessageId("testcon_" + UUID.randomUUID().toString());
     }
 
     @Bean

@@ -16,8 +16,8 @@ import java.io.Serializable;
 import eu.domibus.connector.persistence.model.converter.ZonedDateTimeToTimestampJpaConverter;
 import org.springframework.core.style.ToStringCreator;
 
-@Entity
-@Table(name = PDomibusConnectorMessage.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorMessage.TABLE_NAME)
 public class PDomibusConnectorMessage implements Serializable {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_MESSAGE";

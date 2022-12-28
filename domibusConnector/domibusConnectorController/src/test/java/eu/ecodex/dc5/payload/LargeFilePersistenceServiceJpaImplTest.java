@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.payload;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceJpaImpl;
@@ -58,7 +58,7 @@ class LargeFilePersistenceServiceJpaImplTest {
     public void testPersistMessageWithBigFiles() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             LOGGER.info("run test testPersistMessageWithBigFiles");
-            final DomibusConnectorMessageId connectorMessageId = new DomibusConnectorMessageId("myid0091");
+            final DC5MessageId connectorMessageId = new DC5MessageId("myid0091");
             final byte[] CONTENT = "content".getBytes(StandardCharsets.UTF_8);
 
 
@@ -91,7 +91,7 @@ class LargeFilePersistenceServiceJpaImplTest {
     @Test
     public void testGetAllReferences() throws SQLException, DataSetException {
 
-        final DomibusConnectorMessageId connectorMessageId = new DomibusConnectorMessageId("myid0095");
+        final DC5MessageId connectorMessageId = new DC5MessageId("myid0095");
         final byte[] CONTENT = "content".getBytes(StandardCharsets.UTF_8);
 
         LargeFileReference name1 = transactionTemplate.execute((TransactionStatus status) -> {
@@ -104,7 +104,7 @@ class LargeFilePersistenceServiceJpaImplTest {
             }
         });
 
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceServiceJpa.getAllAvailableReferences();
+        Map<DC5MessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceServiceJpa.getAllAvailableReferences();
         assertThat(allAvailableReferences.get(connectorMessageId))
                 .as("For the connector id mus exist one reference")
                 .hasSize(1);

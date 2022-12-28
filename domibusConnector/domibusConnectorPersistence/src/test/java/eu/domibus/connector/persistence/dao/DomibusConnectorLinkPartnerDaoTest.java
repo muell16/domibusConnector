@@ -1,8 +1,7 @@
 package eu.domibus.connector.persistence.dao;
 
-import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
+import eu.domibus.connector.persistence.model.DC5LinkPartnerJpaEntity;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //@CommonPersistenceTest
@@ -25,7 +23,7 @@ class DomibusConnectorLinkPartnerDaoTest {
 
     @Test
     void testCreateNewLink() {
-        PDomibusConnectorLinkPartner linkInfo = new PDomibusConnectorLinkPartner();
+        DC5LinkPartnerJpaEntity linkInfo = new DC5LinkPartnerJpaEntity();
         linkInfo.setDescription("test description");
         linkInfo.setLinkName("name");
 //
@@ -41,24 +39,24 @@ class DomibusConnectorLinkPartnerDaoTest {
 
     @Test
     void findByExample() {
-        PDomibusConnectorLinkPartner linkPartner = new PDomibusConnectorLinkPartner();
+        DC5LinkPartnerJpaEntity linkPartner = new DC5LinkPartnerJpaEntity();
         linkPartner.setLinkType(LinkType.GATEWAY);
-        Example<PDomibusConnectorLinkPartner> example = Example.of(linkPartner);
+        Example<DC5LinkPartnerJpaEntity> example = Example.of(linkPartner);
 
-        List<PDomibusConnectorLinkPartner> all = dao.findAll(example);
+        List<DC5LinkPartnerJpaEntity> all = dao.findAll(example);
 
         assertThat(all).hasSize(1);
     }
 
     @Test
     void findOneBackendByLinkNameAndEnabledIsTrue() {
-        Optional<PDomibusConnectorLinkPartner> test = dao.findOneBackendByLinkNameAndEnabledIsTrue("test");
+        Optional<DC5LinkPartnerJpaEntity> test = dao.findOneBackendByLinkNameAndEnabledIsTrue("test");
         assertThat(test).isNotEmpty();
     }
 
     @Test
     void findOneByLinkName() {
-        Optional<PDomibusConnectorLinkPartner> test2 = dao.findOneByLinkName("test2");
+        Optional<DC5LinkPartnerJpaEntity> test2 = dao.findOneByLinkName("test2");
         assertThat(test2).isNotEmpty();
 
         assertThat(test2.get().getProperties()).as("must have property entry with [test=test]").hasEntrySatisfying("test", (k) -> k.equals("test"));

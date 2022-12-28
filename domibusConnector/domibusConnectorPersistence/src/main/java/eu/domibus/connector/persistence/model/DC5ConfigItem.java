@@ -1,13 +1,18 @@
 package eu.domibus.connector.persistence.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = PDomibusConnectorKeystore.TABLE_NAME)
-public class PDomibusConnectorKeystore {
+@Table(name = DC5ConfigItem.TABLE_NAME)
+@Getter
+@Setter
+public class DC5ConfigItem {
 
-	public static final String TABLE_NAME = "DC_KEYSTORE";
+	public static final String TABLE_NAME = "DC5_CFGITEM";
 
 	@Id
 	@Column(name="ID")
@@ -36,56 +41,11 @@ public class PDomibusConnectorKeystore {
 	
 	@Column(name="DESCRIPTION", length = 512)
 	private String description;
-	
-//	@Column(name="TYPE", length = 50)
-//	@Enumerated(EnumType.STRING)
-//	private DomibusConnectorKeystore.KeystoreType type;
-	
+
 	@PrePersist
     public void prePersist() {
         if(uploaded == null) 
         	uploaded = new Date();
     }
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public byte[] getKeystore() {
-		return keystore;
-	}
-
-	public void setKeystore(byte[] keystore) {
-		this.keystore = keystore;
-	}
-
-	public Date getUploaded() {
-		return uploaded;
-	}
-
-	public void setUploaded(Date uploaded) {
-		this.uploaded = uploaded;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	
 }

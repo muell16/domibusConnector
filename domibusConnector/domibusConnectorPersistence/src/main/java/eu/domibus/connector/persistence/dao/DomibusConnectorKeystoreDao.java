@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
+import eu.domibus.connector.persistence.model.DC5ConfigItem;
 
 @Repository
-public interface DomibusConnectorKeystoreDao extends CrudRepository<PDomibusConnectorKeystore, Long> {
+public interface DomibusConnectorKeystoreDao extends CrudRepository<DC5ConfigItem, Long> {
 
-	public Optional<PDomibusConnectorKeystore> findByUuid(String uuid);
+	public Optional<DC5ConfigItem> findByUuid(String uuid);
 }

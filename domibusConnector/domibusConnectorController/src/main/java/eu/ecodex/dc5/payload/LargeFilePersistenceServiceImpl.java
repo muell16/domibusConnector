@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.payload;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
@@ -68,7 +68,7 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     @Override
-    public LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType) {
+    public LargeFileReference createDomibusConnectorBigDataReference(DC5MessageId connectorMessageId, String documentName, String documentContentType) {
         return defaultLargeFilePersistenceProvider.createDomibusConnectorBigDataReference(connectorMessageId, documentName, documentContentType);
     }
 
@@ -83,8 +83,8 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     @Override
-    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> collect = availableLargeFilePersistenceProvider
+    public Map<DC5MessageId, List<LargeFileReference>> getAllAvailableReferences() {
+        Map<DC5MessageId, List<LargeFileReference>> collect = availableLargeFilePersistenceProvider
                 .stream()
                 .map(provider -> {
                     try {
@@ -92,7 +92,7 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
                     } catch (Exception e) {
                         //ignore..
                     }
-                    return new HashMap<DomibusConnectorMessageId, List<LargeFileReference>> ();
+                    return new HashMap<DC5MessageId, List<LargeFileReference>> ();
                 })
                 .flatMap(refmap -> refmap.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

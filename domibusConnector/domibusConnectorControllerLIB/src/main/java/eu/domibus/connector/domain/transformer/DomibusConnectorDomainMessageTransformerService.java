@@ -84,7 +84,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * Holds the current domibus connector message id / message processing id
      * is package private so can be access by Test
      */
-    ThreadLocal<DomibusConnectorMessageId> messageIdThreadLocal = new ThreadLocal<>();
+    ThreadLocal<DC5MessageId> messageIdThreadLocal = new ThreadLocal<>();
 
 
     /**
@@ -138,7 +138,7 @@ public class DomibusConnectorDomainMessageTransformerService {
             //map trust token PDF
             toMessageType.getMessageAttachments().add(transformMessageAttachmentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getTrustTokenPDF()));
             //map attachements from asic-s container
-            for (DomibusConnectorMessageAttachment msgAttach : domainMessage.getMessageContent().getBusinessContent().getAttachments()) {
+            for (DC5MessageAttachment msgAttach : domainMessage.getMessageContent().getBusinessContent().getAttachments()) {
                 toMessageType.getMessageAttachments()
                         .add(transformMessageAttachmentDomainToTransition(msgAttach));
             }
@@ -148,7 +148,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         return toMessageType;
     }
 
-    private DomibusConnectorMessageAttachmentType mapAttachment(DomibusConnectorMessageAttachment asicContainer, String asicsContainerIdentifier) {
+    private DomibusConnectorMessageAttachmentType mapAttachment(DC5MessageAttachment asicContainer, String asicsContainerIdentifier) {
         DomibusConnectorMessageAttachmentType messageAttachmentType = new DomibusConnectorMessageAttachmentType();
         messageAttachmentType.setMimeType(asicContainer.getMimeType());
         messageAttachmentType.setIdentifier(asicsContainerIdentifier);
@@ -213,7 +213,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @return the translated (transition model) messageAttachment
      */
     @NotNull
-    DomibusConnectorMessageAttachmentType transformMessageAttachmentDomainToTransition(final @NotNull DomibusConnectorMessageAttachment messageAttachment) {
+    DomibusConnectorMessageAttachmentType transformMessageAttachmentDomainToTransition(final @NotNull DC5MessageAttachment messageAttachment) {
         DomibusConnectorMessageAttachmentType attachmentTO = new DomibusConnectorMessageAttachmentType();
         if (messageAttachment.getAttachment() == null) {
             throw new CannotBeMappedToTransitionException("attachment is not allowed to be null!");
@@ -237,7 +237,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @return the translated (transition model) messageContent or null if null provided
      */
     @Nullable
-    DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DomibusConnectorMessageAttachment businessXml
+    DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DC5MessageAttachment businessXml
     ) {
         if (businessXml == null) {
             return null;
@@ -383,7 +383,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     DC5Message transformTransitionToDomain(final @NotNull MessageTargetSource target,
                                            final @NotNull DomibusConnectorLinkPartner.LinkPartnerName sourcePartner,
                                            final @NotNull DomibusConnectorMessageType toMessage,
-                                           final @NotNull DomibusConnectorMessageId messageId) {
+                                           final @NotNull DC5MessageId messageId) {
         Objects.requireNonNull(target, "MessageTarget must not be null!");
 
         messageIdThreadLocal.set(messageId);
@@ -453,7 +453,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         }
     }
 
-    private DomibusConnectorMessageAttachment transformMessageToAsicContainerDomain(DomibusConnectorMessageType toMessage) {
+    private DC5MessageAttachment transformMessageToAsicContainerDomain(DomibusConnectorMessageType toMessage) {
         DomibusConnectorMessageAttachmentType messageAttachmentType = toMessage.getMessageAttachments().stream()
                 .filter(a -> StringUtils.equals(a.getIdentifier(), ASIC_S_IDENTIFIER))
                 .findAny()
@@ -465,7 +465,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     public static final String TRUST_TOKEN_XML_IDENTIFIER = "tokenXML";
     public static final String ASIC_S_IDENTIFIER = "ASIC-S";
 
-    private DomibusConnectorMessageAttachment transformMessageContentToTrustTokenDomain(DomibusConnectorMessageType toMessage) {
+    private DC5MessageAttachment transformMessageContentToTrustTokenDomain(DomibusConnectorMessageType toMessage) {
         DomibusConnectorMessageAttachmentType messageAttachmentType = toMessage.getMessageAttachments().stream()
                 .filter(a -> StringUtils.equals(a.getIdentifier(), TRUST_TOKEN_XML_IDENTIFIER))
                 .findAny()
@@ -474,7 +474,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         return transformMessageAttachmentTransitionToDomain(messageAttachmentType);
     }
 
-    private Collection<? extends DomibusConnectorMessageAttachment> transformAttachmentsToDomain(DomibusConnectorMessageType toMessage) {
+    private Collection<? extends DC5MessageAttachment> transformAttachmentsToDomain(DomibusConnectorMessageType toMessage) {
         return toMessage.getMessageAttachments().stream()
                 .map(this::transformMessageAttachmentTransitionToDomain)
                 .collect(Collectors.toList());
@@ -513,10 +513,10 @@ public class DomibusConnectorDomainMessageTransformerService {
 
 
     @NotNull
-    DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @NotNull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
+    DC5MessageAttachment transformMessageAttachmentTransitionToDomain(final @NotNull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
 
         @NotNull LargeFileReference ref = convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment());
-        return DomibusConnectorMessageAttachment.builder()
+        return DC5MessageAttachment.builder()
                 .attachment(ref)
                 .identifier(messageAttachmentTO.getIdentifier())
                 .name(messageAttachmentTO.getName())
@@ -557,8 +557,8 @@ public class DomibusConnectorDomainMessageTransformerService {
     public static final String BUSINSS_DOC_DEFAULT_IDENTIFIER = "BUSINESS_DOC";
     public static final String DEFAULT_MIMETYPE = MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE;
 
-    DomibusConnectorMessageAttachment transformBusinessContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
-        DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder attachmentBuilder = DomibusConnectorMessageAttachment.builder();
+    DC5MessageAttachment transformBusinessContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
+        DC5MessageAttachment.DC5MessageAttachmentBuilder attachmentBuilder = DC5MessageAttachment.builder();
 
         Objects.requireNonNull(messageContentTO.getDocument(), "Document must not be null!");
 
@@ -582,8 +582,8 @@ public class DomibusConnectorDomainMessageTransformerService {
         return attachmentBuilder.build();
     }
 
-    DomibusConnectorMessageAttachment transformMessageXmlContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
-        DomibusConnectorMessageAttachment.DomibusConnectorMessageAttachmentBuilder attachmentBuilder = DomibusConnectorMessageAttachment.builder();
+    DC5MessageAttachment transformMessageXmlContentToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
+        DC5MessageAttachment.DC5MessageAttachmentBuilder attachmentBuilder = DC5MessageAttachment.builder();
 
         byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
@@ -617,8 +617,8 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     @NotNull
     LargeFileReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
-        DomibusConnectorMessageId domibusConnectorMessageId = messageIdThreadLocal.get();
-        LargeFileReference dataRef = largeFilePersistenceService.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
+        DC5MessageId DC5MessageId = messageIdThreadLocal.get();
+        LargeFileReference dataRef = largeFilePersistenceService.createDomibusConnectorBigDataReference(DC5MessageId, dataHandler.getName(), dataHandler.getContentType());
         try (InputStream is = dataHandler.getInputStream();
              DigestInputStream digestInputStream = new DigestInputStream(is, getDefaultMessageDigest());
              CountingInputStream countingInputStream = new CountingInputStream(digestInputStream);

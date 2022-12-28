@@ -169,7 +169,7 @@ public class ConnectorMessageFlowITCase {
     public void testReceiveMessageFromGw(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("e23_2");
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
         Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
@@ -236,7 +236,7 @@ public class ConnectorMessageFlowITCase {
     public void testReceiveMessageFromGw_respondWithDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -331,7 +331,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -435,7 +435,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_respondWithDeliveryThenWithNonRetrieval(TestInfo testInfo) {
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -553,7 +553,7 @@ public class ConnectorMessageFlowITCase {
     public void testReceiveMessageFromGw_respondWithNonDelivery(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -639,7 +639,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_respondWithDeliveryAndRetrieval(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -737,7 +737,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_CertificateFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         String MSG_FOLDER = "msg3";
 
         List<DC5TransportRequest> toGW = new ArrayList<>();
@@ -795,7 +795,7 @@ public class ConnectorMessageFlowITCase {
         });
     }
 
-    private void saveMessageToDisk(DomibusConnectorMessageId connectorMessageId) {
+    private void saveMessageToDisk(DC5MessageId connectorMessageId) {
 
         txTemplate.executeWithoutResult((state) -> {
             DC5Message msg = messageRepo.getByConnectorMessageId(connectorMessageId);
@@ -820,7 +820,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void testReceiveMessageFromGw_backendDeliveryFailure(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         EbmsMessageId EBMS_ID = EbmsMessageId.ofString("EBMS_" + testInfo.getDisplayName());
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId deliveryTriggerBackendId = BackendMessageId.ofString("BACKEND_delivery_trigger_" + testInfo.getDisplayName());
         String MSG_FOLDER = "msg2";
 
@@ -877,7 +877,7 @@ public class ConnectorMessageFlowITCase {
 
     }
 
-    private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DomibusConnectorMessageId CONNECTOR_MESSAGE_ID) {
+    private DC5Message createTestMessage(String msgFolder, EbmsMessageId EBMS_ID, DC5MessageId CONNECTOR_MESSAGE_ID) {
         try {
             DC5Message testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/" + msgFolder + "/"), largeFilePersistenceService);
             assertThat(testMessage).isNotNull();
@@ -909,7 +909,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void sendMessageFromBackend(TestInfo testInfo) {
 
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("BACKEND_MSG_ID" + testInfo.getDisplayName());
 
         DC5Message dc5Message = submitMessage(CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
@@ -955,7 +955,7 @@ public class ConnectorMessageFlowITCase {
     @Test
     public void sendMessageFromBackend_rcvEvidences(TestInfo testInfo) {
 
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
         Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
@@ -1064,7 +1064,7 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void rcv_relayRemmd_delivery(TestInfo testInfo) {
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
         Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
@@ -1094,7 +1094,7 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void rcv_relayRemmd_non_delivery(TestInfo testInfo) {
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
         Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
@@ -1121,7 +1121,7 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void rcv_relayRemmdRejection(TestInfo testInfo) {
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
         Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
@@ -1134,7 +1134,7 @@ public class ConnectorMessageFlowITCase {
 
     }
 
-    private void createMessageOnConnector(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID, BackendMessageId BACKEND_MESSAGE_ID, EbmsMessageId ebmsId) {
+    private void createMessageOnConnector(DC5MessageId CONNECTOR_MESSAGE_ID, BackendMessageId BACKEND_MESSAGE_ID, EbmsMessageId ebmsId) {
         LocalDateTime created = LocalDateTime.now();
 
         DC5Message.DC5MessageBuilder businessMsgBuilder = DC5Message.builder();
@@ -1189,7 +1189,7 @@ public class ConnectorMessageFlowITCase {
         }
     }
 
-    private void sendEvidenceMessageToBackend(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID, EbmsMessageId ebmsId, DomibusConnectorEvidenceType evidenceType) {
+    private void sendEvidenceMessageToBackend(DC5MessageId CONNECTOR_MESSAGE_ID, EbmsMessageId ebmsId, DomibusConnectorEvidenceType evidenceType) {
         //Create RELAY_REMMD_ACCEPTANCE as response from GW
         final DC5Message.DC5MessageBuilder deliveryMsgBuilder = DC5Message.builder();
         txTemplate.executeWithoutResult((txState) -> {
@@ -1221,7 +1221,7 @@ public class ConnectorMessageFlowITCase {
 
     }
 
-    private void verifyMessageState(DomibusConnectorMessageId CONNECTOR_MESSAGE_ID,
+    private void verifyMessageState(DC5MessageId CONNECTOR_MESSAGE_ID,
                                     DC5BusinessMessageState.BusinessMessagesStates state,
                                     DomibusConnectorEvidenceType evidenceType) {
         //Verify Message State
@@ -1252,7 +1252,7 @@ public class ConnectorMessageFlowITCase {
      */
     @Test
     public void rcv_relayRemmdRejection_thenrelayRemmdAcceptance(TestInfo testInfo) {
-        DomibusConnectorMessageId CONNECTOR_MESSAGE_ID = DomibusConnectorMessageId.ofString(testInfo.getDisplayName());
+        DC5MessageId CONNECTOR_MESSAGE_ID = DC5MessageId.ofString(testInfo.getDisplayName());
         BackendMessageId BACKEND_MESSAGE_ID = BackendMessageId.ofString("backend_" + testInfo.getDisplayName());
         EbmsMessageId ebmsId = EbmsMessageId.ofString("ebms_" + testInfo.getDisplayName());
         Map<String, DC5TransportRequest> transportRequestMap = new HashMap<>();
@@ -1598,13 +1598,13 @@ public class ConnectorMessageFlowITCase {
 //    }
 //
 //
-    private DC5Message submitMessage(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
+    private DC5Message submitMessage(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         DC5Message msg = createTestMessage1(connectorMessageId, backendMessageId);
         submitFromBackendToController(msg);
         return msg;
     }
 
-    private DC5Message createTestMessage1(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
+    private DC5Message createTestMessage1(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()
@@ -1625,7 +1625,7 @@ public class ConnectorMessageFlowITCase {
                 .build();
     }
 
-    private DC5Message createTestMessage2(DomibusConnectorMessageId connectorMessageId, BackendMessageId backendMessageId) {
+    private DC5Message createTestMessage2(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()

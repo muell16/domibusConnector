@@ -11,7 +11,6 @@ import eu.domibus.connector.domain.model.json.LargeFileReferenceSerializer;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -34,7 +33,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class DomibusConnectorMessageAttachment {
+public class DC5MessageAttachment {
 
 	@GeneratedValue
 	@Id

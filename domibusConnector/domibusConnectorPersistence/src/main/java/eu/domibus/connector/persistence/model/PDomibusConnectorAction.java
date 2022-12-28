@@ -5,8 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
 import javax.persistence.*;
 
-@Entity
-@Table(name = PDomibusConnectorAction.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorAction.TABLE_NAME)
 public class PDomibusConnectorAction implements Serializable {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_ACTION";

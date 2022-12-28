@@ -3,7 +3,6 @@ package eu.ecodex.dc5.message;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.ecodex.dc5.core.model.DC5ModelHelper;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 
@@ -42,7 +41,7 @@ public class FindBusinessMessageByMsgId {
     }
 
     private static class RefTo {
-        private Optional<DomibusConnectorMessageId> refToConnectorMessageId;
+        private Optional<DC5MessageId> refToConnectorMessageId;
         private Optional<EbmsMessageId> refToEbmsId;
         private Optional<BackendMessageId> refToBackendMessageId;
         private DC5Message refToMessage;
@@ -51,7 +50,7 @@ public class FindBusinessMessageByMsgId {
     private @NonNull RefTo findOptionalBusinessMessageByIdAndDirection(final DC5Message refMessage, final MessageTargetSource target) {
         RefTo refTo = new RefTo();
 
-        final Optional<DomibusConnectorMessageId> refToConnectorMessageId = Optional.ofNullable(refMessage.getRefToConnectorMessageId());
+        final Optional<DC5MessageId> refToConnectorMessageId = Optional.ofNullable(refMessage.getRefToConnectorMessageId());
         refTo.refToConnectorMessageId = refToConnectorMessageId;
         final Optional<DC5Message> result0 = refToConnectorMessageId.flatMap(msgId -> {
                     LOGGER.debug("Trying to find related message with ConnectorMessageId: [{}]", msgId);

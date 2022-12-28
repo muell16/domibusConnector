@@ -33,7 +33,7 @@ public class StartWithTestData {
                 .limit(2000)
                 .mapToObj(i -> {
                     final DC5Message message = DomainEntityCreator.createMessage();
-                    message.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
+                    message.setConnectorMessageId(DC5MessageId.ofRandom());
                     message.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 
                     message.setEbmsData(DC5Ebms.builder()

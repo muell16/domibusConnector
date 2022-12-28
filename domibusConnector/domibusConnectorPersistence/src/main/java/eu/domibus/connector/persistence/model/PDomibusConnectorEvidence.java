@@ -8,8 +8,8 @@ import java.util.Date;
 import javax.persistence.*;
 
 
-@Entity
-@Table(name = PDomibusConnectorEvidence.TABLE_NAME)
+//@Entity
+//@Table(name = PDomibusConnectorEvidence.TABLE_NAME)
 public class PDomibusConnectorEvidence {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_EVIDENCE";

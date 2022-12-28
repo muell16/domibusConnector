@@ -2,7 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.persistence.dao.DomibusConnectorKeystoreDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
+import eu.domibus.connector.persistence.model.DC5ConfigItem;
 import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersistenceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
 	@Override
 	@Transactional
 	public DomibusConnectorKeystore persistNewKeystore(DomibusConnectorKeystore pKeystore) {
-		PDomibusConnectorKeystore dbKeystore = new PDomibusConnectorKeystore();
+		DC5ConfigItem dbKeystore = new DC5ConfigItem();
 		
 		String uuid = pKeystore.getUuid();
 
@@ -53,7 +53,7 @@ public class DomibusConnectorKeystorePersistenceServiceImpl implements DomibusCo
             throw new IllegalArgumentException("UUID of keystore must not be null!");
         }
 		
-		Optional<PDomibusConnectorKeystore> dbKeystore = keystoreDao.findByUuid(pKeystore.getUuid());
+		Optional<DC5ConfigItem> dbKeystore = keystoreDao.findByUuid(pKeystore.getUuid());
 		if(dbKeystore.isPresent()) {
 			keystoreDao.save(dbKeystore.get());
 		}else {

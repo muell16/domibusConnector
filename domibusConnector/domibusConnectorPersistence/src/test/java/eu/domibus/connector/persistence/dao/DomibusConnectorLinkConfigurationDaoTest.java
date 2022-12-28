@@ -1,15 +1,12 @@
 package eu.domibus.connector.persistence.dao;
 
-import com.github.database.rider.core.api.dataset.DataSet;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
+import eu.domibus.connector.persistence.model.DC5LinkConfigJpaEntity;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Optional;
-
-import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 
 //@CommonPersistenceTest
 //@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkConfiguration.xml", strategy = CLEAN_INSERT)
@@ -21,7 +18,7 @@ class DomibusConnectorLinkConfigurationDaoTest {
 
     @Test
     void testCreateNewLink() {
-        PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
+        DC5LinkConfigJpaEntity linkConfig = new DC5LinkConfigJpaEntity();
 
         linkConfig.setConfigName("Config3");
 
@@ -35,7 +32,7 @@ class DomibusConnectorLinkConfigurationDaoTest {
 
     @Test
     public void findById() {
-        Optional<PDomibusConnectorLinkConfiguration> linkConfig = dao.findById(2l);
+        Optional<DC5LinkConfigJpaEntity> linkConfig = dao.findById(2l);
     }
 
 

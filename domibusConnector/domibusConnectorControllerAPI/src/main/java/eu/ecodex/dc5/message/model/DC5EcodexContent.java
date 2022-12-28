@@ -21,15 +21,15 @@ public class DC5EcodexContent {
 
     @OneToOne(cascade = CascadeType.ALL)
     @NotNull(groups = IncomingBusinessMesssageRules.class, message = "A incoming business message must have a asic-s container")
-    private DomibusConnectorMessageAttachment asicContainer;
+    private DC5MessageAttachment asicContainer;
 
     @OneToOne(cascade = CascadeType.ALL)
     @NotNull(groups = IncomingBusinessMesssageRules.class, message = "A incoming business message must have a trust xml token")
-    private DomibusConnectorMessageAttachment trustTokenXml;
+    private DC5MessageAttachment trustTokenXml;
 
     @OneToOne(cascade = CascadeType.ALL)
     @NotNull(groups = IncomingBusinessMesssageRules.class, message = "A incoming business message must have a business xml")
-    private DomibusConnectorMessageAttachment businessXml;
+    private DC5MessageAttachment businessXml;
 
 
 }

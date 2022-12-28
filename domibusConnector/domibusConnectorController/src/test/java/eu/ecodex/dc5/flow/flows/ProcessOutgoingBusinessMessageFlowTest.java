@@ -8,7 +8,7 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
@@ -65,7 +65,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
     }
 
 
-    public DomibusConnectorMessageId createMessage() {
+    public DC5MessageId createMessage() {
 
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createOutgoingEpoFormAMessage();
@@ -78,7 +78,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
     @Test
     void processMessage() {
 
-        DomibusConnectorMessageId msgId = createMessage();
+        DC5MessageId msgId = createMessage();
 
 
         try (MessageProcessManager.CloseableMessageProcess p = messageProcessManager.startProcess()) {
@@ -107,7 +107,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
     @Test
     void processMessageWithSecurityError() {
-        DomibusConnectorMessageId msgId = createMessage();
+        DC5MessageId msgId = createMessage();
 
         Mockito.clearInvocations(securityToolkit);
         Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenThrow(new DomibusConnectorSecurityException());

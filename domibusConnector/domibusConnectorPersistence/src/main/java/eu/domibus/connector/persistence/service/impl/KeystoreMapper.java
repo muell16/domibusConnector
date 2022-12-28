@@ -1,14 +1,14 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
-import eu.domibus.connector.persistence.model.PDomibusConnectorKeystore;
+import eu.domibus.connector.persistence.model.DC5ConfigItem;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Nullable;
 
 public class KeystoreMapper {
 
-	static @Nullable DomibusConnectorKeystore mapKeystoreToDomain(@Nullable PDomibusConnectorKeystore persistenceKeystore) {
+	static @Nullable DomibusConnectorKeystore mapKeystoreToDomain(@Nullable DC5ConfigItem persistenceKeystore) {
         if (persistenceKeystore != null) {
             eu.domibus.connector.domain.model.DomibusConnectorKeystore keystore
                     = new eu.domibus.connector.domain.model.DomibusConnectorKeystore(
@@ -23,9 +23,9 @@ public class KeystoreMapper {
     }
 
 
-    static @Nullable PDomibusConnectorKeystore mapKeystoreToPersistence(@Nullable DomibusConnectorKeystore keystore) {
+    static @Nullable DC5ConfigItem mapKeystoreToPersistence(@Nullable DomibusConnectorKeystore keystore) {
         if (keystore != null) {
-        	PDomibusConnectorKeystore persistenceKeystore = new PDomibusConnectorKeystore();
+        	DC5ConfigItem persistenceKeystore = new DC5ConfigItem();
             BeanUtils.copyProperties(keystore, persistenceKeystore);
             return persistenceKeystore;
         }

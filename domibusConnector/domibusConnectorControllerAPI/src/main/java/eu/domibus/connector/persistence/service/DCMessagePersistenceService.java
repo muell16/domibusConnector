@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public interface DCMessagePersistenceService {
         return checkMessageConfirmedOrRejected(message.getConnectorMessageId());
     }
 
-    boolean checkMessageConfirmedOrRejected(DomibusConnectorMessageId message);
+    boolean checkMessageConfirmedOrRejected(DC5MessageId message);
 
     boolean checkMessageRejected(DC5Message message);
 

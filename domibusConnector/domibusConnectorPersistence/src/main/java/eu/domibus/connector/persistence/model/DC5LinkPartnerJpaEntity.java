@@ -6,11 +6,11 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Table(name = PDomibusConnectorLinkPartner.TABLE_NAME)
+@Table(name = DC5LinkPartnerJpaEntity.TABLE_NAME)
 @Entity
-public class PDomibusConnectorLinkPartner {
+public class DC5LinkPartnerJpaEntity {
 
-    public static final String TABLE_NAME = "DC_LINK_PARTNER";
+    public static final String TABLE_NAME = "DC5_LINK_PARTNER";
 
     @Id
     @Column(name="ID")
@@ -45,7 +45,7 @@ public class PDomibusConnectorLinkPartner {
 
     @ManyToOne
     @JoinColumn(name = "LINK_CONFIG_ID", referencedColumnName = "ID")
-    private PDomibusConnectorLinkConfiguration linkConfiguration;
+    private DC5LinkConfigJpaEntity linkConfiguration;
 
     public Long getId() {
         return id;
@@ -88,11 +88,11 @@ public class PDomibusConnectorLinkPartner {
         this.linkType = linkType;
     }
 
-    public PDomibusConnectorLinkConfiguration getLinkConfiguration() {
+    public DC5LinkConfigJpaEntity getLinkConfiguration() {
         return linkConfiguration;
     }
 
-    public void setLinkConfiguration(PDomibusConnectorLinkConfiguration linkConfiguration) {
+    public void setLinkConfiguration(DC5LinkConfigJpaEntity linkConfiguration) {
         this.linkConfiguration = linkConfiguration;
     }
 

@@ -1,12 +1,11 @@
 package eu.ecodex.dc5.payload.provider;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
 
 import eu.ecodex.dc5.payload.DomibusConnectorFilesystemPersistenceProperties;
-import eu.ecodex.dc5.payload.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -173,11 +172,11 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
 
     @Test
     public void testGetAllAvailableReferences() {
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences =
+        Map<DC5MessageId, List<LargeFileReference>> allAvailableReferences =
                 filesystemImpl.getAllAvailableReferences();
 
         assertThat(allAvailableReferences).hasSize(2);
-        assertThat(allAvailableReferences.get(new DomibusConnectorMessageId("testmsg2"))).hasSize(2);
+        assertThat(allAvailableReferences.get(new DC5MessageId("testmsg2"))).hasSize(2);
     }
 
 }

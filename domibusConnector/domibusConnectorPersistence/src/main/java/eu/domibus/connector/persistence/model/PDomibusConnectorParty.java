@@ -2,13 +2,13 @@ package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
+//import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 //@IdClass(PDomibusConnectorPartyPK.class)
-@Table(name = PDomibusConnectorParty.TABLE_NAME)
+//@Table(name = PDomibusConnectorParty.TABLE_NAME)
 public class PDomibusConnectorParty {
 
     public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_PARTY";
@@ -37,9 +37,9 @@ public class PDomibusConnectorParty {
     @Column(name = "PARTY_ID_TYPE", nullable = false, length = 512)
     private String partyIdType;
     
-    @Column(name = "ROLE_TYPE", length = 50)
-//    @Enumerated(EnumType.STRING)
-    private DomibusConnectorParty.PartyRoleType roleType;
+//    @Column(name = "ROLE_TYPE", length = 50)
+////    @Enumerated(EnumType.STRING)
+//    private DomibusConnectorParty.PartyRoleType roleType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
@@ -93,13 +93,13 @@ public class PDomibusConnectorParty {
         this.partyIdType = partyIdType;
     }
 
-    public DomibusConnectorParty.PartyRoleType getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(DomibusConnectorParty.PartyRoleType roleType) {
-        this.roleType = roleType;
-    }
+//    public DomibusConnectorParty.PartyRoleType getRoleType() {
+//        return roleType;
+//    }
+//
+//    public void setRoleType(DomibusConnectorParty.PartyRoleType roleType) {
+//        this.roleType = roleType;
+//    }
 
 	@Override
     public String toString() {
@@ -107,7 +107,7 @@ public class PDomibusConnectorParty {
         toString.append("id", partyId);
         toString.append("role", role);
         toString.append("idType", partyIdType);
-        toString.append("roleType", roleType);
+//        toString.append("roleType", roleType);
         return toString.build();
     }
 }

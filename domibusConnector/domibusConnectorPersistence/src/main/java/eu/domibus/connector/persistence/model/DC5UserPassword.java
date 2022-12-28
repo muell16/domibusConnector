@@ -4,27 +4,22 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import eu.domibus.connector.persistence.model.enums.UserRole;
-
 @Entity
-@Table(name = PDomibusConnectorUserPassword.TABLE_NAME)
-public class PDomibusConnectorUserPassword {
+@Table(name = DC5UserPassword.TABLE_NAME)
+public class DC5UserPassword {
 
-	public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_USER_PWD";
+	public static final String TABLE_NAME = "DC5_USER_PWD";
 
 	@Id
 	@Column(name="ID")
@@ -40,7 +35,7 @@ public class PDomibusConnectorUserPassword {
     
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
-    private PDomibusConnectorUser user;
+    private DC5User user;
     
     @Column(nullable = false, length = 1024)
     private String password;
@@ -71,11 +66,11 @@ public class PDomibusConnectorUserPassword {
 		this.id = id;
 	}
 
-	public PDomibusConnectorUser getUser() {
+	public DC5User getUser() {
 		return user;
 	}
 
-	public void setUser(PDomibusConnectorUser user) {
+	public void setUser(DC5User user) {
 		this.user = user;
 	}
 

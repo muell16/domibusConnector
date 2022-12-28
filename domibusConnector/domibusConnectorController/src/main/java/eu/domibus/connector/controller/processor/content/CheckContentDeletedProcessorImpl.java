@@ -3,10 +3,9 @@ package eu.domibus.connector.controller.processor.content;
 import eu.domibus.connector.controller.spring.ContentDeletionConfigurationProperties;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
@@ -44,12 +43,12 @@ public class CheckContentDeletedProcessorImpl {
     @Scheduled(fixedDelayString = "#{" + ContentDeletionConfigurationProperties.BEAN_NAME + ".checkTimeout.milliseconds}")
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = "checkContentDeletedProcessor")
     public void checkContentDeletedProcessor() {
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
+        Map<DC5MessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
         LOGGER.debug("Checking the following references [{}] for deletion", allAvailableReferences);
         allAvailableReferences.forEach(this::checkDelete);
     }
 
-    private void checkDelete(DomibusConnectorMessageId id, List<LargeFileReference> references) {
+    private void checkDelete(DC5MessageId id, List<LargeFileReference> references) {
 //        DC5Message msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
         DC5Message msg = null;
         String messageIdString = msg == null ? "" : msg.getConnectorMessageId().getConnectorMessageId();

@@ -27,7 +27,7 @@ public class DomibusConnectorWebMessagePersistenceService {
     }
 
     public Optional<WebMessage> getMessageByConnectorId(String connectorMessageId) {
-        return mapDbMessageToWebMessage(messageRepo.findOneByConnectorMessageId(DomibusConnectorMessageId.ofString(connectorMessageId)));
+        return mapDbMessageToWebMessage(messageRepo.findOneByConnectorMessageId(DC5MessageId.ofString(connectorMessageId)));
     }
 
     public Optional<WebMessage> findMessageByEbmsId(String ebmsId, DomibusConnectorMessageDirection gatewayToBackend) {
@@ -51,7 +51,7 @@ public class DomibusConnectorWebMessagePersistenceService {
 
             message.setConnectorMessageId(
                     Optional.ofNullable(pMessage.getConnectorMessageId())
-                            .map(DomibusConnectorMessageId::getConnectorMessageId)
+                            .map(DC5MessageId::getConnectorMessageId)
                             .orElseThrow(() -> new RuntimeException("Connector Message Id was null.")));
 
             message.setEbmsId(
