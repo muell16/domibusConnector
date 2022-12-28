@@ -42,9 +42,9 @@ public class MessageProcessManager {
 
 
     public CloseableMessageProcess startProcess() {
-        MessageProcessId messageProcessId = new MessageProcessId(messageIdGenerator.generateDomibusConnectorMessageId().toString());
+        MessageProcessId messageProcessId = MessageProcessId.ofString(messageIdGenerator.generateDomibusConnectorMessageId().toString());
         DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
-        dc5MsgProcess.setProcessId(messageProcessId.getProcessId());
+        dc5MsgProcess.setProcessId(messageProcessId);
         threadLocalMsgProcess.set(dc5MsgProcess);
         dc5MsgProcess.setCreated(LocalDateTime.now());
         DC5MsgProcess p = msgProcessRepo.save(dc5MsgProcess);
@@ -75,12 +75,12 @@ public class MessageProcessManager {
     }
 
     public MessageProcessId getCurrentMessageProcesssId() {
-        return new MessageProcessId(getCurrentProcess().getProcessId());
+        return getCurrentProcess().getProcessId();
     }
 
     public CloseableMessageProcess resumeProcess(MessageProcessId messageProcessId) {
 
-        Optional<DC5MsgProcess> byProcessId = msgProcessRepo.findByProcessId(messageProcessId.getProcessId());
+        Optional<DC5MsgProcess> byProcessId = msgProcessRepo.findByProcessId(messageProcessId);
         if (byProcessId.isPresent()) {
             return setCurrentProcessId(byProcessId.get());
         } else {

@@ -97,7 +97,6 @@ public class ProcessIncomingBusinessMessageFlow {
 						incomingMessage.getBackendLinkName()
 				);
 			}
-
 		}
 	}
 
