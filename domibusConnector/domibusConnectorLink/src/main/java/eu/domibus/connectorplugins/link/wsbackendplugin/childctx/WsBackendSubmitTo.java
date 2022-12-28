@@ -14,6 +14,7 @@ import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import eu.domibus.connectorplugins.link.wsbackendplugin.WsBackendPluginActiveLinkPartner;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -38,14 +39,16 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
 
 
     @Override
-    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DC5TransportRequest.TransportRequestId transportRequestId, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        DC5TransportRequest transportRequest = transportStateService.getTransportRequest(transportRequestId);
+        DC5Message message = transportRequest.getMessage();
         Optional<ActiveLinkPartner> activeLinkPartnerByName = linkManagerService.getActiveLinkPartnerByName(linkPartnerName);
         if (activeLinkPartnerByName.isPresent()) {
             WsBackendPluginActiveLinkPartner activeLinkPartner = (WsBackendPluginActiveLinkPartner) activeLinkPartnerByName.get();
             if (activeLinkPartner.getLinkPartner().getSendLinkMode() == LinkMode.PUSH) {
-                pushMessage(message, activeLinkPartner);
+                pushMessage(transportRequest, activeLinkPartner);
             } else {
-                makeMessageReadyForPull(message, activeLinkPartner);
+                makeMessageReadyForPull(transportRequest, activeLinkPartner);
             }
 
         } else {
@@ -53,39 +56,39 @@ public class WsBackendSubmitTo implements SubmitToLinkPartner {
         }
     }
 
-    void makeMessageReadyForPull(DC5Message message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
+    void makeMessageReadyForPull(DC5TransportRequest message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
         //TODO
-//        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
+        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
 //        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
-//
-//        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-//        state.setStatus(TransportState.PENDING);
-//        state.setText("Message ready for pull by client");
-//        transportStateService.updateTransportToBackendClientStatus(transportId, state);
+
+        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
+        state.setStatus(TransportState.PENDING);
+        state.setText("Message ready for pull by client");
+        transportStateService.updateTransportToBackendClientStatus(message.getTransportRequestId(), state);
 
     }
 
-    void pushMessage(DC5Message message, WsBackendPluginActiveLinkPartner activeLinkPartner) {
+    void pushMessage(DC5TransportRequest transportRequest, WsBackendPluginActiveLinkPartner activeLinkPartner) {
         //TODO
-//        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
-//
+        DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
+
 //        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
-//
-//        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
-//        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
-//        try {
-//            DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = backendWsClient.deliverMessage(domibusConnectorMessageType);
-//
-//            state.setStatus(domibsConnectorAcknowledgementType.isResult() ? TransportState.ACCEPTED : TransportState.FAILED);
-//            state.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
-//            state.setText(domibsConnectorAcknowledgementType.getResultMessage());
-//
-//        } catch (Exception e) {
-//            state.setStatus(TransportState.FAILED);
-//            state.setText(e.getMessage());
-//        }
-//        transportStateService.updateTransportToBackendClientStatus(transportId, state);
+
+        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
+        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(transportRequest.getMessage());
+        try {
+            DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = backendWsClient.deliverMessage(domibusConnectorMessageType);
+
+            state.setStatus(domibsConnectorAcknowledgementType.isResult() ? TransportState.ACCEPTED : TransportState.FAILED);
+            state.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
+            state.setText(domibsConnectorAcknowledgementType.getResultMessage());
+
+        } catch (Exception e) {
+            state.setStatus(TransportState.FAILED);
+            state.setText(e.getMessage());
+        }
+        transportStateService.updateTransportToBackendClientStatus(transportRequest.getTransportRequestId(), state);
 
     }
 

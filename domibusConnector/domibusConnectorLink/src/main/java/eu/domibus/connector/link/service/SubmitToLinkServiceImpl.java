@@ -26,33 +26,35 @@ public class SubmitToLinkServiceImpl implements SubmitToLinkService {
     private final DCActiveLinkManagerService dcActiveLinkManagerService;
 
     private final DC5TransportRequestRepo transportRequestRepo;
-
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = SUBMIT_TO_LINK_SERVICE)
-    public void submitToLink(DC5Message message) throws DomibusConnectorSubmitToLinkException {
-        DomibusConnectorMessageDirection direction = message.getDirection();
-        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
-        if (direction.getTarget() == MessageTargetSource.BACKEND) {
-            if (StringUtils.isEmpty(message.getBackendLinkName())) {
-                throw new DomibusConnectorSubmitToLinkException(message, "The backendClientName is empty!");
-            }
-            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getBackendLinkName());
-        } else if (direction.getTarget() == MessageTargetSource.GATEWAY) {
-            if (StringUtils.isEmpty(message.getGatewayLinkName())) {
-                throw new DomibusConnectorSubmitToLinkException(message, "The gatewayName is empty!");
-            }
-            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getGatewayLinkName());
-        } else {
-            throw new IllegalArgumentException("MessageTarget not valid!");
-        }
-
-        Optional<SubmitToLinkPartner> submitToLinkPartner = dcActiveLinkManagerService.getSubmitToLinkPartner(linkPartnerName);
-        if (submitToLinkPartner.isPresent()) {
-            submitToLinkPartner.ifPresent(s -> s.submitToLink(message, linkPartnerName));
-        } else {
-            String errorMessage = String.format("The LinkPartner with name [%s] could not be found/is not active!", linkPartnerName);
-            throw new DomibusConnectorSubmitToLinkException(message, errorMessage);
-        }
-    }
+//
+//    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = SUBMIT_TO_LINK_SERVICE)
+//    public void submitToLink(SubmitToLinkEvent event) throws DomibusConnectorSubmitToLinkException {
+//        DC5TransportRequest byId = transportRequestRepo.getById(event.getTransportRequestId());
+//        DC5Message message = byId.getMessage();
+//        DomibusConnectorMessageDirection direction = message.getDirection();
+//        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
+//        if (direction.getTarget() == MessageTargetSource.BACKEND) {
+//            if (StringUtils.isEmpty(message.getBackendLinkName())) {
+//                throw new DomibusConnectorSubmitToLinkException(message, "The backendClientName is empty!");
+//            }
+//            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getBackendLinkName());
+//        } else if (direction.getTarget() == MessageTargetSource.GATEWAY) {
+//            if (StringUtils.isEmpty(message.getGatewayLinkName())) {
+//                throw new DomibusConnectorSubmitToLinkException(message, "The gatewayName is empty!");
+//            }
+//            linkPartnerName = DomibusConnectorLinkPartner.LinkPartnerName.of(message.getGatewayLinkName());
+//        } else {
+//            throw new IllegalArgumentException("MessageTarget not valid!");
+//        }
+//
+//        Optional<SubmitToLinkPartner> submitToLinkPartner = dcActiveLinkManagerService.getSubmitToLinkPartner(linkPartnerName);
+//        if (submitToLinkPartner.isPresent()) {
+//            submitToLinkPartner.ifPresent(s -> s.submitToLink(message, linkPartnerName));
+//        } else {
+//            String errorMessage = String.format("The LinkPartner with name [%s] could not be found/is not active!", linkPartnerName);
+//            throw new DomibusConnectorSubmitToLinkException(message, errorMessage);
+//        }
+//    }
 
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = SUBMIT_TO_LINK_SERVICE)
@@ -69,7 +71,7 @@ public class SubmitToLinkServiceImpl implements SubmitToLinkService {
 
         Optional<SubmitToLinkPartner> submitToLinkPartner = dcActiveLinkManagerService.getSubmitToLinkPartner(linkPartnerName);
         if (submitToLinkPartner.isPresent()) {
-            submitToLinkPartner.ifPresent(s -> s.submitToLink(message, linkPartnerName));
+            submitToLinkPartner.ifPresent(s -> s.submitToLink(transportRequestId, linkPartnerName));
         } else {
             String errorMessage = String.format("The LinkPartner with name [%s] could not be found/is not active!", linkPartnerName);
             throw new DomibusConnectorSubmitToLinkException(message, errorMessage);

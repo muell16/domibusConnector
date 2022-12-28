@@ -4,6 +4,7 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
 import eu.ecodex.dc5.message.model.DC5MessageId;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,10 @@ public interface TransportStateService {
      */
     public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState);
 
+    default void updateTransportToGatewayStatus(DC5TransportRequest.TransportRequestId t, DomibusConnectorTransportState transportState) {
+        updateTransportToGatewayStatus(new TransportId(t.getTransportId()), transportState);
+    }
+
     /**
      * Sets the transport status for transport to backendClient
      * @param transportState the transport status to set, contains also the transport id / connector message id
@@ -33,9 +38,14 @@ public interface TransportStateService {
      */
     public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState);
 
+    default public void updateTransportToBackendClientStatus(DC5TransportRequest.TransportRequestId t, DomibusConnectorTransportState transportState) {
+        updateTransportToBackendClientStatus(new TransportId(t.getTransportId()), transportState);
+    }
+
 
     public void updateTransportStatus(DomibusConnectorTransportState transportState);
 
+    public DC5TransportRequest getTransportRequest(DC5TransportRequest.TransportRequestId transportRequestId);
 
 
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);

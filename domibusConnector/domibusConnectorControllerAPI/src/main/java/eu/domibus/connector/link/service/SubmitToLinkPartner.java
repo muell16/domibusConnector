@@ -3,6 +3,7 @@ package eu.domibus.connector.link.service;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 
 /**
  * Generic interface for submitting a message
@@ -10,6 +11,6 @@ import eu.ecodex.dc5.message.model.DC5Message;
  */
 public interface SubmitToLinkPartner {
 
-    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException;
+    public void submitToLink(DC5TransportRequest.TransportRequestId message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException;
 
 }
