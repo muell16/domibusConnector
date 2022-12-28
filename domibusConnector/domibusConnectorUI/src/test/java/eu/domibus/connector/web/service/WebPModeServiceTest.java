@@ -88,7 +88,7 @@ public class WebPModeServiceTest {
             assertThat(securityToolkitConfigurationProperties.getSignatureValidation().getTrustStore().getPassword()).isEqualTo("pw");
 
             ConnectorMessageProcessingProperties props = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), ConnectorMessageProcessingProperties.class);
-            final String expected = props.getpModeFile();
+            final String expected = props.getPModeConfig().getPModeLocation();
 
             Assertions.assertAll(
                     () -> assertThat(evidencesToolkitConfigurationProperties.getIssuerInfo().getAs4Party().getEndpointAddress())

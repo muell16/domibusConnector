@@ -5,6 +5,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.scope.BusinessDomainScopeConfiguration;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -14,9 +17,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 @ComponentScan(basePackages = {"eu.domibus.connector.security", "eu.domibus.connector.common", "eu.domibus.connector.dss"})
@@ -27,14 +34,27 @@ import static org.mockito.ArgumentMatchers.eq;
 })
 @Configuration
 //@Import({BasicDssConfigurationProperties.class})
+@Import({BusinessDomainScopeConfiguration.class})
 @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
 public class SecurityToolkitTestContext {
+
+    private static DomibusConnectorBusinessDomain businessDomain =  DomibusConnectorBusinessDomain.builder()
+//            .properties()
+            .build();
 
 
     @Bean
     public LargeFilePersistenceService bigDataPersistenceService() {
         LargeFilePersistenceServicePassthroughImpl service = new LargeFilePersistenceServicePassthroughImpl();
         return Mockito.spy(service);
+    }
+
+    @Bean
+    public DCBusinessDomainManager dcBusinessDomainManager() {
+        DCBusinessDomainManager mock = Mockito.mock(DCBusinessDomainManager.class);
+        Mockito.when(mock.getValidBusinessDomainsAllData()).thenReturn(Stream.of(businessDomain).collect(Collectors.toList()));
+        Mockito.when(mock.getBusinessDomain(Mockito.any())).thenReturn(Optional.of(businessDomain));
+        return mock;
     }
 
     @Bean
@@ -45,5 +65,11 @@ public class SecurityToolkitTestContext {
         return mock;
     }
 
+    @Bean
+    public DCDomainValidationService dcDomainValidationService() {
+        DCDomainValidationService mock = Mockito.mock(DCDomainValidationService.class);
+        Mockito.when(mock.validateDomain(any())).thenReturn(DCBusinessDomainManager.DomainValidResult.builder().build());
+        return mock;
+    }
 
 }

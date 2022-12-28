@@ -1,7 +1,8 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {DCBusinessDomainManagerImpl.class, ConnectorConfigurationProperties.class})
+@SpringBootTest(classes = {DCBusinessDomainManagerImpl.class, ConnectorConfigurationProperties.class, DCDomainValidationService.class})
 class DCBusinessDomainManagerImplTest {
 
     @Autowired

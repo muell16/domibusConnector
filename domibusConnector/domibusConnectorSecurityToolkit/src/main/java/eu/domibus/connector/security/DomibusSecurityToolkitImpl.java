@@ -197,25 +197,25 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
 
 
             if (results.isSuccessful()) {
-                if (container != null) {
-                    DSSDocument asicDocument = container.getAsicDocument();
-                    if (asicDocument != null) {
-                        LOGGER.trace("converting asicDocument [{}] to asic message attachment and appending it to message", asicDocument);
-                        DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
-                        message.getMessageContent().getEcodexContent().setAsicContainer(asicAttachment);
+                DC5EcodexContent.DC5EcodexContentBuilder eCodexContentBuilder = DC5EcodexContent.builder();
 
-                    }
-                    DSSDocument tokenXML = container.getTokenXML();
+                DSSDocument asicDocument = container.getAsicDocument();
+                if (asicDocument != null) {
+                    LOGGER.trace("converting asicDocument [{}] to asic message attachment and appending it to message", asicDocument);
+                    DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
+                    eCodexContentBuilder.asicContainer(asicAttachment);
 
-                    if (tokenXML != null) {
-                        LOGGER.trace("converting tokenXml {[{}] to message attachment and appending it to message", tokenXML);
-                        tokenXML.setName(TOKEN_XML_FILE_NAME);
-                        tokenXML.setMimeType(MimeType.XML);
-                        DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
-                        message.getMessageContent().getEcodexContent().setTrustTokenXml(tokenAttachment);
-
-                    }
                 }
+                DSSDocument tokenXML = container.getTokenXML();
+
+                if (tokenXML != null) {
+                    LOGGER.trace("converting tokenXml {[{}] to message attachment and appending it to message", tokenXML);
+                    tokenXML.setName(TOKEN_XML_FILE_NAME);
+                    tokenXML.setMimeType(MimeType.XML);
+                    DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
+                    eCodexContentBuilder.trustTokenXml(tokenAttachment);
+                }
+                message.getMessageContent().setEcodexContent(eCodexContentBuilder.build());
                 return message;
             } else {
                 String errormessage = "\nSeveral problems prevented the container from being created:";

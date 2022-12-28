@@ -3,19 +3,19 @@ package eu.ecodex.dc5.message.model;
 
 import lombok.*;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-//@Embeddable
+
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-
 @ToString
+
+@Valid
 
 @Entity
 public class DC5Role {
@@ -24,7 +24,13 @@ public class DC5Role {
     @GeneratedValue
     private Long id;
 
+    @NonNull
+    @NotNull(message = "The role value of a Role is not allowed to be null!")
+    @NotBlank(message = "The role value of a Role is not allowed to be blank!")
     private String role;
+    @NonNull
+    @NotNull(message = "The role type of a Role is not allowed to be null!")
+    @Convert(converter = DC5RoleTypeConverter.class)
     private DC5RoleType roleType;
 
     @Builder(toBuilder = true)
@@ -49,5 +55,24 @@ public class DC5Role {
         int result = role != null ? role.hashCode() : 0;
         result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
         return result;
+    }
+
+    public static class DC5RoleTypeConverter implements AttributeConverter<DC5RoleType, String> {
+
+        @Override
+        public String convertToDatabaseColumn(DC5RoleType attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.name();
+        }
+
+        @Override
+        public DC5RoleType convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return DC5RoleType.valueOf(dbData);
+        }
     }
 }

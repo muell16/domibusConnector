@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.domain.repo.DC5BusinessDomainJpaEntity;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.repo.DomibusConnectorBusinessDomainDao;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +17,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DCBusinessDomainPersistenceServiceImpl implements DCBusinessDomainPersistenceService {
 
     private final DomibusConnectorBusinessDomainDao businessDomainDao;
-
-    public DCBusinessDomainPersistenceServiceImpl(DomibusConnectorBusinessDomainDao businessDomainDao) {
-        this.businessDomainDao = businessDomainDao;
-    }
 
     @Override
     public Optional<DomibusConnectorBusinessDomain> findById(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {

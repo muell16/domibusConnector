@@ -1,5 +1,22 @@
 package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
+import org.vaadin.klaudeta.PaginatedGrid;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -172,7 +189,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
                     ui.navigate(MessageDetails.class, connectorMessageId.getConnectorMessageId()));
         });
         layout.add(gotoBusinessMessageButton);
-        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DomainModelHelper::isBusinessMessage).orElse(false));
+        gotoBusinessMessageButton.setEnabled(connectorMessageId != null && msg.map(DC5Message::isBusinessMessage).orElse(false));
 
         //retry message
         Button retryMessageButton = new Button(VaadinIcon.ROTATE_LEFT.create());

@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.flow.flows;
 
+import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.flow.steps.VerifyPModesStep;
@@ -8,10 +9,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.ecodex.dc5.core.model.DC5MsgProcess;
-import eu.ecodex.dc5.flow.api.DC5TransformToDomain;
-import eu.ecodex.dc5.flow.api.TransformMessageException;
 import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.assertj.core.api.Assertions;
@@ -42,10 +40,10 @@ class DC5ReceiveMessageFlowTest {
     ReceiveMessageFlow receiveMessageFlow;
 
 
-    eu.ecodex.dc5.flow.api.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomain = new DC5TransformToDomain<DomibusConnectorMessageType>() {
+    SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomain = new SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType>() {
 
         @Override
-        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws SubmitToConnector.TransformMessageException {
             return DomainEntityCreator.createOutgoingEpoFormAMessage();
         }
     };
@@ -57,18 +55,18 @@ class DC5ReceiveMessageFlowTest {
 
 
 
-    DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithException = new DC5TransformToDomain<DomibusConnectorMessageType>() {
+    SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithException = new SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType>() {
         @Override
-        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
-            throw new TransformMessageException("ERROR");
+        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws SubmitToConnector.TransformMessageException {
+            throw new SubmitToConnector.TransformMessageException("ERROR");
         }
     };
 
     public static final long msgId = -100L;
 
-    DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithJPAException = new DC5TransformToDomain<DomibusConnectorMessageType>() {
+    SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType> DC5TransformToDomainWithJPAException = new SubmitToConnector.DC5TransformToDomain<DomibusConnectorMessageType>() {
         @Override
-        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws TransformMessageException {
+        public DC5Message transform(DomibusConnectorMessageType msg, DC5MsgProcess msgProcess) throws SubmitToConnector.TransformMessageException {
             DC5Message m = DomainEntityCreator.createOutgoingEpoFormAMessage();
             m.setId(msgId);
 //            m.getEbmsData().setAction(DC5Action.builder().action("").build());

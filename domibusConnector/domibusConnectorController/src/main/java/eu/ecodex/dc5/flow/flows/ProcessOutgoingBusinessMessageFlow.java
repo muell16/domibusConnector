@@ -1,10 +1,14 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dc5.flow.api.StepFailedException;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
+import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
+import eu.ecodex.dc5.flow.events.OutgoingBusinessMessageTransportEvent;
 import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -12,6 +16,9 @@ import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
+import eu.ecodex.dc5.message.model.MessageModelHelper;
+import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import eu.ecodex.dc5.message.validation.OutgoingBusinessMessageRules;
@@ -20,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
@@ -41,7 +49,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessageProcessor {
 
-    public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "ToGatewayBusinessMessageProcessor";
+    public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "OutgoingBusinessMessageFlow";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessOutgoingBusinessMessageFlow.class);
 
@@ -52,18 +60,74 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
     private final LookupGatewayNameStep lookupGatewayNameStep;
     private final VerifyPModesStep verifyPModesStep;
     private final Validator validator;
-
+    private final DC5MessageRepo messageRepo;
     private final ApplicationEventPublisher eventPublisher;
+    private final ConnectorMessageProcessingProperties processingProperties;
+
+    @EventListener
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
+    public void processOutgoingBusinessMessageTransportEvent(OutgoingBusinessMessageTransportEvent event) {
+        TransportState transportState = event.getTransportState();
+        DC5Message transportedMessage = event.getMessage();
+        if (!MessageModelHelper.isOutgoingBusinessMessage(transportedMessage)) {
+            throw new IllegalArgumentException("TransportEvent does not reference a outgoing business message!");
+        }
+        if (transportState == TransportState.FAILED) {
+
+            //message failed to be transported to gw
+            DC5Confirmation submissionRejection = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
+                    transportedMessage,
+                    DomibusConnectorRejectionReason.GW_REJECTION,
+                    "");
+
+            submitConfirmationMsg(transportedMessage, submissionRejection);
+            //submit trigger message...
+
+        }
+
+        if (transportState == TransportState.ACCEPTED && processingProperties.isSendGeneratedEvidencesToBackend()) {
+
+            DC5Confirmation submissionAcceptance = transportedMessage.getTransportedMessageConfirmation(); //should be submission acceptance
+            if (submissionAcceptance != null &&
+                    submissionAcceptance.getEvidenceType() != DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE) {
+                throw new IllegalStateException("Cannot continue, the wrong evidence has been packed into outgoing business message!");
+            }
+            submitConfirmationMsg(transportedMessage, submissionAcceptance);
+            //submit trigger message...
+
+        }
+
+    }
+
+    /**
+     * Create a evidence message with the given confirmation and send it in
+     * opposite direction to given business message
+     * @param businessMessage - the given business message
+     * @param confirmation - the confirmation
+     */
+    private void submitConfirmationMsg(DC5Message businessMessage, DC5Confirmation confirmation) {
+        DC5Message.DC5MessageBuilder builder = DC5Message.builder();
+        DC5Message evidenceMessage = builder
+                .source(businessMessage.getTarget())
+                .target(businessMessage.getSource())
+                .transportedMessageConfirmation(confirmation)
+                .businessDomainId(businessMessage.getBusinessDomainId())
+                .refToConnectorMessageId(businessMessage.getConnectorMessageId())
+                .connectorMessageId(DomibusConnectorMessageId.ofRandom())
+                .build();
+        messageRepo.save(evidenceMessage);
+        NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());
+        eventPublisher.publishEvent(newMessageStoredEvent);
+    }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DC5Message message) {
         try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getBackendData().getBackendMessageId().toString())) {
 
-            //verify p-Modes step
-
+            //run jsr303 validation
             validateOutgoingMessage(message);
 
-//            ConnectorMessageProcessingProperties.PModeVerificationMode outgoingPModeVerificationMode = connectorMessageProcessingProperties.getOutgoingPModeVerificationMode();
+            //verify p-Modes step
             verifyPModesStep.verifyOutgoing(message);
 
             //buildEcodexContainerStep
@@ -72,26 +136,11 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
             //set gateway name
             lookupGatewayNameStep.executeStep(message);
 
-            //set ebms id, the EBMS id is set here, because it might be possible, that a RELAY_REEMD_EVIDENCE
-            //comes back from the remote connector before this connector has already received the by the
-            //sending GW created EBMSID
-            //domibus GW does not support that!!
-//            generateEbmsIdStep.executeStep(message);
-
-            //persistence step
-//            createNewBusinessMessageInDBStep.executeStep(message);
 
             //create confirmation
             DC5Confirmation submissionAcceptanceConfirmation = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+            message.setTransportedMessageConfirmation(submissionAcceptanceConfirmation);
 
-            //append confirmation to message
-            message.getTransportedMessageConfirmations().add(submissionAcceptanceConfirmation);
-
-            //submit message to GW
-//            submitMessageToLinkStep.submitMessage(message);
-            //submit evidence message to BACKEND
-            //TODO: do this after submitMessage was successfull! offload into extra queue
-//            submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
 //            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put message with backendId [{}] to Gateway Link [{}] on toLink Queue.",
 //                    message.getBackendData().getBackendMessageId(),
@@ -100,6 +149,8 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
             MessageReadyForTransportEvent messageReadyForTransportEvent =
                     MessageReadyForTransportEvent.of(message.getId(), message.getGatewayLinkName(), MessageTargetSource.GATEWAY);
             eventPublisher.publishEvent(messageReadyForTransportEvent);
+            // to be continued with processOutgoingBusinessMessageEvent
+
         } catch (StepFailedException secEcx) {
             DomibusConnectorEvidenceType evidenceType = DomibusConnectorEvidenceType.SUBMISSION_REJECTION;
             LOGGER.error("Could not process message [{}]! Rejecting message with [{}]",  message, evidenceType);

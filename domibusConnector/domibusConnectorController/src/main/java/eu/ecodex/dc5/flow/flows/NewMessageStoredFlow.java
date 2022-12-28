@@ -41,14 +41,14 @@ public class NewMessageStoredFlow {
         msg = lookupDomainStep.lookupDomain(msg);
         CurrentBusinessDomain.setCurrentBusinessDomain(msg.getBusinessDomainId());
 
-        if (MessageModelHelper.isEvidenceTriggerMessage(msg) || MessageModelHelper.isEvidenceMessage(msg)) {
+        if (msg.isConfirmationMessage() || msg.isConfirmationTriggerMessage()) {
             confirmationMessageFlow.processMessage(msg);
-        } else if (MessageModelHelper.isIncomingBusinessMessage(msg)) {
+        } else if (msg.isIncomingBusinessMessage()) {
             processIncomingBusinessMessageFlow.processMessage(msg);
-        } else if (MessageModelHelper.isOutgoingBusinessMessage(msg)) {
+        } else if (msg.isOutgoingBusinessMessage()) {
             outgoingBusinessMessageFlow.processMessage(msg);
         } else {
-            throw new IllegalArgumentException("Message cannot be processed!");
+            throw new IllegalArgumentException("Message cannot be processed, because the message Type cannot be determined!");
         }
 
     }

@@ -20,8 +20,10 @@ import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.pmode.DC5PmodeService;
+import lombok.var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
@@ -36,6 +38,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -123,7 +126,13 @@ public class WebPModeService {
 
     private ConnectorMessageProcessingProperties updatePModes(String referenceString, @NotNull DomibusConnectorBusinessDomain.BusinessDomainId domainNameAkaId) {
         ConnectorMessageProcessingProperties props = configurationPropertyManagerService.loadConfiguration(domainNameAkaId, ConnectorMessageProcessingProperties.class);
-        props.setpModeFile(DatabaseResourceLoader.DB_URL_PREFIX + referenceString);
+        if (props.getPModeConfig() == null) {
+            props.setPModeConfig(new ConnectorMessageProcessingProperties.PModeConfig());
+        }
+        var pModeConfig = props.getPModeConfig();
+        pModeConfig.setPModeLocation(DatabaseResourceLoader.DB_URL_PREFIX + referenceString);
+        pModeConfig.setChangedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        pModeConfig.setUploadDate(LocalDateTime.now());
 
         return props;
     }
@@ -478,26 +487,26 @@ public class WebPModeService {
 //        updatePModeSet(pModes);
 //    }
 
-    private DC5PmodeService.DomibusConnectorPModeSet updatePModeSet(DC5PmodeService.DomibusConnectorPModeSet pModes) {
-        DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getBusinessDomainId();
-        if (laneId == null) {
-            laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
-            LOGGER.info("Setting default lane [{}] pModeSet", laneId);
-            pModes.setBusinessDomainId(laneId);
-        }
-        this.pModeService.updatePModeConfigurationSet(pModes);
-        return this.getCurrentPModeSet(laneId).orElseThrow(() -> new IllegalStateException("After update there must be a p-ModeSet with this id"));
-    }
+//    private DC5PmodeService.DomibusConnectorPModeSet updatePModeSet(DC5PmodeService.DomibusConnectorPModeSet pModes) {
+//        DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getBusinessDomainId();
+//        if (laneId == null) {
+//            laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+//            LOGGER.info("Setting default lane [{}] pModeSet", laneId);
+//            pModes.setBusinessDomainId(laneId);
+//        }
+//        this.pModeService.updatePModeConfigurationSet(pModes);
+//        return this.getCurrentPModeSet(laneId).orElseThrow(() -> new IllegalStateException("After update there must be a p-ModeSet with this id"));
+//    }
 
     @Transactional(readOnly = false)
     public void updateActivePModeSetDescription(DC5PmodeService.DomibusConnectorPModeSet pModes) {
-        DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getBusinessDomainId();
-        if (laneId == null) {
-            laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
-            LOGGER.info("Setting default lane [{}] pModeSet", laneId);
-            pModes.setBusinessDomainId(laneId);
-        }
-        this.pModeService.updateActivePModeSetDescription(pModes);
+//        DomibusConnectorBusinessDomain.BusinessDomainId laneId = pModes.getBusinessDomainId();
+//        if (laneId == null) {
+//            laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+//            LOGGER.info("Setting default lane [{}] pModeSet", laneId);
+//            pModes.setBusinessDomainId(laneId);
+//        }
+//        this.pModeService.updateActivePModeSetDescription(pModes);
     }
 
     @Transactional(readOnly = false)
@@ -510,10 +519,13 @@ public class WebPModeService {
         return this.pModeService.getCurrentPModeSet(laneId);
     }
 
-    public List<DC5PmodeService.DomibusConnectorPModeSet> getInactivePModeSets() {
-        final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
 
-        return this.pModeService.getInactivePModeSets(laneId);
+    @Deprecated
+    public List<DC5PmodeService.DomibusConnectorPModeSet> getInactivePModeSets() {
+//        final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+//
+//        return this.pModeService.getInactivePModeSets(laneId);
+        return new ArrayList<>();
     }
 
     private DC5PmodeService.DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
@@ -526,8 +538,8 @@ public class WebPModeService {
         });
     }
 
-    public DomibusConnectorKeystore getConnectorstore(String connectorstoreUUID) {
-        return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
-    }
+//    public DomibusConnectorKeystore getConnectorstore(String connectorstoreUUID) {
+//        return keystorePersistenceService.getKeystoreByUUID(connectorstoreUUID);
+//    }
 
 }

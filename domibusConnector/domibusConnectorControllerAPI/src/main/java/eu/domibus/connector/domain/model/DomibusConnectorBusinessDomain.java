@@ -1,11 +1,22 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class DomibusConnectorBusinessDomain {
 
     public static final String DEFAULT_LANE_NAME = "defaultBusinessDomain";
@@ -90,21 +101,26 @@ public class DomibusConnectorBusinessDomain {
 
     public static class BusinessDomainId {
 
-        public BusinessDomainId() {}
+//        public BusinessDomainId() {}
 
         public BusinessDomainId(String id) {
+            if (StringUtils.isBlank(id)) {
+                throw new IllegalArgumentException(String.format("id of business domain is not allowed to be blank or null, but it is [%s]!", id));
+            }
             this.businessDomainId = id;
         }
 
         @NotBlank
-        private String businessDomainId;
+        @NotNull
+        @NonNull
+        private final String businessDomainId;
+
+        public static BusinessDomainId of(String s) {
+            return new BusinessDomainId(s);
+        }
 
         public String getBusinessDomainId() {
             return businessDomainId;
-        }
-
-        public void setBusinessDomainId(String businessDomainId) {
-            this.businessDomainId = businessDomainId;
         }
 
         @Override
@@ -126,6 +142,11 @@ public class DomibusConnectorBusinessDomain {
         public int hashCode() {
             return businessDomainId != null ? businessDomainId.hashCode() : 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toString(this.id);
     }
 
 }

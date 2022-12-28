@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
+import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
@@ -110,7 +111,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                     createEvidenceTimeoutConfirmationStep.createNonDeliveryAndSendIt(message);
                     LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] reached Delivery confirmation timeout. A NonDelivery evidence has been generated and sent.", message.getConnectorMessageIdAsString());
                 } catch (DomibusConnectorMessageException e) {
-                    throw new DomibusConnectorControllerException(e);
+                    throw new DomibusConnectorControllerException(ErrorCode.DELIVERY_TIMEOUT_REACHED, e);
                 }
                 return;
             }

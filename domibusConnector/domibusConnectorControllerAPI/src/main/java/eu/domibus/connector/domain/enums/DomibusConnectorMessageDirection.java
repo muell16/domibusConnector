@@ -48,5 +48,11 @@ public enum DomibusConnectorMessageDirection {
     public MessageTargetSource getTarget() {
         return target;
     }
+
+    @Override
+    public String toString() {
+        return source + " to " + target;
+    }
+
 }
 

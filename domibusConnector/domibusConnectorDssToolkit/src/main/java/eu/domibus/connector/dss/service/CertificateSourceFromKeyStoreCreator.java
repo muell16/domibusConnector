@@ -70,9 +70,13 @@ public class CertificateSourceFromKeyStoreCreator {
             KeyStoreSignatureTokenConnection keyStoreSignatureTokenConnection = new KeyStoreSignatureTokenConnection(res, storeConfigurationProperties.getType(), new KeyStore.PasswordProtection(storeConfigurationProperties.getPassword().toCharArray()));
             DSSPrivateKeyEntry privatKeyEntry = keyStoreSignatureTokenConnection.getKey(keyAndKeyStoreConfigurationProperties.getPrivateKey().getAlias(), new KeyStore.PasswordProtection(keyAndKeyStoreConfigurationProperties.getPrivateKey().getPassword().toCharArray()));
 
+            Objects.requireNonNull(privatKeyEntry);
+            Objects.requireNonNull(keyStoreSignatureTokenConnection);
+
             return new SignatureConnectionAndPrivateKeyEntry(keyStoreSignatureTokenConnection, privatKeyEntry);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load trust store", e);
+        } catch (IOException | NullPointerException e) {
+            String error = String.format("Unable to load Key and KeyStore from [%s]", keyAndKeyStoreConfigurationProperties);
+            throw new RuntimeException(error, e);
         }
     }
 

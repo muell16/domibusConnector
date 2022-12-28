@@ -2,10 +2,11 @@ package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
-import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
+import eu.ecodex.dc5.domain.service.DCBusinessDomainManagerImpl;
 import eu.ecodex.dc5.domain.scope.BusinessDomainScopeConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ properties = {
         "connector.routing.backend-rules[3].match-clause=|(not(startswith(FinalRecipient, '1')),startswith(ServiceType, '8'))"
 })
 public class DCMessageRoutingConfigurationPropertiesTest {
+
+    @MockBean
+    DCDomainValidationService validationService;
 
     @Autowired
     DCMessageRoutingConfigurationProperties props;

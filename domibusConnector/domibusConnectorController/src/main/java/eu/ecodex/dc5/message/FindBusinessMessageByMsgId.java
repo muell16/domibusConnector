@@ -64,7 +64,7 @@ public class FindBusinessMessageByMsgId {
         }
 
         Optional<EbmsMessageId> refToEbmsId = Optional.ofNullable(refMessage.getEbmsData())
-                .map(DC5Ebms::getEbmsMessageId);
+                .map(DC5Ebms::getRefToEbmsMessageId);
         refTo.refToEbmsId = refToEbmsId;
         Optional<DC5Message> result1 = refToEbmsId.flatMap(r -> dc5MessageRepo.findOneByEbmsMessageIdAndDirectionTarget(r, target));
 

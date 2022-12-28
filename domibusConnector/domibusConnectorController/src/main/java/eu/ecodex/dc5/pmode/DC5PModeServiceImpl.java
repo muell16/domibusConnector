@@ -1,62 +1,39 @@
 package eu.ecodex.dc5.pmode;
 
+import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class DC5PModeServiceImpl implements DC5PmodeService {
 
-    @Override
-    public List<PModeAction> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeAction action) {
-        return null;
-    }
 
-    @Override
-    public Optional<PModeAction> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeAction action) {
-        return Optional.empty();
-    }
+    private final BusinessScopedPModeService businessScopedPModeService;
 
-    @Override
-    public List<PModeService> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeService DC5Service) {
-        return null;
-    }
 
-    @Override
-    public Optional<PModeService> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeService DC5Service) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<PModeParty> findByExample(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeParty domibusConnectorParty) throws IncorrectResultSizeException {
-        return null;
-    }
-
-    @Override
-    public Optional<PModeParty> getConfiguredSingle(DomibusConnectorBusinessDomain.BusinessDomainId lane, PModeParty domibusConnectorParty) throws IncorrectResultSizeException {
-        return Optional.empty();
-    }
-
-    @Override
-    public void updatePModeConfigurationSet(DomibusConnectorPModeSet connectorPModeSet) {
-
-    }
 
     @Override
     public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
-        return Optional.empty();
+        try (CurrentBusinessDomain.CloseAbleBusinessDomain bd = CurrentBusinessDomain.setCloseAbleCurrentBusinessDomain(lane);) {
+            try {
+                return Optional.ofNullable(businessScopedPModeService.getCurrentPModeSet());
+            } catch (Exception e) {
+                log.warn("Failed to get current pModeSet for domain " + lane + " due", e);
+                return Optional.empty();
+            }
+        }
     }
 
-    @Override
-    public void updateActivePModeSetDescription(DomibusConnectorPModeSet connectorPModeSet) {
 
-    }
-
-    @Override
-    public List<DomibusConnectorPModeSet> getInactivePModeSets(DomibusConnectorBusinessDomain.BusinessDomainId lane) {
-        return null;
-    }
 }

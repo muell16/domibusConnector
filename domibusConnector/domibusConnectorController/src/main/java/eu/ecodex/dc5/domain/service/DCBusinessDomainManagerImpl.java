@@ -1,16 +1,19 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,38 +91,21 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData() {
-        List<DomibusConnectorBusinessDomain> collect = getAllBusinessDomainsAllData().stream()
-                .filter(domain -> this.validateDomain(domain).isValid())
-                .collect(Collectors.toList());
+    public Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
+        return getAllBusinessDomainsAllData().stream()
+                .collect(Collectors.toMap(Function.identity(), this::validateDomain));
+    }
 
+    @Override
+    public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData() {
+        List<DomibusConnectorBusinessDomain> collect = getAllBusinessDomainsValidations().entrySet().stream()
+                .filter(e -> e.getValue().isValid())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
         if (collect.isEmpty()) {
             LOGGER.warn("#getValidBusinessDomainsAllData: returned no valid business domains! Check your configuration!");
         }
         return collect;
-
-//        Set<DomibusConnectorBusinessDomain> collect = new HashSet<>();
-//        if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
-//            businessDomainPersistenceService
-//                    .findAll()
-//                    .stream()
-//                    .filter(DomibusConnectorBusinessDomain::isEnabled)
-//                    .filter(d -> this.validateDomain(d.getId()).isValid())
-//                    .forEach(b -> collect.add(b));
-//        }
-//
-//        businessDomainConfigurationProperties.getBusinessDomain()
-//                .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
-//                .filter(d -> !this.validateDomain(d.getId()).isValid())
-//                .forEach(b -> {
-//                    if (!collect.add(b)) {
-//                        LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
-//                    }
-//                });
-//
-
-//
-//        return new ArrayList<>(collect);
     }
 
     @Override
@@ -194,5 +180,6 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         lane.setProperties(p);
         return lane;
     }
+
 
 }

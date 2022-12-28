@@ -44,7 +44,7 @@ public class ConfirmationMessageFlow {
         // validate message
 
         boolean isEvidenceTriggerMessage = MessageModelHelper.isEvidenceTriggerMessage(message);
-        if (isEvidenceTriggerMessage) {
+        if (isEvidenceTriggerMessage || message.getEbmsData() == null) {
 //            confirmationCreatorService.createConfirmation()
             validateEvidenceTriggerMessage(message);
             message = evidenceTriggerStep.executeStep(message);
@@ -57,7 +57,7 @@ public class ConfirmationMessageFlow {
         DomibusConnectorMessageDirection revertedDirection = DomibusConnectorMessageDirection.revert(message.getDirection());
         DC5Message businessMsg = findBusinessMessageByMsgId.findBusinessMessageByIdAndDirection(message, revertedDirection);
 
-
+        message.setRefToConnectorMessageId(businessMsg.getRefToConnectorMessageId());
 
         //set ref to backend message id (backendId of business message)
         BackendMessageId businessMessageBackendId = businessMsg.getBackendData().getBackendMessageId();
@@ -77,10 +77,8 @@ public class ConfirmationMessageFlow {
 
         validateMessageConfirmationStep.executeStep(message);
 
-        List<DC5Confirmation> transportedConfirmations = message.getTransportedMessageConfirmations();
-        for (DC5Confirmation c : transportedConfirmations) {
-            messageConfirmationStep.processConfirmationForMessage(businessMsg, c);
-        }
+        //process confirmation...
+        messageConfirmationStep.processConfirmationForMessage(businessMsg, message.getTransportedMessageConfirmation());
 
         if (message.getBackendLinkName() == null) {
             message.setBackendLinkName(businessMsg.getBackendLinkName());
@@ -90,7 +88,7 @@ public class ConfirmationMessageFlow {
         }
 
         MessageReadyForTransportEvent messageReadyForTransportEvent =
-                MessageReadyForTransportEvent.of(message.getId(), message.getGatewayLinkName(), message.getTarget());
+                MessageReadyForTransportEvent.of(message.getId(), message.getTargetLinkName(), message.getTarget());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
 
         //if activated send triggered evidence back

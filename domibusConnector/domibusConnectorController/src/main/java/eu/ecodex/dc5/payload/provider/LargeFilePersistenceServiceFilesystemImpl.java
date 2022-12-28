@@ -8,6 +8,7 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.ecodex.dc5.payload.DomibusConnectorFilesystemPersistenceProperties;
 import eu.ecodex.dc5.payload.DomibusConnectorPersistenceProperties;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -35,23 +36,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ConditionalOnProperty(prefix = DomibusConnectorPersistenceProperties.PREFIX,
-        value = "provider-" + LargeFilePersistenceServiceFilesystemImpl.PROVIDER_NAME,
-        havingValue = "true", matchIfMissing = true)
-@Service
+@RequiredArgsConstructor
 public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
 
     public static final String PROVIDER_NAME = "filesystem";
     private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceFilesystemImpl.class);
 
-    @Autowired
-    DomibusConnectorFilesystemPersistenceProperties filesystemPersistenceProperties;
 
-    //setter
-    public void setFilesystemPersistenceProperties(DomibusConnectorFilesystemPersistenceProperties filesystemPersistenceProperties) {
-        this.filesystemPersistenceProperties = filesystemPersistenceProperties;
+    private final DomibusConnectorFilesystemPersistenceProperties filesystemPersistenceProperties;
 
-    }
 
     @Override
     public String getProviderName() {

@@ -23,10 +23,14 @@ public interface DomibusConnectorEvidencesToolkit {
 
 	Evidence createEvidence(DomibusConnectorEvidenceType type, MessageParameters params, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException;
 
+	EvidenceDetails parseEvidence(byte[] evidence);
+
 	@Getter
 	@Builder(toBuilder = true)
 	class HashValue {
+		@NonNull
 		String hash;
+		@NonNull
 		String algorithm;
 	}
 
@@ -96,6 +100,14 @@ public interface DomibusConnectorEvidencesToolkit {
 			d.setSenderAddress(this.getSenderAddress());
 			return d;
 		}
+	}
+
+
+	class EvidenceDetails {
+		DomibusConnectorEvidenceType evidenceType;
+		String rejectionCode;
+		String rejectionDetails;
+
 	}
 
 

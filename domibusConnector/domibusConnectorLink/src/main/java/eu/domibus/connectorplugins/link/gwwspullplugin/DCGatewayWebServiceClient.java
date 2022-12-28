@@ -2,6 +2,7 @@ package eu.domibus.connectorplugins.link.gwwspullplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.*;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
@@ -96,12 +97,22 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
             getMessageByIdRequest.setMessageId(remoteMessageId);
             DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
 
-            DC5Message message = transformerService.transformTransitionToDomain(messageById, connectorMessageId);
+//            DC5Message message = transformerService.transformTransitionToDomain(MessageTargetSource.BACKEND, linkPartnerName, messageById, connectorMessageId);
+//            Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);
 
-
-            Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);
-            submitToConnector.submitToConnector(message, activeLinkPartnerByName.get().getLinkPartner());
-
+            SubmitToConnector.ReceiveMessageFlowResult receiveMessageFlowResult = submitToConnector
+                    .receiveMessage(messageById, (toMessage, p) -> transformerService.transformTransitionToDomain(MessageTargetSource.BACKEND,
+                    linkPartnerName,
+                    toMessage, connectorMessageId));
+            if (receiveMessageFlowResult.isSuccess()) {
+                LOGGER.debug("Pulling message with id [{}] from [{}] is [{}]", remoteMessageId, linkPartnerName, receiveMessageFlowResult.isSuccess());
+            } else {
+                LOGGER.warn("Pulling message with id [{}] from [{}] failed with [{}] due [{}]",
+                        remoteMessageId,
+                        linkPartnerName, receiveMessageFlowResult.getErrorCode().orElse(null),
+                        receiveMessageFlowResult.getError().map(Throwable::getMessage).orElse(null)
+                        );
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.service;
+package eu.ecodex.dc5.domain.validation;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-class DCDomainValidationService {
+public class DCDomainValidationService {
     private final ApplicationContext applicationContext;
 
     public DCBusinessDomainManager.DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {

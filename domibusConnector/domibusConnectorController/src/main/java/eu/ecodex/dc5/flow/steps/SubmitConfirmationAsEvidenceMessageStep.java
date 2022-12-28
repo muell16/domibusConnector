@@ -116,13 +116,12 @@ public class SubmitConfirmationAsEvidenceMessageStep {
                 .source(businessMessage.getTarget())
                 .refToConnectorMessageId(businessMessage.getConnectorMessageId())
                 .build();
-//        evidenceMessage.getEbmsData().setGatewayAddress(receiver);
-//        evidenceMessage.getEbmsData().setBackendAddress(sender);
+
 
         evidenceMessage = messageRepo.save(evidenceMessage);
-        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getSource());
+        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getSource());
 
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getDirection().getSource());
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getSource());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
 
     }

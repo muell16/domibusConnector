@@ -24,6 +24,7 @@ import eu.europa.esig.dss.policy.EtsiValidationPolicy;
 import eu.europa.esig.dss.policy.ValidationPolicyFacade;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
+import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.executor.signature.DefaultSignatureProcessExecutor;
 import org.slf4j.Logger;
@@ -109,7 +110,6 @@ public class ECodexContainerFactoryService {
         Objects.requireNonNull(message, "message is not allowed to be null");
         Objects.requireNonNull(message.getDcMessageProcessSettings(), "messageProcess settings are not allowed to be null!");
         AdvancedElectronicSystemType validationServiceName = message.getDcMessageProcessSettings().getValidationServiceName();
-
 
         if (validationServiceName != null) {
             LOGGER.debug("Using AdvancedSystemType [{}] from message", validationServiceName);
@@ -236,9 +236,17 @@ public class ECodexContainerFactoryService {
             CertificateSourceFromKeyStoreCreator.SignatureConnectionAndPrivateKeyEntry signatureConnectionFromStore = certificateSourceFromKeyStoreCreator.createSignatureConnectionFromStore(signatureConfig);
 
             SignatureParameters signatureParameters = new SignatureParameters();
+
+            DSSPrivateKeyEntry dssPrivateKeyEntry = signatureConnectionFromStore.getDssPrivateKeyEntry();
+            Objects.requireNonNull(dssPrivateKeyEntry, "Private key for signature is not allowed to be null!");
+            signatureParameters.setPrivateKey(dssPrivateKeyEntry);
+
             signatureParameters.setSignatureTokenConnection(signatureConnectionFromStore.getSignatureTokenConnection());
-            signatureParameters.setPrivateKey(signatureConnectionFromStore.getDssPrivateKeyEntry());
+
+            Objects.requireNonNull(signatureConfig.getDigestAlgorithm());
             signatureParameters.setDigestAlgorithm(signatureConfig.getDigestAlgorithm());
+
+            Objects.requireNonNull(signatureConfig.getEncryptionAlgorithm());
             signatureParameters.setEncryptionAlgorithm(signatureConfig.getEncryptionAlgorithm());
 
             return signatureParameters;

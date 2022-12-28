@@ -50,9 +50,9 @@ public class DC5MessageContent {
 			DC5MessageContent content = super.build();
 			if (content.getCurrentState() == null && CollectionUtils.isEmpty(content.getMessageStates())) { //set initial state
 				content.changeCurrentState(DC5BusinessMessageState.builder()
-						.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
-						.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
-						.build());
+					.state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
+					.event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
+					.build());
 			} else if (content.getCurrentState() == null) {
 				content.setCurrentState(content.getMessageStates().get(content.getMessageStates().size() - 1)); //set to last state in list
 			}
@@ -101,7 +101,12 @@ public class DC5MessageContent {
 	public List<DC5Confirmation> getRelatedConfirmations() {
 		return this.messageStates.stream()
 				.map(DC5BusinessMessageState::getConfirmation)
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
+	}
+
+	void setCurrentState(DC5BusinessMessageState currentState) {
+		this.currentState = currentState;
 	}
 
 

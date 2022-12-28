@@ -60,8 +60,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
         fsProps.setStoragePath(Paths.get(testStorageLocation.getAbsolutePath()));
         fsProps.setEncryptionActive(true);
 
-        filesystemImpl = new LargeFilePersistenceServiceFilesystemImpl();
-        filesystemImpl.setFilesystemPersistenceProperties(fsProps);
+        filesystemImpl = new LargeFilePersistenceServiceFilesystemImpl(fsProps);
     }
 
     @Test

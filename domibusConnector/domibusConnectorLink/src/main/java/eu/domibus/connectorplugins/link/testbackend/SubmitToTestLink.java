@@ -1,19 +1,11 @@
 package eu.domibus.connectorplugins.link.testbackend;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirmationBuilder;
-//import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.link.service.SubmitToLinkPartner;
+import eu.ecodex.dc5.message.model.DC5Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -43,7 +35,7 @@ public class SubmitToTestLink implements SubmitToLinkPartner {
 
     @Override
     public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        if (DomainModelHelper.isBusinessMessage(message)) {
+        if (message.isBusinessMessage()) {
 
             if (this.enabled) {
 //                String ebmsMessageId = message.getEbmsData().getEbmsMessageId();

@@ -23,6 +23,7 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 
 import javax.jms.Message;
+import java.util.Objects;
 import java.util.Optional;
 
 @BusinessDomainScoped
@@ -85,36 +86,17 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
         return Evidence.builder().type(type).evidence(evidence).build();
     }
-    
+
+    @Override
+    public EvidenceDetails parseEvidence(byte[] evidence) {
+
+        return null;
+    }
+
     private String checkPDFandBuildHashValue(MessageParameters message)
             throws DomibusConnectorEvidencesToolkitException {
+        Objects.requireNonNull(message.getBusinessDocumentHash(), "Must be set for creating SUBMISSION evidence");
         return message.getBusinessDocumentHash().getHash();
-//        throw new RuntimeException("THIS MUS BE IMPLEMENTED!");
-//
-        //TODO: rethink if the hash should really reference the business doc?!
-        //maybe better the hash references the TOKEN? Because the Token also references the business doc?!
-
-//        String hashValue = null;
-//    	if (ArrayUtils.isEmpty(message.getMessageContent().getXmlContent())) {
-//            DomibusConnectorAction action = message.getMessageDetails().getAction();
-//            if (action == null) {
-//                throw new DomibusConnectorEvidencesToolkitException("Action still null!");
-//            }
-////            if (action.isDocumentRequired()) {
-////                throw new DomibusConnectorEvidencesToolkitException(
-////                        "There is no document in the message though the Action " + action.getAction()
-////                                + " requires one!");
-////            }
-//        } else {
-//            try {
-//                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getXmlContent());
-//
-//            } catch (Exception e) {
-//                throw new DomibusConnectorEvidencesToolkitException("Could not build hash code though the PDF is not empty!",
-//                        e);
-//            }
-//        }
-//        return hashValue;
     }
     
     private byte[] createSubmissionAcceptance(MessageParameters message)
@@ -131,9 +113,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a rejection the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType();
-        event.setCode(rejectionReason.toString());
-        event.setDetails(errorDetails);
+        EventReasonType event = createEventReasonType(rejectionReason, errorDetails);
 
         return createSubmissionAcceptanceRejection(false, event, message, hash);
     }
@@ -158,9 +138,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a rejection the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType();
-        event.setCode(rejectionReason.toString());
-        event.setDetails(errorDetails);
+        EventReasonType event = createEventReasonType(rejectionReason, errorDetails);
 
         Optional<Evidence> prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
@@ -181,9 +159,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a failure the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType();
-        event.setCode(rejectionReason.toString());
-        event.setDetails(errorDetails);
+        EventReasonType event = createEventReasonType(rejectionReason, errorDetails);
 
         Optional<Evidence> prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
@@ -194,6 +170,13 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         }
 
         return createRelayREMMDFailure(event, prevConfirmation.get());
+    }
+
+    private static EventReasonType createEventReasonType(DomibusConnectorRejectionReason rejectionReason, String errorDetail) {
+        EventReasonType event = new EventReasonType();
+        event.setCode(rejectionReason.getErrorCode());
+        event.setDetails(rejectionReason.getReasonText() + ":" + errorDetail);
+        return event;
     }
 
     private byte[] createDeliveryEvidence(MessageParameters message) throws DomibusConnectorEvidencesToolkitException {
@@ -216,9 +199,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a NonDelivery the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType();
-        event.setCode(rejectionReason.toString());
-        event.setDetails(errorDetails);
+        EventReasonType event = createEventReasonType(rejectionReason, errorDetails);
 
         Optional<Evidence> prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
@@ -251,9 +232,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
                     "in case of a NonRetrieval the rejectionReason may not be null!");
         }
 
-        EventReasonType event = new EventReasonType();
-        event.setCode(rejectionReason.toString());
-        event.setDetails(errorDetails);
+        EventReasonType event = createEventReasonType(rejectionReason, errorDetails);
 
         Optional<Evidence> prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
 

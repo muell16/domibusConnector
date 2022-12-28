@@ -10,16 +10,16 @@ public class MessageModelHelper {
         if (message == null) {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
-        return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() == 1
-                && ArrayUtils.isEmpty(message.getTransportedMessageConfirmations().get(0).getEvidence());
+        return message.getMessageContent() == null && message.getTransportedMessageConfirmation() != null
+                && ArrayUtils.isEmpty(message.getTransportedMessageConfirmation().getEvidence());
     }
 
     public static boolean isEvidenceMessage(DC5Message message) {
         if (message == null) {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
-        return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() == 1
-                && !ArrayUtils.isEmpty(message.getTransportedMessageConfirmations().get(0).getEvidence());
+        return message.getMessageContent() == null && message.getTransportedMessageConfirmation() != null
+                && !ArrayUtils.isEmpty(message.getTransportedMessageConfirmation().getEvidence());
     }
 
 

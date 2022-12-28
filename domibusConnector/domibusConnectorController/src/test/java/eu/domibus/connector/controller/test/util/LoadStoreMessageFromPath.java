@@ -12,9 +12,9 @@ import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.ecodex.dc5.message.model.*;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
@@ -24,6 +24,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Should load test messages from directory
@@ -62,7 +63,8 @@ public class LoadStoreMessageFromPath {
     public static final String ATTACHMENT_DIGEST_POSTFIX = ".digest";
     public static final String ATTACHMENT_FILENAME_POSTFIX = ".filename";
 
-    private final Resource basicFolder;
+    private Resource messagePropertiesResource;
+    private Resource messageFolder;
     private final LargeFilePersistenceService largeFilePersistenceService;
 
     private Properties messageProperties;
@@ -74,22 +76,22 @@ public class LoadStoreMessageFromPath {
         loadStoreMessageFromPath.storeMessage(message);
     }
 
-    private LoadStoreMessageFromPath(Resource basicFolder, LargeFilePersistenceService largeFilePersistenceService) {
+    private LoadStoreMessageFromPath(Resource messageFolder, LargeFilePersistenceService largeFilePersistenceService) {
         this.largeFilePersistenceService = largeFilePersistenceService;
-        this.basicFolder = basicFolder;
+        this.messageFolder = messageFolder;
         this.messageProperties = new Properties();
     }
 
 
     private void storeMessage(DC5Message message) throws IOException {
 
-        if (!basicFolder.exists()) {
-            System.out.println("basic folder is: " + basicFolder.getFile().getAbsolutePath());
-            basicFolder.getFile().mkdirs();
+        if (!messageFolder.exists()) {
+            System.out.println("basic folder is: " + messageFolder.getFile().getAbsolutePath());
+            messageFolder.getFile().mkdirs();
         }
 
-        Resource propertiesResource = basicFolder.createRelative("/message.properties");
-        if (propertiesResource.exists()) {
+        messagePropertiesResource = new FileSystemResource(messageFolder.getFile().toPath().resolve("message.properties"));
+        if (messagePropertiesResource.exists()) {
             throw new RuntimeException("message already exists cannot overwrite it!");
         }
 
@@ -109,9 +111,12 @@ public class LoadStoreMessageFromPath {
 
 
         //store confirmations
-        storeMessageConfirmations(message.getTransportedMessageConfirmations());
+        storeMessageConfirmations(Stream.of(message.getTransportedMessageConfirmation()).collect(Collectors.toList()));
 
-        File file = propertiesResource.getFile();
+        //store confirmations
+        storeMessageStates(message.getMessageContent().getMessageStates());
+
+        File file = messagePropertiesResource.getFile();
         System.out.println(file.getAbsolutePath());
         boolean created = file.createNewFile();
         if (!created) {
@@ -122,11 +127,36 @@ public class LoadStoreMessageFromPath {
 
     }
 
+    private void storeMessageStates(List<DC5BusinessMessageState> messageStates) {
+        for (int i = 0; i < messageStates.size(); i++) {
+            try {
+                DC5BusinessMessageState state = messageStates.get(i);
+                String statePrefix = String.format("%s.%s", LoadStoreTransitionMessage.MESSAGE_STATE_PREFIX, i);
+                messageProperties.put(statePrefix + ".state-name", state.getState().name());
+
+                if (state.getConfirmation() != null) {
+                    DC5Confirmation confirmation = state.getConfirmation();
+                    String evidenceFilePropertyName = String.format("%s.%s", statePrefix, "file");
+                    String evidenceTypePropertyName = String.format("%s.%s", statePrefix, "type");
+                    String fileName = getFileNameFromPrefix(evidenceFilePropertyName) + ".xml";;
+
+                    messageProperties.put(evidenceTypePropertyName, confirmation.getEvidenceType().name());
+                    messageProperties.put(evidenceFilePropertyName, fileName);
+
+                    Resource r = messagePropertiesResource.createRelative(fileName);
+                    writeByteArrayToResource(r, confirmation.getEvidence());
+                }
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+
+        }
+    }
 
 
     private void storeMessageData(DC5Message message) {
-        messageProperties.put(MESSAGE_TARGET_PROP_NAME, message.getTarget());
-        messageProperties.put(MESSAGE_SOURCE_PROP_NAME, message.getSource());
+        messageProperties.put(MESSAGE_TARGET_PROP_NAME, message.getTarget().name());
+        messageProperties.put(MESSAGE_SOURCE_PROP_NAME, message.getSource().name());
         if (message.getConnectorMessageId() != null) {
             messageProperties.put(CONNECTOR_MESSAGE_ID_PROP_NAME, message.getConnectorMessageId().getConnectorMessageId());
         }
@@ -149,7 +179,7 @@ public class LoadStoreMessageFromPath {
                 String fileName = confirmation.getEvidenceType().name() + ".xml";
                 messageProperties.put(evidenceFilePropertyName, confirmation.getEvidenceType().name() + ".xml");
 
-                Resource r = basicFolder.createRelative(fileName);
+                Resource r = messagePropertiesResource.createRelative(fileName);
                 writeByteArrayToResource(r, confirmation.getEvidence());
 
             } catch (IOException ioe) {
@@ -198,12 +228,12 @@ public class LoadStoreMessageFromPath {
 
     private DC5Message loadMessage() throws IOException {
         DC5Message.DC5MessageBuilder builder = DC5Message.builder();
-
+        messagePropertiesResource = this.messageFolder;
 
         this.id = DomibusConnectorMessageId.ofRandom();
         builder.connectorMessageId(id);
 
-        Resource propertiesResource = basicFolder.createRelative("message.properties");
+        Resource propertiesResource = messagePropertiesResource.createRelative("message.properties");
         if (!propertiesResource.exists()) {
             throw new IOException("properties " + propertiesResource + " does not exist!");
         }
@@ -231,7 +261,10 @@ public class LoadStoreMessageFromPath {
         builder.ebmsData(loadEcxDatailsFromProperties().build());
         builder.backendData(loadBackendDetailsFromProperties().build());
 
-        builder.transportedMessageConfirmations(loadConfirmations());
+        List<DC5Confirmation> list = loadConfirmations();
+        if (list.size() == 1) {
+            builder.transportedMessageConfirmation(list.get(0));
+        }
 
         String connid = messageProperties.getProperty("message.connector-id", null);
         if (connid != null) {
@@ -369,7 +402,7 @@ public class LoadStoreMessageFromPath {
             return null;
         }
         try {
-            Resource contentResource = basicFolder.createRelative(relativePath);
+            Resource contentResource = messagePropertiesResource.createRelative(relativePath);
             return contentResource;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -450,7 +483,7 @@ public class LoadStoreMessageFromPath {
             filename = getFileNameFromPrefix(propertyPrefix);
         }
 
-        LargeFileReference largeFileReference = loadResourceAsBigDataRef(id, basicFolder.createRelative(filename));
+        LargeFileReference largeFileReference = loadResourceAsBigDataRef(id, messagePropertiesResource.createRelative(filename));
 
         return DomibusConnectorMessageAttachment.builder()
                 .name(messageProperties.getProperty(propertyPrefix + ATTACHMENT_NAME_POSTFIX))
@@ -480,12 +513,17 @@ public class LoadStoreMessageFromPath {
 
         File file;
         try {
-            file = basicFolder.createRelative(filename).getFile();
+            file = messagePropertiesResource.createRelative(filename).getFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        try (OutputStream os = Files.newOutputStream(file.toPath()); InputStream is = a.getAttachment().getInputStream()) {
+        LargeFileReference readableDataSource = a.getAttachment();
+        if (this.largeFilePersistenceService != null) {
+            readableDataSource = largeFilePersistenceService.getReadableDataSource(readableDataSource);
+        }
+
+        try (OutputStream os = Files.newOutputStream(file.toPath()); InputStream is = readableDataSource.getInputStream()) {
             StreamUtils.copy(is, os);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -525,7 +563,10 @@ public class LoadStoreMessageFromPath {
         }
 
         if (details.getEbmsMessageId() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME, details.getEbmsMessageId());
+            messageProperties.put(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME, details.getEbmsMessageId().getEbmsMesssageId());
+        }
+        if (details.getRefToEbmsMessageId() != null) {
+            messageProperties.put(LoadStoreTransitionMessage.REF_TO_EBMS_ID_PROP_NAME, details.getRefToEbmsMessageId().getEbmsMesssageId());
         }
         if (details.getConversationId() != null) {
             messageProperties.put(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME, details.getConversationId());
@@ -572,7 +613,12 @@ public class LoadStoreMessageFromPath {
                         .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
                         .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
                 .build());
-        builder.ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)));
+        if (messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME) != null) {
+            builder.ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)));
+        }
+        if (messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_EBMS_ID_PROP_NAME) != null) {
+            builder.refToEbmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.REF_TO_EBMS_ID_PROP_NAME)));
+        }
         builder.refToEbmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.CONVERSATION_ID_PROP_NAME)));
 
         return builder;

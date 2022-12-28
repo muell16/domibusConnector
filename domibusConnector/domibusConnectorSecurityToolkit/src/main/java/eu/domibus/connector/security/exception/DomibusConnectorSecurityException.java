@@ -2,10 +2,6 @@ package eu.domibus.connector.security.exception;
 
 public class DomibusConnectorSecurityException extends RuntimeException {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 8837848390850284261L;
 
     public DomibusConnectorSecurityException() {
     }

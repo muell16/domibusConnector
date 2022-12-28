@@ -2,7 +2,6 @@ package test.eu.domibus.connector.link;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
-import eu.domibus.connector.common.service.DCBusinessDomainManagerImpl;
 import eu.domibus.connector.common.service.DCKeyStoreService;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
@@ -43,7 +42,7 @@ import java.util.concurrent.LinkedBlockingDeque;
         HelperMethods.class,
         DCKeyStoreService.class,
         ConfigurationPropertyManagerServiceImpl.class,
-        DCBusinessDomainManagerImpl.class,
+//        DCBusinessDomainManagerImpl.class,
         ConnectorConfigurationProperties.class
 })
 @ComponentScan(basePackages = {"eu.domibus.connector.common", "eu.domibus.connector"})
@@ -122,11 +121,11 @@ public class LinkTestContext {
         return Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
     }
 
-    @Bean
-    @Primary
-    public SubmitToConnector submitToConnector() {
-        return new SubmitToConnectorQueuImpl();
-    }
+//    @Bean
+//    @Primary
+//    public SubmitToConnector submitToConnector() {
+//        return new SubmitToConnectorQueuImpl();
+//    }
 
 
     public static final String SUBMIT_TO_CONNECTOR_QUEUE = "submitToConnector";
@@ -137,23 +136,23 @@ public class LinkTestContext {
         return new LinkedBlockingDeque<>(90);
     }
 
-    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
-
-        @Autowired
-        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-        public BlockingQueue<DC5Message> toConnectorSubmittedMessages;
-
-        @Override
-        public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) throws DomibusConnectorSubmitToLinkException {
-
-            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
-            try {
-                toConnectorSubmittedMessages.put(message);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+//    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
+//
+//        @Autowired
+//        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+//        public BlockingQueue<DC5Message> toConnectorSubmittedMessages;
+//
+//        @Override
+//        public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) throws DomibusConnectorSubmitToLinkException {
+//
+//            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages);
+//            try {
+//                toConnectorSubmittedMessages.put(message);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
 
 
 

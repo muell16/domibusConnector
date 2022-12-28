@@ -36,6 +36,12 @@ public class DC5BusinessMessageStateMachineFactory {
                 .transition(RELAYED, RELAYED, RELAY_REMMD_ACCEPTANCE_RCV)
                 .transition(RELAYED, DELIVERED, DELIVERY_RCV)
                 .transition(DELIVERED, RETRIEVED, RETRIEVAL_RCV)
+                .transition(DELIVERED, REJECTED, NON_RETRIEVAL_RCV)
+                .transition(CREATED, REJECTED, ADMIN_ABORT)
+                .transition(SUBMITTED, REJECTED, ADMIN_ABORT)
+                .transition(RELAYED, REJECTED, ADMIN_ABORT)
+                .transition(DELIVERED, REJECTED, ADMIN_ABORT)
+                .transition(RETRIEVED, REJECTED, ADMIN_ABORT)
 //                .throwOnTransition()
                 .throwOnNotAllowedTransition((state, event) -> new DCEvidenceProcessingException(ErrorCode.EVIDENCE_IGNORED, String.format("Cannot move with event [%s] from current state [%s]", event, state)))
                 .build();

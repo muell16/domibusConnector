@@ -3,6 +3,7 @@ package eu.domibus.connector.common.service;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
+import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

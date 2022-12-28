@@ -1,15 +1,13 @@
 package eu.ecodex.dc5.payload;
 
-//import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Component
+
 @ConfigurationProperties(prefix = "connector.persistence.filesystem")
 @Validated
 public class DomibusConnectorFilesystemPersistenceProperties {

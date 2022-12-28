@@ -1,9 +1,15 @@
 package eu.ecodex.evidences;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -11,7 +17,11 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import eu.domibus.connector.common.annotations.BusinessDomainScoped;
-import org.apache.log4j.Logger;
+import eu.domibus.connector.tools.logging.LoggingUtils;
+
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 import org.etsi.uri._02640.soapbinding.v1_.DeliveryConstraints;
 import org.etsi.uri._02640.soapbinding.v1_.Destinations;
 import org.etsi.uri._02640.soapbinding.v1_.MsgIdentification;
@@ -35,19 +45,112 @@ import eu.spocseu.edeliverygw.evidences.RelayREMMDFailure;
 import eu.spocseu.edeliverygw.evidences.RetrievalNonRetrievalByRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @BusinessDomainScoped
+@Log4j2
 public class ECodexEvidenceBuilder implements EvidenceBuilder {
-    private static Logger LOG = Logger.getLogger(ECodexEvidenceBuilder.class);
+
 
     private static EvidenceUtils signer = null;
 
     public ECodexEvidenceBuilder(Resource javaKeyStorePath, String javaKeyStoreType, String javaKeyStorePassword, String alias, String keyPassword) {
-        // signer = new EvidenceUtilsImpl(javaKeyStorePath,
-        // javaKeyStorePassword, alias, keyPassword);
-        signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword);
+        //TODO: use keystore provider, improve keystore loading, HSM support
+        signer = new EvidenceUtilsXades(createKeyPairProvider(javaKeyStorePath, javaKeyStoreType, javaKeyStorePassword, alias, keyPassword));
+    }
+
+    private static EvidenceUtils.KeyPairProvider createKeyPairProvider(Resource store, String storeType, String storePass, String alias, String keyPass) {
+        return new EvidenceUtils.KeyPairProvider() {
+
+            @Override
+            public KeyStore getKeyStore() {
+                log.debug("Loading KeyStore[{}]", getPrettyPrintKeystore());
+
+                try (InputStream kfis = store.getInputStream()){
+                    KeyStore ks = KeyStore.getInstance(storeType);
+                    ks.load(kfis, (storePass == null) ? null : storePass.toCharArray());
+                    return ks;
+                } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
+                    throw new RuntimeException(String.format("Cannot load keystore [%s]", getPrettyPrintKeystore()), e);
+                }
+            }
+
+            @Override
+            public KeyPair getKeyPair() {
+                log.debug("Loading KeyPair from Java KeyStore[{}]", getPrettyPrintKeystore());
+
+                try {
+                    KeyStore ks = getKeyStore();
+                    if (!ks.containsAlias(alias)) {
+                        throw new IllegalArgumentException("Cannot get keypair from keystore: alias does not exist");
+                    }
+                    Key key = ks.getKey(alias, keyPass.toCharArray());
+                    if (!(key instanceof PrivateKey)) {
+                        throw new IllegalArgumentException("Cannot get keypair from keystore: key is not a private key");
+                    }
+                    X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+                    PublicKey publicKey = cert.getPublicKey();
+                    PrivateKey privateKey = (PrivateKey) key;
+                    Objects.requireNonNull(publicKey, "public key must not be null!");
+                    Objects.requireNonNull(privateKey, "private key must not be null!");
+                    return new KeyPair(publicKey, privateKey);
+
+                } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | NullPointerException  e) {
+                    throw new RuntimeException(String.format("Cannot get keypair from keystore [%s]", getPrettyPrintKeystore()), e);
+                }
+
+            }
+
+            @Override
+            public X509Certificate getCertificate() {
+                try {
+                    Certificate crt =  getKeyStore().getCertificate(alias);
+                    if (!(crt instanceof X509Certificate)) {
+                        throw new RuntimeException("Retrieving certificate from keystore [" + getPrettyPrintKeystore() + "] failed, because it is not of X509");
+                    }
+                    return (X509Certificate)crt;
+                } catch (KeyStoreException e) {
+                    throw new RuntimeException("Retrieving certificate from keystore [" + getPrettyPrintKeystore() + "] failed", e);
+                }
+            }
+
+            @Override
+            public List<X509Certificate> getCertificateChain() {
+                try {
+                    Certificate[] certificateChain = getKeyStore().getCertificateChain(alias);
+                    return Arrays.stream(certificateChain)
+                            .map(X509Certificate.class::cast)
+                            .collect(Collectors.toList());
+                } catch (KeyStoreException e) {
+                    throw new RuntimeException("Retrieving certificate chain from keystore [" + getPrettyPrintKeystore() + "] failed", e);
+                }
+
+            }
+
+            private String getPrettyPrintKeystore() {
+
+                return String.format("Keystore [location=%s, type=%s, pw=%s, keyalias=%s, keypw=%s]", store,
+                        storeType,
+                        logPassword(log, storePass),
+                        alias,
+                        logPassword(log, keyPass));
+            }
+
+            private String logPassword(Logger logger, Object password) {
+                if (password == null) {
+                    return null;
+                }
+                if (logger.isTraceEnabled() || !logger.getLevel().isMoreSpecificThan(Level.TRACE)) {
+                    return password.toString();
+                } else {
+                    return String.format("**increase logger [%s] log level to [%s]] to see**", logger, Level.TRACE);
+                }
+            }
+
+        };
     }
 
     @Override
@@ -80,7 +183,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
             recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
             sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
         } catch (MalformedURLException e) {
-            LOG.warn(e);
+            log.warn(e);
         }
 
         Destinations destinations = new Destinations();
@@ -122,7 +225,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
         byte[] signedByteArray = signEvidence(evidence, false);
 
-        LOG.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
+        log.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
 
         return signedByteArray;
     }
@@ -256,7 +359,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
         if (removeOldSignature) {
             // delete old signature field
             evidenceToBeSigned.getXSDObject().setSignature(null);
-            LOG.debug("Old Signature removed");
+            log.debug("Old Signature removed");
         }
 
         ByteArrayOutputStream fo = new ByteArrayOutputStream();
@@ -265,7 +368,7 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
             evidenceToBeSigned.serialize(fo);
         } catch (JAXBException e) {
-            LOG.error("Cannot serialize evidence", e);
+            log.error("Cannot serialize evidence", e);
         }
 
         byte[] bytes = fo.toByteArray();

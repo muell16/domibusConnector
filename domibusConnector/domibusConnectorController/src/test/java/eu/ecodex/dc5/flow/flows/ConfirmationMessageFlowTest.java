@@ -7,16 +7,19 @@ import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
 import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.model.DomibusConnectorMessageId;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static eu.ecodex.dc5.flow.flows.DC5ReceiveMessageFlowTest.msgId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @FlowTestAnnotation
@@ -41,11 +44,9 @@ class ConfirmationMessageFlowTest {
     @Autowired
     MessageProcessManager messageProcessManager;
 
-
-    @Before
-    public void before() {
-//        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
-//        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+    @AfterEach
+    public void afterEachTest() {
+        CurrentBusinessDomain.clear();
     }
 
 
@@ -54,31 +55,31 @@ class ConfirmationMessageFlowTest {
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createAlreadyOutgoneEpoFormAMessage();
             dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-
+            dc5Message.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
-            return m;
+            return dc5Message;
         });
     }
 
 
-    public DC5Message createRelayRemmdRejectMessage(DC5Message refTo) {
+    public DomibusConnectorMessageId createRelayRemmdRejectMessage(DC5Message refTo) {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createRelayRemmdRejectEvidenceForMessage(refTo);
             dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-
+            dc5Message.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
-            return m;
+            return m.getConnectorMessageId();
         });
     }
-    public DC5Message createRelayRemmdAcceptMessage(DC5Message refTo) {
+    public DomibusConnectorMessageId createRelayRemmdAcceptMessage(DC5Message refTo) {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(refTo);
             dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-
+            dc5Message.setConnectorMessageId(DomibusConnectorMessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
-            return m;
+            return dc5Message.getConnectorMessageId();
         });
     }
 
@@ -86,21 +87,21 @@ class ConfirmationMessageFlowTest {
     public void testRelayRemmdAcceptanceRcv() {
         DC5Message message = createMessage();
 
-        Long msgId = createRelayRemmdAcceptMessage(message).getId();
+        DomibusConnectorMessageId msgId = createRelayRemmdAcceptMessage(message);
 
         messageProcessManager.startProcess();
 
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 
         txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getById(msgId);
+            DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
             confirmationMessageFlow.processMessage(msg);
             return msg;
         });
 
         txTemplate.executeWithoutResult(s -> {
-            DC5Message businessMsg = messageRepo.getById(message.getId());
+            DC5Message businessMsg = messageRepo.getByConnectorMessageId(message.getConnectorMessageId());
 
             assertThat(businessMsg.getMessageContent().getCurrentState().getState())
                     .as("Message state must be relayed")
@@ -114,21 +115,21 @@ class ConfirmationMessageFlowTest {
     public void testRelayRemmdRejectRcv() {
         DC5Message message = createMessage();
 
-        Long msgId = createRelayRemmdRejectMessage(message).getId();
+        DomibusConnectorMessageId remmdReject = createRelayRemmdRejectMessage(message);
 
         messageProcessManager.startProcess();
 
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
 
         txTemplate.execute(state -> {
-            DC5Message msg = messageRepo.getById(msgId);
+            DC5Message msg = messageRepo.getByConnectorMessageId(remmdReject);
             CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
             confirmationMessageFlow.processMessage(msg);
             return msg;
         });
 
         txTemplate.executeWithoutResult(s -> {
-            DC5Message businessMsg = messageRepo.getById(message.getId());
+            DC5Message businessMsg = messageRepo.getByConnectorMessageId(message.getConnectorMessageId());
 
             assertThat(businessMsg.getMessageContent().getCurrentState().getState())
                     .as("Message state must be reject")

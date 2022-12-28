@@ -1,0 +1,12 @@
+= Application Health
+
+== Introduction
+
+Point out how READINESS and HEALTH of this application can be described.
+
+
+== List of HealthIndicator to implement / ideas
+
+* BusinessDomainHealth => show how many domains are active and valid, go invalid if no valid domains
+* LinkPartnerHealth => go down if not all required partners are available...
+* Certificates => maybe part of BusinessDomainHealth

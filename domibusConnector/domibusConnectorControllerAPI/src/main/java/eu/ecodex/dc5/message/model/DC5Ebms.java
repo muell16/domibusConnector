@@ -46,12 +46,25 @@ public class DC5Ebms {
 		this.conversationId = conversationId;
 		this.ebmsMessageId = ebmsMessageId;
 		this.refToEbmsMessageId = refToEbmsMessageId;
-		this.action = action;
-		this.service = service;
-		this.backendAddress = backendAddress;
-		this.gatewayAddress = gatewayAddress;
-		this.initiatorRole = initiatorRole;
-		this.responderRole = responderRole;
+		if (action != null) {
+			this.action = action.toBuilder().build();
+		}
+		if (service != null) {
+			this.service = service.toBuilder().build();
+		}
+		if (backendAddress != null) {
+			this.backendAddress = backendAddress.toBuilder().build();
+		}
+		if (gatewayAddress != null) {
+			this.gatewayAddress = gatewayAddress.toBuilder().build();
+		}
+		if (initiatorRole != null) {
+			this.initiatorRole = initiatorRole.toBuilder().build();
+		}
+		if (responderRole != null) {
+			this.responderRole = responderRole.toBuilder().build();
+		}
+
 	}
 
 	@Id
@@ -122,9 +135,11 @@ public class DC5Ebms {
 	private DC5EcxAddress gatewayAddress = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS initiator Role!")
 	private DC5Role initiatorRole = new DC5Role();
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS responder Role!")
 	private DC5Role responderRole = new DC5Role();
 
 	public EbmsSender getSender(MessageTargetSource target) {
@@ -184,11 +199,13 @@ public class DC5Ebms {
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-		builder.append("sender", this.backendAddress);
-		builder.append("receiver", this.gatewayAddress);
+		builder.append("backendAddress", this.backendAddress);
+		builder.append("gatewayAddress", this.gatewayAddress);
         builder.append("ebmsMessageId", this.ebmsMessageId);
         builder.append("refToMessageId", this.refToEbmsMessageId);
         builder.append("conversationId", this.conversationId);
+		builder.append("service", this.service);
+		builder.append("action", this.action);
 
         return builder.toString();        
     }

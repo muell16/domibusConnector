@@ -156,7 +156,7 @@ public class OriginalSenderBasedAESAuthenticationServiceFactory implements DCAut
             final AuthenticationInformation tokenAuthentication = new AuthenticationInformation();
 
             tokenAuthentication.setIdentityProvider(identityProvider);
-            tokenAuthentication.setUsernameSynonym(message.getEbmsData().getBackendAddress().getEcxAddress());
+            tokenAuthentication.setUsernameSynonym(message.getEbmsData().getSender(message.getTarget()).getOriginalSender());
             tokenAuthentication.setTimeOfAuthentication(
                         DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 

@@ -1,5 +1,6 @@
 package eu.ecodex.dc5.flow.steps;
 
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.routing.DCDomainRoutingManager;
@@ -8,6 +9,8 @@ import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,6 +21,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +33,11 @@ class DC5LookupDomainStepTest {
     private FindBusinessMessageByMsgId msgService;
     @Mock
     private DCDomainRoutingManager dcDomainRoutingManager;
+
+    @BeforeEach
+    public void beforeEach() {
+        CurrentBusinessDomain.setCurrentBusinessDomain(null);
+    }
 
     // 1. If the field refToMsgId exists (either in backend or ebms data) then -> lookup the referred msg and associate incoming message with that domain.
     @Test
@@ -93,11 +102,20 @@ class DC5LookupDomainStepTest {
 
         // Arrange
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.empty());
-        when(msgService.findBusinessMsgByConversationId(any())).thenReturn(new ArrayList<>());
+//        when(msgService.findBusinessMsgByConversationId(any())).thenReturn(new ArrayList<>());
 
         final String matchingDomainId1 = "test-domainId-foo1";
         final String notMatchingDomainId2 = "test-domainId-bar2";
-        when(domainManager.getValidBusinessDomains()).thenReturn(Arrays.asList(new DomibusConnectorBusinessDomain.BusinessDomainId(matchingDomainId1), new DomibusConnectorBusinessDomain.BusinessDomainId(notMatchingDomainId2)));
+        when(domainManager.getValidBusinessDomainsAllData()).thenReturn(Arrays.asList(
+                DomibusConnectorBusinessDomain.builder()
+                    .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1))
+                    .build(),
+                DomibusConnectorBusinessDomain.builder()
+                    .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(notMatchingDomainId2))
+                    .build())
+        );
+
+
 
 
         final String serviceName = "service-that-should-go-to-particular-domain";
@@ -110,9 +128,14 @@ class DC5LookupDomainStepTest {
         final Map<String, DomainRoutingRule> ruleIdRuleMap = new HashMap<>();
         ruleIdRuleMap.put(rule1.getRoutingRuleId(), rule1);
 
-        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(matchingDomainId1))).thenReturn(ruleIdRuleMap);
+        when(dcDomainRoutingManager.getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1))).thenReturn(ruleIdRuleMap);
+        when(dcDomainRoutingManager.getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId.of(notMatchingDomainId2))).thenReturn(new HashMap<String, DomainRoutingRule>());
 
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().service(DC5Service.builder().service(serviceName).serviceType(serviceType).build()).build()).build();
+        final DC5Message incomingMsg = DC5Message.builder()
+                .ebmsData(DC5Ebms.builder()
+                        .service(DC5Service.builder().service(serviceName)
+                        .serviceType(serviceType).build()).build())
+                .build();
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
 
@@ -120,7 +143,7 @@ class DC5LookupDomainStepTest {
         final DC5Message result = sut.lookupDomain(incomingMsg);
 
         // Assert
-        assertThat(result.getBusinessDomainId().getBusinessDomainId()).isEqualTo(matchingDomainId1);
+        assertThat(result.getBusinessDomainId()).isEqualTo(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1));
     }
 
     // 4. If the message can be associated with multiple domains (see step 3) => Error!
@@ -131,9 +154,10 @@ class DC5LookupDomainStepTest {
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.empty());
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(new ArrayList<>());
 
-        final String nonMatchingDomainId1 = "test-domainId-11";
-        final String nonMatchingDomainId2 = "test-domainId-22";
-        when(domainManager.getValidBusinessDomains()).thenReturn(Arrays.asList(new DomibusConnectorBusinessDomain.BusinessDomainId(nonMatchingDomainId1), new DomibusConnectorBusinessDomain.BusinessDomainId(nonMatchingDomainId2)));
+        final String testDomain1 = "test-domainId-11";
+        final String testDomain2 = "test-domainId-22";
+        when(domainManager.getValidBusinessDomainsAllData())
+                .thenReturn(Arrays.asList(createDomain(testDomain1), createDomain(testDomain2)));
 
 
         final String serviceName = "service-that-should-go-to-particular-domain";
@@ -146,18 +170,30 @@ class DC5LookupDomainStepTest {
         rule1.setMatchClause(rulePattern1);
         rule2.setMatchClause(rulePattern2);
 
-        final Map<String, DomainRoutingRule> ruleIdRuleMap = new HashMap<>();
-        ruleIdRuleMap.put(rule1.getRoutingRuleId(), rule1);
-        ruleIdRuleMap.put(rule2.getRoutingRuleId(), rule2);
+        final Map<String, DomainRoutingRule> ruleIdRuleMap1 = new HashMap<>();
+        ruleIdRuleMap1.put(rule1.getRoutingRuleId(), rule1);
+        final Map<String, DomainRoutingRule> ruleIdRuleMap2 = new HashMap<>();
+        ruleIdRuleMap2.put(rule2.getRoutingRuleId(), rule2);
 
-        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(nonMatchingDomainId1))).thenReturn(ruleIdRuleMap);
+        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(testDomain1))).thenReturn(ruleIdRuleMap1);
+        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(testDomain2))).thenReturn(ruleIdRuleMap1);
 
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().service(DC5Service.builder().service(serviceName).serviceType(serviceType).build()).build()).build();
+        final DC5Message incomingMsg = DC5Message.builder()
+                .ebmsData(DC5Ebms.builder()
+                        .service(DC5Service.builder()
+                                .service(serviceName)
+                                .serviceType(serviceType)
+                                .build())
+                        .conversationId("test1")
+                        .build())
+                .build();
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
 
         // Act & Assert
-        assertThatExceptionOfType(DomainMatchingException.class).isThrownBy(() -> sut.lookupDomain(incomingMsg));
+        assertThatExceptionOfType(DomainMatchingException.class)
+                .as("There are 2 matching domains")
+                .isThrownBy(() -> sut.lookupDomain(incomingMsg));
     }
 
     // 5. If in the end the message could not be associated with any domain   => Error!
@@ -169,12 +205,21 @@ class DC5LookupDomainStepTest {
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(new ArrayList<>());
 
         final String nonMatchingDomainId1 = "foo";
-        when(domainManager.getValidBusinessDomains()).thenReturn(Arrays.asList(new DomibusConnectorBusinessDomain.BusinessDomainId(nonMatchingDomainId1)));
-        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(nonMatchingDomainId1))).thenReturn(new HashMap<>());
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().build()).build();
+        when(domainManager.getValidBusinessDomainsAllData())
+                .thenReturn(Arrays.asList(createDomain(nonMatchingDomainId1)));
+        when(dcDomainRoutingManager.getDomainRoutingRules(createDomain(nonMatchingDomainId1).getId())).thenReturn(new HashMap<>());
+        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder()
+                        .conversationId("test1")
+                .build()).build();
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
 
         // Act & Assert
         assertThatExceptionOfType(DomainMatchingException.class).isThrownBy(() -> sut.lookupDomain(incomingMsg));
+    }
+
+    private DomibusConnectorBusinessDomain createDomain(String s) {
+        return DomibusConnectorBusinessDomain.builder()
+                .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(s))
+                .build();
     }
 }

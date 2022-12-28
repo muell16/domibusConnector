@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKeyFactory;
@@ -61,9 +63,9 @@ public class InitializeAdminUser {
      * check if the admin user exists in DB
      *  if not - create it
      */
-    @PostConstruct
+    @EventListener
     @Transactional
-    public void checkAdminUser() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public void checkAdminUser(ContextRefreshedEvent contextRefreshedEvent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String adminUserName = initializeAdminUserProperties.getInitialUserName();
 
         PDomibusConnectorUser adminUser = userDao.findOneByUsernameIgnoreCase(adminUserName);

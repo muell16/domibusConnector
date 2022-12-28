@@ -108,8 +108,8 @@ class SigningUtil {
 		params.setSignaturePackaging(SignaturePackaging.ENVELOPED);
 		params.setEncryptionAlgorithm(encryptionAlgorithm);
 		params.setDigestAlgorithm(digestAlgorithm);
-		params.setCertificateChain(signingParameters.getCertificateChain());
-		params.setSigningCertificate(signingParameters.getCertificate());
+		params.setCertificateChain(signingParameters.getPrivateKey().getCertificateChain());
+		params.setSigningCertificate(signingParameters.getPrivateKey().getCertificate());
 		
 		ToBeSigned bytesToSign = signatureService.getDataToSign(document, params);
 

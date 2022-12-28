@@ -10,30 +10,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
-public class SubmitToConnectorImpl implements SubmitToConnector {
+//@Service
+//@RequiredArgsConstructor
+public class SubmitToConnectorImpl {
 
-    private final ReceiveMessageFlow receiveMessageFlow;
+//    private final ReceiveMessageFlow receiveMessageFlow;
 
-    @Override
-    @Transactional
+//    @Override
+//    @Transactional
     public void submitToConnector(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartner, LinkType linkType) {
         ReceiveMessageFlow.ReceiveMessageFlowResult receiveMessageFlowResult;
         if (linkType == LinkType.GATEWAY) {
             message.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
             message.setGatewayLinkName(linkPartner);
-            receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
+//            receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
         } else if (linkType == LinkType.BACKEND) {
             message.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
             message.setBackendLinkName(linkPartner);
-            receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
+//            receiveMessageFlowResult = receiveMessageFlow.receiveMessage(message, (msg, msgProcess) -> msg);
         } else {
             throw new RuntimeException("linkType not known!");
         }
-        if (!receiveMessageFlowResult.isSuccess()) {
-            throw new RuntimeException("Submission failed due: " + receiveMessageFlowResult.toString(), receiveMessageFlowResult.getError().orElse(null));
-        }
+//        if (!receiveMessageFlowResult.isSuccess()) {
+//            throw new RuntimeException("Submission failed due: " + receiveMessageFlowResult.toString(), receiveMessageFlowResult.getError().orElse(null));
+//        }
     }
 
 }

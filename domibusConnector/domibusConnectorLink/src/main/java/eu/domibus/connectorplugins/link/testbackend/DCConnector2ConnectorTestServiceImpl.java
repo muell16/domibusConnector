@@ -3,6 +3,7 @@ package eu.domibus.connectorplugins.link.testbackend;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.domain.enums.LinkType;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -40,8 +41,12 @@ public class DCConnector2ConnectorTestServiceImpl implements DCConnector2Connect
 
 	@Override
 	public void submitTestMessage(DomibusConnectorMessageType testMessage) {
-		DC5Message DC5Message = transformerService.transformTransitionToDomain(testMessage, messageIdGenerator.generateDomibusConnectorMessageId());
-		submitToConnector.submitToConnector(DC5Message, new DomibusConnectorLinkPartner.LinkPartnerName(getTestBackendName()), LinkType.BACKEND);
+		DomibusConnectorLinkPartner.LinkPartnerName lpName = DomibusConnectorLinkPartner.LinkPartnerName.of(getTestBackendName());
+
+		SubmitToConnector.ReceiveMessageFlowResult receiveMessageFlowResult = submitToConnector.receiveMessage(testMessage, (m, p) -> {
+			return transformerService.transformTransitionToDomain(MessageTargetSource.GATEWAY, lpName, m, messageIdGenerator.generateDomibusConnectorMessageId());
+		});
+		//TODO: process result: receiveMessageFlowResult
 	}
 	
 	@Override
