@@ -73,7 +73,7 @@
         <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
         <com.github.fge.jackson-coreutils.version>1.8</com.github.fge.jackson-coreutils.version>
         <joda-time.joda-time.version>2.10.10</joda-time.joda-time.version>
-        <!-- if a proxy is used during build or test configure this properties 
+        <!-- if a proxy is used during build or test configure this properties
 			by overwriting them in your settings.xml file -->
         <https.proxy.enabled>false</https.proxy.enabled>
         <http.proxy.enabled>false</http.proxy.enabled>
