@@ -13,11 +13,11 @@ import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
-@UIScope
-@Route(value = JmsMonitoringView.ROUTE, layout = MonitoringLayout.class)
-@Order(1)
-@TabMetadata(title = "Jms Queues", tabGroup = MonitoringLayout.TAB_GROUP_NAME)
+//@Component
+//@UIScope
+//@Route(value = JmsMonitoringView.ROUTE, layout = MonitoringLayout.class)
+//@Order(1)
+//@TabMetadata(title = "Jms Queues", tabGroup = MonitoringLayout.TAB_GROUP_NAME)
 public class JmsMonitoringView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
     public static final String ROUTE = "queues";
 

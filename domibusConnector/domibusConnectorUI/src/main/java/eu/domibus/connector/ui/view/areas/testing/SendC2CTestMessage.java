@@ -68,6 +68,8 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
 
     boolean filesEnabled = false;
 
+    //TODO: add dialog to choose business domain which should be used to send c2c test from!
+
     public SendC2CTestMessage(@Autowired WebPModeService pModeService,
                               @Autowired WebConnectorTestService webTestService,
                               @Autowired DomibusConnectorMessageIdGenerator messageIdGenerator) {

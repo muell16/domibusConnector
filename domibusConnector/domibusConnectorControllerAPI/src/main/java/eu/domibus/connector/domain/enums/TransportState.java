@@ -10,6 +10,7 @@ public enum TransportState {
     ACCEPTED("accepted", 10),
     PENDING("pending", 1),
     PENDING_DOWNLOADED("pend_down", 2),
+    FAILED_TEMPORARY("fail_temp", 4),
     FAILED("failed", 10);
 
 

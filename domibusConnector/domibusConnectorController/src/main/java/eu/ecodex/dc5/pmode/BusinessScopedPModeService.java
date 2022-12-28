@@ -50,8 +50,8 @@ public class BusinessScopedPModeService {
     }
 
     private String getPModeLocation() {
-        Objects.requireNonNull(processingProperties.getPModeConfig(), DCPModeException.P_MODE_FILE_NOT_CONFIGURED + ": PMode config must be set if PModeService is being called!");
-        Objects.requireNonNull(processingProperties.getPModeConfig().getPModeLocation(), DCPModeException.P_MODE_FILE_NOT_CONFIGURED + ": PMode file in pmodeConfig must be set if PModeService is being called!");
+        Objects.requireNonNull(processingProperties.getPModeConfig(), String.format("%s: PMode config must be set in domain [%s] if PModeService is being called!", DCPModeException.P_MODE_FILE_NOT_CONFIGURED, CurrentBusinessDomain.getCurrentBusinessDomain()));
+        Objects.requireNonNull(processingProperties.getPModeConfig().getPModeLocation(), String.format("%s: PMode file in pmodeConfig must be set in domain [%s] if PModeService is being called!", DCPModeException.P_MODE_FILE_NOT_CONFIGURED, CurrentBusinessDomain.getCurrentBusinessDomain()));
         return processingProperties.getPModeConfig().getPModeLocation();
     }
 

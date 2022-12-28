@@ -45,11 +45,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-@UIScope
-@Component
-@Order(2)
-@Route(value = TransportStateMonitoringView.ROUTE_PREFIX, layout = MonitoringLayout.class)
-@TabMetadata(title = TransportStateMonitoringView.TITLE, tabGroup = MonitoringLayout.TAB_GROUP_NAME)
+//@UIScope
+//@Component
+//@Order(2)
+//@Route(value = TransportStateMonitoringView.ROUTE_PREFIX, layout = MonitoringLayout.class)
+//@TabMetadata(title = TransportStateMonitoringView.TITLE, tabGroup = MonitoringLayout.TAB_GROUP_NAME)
 public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHelpButton implements AfterNavigationObserver {
 
     private final static Logger LOGGER = LogManager.getLogger(TransportStateMonitoringView.class);

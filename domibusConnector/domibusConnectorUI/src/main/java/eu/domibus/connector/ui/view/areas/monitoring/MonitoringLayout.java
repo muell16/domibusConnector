@@ -10,10 +10,10 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTabs;
 import eu.domibus.connector.ui.layout.DCMainLayout;
 
-@UIScope
-@Component
-@RoutePrefix(MonitoringLayout.ROUTE_PREFIX)
-@ParentLayout(DCMainLayout.class)
+//@UIScope
+//@Component
+//@RoutePrefix(MonitoringLayout.ROUTE_PREFIX)
+//@ParentLayout(DCMainLayout.class)
 public class MonitoringLayout extends DCVerticalLayoutWithTabs {
 
     public static final String ROUTE_PREFIX = "monitoring";

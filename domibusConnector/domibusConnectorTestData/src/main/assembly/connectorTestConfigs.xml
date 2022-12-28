@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>connectortestkeystores</id>
+    <formats>
+        <format>zip</format>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <includes>
+                <include>connector.properties</include>
+            </includes>
+            <directory>${project.basedir}/src/main/env</directory>
+            <outputDirectory>properties</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

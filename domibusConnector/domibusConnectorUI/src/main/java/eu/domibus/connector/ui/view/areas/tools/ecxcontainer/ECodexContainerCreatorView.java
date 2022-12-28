@@ -78,6 +78,8 @@ public class ECodexContainerCreatorView extends VerticalLayout {
             uploadResultLabel.getStyle().set("color", "red");
         });
 
+        //TODO: add button to set business domain, which should be used for creating ecx-container!
+
         this.add(upload);
         this.add(uploadResultLabel);
         this.add(resultArea);

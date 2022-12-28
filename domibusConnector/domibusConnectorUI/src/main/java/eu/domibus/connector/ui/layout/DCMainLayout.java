@@ -59,11 +59,11 @@ public class DCMainLayout extends AppLayout implements RouterLayout, BeforeEnter
                 .withIcon(new Icon(VaadinIcon.COG_O))
                 .addForComponent(ConfigurationOverview.class);
 
-        tabManager
-                .createTab()
-                .withLabel("Monitoring")
-                .withIcon(new Icon(VaadinIcon.DASHBOARD))
-                .addForComponent(JmsMonitoringView.class);
+//        tabManager
+//                .createTab()
+//                .withLabel("Monitoring")
+//                .withIcon(new Icon(VaadinIcon.DASHBOARD))
+//                .addForComponent(JmsMonitoringView.class);
 
 
         tabManager
