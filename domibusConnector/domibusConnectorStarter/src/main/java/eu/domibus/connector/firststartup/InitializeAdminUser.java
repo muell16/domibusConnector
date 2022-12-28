@@ -1,9 +1,9 @@
 package eu.domibus.connector.firststartup;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
-import eu.domibus.connector.persistence.model.DC5User;
-import eu.domibus.connector.persistence.model.DC5UserPassword;
+import eu.ecodex.dc5.util.repository.DC5UserDao;
+import eu.ecodex.dc5.util.repository.DC5UserPasswordDao;
+import eu.ecodex.dc5.util.model.DC5User;
+import eu.ecodex.dc5.util.model.DC5UserPassword;
 import eu.domibus.connector.persistence.model.enums.UserRole;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
@@ -45,13 +45,13 @@ public class InitializeAdminUser {
     //instead of the DAOs the service (WebUserPersistenceService) should be used here.
     //But this requires some refactoring, because the service is deeply integrated in
     //the webLib Module
-    private final DomibusConnectorUserDao userDao;
-    private final DomibusConnectorUserPasswordDao userPasswordDao;
+    private final DC5UserDao userDao;
+    private final DC5UserPasswordDao userPasswordDao;
 
 
     public InitializeAdminUser(InitializeAdminUserProperties initializeAdminUserProperties,
-                               DomibusConnectorUserDao userDao,
-                               DomibusConnectorUserPasswordDao userPasswordDao) {
+                               DC5UserDao userDao,
+                               DC5UserPasswordDao userPasswordDao) {
         this.initializeAdminUserProperties = initializeAdminUserProperties;
         this.userDao = userDao;
         this.userPasswordDao = userPasswordDao;

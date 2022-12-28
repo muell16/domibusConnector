@@ -12,8 +12,8 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.lib.spring.configuration.validation.HelperMethods;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
+import eu.ecodex.dc5.link.repository.DomibusConnectorLinkConfigurationDao;
+import eu.ecodex.dc5.link.repository.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;

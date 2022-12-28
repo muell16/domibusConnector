@@ -3,10 +3,10 @@ package test.eu.domibus.connector.link.impl.wsplugin;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
-import eu.domibus.connector.persistence.model.DC5LinkConfigJpaEntity;
-import eu.domibus.connector.persistence.model.DC5LinkPartnerJpaEntity;
+import eu.ecodex.dc5.link.repository.DomibusConnectorLinkConfigurationDao;
+import eu.ecodex.dc5.link.repository.DomibusConnectorLinkPartnerDao;
+import eu.ecodex.dc5.link.model.DC5LinkConfigJpaEntity;
+import eu.ecodex.dc5.link.model.DC5LinkPartnerJpaEntity;
 import eu.domibus.connector.persistence.service.DCLinkPersistenceService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

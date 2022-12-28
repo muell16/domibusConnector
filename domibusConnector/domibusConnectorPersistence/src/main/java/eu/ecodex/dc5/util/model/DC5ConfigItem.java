@@ -1,5 +1,6 @@
-package eu.domibus.connector.persistence.model;
+package eu.ecodex.dc5.util.model;
 
+import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import lombok.Getter;
 import lombok.Setter;
 

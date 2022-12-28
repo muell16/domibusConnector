@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
-import eu.domibus.connector.persistence.model.DC5ConfigItem;
+import eu.ecodex.dc5.util.model.DC5ConfigItem;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Nullable;
