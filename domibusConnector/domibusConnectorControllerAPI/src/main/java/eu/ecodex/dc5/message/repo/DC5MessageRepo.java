@@ -9,13 +9,14 @@ import eu.ecodex.dc5.message.model.EbmsMessageId;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
+public interface DC5MessageRepo extends JpaRepository<DC5Message, Long>, QueryByExampleExecutor<DC5Message> {
 
     @Override
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)

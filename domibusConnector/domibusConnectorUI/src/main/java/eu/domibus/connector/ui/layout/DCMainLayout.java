@@ -4,7 +4,6 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -17,16 +16,14 @@ import eu.domibus.connector.ui.view.areas.configuration.ConfigurationOverview;
 import eu.domibus.connector.ui.view.areas.documentation.ArchitectureDocumentationView;
 import eu.domibus.connector.ui.view.areas.info.Info;
 import eu.domibus.connector.ui.view.areas.messages.MessageOverview;
-import eu.domibus.connector.ui.view.areas.monitoring.JmsMonitoringView;
 import eu.domibus.connector.ui.view.areas.pmodes.PmodeOverview;
 import eu.domibus.connector.ui.view.areas.testing.ConnectorTestsOverview;
-import eu.domibus.connector.ui.view.areas.tools.ToolsLayout;
 import eu.domibus.connector.ui.view.areas.tools.ToolsView;
 import eu.domibus.connector.ui.view.areas.users.UserOverview;
+import org.springframework.stereotype.Component;
 
 @UIScope
-@org.springframework.stereotype.Component
-@Push
+@Component
 public class DCMainLayout extends AppLayout implements RouterLayout, BeforeEnterObserver {
 
     private Tabs tabs;

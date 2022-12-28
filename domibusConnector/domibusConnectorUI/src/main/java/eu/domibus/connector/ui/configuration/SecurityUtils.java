@@ -1,19 +1,15 @@
 package eu.domibus.connector.ui.configuration;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.server.ServletHelper.RequestType;
+import com.vaadin.flow.server.HandlerHelper;
 import com.vaadin.flow.shared.ApplicationConstants;
-import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.ui.dto.WebUser;
 import eu.domibus.connector.ui.utils.RoleRequired;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +40,7 @@ public final class SecurityUtils {
     static boolean isFrameworkInternalRequest(HttpServletRequest request) {
         final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
         return parameterValue != null
-                && Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
+                && Stream.of(HandlerHelper.RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
     }
 
     /**

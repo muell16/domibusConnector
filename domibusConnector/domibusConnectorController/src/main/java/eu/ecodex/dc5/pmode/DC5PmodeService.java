@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.pmode;
 
-import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeException;
+import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import lombok.*;
 
 import javax.annotation.CheckForNull;
@@ -104,6 +104,7 @@ public interface DC5PmodeService {
         String name;
         PModeAction action;
         PModeService service;
+        @ToString.Exclude
         PModeProcess businessProcess;
     }
 

@@ -7,13 +7,10 @@ import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebUser;
 import eu.domibus.connector.ui.login.LoginView;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;

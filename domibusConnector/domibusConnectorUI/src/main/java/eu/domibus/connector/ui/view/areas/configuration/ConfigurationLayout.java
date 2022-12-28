@@ -11,11 +11,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.ui.layout.DCMainLayout;
 import eu.domibus.connector.ui.utils.DCTabHandler;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,12 +41,10 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
     private DCTabHandler DCTabHandler = new DCTabHandler();
 
 
-    private final DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
     private final ConfigurationUtil util;
     private final ApplicationContext applicationContext;
 
-    public ConfigurationLayout(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService, ConfigurationUtil util, ApplicationContext applicationContext) {
-        this.propertiesPersistenceService = propertiesPersistenceService;
+    public ConfigurationLayout(ConfigurationUtil util, ApplicationContext applicationContext) {
         this.util = util;
         this.applicationContext = applicationContext;
     }
