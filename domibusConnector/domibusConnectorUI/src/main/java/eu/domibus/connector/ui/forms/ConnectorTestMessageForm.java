@@ -7,8 +7,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty.PartyRoleType;
 
 import java.util.List;
 import java.util.Objects;
@@ -126,15 +124,15 @@ public class ConnectorTestMessageForm extends FormLayout {
         // TODO Auto-generated constructor stub
     }
 
-    public void setParties(List<DomibusConnectorParty> parties) {
-
-        toParty.setItems(parties.stream()
-                .filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
-                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
-        fromParty.setItems(parties.stream()
-                .filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
-                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
-    }
+//    public void setParties(List<DomibusConnectorParty> parties) {
+//
+//        toParty.setItems(parties.stream()
+//                .filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
+//                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
+//        fromParty.setItems(parties.stream()
+//                .filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
+//                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
+//    }
 
     public void setMessage(WebMessage message) {
         this.removeAll();

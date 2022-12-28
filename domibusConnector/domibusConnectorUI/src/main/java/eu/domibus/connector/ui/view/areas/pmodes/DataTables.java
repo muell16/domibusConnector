@@ -13,6 +13,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.model.*;
+import eu.ecodex.dc5.message.model.DC5Party;
 import eu.ecodex.dc5.pmode.DC5PmodeService;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
@@ -22,7 +23,6 @@ import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.domibus.connector.ui.view.areas.configuration.util.ConfigurationUtil;
 
 import eu.ecodex.dc5.message.model.DC5Action;
-import eu.ecodex.dc5.message.model.DomibusConnectorParty;
 import eu.ecodex.dc5.message.model.DC5Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -66,7 +66,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 	LumoLabel connectorstoreResultLabel = new LumoLabel();
 	Button updateConnectorstorePassword = new Button("Update connectorstore password");
 
-	Grid<DomibusConnectorParty> partyGrid;
+	Grid<DC5Party> partyGrid;
 	Grid<DC5Action> actionGrid;
 	Grid<DC5Service> serviceGrid;
 
@@ -269,13 +269,13 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 		LumoLabel partiesLabel = createGridTitleText("Parties within active PMode-Set:");
 		parties.add(partiesLabel);
 
-		partyGrid = new Grid<DomibusConnectorParty>();
+		partyGrid = new Grid<DC5Party>();
 
 
-		partyGrid.addColumn(DomibusConnectorParty::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
-		partyGrid.addColumn(DomibusConnectorParty::getPartyIdType).setHeader("Party ID Type").setWidth("500px").setSortable(true).setResizable(true);
-		partyGrid.addColumn(DomibusConnectorParty::getRole).setHeader("Role").setWidth("500px").setSortable(true).setResizable(true);
-		partyGrid.addColumn(DomibusConnectorParty::getRoleType).setHeader("Role Type").setWidth("500px").setSortable(true).setResizable(true);
+		partyGrid.addColumn(DC5Party::getPartyId).setHeader("Party ID").setWidth("250px").setSortable(true).setResizable(true);
+		partyGrid.addColumn(DC5Party::getPartyIdType).setHeader("Party ID Type").setWidth("500px").setSortable(true).setResizable(true);
+//		partyGrid.addColumn(DC5Party::getRole).setHeader("Role").setWidth("500px").setSortable(true).setResizable(true);
+//		partyGrid.addColumn(DC5Party::getRoleType).setHeader("Role Type").setWidth("500px").setSortable(true).setResizable(true);
 		partyGrid.setWidth("1760px");
 		partyGrid.setHeight("320px");
 		partyGrid.setMultiSort(true);

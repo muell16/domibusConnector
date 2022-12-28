@@ -85,7 +85,7 @@ public class BusinessScopedPModeService {
                     .actions(new ArrayList<>(actions.values()))
                     .businessProcess(getBusinessProcess(pModeParties, legs))
                     .legs(new ArrayList<>(legs.values()))
-//                .connectorstore(loadConnectorStore())
+//                .connectorstore(loadConnectorStore()) //TODO load connectorstore and provide it ....
                     .build();
         }
         return this.currentPModeSet;

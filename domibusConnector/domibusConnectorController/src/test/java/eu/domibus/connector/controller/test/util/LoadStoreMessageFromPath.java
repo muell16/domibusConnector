@@ -393,7 +393,7 @@ public class LoadStoreMessageFromPath {
                 .map((k) -> k.split("]")[0] + "]")
                 .distinct()
                 .map(this::loadResource)
-                .map(DC5MessageAttachment.DomibusConnectorMessageAttachmentBuilder::build)
+                .map(DC5MessageAttachment.DC5MessageAttachmentBuilder::build)
                 .collect(Collectors.toList());
     }
 
@@ -477,7 +477,7 @@ public class LoadStoreMessageFromPath {
 
 
     @SneakyThrows
-    private DC5MessageAttachment.DomibusConnectorMessageAttachmentBuilder loadResource(String propertyPrefix) {
+    private DC5MessageAttachment.DC5MessageAttachmentBuilder loadResource(String propertyPrefix) {
         String filename = messageProperties.getProperty(propertyPrefix + ATTACHMENT_FILENAME_POSTFIX);
         if (filename == null) {
             filename = getFileNameFromPrefix(propertyPrefix);
