@@ -56,4 +56,6 @@ public interface DC5MessageRepo extends JpaRepository<DC5Message, Long> {
     List<DC5Message> findAllByBackendLinkName(DomibusConnectorLinkPartner.LinkPartnerName backendName);
     @EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
     List<DC5Message> findAllByEbmsData_ConversationId(String conversationId);
+
+    DC5Message getByConnectorMessageId(DomibusConnectorMessageId msgId);
 }
