@@ -40,23 +40,24 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
     @Override
 //    @Transactional //(Transactional.TxType.REQUIRES_NEW)
     public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
-        transportState.setStatus(TransportState.PENDING);
-        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
-        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
-
-        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
-        DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
-
-        transportState = new TransportStateService.DomibusConnectorTransportState();
-        transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
-        transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
-        if (domibsConnectorAcknowledgementType.isResult()) {
-            transportState.setStatus(TransportState.ACCEPTED);
-        } else {
-            transportState.setStatus(TransportState.FAILED);
-        }
-        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
+        //TODO
+//        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+//        transportState.setStatus(TransportState.PENDING);
+//        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
+//        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
+//
+//        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+//        DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
+//
+//        transportState = new TransportStateService.DomibusConnectorTransportState();
+//        transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
+//        transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
+//        if (domibsConnectorAcknowledgementType.isResult()) {
+//            transportState.setStatus(TransportState.ACCEPTED);
+//        } else {
+//            transportState.setStatus(TransportState.FAILED);
+//        }
+//        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
     }
 

@@ -37,12 +37,7 @@ public interface TransportStateService {
 
     public void updateTransportStatus(DomibusConnectorTransportState transportState);
 
-    /**
-     * Creates a new transport for the message
-     * @param message
-     * @return
-     */
-    public TransportId createTransportFor(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+
 
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
