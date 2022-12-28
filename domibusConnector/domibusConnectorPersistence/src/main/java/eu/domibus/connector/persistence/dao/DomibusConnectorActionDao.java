@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Repository
+//@Repository
 public interface DomibusConnectorActionDao extends CrudRepository<PDomibusConnectorAction, Long> {
 
 //    public @Nullable PDomibusConnectorAction findOne(PDomibusConnectorAction action);

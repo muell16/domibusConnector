@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Repository
+//@Repository
 public interface DomibusConnectorServiceDao extends CrudRepository<PDomibusConnectorService, Long> {
 
 }

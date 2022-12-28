@@ -13,7 +13,6 @@ import java.util.Optional;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Repository
 public interface DomibusConnectorPropertiesDao extends CrudRepository<PDomibusConnectorProperties, String> {
 
     Optional<PDomibusConnectorProperties> findByPropertyName(String propertyName);

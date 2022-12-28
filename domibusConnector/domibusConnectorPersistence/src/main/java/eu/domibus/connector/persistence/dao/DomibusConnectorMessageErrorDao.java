@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Repository
+//@Repository
 public interface DomibusConnectorMessageErrorDao extends CrudRepository<PDomibusConnectorMessageError, Long> {
 
     public List<PDomibusConnectorMessageError> findByMessage(Long messageId);

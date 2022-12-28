@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+//@Repository
 public interface DomibusConnectorPModeSetDao extends CrudRepository<PDomibusConnectorPModeSet, Long> {
 
 //    @Query("SELECT p FROM PDomibusConnectorPModeSet p WHERE p.active = true AND p.messageLane.name=?1 ORDER by p.created")
