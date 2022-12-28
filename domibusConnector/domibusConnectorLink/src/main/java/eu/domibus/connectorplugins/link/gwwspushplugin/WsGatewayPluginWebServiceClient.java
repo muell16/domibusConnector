@@ -12,9 +12,11 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
@@ -38,26 +40,27 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
 
 
     @Override
-//    @Transactional //(Transactional.TxType.REQUIRES_NEW)
-    public void submitToLink(DC5Message message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        //TODO
-//        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
-//        transportState.setStatus(TransportState.PENDING);
-//        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
-//        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
-//
-//        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
-//        DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
-//
-//        transportState = new TransportStateService.DomibusConnectorTransportState();
-//        transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
-//        transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
-//        if (domibsConnectorAcknowledgementType.isResult()) {
-//            transportState.setStatus(TransportState.ACCEPTED);
-//        } else {
-//            transportState.setStatus(TransportState.FAILED);
-//        }
-//        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
+    @Transactional
+    public void submitToLink(DC5TransportRequest.TransportRequestId requestId, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        DC5TransportRequest transport = transportStateService.getTransportRequest(requestId);
+
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+        transportState.setStatus(TransportState.PENDING);
+
+        transportStateService.updateTransportToGatewayStatus(requestId, transportState);
+
+        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(transport.getMessage());
+        DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
+
+        transportState = new TransportStateService.DomibusConnectorTransportState();
+        transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
+        transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
+        if (domibsConnectorAcknowledgementType.isResult()) {
+            transportState.setStatus(TransportState.ACCEPTED);
+        } else {
+            transportState.setStatus(TransportState.FAILED);
+        }
+        transportStateService.updateTransportToGatewayStatus(requestId, transportState);
 
     }
 

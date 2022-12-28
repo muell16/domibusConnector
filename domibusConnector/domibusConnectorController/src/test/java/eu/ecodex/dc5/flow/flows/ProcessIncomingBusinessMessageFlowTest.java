@@ -1,18 +1,17 @@
 package eu.ecodex.dc5.flow.flows;
 
-import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
-import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5MessageId;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +43,18 @@ class ProcessIncomingBusinessMessageFlowTest {
     @Autowired
     MessageProcessManager messageProcessManager;
 
-//    @Autowired
-//    private ApplicationEvents applicationEvents;
-
-    @Before
+    @BeforeEach
     public void before() {
-        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
-        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a -> {
+            DC5Message msg = a.getArgument(0);
+            msg.getMessageContent().setBusinessContent(DC5BackendContent.builder().build());
+            return msg;
+        });
+//        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a -> {
+//            DC5Message msg = a.getArgument(0);
+//            msg.getMessageContent().setEcodexContent(DC5EcodexContent.builder().build());
+//            return msg;
+//        });
     }
 
     @AfterEach
@@ -71,6 +75,7 @@ class ProcessIncomingBusinessMessageFlowTest {
 
 
     @Test
+    @Disabled
     public void testIncomingBusinessMessage() {
         try (MessageProcessManager.CloseableMessageProcess process = messageProcessManager.startProcess(); ){
 

@@ -266,7 +266,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             // error-handling
             CheckResult results = containerService.check(container);
 
-            DC5BackendContent.DC5BackendContentBuilder backendContent = DC5BackendContent.builder();
+            DC5BackendContent.DC5BackendContentBuilder backendContentBuilder = DC5BackendContent.builder();
 
             if (!results.isSuccessful()) {
                 StringBuilder errorStringBuilder = new StringBuilder();
@@ -284,7 +284,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
 
             DC5MessageAttachment.DC5MessageAttachmentBuilder businessDocumentFromContainer
                     = retreiveBusinessDocumentFromContainer(message.getConnectorMessageId(), container);
-            backendContent.businessDocument(businessDocumentFromContainer.build());
+            backendContentBuilder.businessDocument(businessDocumentFromContainer.build());
 
 
             if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
@@ -294,7 +294,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                                 message,
                                 businessAttachment,
                                 businessAttachment.getName());
-                        backendContent.attachment(attachment);
+                        backendContentBuilder.attachment(attachment);
                     } catch (IOException e) {
                         LOGGER.error("Could not read attachment!", e);
                     }
@@ -307,7 +307,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                     tokenPDF.setMimeType(MimeType.PDF);
                     tokenPDF.setName(TOKEN_PDF_FILE_NAME);
                     DC5MessageAttachment pdfTokenAttachment = convertDocumentToMessageAttachment(message, tokenPDF, TOKEN_PDF_IDENTIFIER);
-                    backendContent.trustTokenPDF(pdfTokenAttachment);
+                    backendContentBuilder.trustTokenPDF(pdfTokenAttachment);
                 } catch (IOException e) {
                     LOGGER.error("Could not read Token PDF!", e);
                 }
@@ -319,11 +319,12 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                     tokenXML.setMimeType(MimeType.XML);
                     tokenXML.setName(TOKEN_XML_FILE_NAME);
                     DC5MessageAttachment attachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
-                    backendContent.trustTokenXml(attachment);
+                    backendContentBuilder.trustTokenXml(attachment);
                 } catch (IOException e) {
                     LOGGER.error("Could not read Token XML!", e);
                 }
             }
+            message.getMessageContent().setBusinessContent(backendContentBuilder.build());
 
 
         } catch (ECodexException | IOException e) {
