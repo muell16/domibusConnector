@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.process.model.DC5ProcessStep;
-import eu.ecodex.dc5.core.repository.DC5MsgProcessRepo;
+import eu.ecodex.dc5.process.repository.DC5MsgProcessRepo;
 import org.springframework.stereotype.Service;
 
 import java.io.Closeable;
