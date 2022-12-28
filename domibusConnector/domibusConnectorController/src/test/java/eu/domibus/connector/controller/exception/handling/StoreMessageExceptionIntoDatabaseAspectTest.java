@@ -11,6 +11,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPers
 import eu.ecodex.dc5.message.model.DC5MessageId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {StoreMessageExceptionIntoDatabaseAspectTest.TestContextConfiguration.class})
 @DirtiesContext(classMode=ClassMode.AFTER_EACH_TEST_METHOD)
+@Disabled
 public class StoreMessageExceptionIntoDatabaseAspectTest {
 
     @AfterEach
