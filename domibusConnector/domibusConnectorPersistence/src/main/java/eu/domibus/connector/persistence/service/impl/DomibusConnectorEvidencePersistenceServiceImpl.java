@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+//@Service
 public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusConnectorEvidencePersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencePersistenceServiceImpl.class);

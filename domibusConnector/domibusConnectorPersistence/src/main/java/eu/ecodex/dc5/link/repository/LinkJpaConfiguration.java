@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = DC5LinkConfigJpaEntity.class)
+@EnableJpaRepositories(basePackageClasses = DomibusConnectorLinkPartnerDao.class)
 @EntityScan(basePackageClasses = DC5LinkConfigJpaEntity.class)
 public class LinkJpaConfiguration {
 }

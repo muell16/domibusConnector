@@ -22,7 +22,8 @@ import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
-@Service
+@Deprecated
+//@Service
 public class DomibusConnectorMessageErrorPersistenceServiceImpl implements DomibusConnectorMessageErrorPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessageErrorPersistenceServiceImpl.class);
@@ -30,15 +31,6 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
     DomibusConnectorMessageErrorDao messageErrorDao;
     DomibusConnectorMessageDao messageDao;
 
-    @Autowired
-    public void setMessageErrorDao(DomibusConnectorMessageErrorDao messageErrorDao) {
-        this.messageErrorDao = messageErrorDao;
-    }
-
-    @Autowired
-    public void setMessageDao(DomibusConnectorMessageDao messageDao) {
-        this.messageDao = messageDao;
-    }
 
     @Override
     @Transactional(propagation = REQUIRES_NEW) //run in new transaction...so error gets recorded
