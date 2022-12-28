@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Component
 @UIScope
@@ -45,7 +45,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 	WebPModeService pmodeService;
 	ConfigurationUtil util;
-	private DomainSelect domainSelect;
+	private final DomainSelect domainSelect;
 
 	DC5PmodeService.DomibusConnectorPModeSet activePModeSet;
 
@@ -331,100 +331,10 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 	private void refreshUI() {
 		activePModeSet = this.pmodeService.getCurrentPModeSet(domainSelect.getValue()).orElse(null);
-
 		areaNoActivePModeSetDiv.removeAll();
-
-//		if(activePModeSet==null) {
-//			areaNoActivePModeSetDiv.add(noActivePModeSet);
-//			updateConnectorstorePassword.setEnabled(false);
-//			downloadPModesAnchor.removeHref();
-//			updateDescription.setEnabled(false);
-//		}else {
-//			updateDescription.setEnabled(true);
-//			if(activePModeSet.getCreateDate()!=null) {
-//				uploadedAt.setText(activePModeSet.getCreateDate().toString());
-//			}else {
-//				uploadedAt.setText("");
-//			}
-//			if(activePModeSet.getpModes()!=null && activePModeSet.getpModes().length > 1) {
-//				String downloadFileName = "pModes-";
-//				downloadFileName += activePModeSet.getCreateDate()!=null?activePModeSet.getCreateDate().toString():"unknown";
-//				downloadFileName += ".xml";
-//				final StreamResource resource = new StreamResource(downloadFileName,
-//						() -> new ByteArrayInputStream(activePModeSet.getpModes()));
-//
-//				downloadPModesAnchor.setHref(resource);
-//			}else {
-//				downloadPModesAnchor.removeHref();
-//			}
-//			if(!StringUtils.isEmpty(activePModeSet.getDescription())) {
-//				description.setValue(activePModeSet.getDescription());
-//			}else {
-//				description.setValue("");
-//			}
-//			updateDescriptionResult.setText("");
-//
-//			List<DC5Service> serviceList = this.pmodeService.getServiceList();
-//			if(!CollectionUtils.isEmpty(serviceList)) {
-//				serviceGrid.setItems(serviceList);
-//				serviceGrid.setVisible(true);
-//			}
-//
-//			List<DC5Action> actionList = pmodeService.getActionList();
-//			if(!CollectionUtils.isEmpty(actionList)) {
-//				actionGrid.setItems(actionList);
-//				actionGrid.setVisible(true);
-//			}
-//
-//			List<DomibusConnectorParty> partyList = this.pmodeService.getPartyList();
-//			if(!CollectionUtils.isEmpty(partyList)) {
-//				partyGrid.setItems(partyList);
-//				partyGrid.setVisible(true);
-//			}
-//
-//			connectorstoreResultLabel.setText("");
-//			connectorstorePassword.setValue("");
-//			if(activePModeSet.getConnectorstore()==null) {
-//				connectorstoreResultLabel.setText("No connectorstore linked to PMode-Set!");
-//				updateConnectorstorePassword.setEnabled(false);
-//			}else {
-//				DomibusConnectorKeystore connectorstore = activePModeSet.getConnectorstore();
-//				if(connectorstore.getKeystoreBytes()==null || connectorstore.getKeystoreBytes().length<1) {
-//					connectorstoreResultLabel.setText("Connectorstore empty!");
-//				}else {
-//					try {
-//						List<CertificateInfo> storeContents = util.getKeystoreInformation(new ByteArrayInputStream(connectorstore.getKeystoreBytes()),
-//								connectorstore.getPasswordPlain());
-//						if(!CollectionUtils.isEmpty(storeContents)) {
-//							connectorstoreInformationGrid.setItems(storeContents);
-//							connectorstoreInformationGrid.setVisible(true);
-//						}
-//						connectorstoreResultLabel.setText("");
-//					}catch(DCKeyStoreService.CannotLoadKeyStoreException e) {
-//						String text = e.getMessage();
-//						if(e.getCause()!=null) {
-//							text += e.getCause().getMessage();
-//						}
-//						connectorstoreResultLabel.setText("Cannot load connectorstore! "+text);
-//						connectorstoreInformationGrid.setItems(new ArrayList<CertificateInfo>());
-//						connectorstoreInformationGrid.setVisible(false);
-//					}
-//
-//				}
-//				if(!StringUtils.isEmpty(connectorstore.getPasswordPlain())) {
-//					connectorstorePassword.setValue(connectorstore.getPasswordPlain());
-//				}
-//				updateConnectorstorePassword.setEnabled(true);
-//			}
-//			if(!StringUtils.isEmpty(connectorstoreResultLabel.getText())) {
-//				connectorstoreResultLabel.getStyle().set("color", "red");
-//			}
-//
-//		}
-
-		List<DC5PmodeService.DomibusConnectorPModeSet> inactivePModesList = this.pmodeService.getInactivePModeSets();
-		pModesGrid.setItems(inactivePModesList);
-
+		final ArrayList<DC5PmodeService.DomibusConnectorPModeSet> objects = new ArrayList<>();
+		objects.add(pmodeService.getCurrentPModeSet(domainSelect.getValue()).orElse(null));
+		pModesGrid.setItems(objects);
 	}
 
 	@Override

@@ -7,7 +7,6 @@
         <option name="value" value="true" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.init.pmode.upload[0].business-domain-name" />
         <option name="value" value="testdom1" />
       </param>
@@ -16,27 +15,22 @@
         <option name="value" value="testdom2" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.init.pmode.enabled" />
         <option name="value" value="true" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.init.pmode.upload[0].trust-store.path" />
         <option name="value" value="file:./config/keystores/connector-ecodex-truststore.jks" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.init.pmode.upload[0].p-mode-xml" />
         <option name="value" value="file:../pmodes/pmodes-template.xml" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.business-domain[testdom1].enabled" />
         <option name="value" value="true" />
       </param>
       <param>
-        <option name="enabled" value="true" />
         <option name="name" value="connector.business-domain[testdom1].description" />
         <option name="value" value="descriptiontest" />
       </param>
