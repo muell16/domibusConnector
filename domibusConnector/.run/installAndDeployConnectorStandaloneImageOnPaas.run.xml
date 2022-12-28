@@ -32,6 +32,8 @@
               <option value="-pl" />
               <option value=":domibusConnectorBuilderStandalone" />
               <option value="-am" />
+              <option value="-Pproduction" />
+              <option value="-Pdocumentation" />
               <option value="-DskipTests=true" />
             </list>
           </option>
