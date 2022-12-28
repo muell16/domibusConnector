@@ -117,6 +117,7 @@
         <javax.xml.ws.jaxws-api.version>2.3.1</javax.xml.ws.jaxws-api.version>
         <jakarta.xml.soap.jakarta.xml.soap-api.version>1.4.2</jakarta.xml.soap.jakarta.xml.soap-api.version>
         <jakarta.jws.jakarta.jws-api.version>2.1.0</jakarta.jws.jakarta.jws-api.version>
+        <jakarta.xml.bind.jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind.jakarta.xml.bind-api.version>
         <javax.jms.javax.jms-api.version>2.0.1</javax.jms.javax.jms-api.version>
         <javax.validation.validation-api.version>2.0.1.Final</javax.validation.validation-api.version>
         <javax.mail.mail.version>1.5.0-b01</javax.mail.mail.version>
@@ -338,6 +339,11 @@
                 <groupId>jakarta.jws</groupId>
                 <artifactId>jakarta.jws-api</artifactId>
                 <version>${jakarta.jws.jakarta.jws-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind.jakarta.xml.bind-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
