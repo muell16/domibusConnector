@@ -1,8 +1,7 @@
 package eu.ecodex.dc5.process.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import eu.ecodex.dc5.process.MessageProcessId;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,7 +25,8 @@ public class DC5MsgProcess {
     private Long id;
 
     @Column(name = "PROCESS_ID")
-    private String processId;
+    @Convert(converter = MessageProcessIdConverter.class)
+    private MessageProcessId processId;
 
     @Column(name = "CREATED")
     private LocalDateTime created;
@@ -45,6 +45,25 @@ public class DC5MsgProcess {
 
     public void addProcessStep(DC5ProcessStep processStep) {
         this.procStepList.add(processStep);
+    }
+
+    public static class MessageProcessIdConverter implements AttributeConverter<MessageProcessId, String> {
+
+        @Override
+        public String convertToDatabaseColumn(MessageProcessId attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.getProcessId();
+        }
+
+        @Override
+        public MessageProcessId convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return MessageProcessId.ofString(dbData);
+        }
     }
 
 }
