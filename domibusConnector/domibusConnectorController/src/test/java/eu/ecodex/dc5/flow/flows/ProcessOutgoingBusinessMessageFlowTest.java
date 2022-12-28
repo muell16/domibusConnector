@@ -6,9 +6,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
-import eu.ecodex.dc5.message.model.DC5BusinessMessageState;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.ecodex.dc5.message.model.DC5MessageId;
+import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.extern.log4j.Log4j2;
@@ -55,8 +53,13 @@ class ProcessOutgoingBusinessMessageFlowTest {
         definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         this.txTemplate = new TransactionTemplate(txManager, definition);
 
-        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
-        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a ->a.getArgument(0));
+        Mockito.when(securityToolkit.validateContainer(Mockito.any())).thenAnswer(a -> {
+            DC5Message msg = a.getArgument(0);
+            msg.getMessageContent().setBusinessContent(DC5BackendContent.builder().build());
+            return msg;
+        });
+
+
     }
 
     @AfterEach
@@ -77,6 +80,11 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
     @Test
     void processMessage() {
+        Mockito.when(securityToolkit.buildContainer(Mockito.any())).thenAnswer(a -> {
+            DC5Message msg = a.getArgument(0);
+            msg.getMessageContent().setEcodexContent(DC5EcodexContent.builder().build());
+            return msg;
+        });
 
         DC5MessageId msgId = createMessage();
 
@@ -135,7 +143,6 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
 
     }
-
 
 
 }

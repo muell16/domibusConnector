@@ -25,11 +25,13 @@ public class ResolveECodexContainerStep implements MessageProcessStep {
     @Override
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "ResolveECodexContainerStep")
     public boolean executeStep(DC5Message message) {
-        securityToolkit.validateContainer(message);
+        message = securityToolkit.validateContainer(message);
         //TODO: copy business xml
         //maybe call mapper here
-        DC5MessageAttachment businessXml = message.getMessageContent().getEcodexContent().getBusinessXml();
-        message.getMessageContent().getBusinessContent().setBusinessXml(businessXml);
+//        if (message.getMessageContent().getEcodexContent().getBusinessXml() != null) {
+//            DC5MessageAttachment businessXml = message.getMessageContent().getEcodexContent().getBusinessXml();
+//            message.getMessageContent().getBusinessContent().setBusinessXml(businessXml);
+//        }
         LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Successfully resolved eCodexContainer");
         return true;
     }

@@ -25,11 +25,11 @@ public class BuildECodexContainerStep {
 
     @Step(name = "BuildECodexContainerStep")
     public DC5Message executeStep(DC5Message msg) {
-        securityToolkit.buildContainer(msg);
+        msg = securityToolkit.buildContainer(msg);
         //TODO: copy business xml
         //maybe call mapper here
-        DC5MessageAttachment businessXml = msg.getMessageContent().getBusinessContent().getBusinessXml();
-        msg.getMessageContent().getEcodexContent().setBusinessXml(businessXml);
+//        DC5MessageAttachment businessXml = msg.getMessageContent().getBusinessContent().getBusinessXml();
+//        msg.getMessageContent().getEcodexContent().setBusinessXml(businessXml);
         LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully crated e-Codex Container");
         return msg;
     }
