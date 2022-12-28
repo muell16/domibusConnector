@@ -1,9 +1,9 @@
 package eu.domibus.connector.ui.view.areas.configuration.domain;
 
 
-import com.vaadin.componentfactory.ToggleButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -23,13 +23,13 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -89,7 +89,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         .setSortable(true);
 
         final Grid.Column<DomibusConnectorBusinessDomain> domainEnabledColumn =
-                grid.addComponentColumn(this::createToggleButton)
+                grid.addComponentColumn(this::createDomainEnabledCheckbox)
                         .setKey("isEnabled")
                         .setHeader("Domain enabled")
                         .setAutoWidth(true)
@@ -142,7 +142,8 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         editColumn.setEditorComponent(actions);
 
         TextField descriptionField = new TextField();
-        final ToggleButton enabledToggle = new ToggleButton();
+//        final ToggleButton enabledToggle = new ToggleButton();
+        final Checkbox enabledToggle = new Checkbox();
 
         binder.forField(enabledToggle)
                 .bind(DomibusConnectorBusinessDomain::isEnabled, DomibusConnectorBusinessDomain::setEnabled);
@@ -156,13 +157,30 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return grid;
     }
 
-    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain, boolean readOnly) {
-        final ToggleButton toggleButton = createToggleButton(domain);
+//    TODO: needs Vaadin upgrade
+//    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain, boolean readOnly) {
+//        final ToggleButton toggleButton = createToggleButton(domain);
+//        toggleButton.setReadOnly(readOnly);
+//        return toggleButton;
+//    }
+//    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain) {
+//        final ToggleButton toggleButton = new ToggleButton();
+//        toggleButton.setReadOnly(true);
+//        toggleButton.setValue(domain.isEnabled());
+//        toggleButton.addValueChangeListener(event -> {
+//            domain.setEnabled(event.getValue());
+//            domainRepo.updateDomain(domain);
+//        });
+//        return toggleButton;
+//    }
+
+    private Checkbox createDomainEnabledCheckbox(DomibusConnectorBusinessDomain domain, boolean readOnly) {
+        final Checkbox toggleButton = createDomainEnabledCheckbox(domain);
         toggleButton.setReadOnly(readOnly);
         return toggleButton;
     }
-    private ToggleButton createToggleButton(DomibusConnectorBusinessDomain domain) {
-        final ToggleButton toggleButton = new ToggleButton();
+    private Checkbox createDomainEnabledCheckbox(DomibusConnectorBusinessDomain domain) {
+        final Checkbox toggleButton = new Checkbox();
         toggleButton.setReadOnly(true);
         toggleButton.setValue(domain.isEnabled());
         toggleButton.addValueChangeListener(event -> {
@@ -258,14 +276,17 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .bind(DomibusConnectorBusinessDomain::getDescription, DomibusConnectorBusinessDomain::setDescription);
 
         binder.forField(configurationSourceField)
-                .bind(d -> d.getConfigurationSource().toString(), null);
+                .withConverter(ConfigurationSource::valueOf, ConfigurationSource::toString)
+                .bind(DomibusConnectorBusinessDomain::getConfigurationSource, DomibusConnectorBusinessDomain::setConfigurationSource);
 
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
                 domainRepo.createBusinessDomain(binder.getBean());
-                domainGrid.setItems(domainRepo.getValidBusinessDomainsAllData());
+                domainGrid.setItems(domainRepo.getAllBusinessDomainsAllData());
                 dialog.close();
-                binder.setBean(new DomibusConnectorBusinessDomain()); // as mentioned above, this is very important when using the db entities directly.
+//                final DomibusConnectorBusinessDomain nextDomainEntry = new DomibusConnectorBusinessDomain();
+//                nextDomainEntry.setConfigurationSource(ConfigurationSource.DB);
+//                binder.setBean(nextDomainEntry); // as mentioned above, this is very important when using the db entities directly.
             }
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

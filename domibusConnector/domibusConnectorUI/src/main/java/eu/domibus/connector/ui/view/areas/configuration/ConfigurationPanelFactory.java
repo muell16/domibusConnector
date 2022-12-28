@@ -134,6 +134,7 @@ public class ConfigurationPanelFactory {
         public void refreshUI() {
             this.boundConfigValue = readConfigFromPropertyService();
             binder.setBean(boundConfigValue); //bind bean
+            domainSelect.reloadItems(); // todo: really necessary? this worked before???
         }
     }
 

@@ -36,27 +36,22 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>${vaadin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.codegen.v3</groupId>
+                    <artifactId>swagger-codegen</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-server</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.vaadin.klaudeta</groupId>
-            <artifactId>grid-pagination</artifactId>
-            <version>2.0.10</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vaadin</artifactId>
-                    <groupId>com.vaadin</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/com.vaadin.componentfactory/togglebutton -->
         <dependency>
             <groupId>com.vaadin.componentfactory</groupId>
             <artifactId>togglebutton</artifactId>
-            <version>1.0.1</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
