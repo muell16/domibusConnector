@@ -1161,6 +1161,7 @@
                                 </goals>
                                 <configuration>
                                     <reportsDirectory>${project.build.directory}/ittest-reports</reportsDirectory>
+                                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                                 </configuration>
                             </execution>
                         </executions>
@@ -1202,6 +1203,7 @@
                                         <exclude>**/*ITCase.java</exclude>
                                     </excludes>
                                     <reportsDirectory>${project.build.directory}/dbunit-reports</reportsDirectory>
+                                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                                 </configuration>
                             </execution>
                         </executions>
