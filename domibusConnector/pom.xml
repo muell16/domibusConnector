@@ -27,10 +27,10 @@
         <module>domibusConnectorLink</module>
         <module>domibusConnectorTestData</module>
         <module>domibusConnectorBuilder</module>
+        <module>domibusConnectorDssToolkit</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorDssToolkit</module>
-        <module>dc5Model</module>
+
     </modules>
     <scm>
         <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
