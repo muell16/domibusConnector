@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha3-SNAPSHOT</version>
+        <version>5.0.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorUI</artifactId>
     <packaging>jar</packaging>
@@ -38,8 +38,8 @@
             <version>${vaadin.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.swagger.codegen.v3</groupId>
                     <artifactId>swagger-codegen</artifactId>
+                    <groupId>io.swagger.codegen.v3</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
