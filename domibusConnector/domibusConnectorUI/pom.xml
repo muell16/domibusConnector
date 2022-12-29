@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha1-SNAPSHOT</version>
+        <version>5.0.0-alpha2</version>
     </parent>
     <artifactId>domibusConnectorUI</artifactId>
     <packaging>jar</packaging>
@@ -131,8 +131,8 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorTestData</artifactId>
             <version>${project.version}</version>
-            <classifier>testkeystores</classifier>
             <type>jar</type>
+            <classifier>testkeystores</classifier>
         </dependency>
     </dependencies>
     <!--    <build>-->

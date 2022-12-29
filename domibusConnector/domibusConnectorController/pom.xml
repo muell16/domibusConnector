@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha1-SNAPSHOT</version>
+        <version>5.0.0-alpha2</version>
     </parent>
     <artifactId>domibusConnectorController</artifactId>
     <name>${project.artifactId}</name>
@@ -15,10 +15,10 @@
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-jta-atomikos</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-jta-atomikos</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -27,24 +27,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-artemis</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-artemis</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-integration</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.activemq</groupId>-->
-<!--            <artifactId>artemis-jms-server</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jboss-logmanager</artifactId>-->
-<!--                    <groupId>org.jboss.logmanager</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.activemq</groupId>-->
+        <!--            <artifactId>artemis-jms-server</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jboss-logmanager</artifactId>-->
+        <!--                    <groupId>org.jboss.logmanager</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <!--        <dependency>-->
         <!--            <groupId>org.apache.activemq</groupId>-->
         <!--            <artifactId>activemq-kahadb-store</artifactId>-->
@@ -245,7 +245,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>dc5Model</artifactId>
-            <version>5.0.0-alpha1-SNAPSHOT</version>
+            <version>5.0.0-alpha2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

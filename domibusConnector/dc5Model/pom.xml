@@ -4,14 +4,13 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha1-SNAPSHOT</version>
+        <version>5.0.0-alpha2</version>
     </parent>
     <artifactId>dc5Model</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>This module is responsibly for persisting the messages and message contents into a persistent storage
         (Database).</description>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

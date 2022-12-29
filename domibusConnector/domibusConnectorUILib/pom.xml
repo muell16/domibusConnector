@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha1-SNAPSHOT</version>
+        <version>5.0.0-alpha2</version>
     </parent>
     <artifactId>domibusConnectorUILib</artifactId>
     <properties>
@@ -53,30 +53,30 @@
     </dependencies>
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
-<!--                <artifactId>maven-jaxb2-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>PModes</id>-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <schemaDirectory>${pmode.xsd.resources.path}</schemaDirectory>-->
-<!--                            <schemaIncludes>-->
-<!--                                <include>domibus-pmode.xsd</include>-->
-<!--                            </schemaIncludes>-->
-<!--                            &lt;!&ndash;                            <generateDirectory>src/main/java</generateDirectory>&ndash;&gt;-->
-<!--                            <strict>true</strict>-->
-<!--                            <extension>true</extension>-->
-<!--                            <args>-->
-<!--                                <arg>-no-header</arg>-->
-<!--                            </args>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
+            <!--                <artifactId>maven-jaxb2-plugin</artifactId>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>PModes</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>generate</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <schemaDirectory>${pmode.xsd.resources.path}</schemaDirectory>-->
+            <!--                            <schemaIncludes>-->
+            <!--                                <include>domibus-pmode.xsd</include>-->
+            <!--                            </schemaIncludes>-->
+            <!--                            &lt;!&ndash;                            <generateDirectory>src/main/java</generateDirectory>&ndash;&gt;-->
+            <!--                            <strict>true</strict>-->
+            <!--                            <extension>true</extension>-->
+            <!--                            <args>-->
+            <!--                                <arg>-no-header</arg>-->
+            <!--                            </args>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 </project>

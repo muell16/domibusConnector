@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>5.0.0-alpha1-SNAPSHOT</version>
+        <version>5.0.0-alpha2</version>
     </parent>
     <artifactId>domibusConnectorControllerAPI</artifactId>
     <name>${project.artifactId}</name>
@@ -102,6 +102,16 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources-filtered</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -137,15 +147,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/resources-filtered</directory>
-            </resource>
-        </resources>
     </build>
 </project>
