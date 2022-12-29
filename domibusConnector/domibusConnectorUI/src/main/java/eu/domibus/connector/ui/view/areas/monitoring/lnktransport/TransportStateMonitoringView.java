@@ -2,6 +2,7 @@ package eu.domibus.connector.ui.view.areas.monitoring.lnktransport;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -29,7 +30,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.vaadin.klaudeta.PaginatedGrid;
 
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +59,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
     private final DCLinkFacade dcLinkFacade;
 
     private int pageSize = INITIAL_PAGE_SIZE;
-    private PaginatedGrid<DomibusConnectorTransportStep> paginatedGrid;
+    private Grid<DomibusConnectorTransportStep> paginatedGrid;
     private CallbackDataProvider<DomibusConnectorTransportStep, DomibusConnectorTransportStep> callbackDataProvider;
 
     private Set<TransportState> filterForState = Stream.of(TransportState.values())
@@ -122,7 +122,7 @@ public class TransportStateMonitoringView extends DCVerticalLayoutWithTitleAndHe
 
         this.add(buttonBar);
 
-        paginatedGrid = new PaginatedGrid<>(DomibusConnectorTransportStep.class);
+        paginatedGrid = new Grid<>(DomibusConnectorTransportStep.class);
         paginatedGrid.setDataProvider(callbackDataProvider);
         paginatedGrid.setPageSize(this.pageSize);
 
