@@ -14,7 +14,7 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.ui.component.DomainSelect;
@@ -65,7 +65,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 	TextField connectorstorePwd = new TextField("Connectorstore password");
 	ComboBox<KeystoreType> connectorstoreType = new ComboBox<KeystoreType>();
 
-	Select<DomibusConnectorBusinessDomain.BusinessDomainId> domains;
+	Select<DC5BusinessDomain.BusinessDomainId> domains;
 
 	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, DomainSelect domains) {
 		super(HELP_ID, TITLE);
@@ -225,7 +225,7 @@ public class Import extends DCVerticalLayoutWithTitleAndHelpButton implements Af
 		}
 	}
 
-	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+	private boolean importPModeSet(byte[] pmodeFile, String description, byte[] connectorstore, String connectorStorePwd, KeystoreType connectorstoreType, DC5BusinessDomain.BusinessDomainId domainId) {
 
 		if (pmodeFile == null || pmodeFile.length < 1
 				|| connectorstore == null || connectorstore.length < 1

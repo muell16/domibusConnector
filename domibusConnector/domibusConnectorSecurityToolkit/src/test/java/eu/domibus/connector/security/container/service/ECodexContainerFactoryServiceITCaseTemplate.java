@@ -3,9 +3,8 @@ package eu.domibus.connector.security.container.service;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
@@ -62,7 +60,7 @@ public abstract class ECodexContainerFactoryServiceITCaseTemplate {
 
     @BeforeEach
     public void beforeEach() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+        CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
     }
 
     @AfterEach

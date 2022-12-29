@@ -4,7 +4,7 @@ import eu.domibus.connector.common.configuration.ConnectorConfigurationPropertie
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.service.DCBusinessDomainManagerImpl;
 import eu.ecodex.dc5.domain.scope.BusinessDomainScopeConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import org.junit.jupiter.api.AfterEach;
@@ -57,7 +57,7 @@ public class DCMessageRoutingConfigurationPropertiesTest {
     @Test
 //    @Disabled //properties are not loaded?
     public void testProps() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+        CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
 
         Map<String, LinkPartnerRoutingRule> backendRules = props.getBackendRules();
 

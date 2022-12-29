@@ -1,7 +1,7 @@
 package eu.domibus.connector.common.configuration;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +38,7 @@ public class ConnectorConfigurationProperties {
     private StageConfigurationProperties stage = new StageConfigurationProperties();
 
     @NotNull
-    DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+    DC5BusinessDomain.BusinessDomainId defaultBusinessDomainId = DC5BusinessDomain.getDefaultBusinessDomainId();
 
     /**
      * should the business domains be loaded from
@@ -48,7 +48,7 @@ public class ConnectorConfigurationProperties {
     boolean loadBusinessDomainsFromDb = true;
 
     @NotNull
-    Map<DomibusConnectorBusinessDomain.BusinessDomainId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
+    Map<DC5BusinessDomain.BusinessDomainId, @Valid BusinessDomainConfig> businessDomain = new HashMap<>();
 
     @Validated
     public static class BusinessDomainConfig {
@@ -93,19 +93,19 @@ public class ConnectorConfigurationProperties {
         this.instanceName = instanceName;
     }
 
-    public DomibusConnectorBusinessDomain.BusinessDomainId getDefaultBusinessDomainId() {
+    public DC5BusinessDomain.BusinessDomainId getDefaultBusinessDomainId() {
         return defaultBusinessDomainId;
     }
 
-    public void setDefaultBusinessDomainId(DomibusConnectorBusinessDomain.BusinessDomainId defaultBusinessDomainId) {
+    public void setDefaultBusinessDomainId(DC5BusinessDomain.BusinessDomainId defaultBusinessDomainId) {
         this.defaultBusinessDomainId = defaultBusinessDomainId;
     }
 
-    public Map<DomibusConnectorBusinessDomain.BusinessDomainId, BusinessDomainConfig> getBusinessDomain() {
+    public Map<DC5BusinessDomain.BusinessDomainId, BusinessDomainConfig> getBusinessDomain() {
         return businessDomain;
     }
 
-    public void setBusinessDomain(Map<DomibusConnectorBusinessDomain.BusinessDomainId, BusinessDomainConfig> businessDomain) {
+    public void setBusinessDomain(Map<DC5BusinessDomain.BusinessDomainId, BusinessDomainConfig> businessDomain) {
         this.businessDomain = businessDomain;
     }
 

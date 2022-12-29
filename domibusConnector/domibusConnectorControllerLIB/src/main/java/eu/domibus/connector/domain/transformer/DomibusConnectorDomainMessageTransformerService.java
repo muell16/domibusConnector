@@ -563,7 +563,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         Objects.requireNonNull(messageContentTO.getDocument(), "Document must not be null!");
 
         if (messageContentTO.getDocument().getDetachedSignature() != null) {
-            attachmentBuilder.detachedSignature(DetachedSignature.builder()
+            attachmentBuilder.DC5DetachedSignature(DC5DetachedSignature.builder()
                             .detachedSignature(messageContentTO.getDocument().getDetachedSignature().getDetachedSignature())
                             .detachedSignatureName(messageContentTO.getDocument().getDetachedSignature().getDetachedSignatureName())
                             .mimeType(DetachedSignatureMimeType.fromCode(messageContentTO.getDocument().getDetachedSignature().getMimeType().value()))

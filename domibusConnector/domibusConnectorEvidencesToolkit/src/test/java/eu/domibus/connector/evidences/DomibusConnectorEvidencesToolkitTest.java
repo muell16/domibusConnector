@@ -53,9 +53,9 @@ public class DomibusConnectorEvidencesToolkitTest {
 
     @BeforeEach
     public void beforeEach() {
-        CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-        Mockito.when(dcBusinessDomainManager.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
+        CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
+        Mockito.when(dcBusinessDomainManager.getBusinessDomain(eq(DC5BusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DC5BusinessDomain.getDefaultBusinessDomain()));
     }
 
     @Test

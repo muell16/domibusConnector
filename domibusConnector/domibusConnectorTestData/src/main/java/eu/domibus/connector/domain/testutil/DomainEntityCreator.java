@@ -596,7 +596,7 @@ public class DomainEntityCreator {
         return createSimpleMessageAttachment();
     }
 
-    public static DomibusConnectorBusinessDomain.BusinessDomainId getEpoBusinessDomain() {
-        return DomibusConnectorBusinessDomain.BusinessDomainId.of("epo_domain");
+    public static DC5BusinessDomain.BusinessDomainId getEpoBusinessDomain() {
+        return DC5BusinessDomain.BusinessDomainId.of("epo_domain");
     }
 }

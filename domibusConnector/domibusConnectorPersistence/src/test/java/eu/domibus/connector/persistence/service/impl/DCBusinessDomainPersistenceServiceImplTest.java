@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import org.junit.jupiter.api.Assertions;
@@ -25,15 +25,15 @@ class DCBusinessDomainPersistenceServiceImplTest {
     @Test
     @Order(1)
     void testFindById() {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+        Optional<DC5BusinessDomain> byId = businessDomainPersistenceService.findById(DC5BusinessDomain.getDefaultBusinessDomainId());
         assertThat(byId).isPresent();
-        assertThat(byId).get().extracting(DomibusConnectorBusinessDomain::getConfigurationSource).isEqualTo(ConfigurationSource.DB);
+        assertThat(byId).get().extracting(DC5BusinessDomain::getConfigurationSource).isEqualTo(ConfigurationSource.DB);
     }
 
     @Test
     @Order(1)
     void testFindById_notExistant() {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(new DomibusConnectorBusinessDomain.BusinessDomainId("not_existant"));
+        Optional<DC5BusinessDomain> byId = businessDomainPersistenceService.findById(new DC5BusinessDomain.BusinessDomainId("not_existant"));
         assertThat(byId).isEmpty();
 
     }
@@ -41,25 +41,25 @@ class DCBusinessDomainPersistenceServiceImplTest {
     @Test
     @Order(2)
     void findAll() {
-        List<DomibusConnectorBusinessDomain> all = businessDomainPersistenceService.findAll();
+        List<DC5BusinessDomain> all = businessDomainPersistenceService.findAll();
         assertThat(all).hasSize(1);
     }
 
     @Test
     @Order(3)
     void testUpdate() {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+        Optional<DC5BusinessDomain> byId = businessDomainPersistenceService.findById(DC5BusinessDomain.getDefaultBusinessDomainId());
 
-        DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = byId.get();
-        domibusConnectorBusinessDomain.setDescription("Hallo Welt");
-        domibusConnectorBusinessDomain.getProperties().put("test1", "test1");
-        domibusConnectorBusinessDomain.getProperties().put("prop1", "test2");
-        domibusConnectorBusinessDomain.getProperties().put("prop2.prop2", "test3");
+        DC5BusinessDomain DC5BusinessDomain = byId.get();
+        DC5BusinessDomain.setDescription("Hallo Welt");
+        DC5BusinessDomain.getProperties().put("test1", "test1");
+        DC5BusinessDomain.getProperties().put("prop1", "test2");
+        DC5BusinessDomain.getProperties().put("prop2.prop2", "test3");
 
-        businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
+        businessDomainPersistenceService.update(DC5BusinessDomain);
 
-        Optional<DomibusConnectorBusinessDomain> changed = businessDomainPersistenceService.findById(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
-        DomibusConnectorBusinessDomain changedBd = changed.get();
+        Optional<DC5BusinessDomain> changed = businessDomainPersistenceService.findById(DC5BusinessDomain.getDefaultBusinessDomainId());
+        DC5BusinessDomain changedBd = changed.get();
 
         assertThat(changedBd.getDescription()).isEqualTo("Hallo Welt");
         assertThat(changedBd.getProperties()).hasSize(3);
@@ -69,11 +69,11 @@ class DCBusinessDomainPersistenceServiceImplTest {
     @Test
     @Order(4)
     void testUpdateNotExistant_shouldThrow() {
-        DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = new DomibusConnectorBusinessDomain();
-        domibusConnectorBusinessDomain.setId(new DomibusConnectorBusinessDomain.BusinessDomainId("doesnotexist"));
+        DC5BusinessDomain DC5BusinessDomain = new DC5BusinessDomain();
+        DC5BusinessDomain.setId(new DC5BusinessDomain.BusinessDomainId("doesnotexist"));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
+            businessDomainPersistenceService.update(DC5BusinessDomain);
         });
     }
 }

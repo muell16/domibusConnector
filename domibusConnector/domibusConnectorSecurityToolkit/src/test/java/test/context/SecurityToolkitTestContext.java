@@ -1,7 +1,7 @@
 package test.context;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
@@ -38,7 +38,7 @@ import static org.mockito.ArgumentMatchers.eq;
 @EnableConfigurationProperties({ConnectorConfigurationProperties.class})
 public class SecurityToolkitTestContext {
 
-    private static DomibusConnectorBusinessDomain businessDomain =  DomibusConnectorBusinessDomain.builder()
+    private static DC5BusinessDomain businessDomain =  DC5BusinessDomain.builder()
 //            .properties()
             .build();
 
@@ -60,8 +60,8 @@ public class SecurityToolkitTestContext {
     @Bean
     public DCBusinessDomainPersistenceService dcBusinessDomainPersistenceService() {
         DCBusinessDomainPersistenceService mock = Mockito.mock(DCBusinessDomainPersistenceService.class);
-        Mockito.when(mock.findById(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
+        Mockito.when(mock.findById(eq(DC5BusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DC5BusinessDomain.getDefaultBusinessDomain()));
         return mock;
     }
 

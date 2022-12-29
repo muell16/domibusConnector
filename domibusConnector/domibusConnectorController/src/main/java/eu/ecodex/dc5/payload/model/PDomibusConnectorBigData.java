@@ -10,7 +10,7 @@ import java.util.Date;
 @Table(name = PDomibusConnectorBigData.TABLE_NAME)
 public class PDomibusConnectorBigData {
 
-    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_BIGDATA";
+    public static final String TABLE_NAME = "DC5_JPA_STORAGE";
 
     @Id
     @Column(name="ID")

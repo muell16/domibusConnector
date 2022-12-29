@@ -12,7 +12,7 @@ import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
@@ -94,8 +94,8 @@ public class TestBackendAutoConfiguration {
      */
     private boolean configureRoutingRules() {
         boolean enabled = false;
-        List<DomibusConnectorBusinessDomain> activeBusinessDomainIds = businessDomainManager.getValidBusinessDomainsAllData();
-        for (DomibusConnectorBusinessDomain domain : activeBusinessDomainIds) {
+        List<DC5BusinessDomain> activeBusinessDomainIds = businessDomainManager.getValidBusinessDomainsAllData();
+        for (DC5BusinessDomain domain : activeBusinessDomainIds) {
             ConnectorTestConfigurationProperties c2cTestProperties = configurationPropertyLoaderService.loadConfiguration(domain.getId(), ConnectorTestConfigurationProperties.class);
             enabled = enabled || c2cTestProperties.isEnabled();
             if (c2cTestProperties.isEnabled()) {

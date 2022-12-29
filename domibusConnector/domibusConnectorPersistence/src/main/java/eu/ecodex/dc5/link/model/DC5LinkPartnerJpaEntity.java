@@ -39,9 +39,9 @@ public class DC5LinkPartnerJpaEntity {
     private LinkType linkType;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
-    @Column(name="PROPERTY_VALUE", length = 2048)
+    @CollectionTable(name = "DC_LINK_PROP")
+    @MapKeyColumn (name="KEY", nullable = false)
+    @Column(name="VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     @ManyToOne

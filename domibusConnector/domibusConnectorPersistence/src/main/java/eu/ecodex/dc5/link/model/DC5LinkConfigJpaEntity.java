@@ -31,9 +31,9 @@ public class DC5LinkConfigJpaEntity {
     private String configName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DC_LINK_CONFIG_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_CONFIGURATION_ID", referencedColumnName = "ID"))
-    @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
-    @Column(name="PROPERTY_VALUE", length = 2048)
+    @CollectionTable(name = "DC5_LNK_PROP")
+    @MapKeyColumn (name="KEY", nullable = false)
+    @Column(name="VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Long getId() {

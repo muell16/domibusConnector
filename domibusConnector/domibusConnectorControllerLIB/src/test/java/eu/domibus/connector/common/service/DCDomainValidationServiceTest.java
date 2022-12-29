@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
 import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
@@ -32,8 +32,8 @@ class DCDomainValidationServiceTest {
 
         final DCDomainValidationService sut = new DCDomainValidationService(context);
 
-        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
-        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        final DC5BusinessDomain.BusinessDomainId anyId = new DC5BusinessDomain.BusinessDomainId("any id");
+        final DC5BusinessDomain domain = new DC5BusinessDomain();
         domain.setId(anyId);
 
 
@@ -55,8 +55,8 @@ class DCDomainValidationServiceTest {
 
         final DCDomainValidationService sut = new DCDomainValidationService(context);
 
-        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
-        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        final DC5BusinessDomain.BusinessDomainId anyId = new DC5BusinessDomain.BusinessDomainId("any id");
+        final DC5BusinessDomain domain = new DC5BusinessDomain();
         domain.setId(anyId);
 
         // Act

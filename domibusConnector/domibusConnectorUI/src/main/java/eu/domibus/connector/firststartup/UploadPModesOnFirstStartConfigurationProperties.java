@@ -1,6 +1,6 @@
 package eu.domibus.connector.firststartup;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
@@ -35,7 +35,7 @@ public class UploadPModesOnFirstStartConfigurationProperties {
     }
 
     public static class PModeUpload {
-        private String businessDomainName = DomibusConnectorBusinessDomain.DEFAULT_LANE_NAME;
+        private String businessDomainName = DC5BusinessDomain.DEFAULT_LANE_NAME;
         private StoreConfigurationProperties trustStore;
         private Resource pModeXml;
 

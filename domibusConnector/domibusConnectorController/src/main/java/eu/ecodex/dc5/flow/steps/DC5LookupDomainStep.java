@@ -6,7 +6,7 @@ import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.exception.ErrorCode;
 import eu.domibus.connector.controller.routing.DCDomainRoutingManager;
 import eu.domibus.connector.controller.routing.DomainRoutingRule;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.flow.api.Step;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.DC5Message;
@@ -29,7 +29,7 @@ public class DC5LookupDomainStep {
 
     @Step(name = "LookupDomainStep")
     public DC5Message lookupDomain(DC5Message msg) {
-        DomibusConnectorBusinessDomain.BusinessDomainId currentBusinessDomain = CurrentBusinessDomain.getCurrentBusinessDomain();
+        DC5BusinessDomain.BusinessDomainId currentBusinessDomain = CurrentBusinessDomain.getCurrentBusinessDomain();
         if (currentBusinessDomain != null) {
             msg.setBusinessDomainId(currentBusinessDomain);
             LOGGER.info("Associated msg [{}] with domain [{}] from ThreadContext.", msg, currentBusinessDomain);
@@ -39,7 +39,7 @@ public class DC5LookupDomainStep {
         // -> lookup the referred msg and associate incoming message with that domain.
         final Optional<DC5Message> businessMsgByRefToMsgId = msgService.findBusinessMsgByRefToMsgId(msg);
         if (businessMsgByRefToMsgId.isPresent()) {
-            final DomibusConnectorBusinessDomain.BusinessDomainId id = businessMsgByRefToMsgId.get().getBusinessDomainId();
+            final DC5BusinessDomain.BusinessDomainId id = businessMsgByRefToMsgId.get().getBusinessDomainId();
             msg.setBusinessDomainId(id);
             LOGGER.info("Associated msg [{}] with domain [{}].", msg, id);
             return msg;
@@ -52,7 +52,7 @@ public class DC5LookupDomainStep {
                 .flatMap(s -> msgService.findBusinessMsgByConversationId(s).stream().findFirst());
 
         if (any.isPresent()) {
-            final DomibusConnectorBusinessDomain.BusinessDomainId id = any.get().getBusinessDomainId();
+            final DC5BusinessDomain.BusinessDomainId id = any.get().getBusinessDomainId();
             msg.setBusinessDomainId(id);
             LOGGER.info("Associated msg [{}] with domain [{}].", msg, id);
             return msg;
@@ -62,8 +62,8 @@ public class DC5LookupDomainStep {
         // -> they should be applied.
 
         List<Tuple> matchingDomains = new ArrayList<>();
-        final List<DomibusConnectorBusinessDomain> validBusinessDomains = domainManager.getValidBusinessDomainsAllData();
-        for (DomibusConnectorBusinessDomain domain : validBusinessDomains) {
+        final List<DC5BusinessDomain> validBusinessDomains = domainManager.getValidBusinessDomainsAllData();
+        for (DC5BusinessDomain domain : validBusinessDomains) {
             dcDomainRoutingManager.getDomainRoutingRules(domain.getId())
                     .values()
                     .stream()
@@ -90,9 +90,9 @@ public class DC5LookupDomainStep {
     }
 
     private static class Tuple {
-        DomibusConnectorBusinessDomain.BusinessDomainId domainid;
+        DC5BusinessDomain.BusinessDomainId domainid;
         DomainRoutingRule routingRule;
-        public Tuple(DomibusConnectorBusinessDomain.BusinessDomainId domainid, DomainRoutingRule y) {
+        public Tuple(DC5BusinessDomain.BusinessDomainId domainid, DomainRoutingRule y) {
             this.domainid = domainid;
             this.routingRule = y;
         }

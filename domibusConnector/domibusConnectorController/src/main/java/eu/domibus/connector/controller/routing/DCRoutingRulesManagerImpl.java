@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.routing;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.service.DCRoutingRulePersistenceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +24,7 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     /**
      * holds all routing rules which have been added dynamically
      */
-    private Map<DomibusConnectorBusinessDomain.BusinessDomainId, RoutingConfig> routingRuleMap = new HashMap<>();
+    private Map<DC5BusinessDomain.BusinessDomainId, RoutingConfig> routingRuleMap = new HashMap<>();
 
     private final ConfigurationPropertyManagerService propertyManager;
     private final DCRoutingRulePersistenceService dcRoutingRulePersistenceService;
@@ -36,7 +36,7 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     @Override
-    public synchronized void addBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
+    public synchronized void addBackendRoutingRule(DC5BusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
         RoutingConfig rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new RoutingConfig();
@@ -49,7 +49,7 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
 
 
     @Override
-    public LinkPartnerRoutingRule persistBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
+    public LinkPartnerRoutingRule persistBackendRoutingRule(DC5BusinessDomain.BusinessDomainId businessDomainId, LinkPartnerRoutingRule linkPartnerRoutingRule) {
         dcRoutingRulePersistenceService.createRoutingRule(businessDomainId, linkPartnerRoutingRule);
         addBackendRoutingRule(businessDomainId, linkPartnerRoutingRule);
         linkPartnerRoutingRule.setConfigurationSource(ConfigurationSource.DB);
@@ -57,13 +57,13 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
     }
 
     @Override
-    public void deleteBackendRoutingRuleFromPersistence(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public void deleteBackendRoutingRuleFromPersistence(DC5BusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         dcRoutingRulePersistenceService.deleteRoutingRule(businessDomainId, routingRuleId);
         deleteBackendRoutingRule(businessDomainId, routingRuleId);
     }
 
     @Override
-    public synchronized void deleteBackendRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public synchronized void deleteBackendRoutingRule(DC5BusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         RoutingConfig rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new RoutingConfig();
@@ -76,27 +76,27 @@ public class DCRoutingRulesManagerImpl implements DCRoutingRulesManager {
 
 
     @Override
-    public Map<String, LinkPartnerRoutingRule> getBackendRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public Map<String, LinkPartnerRoutingRule> getBackendRoutingRules(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         RoutingConfig dcMessageRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
         return dcMessageRoutingConfigurationProperties.backendRoutingRules;
     }
 
     @Override
-    public String getDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public String getDefaultBackendName(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         return getMessageRoutingConfigurationProperties(businessDomainId).defaultBackendLink.getLinkName();
     }
 
     @Override
-    public void setDefaultBackendName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+    public void setDefaultBackendName(DC5BusinessDomain.BusinessDomainId businessDomainId, String backendName) {
         dcRoutingRulePersistenceService.setDefaultBackendName(businessDomainId, backendName);
     }
 
     @Override
-    public boolean isBackendRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public boolean isBackendRoutingEnabled(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         return true; //always true
     }
 
-    private synchronized RoutingConfig getMessageRoutingConfigurationProperties(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    private synchronized RoutingConfig getMessageRoutingConfigurationProperties(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         DCMessageRoutingConfigurationProperties routProps = propertyManager.loadConfiguration(businessDomainId, DCMessageRoutingConfigurationProperties.class);
 
         RoutingConfig routingConfig = new RoutingConfig();

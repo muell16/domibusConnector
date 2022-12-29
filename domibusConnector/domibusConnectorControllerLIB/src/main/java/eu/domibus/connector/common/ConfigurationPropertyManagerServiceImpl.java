@@ -2,7 +2,7 @@ package eu.domibus.connector.common;
 
 import eu.domibus.connector.common.annotations.ConnectorConversationService;
 import eu.domibus.connector.common.service.*;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +55,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     }
 
     @Override
-    public <T> T loadConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz) {
+    public <T> T loadConfiguration(DC5BusinessDomain.BusinessDomainId laneId, Class<T> clazz) {
         String prefix = getPrefixFromAnnotation(clazz);
 
         return this.loadConfiguration(laneId, clazz, prefix);
@@ -82,7 +82,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
      * @param <T> a class
      * @return the configuration object
      */
-    public <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
+    public <T> T loadConfiguration(@Nullable DC5BusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
         if (clazz == null) {
             throw new IllegalArgumentException("Clazz is not allowed to be null!");
         }
@@ -121,8 +121,8 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     }
 
 
-    private MapConfigurationPropertySource loadLaneProperties(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
-        Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
+    private MapConfigurationPropertySource loadLaneProperties(DC5BusinessDomain.BusinessDomainId laneId) {
+        Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
         if (businessDomain.isPresent()) {
             MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(businessDomain.get().getProperties());
             return mapConfigurationPropertySource;
@@ -150,7 +150,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
      *
      */
     @Override
-    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
+    public void updateConfiguration(DC5BusinessDomain.BusinessDomainId laneId, Object updatedConfigClazz) {
         final ArrayList<Object> updatedClazzes = new ArrayList<>();
         updatedClazzes.add(updatedConfigClazz);
         Map<String, String> diffProps = getUpdatedConfiguration(laneId, updatedClazzes);
@@ -158,7 +158,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     }
 
     @Override
-    public void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps) {
+    public void updateConfiguration(DC5BusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps) {
         LOGGER.debug("Updating of [{}] the following properties [{}]", updatedConfigClazz, diffProps);
 
         businessDomainManager.updateConfig(laneId, diffProps);
@@ -166,7 +166,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
     }
 
     @Override
-    public Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes) {
+    public Map<String, String> getUpdatedConfiguration(DC5BusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes) {
         if (laneId == null) {
             throw new IllegalArgumentException("LaneId is not allowed to be null!");
         }

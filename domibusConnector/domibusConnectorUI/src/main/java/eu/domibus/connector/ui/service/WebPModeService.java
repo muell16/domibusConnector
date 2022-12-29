@@ -9,7 +9,7 @@ import eu.domibus.connector.controller.routing.DomainRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore.KeystoreType;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
@@ -89,7 +89,7 @@ public class WebPModeService {
     }
 
     @Transactional(readOnly = false)
-    public boolean importPModes(byte[] contents, String description, DomibusConnectorKeystore store, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+    public boolean importPModes(byte[] contents, String description, DomibusConnectorKeystore store, DC5BusinessDomain.BusinessDomainId domainId) {
         if (contents == null || contents.length < 1) {
             throw new IllegalArgumentException("pModes are not allowed to be null or empty!");
         }
@@ -124,7 +124,7 @@ public class WebPModeService {
         return true;
     }
 
-    private ConnectorMessageProcessingProperties updatePModes(String referenceString, @NotNull DomibusConnectorBusinessDomain.BusinessDomainId domainNameAkaId) {
+    private ConnectorMessageProcessingProperties updatePModes(String referenceString, @NotNull DC5BusinessDomain.BusinessDomainId domainNameAkaId) {
         ConnectorMessageProcessingProperties props = configurationPropertyManagerService.loadConfiguration(domainNameAkaId, ConnectorMessageProcessingProperties.class);
         if (props.getPModeConfig() == null) {
             props.setPModeConfig(new ConnectorMessageProcessingProperties.PModeConfig());
@@ -152,7 +152,7 @@ public class WebPModeService {
      * @return
      */
     private DCEcodexContainerProperties getChangesToSecurityConfig(DomibusConnectorKeystore store) {
-        DCEcodexContainerProperties dcEcodexContainerProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), DCEcodexContainerProperties.class);
+        DCEcodexContainerProperties dcEcodexContainerProperties = configurationPropertyManagerService.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), DCEcodexContainerProperties.class);
 
         StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
         storeConfigurationProperties.setPassword(store.getPasswordPlain());
@@ -175,14 +175,14 @@ public class WebPModeService {
                 .findFirst()
                 .get();
 
-        EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), EvidencesToolkitConfigurationProperties.class);
+        EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), EvidencesToolkitConfigurationProperties.class);
         homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setName(homeParty.getIdentifier().get(0).getPartyId());
         homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setEndpointAddress(homeParty.getEndpoint());
 
         return homePartyConfigurationProperties;
     }
 
-    private DCMessageRoutingConfigurationProperties getChangesToDomainRuleConfig(Configuration pmodes, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+    private DCMessageRoutingConfigurationProperties getChangesToDomainRuleConfig(Configuration pmodes, DC5BusinessDomain.BusinessDomainId domainId) {
         final DCMessageRoutingConfigurationProperties msgRoutingConfig = configurationPropertyManagerService.loadConfiguration(domainId, DCMessageRoutingConfigurationProperties.class);
         final Map<String, DomainRoutingRule> currentRules = msgRoutingConfig.getDomainRules();
         for (Configuration.BusinessProcesses.Services.Service s : pmodes.getBusinessProcesses().getServices().getService()) {
@@ -198,7 +198,7 @@ public class WebPModeService {
 
     public EvidencesToolkitConfigurationProperties getHomeParty(Configuration config) {
         final Optional<Configuration.BusinessProcesses.Parties.Party> partyEndpoint = config.getBusinessProcesses().getParties().getParty().stream().filter(p -> p.getName() == config.getParty()).findFirst();
-        EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), EvidencesToolkitConfigurationProperties.class);
+        EvidencesToolkitConfigurationProperties homePartyConfigurationProperties = configurationPropertyManagerService.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), EvidencesToolkitConfigurationProperties.class);
         if (partyEndpoint.isPresent()) {
             homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setName(partyEndpoint.get().getName());
             homePartyConfigurationProperties.getIssuerInfo().getAs4Party().setEndpointAddress(partyEndpoint.get().getEndpoint());
@@ -514,7 +514,7 @@ public class WebPModeService {
         this.keystorePersistenceService.updateKeystorePassword(pModes.getConnectorstore(), newConnectorstorePwd);
     }
 
-    public Optional<DC5PmodeService.DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId laneId) {
+    public Optional<DC5PmodeService.DomibusConnectorPModeSet> getCurrentPModeSet(DC5BusinessDomain.BusinessDomainId laneId) {
         return this.pModeService.getCurrentPModeSet(laneId);
     }
 
@@ -528,7 +528,7 @@ public class WebPModeService {
     }
 
     private DC5PmodeService.DomibusConnectorPModeSet getCurrentPModeSetOrNewSet() {
-        final DomibusConnectorBusinessDomain.BusinessDomainId laneId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+        final DC5BusinessDomain.BusinessDomainId laneId = DC5BusinessDomain.getDefaultBusinessDomainId();
         Optional<DC5PmodeService.DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(laneId);
         return currentPModeSetOptional.orElseGet(() -> {
             DC5PmodeService.DomibusConnectorPModeSet set = new DC5PmodeService.DomibusConnectorPModeSet();

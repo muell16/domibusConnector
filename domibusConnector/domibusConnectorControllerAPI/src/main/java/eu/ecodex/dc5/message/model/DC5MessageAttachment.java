@@ -57,7 +57,7 @@ public class DC5MessageAttachment {
 	private long size = -1;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	private DetachedSignature detachedSignature;
+	private DC5DetachedSignature DC5DetachedSignature;
 
 	public static class StorageReferenceConverter implements AttributeConverter<LargeFileReference, String> {
 

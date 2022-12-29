@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
@@ -24,7 +24,7 @@ class DCDomainValidationServiceITTest {
     static class Rule1Test implements DomainValidationRule {
 
         @Override
-        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
+        public DCBusinessDomainManager.DomainValidResult validate(DC5BusinessDomain domain) {
             return DCBusinessDomainManager.DomainValidResult.builder().warning("test warning").build();
         }
     }
@@ -33,7 +33,7 @@ class DCDomainValidationServiceITTest {
     static class Rule2Test implements DomainValidationRule {
 
         @Override
-        public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
+        public DCBusinessDomainManager.DomainValidResult validate(DC5BusinessDomain domain) {
             return DCBusinessDomainManager.DomainValidResult.builder().errors(Collections.singletonList("an error")).build();
         }
     }
@@ -47,8 +47,8 @@ class DCDomainValidationServiceITTest {
     void given_the_validation_rules_raise_an_error_then_the_domain_validation_result_will_be_false() {
         // Arrange
         final DCDomainValidationService sut = new DCDomainValidationService(context);
-        final DomibusConnectorBusinessDomain.BusinessDomainId anyId = new DomibusConnectorBusinessDomain.BusinessDomainId("any id");
-        final DomibusConnectorBusinessDomain domain = new DomibusConnectorBusinessDomain();
+        final DC5BusinessDomain.BusinessDomainId anyId = new DC5BusinessDomain.BusinessDomainId("any id");
+        final DC5BusinessDomain domain = new DC5BusinessDomain();
         domain.setId(anyId);
 
 

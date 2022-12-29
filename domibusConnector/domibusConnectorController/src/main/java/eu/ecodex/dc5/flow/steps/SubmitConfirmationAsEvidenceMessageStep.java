@@ -221,7 +221,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         }
     }
 
-    public boolean isSendCreatedTriggerEvidenceBack(DomibusConnectorBusinessDomain.BusinessDomainId messageDomain) {
+    public boolean isSendCreatedTriggerEvidenceBack(DC5BusinessDomain.BusinessDomainId messageDomain) {
         ConnectorMessageProcessingProperties processingProperties =
                 configurationPropertyLoaderService.loadConfiguration(messageDomain, ConnectorMessageProcessingProperties.class);
         boolean result = processingProperties.isSendGeneratedEvidencesToBackend();

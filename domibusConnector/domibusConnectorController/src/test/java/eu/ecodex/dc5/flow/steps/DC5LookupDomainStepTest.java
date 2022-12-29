@@ -6,10 +6,9 @@ import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.routing.DCDomainRoutingManager;
 import eu.domibus.connector.controller.routing.DomainRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +45,7 @@ class DC5LookupDomainStepTest {
         // Arrange
         final String domainId = "test-id-1";
         final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().refToEbmsMessageId(EbmsMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(domainId)).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId)).build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -64,7 +63,7 @@ class DC5LookupDomainStepTest {
         // Arrange
         final String domainId = "test-domainId-2";
         final DC5Message incomingMsg = DC5Message.builder().backendData(DC5BackendData.builder().refToBackendMessageId(BackendMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(domainId)).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId)).build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -83,7 +82,7 @@ class DC5LookupDomainStepTest {
         // Arrange
         final String id = "test-domainId-3";
         final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId("test-conversation-id").build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DomibusConnectorBusinessDomain.BusinessDomainId(id)).build();
+        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(id)).build();
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(Collections.singletonList(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -107,11 +106,11 @@ class DC5LookupDomainStepTest {
         final String matchingDomainId1 = "test-domainId-foo1";
         final String notMatchingDomainId2 = "test-domainId-bar2";
         when(domainManager.getValidBusinessDomainsAllData()).thenReturn(Arrays.asList(
-                DomibusConnectorBusinessDomain.builder()
-                    .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1))
+                DC5BusinessDomain.builder()
+                    .id(DC5BusinessDomain.BusinessDomainId.of(matchingDomainId1))
                     .build(),
-                DomibusConnectorBusinessDomain.builder()
-                    .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(notMatchingDomainId2))
+                DC5BusinessDomain.builder()
+                    .id(DC5BusinessDomain.BusinessDomainId.of(notMatchingDomainId2))
                     .build())
         );
 
@@ -128,8 +127,8 @@ class DC5LookupDomainStepTest {
         final Map<String, DomainRoutingRule> ruleIdRuleMap = new HashMap<>();
         ruleIdRuleMap.put(rule1.getRoutingRuleId(), rule1);
 
-        when(dcDomainRoutingManager.getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1))).thenReturn(ruleIdRuleMap);
-        when(dcDomainRoutingManager.getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId.of(notMatchingDomainId2))).thenReturn(new HashMap<String, DomainRoutingRule>());
+        when(dcDomainRoutingManager.getDomainRoutingRules(DC5BusinessDomain.BusinessDomainId.of(matchingDomainId1))).thenReturn(ruleIdRuleMap);
+        when(dcDomainRoutingManager.getDomainRoutingRules(DC5BusinessDomain.BusinessDomainId.of(notMatchingDomainId2))).thenReturn(new HashMap<String, DomainRoutingRule>());
 
         final DC5Message incomingMsg = DC5Message.builder()
                 .ebmsData(DC5Ebms.builder()
@@ -143,7 +142,7 @@ class DC5LookupDomainStepTest {
         final DC5Message result = sut.lookupDomain(incomingMsg);
 
         // Assert
-        assertThat(result.getBusinessDomainId()).isEqualTo(DomibusConnectorBusinessDomain.BusinessDomainId.of(matchingDomainId1));
+        assertThat(result.getBusinessDomainId()).isEqualTo(DC5BusinessDomain.BusinessDomainId.of(matchingDomainId1));
     }
 
     // 4. If the message can be associated with multiple domains (see step 3) => Error!
@@ -175,8 +174,8 @@ class DC5LookupDomainStepTest {
         final Map<String, DomainRoutingRule> ruleIdRuleMap2 = new HashMap<>();
         ruleIdRuleMap2.put(rule2.getRoutingRuleId(), rule2);
 
-        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(testDomain1))).thenReturn(ruleIdRuleMap1);
-        when(dcDomainRoutingManager.getDomainRoutingRules(new DomibusConnectorBusinessDomain.BusinessDomainId(testDomain2))).thenReturn(ruleIdRuleMap1);
+        when(dcDomainRoutingManager.getDomainRoutingRules(new DC5BusinessDomain.BusinessDomainId(testDomain1))).thenReturn(ruleIdRuleMap1);
+        when(dcDomainRoutingManager.getDomainRoutingRules(new DC5BusinessDomain.BusinessDomainId(testDomain2))).thenReturn(ruleIdRuleMap1);
 
         final DC5Message incomingMsg = DC5Message.builder()
                 .ebmsData(DC5Ebms.builder()
@@ -217,9 +216,9 @@ class DC5LookupDomainStepTest {
         assertThatExceptionOfType(DomainMatchingException.class).isThrownBy(() -> sut.lookupDomain(incomingMsg));
     }
 
-    private DomibusConnectorBusinessDomain createDomain(String s) {
-        return DomibusConnectorBusinessDomain.builder()
-                .id(DomibusConnectorBusinessDomain.BusinessDomainId.of(s))
+    private DC5BusinessDomain createDomain(String s) {
+        return DC5BusinessDomain.builder()
+                .id(DC5BusinessDomain.BusinessDomainId.of(s))
                 .build();
     }
 }

@@ -3,7 +3,7 @@ package eu.domibus.connector.test.service;
 import eu.domibus.connector.common.DomibusConnectorDefaults;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain.BusinessDomainId;
+import eu.domibus.connector.domain.model.DC5BusinessDomain.BusinessDomainId;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 
 public interface DCConnector2ConnectorTestService {

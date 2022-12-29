@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.pmode;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import lombok.*;
 
@@ -24,7 +24,7 @@ public interface DC5PmodeService {
      * @param lane - the MessageLaneConfiguration which is changed
      * @return  the current PModeSet of the given MessageLane
      */
-    Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorBusinessDomain.BusinessDomainId lane);
+    Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DC5BusinessDomain.BusinessDomainId lane);
 
 
     @Getter
@@ -35,7 +35,7 @@ public interface DC5PmodeService {
     @ToString
     class DomibusConnectorPModeSet {
 
-        private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
+        private DC5BusinessDomain.BusinessDomainId businessDomainId;
 
         //create new class in ConnectorMessageProcessingProperties
         //PMode

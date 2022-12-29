@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.spring;
 import eu.domibus.connector.common.ConfigurationPropertyManagerServiceImpl;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +37,7 @@ public class TestPropertyLoadingStoring {
     @Order(1)
     public void testPropLoad() {
         try {
-            DomibusConnectorBusinessDomain.BusinessDomainId d1 = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+            DC5BusinessDomain.BusinessDomainId d1 = DC5BusinessDomain.getDefaultBusinessDomainId();
             CurrentBusinessDomain.setCurrentBusinessDomain(d1);
 
 
@@ -64,14 +64,14 @@ public class TestPropertyLoadingStoring {
     @Test
     @Order(3)
     public void testPropLoadDifferentBusinessDomain() {
-        DomibusConnectorBusinessDomain b = new DomibusConnectorBusinessDomain();
-        DomibusConnectorBusinessDomain.BusinessDomainId bid = new DomibusConnectorBusinessDomain.BusinessDomainId("b2");
+        DC5BusinessDomain b = new DC5BusinessDomain();
+        DC5BusinessDomain.BusinessDomainId bid = new DC5BusinessDomain.BusinessDomainId("b2");
         b.setId(bid);
         dcBusinessDomainManager.createBusinessDomain(b);
 
         try {
-            DomibusConnectorBusinessDomain.BusinessDomainId defaultDomain = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
-            DomibusConnectorBusinessDomain.BusinessDomainId testDomain2 = bid;
+            DC5BusinessDomain.BusinessDomainId defaultDomain = DC5BusinessDomain.getDefaultBusinessDomainId();
+            DC5BusinessDomain.BusinessDomainId testDomain2 = bid;
 
             //update properties in default domain
             TestProperties changed1 = configurationPropertyLoaderService.loadConfiguration(defaultDomain, TestProperties.class);
