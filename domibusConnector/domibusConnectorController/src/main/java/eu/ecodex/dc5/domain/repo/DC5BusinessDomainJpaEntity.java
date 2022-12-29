@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.domain.repo;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import eu.ecodex.dc5.domain.model.BusinessDomainIdConverter;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import java.util.Map;
 @Setter
 public class DC5BusinessDomainJpaEntity {
 
-    public static final String TABLE_NAME = "DC_MESSAGE_LANE";
+    public static final String TABLE_NAME = "DC5_DOMAIN";
 
     @Id
     @Column(name="ID")
@@ -39,7 +39,7 @@ public class DC5BusinessDomainJpaEntity {
 
     @Column(name= "NAME", unique = true, nullable = false, length = 255)
     @Convert(converter = BusinessDomainIdConverter.class)
-    private DomibusConnectorBusinessDomain.BusinessDomainId name;
+    private DC5BusinessDomain.BusinessDomainId name;
 
     @Lob
     @Column(name = "DESCRIPTION")

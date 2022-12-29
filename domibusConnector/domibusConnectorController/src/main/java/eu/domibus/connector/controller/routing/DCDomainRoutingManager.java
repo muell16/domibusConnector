@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.routing.DCDomainRoutingRulePersistenceService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -24,11 +24,11 @@ public class DCDomainRoutingManager {
     /**
      * holds all routing rules which have been added dynamically
      */
-    private Map<DomibusConnectorBusinessDomain.BusinessDomainId, DomainRoutingProperties> routingRuleMap = new HashMap<>();
+    private Map<DC5BusinessDomain.BusinessDomainId, DomainRoutingProperties> routingRuleMap = new HashMap<>();
     private final ConfigurationPropertyManagerService propertyManager;
     private final DCDomainRoutingRulePersistenceService dcRoutingRulePersistenceService;
 
-    public synchronized void addDomainRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
+    public synchronized void addDomainRoutingRule(DC5BusinessDomain.BusinessDomainId businessDomainId, DomainRoutingRule DomainRoutingRule) {
         DomainRoutingProperties rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new DomainRoutingProperties();
@@ -48,12 +48,12 @@ public class DCDomainRoutingManager {
 //        return DomainRoutingRule;
 //    }
 
-    public void deleteDomainRoutingRuleFromPersistence(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public void deleteDomainRoutingRuleFromPersistence(DC5BusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         dcRoutingRulePersistenceService.deleteRoutingRule(businessDomainId, routingRuleId);
         deleteDomainRoutingRule(businessDomainId, routingRuleId);
     }
 
-    public synchronized void deleteDomainRoutingRule(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
+    public synchronized void deleteDomainRoutingRule(DC5BusinessDomain.BusinessDomainId businessDomainId, String routingRuleId) {
         DomainRoutingProperties rc = routingRuleMap.get(businessDomainId);
         if (rc == null) {
             rc = new DomainRoutingProperties();
@@ -65,20 +65,20 @@ public class DCDomainRoutingManager {
     }
 
 
-    public Map<String, DomainRoutingRule> getDomainRoutingRules(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public Map<String, DomainRoutingRule> getDomainRoutingRules(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         DomainRoutingProperties dcMessageDomainRoutingConfigurationProperties = getMessageRoutingConfigurationProperties(businessDomainId);
         return dcMessageDomainRoutingConfigurationProperties.domainRoutingRules;
     }
 
-    public void setDefaultDomainName(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId, String backendName) {
+    public void setDefaultDomainName(DC5BusinessDomain.BusinessDomainId businessDomainId, String backendName) {
         dcRoutingRulePersistenceService.setDefaultBackendName(businessDomainId, backendName);
     }
 
-    public boolean isDomainRoutingEnabled(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public boolean isDomainRoutingEnabled(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         return true; //always true
     }
 
-    private synchronized DomainRoutingProperties getMessageRoutingConfigurationProperties(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    private synchronized DomainRoutingProperties getMessageRoutingConfigurationProperties(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         DCMessageRoutingConfigurationProperties routProps = propertyManager.loadConfiguration(businessDomainId, DCMessageRoutingConfigurationProperties.class);
 
         DomainRoutingProperties domainRoutingProperties = new DomainRoutingProperties();

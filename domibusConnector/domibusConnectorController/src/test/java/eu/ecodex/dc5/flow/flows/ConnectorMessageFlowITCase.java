@@ -10,7 +10,7 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.*;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
@@ -213,7 +213,7 @@ public class ConnectorMessageFlowITCase {
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RELAYED);
                 assertThat(persistedMessage.getMessageLaneId())
                         .as("Should assigned to default domain!")
-                        .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                        .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
             });
 
 
@@ -308,7 +308,7 @@ public class ConnectorMessageFlowITCase {
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.DELIVERED);
                 assertThat(persistedMessage.getMessageLaneId())
                         .as("Should assigned to default domain!")
-                        .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                        .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
             });
 
         });
@@ -495,7 +495,7 @@ public class ConnectorMessageFlowITCase {
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.DELIVERED);
                 assertThat(persistedMessage.getMessageLaneId())
                         .as("Should assigned to default domain!")
-                        .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                        .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
             });
 
 
@@ -531,7 +531,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.REJECTED);
             assertThat(persistedMessage.getMessageLaneId())
                     .as("Should assigned to default domain!")
-                    .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                    .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
         });
 
     }
@@ -615,7 +615,7 @@ public class ConnectorMessageFlowITCase {
                     .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.REJECTED);
             assertThat(persistedMessage.getMessageLaneId())
                     .as("Should assigned to default domain!")
-                    .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                    .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
         });
 
     }
@@ -715,7 +715,7 @@ public class ConnectorMessageFlowITCase {
                         .isEqualTo(DC5BusinessMessageState.BusinessMessagesStates.RETRIEVED);
                 assertThat(persistedMessage.getMessageLaneId())
                         .as("Should assigned to default domain!")
-                        .isEqualTo(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                        .isEqualTo(DC5BusinessDomain.getDefaultBusinessDomainId());
             });
 
 
@@ -1655,7 +1655,7 @@ public class ConnectorMessageFlowITCase {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getBusinessDomainId())) {
-            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
         }
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
@@ -1673,7 +1673,7 @@ public class ConnectorMessageFlowITCase {
             message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         }
         if (message.getMessageLaneId() == null || StringUtils.isEmpty(message.getMessageLaneId().getBusinessDomainId())) {
-            message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
         }
         DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
         testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));

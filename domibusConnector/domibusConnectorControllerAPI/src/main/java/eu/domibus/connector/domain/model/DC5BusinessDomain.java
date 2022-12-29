@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.style.ToStringCreator;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class DomibusConnectorBusinessDomain {
+public class DC5BusinessDomain {
 
     public static final String DEFAULT_LANE_NAME = "defaultBusinessDomain";
 
@@ -31,8 +30,8 @@ public class DomibusConnectorBusinessDomain {
 
     private ConfigurationSource configurationSource; // TODO: must be read-only if props are not from db, beause cant change .properties.
 
-    public static DomibusConnectorBusinessDomain getDefaultBusinessDomain() {
-        DomibusConnectorBusinessDomain defaultMessageLane = new DomibusConnectorBusinessDomain();
+    public static DC5BusinessDomain getDefaultBusinessDomain() {
+        DC5BusinessDomain defaultMessageLane = new DC5BusinessDomain();
         defaultMessageLane.setId(new BusinessDomainId(DEFAULT_LANE_NAME));
         defaultMessageLane.setDescription("default message lane");
         defaultMessageLane.setProperties(new HashMap<>());
@@ -87,9 +86,9 @@ public class DomibusConnectorBusinessDomain {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DomibusConnectorBusinessDomain)) return false;
+        if (!(o instanceof DC5BusinessDomain)) return false;
 
-        DomibusConnectorBusinessDomain that = (DomibusConnectorBusinessDomain) o;
+        DC5BusinessDomain that = (DC5BusinessDomain) o;
 
         return id != null ? id.equals(that.id) : that.id == null;
     }

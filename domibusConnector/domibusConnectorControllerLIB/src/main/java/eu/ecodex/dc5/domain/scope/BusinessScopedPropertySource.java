@@ -2,7 +2,7 @@ package eu.ecodex.dc5.domain.scope;
 
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class BusinessScopedPropertySource extends EnumerablePropertySource<DomibusConnectorBusinessDomain> {
+public class BusinessScopedPropertySource extends EnumerablePropertySource<DC5BusinessDomain> {
 
     private final static Logger LOGGER = LogManager.getLogger(BusinessScopedPropertySource.class);
 
@@ -33,13 +33,13 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<Domib
 
 
     @Override
-    public DomibusConnectorBusinessDomain getSource() {
+    public DC5BusinessDomain getSource() {
         if (CurrentBusinessDomain.getCurrentBusinessDomain() != null) {
             DCBusinessDomainManager businessDomainManager = applicationContext.getBean(DCBusinessDomainManager.class);
-            Optional<DomibusConnectorBusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain());
+            Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain());
             return businessDomain.orElseThrow(() -> new IllegalArgumentException("No Business Domain found for id" + CurrentBusinessDomain.getCurrentBusinessDomain()));
         } else {
-            return DomibusConnectorBusinessDomain.getDefaultBusinessDomain();
+            return DC5BusinessDomain.getDefaultBusinessDomain();
         }
     }
 
@@ -64,7 +64,7 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<Domib
             DCBusinessDomainManager businessDomainManager = applicationContext.getBean(DCBusinessDomainManager.class);
 
             businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain())
-                    .map(DomibusConnectorBusinessDomain::getProperties)
+                    .map(DC5BusinessDomain::getProperties)
                     .orElse(new HashMap<>())
                     .forEach((key, v) -> m.put(ConfigurationPropertyName.of(key), v));
 

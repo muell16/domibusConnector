@@ -6,7 +6,7 @@ import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.message.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.junit.jupiter.api.Assertions;
@@ -71,7 +71,7 @@ public class EvidenceMessageProcessorTest {
         //send trigger to evidenceMessageProcessor...
         try {
             //set domain to DefaultDomain
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
 
             //prepare test message in DB
             DC5Message businessMsg = DomainEntityCreator.createOutgoingEpoFormAMessage();
@@ -79,7 +79,7 @@ public class EvidenceMessageProcessorTest {
             businessMsg.getEbmsData().setEbmsMessageId(EBMSID);
             businessMsg.setConnectorMessageId(DC5MessageId.ofRandom());
             businessMsg.getBackendData().setBackendMessageId(BackendMessageId.ofRandom());
-            businessMsg.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            businessMsg.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
 //            messagePersistenceService.persistBusinessMessageIntoDatabase(businessMsg);
 
             DC5Confirmation submissionAcc = confirmationCreatorService.createConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, businessMsg, null, "");
@@ -127,7 +127,7 @@ public class EvidenceMessageProcessorTest {
     public void testDeliverTrigger_evidenceShouldBeSentBack() throws InterruptedException {
         EbmsMessageId EBMSID = EbmsMessageId.ofString("testDeliverTrigger_evidenceShouldBeSentBack_1");
 
-        DomibusConnectorBusinessDomain.BusinessDomainId domain = DomibusConnectorBusinessDomain.BusinessDomainId.of("lane1");
+        DC5BusinessDomain.BusinessDomainId domain = DC5BusinessDomain.BusinessDomainId.of("lane1");
 
         //send trigger to evidenceMessageProcessor...
         try {

@@ -24,7 +24,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.utils.RoleRequired;
 import eu.domibus.connector.ui.view.areas.configuration.ConfigurationLayout;
@@ -59,43 +59,43 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         add(createAddDomainButtonDiv(), domainGrid);
     }
 
-    private Grid<DomibusConnectorBusinessDomain> domainGrid;
+    private Grid<DC5BusinessDomain> domainGrid;
     private final Dialog createDomainDialog;
 
-    private Grid<DomibusConnectorBusinessDomain> initGrid() {
+    private Grid<DC5BusinessDomain> initGrid() {
         // Grid Settings
-        final Grid<DomibusConnectorBusinessDomain> grid = new Grid<>();
+        final Grid<DC5BusinessDomain> grid = new Grid<>();
         grid.setAllRowsVisible(true);
         grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_COMPACT, GridVariant.LUMO_ROW_STRIPES);
 
         // Grid Layout
-        final Grid.Column<DomibusConnectorBusinessDomain> editColumn =
+        final Grid.Column<DC5BusinessDomain> editColumn =
                 grid.addComponentColumn(this::createEditButton)
                         .setHeader("edit")
                         .setWidth("160px")
                         .setFlexGrow(0)
                         .setTextAlign(ColumnTextAlign.CENTER);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainIdColumn =
-                grid.addColumn(DomibusConnectorBusinessDomain::getId)
+        final Grid.Column<DC5BusinessDomain> domainIdColumn =
+                grid.addColumn(DC5BusinessDomain::getId)
                         .setKey("getId")
                         .setHeader("Domain Name / ID")
                         .setSortable(true);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainDescriptionColumn =
-                grid.addColumn(DomibusConnectorBusinessDomain::getDescription)
+        final Grid.Column<DC5BusinessDomain> domainDescriptionColumn =
+                grid.addColumn(DC5BusinessDomain::getDescription)
                         .setKey("getDescription")
                         .setHeader("Description")
                         .setSortable(true);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainEnabledColumn =
+        final Grid.Column<DC5BusinessDomain> domainEnabledColumn =
                 grid.addComponentColumn(this::createDomainEnabledCheckbox)
                         .setKey("isEnabled")
                         .setHeader("Domain enabled")
                         .setAutoWidth(true)
                         .setSortable(true);
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainValidColumn =
+        final Grid.Column<DC5BusinessDomain> domainValidColumn =
                 grid.addComponentColumn(this::createValidationInfo)
                         .setKey("isValid")
                         .setHeader("Validation Result")
@@ -103,7 +103,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                         .setSortable(true);
 
 
-        final Grid.Column<DomibusConnectorBusinessDomain> domainConfigSource =
+        final Grid.Column<DC5BusinessDomain> domainConfigSource =
                 grid.addColumn(d -> d.getConfigurationSource().toString())
                         .setKey("getConfigurationSource")
                         .setHeader("Configuration Source")
@@ -111,15 +111,15 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
 
         // Row editing configuration
-        Binder<DomibusConnectorBusinessDomain> binder = new Binder<>(DomibusConnectorBusinessDomain.class);
-        final Editor<DomibusConnectorBusinessDomain> editor = grid.getEditor();
+        Binder<DC5BusinessDomain> binder = new Binder<>(DC5BusinessDomain.class);
+        final Editor<DC5BusinessDomain> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
 
         editor.addSaveListener(e -> {
             if (e.getItem().getConfigurationSource().equals(ConfigurationSource.DB)) {
-                final DomibusConnectorBusinessDomain item = e.getItem();
-                if (DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(item.getId()) && !item.isEnabled()) {
+                final DC5BusinessDomain item = e.getItem();
+                if (DC5BusinessDomain.getDefaultBusinessDomain().getId().equals(item.getId()) && !item.isEnabled()) {
                     new Notification("Can't disable default domain!", 5000, Notification.Position.MIDDLE).open();
                     e.getItem().setEnabled(true);
                 } else {
@@ -146,10 +146,10 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         final Checkbox enabledToggle = new Checkbox();
 
         binder.forField(enabledToggle)
-                .bind(DomibusConnectorBusinessDomain::isEnabled, DomibusConnectorBusinessDomain::setEnabled);
+                .bind(DC5BusinessDomain::isEnabled, DC5BusinessDomain::setEnabled);
 
         binder.forField(descriptionField)
-                .bind(DomibusConnectorBusinessDomain::getDescription, DomibusConnectorBusinessDomain::setDescription);
+                .bind(DC5BusinessDomain::getDescription, DC5BusinessDomain::setDescription);
 
         domainEnabledColumn.setEditorComponent(enabledToggle);
         domainDescriptionColumn.setEditorComponent(descriptionField);
@@ -174,12 +174,12 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 //        return toggleButton;
 //    }
 
-    private Checkbox createDomainEnabledCheckbox(DomibusConnectorBusinessDomain domain, boolean readOnly) {
+    private Checkbox createDomainEnabledCheckbox(DC5BusinessDomain domain, boolean readOnly) {
         final Checkbox toggleButton = createDomainEnabledCheckbox(domain);
         toggleButton.setReadOnly(readOnly);
         return toggleButton;
     }
-    private Checkbox createDomainEnabledCheckbox(DomibusConnectorBusinessDomain domain) {
+    private Checkbox createDomainEnabledCheckbox(DC5BusinessDomain domain) {
         final Checkbox toggleButton = new Checkbox();
         toggleButton.setReadOnly(true);
         toggleButton.setValue(domain.isEnabled());
@@ -209,10 +209,10 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return div;
     }
 
-    private Button createEditButton(DomibusConnectorBusinessDomain competence) {
+    private Button createEditButton(DC5BusinessDomain competence) {
         final Button edit = new Button(new Icon(VaadinIcon.PENCIL));
         edit.addClickListener(event -> {
-            final Editor<DomibusConnectorBusinessDomain> editor = domainGrid.getEditor();
+            final Editor<DC5BusinessDomain> editor = domainGrid.getEditor();
             if (editor.isOpen()) {
                 editor.cancel();
             }
@@ -259,8 +259,8 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
             dialog.close();
         });
 
-        Binder<DomibusConnectorBusinessDomain> binder = new Binder<>();
-        final DomibusConnectorBusinessDomain bean = new DomibusConnectorBusinessDomain();
+        Binder<DC5BusinessDomain> binder = new Binder<>();
+        final DC5BusinessDomain bean = new DC5BusinessDomain();
         bean.setConfigurationSource(ConfigurationSource.DB);
         binder.setBean(bean); // this db entity exists until save, it can cause subtle bugs, if the binder is not bound to another entity after save, as the entity persists in the dialog and subsequent saves store the old object again and again.
 
@@ -268,16 +268,16 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .asRequired("A domain name is required!")
                 .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
                 .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
-                .withValidator(s -> !domainRepo.getBusinessDomain(new DomibusConnectorBusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
-                .withConverter(DomibusConnectorBusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getBusinessDomainId())
-                .bind(DomibusConnectorBusinessDomain::getId, DomibusConnectorBusinessDomain::setId);
+                .withValidator(s -> !domainRepo.getBusinessDomain(new DC5BusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
+                .withConverter(DC5BusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getBusinessDomainId())
+                .bind(DC5BusinessDomain::getId, DC5BusinessDomain::setId);
 
         binder.forField(descriptionField)
-                .bind(DomibusConnectorBusinessDomain::getDescription, DomibusConnectorBusinessDomain::setDescription);
+                .bind(DC5BusinessDomain::getDescription, DC5BusinessDomain::setDescription);
 
         binder.forField(configurationSourceField)
                 .withConverter(ConfigurationSource::valueOf, ConfigurationSource::toString)
-                .bind(DomibusConnectorBusinessDomain::getConfigurationSource, DomibusConnectorBusinessDomain::setConfigurationSource);
+                .bind(DC5BusinessDomain::getConfigurationSource, DC5BusinessDomain::setConfigurationSource);
 
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
@@ -302,7 +302,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
         return dialogLayout;
     }
 
-    private HorizontalLayout createValidationInfo(DomibusConnectorBusinessDomain domain) {
+    private HorizontalLayout createValidationInfo(DC5BusinessDomain domain) {
         final HorizontalLayout horizontalLayout = new HorizontalLayout();
         Span validIcon = new Span(createIcon(VaadinIcon.CHECK),
                 new Span("Confirmed"));

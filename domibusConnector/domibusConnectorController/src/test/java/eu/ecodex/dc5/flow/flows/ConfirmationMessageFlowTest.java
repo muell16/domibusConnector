@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
@@ -52,7 +52,7 @@ class ConfirmationMessageFlowTest {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createAlreadyOutgoneEpoFormAMessage();
-            dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            dc5Message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
             dc5Message.setConnectorMessageId(DC5MessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
             return dc5Message;
@@ -64,7 +64,7 @@ class ConfirmationMessageFlowTest {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createRelayRemmdRejectEvidenceForMessage(refTo);
-            dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            dc5Message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
             dc5Message.setConnectorMessageId(DC5MessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
             return m.getConnectorMessageId();
@@ -74,7 +74,7 @@ class ConfirmationMessageFlowTest {
         TransactionTemplate txTemplate = new TransactionTemplate(txManager);
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(refTo);
-            dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            dc5Message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
             dc5Message.setConnectorMessageId(DC5MessageId.ofRandom());
             DC5Message m = messageRepo.save(dc5Message);
             return dc5Message.getConnectorMessageId();
@@ -93,7 +93,7 @@ class ConfirmationMessageFlowTest {
 
         txTemplate.execute(state -> {
             DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
             confirmationMessageFlow.processMessage(msg);
             return msg;
         });
@@ -121,7 +121,7 @@ class ConfirmationMessageFlowTest {
 
         txTemplate.execute(state -> {
             DC5Message msg = messageRepo.getByConnectorMessageId(remmdReject);
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
             confirmationMessageFlow.processMessage(msg);
             return msg;
         });

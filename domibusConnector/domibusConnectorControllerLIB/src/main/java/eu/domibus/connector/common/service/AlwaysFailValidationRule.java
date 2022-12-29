@@ -1,7 +1,7 @@
 package eu.domibus.connector.common.service;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AlwaysFailValidationRule implements DomainValidationRule {
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final BusinessScopedConfigurationPropertiesRegistrar.BusinessScopedConfigurationPropertiesListHolder holder;
-    public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
+    public DCBusinessDomainManager.DomainValidResult validate(DC5BusinessDomain domain) {
 
         final ArrayList<Object> errors = new ArrayList<>();
         errors.add("This is a fail1");

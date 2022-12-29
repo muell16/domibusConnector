@@ -2,10 +2,8 @@ package eu.domibus.connectorplugins.link.testbackend;
 
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.ecodex.dc5.message.model.DC5Message;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +13,7 @@ import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain.BusinessDomainId;
+import eu.domibus.connector.domain.model.DC5BusinessDomain.BusinessDomainId;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
 

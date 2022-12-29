@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.domain;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ public class BusinessDomainConfigurationChange extends ApplicationEvent {
     /**
      * The business domain where the configuration has changed
      */
-    private final DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId;
+    private final DC5BusinessDomain.BusinessDomainId businessDomainId;
 
     private final Map<String, String> changedConfiguration;
 
@@ -22,14 +22,14 @@ public class BusinessDomainConfigurationChange extends ApplicationEvent {
      * @param changedConfiguration the configuration changes itself
      */
     public BusinessDomainConfigurationChange(Object source,
-                                             DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId,
+                                             DC5BusinessDomain.BusinessDomainId businessDomainId,
                                              Map<String, String> changedConfiguration) {
         super(source);
         this.businessDomainId = businessDomainId;
         this.changedConfiguration = changedConfiguration;
     }
 
-    public DomibusConnectorBusinessDomain.BusinessDomainId getBusinessDomainId() {
+    public DC5BusinessDomain.BusinessDomainId getBusinessDomainId() {
         return businessDomainId;
     }
 

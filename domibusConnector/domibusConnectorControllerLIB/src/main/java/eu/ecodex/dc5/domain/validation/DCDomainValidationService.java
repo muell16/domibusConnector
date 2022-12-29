@@ -1,6 +1,6 @@
 package eu.ecodex.dc5.domain.validation;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class DCDomainValidationService {
     private final ApplicationContext applicationContext;
 
-    public DCBusinessDomainManager.DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {
+    public DCBusinessDomainManager.DomainValidResult validateDomain(DC5BusinessDomain domain) {
         Map<String, DomainValidationRule> beansOfType = applicationContext.getBeansOfType(DomainValidationRule.class);
 
         final ArrayList<Object> errors = new ArrayList<>();

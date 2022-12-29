@@ -4,7 +4,7 @@ import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
@@ -81,13 +81,13 @@ public class WebPModeServiceTest {
                     .as("example pmodes contains 24 parties")
                     .hasSize(24);
 
-            CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
 
 
-            DCEcodexContainerProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), DCEcodexContainerProperties.class);
+            DCEcodexContainerProperties securityToolkitConfigurationProperties = configManager.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), DCEcodexContainerProperties.class);
             assertThat(securityToolkitConfigurationProperties.getSignatureValidation().getTrustStore().getPassword()).isEqualTo("pw");
 
-            ConnectorMessageProcessingProperties props = configManager.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), ConnectorMessageProcessingProperties.class);
+            ConnectorMessageProcessingProperties props = configManager.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), ConnectorMessageProcessingProperties.class);
             final String expected = props.getPModeConfig().getPModeLocation();
 
             Assertions.assertAll(

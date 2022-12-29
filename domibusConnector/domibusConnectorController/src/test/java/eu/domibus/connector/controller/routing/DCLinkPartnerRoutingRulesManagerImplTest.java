@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.routing;
 
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class DCLinkPartnerRoutingRulesManagerImplTest {
         rr.setLinkName("backend_bob");
         rr.setMatchClause(new RoutingRulePattern("equals(ServiceName, 'test')"));
 
-        routingRulesManager.addBackendRoutingRule(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), rr);
+        routingRulesManager.addBackendRoutingRule(DC5BusinessDomain.getDefaultBusinessDomainId(), rr);
 
         
     }

@@ -7,7 +7,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +80,7 @@ public abstract class AImportOldConfigDialog extends Dialog {
 
     protected abstract Object showImportedConfig(Div div, Map<String, String> p);
 
-    protected void save(Object configClass, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+    protected void save(Object configClass, DC5BusinessDomain.BusinessDomainId domainId) {
         dialogFactory.createChangedPropertiesDialog(configClass, domainId);
     }
 

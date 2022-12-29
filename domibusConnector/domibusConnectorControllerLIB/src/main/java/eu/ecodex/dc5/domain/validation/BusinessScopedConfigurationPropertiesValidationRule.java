@@ -2,7 +2,7 @@ package eu.ecodex.dc5.domain.validation;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.DomainValidationRule;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class BusinessScopedConfigurationPropertiesValidationRule implements Doma
 
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final Optional<BusinessScopedConfigurationPropertiesRegistrar.BusinessScopedConfigurationPropertiesListHolder> holder;
-    public DCBusinessDomainManager.DomainValidResult validate(DomibusConnectorBusinessDomain domain) {
+    public DCBusinessDomainManager.DomainValidResult validate(DC5BusinessDomain domain) {
 
         Stream<? extends ConstraintViolation<?>> hibernateConstraintViolations = holder
                 .map(h -> h.getBusinessScopeConfigurationPropertyBeanNames().stream())

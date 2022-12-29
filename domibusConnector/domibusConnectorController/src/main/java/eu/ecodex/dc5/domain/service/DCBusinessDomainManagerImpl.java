@@ -2,14 +2,13 @@ package eu.ecodex.dc5.domain.service;
 
 import eu.domibus.connector.common.configuration.ConnectorConfigurationProperties;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.persistence.service.DCBusinessDomainPersistenceService;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.domain.validation.DCDomainValidationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,8 +27,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
 
     @Override
-    public DomainValidResult validateDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
-        final Optional<DomibusConnectorBusinessDomain> businessDomain = this.getBusinessDomain(id);
+    public DomainValidResult validateDomain(DC5BusinessDomain.BusinessDomainId id) {
+        final Optional<DC5BusinessDomain> businessDomain = this.getBusinessDomain(id);
         if (!businessDomain.isPresent()) {
             throw new IllegalArgumentException("For the provided business domain id [" + id + "] no domain exists");
         }
@@ -37,7 +36,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public DomainValidResult validateDomain(DomibusConnectorBusinessDomain domain) {
+    public DomainValidResult validateDomain(DC5BusinessDomain domain) {
         DomainValidResult result = domainValidationService.validateDomain(domain);
         LOGGER.debug("#validateDomain: Validate Domain [{}] returned result: [{}]", domain, result);
         return result;
@@ -45,13 +44,13 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
 
     @Override
-    public List<DomibusConnectorBusinessDomain.BusinessDomainId> getAllBusinessDomains() {
-        Set<DomibusConnectorBusinessDomain.BusinessDomainId> collect = new HashSet<>();
+    public List<DC5BusinessDomain.BusinessDomainId> getAllBusinessDomains() {
+        Set<DC5BusinessDomain.BusinessDomainId> collect = new HashSet<>();
         if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
             businessDomainPersistenceService
                     .findAll()
                     .stream()
-                    .map(DomibusConnectorBusinessDomain::getId)
+                    .map(DC5BusinessDomain::getId)
                     .forEach(b -> {
                         LOGGER.debug("#getAllBusinessDomains: adding domain [{}] from DB", b);
                         collect.add(b);
@@ -60,7 +59,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
         businessDomainConfigurationProperties.getBusinessDomain()
                 .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
-                .map(DomibusConnectorBusinessDomain::getId)
+                .map(DC5BusinessDomain::getId)
                 .forEach(b -> {
                     if (!collect.add(b)) {
                         LOGGER.warn("Database has already provided a business domain with id [{}]. The domain will not be added from environment. DB takes precedence!", b);
@@ -75,14 +74,14 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public List<DomibusConnectorBusinessDomain.BusinessDomainId> getValidBusinessDomains() {
+    public List<DC5BusinessDomain.BusinessDomainId> getValidBusinessDomains() {
         return getValidBusinessDomainsAllData().stream()
-                .map(DomibusConnectorBusinessDomain::getId)
+                .map(DC5BusinessDomain::getId)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<DomibusConnectorBusinessDomain> getAllBusinessDomainsAllData() {
+    public List<DC5BusinessDomain> getAllBusinessDomainsAllData() {
         return getAllBusinessDomains().stream()
                 .map(this::getBusinessDomain)
                 .map(o -> o.orElse(null))
@@ -91,14 +90,14 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public Map<DomibusConnectorBusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
+    public Map<DC5BusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
         return getAllBusinessDomainsAllData().stream()
                 .collect(Collectors.toMap(Function.identity(), this::validateDomain));
     }
 
     @Override
-    public List<DomibusConnectorBusinessDomain> getValidBusinessDomainsAllData() {
-        List<DomibusConnectorBusinessDomain> collect = getAllBusinessDomainsValidations().entrySet().stream()
+    public List<DC5BusinessDomain> getValidBusinessDomainsAllData() {
+        List<DC5BusinessDomain> collect = getAllBusinessDomainsValidations().entrySet().stream()
                 .filter(e -> e.getValue().isValid())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -109,8 +108,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public Optional<DomibusConnectorBusinessDomain> getBusinessDomain(DomibusConnectorBusinessDomain.BusinessDomainId id) {
-        Optional<DomibusConnectorBusinessDomain> db = Optional.empty();
+    public Optional<DC5BusinessDomain> getBusinessDomain(DC5BusinessDomain.BusinessDomainId id) {
+        Optional<DC5BusinessDomain> db = Optional.empty();
         if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
             db = businessDomainPersistenceService.findById(id);
         }
@@ -124,12 +123,12 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public void updateDomain(DomibusConnectorBusinessDomain domain) {
+    public void updateDomain(DC5BusinessDomain domain) {
         businessDomainPersistenceService.findById(domain.getId())
                 .filter(d -> d.getConfigurationSource().equals(ConfigurationSource.DB))
                 .ifPresent(d -> {
                     final boolean alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain =
-                            domain.isEnabled() || !DomibusConnectorBusinessDomain.getDefaultBusinessDomain().getId().equals(domain.getId());
+                            domain.isEnabled() || !DC5BusinessDomain.getDefaultBusinessDomain().getId().equals(domain.getId());
                     if (alwaysAllowEnablingDomainsOrEditingDomainsThatAreNotTheDefaultDomain) {
                         businessDomainPersistenceService.update(domain);
                     }
@@ -137,19 +136,19 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public void updateConfig(DomibusConnectorBusinessDomain.BusinessDomainId id, Map<String, String> properties) {
-        Optional<DomibusConnectorBusinessDomain> byId = businessDomainPersistenceService.findById(id);
+    public void updateConfig(DC5BusinessDomain.BusinessDomainId id, Map<String, String> properties) {
+        Optional<DC5BusinessDomain> byId = businessDomainPersistenceService.findById(id);
         if (byId.isPresent()) {
-            DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = byId.get();
-            if (domibusConnectorBusinessDomain.getConfigurationSource() != ConfigurationSource.DB) {
+            DC5BusinessDomain DC5BusinessDomain = byId.get();
+            if (DC5BusinessDomain.getConfigurationSource() != ConfigurationSource.DB) {
                 LOGGER.warn("Cannot update other than DB source!");
                 return;
             }
 
-            Map<String, String> updatedProperties = updateChangedProperties(domibusConnectorBusinessDomain.getProperties(), properties);
-            domibusConnectorBusinessDomain.setProperties(updatedProperties);
+            Map<String, String> updatedProperties = updateChangedProperties(DC5BusinessDomain.getProperties(), properties);
+            DC5BusinessDomain.setProperties(updatedProperties);
 
-            businessDomainPersistenceService.update(domibusConnectorBusinessDomain);
+            businessDomainPersistenceService.update(DC5BusinessDomain);
         } else {
             throw new RuntimeException("no business domain found for update config!");
         }
@@ -157,7 +156,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public void createBusinessDomain(DomibusConnectorBusinessDomain businessDomain) {
+    public void createBusinessDomain(DC5BusinessDomain businessDomain) {
         businessDomainPersistenceService.create(businessDomain);
     }
 
@@ -170,8 +169,8 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         return collect;
     }
 
-    private DomibusConnectorBusinessDomain mapBusinessConfigToBusinessDomain(Map.Entry<DomibusConnectorBusinessDomain.BusinessDomainId, ConnectorConfigurationProperties.BusinessDomainConfig> messageLaneIdBusinessDomainConfigEntry) {
-        DomibusConnectorBusinessDomain lane = new DomibusConnectorBusinessDomain();
+    private DC5BusinessDomain mapBusinessConfigToBusinessDomain(Map.Entry<DC5BusinessDomain.BusinessDomainId, ConnectorConfigurationProperties.BusinessDomainConfig> messageLaneIdBusinessDomainConfigEntry) {
+        DC5BusinessDomain lane = new DC5BusinessDomain();
         lane.setDescription(messageLaneIdBusinessDomainConfigEntry.getValue().getDescription());
         lane.setId(messageLaneIdBusinessDomainConfigEntry.getKey());
         lane.setEnabled(messageLaneIdBusinessDomainConfigEntry.getValue().isEnabled());

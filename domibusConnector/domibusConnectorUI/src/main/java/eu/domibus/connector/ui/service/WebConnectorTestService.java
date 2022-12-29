@@ -3,7 +3,7 @@ package eu.domibus.connector.ui.service;
 import eu.domibus.connector.c2ctests.config.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Action;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties.AS4Service;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.test.service.DCConnector2ConnectorTestService;
@@ -61,13 +61,13 @@ public class WebConnectorTestService {
 	}
 
 	public WebMessageDetail.Service getTestService() {
-		AS4Service testService = connectorTestService.getTestService(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+		AS4Service testService = connectorTestService.getTestService(DC5BusinessDomain.getDefaultBusinessDomainId());
 		WebMessageDetail.Service service = new WebMessageDetail.Service(testService.getName(), testService.getServiceType());
 		return service;
 	}
 	
 	public WebMessageDetail.Action getTestAction() {
-		AS4Action testAction = connectorTestService.getTestAction(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+		AS4Action testAction = connectorTestService.getTestAction(DC5BusinessDomain.getDefaultBusinessDomainId());
 		WebMessageDetail.Action action = new WebMessageDetail.Action(testAction.getAction());
 		return action;
 	}

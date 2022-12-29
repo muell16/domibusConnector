@@ -10,7 +10,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.ui.component.DomainSelect;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
@@ -62,7 +62,7 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
         domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> this.refreshUI());
 
         //CAVE: activePModeSet can be null!!
-        activePModeSet = this.pmodeService.getCurrentPModeSet(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId()).orElse(null);
+        activePModeSet = this.pmodeService.getCurrentPModeSet(DC5BusinessDomain.getDefaultBusinessDomainId()).orElse(null);
 
         createActivePmodeSetDiv();
 

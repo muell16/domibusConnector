@@ -4,7 +4,7 @@ import eu.domibus.connector.common.configuration.ConnectorConfigurationPropertie
 import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
 import eu.ecodex.dc5.domain.BusinessDomainConfigurationChange;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.utils.service.MyTestProperties;
 import eu.domibus.connector.utils.service.MyTestProperties2;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
@@ -77,14 +77,14 @@ public class ConfigurationPropertyManagerServiceImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId())))
-                .thenReturn(Optional.of(DomibusConnectorBusinessDomain.getDefaultBusinessDomain()));
+        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DC5BusinessDomain.getDefaultBusinessDomainId())))
+                .thenReturn(Optional.of(DC5BusinessDomain.getDefaultBusinessDomain()));
 
     }
 
     @Test
     void loadConfiguration() {
-        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties = propertyLoaderService.loadConfiguration(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId(), EvidenceActionServiceConfigurationProperties.class);
+        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties = propertyLoaderService.loadConfiguration(DC5BusinessDomain.getDefaultBusinessDomainId(), EvidenceActionServiceConfigurationProperties.class);
 
         assertThat(evidenceActionServiceConfigurationProperties).isNotNull();
 

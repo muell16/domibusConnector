@@ -1,15 +1,14 @@
-package eu.ecodex.dc5.domain.model;
+package eu.domibus.connector.persistence.model.converter;
 
 import eu.domibus.connector.domain.model.DC5BusinessDomain;
 
-import javax.annotation.Nullable;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
-
+@Converter(autoApply = true)
 public class BusinessDomainIdConverter implements AttributeConverter<DC5BusinessDomain.BusinessDomainId, String> {
 
     @Override
-    @Nullable
     public String convertToDatabaseColumn(DC5BusinessDomain.BusinessDomainId attribute) {
         if (attribute == null) {
             return null;
@@ -18,7 +17,6 @@ public class BusinessDomainIdConverter implements AttributeConverter<DC5Business
     }
 
     @Override
-    @Nullable
     public DC5BusinessDomain.BusinessDomainId convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;

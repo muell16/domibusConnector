@@ -338,7 +338,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
                 container.getBusinessContent().getDetachedSignature() != null);
 
         DC5MessageAttachment.DC5MessageAttachmentBuilder businessDocumentBuilder = DC5MessageAttachment.builder();
-        DetachedSignature.DetachedSignatureBuilder detachedSignatureBuilder = DetachedSignature.builder();
+        DC5DetachedSignature.DC5DetachedSignatureBuilder detachedSignatureBuilder = DC5DetachedSignature.builder();
 
         if (container.getBusinessContent().getDetachedSignature() != null) {
             try (InputStream is = container.getBusinessContent().getDetachedSignature().openStream()) {
@@ -369,7 +369,7 @@ public class DomibusSecurityToolkitImpl implements DomibusConnectorSecurityToolk
             }
             //set detached signature
 //                        businessDocBuilder.withDetachedSignature(detachedSignatureBuilder.build());
-            return businessDocumentBuilder.detachedSignature(DetachedSignature.builder().build());
+            return businessDocumentBuilder.DC5DetachedSignature(DC5DetachedSignature.builder().build());
         }
 
 

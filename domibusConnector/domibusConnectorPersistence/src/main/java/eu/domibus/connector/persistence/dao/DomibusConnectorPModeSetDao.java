@@ -1,12 +1,7 @@
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPModeSet;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 //@Repository
 public interface DomibusConnectorPModeSetDao extends CrudRepository<PDomibusConnectorPModeSet, Long> {

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DCMessageProcessSettings;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
@@ -57,7 +57,7 @@ public class DC5Message implements Serializable {
     @CheckForNull
     @Convert(converter = BusinessDomainIdConverter.class)
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must already have a business domain!")
-    private DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId = DomibusConnectorBusinessDomain.getDefaultBusinessDomainId();
+    private DC5BusinessDomain.BusinessDomainId businessDomainId = DC5BusinessDomain.getDefaultBusinessDomainId();
 
     @NotNull(message = "A message must have a connectorMessageId!")
     @Valid
@@ -165,11 +165,11 @@ public class DC5Message implements Serializable {
         return this.messageContent;
     }
 
-    public DomibusConnectorBusinessDomain.BusinessDomainId getMessageLaneId() {
+    public DC5BusinessDomain.BusinessDomainId getMessageLaneId() {
         return businessDomainId;
     }
 
-    public void setMessageLaneId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public void setMessageLaneId(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         this.businessDomainId = businessDomainId;
     }
 
@@ -228,11 +228,11 @@ public class DC5Message implements Serializable {
         this.id = id;
     }
 
-    public DomibusConnectorBusinessDomain.BusinessDomainId getBusinessDomainId() {
+    public DC5BusinessDomain.BusinessDomainId getBusinessDomainId() {
         return businessDomainId;
     }
 
-    public void setBusinessDomainId(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId) {
+    public void setBusinessDomainId(DC5BusinessDomain.BusinessDomainId businessDomainId) {
         this.businessDomainId = businessDomainId;
     }
 

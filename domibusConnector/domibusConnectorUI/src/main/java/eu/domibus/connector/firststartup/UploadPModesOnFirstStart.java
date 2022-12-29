@@ -1,6 +1,6 @@
 package eu.domibus.connector.firststartup;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorKeystore;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.ui.service.WebPModeService;
@@ -50,8 +50,8 @@ public class UploadPModesOnFirstStart {
 
         try {
             if (!dcBusinessDomainManager.getValidBusinessDomainsAllData().contains(businessDomainName)) {
-                final DomibusConnectorBusinessDomain businessDomain = new DomibusConnectorBusinessDomain();
-                final DomibusConnectorBusinessDomain.BusinessDomainId id = new DomibusConnectorBusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName());
+                final DC5BusinessDomain businessDomain = new DC5BusinessDomain();
+                final DC5BusinessDomain.BusinessDomainId id = new DC5BusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName());
                 businessDomain.setId(id);
                 dcBusinessDomainManager.createBusinessDomain(businessDomain);
                 LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, String.format("Can't find domain with name %s. Creating ...", businessDomainName));
@@ -64,7 +64,7 @@ public class UploadPModesOnFirstStart {
             DomibusConnectorKeystore domibusConnectorKeystore = webPModeService.importConnectorstore(trustStoreBytes, pw, DomibusConnectorKeystore.KeystoreType.ofDbName(type));
 
             byte[] pModeXml = StreamUtils.copyToByteArray(pModeUpload.getpModeXml().getInputStream());
-            boolean success = webPModeService.importPModes(pModeXml, "Initially loaded by UploadPModesOnFirstStart", domibusConnectorKeystore, new DomibusConnectorBusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName())); // TODO: NAMING !!! the domain name is the ID
+            boolean success = webPModeService.importPModes(pModeXml, "Initially loaded by UploadPModesOnFirstStart", domibusConnectorKeystore, new DC5BusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName())); // TODO: NAMING !!! the domain name is the ID
 
             if (success) {
                 LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Successfully Uploaded configured p-Modes and trustStore: [{}]", pModeUpload);

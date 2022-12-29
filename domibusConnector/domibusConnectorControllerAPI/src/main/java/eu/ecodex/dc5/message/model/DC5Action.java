@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
  */
 //@Embeddable
 @Entity
+@Table(name = DC5Action.TABLE_NAME)
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +23,8 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Builder(toBuilder = true)
 public class DC5Action {
+
+	public static final String TABLE_NAME = "DC5_ACTION";
 
 	@Id
 	@GeneratedValue

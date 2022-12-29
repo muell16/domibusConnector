@@ -2,11 +2,8 @@ package eu.ecodex.dc5.core;
 
 import eu.ecodex.dc5.message.MessageJpaConfiguration;
 import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
-import eu.ecodex.dc5.core.repository.DC5PayloadRepo;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

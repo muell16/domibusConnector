@@ -1,17 +1,17 @@
 package eu.domibus.connector.persistence.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface DCBusinessDomainPersistenceService {
 
-    Optional<DomibusConnectorBusinessDomain> findById(DomibusConnectorBusinessDomain.BusinessDomainId businessDomainId);
+    Optional<DC5BusinessDomain> findById(DC5BusinessDomain.BusinessDomainId businessDomainId);
 
-    List<DomibusConnectorBusinessDomain> findAll();
+    List<DC5BusinessDomain> findAll();
 
-    DomibusConnectorBusinessDomain update(DomibusConnectorBusinessDomain domibusConnectorBusinessDomain);
+    DC5BusinessDomain update(DC5BusinessDomain DC5BusinessDomain);
 
-    DomibusConnectorBusinessDomain create(DomibusConnectorBusinessDomain businessDomain);
+    DC5BusinessDomain create(DC5BusinessDomain businessDomain);
 }

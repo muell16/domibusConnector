@@ -1,6 +1,6 @@
 package eu.domibus.connector.common;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import org.springframework.lang.Nullable;
 
 import javax.validation.ConstraintViolation;
@@ -22,10 +22,10 @@ public interface ConfigurationPropertyManagerService {
      * determines the prefix from the clazz
      * which must be annotated with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
      *
-     * then {@link #loadConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId, Class, String)} is called
+     * then {@link #loadConfiguration(DC5BusinessDomain.BusinessDomainId, Class, String)} is called
      *
      */
-    <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz);
+    <T> T loadConfiguration(@Nullable DC5BusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz);
 
     /**
      *
@@ -40,7 +40,7 @@ public interface ConfigurationPropertyManagerService {
      * @param <T> - type of the clazz
      * @return the initialized class
      */
-    <T> T loadConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz, String prefix);
+    <T> T loadConfiguration(@Nullable DC5BusinessDomain.BusinessDomainId laneId, @NotNull Class<T> clazz, String prefix);
 
 
     <T> T loadConfigurationOnlyFromMap(Map<String, String> map, Class<T> clazz, String prefix);
@@ -56,10 +56,10 @@ public interface ConfigurationPropertyManagerService {
      *
      *
      */
-    void updateConfiguration(@Nullable DomibusConnectorBusinessDomain.BusinessDomainId laneId, Object configurationBean);
+    void updateConfiguration(@Nullable DC5BusinessDomain.BusinessDomainId laneId, Object configurationBean);
 
 
-    void updateConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps);
+    void updateConfiguration(DC5BusinessDomain.BusinessDomainId laneId, Class<?> updatedConfigClazz, Map<String, String> diffProps);
 
-    Map<String, String> getUpdatedConfiguration(DomibusConnectorBusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes);
+    Map<String, String> getUpdatedConfiguration(DC5BusinessDomain.BusinessDomainId laneId, List<Object> updatedConfigClazzes);
 }

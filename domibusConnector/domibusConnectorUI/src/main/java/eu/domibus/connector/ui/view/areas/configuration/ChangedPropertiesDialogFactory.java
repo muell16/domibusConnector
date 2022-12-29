@@ -8,7 +8,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +25,13 @@ public class ChangedPropertiesDialogFactory {
         this.configurationPropertyManagerService = configurationPropertyManagerService;
     }
 
-    public Dialog createChangedPropertiesDialog(Object config, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+    public Dialog createChangedPropertiesDialog(Object config, DC5BusinessDomain.BusinessDomainId domainId) {
         // do not use Arrays.asList(config) because when you pass a single parameter of type Object it assumes it is an array.
         return createChangedPropertiesDialog(Collections.singletonList(config), domainId);
 
     }
 
-    public Dialog createChangedPropertiesDialog(List<Object> configs, DomibusConnectorBusinessDomain.BusinessDomainId domainId) {
+    public Dialog createChangedPropertiesDialog(List<Object> configs, DC5BusinessDomain.BusinessDomainId domainId) {
         Map<String, String> updatedConfiguration = configurationPropertyManagerService.getUpdatedConfiguration(domainId,
                 configs);
 
@@ -80,11 +80,11 @@ public class ChangedPropertiesDialogFactory {
         dialogLayout.add(validationLayout);
         dialogLayout.add(grid);
 
-        final Optional<DomibusConnectorBusinessDomain> businessDomain = domainManager.getBusinessDomain(domainId);
+        final Optional<DC5BusinessDomain> businessDomain = domainManager.getBusinessDomain(domainId);
         if (businessDomain.isPresent()) {
-            final DomibusConnectorBusinessDomain domibusConnectorBusinessDomain = businessDomain.get();
-            domibusConnectorBusinessDomain.getProperties().putAll(updatedConfiguration); //overwrite props in current domain with updated props
-            final DCBusinessDomainManager.DomainValidResult domainValidResult = domainManager.validateDomain(domibusConnectorBusinessDomain);
+            final DC5BusinessDomain DC5BusinessDomain = businessDomain.get();
+            DC5BusinessDomain.getProperties().putAll(updatedConfiguration); //overwrite props in current domain with updated props
+            final DCBusinessDomainManager.DomainValidResult domainValidResult = domainManager.validateDomain(DC5BusinessDomain);
 
             if (domainValidResult.isValid()) {
                 domainValidBadge.addThemeVariants(ButtonVariant.LUMO_SUCCESS);

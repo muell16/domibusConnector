@@ -1,7 +1,7 @@
 package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.domibus.connector.domain.model.DomibusConnectorBusinessDomain;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
@@ -72,7 +72,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createOutgoingEpoFormAMessage();
-            dc5Message.setMessageLaneId(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+            dc5Message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
             DC5Message m = messageRepo.saveAndFlush(dc5Message);
             return dc5Message.getConnectorMessageId();
         });
@@ -95,7 +95,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
             txTemplate.execute(state -> {
                 DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
-                CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
                 processOutgoingBusinessMessageFlow.processMessage(msg);
                 return msg;
             });
@@ -124,7 +124,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
 
             txTemplate.execute(state -> {
                 DC5Message msg = messageRepo.getByConnectorMessageId(msgId);
-                CurrentBusinessDomain.setCurrentBusinessDomain(DomibusConnectorBusinessDomain.getDefaultBusinessDomainId());
+                CurrentBusinessDomain.setCurrentBusinessDomain(DC5BusinessDomain.getDefaultBusinessDomainId());
                 processOutgoingBusinessMessageFlow.processMessage(msg);
                 return msg;
             });
