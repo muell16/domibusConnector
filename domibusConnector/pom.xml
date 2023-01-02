@@ -731,7 +731,7 @@
                     <artifactId>vaadin-maven-plugin</artifactId>
                     <version>${vaadin.version}</version>
                     <configuration>
-                        <useGlobalPnpm>true</useGlobalPnpm>
+                        <pnpmEnable>false</pnpmEnable>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1037,6 +1037,23 @@
                 <version>2.11.0</version>
                 <configuration>
                     <nrOfIndentSpace>4</nrOfIndentSpace>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>true</doCheck>
+                    <doUpdate>true</doUpdate>
                 </configuration>
             </plugin>
         </plugins>
