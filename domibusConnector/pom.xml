@@ -33,7 +33,8 @@
 
     </modules>
     <scm>
-        <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
+        <url>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</url>
+        <developerConnection>scm:git:ssh://git@git.brz.gv.at:7999/jueuecodex/domibus-connector.git</developerConnection>
     </scm>
     <ciManagement>
         <system>Jenkins</system>
