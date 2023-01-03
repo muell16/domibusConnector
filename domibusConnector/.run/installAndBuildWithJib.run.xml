@@ -27,8 +27,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="install" />
-              <option value="-T2C" />
+              <option value="install-T2C" />
               <option value="-pl" />
               <option value=":domibusConnectorBuilderStandalone" />
               <option value="-am" />
