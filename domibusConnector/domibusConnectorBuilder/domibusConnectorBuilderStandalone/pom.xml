@@ -346,7 +346,7 @@
                                 </ports>
 <!--                                <entrypoint>exec java -Dloader.path=/app/lib -Dspring.config.name=connector -cp /app/connector.jar org.springframework.boot.loader.PropertiesLauncher</entrypoint>-->
                                 <user>185:185</user>
-                                <format>OCI</format>
+<!--                                <format>OCI</format>-->
                             </container>
                             <from>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi-openjdk11:latest</image>
