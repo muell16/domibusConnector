@@ -9,6 +9,7 @@
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
         <run.env>dev</run.env>
+        <git.commit.id.abbrev>empty</git.commit.id.abbrev>
     </properties>
     <dependencies>
         <dependency>
@@ -354,7 +355,7 @@
                             <to>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
                                 <tags>
-<!--                                    <tag>${git.commit.id.abbrev}</tag>-->
+                                    <tag>${git.commit.id.abbrev}</tag>
                                     <tag>${project.version}</tag>
                                 </tags>
                             </to>
