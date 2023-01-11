@@ -27,13 +27,11 @@
           </option>
           <option name="goals">
             <list>
-              <option value="install-T2C" />
+              <option value="install" />
+              <option value="-T2C" />
               <option value="-pl" />
               <option value=":domibusConnectorBuilderStandalone" />
               <option value="-am" />
-              <option value="-Pproduction" />
-              <option value="-Pdocumentation" />
-              <option value="-Pjib" />
               <option value="-DskipTests=true" />
               <option value="-e" />
             </list>
@@ -41,6 +39,7 @@
           <option name="pomFileName" />
           <option name="profilesMap">
             <map>
+              <entry key="jib" value="true" />
               <entry key="production" value="true" />
             </map>
           </option>
