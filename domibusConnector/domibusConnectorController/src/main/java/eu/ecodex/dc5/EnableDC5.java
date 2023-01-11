@@ -43,6 +43,7 @@ import java.lang.annotation.*;
         "eu.domibus.connector.lib",
         "eu.domibus.connector.persistence.service",
         "eu.domibus.connector.controller.transport",
+        "eu.domibus.connector.domain.transformer",
         "eu.domibus.connector.common.service",
         "eu.domibus.connector.security",
         "eu.domibus.connector.dss",
