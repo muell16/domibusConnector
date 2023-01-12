@@ -88,7 +88,11 @@ public class BackendMessageRoutingView extends DCVerticalLayoutWithTitleAndHelpB
 
     private void initUI() {
 
-        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> this.updateUI());
+        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> {
+            if (comboBoxBusinessDomainIdComponentValueChangeEvent.isFromClient()) {
+                this.updateUI();
+            }
+        });
 
         add(domainSelect);
 

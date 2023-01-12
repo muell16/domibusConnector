@@ -124,7 +124,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                     e.getItem().setEnabled(true);
                 } else {
                     domainRepo.updateDomain(item);
-                    grid.setItems(domainRepo.getAllBusinessDomainsAllData());
+                    grid.setItems(domainRepo.getDomains());
                 }
             }
         });
@@ -268,7 +268,7 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
                 .asRequired("A domain name is required!")
                 .withValidator(s -> Charset.forName("US-ASCII").newEncoder().canEncode(s), "Only ASCII allowed!")
                 .withValidator(s -> s.length() < 255, "Must use less than 255 characters!")
-                .withValidator(s -> !domainRepo.getBusinessDomain(new DC5BusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
+                .withValidator(s -> !domainRepo.getDomain(new DC5BusinessDomain.BusinessDomainId(s)).isPresent(), "Domain already exists!")
                 .withConverter(DC5BusinessDomain.BusinessDomainId::new, id -> id == null ? "" : id.getBusinessDomainId())
                 .bind(DC5BusinessDomain::getId, DC5BusinessDomain::setId);
 
@@ -281,8 +281,8 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
         Button saveButton = new Button("Save", e -> {
             if (binder.validate().isOk()) {
-                domainRepo.createBusinessDomain(binder.getBean());
-                domainGrid.setItems(domainRepo.getAllBusinessDomainsAllData());
+                domainRepo.createDomain(binder.getBean());
+                domainGrid.setItems(domainRepo.getDomains());
                 dialog.close();
 //                final DomibusConnectorBusinessDomain nextDomainEntry = new DomibusConnectorBusinessDomain();
 //                nextDomainEntry.setConfigurationSource(ConfigurationSource.DB);
@@ -324,6 +324,6 @@ public class DomainView extends DCVerticalLayoutWithTitleAndHelpButton implement
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        domainGrid.setItems(domainRepo.getAllBusinessDomainsAllData());
+        domainGrid.setItems(domainRepo.getDomains());
     }
 }

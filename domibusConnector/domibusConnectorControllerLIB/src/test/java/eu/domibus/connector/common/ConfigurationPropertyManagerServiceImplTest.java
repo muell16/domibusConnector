@@ -77,7 +77,7 @@ public class ConfigurationPropertyManagerServiceImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        Mockito.when(dcBusinessDomainManagerImpl.getBusinessDomain(eq(DC5BusinessDomain.getDefaultBusinessDomainId())))
+        Mockito.when(dcBusinessDomainManagerImpl.getDomain(eq(DC5BusinessDomain.getDefaultBusinessDomainId())))
                 .thenReturn(Optional.of(DC5BusinessDomain.getDefaultBusinessDomain()));
 
     }

@@ -17,7 +17,7 @@ public class DCBusinessDomainHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        Map<DC5BusinessDomain, DCBusinessDomainManager.DomainValidResult> allBusinessDomainsValidations = businessDomainManager.getAllBusinessDomainsValidations();
+        Map<DC5BusinessDomain, DCBusinessDomainManager.DomainValidResult> allBusinessDomainsValidations = businessDomainManager.getDomainValidations();
         long overallDomains = allBusinessDomainsValidations.size();
         long validDomains = allBusinessDomainsValidations.values().stream().filter(DCBusinessDomainManager.DomainValidResult::isValid).count();
         long warningDomains = allBusinessDomainsValidations.values().stream().filter(r -> r.isValid() && !r.getWarnings().isEmpty()).count();

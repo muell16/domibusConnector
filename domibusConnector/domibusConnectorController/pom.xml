@@ -243,12 +243,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>dc5Model</artifactId>
-            <version>5.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.moduliths</groupId>
             <artifactId>moduliths-test</artifactId>
             <scope>test</scope>

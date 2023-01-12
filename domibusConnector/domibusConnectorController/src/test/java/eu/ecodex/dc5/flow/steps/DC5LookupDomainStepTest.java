@@ -1,12 +1,12 @@
 package eu.ecodex.dc5.flow.steps;
 
-import eu.ecodex.dc5.domain.CurrentBusinessDomain;
-import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.domibus.connector.controller.exception.DomainMatchingException;
 import eu.domibus.connector.controller.routing.DCDomainRoutingManager;
 import eu.domibus.connector.controller.routing.DomainRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.model.DC5BusinessDomain;
+import eu.ecodex.dc5.domain.CurrentBusinessDomain;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,7 +104,7 @@ class DC5LookupDomainStepTest {
 
         final String matchingDomainId1 = "test-domainId-foo1";
         final String notMatchingDomainId2 = "test-domainId-bar2";
-        when(domainManager.getValidBusinessDomainsAllData()).thenReturn(Arrays.asList(
+        when(domainManager.getValidDomains()).thenReturn(Arrays.asList(
                 DC5BusinessDomain.builder()
                     .id(DC5BusinessDomain.BusinessDomainId.of(matchingDomainId1))
                     .build(),
@@ -155,7 +154,7 @@ class DC5LookupDomainStepTest {
 
         final String testDomain1 = "test-domainId-11";
         final String testDomain2 = "test-domainId-22";
-        when(domainManager.getValidBusinessDomainsAllData())
+        when(domainManager.getValidDomains())
                 .thenReturn(Arrays.asList(createDomain(testDomain1), createDomain(testDomain2)));
 
 
@@ -204,7 +203,7 @@ class DC5LookupDomainStepTest {
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(new ArrayList<>());
 
         final String nonMatchingDomainId1 = "foo";
-        when(domainManager.getValidBusinessDomainsAllData())
+        when(domainManager.getValidDomains())
                 .thenReturn(Arrays.asList(createDomain(nonMatchingDomainId1)));
         when(dcDomainRoutingManager.getDomainRoutingRules(createDomain(nonMatchingDomainId1).getId())).thenReturn(new HashMap<>());
         final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder()

@@ -28,7 +28,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
     @Override
     public DomainValidResult validateDomain(DC5BusinessDomain.BusinessDomainId id) {
-        final Optional<DC5BusinessDomain> businessDomain = this.getBusinessDomain(id);
+        final Optional<DC5BusinessDomain> businessDomain = this.getDomain(id);
         if (!businessDomain.isPresent()) {
             throw new IllegalArgumentException("For the provided business domain id [" + id + "] no domain exists");
         }
@@ -44,7 +44,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
 
 
     @Override
-    public List<DC5BusinessDomain.BusinessDomainId> getAllBusinessDomains() {
+    public List<DC5BusinessDomain.BusinessDomainId> getDomainIds() {
         Set<DC5BusinessDomain.BusinessDomainId> collect = new HashSet<>();
         if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
             businessDomainPersistenceService
@@ -58,7 +58,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         }
 
         businessDomainConfigurationProperties.getBusinessDomain()
-                .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
+                .entrySet().stream().map(this::mapDomainConfigToDomain)
                 .map(DC5BusinessDomain::getId)
                 .forEach(b -> {
                     if (!collect.add(b)) {
@@ -74,30 +74,30 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public List<DC5BusinessDomain.BusinessDomainId> getValidBusinessDomains() {
-        return getValidBusinessDomainsAllData().stream()
+    public List<DC5BusinessDomain.BusinessDomainId> getValidDomainIds() {
+        return getValidDomains().stream()
                 .map(DC5BusinessDomain::getId)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<DC5BusinessDomain> getAllBusinessDomainsAllData() {
-        return getAllBusinessDomains().stream()
-                .map(this::getBusinessDomain)
+    public List<DC5BusinessDomain> getDomains() {
+        return getDomainIds().stream()
+                .map(this::getDomain)
                 .map(o -> o.orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Map<DC5BusinessDomain, DomainValidResult> getAllBusinessDomainsValidations() {
-        return getAllBusinessDomainsAllData().stream()
+    public Map<DC5BusinessDomain, DomainValidResult> getDomainValidations() {
+        return getDomains().stream()
                 .collect(Collectors.toMap(Function.identity(), this::validateDomain));
     }
 
     @Override
-    public List<DC5BusinessDomain> getValidBusinessDomainsAllData() {
-        List<DC5BusinessDomain> collect = getAllBusinessDomainsValidations().entrySet().stream()
+    public List<DC5BusinessDomain> getValidDomains() {
+        List<DC5BusinessDomain> collect = getDomainValidations().entrySet().stream()
                 .filter(e -> e.getValue().isValid())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -108,14 +108,14 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public Optional<DC5BusinessDomain> getBusinessDomain(DC5BusinessDomain.BusinessDomainId id) {
+    public Optional<DC5BusinessDomain> getDomain(DC5BusinessDomain.BusinessDomainId id) {
         Optional<DC5BusinessDomain> db = Optional.empty();
         if (businessDomainConfigurationProperties.isLoadBusinessDomainsFromDb()) {
             db = businessDomainPersistenceService.findById(id);
         }
         if (!db.isPresent()) {
             db = businessDomainConfigurationProperties.getBusinessDomain()
-                    .entrySet().stream().map(this::mapBusinessConfigToBusinessDomain)
+                    .entrySet().stream().map(this::mapDomainConfigToDomain)
                     .filter(b -> b.getId().equals(id))
                     .findAny();
         }
@@ -156,7 +156,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
     }
 
     @Override
-    public void createBusinessDomain(DC5BusinessDomain businessDomain) {
+    public void createDomain(DC5BusinessDomain businessDomain) {
         businessDomainPersistenceService.create(businessDomain);
     }
 
@@ -169,7 +169,7 @@ public class DCBusinessDomainManagerImpl implements DCBusinessDomainManager {
         return collect;
     }
 
-    private DC5BusinessDomain mapBusinessConfigToBusinessDomain(Map.Entry<DC5BusinessDomain.BusinessDomainId, ConnectorConfigurationProperties.BusinessDomainConfig> messageLaneIdBusinessDomainConfigEntry) {
+    private DC5BusinessDomain mapDomainConfigToDomain(Map.Entry<DC5BusinessDomain.BusinessDomainId, ConnectorConfigurationProperties.BusinessDomainConfig> messageLaneIdBusinessDomainConfigEntry) {
         DC5BusinessDomain lane = new DC5BusinessDomain();
         lane.setDescription(messageLaneIdBusinessDomainConfigEntry.getValue().getDescription());
         lane.setId(messageLaneIdBusinessDomainConfigEntry.getKey());

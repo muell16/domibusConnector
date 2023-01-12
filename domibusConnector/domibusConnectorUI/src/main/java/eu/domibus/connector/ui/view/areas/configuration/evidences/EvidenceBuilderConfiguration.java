@@ -42,9 +42,6 @@ public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndH
 		ConfigurationPanelFactory.ConfigurationPanel<EvidencesToolkitConfigurationProperties> configurationPanel
 				= configurationPanelFactory.createConfigurationPanel(form, domainSelect, EvidencesToolkitConfigurationProperties.class);
 
-//		domainSelect.addValueChangeListener(valueChangeEvent -> configurationPanel::refreshUI);
-		domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
-
 		Button b = new Button("Import old config");
 		b.addClickListener(event -> {
 			ImportOldEvidenceConfigDialog dialog = importOldEvidenceConfigDialog.getObject();
@@ -55,6 +52,4 @@ public class EvidenceBuilderConfiguration  extends DCVerticalLayoutWithTitleAndH
 		this.add(b);
 		this.add(configurationPanel);
 	}
-
 }
-
