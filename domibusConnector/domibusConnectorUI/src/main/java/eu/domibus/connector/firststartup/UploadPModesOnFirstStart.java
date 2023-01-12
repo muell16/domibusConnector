@@ -49,11 +49,11 @@ public class UploadPModesOnFirstStart {
 
 
         try {
-            if (!dcBusinessDomainManager.getValidBusinessDomainsAllData().contains(businessDomainName)) {
+            if (!dcBusinessDomainManager.getValidDomains().contains(businessDomainName)) {
                 final DC5BusinessDomain businessDomain = new DC5BusinessDomain();
                 final DC5BusinessDomain.BusinessDomainId id = new DC5BusinessDomain.BusinessDomainId(pModeUpload.getBusinessDomainName());
                 businessDomain.setId(id);
-                dcBusinessDomainManager.createBusinessDomain(businessDomain);
+                dcBusinessDomainManager.createDomain(businessDomain);
                 LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, String.format("Can't find domain with name %s. Creating ...", businessDomainName));
             }
 

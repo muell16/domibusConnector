@@ -34,6 +34,11 @@
         <option name="name" value="connector.business-domain[testdom1].description" />
         <option name="value" value="descriptiontest" />
       </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="connector.load-business-domains-from-db" />
+        <option name="value" value="true" />
+      </param>
     </additionalParameters>
     <option name="DEBUG_MODE" value="true" />
     <option name="ENABLE_JMX_AGENT" value="false" />

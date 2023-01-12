@@ -64,7 +64,7 @@ public class DCRoutingRulePersistenceServiceImpl implements DCRoutingRulePersist
 
     private DC5BusinessDomain getBusinessDomain(DC5BusinessDomain.BusinessDomainId businessDomainId) {
 
-        Optional<DC5BusinessDomain> byName = domainManager.getBusinessDomain(businessDomainId);
+        Optional<DC5BusinessDomain> byName = domainManager.getDomain(businessDomainId);
 
 //        Optional<DC5BusinessDomainJpaEntity> byName = businessDomainDao.findByName(businessDomainId);
         if (byName.isPresent()) {

@@ -36,7 +36,7 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<DC5Bu
     public DC5BusinessDomain getSource() {
         if (CurrentBusinessDomain.getCurrentBusinessDomain() != null) {
             DCBusinessDomainManager businessDomainManager = applicationContext.getBean(DCBusinessDomainManager.class);
-            Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain());
+            Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getDomain(CurrentBusinessDomain.getCurrentBusinessDomain());
             return businessDomain.orElseThrow(() -> new IllegalArgumentException("No Business Domain found for id" + CurrentBusinessDomain.getCurrentBusinessDomain()));
         } else {
             return DC5BusinessDomain.getDefaultBusinessDomain();
@@ -63,7 +63,7 @@ public class BusinessScopedPropertySource extends EnumerablePropertySource<DC5Bu
         if (CurrentBusinessDomain.getCurrentBusinessDomain() != null) {
             DCBusinessDomainManager businessDomainManager = applicationContext.getBean(DCBusinessDomainManager.class);
 
-            businessDomainManager.getBusinessDomain(CurrentBusinessDomain.getCurrentBusinessDomain())
+            businessDomainManager.getDomain(CurrentBusinessDomain.getCurrentBusinessDomain())
                     .map(DC5BusinessDomain::getProperties)
                     .orElse(new HashMap<>())
                     .forEach((key, v) -> m.put(ConfigurationPropertyName.of(key), v));

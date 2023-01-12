@@ -59,7 +59,11 @@ public class DataTables extends DCVerticalLayoutWithTitleAndHelpButton implement
 
         this.pmodeService = pmodeService;
         this.domainSelect = domainSelect;
-        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> this.refreshUI());
+        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> {
+            if (comboBoxBusinessDomainIdComponentValueChangeEvent.isFromClient()) {
+                this.refreshUI();
+            }
+        });
 
         //CAVE: activePModeSet can be null!!
         activePModeSet = this.pmodeService.getCurrentPModeSet(DC5BusinessDomain.getDefaultBusinessDomainId()).orElse(null);

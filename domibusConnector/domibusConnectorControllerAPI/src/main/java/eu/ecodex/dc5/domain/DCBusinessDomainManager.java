@@ -39,7 +39,7 @@ public interface DCBusinessDomainManager {
 
     public static final String BUSINESS_DOMAIN_PROPERTY_PREFIX = "connector.businessDomain";
 
-    Map<DC5BusinessDomain, DomainValidResult> getAllBusinessDomainsValidations();
+    Map<DC5BusinessDomain, DomainValidResult> getDomainValidations();
 
     DomainValidResult validateDomain(DC5BusinessDomain.BusinessDomainId id);
     DomainValidResult validateDomain(DC5BusinessDomain domain);
@@ -49,18 +49,18 @@ public interface DCBusinessDomainManager {
      * @return a list of all domains with the minimum length of 1
      *  The default domain is always included in this List!
      */
-    List<DC5BusinessDomain.BusinessDomainId> getAllBusinessDomains();
-    List<DC5BusinessDomain> getAllBusinessDomainsAllData();
+    List<DC5BusinessDomain.BusinessDomainId> getDomainIds();
+    List<DC5BusinessDomain> getDomains();
 
-    public List<DC5BusinessDomain.BusinessDomainId> getValidBusinessDomains();
-    public List<DC5BusinessDomain> getValidBusinessDomainsAllData();
+    public List<DC5BusinessDomain.BusinessDomainId> getValidDomainIds();
+    public List<DC5BusinessDomain> getValidDomains();
 
-    Optional<DC5BusinessDomain> getBusinessDomain(DC5BusinessDomain.BusinessDomainId id);
+    Optional<DC5BusinessDomain> getDomain(DC5BusinessDomain.BusinessDomainId id);
 
     void updateDomain(DC5BusinessDomain domain);
 
     void updateConfig(DC5BusinessDomain.BusinessDomainId id, Map<String, String> properties);
 
-    void createBusinessDomain(DC5BusinessDomain businessDomain);
+    void createDomain(DC5BusinessDomain businessDomain);
 
 }

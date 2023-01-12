@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
@@ -39,10 +40,6 @@ public class ConfigurationPanelFactory {
         return new ConfigurationPanel<>(form, domainSelect, configurationClazz);
     }
 
-
-
-
-
     public class ConfigurationPanel<T> extends VerticalLayout implements AfterNavigationObserver {
 
         private final Label errorField;
@@ -56,16 +53,13 @@ public class ConfigurationPanelFactory {
         private ConfigurationPanel(FormLayout ecxContainerConfigForm, DomainSelect domainSelect, Class<T> configurationClazz) {
             this.form = ecxContainerConfigForm;
             this.domainSelect = domainSelect;
+            domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> {
+                if (comboBoxBusinessDomainIdComponentValueChangeEvent.isFromClient()) { // this prevents triggering the listener when doing something from the server side, e.g. refreshing data items.
+                    this.refreshUI();
+                }
+            });
             this.configurationClazz = configurationClazz;
-
             this.errorField = new Label("");
-
-            initUI();
-        }
-
-        private void initUI() {
-
-            domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> this.refreshUI());
 
             VerticalLayout configDiv = new VerticalLayout();
 
@@ -91,6 +85,7 @@ public class ConfigurationPanelFactory {
             add(configDiv);
         }
 
+
         private void resetButtonClicked(ClickEvent<Button> buttonClickEvent) {
             T currentConfig = readConfigFromPropertyService();
             binder.readBean(currentConfig); //reset config
@@ -98,7 +93,8 @@ public class ConfigurationPanelFactory {
 
         private T readConfigFromPropertyService() {
             return configurationPropertyManagerService.loadConfiguration(
-                    domainSelect.getValue(),
+//                    domainSelect.getValue(),
+                    domainSelect.getOptionalValue().orElseThrow(()->new RuntimeException("DomainSelect passed null to service layer.")),
                     configurationClazz);
         }
 
@@ -119,7 +115,7 @@ public class ConfigurationPanelFactory {
             } else {
                 Notification.show("Error, cannot save due:\n" + validate.getBeanValidationErrors()
                         .stream()
-                        .map(vr -> vr.getErrorMessage())
+                        .map(ValidationResult::getErrorMessage)
                         .collect(Collectors.joining("\n"))
                 );
             }
@@ -128,13 +124,17 @@ public class ConfigurationPanelFactory {
 
         @Override
         public void afterNavigation(AfterNavigationEvent event) {
+            refreshDomainItems();
             refreshUI();
         }
 
         public void refreshUI() {
             this.boundConfigValue = readConfigFromPropertyService();
             binder.setBean(boundConfigValue); //bind bean
-            domainSelect.reloadItems(); // todo: really necessary? this worked before???
+        }
+
+        private void refreshDomainItems() {
+            domainSelect.getDomains();
         }
     }
 
