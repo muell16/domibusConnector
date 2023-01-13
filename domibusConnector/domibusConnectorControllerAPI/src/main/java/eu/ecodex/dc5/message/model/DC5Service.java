@@ -1,13 +1,15 @@
 package eu.ecodex.dc5.message.model;
 
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.core.style.ToStringCreator;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -18,10 +20,11 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Getter
-
-
+@Table(name = DC5Service.TABLE_NAME)
 @NoArgsConstructor
 public class DC5Service {
+
+	public static final String TABLE_NAME = "DC5_SERVICE";
 
 	@Builder(toBuilder = true)
 	private DC5Service(String service, String serviceType) {
@@ -40,11 +43,11 @@ public class DC5Service {
 	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS ServiceType")
 	private String serviceType;
 
-	public String getService(){
+	public String getService() {
 		return this.service;
 	}
 
-	public String getServiceType(){
+	public String getServiceType() {
 		return this.serviceType;
 	}
 
@@ -57,12 +60,12 @@ public class DC5Service {
 	}
 
 	@Override
-    public String toString() {
-        ToStringCreator builder = new ToStringCreator(this);
-        builder.append("service", this.service);
-        builder.append("serviceType", this.serviceType);
-        return builder.toString();        
-    }
+	public String toString() {
+		ToStringCreator builder = new ToStringCreator(this);
+		builder.append("service", this.service);
+		builder.append("serviceType", this.serviceType);
+		return builder.toString();
+	}
 
 	@Override
 	public boolean equals(Object o) {
