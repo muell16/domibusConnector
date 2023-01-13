@@ -40,7 +40,7 @@ import java.lang.annotation.*;
         "eu.domibus.connector.evidences",
         "eu.domibus.connector.controller.spring",
         "eu.domibus.connector.link",
-        "eu.domibus.connector.lib",
+        "eu.domibus.connector",
         "eu.domibus.connector.persistence.service",
         "eu.domibus.connector.controller.transport",
         "eu.domibus.connector.domain.transformer",
