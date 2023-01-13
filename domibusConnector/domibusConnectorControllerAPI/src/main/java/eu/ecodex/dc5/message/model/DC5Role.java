@@ -14,12 +14,12 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @ToString
-
 @Valid
-
 @Entity
+@Table(name = DC5Role.TABLE_NAME)
 public class DC5Role {
 
+    public static final String TABLE_NAME = "DC5_ROLE";
     @Id
     @GeneratedValue
     private Long id;
