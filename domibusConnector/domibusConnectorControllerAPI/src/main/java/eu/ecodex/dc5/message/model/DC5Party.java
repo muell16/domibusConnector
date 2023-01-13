@@ -4,23 +4,25 @@ package eu.ecodex.dc5.message.model;
 import eu.ecodex.dc5.message.validation.ConfirmationMessageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
-
+@Table(name = DC5Party.TABLE_NAME)
 @Entity
 public class DC5Party {
-
+    public static final String TABLE_NAME = "DC5_PARTY";
     @Id
     @GeneratedValue
     private long id;
