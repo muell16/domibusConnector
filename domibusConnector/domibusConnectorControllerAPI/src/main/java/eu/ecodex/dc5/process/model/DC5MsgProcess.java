@@ -35,6 +35,7 @@ public class DC5MsgProcess {
     private LocalDateTime finished;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "DC5_MSG_PROC_STEPLIST")
     private List<DC5ProcessStep> procStepList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
