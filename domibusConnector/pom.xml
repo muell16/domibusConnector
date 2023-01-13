@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
@@ -33,7 +34,8 @@
 
     </modules>
     <scm>
-        <developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
+        <url>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</url>
+        <developerConnection>scm:git:ssh://git@git.brz.gv.at:7999/jueuecodex/domibus-connector.git</developerConnection>
     </scm>
     <ciManagement>
         <system>Jenkins</system>
@@ -86,11 +88,11 @@
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
         <asciidoclet.version>1.5.6</asciidoclet.version>
-        <asciidoctorj.version>2.5.2</asciidoctorj.version>
-        <asciidoctorj.pdf.version>1.6.0</asciidoctorj.pdf.version>
-        <asciidoctorj.diagram.version>2.2.1</asciidoctorj.diagram.version>
-        <asciidoctorj.diagram.plantuml.version>1.2021.8</asciidoctorj.diagram.plantuml.version>
-        <asciidoctorj.maven.plugin.version>2.2.1</asciidoctorj.maven.plugin.version>
+        <asciidoctorj.version>2.5.7</asciidoctorj.version>
+        <asciidoctorj.pdf.version>2.3.4</asciidoctorj.pdf.version>
+        <asciidoctorj.diagram.version>2.2.3</asciidoctorj.diagram.version>
+        <asciidoctorj.diagram.plantuml.version>1.2022.5</asciidoctorj.diagram.plantuml.version>
+        <asciidoctorj.maven.plugin.version>2.2.2</asciidoctorj.maven.plugin.version>
         <org.apache.cxf.version>3.5.4</org.apache.cxf.version>
         <org.apache.wss4j.version>3.0.0</org.apache.wss4j.version>
         <!-- always update with cxf -->
@@ -144,6 +146,7 @@
         <org.liquibase.liquibase-core.version>4.8.0</org.liquibase.liquibase-core.version>
         <org.apache.commons.commons-text.version>1.9</org.apache.commons.commons-text.version>
         <org.fusesource.jansi.jansi.version>2.4.0</org.fusesource.jansi.jansi.version>
+        <org.jacoco.jacoco-maven-plugin.version>0.8.2</org.jacoco.jacoco-maven-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -696,7 +699,8 @@
                     <version>5.0.0</version>
                     <configuration>
                         <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                        </generateGitPropertiesFilename>
                         <useNativeGit>true</useNativeGit>
                         <skipPoms>false</skipPoms>
                     </configuration>
@@ -731,7 +735,7 @@
                     <artifactId>vaadin-maven-plugin</artifactId>
                     <version>${vaadin.version}</version>
                     <configuration>
-                        <useGlobalPnpm>true</useGlobalPnpm>
+                        <pnpmEnable>false</pnpmEnable>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -742,7 +746,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.9</version>
+                    <version>${org.jacoco.jacoco-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -938,50 +942,17 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info 
-						to be passed to the JVM hosting the code being tested. -->
-                    <execution>
-                        <id>prepare-ut-agent</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.reportPath}</destFile>
-                            <propertyName>jacoco.agent.ut.arg</propertyName>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                    <!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the 
-						info to be passed to the JVM hosting the code being tested. –> -->
-                    <execution>
-                        <id>prepare-it-agent</id>
-                        <!--<!– moved to package phase to be sure all pre-integration test 
-							have it already set to bring up environments with jacoco agent as JVM params 
-							–> -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.itReportPath}</destFile>
-                            <propertyName>jacoco.agent.it.arg</propertyName>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.docx</exclude>
-                        <exclude>**/*.pdf</exclude>
-                        <exclude>**/*.zip</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jacoco</groupId>-->
+<!--                <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>prepare-agent</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -1240,8 +1211,11 @@
                                     <provider>URL</provider>
                                     <providerConfig>
                                         <id>openjdk-18-linux-x64</id>
-                                        <url>https://centralrepo.brz.gv.at/artifactory/github-mirror/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x64_windows_hotspot_11.0.17_8.zip</url>
-                                        <sha256>f051bc3ff84074fd1e7b672c1edfe61327381851e96cd8b6f50dc8dd6f435e8e</sha256>
+                                        <url>
+                                            https://centralrepo.brz.gv.at/artifactory/github-mirror/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x64_windows_hotspot_11.0.17_8.zip
+                                        </url>
+                                        <sha256>f051bc3ff84074fd1e7b672c1edfe61327381851e96cd8b6f50dc8dd6f435e8e
+                                        </sha256>
                                     </providerConfig>
                                 </configuration>
                             </execution>

@@ -1,6 +1,7 @@
 package eu.domibus.connector.starter;
 
 import eu.domibus.connector.common.service.BusinessScopedConfigurationPropertiesRegistrar;
+import eu.ecodex.dc5.EnableDC5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -23,9 +24,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-@SpringBootApplication(scanBasePackages = {"eu.domibus.connector", "eu.ecodex.dc5"})
-@EnableTransactionManagement
-@PropertySource("classpath:/config/connector.properties")
+//@SpringBootApplication(scanBasePackages = {"eu.domibus.connector", "eu.ecodex.dc5"})
+//@EnableTransactionManagement
+//@PropertySource("classpath:/config/connector.properties")
+@EnableDC5
 @Import(BusinessScopedConfigurationPropertiesRegistrar.class)
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 

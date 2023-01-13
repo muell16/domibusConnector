@@ -9,12 +9,19 @@
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
         <run.env>dev</run.env>
+        <git.commit.id.abbrev>${project.version}</git.commit.id.abbrev>
     </properties>
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorUI</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorTestData</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -62,16 +69,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <to>
-                        <image>myimage</image>
-                    </to>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
@@ -83,6 +80,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <classifier>spring</classifier>
                     <mainClass>eu.domibus.connector.starter.DomibusConnectorStarter</mainClass>
                     <requiresUnpack>
                         <dependency>
@@ -90,6 +88,7 @@
                             <artifactId>domibusConnectorUI</artifactId>
                         </dependency>
                     </requiresUnpack>
+                    <layout>DIR</layout>
                 </configuration>
             </plugin>
             <plugin>
@@ -172,25 +171,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>io.github.git-commit-id</groupId>-->
-            <!--                <artifactId>git-commit-id-maven-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <dotGitDirectory>${project.basedir}/../../../.git</dotGitDirectory>-->
-            <!--                    <generateGitPropertiesFile>true</generateGitPropertiesFile>-->
-            <!--                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>-->
-            <!--                </configuration>-->
-            <!--                <inherited>false</inherited>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>get-the-git-infos</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>revision</goal>-->
-            <!--                        </goals>-->
-            <!--                        <phase>initialize</phase>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
                 <artifactId>openshift-maven-plugin</artifactId>
@@ -215,7 +195,7 @@
                             <name>dc-connector</name>
                             <build>
                                 <tags>
-                                    <!--                                    <tag>${git.commit.id.abbrev}</tag>-->
+                                    <tag>${git.commit.id.abbrev}</tag>
                                     <tag>${project.version}</tag>
                                 </tags>
                                 <dockerFile>Dockerfile</dockerFile>
@@ -234,7 +214,7 @@
                                             <id>connector-jar</id>
                                             <files>
                                                 <file>
-                                                    <source>${project.basedir}/target/${project.artifactId}-${project.version}.jar</source>
+                                                    <source>${project.basedir}/target/${project.artifactId}-spring-${project.version}.jar</source>
                                                     <outputDirectory>./</outputDirectory>
                                                     <destName>connector.jar</destName>
                                                 </file>
@@ -303,6 +283,119 @@
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>jib</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <id>copy-spring-boot-starter</id>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jib-extra-libs</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.springframework.boot</groupId>
+                                            <artifactId>spring-boot-loader</artifactId>
+                                            <version>${spring.boot.version}</version>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <id>copy-labbox-config</id>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jib-extra-config</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testconfig</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <configuration>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>${project.build.directory}/jib-extra-libs</from>
+                                        <into>/app/libs</into>
+                                    </path>
+                                    <path>
+                                        <from>${project.build.directory}/jib-extra-config</from>
+                                        <into>/app/config</into>
+                                    </path>
+                                </paths>
+                            </extraDirectories>
+                            <container>
+
+                                <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
+                                <jvmFlags>
+                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>
+                                    <jvmFlag>-Dspring.config.name=connector</jvmFlag>
+                                    <jvmFlag>-Dloader.main=eu.domibus.connector.starter.DomibusConnectorStarter</jvmFlag>
+                                </jvmFlags>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <user>185:185</user>
+                            </container>
+                            <from>
+                                <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi-openjdk11:1.0.36</image>
+                            </from>
+                            <to>
+                                <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
+                                <tags>
+                                    <tag>${git.commit.id.abbrev}</tag>
+                                </tags>
+                            </to>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>buildTar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

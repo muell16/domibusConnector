@@ -58,7 +58,6 @@ public class WsGatewayPluginConfiguration {
 
     @Bean
     DomibusConnectorGatewaySubmissionWebService gatewaySubmissionWebserviceProxy() {
-//        JaxWsClientProxy jaxWsClientProxy = new JaxWsClientProxy();
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
 

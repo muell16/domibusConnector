@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="installAndDeployConnectorStandaloneImageOnPaas" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="installAndBuildWithJib" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings">
@@ -27,13 +27,11 @@
           </option>
           <option name="goals">
             <list>
-              <option value="install-T2C" />
-              <option value="oc:build" />
+              <option value="install" />
+              <option value="-T2C" />
               <option value="-pl" />
               <option value=":domibusConnectorBuilderStandalone" />
               <option value="-am" />
-              <option value="-Pproduction" />
-              <option value="-Pdocumentation" />
               <option value="-DskipTests=true" />
               <option value="-e" />
             </list>
@@ -41,6 +39,7 @@
           <option name="pomFileName" />
           <option name="profilesMap">
             <map>
+              <entry key="jib" value="true" />
               <entry key="production" value="true" />
             </map>
           </option>
