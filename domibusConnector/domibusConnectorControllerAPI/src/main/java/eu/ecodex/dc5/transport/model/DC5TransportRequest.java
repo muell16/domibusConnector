@@ -15,10 +15,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-
 @Entity
+@Table(name = DC5TransportRequest.TABLE_NAME)
 public class DC5TransportRequest {
 
+    public static final String TABLE_NAME = "DC5_TRANSPORT_REQUEST";
     @Id
     @GeneratedValue
     private Long id;
