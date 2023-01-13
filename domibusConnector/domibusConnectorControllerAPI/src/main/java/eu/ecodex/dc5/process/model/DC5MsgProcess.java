@@ -42,6 +42,7 @@ public class DC5MsgProcess {
     @CollectionTable
     @MapKeyColumn(name = "PROPERTY_NAME", nullable = false)
     @Column(name = "PROPERTY_VALUE", length = 2048)
+    @JoinTable(name = "DC5_MSG_PROC_PROPERTY")
     private Map<String, String> properties;
 
     public void addProcessStep(DC5ProcessStep processStep) {
