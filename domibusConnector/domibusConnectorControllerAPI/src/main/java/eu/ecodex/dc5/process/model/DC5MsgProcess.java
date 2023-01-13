@@ -39,10 +39,9 @@ public class DC5MsgProcess {
     private List<DC5ProcessStep> procStepList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable
+    @CollectionTable(name = "DC5_MSG_PROC_PROPERTY")
     @MapKeyColumn(name = "PROPERTY_NAME", nullable = false)
     @Column(name = "PROPERTY_VALUE", length = 2048)
-    @JoinTable(name = "DC5_MSG_PROC_PROPERTY")
     private Map<String, String> properties;
 
     public void addProcessStep(DC5ProcessStep processStep) {
