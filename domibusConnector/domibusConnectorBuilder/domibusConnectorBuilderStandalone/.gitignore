@@ -2,3 +2,6 @@
 /*.json
 /*.js
 
+data
+logs
+.npmrc
