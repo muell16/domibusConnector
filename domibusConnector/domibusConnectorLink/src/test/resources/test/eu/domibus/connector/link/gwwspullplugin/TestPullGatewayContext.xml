@@ -19,7 +19,8 @@
         </jaxws:properties>
         <jaxws:features>
             <p:policies>
-                <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
+<!--                <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>-->
+                <wsp:PolicyReference URI="classpath:/wsdl/no-security.policy.xml"/>
             </p:policies>
         </jaxws:features>
         <jaxws:binding>
