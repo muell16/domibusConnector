@@ -63,6 +63,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <tomcat.version>8.5.32</tomcat.version>
         <javax.ws.rs>1.1.1</javax.ws.rs>
+        <javax.jws.javax.jws-api.version>1.1</javax.jws.javax.jws-api.version>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <com.sun.xml.bind.jaxb.version>2.3.0</com.sun.xml.bind.jaxb.version>
@@ -338,6 +339,11 @@
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
                 <version>${javax.xml.ws.jaxws-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.jws</groupId>
+                <artifactId>javax.jws-api</artifactId>
+                <version>${javax.jws.javax.jws-api.version}</version>
             </dependency>
 <!--            <dependency>-->
 <!--                <groupId>jakarta.xml.soap</groupId>-->
