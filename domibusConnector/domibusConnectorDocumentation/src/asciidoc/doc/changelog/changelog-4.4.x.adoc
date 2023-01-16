@@ -113,3 +113,4 @@ encryption uses SecureRandom.getStrong() which will use /dev/random on Unix-Syst
 entropy available. With 4.4.7 the connector will use new SecureRandom() which
 will use /dev/urandom as entropy source by default.
 * Update minor version of dependencies
+* Update Testdata keystores
