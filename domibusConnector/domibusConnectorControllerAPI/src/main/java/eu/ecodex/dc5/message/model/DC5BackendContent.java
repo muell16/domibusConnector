@@ -34,6 +34,7 @@ public class DC5BackendContent {
 
     @OneToMany(cascade = CascadeType.ALL)
     @Singular
+    @JoinTable(name = "DC5_BACKCONT_2_ATT")
     private List<DC5MessageAttachment> attachments;
 
     @OneToOne(cascade = CascadeType.ALL)
