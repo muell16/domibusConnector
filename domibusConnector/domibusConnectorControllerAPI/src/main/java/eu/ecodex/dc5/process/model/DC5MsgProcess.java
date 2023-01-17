@@ -45,6 +45,12 @@ public class DC5MsgProcess {
     @Column(name = "PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties;
 
+    @Builder(toBuilder = true)
+    public DC5MsgProcess(MessageProcessId processId) {
+        this.created = LocalDateTime.now();
+        this.processId = processId;
+    }
+
     public void addProcessStep(DC5ProcessStep processStep) {
         this.procStepList.add(processStep);
     }

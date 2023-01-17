@@ -1,5 +1,6 @@
 /domibusConnectorGatewayPluginClient/
 /domibusConnectorGatewayWebserviceClient/
+domibusConnectorController/data/
 
 
 *.iml
@@ -15,5 +16,19 @@ nbproject
 .settings
 
 .idea
+
+dc-nist-db
+
+frontend
+jdk8.exe
+odc.mv.db
+package.json
+pnpm-lock.yaml
+pnpmfile.js
+transaction-logs
+tsconfig.json
+types.d.ts
+webpack.config.js
+webpack.generated.js
 
 

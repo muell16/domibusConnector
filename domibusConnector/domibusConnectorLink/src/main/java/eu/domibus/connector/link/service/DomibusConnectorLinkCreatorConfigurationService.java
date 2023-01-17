@@ -71,10 +71,9 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     private void configureBackendLinks() {
         List<DCLinkPluginConfigurationProperties.DCLnkPropertyConfig> backends = config.getBackend();
         if (backends.isEmpty() && !config.isFailOnLinkPluginError()) {
-            LOGGER.warn("No backends are configured!");
-        } else if (backends.isEmpty()) {
-            String error = String.format("No backends are configured under [%s.backend]\nConnector will not start!", DCLinkPluginConfigurationProperties.PREFIX);
-            throw new IllegalStateException(error);
+            String warn = String.format("No backends are configured under [%s.backend]", DCLinkPluginConfigurationProperties.PREFIX);
+            LOGGER.warn(warn);
+            return;
         }
 
         int i = 0;
@@ -111,11 +110,9 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     private void configureGatewayLinks() {
         final DCLinkPluginConfigurationProperties.DCLnkPropertyConfig gateway = config.getGateway();
         if (gateway == null && !config.isFailOnLinkPluginError()) {
-            LOGGER.warn("No gateway configured!");
+            String warn = String.format("No gateway is configured under [%s.gateway]", DCLinkPluginConfigurationProperties.PREFIX);
+            LOGGER.warn(warn);
             return;
-        } else if (gateway == null) {
-            String error = String.format("No gateway is configured under [%s.gateway]\nConnector will not start!", DCLinkPluginConfigurationProperties.PREFIX);
-            throw new IllegalStateException(error);
         }
         DomibusConnectorLinkConfiguration linkConfig = gateway.getLinkConfig();
 

@@ -25,7 +25,6 @@ public interface SubmitToConnector {
         @CheckForNull private final Throwable error;
         @CheckForNull private final DC5Message message;
 
-        @Builder(toBuilder = true)
         public static ReceiveMessageFlowResult getSuccess(DC5Message message) {
             return new ReceiveMessageFlowResult(true, null, null, message);
         }

@@ -63,6 +63,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <tomcat.version>8.5.32</tomcat.version>
         <javax.ws.rs>1.1.1</javax.ws.rs>
+        <javax.jws.javax.jws-api.version>1.1</javax.jws.javax.jws-api.version>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <com.sun.xml.bind.jaxb.version>2.3.0</com.sun.xml.bind.jaxb.version>
@@ -93,10 +94,15 @@
         <asciidoctorj.diagram.version>2.2.3</asciidoctorj.diagram.version>
         <asciidoctorj.diagram.plantuml.version>1.2022.5</asciidoctorj.diagram.plantuml.version>
         <asciidoctorj.maven.plugin.version>2.2.2</asciidoctorj.maven.plugin.version>
-        <org.apache.cxf.version>3.5.4</org.apache.cxf.version>
-        <org.apache.wss4j.version>3.0.0</org.apache.wss4j.version>
+        <org.apache.cxf.version>3.5.5</org.apache.cxf.version>
+<!--        <org.apache.cxf.version>4.0.0</org.apache.cxf.version>-->
         <!-- always update with cxf -->
-        <org.apache.santuario.xmlsec.version>3.0.1</org.apache.santuario.xmlsec.version>
+        <org.apache.wss4j.version>2.4.1</org.apache.wss4j.version>
+<!--        <org.apache.wss4j.version>3.0.0</org.apache.wss4j.version>-->
+        <!-- always update with cxf -->
+        <com.fasterxml.woodstox.woodstox-core.version>6.4.0</com.fasterxml.woodstox.woodstox-core.version>
+        <!-- always update with cxf -->
+        <org.apache.santuario.xmlsec.version>2.3.2</org.apache.santuario.xmlsec.version>
         <!--        <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>-->
         <spring.boot.version>2.6.13</spring.boot.version>
         <spring-statemachine.version>3.2.0</spring-statemachine.version>
@@ -117,9 +123,9 @@
         <com.sun.xml.bind.jaxb-impl.version>2.3.0</com.sun.xml.bind.jaxb-impl.version>
         <com.sun.xml.bind.jaxb-xjc.version>2.3.0</com.sun.xml.bind.jaxb-xjc.version>
         <javax.xml.ws.jaxws-api.version>2.3.1</javax.xml.ws.jaxws-api.version>
-        <jakarta.xml.soap.jakarta.xml.soap-api.version>1.4.2</jakarta.xml.soap.jakarta.xml.soap-api.version>
-        <jakarta.jws.jakarta.jws-api.version>2.1.0</jakarta.jws.jakarta.jws-api.version>
-        <jakarta.xml.bind.jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind.jakarta.xml.bind-api.version>
+<!--        <jakarta.xml.soap.jakarta.xml.soap-api.version>1.4.2</jakarta.xml.soap.jakarta.xml.soap-api.version>-->
+<!--        <jakarta.jws.jakarta.jws-api.version>2.1.0</jakarta.jws.jakarta.jws-api.version>-->
+<!--        <jakarta.xml.bind.jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind.jakarta.xml.bind-api.version>-->
         <javax.jms.javax.jms-api.version>2.0.1</javax.jms.javax.jms-api.version>
         <javax.validation.validation-api.version>2.0.1.Final</javax.validation.validation-api.version>
         <javax.mail.mail.version>1.5.0-b01</javax.mail.mail.version>
@@ -147,6 +153,7 @@
         <org.apache.commons.commons-text.version>1.9</org.apache.commons.commons-text.version>
         <org.fusesource.jansi.jansi.version>2.4.0</org.fusesource.jansi.jansi.version>
         <org.jacoco.jacoco-maven-plugin.version>0.8.2</org.jacoco.jacoco-maven-plugin.version>
+
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -334,20 +341,25 @@
                 <version>${javax.xml.ws.jaxws-api.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.xml.soap</groupId>
-                <artifactId>jakarta.xml.soap-api</artifactId>
-                <version>${jakarta.xml.soap.jakarta.xml.soap-api.version}</version>
+                <groupId>javax.jws</groupId>
+                <artifactId>javax.jws-api</artifactId>
+                <version>${javax.jws.javax.jws-api.version}</version>
             </dependency>
-            <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta.jws.jakarta.jws-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${jakarta.xml.bind.jakarta.xml.bind-api.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>jakarta.xml.soap</groupId>-->
+<!--                <artifactId>jakarta.xml.soap-api</artifactId>-->
+<!--                <version>${jakarta.xml.soap.jakarta.xml.soap-api.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>jakarta.jws</groupId>-->
+<!--                <artifactId>jakarta.jws-api</artifactId>-->
+<!--                <version>${jakarta.jws.jakarta.jws-api.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>jakarta.xml.bind</groupId>-->
+<!--                <artifactId>jakarta.xml.bind-api</artifactId>-->
+<!--                <version>${jakarta.xml.bind.jakarta.xml.bind-api.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
@@ -488,6 +500,11 @@
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
                 <version>${org.apache.santuario.xmlsec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>${com.fasterxml.woodstox.woodstox-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.wss4j</groupId>
