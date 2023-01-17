@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 
-@Entity(name = DC5MsgProcess.TABLE_NAME)
+@Entity
+@Table(name = DC5MsgProcess.TABLE_NAME)
 
 @Getter
 @Setter
@@ -35,13 +36,20 @@ public class DC5MsgProcess {
     private LocalDateTime finished;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "DC5_MSG_PROC_STEPLIST")
     private List<DC5ProcessStep> procStepList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable
+    @CollectionTable(name = "DC5_MSG_PROC_PROPERTY")
     @MapKeyColumn(name = "PROPERTY_NAME", nullable = false)
     @Column(name = "PROPERTY_VALUE", length = 2048)
     private Map<String, String> properties;
+
+    @Builder(toBuilder = true)
+    public DC5MsgProcess(MessageProcessId processId) {
+        this.created = LocalDateTime.now();
+        this.processId = processId;
+    }
 
     public void addProcessStep(DC5ProcessStep processStep) {
         this.procStepList.add(processStep);

@@ -5,6 +5,7 @@ import eu.ecodex.dc5.domain.scope.BusinessDomainScopeConfiguration;
 import org.moduliths.Modulithic;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -40,12 +41,17 @@ import java.lang.annotation.*;
         "eu.domibus.connector.evidences",
         "eu.domibus.connector.controller.spring",
         "eu.domibus.connector.link",
-        "eu.domibus.connector.lib",
+        "eu.domibus.connector",
+        "eu.domibus.connector.persistence.service",
+        "eu.domibus.connector.controller.transport",
+        "eu.domibus.connector.domain.transformer",
         "eu.domibus.connector.common.service",
         "eu.domibus.connector.security",
         "eu.domibus.connector.dss",
         "eu.domibus.connector.controller.processor",
         "eu.domibus.connector.controller.service",
+}, exclude = {
+        UserDetailsServiceAutoConfiguration.class,
 })
 @Import({BusinessScopedConfigurationPropertiesRegistrar.class, BusinessDomainScopeConfiguration.class})
 public @interface EnableDC5 {

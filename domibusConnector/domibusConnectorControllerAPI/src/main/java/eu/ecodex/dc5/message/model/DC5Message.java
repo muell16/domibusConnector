@@ -1,14 +1,11 @@
 package eu.ecodex.dc5.message.model;
 
-import java.io.Serializable;
-import java.util.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DC5BusinessDomain;
+import eu.domibus.connector.domain.model.DCMessageProcessSettings;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.jpa.DomibusConnectorMessageIdConverter;
@@ -24,9 +21,12 @@ import javax.annotation.CheckForNull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -128,6 +128,7 @@ public class DC5Message implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn (name="PROPERTY_NAME", nullable = false)
     @Column(name="PROPERTY_VALUE", length = 2048)
+    @CollectionTable(name = "DC5_MSG_PROC_PROPERTY")
     private Map<String, String> messageProcessingProperties = new HashMap<String, String>();
 
     @PostLoad

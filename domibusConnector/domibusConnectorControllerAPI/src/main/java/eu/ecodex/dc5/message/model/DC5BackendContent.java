@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-
+@Table(name = "DC5_BACKEND_CONTENT")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -34,6 +34,7 @@ public class DC5BackendContent {
 
     @OneToMany(cascade = CascadeType.ALL)
     @Singular
+    @JoinTable(name = "DC5_BACKCONT_2_ATT")
     private List<DC5MessageAttachment> attachments;
 
     @OneToOne(cascade = CascadeType.ALL)

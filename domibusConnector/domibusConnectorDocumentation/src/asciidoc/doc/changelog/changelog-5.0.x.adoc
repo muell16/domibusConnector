@@ -9,3 +9,17 @@
 * Spring Boot Update 2.4.x => 2.6.x
 * CXF Update 3.3.x => 3.5.x
 * Partial JAXB (2.x) update to JAXB 3.0 (jakarta)
+
+
+==== Features
+
+* Support for multiple domains and therefore p-mode and truststores
+* Support for database only transactions
+
+
+=== 5.0.1
+
+* Fixed wrong lib version of santurio xmlsec, which prevented the usage of ws security policies.
+* Fixed some DB naming issues (missing _ and DC5 prefixes in table names)
+
+

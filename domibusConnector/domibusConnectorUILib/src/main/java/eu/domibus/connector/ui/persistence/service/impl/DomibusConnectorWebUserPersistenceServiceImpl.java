@@ -89,10 +89,10 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 				if(graceLoginsUsed >= numberOfGraceLogins) {
 					user.setLocked(true);
 					userDao.save(user);
-					throw new UserLoginException("The given password is not correct! The user is locked now!");
+					throw new UserLoginException("Invalid Credentials! The user is locked now!");
 				}else {
 					userDao.save(user);
-					throw new UserLoginException("The given password is not correct! You have "+(numberOfGraceLogins-graceLoginsUsed)+" grace logins left.");
+					throw new UserLoginException("Invalid Credentials! You have "+(numberOfGraceLogins-graceLoginsUsed)+" grace logins left.");
 				}
 				
 			}
@@ -109,7 +109,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 			return user;
 			
 		}
-		throw new UserLoginException("Cannot find given User!");
+		throw new UserLoginException("Invalid Credentials!");
 	}
 	
 	@Override

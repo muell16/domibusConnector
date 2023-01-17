@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 		}
 )
 @Entity
-
+@Table(name = "DC5_BUSINESS_MSG")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
@@ -72,8 +72,8 @@ public class DC5MessageContent {
 	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BackendContent businessContent;
 
-	// TODO: use a fetch graph instead
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "DC5_BUSIMSG_2_MSGSTATE")
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
 	@OneToOne(cascade = CascadeType.ALL, optional = false)

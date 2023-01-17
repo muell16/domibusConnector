@@ -15,10 +15,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-
 @Entity
+@Table(name = DC5TransportRequest.TABLE_NAME)
 public class DC5TransportRequest {
 
+    public static final String TABLE_NAME = "DC5_TRANSPORT_REQUEST";
     @Id
     @GeneratedValue
     private Long id;
@@ -43,6 +44,7 @@ public class DC5TransportRequest {
     private MessageTargetSource linkType;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "DC5_TRANSP_REQ_2_STATE")
     private List<DC5TransportRequestState> states = new ArrayList<>();
 
     public void changeCurrentState(DC5TransportRequestState currentState) {
