@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 		}
 )
 @Entity
-
+@Table(name = "DC5_BUSINESS_MSG")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
