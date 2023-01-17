@@ -26,8 +26,7 @@ import javax.validation.constraints.NotBlank;
  * @version 1.0
  */
 @Entity
-
-
+@Table(name = "DC5_MSG_ATTACHMENT")
 @Getter
 @Setter
 @AllArgsConstructor
