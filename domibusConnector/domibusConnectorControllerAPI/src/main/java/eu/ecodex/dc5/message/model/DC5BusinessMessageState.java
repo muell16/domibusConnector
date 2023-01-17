@@ -1,7 +1,6 @@
 package eu.ecodex.dc5.message.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 @Entity
-
+@Table(name = "DC5_BUSINESS_MSG_STATE")
 @Getter
 //@Setter
 @AllArgsConstructor
