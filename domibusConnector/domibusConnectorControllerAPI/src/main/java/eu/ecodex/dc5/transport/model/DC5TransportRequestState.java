@@ -4,11 +4,7 @@ package eu.ecodex.dc5.transport.model;
 import eu.domibus.connector.domain.enums.TransportState;
 import lombok.*;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 
 @Entity
+@Table(name = "DC5_TRANSPORT_STATE")
 public class DC5TransportRequestState {
 
     @Id
