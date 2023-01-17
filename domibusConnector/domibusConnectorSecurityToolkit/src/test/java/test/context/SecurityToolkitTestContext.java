@@ -52,8 +52,8 @@ public class SecurityToolkitTestContext {
     @Bean
     public DCBusinessDomainManager dcBusinessDomainManager() {
         DCBusinessDomainManager mock = Mockito.mock(DCBusinessDomainManager.class);
-        Mockito.when(mock.getValidBusinessDomainsAllData()).thenReturn(Stream.of(businessDomain).collect(Collectors.toList()));
-        Mockito.when(mock.getBusinessDomain(Mockito.any())).thenReturn(Optional.of(businessDomain));
+        Mockito.when(mock.getValidDomains()).thenReturn(Stream.of(businessDomain).collect(Collectors.toList()));
+        Mockito.when(mock.getDomain(Mockito.any())).thenReturn(Optional.of(businessDomain));
         return mock;
     }
 

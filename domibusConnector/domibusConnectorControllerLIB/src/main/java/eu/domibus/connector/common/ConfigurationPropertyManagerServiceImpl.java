@@ -83,6 +83,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
      * @return the configuration object
      */
     public <T> T loadConfiguration(@Nullable DC5BusinessDomain.BusinessDomainId laneId, Class<T> clazz, String prefix) {
+        Objects.requireNonNull(laneId);
         if (clazz == null) {
             throw new IllegalArgumentException("Clazz is not allowed to be null!");
         }
@@ -122,7 +123,7 @@ public class ConfigurationPropertyManagerServiceImpl implements ConfigurationPro
 
 
     private MapConfigurationPropertySource loadLaneProperties(DC5BusinessDomain.BusinessDomainId laneId) {
-        Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getBusinessDomain(laneId);
+        Optional<DC5BusinessDomain> businessDomain = businessDomainManager.getDomain(laneId);
         if (businessDomain.isPresent()) {
             MapConfigurationPropertySource mapConfigurationPropertySource = new MapConfigurationPropertySource(businessDomain.get().getProperties());
             return mapConfigurationPropertySource;

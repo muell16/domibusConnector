@@ -67,7 +67,7 @@ public class TestPropertyLoadingStoring {
         DC5BusinessDomain b = new DC5BusinessDomain();
         DC5BusinessDomain.BusinessDomainId bid = new DC5BusinessDomain.BusinessDomainId("b2");
         b.setId(bid);
-        dcBusinessDomainManager.createBusinessDomain(b);
+        dcBusinessDomainManager.createDomain(b);
 
         try {
             DC5BusinessDomain.BusinessDomainId defaultDomain = DC5BusinessDomain.getDefaultBusinessDomainId();

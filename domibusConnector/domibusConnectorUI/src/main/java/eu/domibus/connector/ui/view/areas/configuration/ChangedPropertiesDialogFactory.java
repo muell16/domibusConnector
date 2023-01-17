@@ -80,7 +80,7 @@ public class ChangedPropertiesDialogFactory {
         dialogLayout.add(validationLayout);
         dialogLayout.add(grid);
 
-        final Optional<DC5BusinessDomain> businessDomain = domainManager.getBusinessDomain(domainId);
+        final Optional<DC5BusinessDomain> businessDomain = domainManager.getDomain(domainId);
         if (businessDomain.isPresent()) {
             final DC5BusinessDomain DC5BusinessDomain = businessDomain.get();
             DC5BusinessDomain.getProperties().putAll(updatedConfiguration); //overwrite props in current domain with updated props

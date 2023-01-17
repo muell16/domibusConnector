@@ -94,7 +94,7 @@ public class TestBackendAutoConfiguration {
      */
     private boolean configureRoutingRules() {
         boolean enabled = false;
-        List<DC5BusinessDomain> activeBusinessDomainIds = businessDomainManager.getValidBusinessDomainsAllData();
+        List<DC5BusinessDomain> activeBusinessDomainIds = businessDomainManager.getValidDomains();
         for (DC5BusinessDomain domain : activeBusinessDomainIds) {
             ConnectorTestConfigurationProperties c2cTestProperties = configurationPropertyLoaderService.loadConfiguration(domain.getId(), ConnectorTestConfigurationProperties.class);
             enabled = enabled || c2cTestProperties.isEnabled();

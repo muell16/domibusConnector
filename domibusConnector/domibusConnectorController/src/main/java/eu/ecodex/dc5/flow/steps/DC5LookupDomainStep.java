@@ -62,7 +62,7 @@ public class DC5LookupDomainStep {
         // -> they should be applied.
 
         List<Tuple> matchingDomains = new ArrayList<>();
-        final List<DC5BusinessDomain> validBusinessDomains = domainManager.getValidBusinessDomainsAllData();
+        final List<DC5BusinessDomain> validBusinessDomains = domainManager.getValidDomains();
         for (DC5BusinessDomain domain : validBusinessDomains) {
             dcDomainRoutingManager.getDomainRoutingRules(domain.getId())
                     .values()

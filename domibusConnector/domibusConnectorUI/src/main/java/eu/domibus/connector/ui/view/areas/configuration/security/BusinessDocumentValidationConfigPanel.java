@@ -35,8 +35,6 @@ public class BusinessDocumentValidationConfigPanel extends DCVerticalLayoutWithT
         ConfigurationPanelFactory.ConfigurationPanel<DCBusinessDocumentValidationConfigurationProperties> configurationPanel
                 = configurationPanelFactory.createConfigurationPanel(form, domainSelect, DCBusinessDocumentValidationConfigurationProperties.class);
 
-        domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> configurationPanel.refreshUI());
-
         Button b = new Button("Import old config");
         b.addClickListener(event -> {
             ImportBusinessDocConfig dialog = importBusinessDocConfig.getObject();

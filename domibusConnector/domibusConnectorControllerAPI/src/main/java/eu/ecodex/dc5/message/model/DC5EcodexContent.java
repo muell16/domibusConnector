@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-
+@Table(name = "DC5_ECODEX_CONTENT")
 @Getter
 @Setter
 @NoArgsConstructor

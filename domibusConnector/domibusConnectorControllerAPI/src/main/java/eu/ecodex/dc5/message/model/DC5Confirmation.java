@@ -1,17 +1,13 @@
 package eu.ecodex.dc5.message.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-
-import java.util.Arrays;
-
 import eu.ecodex.dc5.core.model.converter.EvidenceTypeConverter;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
-import org.springframework.lang.Nullable;
-
 import javax.annotation.CheckForNull;
 import javax.persistence.*;
+import java.util.Arrays;
 
 /**
  * This is an object that internally represents the evidences for a message. It
@@ -24,7 +20,7 @@ import javax.persistence.*;
  *
  */
 @Entity
-
+@Table(name = "DC5_CONFIRMATION_MSG")
 @Getter
 @Setter
 @NoArgsConstructor
