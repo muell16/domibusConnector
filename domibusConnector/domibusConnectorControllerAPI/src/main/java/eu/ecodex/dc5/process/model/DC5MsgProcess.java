@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 
-@Entity(name = DC5MsgProcess.TABLE_NAME)
+@Entity
+@Table(name = DC5MsgProcess.TABLE_NAME)
 
 @Getter
 @Setter

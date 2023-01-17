@@ -7,7 +7,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = DC5ProcessStep.TABLE_NAME)
+@Entity
+@Table(name = DC5ProcessStep.TABLE_NAME)
 
 @Getter
 @Setter
