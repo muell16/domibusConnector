@@ -25,7 +25,7 @@ public class ConstraintViolationSetHelper {
     public static KeyConfigurationProperties generateTestKeyConfig() {
         KeyConfigurationProperties keyConfigurationProperties = new KeyConfigurationProperties();
         keyConfigurationProperties.setAlias("bob");
-        keyConfigurationProperties.setPassword("");
+        keyConfigurationProperties.setPassword("12345");
         return keyConfigurationProperties;
     }
 }
