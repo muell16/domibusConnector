@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-
+@Table(name = "DC5_BACKEND_CONTENT")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
