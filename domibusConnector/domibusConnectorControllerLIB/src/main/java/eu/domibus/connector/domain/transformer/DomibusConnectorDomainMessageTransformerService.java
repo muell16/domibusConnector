@@ -610,7 +610,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     private MessageDigest getDefaultMessageDigest() {
         try {
-            return MessageDigest.getInstance("SHA256"); //TODO: put into configuration properties!
+            return MessageDigest.getInstance("SHA-256"); //TODO: put into configuration properties!
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
