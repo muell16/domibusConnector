@@ -115,9 +115,11 @@ public class DC5Message implements Serializable {
     @JoinColumn(name = "MESSAGECONFIRMATION_ID", referencedColumnName = "ID")
     private DC5Confirmation transportedMessageConfirmation;
 
-    @OneToOne
-    @JoinColumn(name = "PROCESS_ID", referencedColumnName = "ID")
-    private DC5MsgProcess processId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "PROCESS_ID", referencedColumnName = "ID", nullable = false)
+    @NotNull
+    @NonNull
+    private DC5MsgProcess process;
 
 
     @Transient //TODO: move to process
