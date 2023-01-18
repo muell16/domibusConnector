@@ -692,7 +692,9 @@ public class DomibusConnectorDomainMessageTransformerService {
         }
 
         //map ebms id
-        ebmsBuilder.ebmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getEbmsMessageId()));
+        if (StringUtils.isNotBlank(messageDetailsTO.getEbmsMessageId())) {
+            ebmsBuilder.ebmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getEbmsMessageId()));
+        }
         //map refToEbmsId if message comes from GW
         if (target == MessageTargetSource.BACKEND) {
             ebmsBuilder.refToEbmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getRefToMessageId()));
