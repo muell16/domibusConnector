@@ -483,10 +483,11 @@ public class DomibusConnectorDomainMessageTransformerService {
     private DC5BackendData transformMessageDetailsToBackendData(MessageTargetSource target, DomibusConnectorMessageDetailsType messageDetailsTO) {
         DC5BackendData.DC5BackendDataBuilder backendDataBuilder = DC5BackendData.builder();
 
-        backendDataBuilder.backendMessageId(BackendMessageId.ofString(messageDetailsTO.getBackendMessageId()));
         if (target == MessageTargetSource.GATEWAY) {
+            backendDataBuilder.backendMessageId(BackendMessageId.ofString(messageDetailsTO.getBackendMessageId()));
+        }
+        if (target == MessageTargetSource.GATEWAY && StringUtils.isNotBlank(messageDetailsTO.getRefToMessageId())) {
             backendDataBuilder.refToBackendMessageId(BackendMessageId.ofString(messageDetailsTO.getRefToMessageId()));
-            backendDataBuilder.backendConversationId(messageDetailsTO.getConversationId());
         }
 
         return backendDataBuilder.build();
@@ -692,11 +693,11 @@ public class DomibusConnectorDomainMessageTransformerService {
         }
 
         //map ebms id
-        if (StringUtils.isNotBlank(messageDetailsTO.getEbmsMessageId())) {
+        if (target == MessageTargetSource.BACKEND) {
             ebmsBuilder.ebmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getEbmsMessageId()));
         }
         //map refToEbmsId if message comes from GW
-        if (target == MessageTargetSource.BACKEND) {
+        if (target == MessageTargetSource.BACKEND && StringUtils.isNotBlank(messageDetailsTO.getRefToMessageId())) {
             ebmsBuilder.refToEbmsMessageId(EbmsMessageId.ofString(messageDetailsTO.getRefToMessageId()));
         }
         //map conversation id
