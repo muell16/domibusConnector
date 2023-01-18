@@ -1,9 +1,12 @@
 package eu.ecodex.dc5.core;
 
 import eu.ecodex.dc5.message.MessageJpaConfiguration;
-import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.message.repo.DC5EbmsRepo;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.model.ProcessModelConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.jpa.show-sql=true",
         "spring.liquibase.enabled=false"
 })
+@Import({MessageJpaConfiguration.class, ProcessModelConfiguration.class})
 class DC5MsgH2Tests {
 
     @SpringBootApplication
@@ -53,6 +57,8 @@ class DC5MsgH2Tests {
         final DC5Message dc5BusinessDocumentMessage = new DC5Message();
         final DC5Ebms dc5Ebms = new DC5Ebms();
         dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
+        final DC5MsgProcess msgProcess = DC5MsgProcess.builder().processId(MessageProcessId.ofString("proc_foo")).build();
+        dc5BusinessDocumentMessage.setProcess(msgProcess);
 
         // Act
         final DC5Message save = msgRepo.save(dc5BusinessDocumentMessage);
@@ -68,6 +74,8 @@ class DC5MsgH2Tests {
         final DC5Ebms dc5Ebms = new DC5Ebms();
         dc5Ebms.setEbmsMessageId(EbmsMessageId.ofString("foo"));
         dc5BusinessDocumentMessage.setEbmsData(dc5Ebms);
+        final DC5MsgProcess msgProcess = DC5MsgProcess.builder().processId(MessageProcessId.ofString("proc_bar")).build();
+        dc5BusinessDocumentMessage.setProcess(msgProcess);
 
         // Act
         final DC5Message save = msgRepo.save(dc5BusinessDocumentMessage);

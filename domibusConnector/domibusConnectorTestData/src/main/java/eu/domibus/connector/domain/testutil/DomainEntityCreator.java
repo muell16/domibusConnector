@@ -7,6 +7,8 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import lombok.SneakyThrows;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
@@ -19,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- *
  *
  */
 public class DomainEntityCreator {
@@ -65,11 +66,11 @@ public class DomainEntityCreator {
     public static DC5Action createActionForm_A() {
         return DC5Action.builder().action("Form_A").build();
     }
-    
+
     public static DC5Action createActionRelayREMMDAcceptanceRejection() {
         return DC5Action.builder().action("RelayREMMDAcceptanceRejection").build();
     }
-    
+
     public static DC5Service createServiceEPO() {
         return DC5Service.builder().service("EPO").serviceType("urn:e-codex:services:").build();
     }
@@ -80,7 +81,6 @@ public class DomainEntityCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
         return confirmation;
     }
-
 
 
     public static DC5Confirmation createMessageSubmissionRejectionConfirmation() {
@@ -103,14 +103,14 @@ public class DomainEntityCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
         return confirmation;
     }
-    
+
     public static DC5Confirmation createMessageDeliveryConfirmation() {
         DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_DELIVERY/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         return confirmation;
     }
-    
+
     public static DC5Confirmation createMessageNonDeliveryConfirmation() {
         DC5Confirmation confirmation = new DC5Confirmation();
         confirmation.setEvidence("<EVIDENCE1_NON_DELIVERY/>".getBytes());
@@ -124,7 +124,7 @@ public class DomainEntityCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.RETRIEVAL);
         return confirmation;
     }
-    
+
     public static DC5MessageAttachment createSimpleMessageAttachment() {
         return DC5MessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
@@ -136,11 +136,11 @@ public class DomainEntityCreator {
     public static LargeFileReference connectorBigDataReferenceFromDataSource(String input) {
         LargeFileReferenceGetSetBased reference =
                 new LargeFileReferenceGetSetBased();
-        
+
         reference.setBytes(input.getBytes());
         reference.setReadable(true);
 //        reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
-        
+
         return reference;
     }
 
@@ -155,30 +155,36 @@ public class DomainEntityCreator {
 
         return reference;
     }
-    
+
     public static DC5Message createEvidenceNonDeliveryMessage() {
 //        DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
 //        DC5Confirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
-        
+
+
         DC5Message msg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
 //                .connectorMessageId(DomibusConnectorMessageId.of("id1"))
 //                .setMessageDetails(messageDetails)
 //                .addTransportedConfirmations(nonDeliveryConfirmation)
                 .build();
-        
+
         return msg;
     }
 
 
     public static DC5Message createSimpleTestMessage() {
-        
+
         DC5Ebms messageDetails = new DC5Ebms();
 
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId(EbmsMessageId.ofString("ebms1"));
-        
+
         DC5MessageContent messageContent = new DC5MessageContent();
         DC5Message msg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .ebmsData(messageDetails)
                 .build();
 
@@ -186,10 +192,10 @@ public class DomainEntityCreator {
 
         return msg;
     }
-    
+
     public static DC5Message createMessage() {
         DC5Ebms messageDetails = createDomibusConnectorMessageDetails();
-        
+
         DC5MessageContent messageContent = new DC5MessageContent();
 
 //        DetachedSignature detachedSignature = DetachedSignature.builder()
@@ -199,7 +205,9 @@ public class DomainEntityCreator {
 //                .build();
 
         return DC5Message.builder()
-                        .transportedMessageConfirmation(createMessageDeliveryConfirmation())
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
+                .transportedMessageConfirmation(createMessageDeliveryConfirmation())
                 .created(LocalDateTime.now())
                 .ebmsData(messageDetails)
                 .messageContent(messageContent)
@@ -229,24 +237,26 @@ public class DomainEntityCreator {
                                 .businessXml(createSimpleMessageAttachment())
                                 .build())
                         .messageStates(Stream.of(DC5BusinessMessageState.builder()
-                                                .event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
-                                                .state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
+                                        .event(DC5BusinessMessageState.BusinessMessageEvents.NEW_MSG)
+                                        .state(DC5BusinessMessageState.BusinessMessagesStates.CREATED)
                                         .build(),
-                                        DC5BusinessMessageState.builder()
-                                                .event(DC5BusinessMessageState.BusinessMessageEvents.SUBMISSION_ACCEPTANCE_RCV)
-                                                .state(DC5BusinessMessageState.BusinessMessagesStates.SUBMITTED)
-                                                .confirmation(DC5Confirmation.builder()
-                                                        .evidence("<evidence />".getBytes())    //better use real evidence...
-                                                        .evidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE)
-                                                        .build())
-                                                .build()
-                                ).collect(Collectors.toList()))
+                                DC5BusinessMessageState.builder()
+                                        .event(DC5BusinessMessageState.BusinessMessageEvents.SUBMISSION_ACCEPTANCE_RCV)
+                                        .state(DC5BusinessMessageState.BusinessMessagesStates.SUBMITTED)
+                                        .confirmation(DC5Confirmation.builder()
+                                                .evidence("<evidence />".getBytes())    //better use real evidence...
+                                                .evidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE)
+                                                .build())
+                                        .build()
+                        ).collect(Collectors.toList()))
                         .build())
                 .build();
     }
 
     public static DC5Message.DC5MessageBuilder createOutgoingEpoFormAMessage(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .backendData(createOutgoingEpoFormAMessageBackendData(backendMessageId))
                 .ebmsData(createOutgoingEpoFormAMessageEbmsData().build())
                 .backendLinkName(EPO_BACKEND)
@@ -275,7 +285,6 @@ public class DomainEntityCreator {
     }
 
 
-
     public static DC5Message createRelayRemmdRejectEvidenceForMessage(DC5Message message) {
         DC5Ebms.DC5EbmsBuilder dc5EbmsBuilder = message.getEbmsData().toBuilder();
 
@@ -289,6 +298,8 @@ public class DomainEntityCreator {
         DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdRejectConfirmation();
 
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .ebmsData(dc5EbmsBuilder.build())
                 .target(MessageTargetSource.BACKEND)
                 .source(MessageTargetSource.GATEWAY)
@@ -310,6 +321,8 @@ public class DomainEntityCreator {
         DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
 
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .ebmsData(dc5EbmsBuilder.build())
                 .target(MessageTargetSource.BACKEND)
                 .source(MessageTargetSource.GATEWAY)
@@ -332,6 +345,8 @@ public class DomainEntityCreator {
         ebmsBuilder.service(createServiceEPO());
 
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .ebmsData(ebmsBuilder.build())
                 .transportedMessageConfirmation(confirmation)
                 .build();
@@ -351,6 +366,8 @@ public class DomainEntityCreator {
         ebmsBuilder.service(createServiceEPO());
 
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .ebmsData(ebmsBuilder.build())
                 .transportedMessageConfirmation(createMessageDeliveryConfirmation())
                 .build();
@@ -426,22 +443,23 @@ public class DomainEntityCreator {
 //        messageDetails.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 //        messageDetails.setDeliveredToGateway(parseDateTime("2018-01-01 12:12:12"));
 //        messageDetails.setDeliveredToBackend(parseDateTime("2018-01-01 12:12:12"));
-        
+
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
 //        messageDetails.setToParty(createPartyATasInitiator());
 //        messageDetails.setFromParty(createPartyDE());
-        
+
         return messageDetails;
     }
-    
-    
-     /**
+
+
+    /**
      * creates a error message with
      * #createSimpleDomibusConnectorMessage as message
      * "error detail message" as details
      * "error message" as text
      * "error source" as error source
+     *
      * @return the MessageError
      */
     public static DomibusConnectorMessageError createMessageError() {
@@ -455,12 +473,12 @@ public class DomainEntityCreator {
     }
 
     public static DC5MessageAttachment createMessageAttachment() {
-                
+
         return DC5MessageAttachment.builder()
                 .attachment(connectorBigDataReferenceFromDataSource("attachment"))
                 .identifier("identifier")
                 .digest(Digest.builder().digestValue("123213").digestAlgorithm("md5").build())
-                .build(); 
+                .build();
     }
 
 //    public static DomibusConnectorMessageDocument createDocumentWithNoSignature() {
@@ -480,14 +498,14 @@ public class DomainEntityCreator {
 //                .build();
 //        return doc;
 //    }
-    
-    public static DC5MessageContent createMessageContentWithDocumentWithNoSignature()  {
+
+    public static DC5MessageContent createMessageContentWithDocumentWithNoSignature() {
 //        try {
-            DC5MessageContent messageContent = new DC5MessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
 //            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
 //            messageContent.setDocument(createDocumentWithNoSignature());
-                        
-            return messageContent;
+
+        return messageContent;
 //        } catch (UnsupportedEncodingException ex) {
 //            throw new RuntimeException(ex);
 //        }
@@ -495,11 +513,11 @@ public class DomainEntityCreator {
 
     public static DC5MessageContent createMessageContentWithDocumentWithNoPdfDocument() {
 //        try {
-            DC5MessageContent messageContent = new DC5MessageContent();
+        DC5MessageContent messageContent = new DC5MessageContent();
 //            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
 //            messageContent.setDocument(null);
-                        
-            return messageContent;
+
+        return messageContent;
 //        } catch (UnsupportedEncodingException ex) {
 //            throw new RuntimeException(ex);
 //        }
@@ -517,6 +535,8 @@ public class DomainEntityCreator {
 
     public static DC5Message createIncomingEpoFormAMessage() {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+
                 .source(MessageTargetSource.GATEWAY)
                 .target(MessageTargetSource.BACKEND)
                 .gatewayLinkName(getDefaultGatewayName())
