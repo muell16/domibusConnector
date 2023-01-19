@@ -1,17 +1,19 @@
 package eu.ecodex.dc5.flow.steps;
 
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
-import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
-import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.process.MessageProcessManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +44,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     private final ApplicationEventPublisher eventPublisher;
 
     private final DC5MessageRepo messageRepo;
+    private final MessageProcessManager processManager;
 
     /**
      * sends the supplied confirmation as
@@ -111,6 +114,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 
         DC5Message.DC5MessageBuilder dc5EvidenceMessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
         DC5Message evidenceMessage = dc5EvidenceMessageBuilder
+                .process(processManager.getCurrentProcess())
                 .connectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId())
                 .target(businessMessage.getSource())
                 .source(businessMessage.getTarget())

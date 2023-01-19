@@ -71,7 +71,7 @@ public class MessageProcessManager {
         if (dc5MsgProcess == null) {
             throw new IllegalStateException("No message process is currently active in this thread! You must start one first with MessageProcessManager.startProcess");
         }
-        return dc5MsgProcess;
+        return msgProcessRepo.getDC5MsgProcessByProcessId(dc5MsgProcess.getProcessId()); // return jpa managed entity, can not persist a msg with proc in detached state.
     }
 
     public MessageProcessId getCurrentMessageProcesssId() {
