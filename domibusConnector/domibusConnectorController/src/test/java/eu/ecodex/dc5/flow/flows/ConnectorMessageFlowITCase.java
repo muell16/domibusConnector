@@ -20,6 +20,8 @@ import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import lombok.Data;
@@ -1138,6 +1140,7 @@ public class ConnectorMessageFlowITCase {
         LocalDateTime created = LocalDateTime.now();
 
         DC5Message.DC5MessageBuilder businessMsgBuilder = DC5Message.builder();
+        businessMsgBuilder.process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build());
         businessMsgBuilder.connectorMessageId(CONNECTOR_MESSAGE_ID);
         businessMsgBuilder.businessDomainId(DomainEntityCreator.getEpoBusinessDomain());
         businessMsgBuilder.target(MessageTargetSource.GATEWAY);
@@ -1197,6 +1200,7 @@ public class ConnectorMessageFlowITCase {
             deliveryMsgBuilder
                     .source(MessageTargetSource.GATEWAY)
                     .target(MessageTargetSource.BACKEND)
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .ebmsData(DC5Ebms.builder()
                             .refToEbmsMessageId(ebmsId)
                             .ebmsMessageId(EbmsMessageId.ofRandom())

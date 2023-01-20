@@ -117,8 +117,6 @@ public class DC5Message implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PROCESS_ID", referencedColumnName = "ID", nullable = false)
-    @NotNull
-    @NonNull
     private DC5MsgProcess process;
 
 

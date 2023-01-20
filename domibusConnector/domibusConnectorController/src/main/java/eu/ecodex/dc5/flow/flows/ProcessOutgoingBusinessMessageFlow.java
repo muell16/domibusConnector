@@ -2,19 +2,21 @@ package eu.ecodex.dc5.flow.flows;
 
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import eu.domibus.connector.lib.logging.MDC;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.ecodex.dc5.flow.api.StepFailedException;
+import eu.ecodex.dc5.flow.common.SubmitConfirmationMsg;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
-import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.events.OutgoingBusinessMessageTransportEvent;
 import eu.ecodex.dc5.flow.steps.*;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
-import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.ecodex.dc5.message.model.DC5MessageId;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.MessageModelHelper;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.message.validation.OutgoingBusinessMessageRules;
@@ -25,10 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.ecodex.dc5.message.model.DC5Message;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -58,6 +56,8 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
     private final DC5MessageRepo messageRepo;
     private final ApplicationEventPublisher eventPublisher;
     private final ConnectorMessageProcessingProperties processingProperties;
+
+    private final SubmitConfirmationMsg submitConfirmationMsg;
 
     @EventListener
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
@@ -101,18 +101,7 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
      * @param confirmation - the confirmation
      */
     private void submitConfirmationMsg(DC5Message businessMessage, DC5Confirmation confirmation) {
-        DC5Message.DC5MessageBuilder builder = DC5Message.builder();
-        DC5Message evidenceMessage = builder
-                .source(businessMessage.getTarget())
-                .target(businessMessage.getSource())
-                .transportedMessageConfirmation(confirmation)
-                .businessDomainId(businessMessage.getBusinessDomainId())
-                .refToConnectorMessageId(businessMessage.getConnectorMessageId())
-                .connectorMessageId(DC5MessageId.ofRandom())
-                .build();
-        messageRepo.save(evidenceMessage);
-        NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());
-        eventPublisher.publishEvent(newMessageStoredEvent);
+        submitConfirmationMsg.submitConfirmationMsg(businessMessage, confirmation);
     }
 
     @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)

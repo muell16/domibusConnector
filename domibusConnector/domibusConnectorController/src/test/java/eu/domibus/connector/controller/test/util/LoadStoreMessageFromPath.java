@@ -11,6 +11,8 @@ import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,8 @@ public class LoadStoreMessageFromPath {
 
     public static final String MESSAGE_TARGET_PROP_NAME = "msg.target";
     public static final String MESSAGE_SOURCE_PROP_NAME = "msg.source";
+
+    public static final String MESSAGE_PROCESS_PROP_NAME = "msg.process";
     public static String INITIATOR_ROLE_PROP_NAME = "role.initiator";
     public static String RESPONDER_ROLE_PROP_NAME = "role.responder";
     public static final String ECX_MESSAGE_ASIC_CONTENT_PROP_NAME = "ecx.asics";
@@ -288,7 +292,13 @@ public class LoadStoreMessageFromPath {
         if (messageProperties.get(MESSAGE_SOURCE_PROP_NAME) != null) {
             builder.source(MessageTargetSource.valueOf(messageProperties.get(MESSAGE_SOURCE_PROP_NAME).toString()));
         }
-
+        if (messageProperties.get(MESSAGE_PROCESS_PROP_NAME) != null) {
+            builder.process(DC5MsgProcess.builder()
+                    .processId(MessageProcessId.ofString(messageProperties.get(MESSAGE_PROCESS_PROP_NAME).toString()))
+                    .build());
+        } else {
+            builder.process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build());
+        }
     }
 
 

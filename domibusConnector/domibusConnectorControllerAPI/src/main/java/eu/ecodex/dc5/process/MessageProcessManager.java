@@ -95,6 +95,13 @@ public class MessageProcessManager {
         public DC5MsgProcess getProcess();
     }
 
+    public DC5MsgProcess createProcess() {
+        final MessageProcessId messageProcessId = MessageProcessId.ofString(messageIdGenerator.generateDomibusConnectorMessageId().toString());
+        DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
+        dc5MsgProcess.setProcessId(messageProcessId); dc5MsgProcess.setCreated(LocalDateTime.now());
+        return msgProcessRepo.save(dc5MsgProcess);
+    }
+
 }
 
 

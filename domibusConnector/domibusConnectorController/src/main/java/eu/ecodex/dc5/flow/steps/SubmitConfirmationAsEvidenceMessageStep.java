@@ -97,21 +97,6 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     public void submitOppositeDirection(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
         validateParameters(businessMessage);
 
-//        DC5Ebms.DC5EbmsBuilder ebmsData = businessMessage.getEbmsData().toBuilder();
-//
-//        DC5EcxAddress sender = businessMessage.getEbmsData().getGatewayAddress()
-//                .toBuilder()
-////                .role(businessMessage.getEbmsData().getBackendAddress().getRole()
-////                        .toBuilder()
-////                        .build())
-//                .build();
-//        DC5EcxAddress receiver = businessMessage.getEbmsData().getBackendAddress()
-//                .toBuilder()
-////                .role(businessMessage.getEbmsData().getGatewayAddress().getRole()
-////                        .toBuilder()
-////                        .build())
-//                .build();
-
         DC5Message.DC5MessageBuilder dc5EvidenceMessageBuilder = buildEvidenceMessage(messageId, businessMessage, confirmation);
         DC5Message evidenceMessage = dc5EvidenceMessageBuilder
                 .process(processManager.getCurrentProcess())
@@ -127,7 +112,6 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 
         MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getSource());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
-
     }
 
 
@@ -173,6 +157,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
 
 
             msgBuilder.id(null)
+                    .process(processManager.getCurrentProcess())
                     .businessDomainId(businessMessage.getBusinessDomainId())
                     .ebmsData(ebmsDataBuilder.build())
 //                    .backendData(dc5BackendDataBuilder.build())
