@@ -40,7 +40,7 @@ public class TransportMessageFlow {
     private final ConfirmationCreatorService confirmationCreatorService;
     private final ApplicationEventPublisher eventPublisher;
     private final MessageProcessManager messageProcessManager;
-    private SubmitConfirmationMsg submitConfirmationMsg;
+    private final SubmitConfirmationMsg submitConfirmationMsg;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleMessageReadyForTransport(MessageReadyForTransportEvent messageReadyForTransportEvent) {
