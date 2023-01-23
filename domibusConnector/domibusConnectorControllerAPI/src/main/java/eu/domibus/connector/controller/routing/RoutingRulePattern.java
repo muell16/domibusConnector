@@ -67,8 +67,10 @@ public class RoutingRulePattern {
                 return details.getBackendAddress().getParty().getPartyIdType();
             } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
                 return details.getBackendAddress().getParty().getPartyId();
-//        } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {
-//            return details.getSender().getRole().toString();
+            } else if (as4Attribute == TokenType.BACKEND_NAME) {
+                return message.getBackendLinkName() == null ? null : message.getBackendLinkName().getLinkName();
+            } else if (as4Attribute == TokenType.GATEWAY_NAME) {
+                return message.getGatewayLinkName() == null ? null : message.getGatewayLinkName().getLinkName();
             } else {
                 throw new RuntimeException("Unsupported AS4 Attribute to match!");
             }
