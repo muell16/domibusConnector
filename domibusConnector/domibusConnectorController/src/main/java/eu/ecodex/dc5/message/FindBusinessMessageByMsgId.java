@@ -86,7 +86,7 @@ public class FindBusinessMessageByMsgId {
     }
 
     public @NonNull List<DC5Message> findBusinessMsgByConversationId(String s) {
-        final DC5Message example = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId(s).build()).build(); // TODO: test
+        final DC5Message example = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId(s).build()).build();
         return dc5MessageRepo.findAll(Example.of(example));
     }
 
