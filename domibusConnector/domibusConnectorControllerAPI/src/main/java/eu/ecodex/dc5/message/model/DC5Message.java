@@ -14,6 +14,7 @@ import eu.ecodex.dc5.message.validation.ConfirmationMessageRules;
 import eu.ecodex.dc5.message.validation.IncomingBusinessMesssageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
 import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
@@ -42,7 +43,7 @@ import java.util.stream.Stream;
  */
 @Valid
 @Entity
-
+@Table(name = "DC5_MESSAGE")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -57,6 +58,7 @@ public class DC5Message implements Serializable {
     @CheckForNull
     @Convert(converter = BusinessDomainIdConverter.class)
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must already have a business domain!")
+    @Column(name = "DOMAIN_KEY")
     private DC5BusinessDomain.BusinessDomainId businessDomainId = DC5BusinessDomain.getDefaultBusinessDomainId();
 
     @NotNull(message = "A message must have a connectorMessageId!")
@@ -110,7 +112,12 @@ public class DC5Message implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @CheckForNull
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a transport confirmation!")
+    @JoinColumn(name = "MESSAGECONFIRMATION_ID", referencedColumnName = "ID")
     private DC5Confirmation transportedMessageConfirmation;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "PROCESS_ID", referencedColumnName = "ID", nullable = false)
+    private DC5MsgProcess process;
 
 
     @Transient //TODO: move to process

@@ -18,7 +18,9 @@ import eu.ecodex.dc5.link.repository.DomibusConnectorLinkPartnerDao;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.MessageProcessManager;
 import eu.ecodex.dc5.process.model.DC5MsgProcess;
+import eu.ecodex.dc5.process.repository.DC5MsgProcessRepo;
 import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -126,10 +128,17 @@ public class LinkTestContext {
         return new LargeFilePersistenceServicePassthroughImpl();
     }
 
+
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorDomainMessageTransformerService transformerService(LargeFilePersistenceService largeFilePersistenceService) {
-        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceService);
+    public DC5MsgProcessRepo mockProcessRepo() {
+        return Mockito.mock(DC5MsgProcessRepo.class);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorDomainMessageTransformerService transformerService(LargeFilePersistenceService largeFilePersistenceService, DC5MsgProcessRepo processRepo) {
+        return new DomibusConnectorDomainMessageTransformerService(largeFilePersistenceService, new MessageProcessManager(processRepo));
     }
 
     @Bean

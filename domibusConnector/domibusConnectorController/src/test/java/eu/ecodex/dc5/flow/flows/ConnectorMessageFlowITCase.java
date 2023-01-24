@@ -20,6 +20,8 @@ import eu.ecodex.dc5.flow.events.MessageTransportEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import eu.ecodex.dc5.transport.model.DC5TransportRequest;
 import eu.ecodex.dc5.transport.repo.DC5TransportRequestRepo;
 import lombok.Data;
@@ -268,6 +270,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
@@ -362,6 +365,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
@@ -386,6 +390,7 @@ public class ConnectorMessageFlowITCase {
 
             //send 2nd trigger
             DC5Message deliveryTriggerMessage2 = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
@@ -466,6 +471,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
@@ -501,6 +507,7 @@ public class ConnectorMessageFlowITCase {
 
             //send 2nd trigger
             DC5Message deliveryTriggerMessage2 = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(NON_RETRIEVAL)
                             .build()
@@ -584,6 +591,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(NON_DELIVERY)
                             .build()
@@ -670,6 +678,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message deliveryTriggerMessage = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(DELIVERY)
                             .build()
@@ -690,6 +699,7 @@ public class ConnectorMessageFlowITCase {
 
             //create confirmation trigger message...
             DC5Message retrievalTriggerMsg = DC5Message.builder()
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .transportedMessageConfirmation(DC5Confirmation.builder()
                             .evidenceType(RETRIEVAL)
                             .build()
@@ -1005,6 +1015,7 @@ public class ConnectorMessageFlowITCase {
                         .build());
                 DC5Confirmation confirmation = confirmationCreatorService.createConfirmation(RELAY_REMMD_ACCEPTANCE, m, null, "");
                 builder.transportedMessageConfirmation(confirmation);
+                builder.process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build());
             });
             submitFromGatewayToController(builder.build());
 
@@ -1138,6 +1149,7 @@ public class ConnectorMessageFlowITCase {
         LocalDateTime created = LocalDateTime.now();
 
         DC5Message.DC5MessageBuilder businessMsgBuilder = DC5Message.builder();
+        businessMsgBuilder.process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build());
         businessMsgBuilder.connectorMessageId(CONNECTOR_MESSAGE_ID);
         businessMsgBuilder.businessDomainId(DomainEntityCreator.getEpoBusinessDomain());
         businessMsgBuilder.target(MessageTargetSource.GATEWAY);
@@ -1197,6 +1209,7 @@ public class ConnectorMessageFlowITCase {
             deliveryMsgBuilder
                     .source(MessageTargetSource.GATEWAY)
                     .target(MessageTargetSource.BACKEND)
+                    .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                     .ebmsData(DC5Ebms.builder()
                             .refToEbmsMessageId(ebmsId)
                             .ebmsMessageId(EbmsMessageId.ofRandom())
@@ -1606,6 +1619,7 @@ public class ConnectorMessageFlowITCase {
 
     private DC5Message createTestMessage1(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()
                         .backendMessageId(backendMessageId)
@@ -1627,6 +1641,7 @@ public class ConnectorMessageFlowITCase {
 
     private DC5Message createTestMessage2(DC5MessageId connectorMessageId, BackendMessageId backendMessageId) {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .connectorMessageId(connectorMessageId)
                 .backendData(DC5BackendData.builder()
                         .backendMessageId(backendMessageId)

@@ -1,6 +1,8 @@
 package eu.domibus.connector.controller.routing;
 
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -52,6 +54,7 @@ public class LinkPartnerRoutingRuleEvaluationTest {
 
     private static DC5Message getMessage1() {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .ebmsData(DC5Ebms.builder()
                         .action(DC5Action.builder().action("OtherAction").build())
                         .service(DC5Service.builder()
@@ -69,6 +72,7 @@ public class LinkPartnerRoutingRuleEvaluationTest {
 
     private static DC5Message getMessage2() {
         return DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .ebmsData(DC5Ebms.builder()
                         .action(DC5Action.builder().action("ConTest_Form").build())
                         .service(DC5Service.builder()

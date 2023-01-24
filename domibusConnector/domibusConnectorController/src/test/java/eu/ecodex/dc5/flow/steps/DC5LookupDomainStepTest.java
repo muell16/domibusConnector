@@ -9,6 +9,8 @@ import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,8 +45,14 @@ class DC5LookupDomainStepTest {
 
         // Arrange
         final String domainId = "test-id-1";
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().refToEbmsMessageId(EbmsMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId)).build();
+        final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .ebmsData(DC5Ebms.builder().refToEbmsMessageId(EbmsMessageId.ofRandom()).build())
+                .build();
+        final DC5Message stub = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId))
+                .build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -61,8 +69,14 @@ class DC5LookupDomainStepTest {
 
         // Arrange
         final String domainId = "test-domainId-2";
-        final DC5Message incomingMsg = DC5Message.builder().backendData(DC5BackendData.builder().refToBackendMessageId(BackendMessageId.ofRandom()).build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId)).build();
+        final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .backendData(DC5BackendData.builder().refToBackendMessageId(BackendMessageId.ofRandom()).build())
+                .build();
+        final DC5Message stub = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .businessDomainId(new DC5BusinessDomain.BusinessDomainId(domainId))
+                .build();
         when(msgService.findBusinessMsgByRefToMsgId(any())).thenReturn(Optional.of(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -80,8 +94,14 @@ class DC5LookupDomainStepTest {
 
         // Arrange
         final String id = "test-domainId-3";
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId("test-conversation-id").build()).build();
-        final DC5Message stub = DC5Message.builder().businessDomainId(new DC5BusinessDomain.BusinessDomainId(id)).build();
+        final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .ebmsData(DC5Ebms.builder().conversationId("test-conversation-id").build())
+                .build();
+        final DC5Message stub = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .businessDomainId(new DC5BusinessDomain.BusinessDomainId(id))
+                .build();
         when(msgService.findBusinessMsgByConversationId(any())).thenReturn(Collections.singletonList(stub));
 
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);
@@ -130,6 +150,7 @@ class DC5LookupDomainStepTest {
         when(dcDomainRoutingManager.getDomainRoutingRules(DC5BusinessDomain.BusinessDomainId.of(notMatchingDomainId2))).thenReturn(new HashMap<String, DomainRoutingRule>());
 
         final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .ebmsData(DC5Ebms.builder()
                         .service(DC5Service.builder().service(serviceName)
                         .serviceType(serviceType).build()).build())
@@ -177,6 +198,7 @@ class DC5LookupDomainStepTest {
         when(dcDomainRoutingManager.getDomainRoutingRules(new DC5BusinessDomain.BusinessDomainId(testDomain2))).thenReturn(ruleIdRuleMap1);
 
         final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .ebmsData(DC5Ebms.builder()
                         .service(DC5Service.builder()
                                 .service(serviceName)
@@ -206,7 +228,9 @@ class DC5LookupDomainStepTest {
         when(domainManager.getValidDomains())
                 .thenReturn(Arrays.asList(createDomain(nonMatchingDomainId1)));
         when(dcDomainRoutingManager.getDomainRoutingRules(createDomain(nonMatchingDomainId1).getId())).thenReturn(new HashMap<>());
-        final DC5Message incomingMsg = DC5Message.builder().ebmsData(DC5Ebms.builder()
+        final DC5Message incomingMsg = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
+                .ebmsData(DC5Ebms.builder()
                         .conversationId("test1")
                 .build()).build();
         final DC5LookupDomainStep sut = new DC5LookupDomainStep(domainManager, msgService, dcDomainRoutingManager);

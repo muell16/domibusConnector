@@ -1,33 +1,37 @@
 package eu.domibus.connector.domain.transformer;
 
-import org.apache.commons.io.input.CountingInputStream;
 import eu.domibus.connector.domain.enums.AdvancedElectronicSystemType;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
-import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.domain.transition.tools.TransitionHelper;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.ecodex.dc5.message.model.*;
+import eu.ecodex.dc5.process.MessageProcessManager;
+import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
-
 import javax.validation.constraints.NotNull;
-import javax.xml.transform.*;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
@@ -50,6 +54,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDomainMessageTransformerService.class);
     private final LargeFilePersistenceService largeFilePersistenceService;
+    private final MessageProcessManager messageProcessManager;
 
     public List<DomibusConnectorMessageError> transformTransitionToDomain(List<DomibusConnectorMessageErrorType> messageErrors) {
         return messageErrors.stream()
@@ -75,9 +80,9 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     }
 
-    @Autowired
-    public DomibusConnectorDomainMessageTransformerService(LargeFilePersistenceService largeFilePersistenceService) {
+    public DomibusConnectorDomainMessageTransformerService(LargeFilePersistenceService largeFilePersistenceService, MessageProcessManager messageProcessManager) {
         this.largeFilePersistenceService = largeFilePersistenceService;
+        this.messageProcessManager = messageProcessManager;
     }
 
     /**
@@ -397,6 +402,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 
             //DomibusConnectorMessage
             DC5Message.DC5MessageBuilder dc5MessageBuilder = DC5Message.builder();
+            dc5MessageBuilder.process(messageProcessManager.getCurrentProcess());
             dc5MessageBuilder.source(target.getOpposite());
             dc5MessageBuilder.target(target);
             dc5MessageBuilder.connectorMessageId(messageId);

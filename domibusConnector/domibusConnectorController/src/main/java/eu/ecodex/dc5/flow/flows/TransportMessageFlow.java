@@ -2,20 +2,17 @@ package eu.ecodex.dc5.flow.flows;
 
 
 import eu.domibus.connector.controller.service.SubmitToLinkService;
-import eu.domibus.connector.controller.spring.ConnectorMessageProcessingProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.ecodex.dc5.domain.CurrentBusinessDomain;
 import eu.ecodex.dc5.events.DC5EventListener;
+import eu.ecodex.dc5.flow.common.SubmitConfirmationMsg;
 import eu.ecodex.dc5.flow.events.MessageReadyForTransportEvent;
 import eu.ecodex.dc5.flow.events.MessageTransportEvent;
-import eu.ecodex.dc5.flow.events.NewMessageStoredEvent;
 import eu.ecodex.dc5.flow.events.OutgoingBusinessMessageTransportEvent;
 import eu.ecodex.dc5.message.ConfirmationCreatorService;
-import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import eu.ecodex.dc5.process.MessageProcessManager;
@@ -38,18 +35,17 @@ import java.util.Optional;
 public class TransportMessageFlow {
 
     private final SubmitToLinkService submitToLinkService;
-    private final DC5MessageRepo dc5MessageRepo;
+    private final DC5MessageRepo messageRepo;
     private final DC5TransportRequestRepo dc5TransportRequestRepo;
     private final ConfirmationCreatorService confirmationCreatorService;
     private final ApplicationEventPublisher eventPublisher;
-    private final ConnectorMessageProcessingProperties processingProperties;
-    private final DomibusConnectorEvidencesToolkit evidencesToolkit;
-    private final FindBusinessMessageByMsgId findBusinessMessageByMsgId;
+    private final MessageProcessManager messageProcessManager;
+    private final SubmitConfirmationMsg submitConfirmationMsg;
 
     @DC5EventListener //implicit transactional and resumes implicit current message process
     public void handleMessageReadyForTransport(MessageReadyForTransportEvent messageReadyForTransportEvent) {
 
-        DC5Message msg = dc5MessageRepo.getById(messageReadyForTransportEvent.getId());
+        DC5Message msg = messageRepo.getById(messageReadyForTransportEvent.getId());
 
         DC5TransportRequest transportRequest = new DC5TransportRequest();
         transportRequest.setMessage(msg);
@@ -72,8 +68,6 @@ public class TransportMessageFlow {
         submitToLinkService.submitToLink(build);
 
     }
-
-    private final MessageProcessManager messageProcessManager;
 
 //    @DC5EventListener
     //TODO: restore correct Message Process here...
@@ -201,18 +195,7 @@ public class TransportMessageFlow {
      * @param confirmation - the confirmation
      */
     private void submitConfirmationMsg(DC5Message businessMessage, DC5Confirmation confirmation) {
-        DC5Message.DC5MessageBuilder builder = DC5Message.builder();
-        DC5Message evidenceMessage = builder
-                .source(businessMessage.getTarget())
-                .target(businessMessage.getSource())
-                .transportedMessageConfirmation(confirmation)
-                .businessDomainId(businessMessage.getBusinessDomainId())
-                .refToConnectorMessageId(businessMessage.getConnectorMessageId())
-                .connectorMessageId(DC5MessageId.ofRandom())
-                .build();
-        dc5MessageRepo.save(evidenceMessage);
-        NewMessageStoredEvent newMessageStoredEvent = NewMessageStoredEvent.of(evidenceMessage.getId());
-        eventPublisher.publishEvent(newMessageStoredEvent);
+        submitConfirmationMsg.submitConfirmationMsg(businessMessage, confirmation);
     }
 
 }

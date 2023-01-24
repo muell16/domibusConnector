@@ -37,7 +37,7 @@ public class DC5BusinessDomainJpaEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
-    @Column(name= "NAME", unique = true, nullable = false, length = 255)
+    @Column(name= "DOMAIN_KEY", unique = true, nullable = false, length = 255)
     @Convert(converter = BusinessDomainIdConverter.class)
     private DC5BusinessDomain.BusinessDomainId name;
 
