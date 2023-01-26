@@ -14,6 +14,8 @@
                 <prop key="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
                 <prop key="org.apache.ws.security.crypto.merlin.keystore.password">12345</prop>
                 <prop key="org.apache.ws.security.crypto.merlin.keystore.file">keystores/client-${ws.backendclient.name}.jks</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.private.password">12345</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${ws.backendclient.name}</prop>
             </props>
         </property>
     </bean>

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.8-SNAPSHOT</version>
+    <version>4.4.7</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -128,7 +128,7 @@
         <org.xmlunit.xmlunit-matchers.version>2.5.1</org.xmlunit.xmlunit-matchers.version>
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.3</org.dbunit.dbunit.version>
-        <com.google.guava.version>30.1.1-jre </com.google.guava.version>
+        <com.google.guava.version>30.1.1-jre</com.google.guava.version>
         <mysql.mysql-connector-java.version>8.0.31</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.8</org.postgresql.postgresql.version>
         <org.mariadb.jdbc.mariadb-java-client.version>3.0.9</org.mariadb.jdbc.mariadb-java-client.version>
@@ -582,8 +582,8 @@
                 <version>${org.postgresql.postgresql.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.checkerframework</groupId>
                         <artifactId>checker-qual</artifactId>
+                        <groupId>org.checkerframework</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
