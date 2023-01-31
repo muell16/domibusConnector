@@ -345,10 +345,6 @@ public class DomibusConnectorDomainMessageTransformerService {
             if (messageHasBackendMessageId) {
                 toDetailsType.setRefToMessageId(message.getBackendData().getBackendMessageId().toString());
             }
-            boolean messageHasBackendConversationId = message.getBackendData() != null && message.getBackendData().getBackendConversationId() != null;
-            if (messageHasBackendConversationId) {
-                toDetailsType.setConversationId(message.getBackendData().getBackendConversationId());
-            }
         }
 
         //map backend id
@@ -492,7 +488,6 @@ public class DomibusConnectorDomainMessageTransformerService {
         backendDataBuilder.backendMessageId(BackendMessageId.ofString(messageDetailsTO.getBackendMessageId()));
         if (target == MessageTargetSource.GATEWAY) {
             backendDataBuilder.refToBackendMessageId(BackendMessageId.ofString(messageDetailsTO.getRefToMessageId()));
-            backendDataBuilder.backendConversationId(messageDetailsTO.getConversationId());
         }
 
         return backendDataBuilder.build();

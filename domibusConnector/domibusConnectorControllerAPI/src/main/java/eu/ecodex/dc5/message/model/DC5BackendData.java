@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-
+@Table(name = "DC5_BACKEND_DATA")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,8 +27,6 @@ public class DC5BackendData {
 
     @Convert(converter = BackendMessageIdConverter.class)
     private BackendMessageId refToBackendMessageId;
-
-    private String backendConversationId;
 
     public String toString() {
         return new ToStringCreator(this)
