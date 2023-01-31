@@ -8,7 +8,6 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -18,8 +17,8 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Entity
+@Table(name = "DC5_EXC_ADDRESS")
 public class DC5EcxAddress {
 
     @Id
@@ -35,6 +34,7 @@ public class DC5EcxAddress {
     @NotBlank(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a ecx addr")
     @NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a ecx addr")
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a ecx addr")
+    @Column(name = "SENDER_RECEIVER_REF")
     private String ecxAddress;
 
     @ManyToOne(cascade = CascadeType.ALL)
