@@ -4,7 +4,7 @@
     <jaxws:endpoint xmlns:s="http://connector.domibus.eu/ws/gateway/webservice"
                     id="testGwPullServiceEndpoint"
                     implementor="#testGwPullService"
-                    address="/pullservice"
+                    address="/dcpullplugin"
                     endpointName="s:DomibusConnectorGatewayWebService"
                     serviceName="s:DomibusConnectorGatewayWSService"
                     wsdlLocation="wsdl/DomibusConnectorGatewayWebService.wsdl">
