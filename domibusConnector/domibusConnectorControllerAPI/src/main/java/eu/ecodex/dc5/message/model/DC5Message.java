@@ -19,6 +19,7 @@ import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.CheckForNull;
+import javax.inject.Named;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -50,8 +51,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 
-@NamedEntityGraph(name = "DC5Message.fetchAll", includeAllAttributes = true,
-        attributeNodes = { @NamedAttributeNode(value = "ebmsData")})
+//@EntityGraph(attributePaths = {"ebmsData.action", "ebmsData.service", "ebmsData.backendAddress", "ebmsData.gatewayAddress.party", "ebmsData.initiatorRole", "ebmsData.responderRole", "messageContent.currentState", "messageContent.messageStates"}, type = EntityGraph.EntityGraphType.LOAD)
 public class DC5Message implements Serializable {
 
     @GeneratedValue
