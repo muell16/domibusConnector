@@ -1,19 +1,22 @@
 package eu.ecodex.dc5.message.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "DC5_PARTNER")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class DC5Partner {
+
+    @Builder(toBuilder = true)
+    public DC5Partner(DC5EcxAddress partnerAddress, DC5Role partnerRole) {
+        this.partnerAddress = partnerAddress;
+        this.partnerRole = partnerRole;
+    }
+
     @Id
     @GeneratedValue
     @Column(name = "PARTNER_ID")

@@ -142,7 +142,8 @@ public class LoadStoreMessageFromPath {
                     DC5Confirmation confirmation = state.getConfirmation();
                     String evidenceFilePropertyName = String.format("%s.%s", statePrefix, "file");
                     String evidenceTypePropertyName = String.format("%s.%s", statePrefix, "type");
-                    String fileName = getFileNameFromPrefix(evidenceFilePropertyName) + ".xml";;
+                    String fileName = getFileNameFromPrefix(evidenceFilePropertyName) + ".xml";
+                    ;
 
                     messageProperties.put(evidenceTypePropertyName, confirmation.getEvidenceType().name());
                     messageProperties.put(evidenceFilePropertyName, fileName);
@@ -245,8 +246,6 @@ public class LoadStoreMessageFromPath {
         messageProperties.load(propertiesResource.getInputStream());
 
         loadMessageData(builder);
-
-
 
 
         DC5MessageContent.DC5MessageContentBuilder contentBuilder = DC5MessageContent.builder();
@@ -542,29 +541,27 @@ public class LoadStoreMessageFromPath {
     }
 
 
-
-
     private void storeEbmsMessageDetails(DC5Ebms details) {
 
         if (details.getAction() != null && details.getAction().getAction() != null) {
             messageProperties.put(LoadStoreTransitionMessage.ACTION_PROP_NAME, details.getAction().getAction());
         }
 
-        if (details.getBackendAddress() != null) {
-            Map<String, String> senderProperties = getAddrProperties(details.getBackendAddress());
+        if (details.getInitiator() != null) {
+            Map<String, String> senderProperties = getAddrProperties(details.getInitiator().getPartnerAddress());
             senderProperties.forEach((key, value) ->
                     messageProperties.put(GATEWAY_PREFIX + key, value));
         }
-        if (details.getGatewayAddress() != null) {
-            Map<String, String> senderProperties = getAddrProperties(details.getBackendAddress());
+        if (details.getResponder() != null) {
+            Map<String, String> senderProperties = getAddrProperties(details.getResponder().getPartnerAddress());
             senderProperties.forEach((key, value) ->
                     messageProperties.put(BACKEND_PREFIX + key, value));
         }
-        if (details.getResponderRole() != null) {
-            messageProperties.put(RESPONDER_ROLE_PROP_NAME, details.getResponderRole().getRole());
+        if (details.getResponder().getPartnerRole() != null) {
+            messageProperties.put(RESPONDER_ROLE_PROP_NAME, details.getResponder().getPartnerRole());
         }
-        if (details.getInitiatorRole() != null) {
-            messageProperties.put(INITIATOR_ROLE_PROP_NAME, details.getInitiatorRole().getRole());
+        if (details.getInitiator().getPartnerRole() != null) {
+            messageProperties.put(INITIATOR_ROLE_PROP_NAME, details.getInitiator().getPartnerRole());
         }
 
         if (details.getService() != null && details.getService() != null) {
@@ -596,32 +593,33 @@ public class LoadStoreMessageFromPath {
     }
 
 
-
     private DC5Ebms.DC5EbmsBuilder loadEcxDatailsFromProperties() {
         DC5Ebms.DC5EbmsBuilder builder = DC5Ebms.builder();
-        builder.backendAddress(loadEcxAddress(BACKEND_PREFIX));
-        builder.gatewayAddress(loadEcxAddress(GATEWAY_PREFIX));
+        builder.initiator(DC5Partner.builder().partnerAddress(loadEcxAddress(BACKEND_PREFIX)).build());
+        builder.responder(DC5Partner.builder().partnerAddress(loadEcxAddress(GATEWAY_PREFIX)).build());
 
         if (messageProperties.getProperty(INITIATOR_ROLE_PROP_NAME) != null) {
-            builder.initiatorRole(DC5Role.builder()
-                    .role(messageProperties.getProperty(INITIATOR_ROLE_PROP_NAME).toString())
-                    .roleType(DC5RoleType.INITIATOR)
-                    .build()
-            );
+            builder.initiator(DC5Partner.builder()
+                    .partnerRole(DC5Role.builder()
+                            .role(messageProperties.getProperty(INITIATOR_ROLE_PROP_NAME).toString())
+                            .roleType(DC5RoleType.INITIATOR)
+                            .build()
+                    ).build());
         }
         if (messageProperties.getProperty(RESPONDER_ROLE_PROP_NAME) != null) {
-            builder.responderRole(DC5Role.builder()
-                    .role(messageProperties.getProperty(RESPONDER_ROLE_PROP_NAME).toString())
-                    .roleType(DC5RoleType.RESPONDER)
-                    .build()
-            );
+            builder.responder(DC5Partner.builder()
+                    .partnerRole(DC5Role.builder()
+                            .role(messageProperties.getProperty(RESPONDER_ROLE_PROP_NAME).toString())
+                            .roleType(DC5RoleType.RESPONDER)
+                            .build()
+                    ).build());
         }
         builder.action(DC5Action.builder()
-                        .action(messageProperties.getProperty(LoadStoreTransitionMessage.ACTION_PROP_NAME))
+                .action(messageProperties.getProperty(LoadStoreTransitionMessage.ACTION_PROP_NAME))
                 .build());
         builder.service(DC5Service.builder()
-                        .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
-                        .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
+                .serviceType(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_TYPE_PROP_NAME))
+                .service(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
                 .build());
         if (messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME) != null) {
             builder.ebmsMessageId(EbmsMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.EBMS_ID_PROP_NAME)));
@@ -647,7 +645,6 @@ public class LoadStoreMessageFromPath {
         }
         return builder;
     }
-
 
 
     private DC5EcxAddress loadEcxAddress(String senderPrefix) {

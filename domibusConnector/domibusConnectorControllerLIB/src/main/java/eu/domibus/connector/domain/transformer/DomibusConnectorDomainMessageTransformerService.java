@@ -570,9 +570,9 @@ public class DomibusConnectorDomainMessageTransformerService {
 
         if (messageContentTO.getDocument().getDetachedSignature() != null) {
             attachmentBuilder.DC5DetachedSignature(DC5DetachedSignature.builder()
-                            .detachedSignature(messageContentTO.getDocument().getDetachedSignature().getDetachedSignature())
-                            .detachedSignatureName(messageContentTO.getDocument().getDetachedSignature().getDetachedSignatureName())
-                            .mimeType(DetachedSignatureMimeType.fromCode(messageContentTO.getDocument().getDetachedSignature().getMimeType().value()))
+                    .detachedSignature(messageContentTO.getDocument().getDetachedSignature().getDetachedSignature())
+                    .detachedSignatureName(messageContentTO.getDocument().getDetachedSignature().getDetachedSignatureName())
+                    .mimeType(DetachedSignatureMimeType.fromCode(messageContentTO.getDocument().getDetachedSignature().getMimeType().value()))
                     .build());
         }
 
@@ -656,16 +656,24 @@ public class DomibusConnectorDomainMessageTransformerService {
                 .action(messageDetailsTO.getAction().getAction())
                 .build());
 
+        DC5Partner.builder()
+                .partnerRole(DC5Role.builder()
+                        .role(messageDetailsTO.getFromParty().getRole())
+                        .roleType(DC5RoleType.INITIATOR)
+                        .build());
 
         DomibusConnectorPartyType fromParty = messageDetailsTO.getFromParty();
-        ebmsBuilder.initiatorRole(DC5Role.builder()
-                .role(fromParty.getRole())
-                .roleType(DC5RoleType.INITIATOR)
-                .build());
+        ebmsBuilder.initiator(DC5Partner.builder()
+                .partnerRole(DC5Role.builder()
+                        .role(fromParty.getRole())
+                        .roleType(DC5RoleType.INITIATOR)
+                        .build()).build());
+
         DomibusConnectorPartyType toParty = messageDetailsTO.getFromParty();
-        ebmsBuilder.initiatorRole(DC5Role.builder()
-                .role(toParty.getRole())
-                .roleType(DC5RoleType.RESPONDER)
+        ebmsBuilder.initiator(DC5Partner.builder().partnerRole(DC5Role.builder()
+                        .role(toParty.getRole())
+                        .roleType(DC5RoleType.RESPONDER)
+                        .build())
                 .build());
 
         DC5EcxAddress.DC5EcxAddressBuilder fromAddrBuilder = DC5EcxAddress.builder()
@@ -681,19 +689,28 @@ public class DomibusConnectorDomainMessageTransformerService {
                         .build());
 
         if (target == MessageTargetSource.GATEWAY) {
-            ebmsBuilder.gatewayAddress(toAddrBuilder
-                    .ecxAddress(messageDetailsTO.getFinalRecipient())
+            ebmsBuilder.responder(DC5Partner.builder()
+                    .partnerAddress(toAddrBuilder
+                            .ecxAddress(messageDetailsTO.getFinalRecipient())
+                            .build())
                     .build());
-            ebmsBuilder.backendAddress(fromAddrBuilder
-                    .ecxAddress(messageDetailsTO.getOriginalSender())
+
+            ebmsBuilder.initiator(DC5Partner.builder()
+                    .partnerAddress(fromAddrBuilder
+                            .ecxAddress(messageDetailsTO.getOriginalSender())
+                            .build())
                     .build());
         }
         if (target == MessageTargetSource.BACKEND) {
-            ebmsBuilder.gatewayAddress(fromAddrBuilder
-                    .ecxAddress(messageDetailsTO.getOriginalSender())
+            ebmsBuilder.responder(DC5Partner.builder()
+                    .partnerAddress(fromAddrBuilder
+                            .ecxAddress(messageDetailsTO.getOriginalSender())
+                            .build())
                     .build());
-            ebmsBuilder.backendAddress(toAddrBuilder
-                    .ecxAddress(messageDetailsTO.getFinalRecipient())
+
+            ebmsBuilder.initiator(DC5Partner.builder().partnerAddress(toAddrBuilder
+                            .ecxAddress(messageDetailsTO.getFinalRecipient())
+                            .build())
                     .build());
         }
 

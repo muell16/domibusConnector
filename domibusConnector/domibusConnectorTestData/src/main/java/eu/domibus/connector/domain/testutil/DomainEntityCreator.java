@@ -292,8 +292,8 @@ public class DomainEntityCreator {
 
         dc5EbmsBuilder.action(createActionRelayREMMDAcceptanceRejection());
 
-        dc5EbmsBuilder.backendAddress(message.getEbmsData().getBackendAddress());
-        dc5EbmsBuilder.gatewayAddress(message.getEbmsData().getGatewayAddress());
+        dc5EbmsBuilder.initiator(message.getEbmsData().getInitiator());
+        dc5EbmsBuilder.responder(message.getEbmsData().getResponder());
 
         DC5Confirmation messageDeliveryConfirmation = createMessageRelayRemmdRejectConfirmation();
 
@@ -379,10 +379,14 @@ public class DomainEntityCreator {
         DC5Ebms.DC5EbmsBuilder ebmsBuilder = DC5Ebms.builder();
         ebmsBuilder.conversationId(null);      //first message no conversation set yet!
 
-        ebmsBuilder.backendAddress(createEpoAddressAT());
-        ebmsBuilder.gatewayAddress(createEpoAddressDE());
-        ebmsBuilder.initiatorRole(getEpoInitiatorRole());
-        ebmsBuilder.responderRole(getEpoResponderRole());
+        ebmsBuilder.initiator(DC5Partner.builder()
+                .partnerAddress(createEpoAddressAT())
+                .partnerRole(getEpoInitiatorRole())
+                .build());
+        ebmsBuilder.responder(DC5Partner.builder()
+                .partnerAddress(createEpoAddressDE())
+                .partnerRole(getEpoResponderRole())
+                .build());
 
         ebmsBuilder.refToEbmsMessageId(null);     //is the first message
         ebmsBuilder.action(createActionForm_A());
@@ -544,8 +548,8 @@ public class DomainEntityCreator {
                         .ebmsMessageId(EbmsMessageId.ofRandom())
                         .service(createServiceEPO())
                         .action(createActionForm_A())
-                        .gatewayAddress(defaultSender())
-                        .backendAddress(defaultRecipient())
+                        .responder(DC5Partner.builder().partnerAddress(defaultSender()).build())
+                        .initiator(DC5Partner.builder().partnerAddress(defaultRecipient()).build())
                         .build()
                 )
                 .messageContent(DC5MessageContent.builder()

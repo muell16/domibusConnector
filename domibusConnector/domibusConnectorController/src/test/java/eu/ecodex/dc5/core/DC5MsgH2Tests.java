@@ -89,18 +89,18 @@ class DC5MsgH2Tests {
     public void can_persist_ebms_entity() {
         // Arrange
         final DC5Ebms dc5Ebms = new DC5Ebms();
-        dc5Ebms.setBackendAddress(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO")));
-        dc5Ebms.setGatewayAddress(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ")));
+        dc5Ebms.setInitiator(new DC5Partner(new DC5EcxAddress("ecxAddrSend", new DC5Party("ID_SENDER", "FOO")), DC5Role.builder().build()));
+        dc5Ebms.setResponder(new DC5Partner(new DC5EcxAddress("ecxAddrRec", new DC5Party("ID_RECEIVER", "BAZ")), DC5Role.builder().build()));
 
         // Act
         final Long id = ebmsRepo.save(dc5Ebms).getId();
         final DC5Ebms save = ebmsRepo.findById(id).get();
 
         // Assert
-        assertThat(save.getGatewayAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
-        assertThat(save.getGatewayAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
+        assertThat(save.getInitiator().getPartnerAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
+        assertThat(save.getResponder().getPartnerAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
 
-        assertThat(save.getBackendAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
-        assertThat(save.getBackendAddress().getParty().getPartyId()).isEqualTo("ID_SENDER");
+        assertThat(save.getInitiator().getPartnerAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
+        assertThat(save.getInitiator().getPartnerAddress().getParty().getPartyId()).isEqualTo("ID_SENDER");
     }
 }
