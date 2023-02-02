@@ -131,7 +131,7 @@ public class ProcessOutgoingBusinessMessageFlow implements DomibusConnectorMessa
 //                    message.getGatewayLinkName());
 
             MessageReadyForTransportEvent messageReadyForTransportEvent =
-                    MessageReadyForTransportEvent.of(message.getId(), message.getGatewayLinkName(), MessageTargetSource.GATEWAY);
+                    MessageReadyForTransportEvent.of(message, message.getGatewayLinkName(), MessageTargetSource.GATEWAY);
             eventPublisher.publishEvent(messageReadyForTransportEvent);
             // to be continued with processOutgoingBusinessMessageEvent
 

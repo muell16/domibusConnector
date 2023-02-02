@@ -30,14 +30,6 @@ public class DC5TransportRequest {
     @ManyToOne(optional = false)
     private DC5Message message;
 
-    /**
-     * If message.getEbmsData() == this.ebmsData() then the message is just forwarded
-     * If message.getEbmsData() != this.ebmsData() then the message is a backtravelling message,
-     *  this kind of message is used to transmit something in the opposite direction without creating a new message for it.
-     */
-    @ManyToOne(optional = false)
-    private DC5Ebms ebmsData;
-
     private String remoteMessageId;
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -80,7 +72,6 @@ public class DC5TransportRequest {
     ) {
         DC5TransportRequest request = new DC5TransportRequest();
         request.setMessage(message);
-        request.setEbmsData(ebmsData);
         request.setLinkName(linkName);
         request.setLinkType(linkType);
         request.setTransportRequestId(transportRequestId);

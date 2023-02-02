@@ -46,30 +46,30 @@ public class SubmitConfirmationAsEvidenceMessageStep {
     private final DC5MessageRepo messageRepo;
     private final MessageProcessManager processManager;
 
-    /**
-     * sends the supplied confirmation as
-     * evidence message in the same direction
-     * as the supplied business message
-     * <p>
-     * for this purpose a new message is generated
-     * this message is NOT stored into the DB
-     *
-     * @param businessMessage the business message
-     * @param confirmation    the confirmation
-     */
-    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
-    public void submitSameDirection(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
-        validateParameters(businessMessage);
-        DC5Message.DC5MessageBuilder evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
-//        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
-        DC5Message build = evidenceMessage.build();
-        DC5Message msg = messageRepo.save(build);
-
-        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getTarget());
-
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getTarget());
-        eventPublisher.publishEvent(messageReadyForTransportEvent);
-    }
+//    /**
+//     * sends the supplied confirmation as
+//     * evidence message in the same direction
+//     * as the supplied business message
+//     * <p>
+//     * for this purpose a new message is generated
+//     * this message is NOT stored into the DB
+//     *
+//     * @param businessMessage the business message
+//     * @param confirmation    the confirmation
+//     */
+//    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "SubmitConfirmationAsEvidenceMessageStep#sameDirection")
+//    public void submitSameDirection(DC5MessageId messageId, DC5Message businessMessage, DC5Confirmation confirmation) {
+//        validateParameters(businessMessage);
+//        DC5Message.DC5MessageBuilder evidenceMessage = buildEvidenceMessage(messageId, businessMessage, confirmation);
+////        submitMessageToLinkModuleQueueStep.submitMessage(evidenceMessage);
+//        DC5Message build = evidenceMessage.build();
+//        DC5Message msg = messageRepo.save(build);
+//
+//        DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getDirection().getTarget());
+//
+//        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(msg.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getTarget());
+//        eventPublisher.publishEvent(messageReadyForTransportEvent);
+//    }
 
     private DomibusConnectorLinkPartner.LinkPartnerName getLinkName(DC5Message businessMessage, MessageTargetSource target) {
         if (target == MessageTargetSource.BACKEND) {
@@ -87,7 +87,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
      * as the supplied business message
      * <p>
      * for this purpose a new message is generated
-     * this message is NOT stored into the DB
+     *
      *
      * @param messageId       the connector message id of the new confirmation message
      * @param businessMessage the business message
@@ -110,7 +110,7 @@ public class SubmitConfirmationAsEvidenceMessageStep {
         evidenceMessage = messageRepo.save(evidenceMessage);
         DomibusConnectorLinkPartner.LinkPartnerName linkName = getLinkName(businessMessage, businessMessage.getSource());
 
-        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage.getId(), DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getSource());
+        MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(evidenceMessage, DomibusConnectorLinkPartner.LinkPartnerName.of(linkName), businessMessage.getSource());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
     }
 

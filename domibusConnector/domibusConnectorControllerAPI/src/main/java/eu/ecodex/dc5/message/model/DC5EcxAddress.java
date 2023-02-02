@@ -27,7 +27,9 @@ public class DC5EcxAddress {
 
     @Builder(toBuilder = true)
     public DC5EcxAddress(String ecxAddress, DC5Party party) {
-        this.party = party.toBuilder().build();
+        if (party != null) {
+            this.party = party.toBuilder().build();
+        }
         this.ecxAddress = ecxAddress;
     }
 
@@ -38,7 +40,7 @@ public class DC5EcxAddress {
     private String ecxAddress;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming message must have a not null party")
+    @NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a not null party")
     @NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a valid party")
     private DC5Party party = new DC5Party();
 

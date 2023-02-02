@@ -13,8 +13,12 @@ public class DC5Partner {
 
     @Builder(toBuilder = true)
     public DC5Partner(DC5EcxAddress partnerAddress, DC5Role partnerRole) {
-        this.partnerAddress = partnerAddress;
-        this.partnerRole = partnerRole;
+        if (partnerAddress != null) {
+            this.partnerAddress = partnerAddress.toBuilder().build();
+        }
+        if (partnerRole != null) {
+            this.partnerRole = partnerRole.toBuilder().build();
+        }
     }
 
     @Id

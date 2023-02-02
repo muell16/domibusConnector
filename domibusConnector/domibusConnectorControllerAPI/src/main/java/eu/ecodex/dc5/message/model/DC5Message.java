@@ -49,6 +49,9 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+
+@NamedEntityGraph(name = "DC5Message.fetchAll", includeAllAttributes = true,
+        attributeNodes = { @NamedAttributeNode(value = "ebmsData")})
 public class DC5Message implements Serializable {
 
     @GeneratedValue
