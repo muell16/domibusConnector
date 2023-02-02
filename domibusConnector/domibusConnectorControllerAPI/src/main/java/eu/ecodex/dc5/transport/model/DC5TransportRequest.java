@@ -1,7 +1,9 @@
 package eu.ecodex.dc5.transport.model;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.MessageTargetSourceConverter;
 import lombok.*;
@@ -12,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = DC5TransportRequest.TABLE_NAME)
+
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
-@Table(name = DC5TransportRequest.TABLE_NAME)
 public class DC5TransportRequest {
 
     public static final String TABLE_NAME = "DC5_TRANSPORT_REQUEST";
@@ -26,6 +29,14 @@ public class DC5TransportRequest {
 
     @ManyToOne(optional = false)
     private DC5Message message;
+
+    /**
+     * If message.getEbmsData() == this.ebmsData() then the message is just forwarded
+     * If message.getEbmsData() != this.ebmsData() then the message is a backtravelling message,
+     *  this kind of message is used to transmit something in the opposite direction without creating a new message for it.
+     */
+    @ManyToOne(optional = false)
+    private DC5Ebms ebmsData;
 
     private String remoteMessageId;
 
@@ -57,6 +68,23 @@ public class DC5TransportRequest {
         } else {
             throw new IllegalArgumentException("Not a new state!");
         }
+    }
+
+    @Builder
+    public static DC5TransportRequest dc5TransportRequest(
+            @NonNull DC5Message message,
+            @NonNull DC5Ebms ebmsData,
+            DomibusConnectorLinkPartner.LinkPartnerName linkName,
+            MessageTargetSource linkType,
+            TransportRequestId transportRequestId
+    ) {
+        DC5TransportRequest request = new DC5TransportRequest();
+        request.setMessage(message);
+        request.setEbmsData(ebmsData);
+        request.setLinkName(linkName);
+        request.setLinkType(linkType);
+        request.setTransportRequestId(transportRequestId);
+        return request;
     }
 
     @Getter
