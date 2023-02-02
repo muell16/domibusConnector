@@ -22,10 +22,10 @@ public class DC5Partner {
     @Column(name = "PARTNER_ID")
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PARTNER_ADDRESS")
     private DC5EcxAddress partnerAddress;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PARTNER_ROLE")
     private DC5Role partnerRole;
 

@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 /**
@@ -90,40 +91,46 @@ public class DC5Ebms {
 	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS Service")
 	private DC5Service service;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "INITIATOR")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a initiator")
 	private DC5Partner initiator;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "RESPONDER")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a responder")
 	private DC5Partner responder;
 
 	public EbmsSender getSender(MessageTargetSource target) {
 		if (target == MessageTargetSource.BACKEND) {
+			verifyInitiator();
 			return EbmsSender.builder()
 					.originalSender(initiator.getPartnerAddress().getEcxAddress())
 					.party(initiator.getPartnerAddress().getParty())
 					.role(initiator.getPartnerRole())
 					.build();
 		} else if (target == MessageTargetSource.GATEWAY) {
+			verifyResponder();
 			return EbmsSender.builder()
 					.originalSender(responder.getPartnerAddress().getEcxAddress())
 					.party(responder.getPartnerAddress().getParty())
 					.role(responder.getPartnerRole())
 					.build();
 		} else {
-			throw new IllegalArgumentException("Unknonw MessageTargetSource " + target);
+			throw new IllegalArgumentException("Unknown MessageTargetSource " + target);
 		}
 	}
 
 	public EbmsReceiver getReceiver(MessageTargetSource target) {
 		if (target == MessageTargetSource.GATEWAY) {
+			verifyResponder();
 			return EbmsReceiver.builder()
 					.finalRecipient(responder.getPartnerAddress().getEcxAddress())
 					.party(responder.getPartnerAddress().getParty())
 					.role(responder.getPartnerRole())
 					.build();
 		} else if (target == MessageTargetSource.BACKEND) {
+			verifyInitiator();
 			return EbmsReceiver.builder()
 					.finalRecipient(initiator.getPartnerAddress().getEcxAddress())
 					.party(initiator.getPartnerAddress().getParty())
@@ -132,6 +139,22 @@ public class DC5Ebms {
 		} else {
 			throw new IllegalArgumentException("Unknonw MessageTargetSource " + target);
 		}
+	}
+
+	private void verifyResponder() {
+		verify("responder");
+	}
+
+	private void verifyInitiator() {
+		verify("initiator");
+	}
+
+	private void verify(String s) {
+		Objects.requireNonNull(initiator, String.format("%s must be set", s));
+		Objects.requireNonNull(initiator.getPartnerAddress(), String.format("The %s must have a partner address!", s));
+		Objects.requireNonNull(initiator.getPartnerAddress().getEcxAddress(), String.format("The %s must have a partner address with a ecxAddress (originalSender for Initiator or finalRecipient for Responder)!", s));
+		Objects.requireNonNull(initiator.getPartnerAddress().getParty(), String.format("The %s must have a partner address with a party!", s));
+		Objects.requireNonNull(initiator.getPartnerRole(), String.format("The %s must have a role!", s));
 	}
 
 	@Getter

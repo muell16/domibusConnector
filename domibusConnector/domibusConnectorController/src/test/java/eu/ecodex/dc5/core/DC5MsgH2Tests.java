@@ -97,7 +97,7 @@ class DC5MsgH2Tests {
         final DC5Ebms save = ebmsRepo.findById(id).get();
 
         // Assert
-        assertThat(save.getInitiator().getPartnerAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
+        assertThat(save.getResponder().getPartnerAddress().getEcxAddress()).isEqualTo("ecxAddrRec");
         assertThat(save.getResponder().getPartnerAddress().getParty().getPartyId()).isEqualTo("ID_RECEIVER");
 
         assertThat(save.getInitiator().getPartnerAddress().getEcxAddress()).isEqualTo("ecxAddrSend");
