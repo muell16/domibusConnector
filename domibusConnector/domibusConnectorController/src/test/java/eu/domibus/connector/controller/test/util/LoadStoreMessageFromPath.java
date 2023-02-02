@@ -557,11 +557,11 @@ public class LoadStoreMessageFromPath {
             senderProperties.forEach((key, value) ->
                     messageProperties.put(MSG_RESPONDER_PREFIX + key, value));
         }
-        if (details.getResponder().getPartnerRole() != null) {
-            messageProperties.put(RESPONDER_ROLE_PROP_NAME, details.getResponder().getPartnerRole());
+        if (details.getResponder() != null && details.getResponder().getPartnerRole() != null) {
+            messageProperties.put(RESPONDER_ROLE_PROP_NAME, details.getResponder().getPartnerRole().getRole());
         }
-        if (details.getInitiator().getPartnerRole() != null) {
-            messageProperties.put(INITIATOR_ROLE_PROP_NAME, details.getInitiator().getPartnerRole());
+        if (details.getInitiator() != null && details.getInitiator().getPartnerRole() != null) {
+            messageProperties.put(INITIATOR_ROLE_PROP_NAME, details.getInitiator().getPartnerRole().getRole());
         }
 
         if (details.getService() != null && details.getService() != null) {
