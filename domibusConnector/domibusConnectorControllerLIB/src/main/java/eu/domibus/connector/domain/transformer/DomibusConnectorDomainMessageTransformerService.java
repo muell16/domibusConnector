@@ -117,7 +117,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         toMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
 
         //map message confirmations
-        if (domainMessage.getTransportedMessageConfirmation() != null) {
+        if (!domainMessage.isIncomingBusinessMessage() && domainMessage.getTransportedMessageConfirmation() != null) {
             toMessageType.getMessageConfirmations()
                     .add(transformMessageConfirmationDomainToTransition(domainMessage.getTransportedMessageConfirmation()));
         }
@@ -142,10 +142,15 @@ public class DomibusConnectorDomainMessageTransformerService {
             toMessageType.getMessageAttachments().add(transformMessageAttachmentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getTrustTokenXml()));
             //map trust token PDF
             toMessageType.getMessageAttachments().add(transformMessageAttachmentDomainToTransition(domainMessage.getMessageContent().getBusinessContent().getTrustTokenPDF()));
-            //map attachements from asic-s container
+            //map attachments from asic-s container
             for (DC5MessageAttachment msgAttach : domainMessage.getMessageContent().getBusinessContent().getAttachments()) {
                 toMessageType.getMessageAttachments()
                         .add(transformMessageAttachmentDomainToTransition(msgAttach));
+            }
+            //if it's a business message map all related confirmations
+            for (DC5Confirmation confirmation : domainMessage.getMessageContent().getRelatedConfirmations()) {
+                toMessageType.getMessageConfirmations()
+                        .add(transformMessageConfirmationDomainToTransition(confirmation));
             }
         }
 
