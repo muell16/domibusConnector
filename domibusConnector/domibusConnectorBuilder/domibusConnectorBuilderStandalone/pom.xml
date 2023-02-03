@@ -339,6 +339,13 @@
                                             <classifier>testconfig</classifier>
                                             <type>zip</type>
                                         </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testkeystores</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
                                     </artifactItems>
                                 </configuration>
                             </execution>
@@ -376,11 +383,14 @@
                             </container>
                             <from>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi8-openjdk11:latest</image>
+<!--                                sha256:82a6485882ffedba7f4f96a0c061a59948ad798697626c769667fdfcbe38fa85-->
                             </from>
                             <to>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
                                 <tags>
                                     <tag>${git.commit.id.abbrev}</tag>
+                                    <tag>latest</tag>
+                                    <tag>${maven.build.timestamp}</tag>
                                 </tags>
                             </to>
                         </configuration>

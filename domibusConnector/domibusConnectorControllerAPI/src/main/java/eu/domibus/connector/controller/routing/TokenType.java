@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum TokenType {
+    BACKEND_NAME("BackendName"),
+    GATEWAY_NAME("GatewayName"),
     AS4_SERVICE_TYPE("ServiceType"),
     AS4_SERVICE_NAME("ServiceName"),
     AS4_FINAL_RECIPIENT("FinalRecipient"),
@@ -35,7 +37,9 @@ public enum TokenType {
             AS4_FINAL_RECIPIENT,
             AS4_ACTION,
             AS4_FROM_PARTY_ID,
-            AS4_FROM_PARTY_ID_TYPE
+            AS4_FROM_PARTY_ID_TYPE,
+            BACKEND_NAME,
+            GATEWAY_NAME
 //            AS4_FROM_PARTY_ROLE
             ).collect(Collectors.toList());
 

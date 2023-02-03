@@ -3,12 +3,14 @@ package eu.domibus.connector.domain.model;
 import eu.domibus.connector.domain.enums.ConfigurationSource;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.persistence.AttributeConverter;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Link;
 import java.time.Duration;
 import java.util.HashMap;
@@ -133,6 +135,8 @@ public class DomibusConnectorLinkPartner {
 
     public static class LinkPartnerName {
         @NotBlank
+        @NonNull
+        @NotNull
         private String linkName;
 
         public static LinkPartnerName of(LinkPartnerName name) {
@@ -147,6 +151,7 @@ public class DomibusConnectorLinkPartner {
         }
 
         public LinkPartnerName(String linkName) {
+            Objects.requireNonNull(linkName, "Link partner name cannot be null!");
             this.linkName = linkName;
         }
 
@@ -155,6 +160,7 @@ public class DomibusConnectorLinkPartner {
         }
 
         public void setLinkName(String linkName) {
+            Objects.requireNonNull(linkName, "Link partner name cannot be null!");
             this.linkName = linkName;
         }
 
