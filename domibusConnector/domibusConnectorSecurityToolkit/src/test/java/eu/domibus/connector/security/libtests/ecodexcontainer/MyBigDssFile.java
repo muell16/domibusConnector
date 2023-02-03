@@ -52,11 +52,6 @@ public class MyBigDssFile implements DSSDocument {
     }
 
     @Override
-    public String getAbsolutePath() {
-        throw new UnsupportedOperationException("This document is read only!");
-    }
-
-    @Override
     public MimeType getMimeType() {
         return MimeType.BINARY;
     }

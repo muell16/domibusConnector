@@ -31,6 +31,7 @@ import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 
 import eu.europa.esig.dss.spi.x509.CandidatesForSigningCertificate;
 import eu.europa.esig.dss.spi.x509.CertificateSource;
+import eu.europa.esig.dss.spi.x509.CertificateValidity;
 import eu.europa.esig.dss.validation.AdvancedSignature;
 
 import eu.europa.esig.dss.validation.CertificateVerifier;
@@ -49,6 +50,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -56,7 +58,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * The DSS implementation of the services
- * 
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -68,7 +70,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 	private static final LogDelegate LOG = new LogDelegate(DSSECodexTechnicalValidationService.class);
 
-//	private ProxyConfig preferenceManager;
+	//	private ProxyConfig preferenceManager;
 	private final EtsiValidationPolicy etsiValidationPolicy;
 	private final CertificateVerifier certificateVerifier;
 	private final DocumentProcessExecutor processExecutor;
@@ -152,7 +154,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 			// return an empty document
 			return new InMemoryDocument(new byte[0]);
 		}
-		
+
 		// TODO: Reaktivieren?
 //		if (reportDatas.size() > 2) {
 //			throw new ECodexException("the report (of the token's validation object) must contain not more than two objects, but has " + reportDatas.size());
@@ -298,7 +300,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //	public void setProcessExecutor(DocumentProcessExecutor processExecutor) {
 //		this.processExecutor = processExecutor;
 //	}
-	
+
 //    // klara
 //	/**
 //	 * This method is used for one-time initialization of a configured TSL for the purpose of authentication certificate verification.
@@ -315,17 +317,17 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //		dataLoader.isLOTL(this.isLOTL);
 
 //		TLInfo test = new TLInfo();
-		
+
 //		trustedListCertificatesSource = new TrustedListsCertificateSource();
-		
+
 //		TSLRepository tslRepository = new TSLRepository();
 //		tslRepository.setTrustedListsCertificateSource(trustedListCertificatesSource);
-		
+
 //        TSLValidationJob job = new TSLValidationJob();
 //        job.setDataLoader(dataLoader);
 //        job.setCheckTSLSignatures(false);
 //        job.setRepository(tslRepository);
-		
+
 //		if(!isLOTL){
 //			job.setLotlUrl("inmemory:intermediatetsl");
 //		}else if(authenticationCertificateTSL instanceof String){
@@ -337,14 +339,14 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //		}else{
 //			// trustedListCertificatesSource.setLotlCertificate(null);
 //		}
-		
+
 //		try {
 //			job.initRepository();
 //		} catch (Exception e) {
 //			throw new ECodexException(e);
 //		}
 //	}
-	
+
 //	// klara
 //	/**
 //	 * This method provides the information to the library whether the given TSL is a LOTL, a TSL containing a list of
@@ -357,8 +359,8 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //	public void isAuthenticationCertificateLOTL(boolean isLOTL) {
 //		this.isLOTL = isLOTL;
 //	}
-	
-    // klara: Added method for certificate verification against TSL of authentication-certificates
+
+	// klara: Added method for certificate verification against TSL of authentication-certificates
 	/**
 	 * This method checks whether the certificate a signature has been created with on a given document (within the document or detached) is present within
 	 * a defined TSL. Before being able to verify the TSL (trustedListCertificatesSource) needs to be configured
@@ -373,13 +375,13 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 		AuthenticationCertificate validationResult = new AuthenticationCertificate();
 
-    	if(trustedListCertificatesSource.isPresent()) {
+		if(trustedListCertificatesSource.isPresent()) {
 
-    		X509Certificate signatureCert = getCertificate(businessDocument, detachedSignature);
+			X509Certificate signatureCert = getCertificate(businessDocument, detachedSignature);
 
-    		if(signatureCert != null)
-    		{
-    			X500Principal subjectName = signatureCert.getSubjectX500Principal();
+			if(signatureCert != null)
+			{
+				X500Principal subjectName = signatureCert.getSubjectX500Principal();
 
 				List<CertificateToken> tslCerts = trustedListCertificatesSource.get().getCertificates();
 
@@ -399,11 +401,11 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 					validationResult.setValidationSuccessful(false);
 					LOG.lInfo("TSL of authentication certificates was null or empty - No certificate will be deemed to bevalid.");
 				}
-    		}
-    	} else {
-    		validationResult.setValidationSuccessful(false);
-    		LOG.lInfo("Attribute authenticationCertificateTSL has not been set - Validation of signature certificate against TSL of authentication service providers will always fail!");
-    	}
+			}
+		} else {
+			validationResult.setValidationSuccessful(false);
+			LOG.lInfo("Attribute authenticationCertificateTSL has not been set - Validation of signature certificate against TSL of authentication service providers will always fail!");
+		}
 
 //    	if(this.authenticationCertificateTSL != null) {
 //
@@ -437,21 +439,21 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //    		LOG.lInfo("Attribute authenticationCertificateTSL has not been set - Validation of signature certificate against TSL of authentication service providers will always fail!");
 //    	}
 
-    	return validationResult;
-    }
+		return validationResult;
+	}
 
 
 
 	// klara
 	private X509Certificate getCertificate(DSSDocument businessDocument, DSSDocument detachedSignature) throws ECodexException {
-		
+
 		X509Certificate signatureCert = null;
-		
+
 		if(detachedSignature == null)
 		{
 			InputStream is = null;
 			ByteArrayOutputStream baos = null;
-			
+
 			try {
 				is = businessDocument.openStream();
 				baos = new ByteArrayOutputStream();
@@ -465,46 +467,47 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 
 				baos.flush();
 				byte[] document = baos.toByteArray();
-				
+
 				InMemoryDocument file = new InMemoryDocument(document);
-				
+
 				try{
 					SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(file);
 					validator.setCertificateVerifier(new CommonCertificateVerifier(true)); //TODO: use CertificateVerifier factory
-					
+
 					Reports rep = validator.validateDocument();
 //					String certId = rep.getDiagnosticData().getFirstSigningCertificateId();
 					String certId = rep.getDiagnosticData().getFirstSignatureId();
-					
+
 					List<AdvancedSignature> signatures = validator.getSignatures();
 					Iterator<AdvancedSignature> it = signatures.listIterator();
-					
+
 					Date lastSignature = null;
-					
+
 					//klara: This could become troublesome with timezones
 					while(it.hasNext()) {
 						AdvancedSignature curSig = it.next();
 						if(lastSignature == null || lastSignature.after(curSig.getSigningTime())){
-							
+
 							CandidatesForSigningCertificate candidates = curSig.getCandidatesForSigningCertificate();
-							List<CertificateToken> candidateList = candidates.getSigningCertificateTokenList();
-							
-							for (CertificateToken certificateToken : candidateList) {
-								if(certificateToken.getDSSIdAsString().equals(certId)){
-									signatureCert = certificateToken.getCertificate();
-								}
-							}
+
+							signatureCert =  candidates.getCertificateValidityList()
+									.stream()
+									.map(CertificateValidity::getCertificateToken)
+									.filter(c -> c.getDSSIdAsString().equals(certId))
+									.map(CertificateToken::getCertificate)
+									.findFirst().orElse(null);
+
 						}
 					}
 				} catch(DSSException ex) {
 					/* This exception is thrown by "SignedDocumentValidator.fromDocument(file)" in case of
 					 * - Document Type is not recognized (No PDF, ASiC-S, XML or CMS file)
 					 * - File is to short (Length < 5 Byte)
-					 * 
+					 *
 					 *  No reason to react here. Result is "No signing certificate in place"
 					 */
 				}
-				
+
 			} catch (IOException e) {
 				throw new ECodexException(e);
 			} finally {
@@ -513,11 +516,11 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 				if(baos != null)
 					IOUtils.closeQuietly(baos);
 			}
-		}		
-		
+		}
+
 		return signatureCert;
 	}
-	
+
 //	/**
 //	 * This method can be used to configure a TSL to be used for the verification of whether certificates used to sign
 //	 * a document are representing a, authentication service provider (and thereby are present on the TSL)
@@ -547,7 +550,7 @@ public class DSSECodexTechnicalValidationService implements ECodexTechnicalValid
 //    public void setAuthenticationCertificateTSL(byte[] authenticationCertificateTSL) {
 //		this.authenticationCertificateTSL = authenticationCertificateTSL;
 //	}
-    
+
 //    public void setIgnoredCertificatesStore(CertificateStoreInfo ignoredCertificatesStore) {
 //		try {
 //			LOG.lConfig("updating the ignored certificates");

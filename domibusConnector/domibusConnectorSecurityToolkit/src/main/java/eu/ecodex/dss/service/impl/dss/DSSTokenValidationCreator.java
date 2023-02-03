@@ -53,7 +53,7 @@ import eu.europa.esig.dss.model.x509.CertificateToken;
 
 /**
  * this class creates the token validation; the execution is thread-safe
- * 
+ *
  * <p>
  * DISCLAIMER: Project owner e-CODEX
  * </p>
@@ -91,9 +91,9 @@ class DSSTokenValidationCreator {
 	DSSTokenValidationCreator(
 			final EtsiValidationPolicy etsiValidationPolicy,
 			final CertificateVerifier certificateVerifier,
-							  final DSSDocument businessDocument,
-							  final DSSDocument detachedSignature,
-							  DocumentProcessExecutor processExecutor) {
+			final DSSDocument businessDocument,
+			final DSSDocument detachedSignature,
+			DocumentProcessExecutor processExecutor) {
 		this.etsiValidationPolicy = etsiValidationPolicy;
 		this.certificateVerifier = certificateVerifier;
 		this.businessDocument = businessDocument;
@@ -129,8 +129,8 @@ class DSSTokenValidationCreator {
 		final TechnicalValidationResult validationResult = new TechnicalValidationResult();
 		final ValidationVerification validationVerification = new ValidationVerification();
 
-		final List<Signature> signatures = new ArrayList<Signature>(); 
-		
+		final List<Signature> signatures = new ArrayList<Signature>();
+
 		// Default TokenValidationCreator takes only a signed document into account
 		validationVerification.setAuthenticationData(null);
 		validationVerification.setSignatureData(signatures);
@@ -147,7 +147,7 @@ class DSSTokenValidationCreator {
 			if (tValidation.getVerificationTime() == null) {
 				tValidation.setVerificationTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 			}
-			
+
 			// => set also the original validation report if needed
 			if (tValidation.getOriginalValidationReport() == null) {
 				tValidation.setOriginalValidationReport(new OriginalValidationReportContainer());
@@ -160,7 +160,7 @@ class DSSTokenValidationCreator {
 	}
 
 	private void runImpl() throws Exception {
-		
+
 		final TechnicalValidationResult validationResult = tValidation.getTechnicalResult();
 
 		// Create the validation report
@@ -175,7 +175,7 @@ class DSSTokenValidationCreator {
 			LOG.lDetail("acquiring SignedDocumentValidator upon document via contained signature");
 			validator = SignedDocumentValidator.fromDocument(businessDocument);
 		}
-		
+
 		validator.setProcessExecutor(processExecutor);
 		validator.setCertificateVerifier(certificateVerifier);
 
@@ -183,12 +183,12 @@ class DSSTokenValidationCreator {
 		LOG.lDetail("validating document");
 		//TODO: use config here...
 //		final InputStream resourceAsStream = DSSECodexContainerService.class.getResourceAsStream("/validation/102853/constraint.xml");
-		
+
 		Reports reports = validator.validateDocument(etsiValidationPolicy);
 		final SimpleReport simpleReport = reports.getSimpleReport();
 		final DiagnosticData diagnosticData = reports.getDiagnosticData();
 		final List<AdvancedSignature> signatures = validator.getSignatures();
-		
+
 		LOG.lDetail("DSS validation report created: {}", simpleReport);
 
 		final DetailedReport detailedReport = reports.getDetailedReport();
@@ -214,11 +214,11 @@ class DSSTokenValidationCreator {
 				invalidSignatures.add(curSignature);
 			}
 		}
-		
+
 		for (AdvancedSignature curSignature : invalidSignatures) {
 			signatures.remove(curSignature);
 		}
-		
+
 		// detect the significant signature = the latest one in time
 		// actually the order returned by iText and hence DSS is not reliable in terms of signing-time order
 		// so, we sort the list accordingly
@@ -228,7 +228,7 @@ class DSSTokenValidationCreator {
 		// inspect the info and derive some diagnosis and validation data
 		ArrayList<DecisionData> decisionData = new ArrayList<DecisionData>();
 		List<String> idsToRemove = new ArrayList<String>();
-		
+
 		for (AdvancedSignature curSignature : signatures) {
 			if(ignoredCertificateStore != null && !ignoredCertificateStore.getByPublicKey(curSignature.getSigningCertificateToken().getCertificate().getPublicKey()).isEmpty()) {
 				LOG.lDetail("Removing curSignature [{}] because the according certificate is within ignore list", curSignature);
@@ -239,52 +239,52 @@ class DSSTokenValidationCreator {
 				SignatureAttributes tokenSignatureAttributes = new SignatureAttributes();
 				SignatureCertificate tokenSignatureCertificate = new SignatureCertificate();
 				TechnicalValidationResult tokenSignatureResult = new TechnicalValidationResult();
-				
+
 				final DecisionData data = computeData(curSignature, reports);
 				decisionData.add(data);
-	
+
 				// propagate to token validation instance
 				signature.setSigningTime(data.diagnosis.signingTime);
-				
+
 				tokenSignatureCertificate.setSubject(data.diagnosis.signingCertificateSubject);
 				tokenSignatureCertificate.setCertificateValid(data.validation.signatureCertStatus != TechnicalTrustLevel.FAIL);
 				tokenSignatureCertificate.setIssuer(data.diagnosis.signingCertificateIssuer);
 				tokenSignatureCertificate.setValidityAtSigningTime(data.validation.signatureCertHistory != TechnicalTrustLevel.FAIL);
-				
+
 				tokenSignatureAttributes.setSignatureFormat(data.diagnosis.signatureFormatLevel);
 				tokenSignatureAttributes.setSignatureLevel(data.diagnosis.signatureConclusion.name());
 				tokenSignatureAttributes.setSignatureValid(data.validation.signatureComputation);
 				// structure verification is always true if the DSS report is generated and contains signature information.
 				tokenSignatureAttributes.setStructureValid(true);
-				
+
 				tokenSignatureResult.setTrustLevel(data.diagnosis.trustLevel);
 				tokenSignatureResult.setComment(data.diagnosis.comment);
-				
+
 				signature.setCertificateInformation(tokenSignatureCertificate);
 				signature.setSignatureInformation(tokenSignatureAttributes);
 				signature.setTechnicalResult(tokenSignatureResult);
-				
+
 				tValidation.getVerificationData().addSignatureData(signature);
 			}
 		}
-		
+
 		if (signatures.isEmpty() || idsToRemove.size() == signatures.size()) {
 			// No signature information in the validation report
 			validationResult.setTrustLevel(TechnicalTrustLevel.FAIL);
 			// http://www.jira.e-codex.eu/browse/ECDX-45: tokenSignature.setUnsigned(true);
 			validationResult.setComment("Unable to find a signature.");
-			
+
 			// For the reason of downwardcompatibility, at least one Signature-Entry needs to be present
-			tValidation.getVerificationData().addSignatureData(new Signature());  
+			tValidation.getVerificationData().addSignatureData(new Signature());
 
 			LOG.lWarn("no valid signature information found in DSS validation report - setting FAIL level.");
 		}
-		
-		TechnicalValidationResult result = tValidation.getTechnicalResult();		
+
+		TechnicalValidationResult result = tValidation.getTechnicalResult();
 		LOG.lInfo("General result determined to lowest level: {}: {}", result.getTrustLevel(), result.getComment());
-		
+
 		removeSignaturesFromSimpleReport(simpleReport, idsToRemove);
-        
+
 		// Add the original report to the token validation
 		LOG.lDetail("propagating DSS validation report");
 		final OriginalValidationReportContainer tReportContainer = new OriginalValidationReportContainer();
@@ -293,20 +293,20 @@ class DSSTokenValidationCreator {
 	}
 
 	private void removeSignaturesFromSimpleReport(final SimpleReport simpleReport, final List<String> idsToRemove) {
-		
+
 //      int decreaseSigCount = 0;
 //		int decreaseValid = 0;
-		
+
 		List<XmlToken> signatures = simpleReport.getJaxbModel().getSignatureOrTimestamp();
 		List<XmlToken> toRemove = new ArrayList<XmlToken>();
-		
+
 		for (XmlToken curSig : signatures) {
 			if(idsToRemove.contains(curSig.getId())) {
 				simpleReport.getSignatureIdList().remove(curSig.getId());
 				toRemove.add(curSig);
 			}
 		}
-		
+
 		for (XmlToken curSig : toRemove) {
 			signatures.remove(curSig);
 		}
@@ -357,18 +357,18 @@ class DSSTokenValidationCreator {
     			curChild.setTextContent(String.valueOf(sigCount));
     		}
     	}
-    	*/		
+    	*/
 	}
 
 	private DecisionData computeData(final AdvancedSignature signature, Reports reports) throws Exception {
-		
+
 		DiagnosticData diagnosticData = reports.getDiagnosticData();
 		SimpleReport simpleReport = reports.getSimpleReport();
-		
+
 		final String signatureId = signature.getId();
 		final String certificateId = diagnosticData.getSigningCertificateId(signatureId);
 
-	// compute some diagnosis data
+		// compute some diagnosis data
 		LOG.lDetail("computing the diagnosis data");
 		final XMLGregorianCalendar signingTime = TechnicalValidationUtil.getSigningTime(signature, signatureId);
 		final CertificateToken signingCertificateToken = TechnicalValidationUtil.getCertificateToken(signature, certificateId);
@@ -403,21 +403,21 @@ class DSSTokenValidationCreator {
 
 		// log the data
 		LOG.lDetail("data details:\n " +
-					"signingTime={}\n signatureFormatLevel={}\n signingCertificate={}\n signingCertificateSubject={}\n signingCertificateIssuer={}\n signatureConclusion={}\n " +
-					"issuerCertificate={}\n validSignatureComputation={}\n validSignatureCertStatus={}\n validSignatureCertHistory={}\n validTrustAnchor={}\n " +
-					"validSignatureConclusion={}\n validSignatureFormat={}\n validIssuerCertStatus={}\n validIssuerCertHistory={}\n", signingTime, signatureFormatLevel,
-			  signingCertificate, signingCertificateSubject, signingCertificateIssuer, signatureConclusion, issuingCertificate, validSignatureComputation, validSignatureCertStatus, validSignatureCertHistory,
-			  validTrustAnchor, validSignatureConclusion, validSignatureFormat, validIssuerCertStatus, validIssuerCertHistory
+						"signingTime={}\n signatureFormatLevel={}\n signingCertificate={}\n signingCertificateSubject={}\n signingCertificateIssuer={}\n signatureConclusion={}\n " +
+						"issuerCertificate={}\n validSignatureComputation={}\n validSignatureCertStatus={}\n validSignatureCertHistory={}\n validTrustAnchor={}\n " +
+						"validSignatureConclusion={}\n validSignatureFormat={}\n validIssuerCertStatus={}\n validIssuerCertHistory={}\n", signingTime, signatureFormatLevel,
+				signingCertificate, signingCertificateSubject, signingCertificateIssuer, signatureConclusion, issuingCertificate, validSignatureComputation, validSignatureCertStatus, validSignatureCertHistory,
+				validTrustAnchor, validSignatureConclusion, validSignatureFormat, validIssuerCertStatus, validIssuerCertHistory
 		);
-		
+
 		// create the data container and put it in the cache
 		final DiagnosisData diagnosis = new DiagnosisData(signingTime, signingCertificate, signingCertificateSubject, signingCertificateIssuer, signatureFormatLevel, signatureConclusion, issuingCertificate, TechnicalTrustLevel.FAIL, "Not yet determined!");
 		final ValidationData validation = new ValidationData(validSignatureComputation, validSignatureConclusion, validSignatureFormat, validSignatureCertStatus,
-			  validSignatureCertHistory, validTrustAnchor, validIssuerCertStatus, validIssuerCertHistory);
+				validSignatureCertHistory, validTrustAnchor, validIssuerCertStatus, validIssuerCertHistory);
 		final DecisionData decision = new DecisionData(diagnosis, validation);
-		
+
 		determineDecision(decision);
-		
+
 		DATA_CACHE.set(new SoftReference<DecisionData>(decision));
 
 		return decision;
@@ -425,103 +425,103 @@ class DSSTokenValidationCreator {
 
 	private void determineDecision(DecisionData decisionData) {
 
-			// ########## PART A -> FAIL checks ##########################################
-			LOG.lDetail("deciding: PART A -> FAIL checks");
+		// ########## PART A -> FAIL checks ##########################################
+		LOG.lDetail("deciding: PART A -> FAIL checks");
 
-			// 1. The signature has to be mathematical correct. Otherwise the result of the technical validation has to be RED
-			if (!decisionData.validation.signatureComputation) {
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The signature is not mathematically correct.");
+		// 1. The signature has to be mathematical correct. Otherwise the result of the technical validation has to be RED
+		if (!decisionData.validation.signatureComputation) {
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The signature is not mathematically correct.");
+			return;
+		}
+		// 2. If DSS can recognize and analyze the signature format (e.g. PAdES-BES), the final conclusion can be GREEN, otherwise the final conclusion will be RED
+		if (!decisionData.validation.signatureFormat) {
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The signature format could not be detected.");
+			return;
+		}
+		// 3. QES, ADES_QC and ADES are allowed signatures levels and can create a GREEN result, an UNDETERMINED signature level will not be allowed and the final conclusion will be RED
+		if (!decisionData.validation.signatureConclusion) {
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The signature conclusion is not sufficient.");
+			return;
+		}
+		// 4. The signing certificate at least has to be valid at the time of signing (not revoked, not expired, recognizable by DSS).
+		if (decisionData.validation.signatureCertStatus == TechnicalTrustLevel.FAIL || decisionData.validation.signatureCertHistory == TechnicalTrustLevel.FAIL) {
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The signature certificate is not valid at the time of signing (non-active or revoked).");
+			return;
+		}
+
+		// 5. The only certificate with the need to be checked is the issuing certificate for the signing certificate.
+		//    A validation down to a root certificate is not necessary.
+		//    For this certificate, the same rules apply as they do for the signing certificate,
+		//    with the addition, that the issuing certificate had to be valid at the time the signing certificate started to become valid.
+
+		// checks that the signing certificate has be signed by the issuer certificate
+		if (decisionData.validation.issuerCertStatus == TechnicalTrustLevel.FAIL) {
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The issuer certificate could not be detected or is invalid.");
+			return;
+		}
+		if (decisionData.validation.issuerCertHistory != TechnicalTrustLevel.SUCCESSFUL) { // there is no SUFFICIENT for this check
+			decide(decisionData, TechnicalTrustLevel.FAIL, "The issuer certificate is not valid at the time of signing (revoked, expired or not recognisable).");
+			return;
+		}
+
+		// ########## PART B -> SUFFICIENT checks ####################################
+		LOG.lDetail("deciding: PART B -> SUFFICIENT checks");
+
+		// 4-3. Being valid at the time of signing with an CRL and/or an OCSP being defined, but none of them is reachable: YELLOW
+		if (decisionData.validation.signatureCertStatus == TechnicalTrustLevel.SUFFICIENT || decisionData.validation.signatureCertHistory == TechnicalTrustLevel.SUFFICIENT) {
+			decide(decisionData, TechnicalTrustLevel.SUFFICIENT,
+					"The signature certificate's validity at the time of signing could not be fully determined (OCSP/CRL data not available).");
+			return;
+		}
+
+		if (decisionData.diagnosis.signatureConclusion == SignatureQualification.QESIG) {
+			// 5-1. In case of qualified signatures, the issuing certificate has to be present and verifiable at a national TSL.
+			//      Otherwise the signature can be assessed with “AdES_QC” and the comment “Unable to verify the certificates issuer at a national TSL”.
+			if (!decisionData.validation.trustAnchor) {
+				final SignatureAttributes tokenSignatureAttributes = tValidation.getVerificationData().getSignatureData().get(0).getSignatureInformation();
+				tokenSignatureAttributes.setSignatureLevel(SignatureQualification.ADESIG_QC.name());
+				decide(decisionData, TechnicalTrustLevel.SUFFICIENT, "Unable to verify the certificate's issuer at a national TSL.");
 				return;
 			}
-			// 2. If DSS can recognize and analyze the signature format (e.g. PAdES-BES), the final conclusion can be GREEN, otherwise the final conclusion will be RED
-			if (!decisionData.validation.signatureFormat) {
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The signature format could not be detected.");
-				return;
-			}
-			// 3. QES, ADES_QC and ADES are allowed signatures levels and can create a GREEN result, an UNDETERMINED signature level will not be allowed and the final conclusion will be RED
-			if (!decisionData.validation.signatureConclusion) {
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The signature conclusion is not sufficient.");
-				return;
-			}
-			// 4. The signing certificate at least has to be valid at the time of signing (not revoked, not expired, recognizable by DSS).
-			if (decisionData.validation.signatureCertStatus == TechnicalTrustLevel.FAIL || decisionData.validation.signatureCertHistory == TechnicalTrustLevel.FAIL) {
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The signature certificate is not valid at the time of signing (non-active or revoked).");
-				return;
+		} else //noinspection ConstantConditions
+			if (decisionData.diagnosis.signatureConclusion == SignatureQualification.ADESIG_QC || decisionData.diagnosis.signatureConclusion == SignatureQualification.ADESIG_QC) {
+				// only for clarity
+				// 5-2. In case of AdES and AdES_QC, the issuing certificate should be validated against a TSL if possible
+				//      and the result of the verification should be part of the technical validation part of the “Trust Ok”-Token.
+				//      The outcome of this validation thereby does not affect the result of the technical validation.
 			}
 
-			// 5. The only certificate with the need to be checked is the issuing certificate for the signing certificate.
-			//    A validation down to a root certificate is not necessary.
-			//    For this certificate, the same rules apply as they do for the signing certificate,
-			//    with the addition, that the issuing certificate had to be valid at the time the signing certificate started to become valid.
+		// ########## PART C -> finally reached SUCCESSFUL ###########################
+		LOG.lDetail("deciding: PART C -> finally reached SUCCESSFUL");
 
-			// checks that the signing certificate has be signed by the issuer certificate
-			if (decisionData.validation.issuerCertStatus == TechnicalTrustLevel.FAIL) {
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The issuer certificate could not be detected or is invalid.");
-				return;
-			}
-			if (decisionData.validation.issuerCertHistory != TechnicalTrustLevel.SUCCESSFUL) { // there is no SUFFICIENT for this check
-				decide(decisionData, TechnicalTrustLevel.FAIL, "The issuer certificate is not valid at the time of signing (revoked, expired or not recognisable).");
-				return;
-			}
-
-			// ########## PART B -> SUFFICIENT checks ####################################
-			LOG.lDetail("deciding: PART B -> SUFFICIENT checks");
-
-			// 4-3. Being valid at the time of signing with an CRL and/or an OCSP being defined, but none of them is reachable: YELLOW
-			if (decisionData.validation.signatureCertStatus == TechnicalTrustLevel.SUFFICIENT || decisionData.validation.signatureCertHistory == TechnicalTrustLevel.SUFFICIENT) {
-				decide(decisionData, TechnicalTrustLevel.SUFFICIENT,
-					  "The signature certificate's validity at the time of signing could not be fully determined (OCSP/CRL data not available).");
-				return;
-			}
-
-			if (decisionData.diagnosis.signatureConclusion == SignatureQualification.QES) {
-				// 5-1. In case of qualified signatures, the issuing certificate has to be present and verifiable at a national TSL.
-				//      Otherwise the signature can be assessed with “AdES_QC” and the comment “Unable to verify the certificates issuer at a national TSL”.
-				if (!decisionData.validation.trustAnchor) {
-					final SignatureAttributes tokenSignatureAttributes = tValidation.getVerificationData().getSignatureData().get(0).getSignatureInformation();
-					tokenSignatureAttributes.setSignatureLevel(SignatureQualification.ADES_QC.name());
-					decide(decisionData, TechnicalTrustLevel.SUFFICIENT, "Unable to verify the certificate's issuer at a national TSL.");
-					return;
-				}
-			} else //noinspection ConstantConditions
-				if (decisionData.diagnosis.signatureConclusion == SignatureQualification.ADES_QC || decisionData.diagnosis.signatureConclusion == SignatureQualification.ADES) {
-					// only for clarity
-					// 5-2. In case of AdES and AdES_QC, the issuing certificate should be validated against a TSL if possible
-					//      and the result of the verification should be part of the technical validation part of the “Trust Ok”-Token.
-					//      The outcome of this validation thereby does not affect the result of the technical validation.
-				}
-
-			// ########## PART C -> finally reached SUCCESSFUL ###########################
-			LOG.lDetail("deciding: PART C -> finally reached SUCCESSFUL");
-
-			// passed all the previous checks
-			decide(decisionData, TechnicalTrustLevel.SUCCESSFUL, "The signature is valid.");	
+		// passed all the previous checks
+		decide(decisionData, TechnicalTrustLevel.SUCCESSFUL, "The signature is valid.");
 	}
 
 	private void decide(final DecisionData data, final TechnicalTrustLevel level, final String comments) {
-		
+
 		DiagnosisData diag = data.getDiagnosis();
-		
+
 		if(diag != null){
 			diag.setTrustLevel(level);
 			diag.setComment(comments);
 			LOG.lInfo("result determined to {}: {}", level, comments);
 		}else{
-			LOG.lWarn("Result hasn't been set. Diagnosis Data missing!");	
+			LOG.lWarn("Result hasn't been set. Diagnosis Data missing!");
 		}
-		
+
 		final TechnicalValidationResult r = tValidation.getTechnicalResult();
-		
+
 		//TODO: Just a dummy decider: Take the lowest result as the general result.
 		TechnicalTrustLevel curLevel = r.getTrustLevel();
-		if(curLevel == null	|| 
-		   (curLevel.equals(TechnicalTrustLevel.SUCCESSFUL) && (level.equals(TechnicalTrustLevel.SUFFICIENT) || level.equals(TechnicalTrustLevel.FAIL))) ||
-		   (curLevel.equals(TechnicalTrustLevel.SUFFICIENT) && level.equals(TechnicalTrustLevel.FAIL))) {
+		if(curLevel == null	||
+				(curLevel.equals(TechnicalTrustLevel.SUCCESSFUL) && (level.equals(TechnicalTrustLevel.SUFFICIENT) || level.equals(TechnicalTrustLevel.FAIL))) ||
+				(curLevel.equals(TechnicalTrustLevel.SUFFICIENT) && level.equals(TechnicalTrustLevel.FAIL))) {
 			r.setTrustLevel(level);
 			r.setComment(comments);
 		}
 	}
-	
+
 	/**
 	 * gives access to the latest data that was used for computing the decision in the current thread
 	 *
@@ -584,10 +584,10 @@ class DSSTokenValidationCreator {
 		@Override
 		public String toString() {
 			return "DecisionData{" +
-				  "\nlevel=\n" + level +
-				  "\nvalidation=\n" + validation +
-				  "\ndiagnosis=\n" + diagnosis +
-				  "\n}";
+					"\nlevel=\n" + level +
+					"\nvalidation=\n" + validation +
+					"\ndiagnosis=\n" + diagnosis +
+					"\n}";
 		}
 	}
 
@@ -617,7 +617,7 @@ class DSSTokenValidationCreator {
 		 * @param issuerCertificate        the value
 		 */
 		DiagnosisData(final XMLGregorianCalendar signingTime, final X509Certificate signingCertificate, final String signingCertificateSubject, final String signingCertificateIssuer, final String signatureFormatLevel,
-		              final SignatureQualification signatureConclusion, final X509Certificate issuerCertificate, final TechnicalTrustLevel trustLevel, final String comment) {
+					  final SignatureQualification signatureConclusion, final X509Certificate issuerCertificate, final TechnicalTrustLevel trustLevel, final String comment) {
 			this.signingTime = signingTime;
 			this.signingCertificate = signingCertificate;
 			this.signingCertificateSubject = signingCertificateSubject;
@@ -635,19 +635,19 @@ class DSSTokenValidationCreator {
 		@Override
 		public String toString() {
 			return "DiagnosisData{" +
-				  "\n   signingTime=" + signingTime +
-				  "\n   signingCertificateIssuer='" + signingCertificateIssuer + '\'' +
-				  "\n   signatureFormatLevel='" + signatureFormatLevel + '\'' +
-				  "\n   signatureConclusion=" + signatureConclusion +
-				  "\n   signingCertificate=" + signingCertificate +
-				  "\n   issuerCertificate=" + issuerCertificate +
-				  "\n}";
+					"\n   signingTime=" + signingTime +
+					"\n   signingCertificateIssuer='" + signingCertificateIssuer + '\'' +
+					"\n   signatureFormatLevel='" + signatureFormatLevel + '\'' +
+					"\n   signatureConclusion=" + signatureConclusion +
+					"\n   signingCertificate=" + signingCertificate +
+					"\n   issuerCertificate=" + issuerCertificate +
+					"\n}";
 		}
-		
+
 		protected void setComment(String comment){
 			this.comment = comment;
 		}
-		
+
 		protected void setTrustLevel(TechnicalTrustLevel trustLevel){
 			this.trustLevel = trustLevel;
 		}
@@ -679,8 +679,8 @@ class DSSTokenValidationCreator {
 		 * @param issuerCertHistory    the value
 		 */
 		ValidationData(final boolean signatureComputation, final boolean signatureConclusion, final boolean signatureFormat, final TechnicalTrustLevel signatureCertStatus,
-		               final TechnicalTrustLevel signatureCertHistory, final boolean trustAnchor, final TechnicalTrustLevel issuerCertStatus,
-		               final TechnicalTrustLevel issuerCertHistory) {
+					   final TechnicalTrustLevel signatureCertHistory, final boolean trustAnchor, final TechnicalTrustLevel issuerCertStatus,
+					   final TechnicalTrustLevel issuerCertHistory) {
 			this.signatureComputation = signatureComputation;
 			this.signatureConclusion = signatureConclusion;
 			this.signatureFormat = signatureFormat;
@@ -697,15 +697,15 @@ class DSSTokenValidationCreator {
 		@Override
 		public String toString() {
 			return "ValidationData{" +
-				  "\n   signatureComputation=" + signatureComputation +
-				  "\n   signatureConclusion=" + signatureConclusion +
-				  "\n   signatureFormat=" + signatureFormat +
-				  "\n   signatureCertStatus=" + signatureCertStatus +
-				  "\n   signatureCertHistory=" + signatureCertHistory +
-				  "\n   trustAnchor=" + trustAnchor +
-				  "\n   issuerCertStatus=" + issuerCertStatus +
-				  "\n   issuerCertHistory=" + issuerCertHistory +
-				  "\n}";
+					"\n   signatureComputation=" + signatureComputation +
+					"\n   signatureConclusion=" + signatureConclusion +
+					"\n   signatureFormat=" + signatureFormat +
+					"\n   signatureCertStatus=" + signatureCertStatus +
+					"\n   signatureCertHistory=" + signatureCertHistory +
+					"\n   trustAnchor=" + trustAnchor +
+					"\n   issuerCertStatus=" + issuerCertStatus +
+					"\n   issuerCertHistory=" + issuerCertHistory +
+					"\n}";
 		}
 	}
 
@@ -831,6 +831,6 @@ class DSSTokenValidationCreator {
 	}
 
 	public void setIgnoredCertificatesStore(CertificateSource ignoredCertificatesStore) {
-		this.ignoredCertificateStore = ignoredCertificatesStore;		
+		this.ignoredCertificateStore = ignoredCertificatesStore;
 	}
 }

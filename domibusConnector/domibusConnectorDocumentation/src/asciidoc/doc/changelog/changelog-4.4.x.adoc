@@ -118,9 +118,14 @@ will use /dev/urandom as entropy source by default.
 
 === 4.4.8
 
+With 4.4.8 the DSS Tools are upgraded to stay as compatible as possible with CXF. But
+the dss tools upgraded also changed the dss-API so this upgrade should be
+tested very carefully.
+
 ==== Fixes
 
-* Fix for CVE-2022-46364. CXF is upgraded to 3.4.10. As therefore the xmlsec (org.apache.santuario:xmlsec) lib is also upgraded we have to override the class: eu.europa.esig.dss.xades.SantuarioInitializer from dss utils (eu.europa.ec.joinup.sd-dss:dss-xades)
+* Fix for CVE-2022-46364. CXF is upgraded to 3.4.10. As therefore the xmlsec (org.apache.santuario:xmlsec) lib is also upgraded we had to override the class: eu.europa.esig.dss.xades.SantuarioInitializer from dss utils (eu.europa.ec.joinup.sd-dss:dss-xades)
+This is done by loading our class first.
 
 ==== Upgrades
 
