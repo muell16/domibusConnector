@@ -114,3 +114,20 @@ entropy available. With 4.4.7 the connector will use new SecureRandom() which
 will use /dev/urandom as entropy source by default.
 * Update minor version of dependencies
 * Update Testdata keystores
+
+
+=== 4.4.8
+
+==== Fixes
+
+* Fix for CVE-2022-46364. CXF is upgraded to 3.4.10. As therefore the xmlsec (org.apache.santuario:xmlsec) lib is also upgraded we have to override the class: eu.europa.esig.dss.xades.SantuarioInitializer from dss utils (eu.europa.ec.joinup.sd-dss:dss-xades)
+
+==== Upgrades
+
+* DSS-Tools => 5.11.1
+* CXF => 3.4.10
+* Santuario => 2.2.4
+
+==== Notes
+
+* CVE-2022-46363 does not affect the connector because neither of the attribtues are set by cxf-spring-boot-starter-jaxws
