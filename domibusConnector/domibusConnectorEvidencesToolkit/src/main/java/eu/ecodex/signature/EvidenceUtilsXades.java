@@ -244,7 +244,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 
     protected CertificateVerifier getCompleteCertificateVerifier() {
         CertificateVerifier cv = new CommonCertificateVerifier(true); //TODO: use certificate Verifier Factory
-        cv.setDataLoader(getFileCacheDataLoader());
+//        cv.setDataLoader(getFileCacheDataLoader());
         //cv.setCrlSource(onlineCrlSource());
         //cv.setOcspSource(onlineOcspSource());
         //cv.setTrustedCertSource(getTrustedCertificateSource());
