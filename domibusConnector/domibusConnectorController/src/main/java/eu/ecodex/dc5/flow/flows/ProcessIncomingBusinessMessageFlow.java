@@ -78,7 +78,7 @@ public class ProcessIncomingBusinessMessageFlow {
 			messageConfirmationStep.processConfirmationForMessage(incomingMessage, relayREMMDEvidence);
 			submitAsEvidenceMessageToLink.submitOppositeDirection(null, incomingMessage, relayREMMDEvidence);
 
-			MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(incomingMessage.getId(),
+			MessageReadyForTransportEvent messageReadyForTransportEvent = MessageReadyForTransportEvent.of(incomingMessage,
 					incomingMessage.getBackendLinkName(),
 					MessageTargetSource.BACKEND);
 			eventPublisher.publishEvent(messageReadyForTransportEvent); //publish transport request

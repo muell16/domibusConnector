@@ -62,11 +62,11 @@ public class RoutingRulePattern {
             } else if (as4Attribute == TokenType.AS4_ACTION) {
                 return details.getAction().getAction();
             } else if (as4Attribute == TokenType.AS4_FINAL_RECIPIENT) {
-                return details.getGatewayAddress().getEcxAddress();
+                return details.getResponder().getPartnerAddress().getEcxAddress();
             } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
-                return details.getBackendAddress().getParty().getPartyIdType();
+                return details.getInitiator().getPartnerAddress().getParty().getPartyIdType();
             } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
-                return details.getBackendAddress().getParty().getPartyId();
+                return details.getInitiator().getPartnerAddress().getParty().getPartyId();
             } else if (as4Attribute == TokenType.BACKEND_NAME) {
                 return message.getBackendLinkName() == null ? null : message.getBackendLinkName().getLinkName();
             } else if (as4Attribute == TokenType.GATEWAY_NAME) {

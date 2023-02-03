@@ -125,15 +125,15 @@ public class VerifyPModesStep {
         DC5PmodeService.PModeLeg leg = verifyLeg(service, action);
         DC5PmodeService.PModeProcess businessProcess = leg.getBusinessProcess();
 
-        if (ebmsData.getInitiatorRole() == null) {
-            ebmsData.setInitiatorRole(DC5Role.builder()
+        if (ebmsData.getInitiator().getPartnerRole() == null) {
+            ebmsData.getInitiator().setPartnerRole(DC5Role.builder()
                             .role(businessProcess.getInitiatorRole())
                             .roleType(DC5RoleType.INITIATOR)
                     .build());
         }
 
-        if (ebmsData.getResponderRole() == null) {
-            ebmsData.setResponderRole(DC5Role.builder()
+        if (ebmsData.getResponder().getPartnerRole() == null) {
+            ebmsData.getResponder().setPartnerRole(DC5Role.builder()
                     .role(businessProcess.getInitiatorRole())
                     .roleType(DC5RoleType.RESPONDER)
                     .build());

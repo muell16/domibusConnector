@@ -3,7 +3,6 @@ package eu.ecodex.dc5.message.model;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.validation.ConfirmationMessageRules;
 import eu.ecodex.dc5.message.validation.IncomingMessageRules;
-import eu.ecodex.dc5.message.validation.OutgoingMessageRules;
 import lombok.*;
 import org.springframework.core.style.ToStringCreator;
 
@@ -12,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 /**
@@ -24,12 +24,11 @@ import java.time.LocalDateTime;
  *
  */
 @Entity
-
+@Table(name = "DC5_EBMS_DATA")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class DC5Ebms {
 
 	@Builder(toBuilder = true)
@@ -38,10 +37,8 @@ public class DC5Ebms {
 				   EbmsMessageId refToEbmsMessageId,
 				   DC5Action action,
 				   DC5Service service,
-				   DC5EcxAddress backendAddress,
-				   DC5EcxAddress gatewayAddress,
-				   DC5Role initiatorRole,
-				   DC5Role responderRole
+				   DC5Partner initiator,
+				   DC5Partner responder
 				   ) {
 		this.conversationId = conversationId;
 		this.ebmsMessageId = ebmsMessageId;
@@ -52,19 +49,12 @@ public class DC5Ebms {
 		if (service != null) {
 			this.service = service.toBuilder().build();
 		}
-		if (backendAddress != null) {
-			this.backendAddress = backendAddress.toBuilder().build();
+		if (initiator != null) {
+			this.initiator = initiator.toBuilder().build();
 		}
-		if (gatewayAddress != null) {
-			this.gatewayAddress = gatewayAddress.toBuilder().build();
+		if (responder != null) {
+			this.responder = responder.toBuilder().build();
 		}
-		if (initiatorRole != null) {
-			this.initiatorRole = initiatorRole.toBuilder().build();
-		}
-		if (responderRole != null) {
-			this.responderRole = responderRole.toBuilder().build();
-		}
-
 	}
 
 	@Id
@@ -74,7 +64,7 @@ public class DC5Ebms {
 	@Column(name = "CREATED")
 	private LocalDateTime created;
 
-	@Column(name = "DC5_CONVERSATION_ID", length = 255)
+	@Column(name = "CONVERSATION_ID", length = 255)
 	private String conversationId;
 
 	@Column(name = "EBMS_MESSAGE_ID", length = 255)
@@ -82,7 +72,7 @@ public class DC5Ebms {
 	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have EBMS ID")
 	private EbmsMessageId ebmsMessageId;
 
-	@Column(name = "DC5_REF_TO_MESSAGE_ID", length = 255)
+	@Column(name = "REF_TO_MESSAGE_ID", length = 255)
 	@Convert(converter = EbmsMessageIdConverter.class)
 	@NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a refToEbmsMessageId")
 	private EbmsMessageId refToEbmsMessageId;
@@ -100,82 +90,70 @@ public class DC5Ebms {
 	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS Service")
 	private DC5Service service;
 
-	//JPA
-//	@Embedded
-//	@AttributeOverrides({
-//			@AttributeOverride( name = "ecxAddress", column = @Column(name = "S_ECX_ADDRESS", length = 255)),
-//			@AttributeOverride( name = "party.partyId", column = @Column(name = "S_PARTY_Id", length = 255)),
-//			@AttributeOverride( name = "party.partyIdType", column = @Column(name = "S_PARTY_TYPE", length = 255)),
-//			@AttributeOverride( name = "role.role", column = @Column(name = "S_ROLE", length = 255)),
-//			@AttributeOverride( name = "role.roleType", column = @Column(name = "S_ROLE_TYPE", length = 255)),
-//	})
-	//lombok
-//	@Builder.Default
-	//validation rules
-	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a EBMS backend addr block")
-	@NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a EBMS backend addr block")
 	@ManyToOne(cascade = CascadeType.ALL)
-	private DC5EcxAddress backendAddress = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
-
-	//JPA
-//	@Embedded
-//	@AttributeOverrides({
-//			@AttributeOverride( name = "ecxAddress", column = @Column(name = "R_ECX_ADDRESS", length = 255)),
-//			@AttributeOverride( name = "party.partyId", column = @Column(name = "R_PARTY_Id", length = 255)),
-//			@AttributeOverride( name = "party.partyIdType", column = @Column(name = "R_PARTY_TYPE", length = 255)),
-//			@AttributeOverride( name = "role.role", column = @Column(name = "R_ROLE", length = 255)),
-//			@AttributeOverride( name = "role.roleType", column = @Column(name = "R_ROLE_TYPE", length = 255)),
-//	})
-	//lombok
-//	@Builder.Default
-	//validation Rules
-	@NotNull(groups = {IncomingMessageRules.class, OutgoingMessageRules.class}, message = "A incoming or outgoing message must have a EBMS gateway addr block")
-	@NotNull(groups = ConfirmationMessageRules.class, message = "A confirmation message must have a EBMS gateway addr block")
-	@ManyToOne(cascade = CascadeType.ALL)
-	private DC5EcxAddress gatewayAddress = new DC5EcxAddress(); //role type is implicit RESPONDER - do I need a ROLE TYPE here?
+	@JoinColumn(name = "INITIATOR")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a initiator")
+	private DC5Partner initiator;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS initiator Role!")
-	private DC5Role initiatorRole = new DC5Role();
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull(groups = {IncomingMessageRules.class}, message = "A incoming message must already have a EBMS responder Role!")
-	private DC5Role responderRole = new DC5Role();
+	@JoinColumn(name = "RESPONDER")
+	@NotNull(groups = IncomingMessageRules.class, message = "A incoming message must have a responder")
+	private DC5Partner responder;
 
 	public EbmsSender getSender(MessageTargetSource target) {
 		if (target == MessageTargetSource.BACKEND) {
+			verifyInitiator();
 			return EbmsSender.builder()
-					.originalSender(backendAddress.getEcxAddress())
-					.party(backendAddress.getParty())
-					.role(initiatorRole)
+					.originalSender(initiator.getPartnerAddress().getEcxAddress())
+					.party(initiator.getPartnerAddress().getParty())
+					.role(initiator.getPartnerRole())
 					.build();
 		} else if (target == MessageTargetSource.GATEWAY) {
+			verifyResponder();
 			return EbmsSender.builder()
-					.originalSender(backendAddress.getEcxAddress())
-					.party(backendAddress.getParty())
-					.role(initiatorRole)
+					.originalSender(responder.getPartnerAddress().getEcxAddress())
+					.party(responder.getPartnerAddress().getParty())
+					.role(responder.getPartnerRole())
+					.build();
+		} else {
+			throw new IllegalArgumentException("Unknown MessageTargetSource " + target);
+		}
+	}
+
+	public EbmsReceiver getReceiver(MessageTargetSource target) {
+		if (target == MessageTargetSource.GATEWAY) {
+			verifyResponder();
+			return EbmsReceiver.builder()
+					.finalRecipient(responder.getPartnerAddress().getEcxAddress())
+					.party(responder.getPartnerAddress().getParty())
+					.role(responder.getPartnerRole())
+					.build();
+		} else if (target == MessageTargetSource.BACKEND) {
+			verifyInitiator();
+			return EbmsReceiver.builder()
+					.finalRecipient(initiator.getPartnerAddress().getEcxAddress())
+					.party(initiator.getPartnerAddress().getParty())
+					.role(initiator.getPartnerRole())
 					.build();
 		} else {
 			throw new IllegalArgumentException("Unknonw MessageTargetSource " + target);
 		}
 	}
 
-	public EbmsReceiver getReceiver(MessageTargetSource target) {
-		if (target == MessageTargetSource.GATEWAY) {
-			return EbmsReceiver.builder()
-					.finalRecipient(gatewayAddress.getEcxAddress())
-					.party(gatewayAddress.getParty())
-					.role(responderRole)
-					.build();
-		} else if (target == MessageTargetSource.BACKEND) {
-			return EbmsReceiver.builder()
-					.finalRecipient(backendAddress.getEcxAddress())
-					.party(backendAddress.getParty())
-					.role(responderRole)
-					.build();
-		} else {
-			throw new IllegalArgumentException("Unknonw MessageTargetSource " + target);
-		}
+	private void verifyResponder() {
+		verify("responder");
+	}
+
+	private void verifyInitiator() {
+		verify("initiator");
+	}
+
+	private void verify(String s) {
+		Objects.requireNonNull(initiator, String.format("%s must be set", s));
+		Objects.requireNonNull(initiator.getPartnerAddress(), String.format("The %s must have a partner address!", s));
+		Objects.requireNonNull(initiator.getPartnerAddress().getEcxAddress(), String.format("The %s must have a partner address with a ecxAddress (originalSender for Initiator or finalRecipient for Responder)!", s));
+		Objects.requireNonNull(initiator.getPartnerAddress().getParty(), String.format("The %s must have a partner address with a party!", s));
+		Objects.requireNonNull(initiator.getPartnerRole(), String.format("The %s must have a role!", s));
 	}
 
 	@Getter
@@ -199,8 +177,6 @@ public class DC5Ebms {
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-		builder.append("backendAddress", this.backendAddress);
-		builder.append("gatewayAddress", this.gatewayAddress);
         builder.append("ebmsMessageId", this.ebmsMessageId);
         builder.append("refToMessageId", this.refToEbmsMessageId);
         builder.append("conversationId", this.conversationId);

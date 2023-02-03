@@ -71,7 +71,7 @@ public class MessageProcessManager {
         if (dc5MsgProcess == null) {
             throw new IllegalStateException("No message process is currently active in this thread! You must start one first with MessageProcessManager.startProcess");
         }
-        return dc5MsgProcess;
+        return msgProcessRepo.getDC5MsgProcessByProcessId(dc5MsgProcess.getProcessId()); // return jpa managed entity, can not persist a msg with proc in detached state.
     }
 
     public MessageProcessId getCurrentMessageProcesssId() {
@@ -93,6 +93,13 @@ public class MessageProcessManager {
         public void close();
 
         public DC5MsgProcess getProcess();
+    }
+
+    public DC5MsgProcess createProcess() {
+        final MessageProcessId messageProcessId = MessageProcessId.ofString(messageIdGenerator.generateDomibusConnectorMessageId().toString());
+        DC5MsgProcess dc5MsgProcess = new DC5MsgProcess();
+        dc5MsgProcess.setProcessId(messageProcessId); dc5MsgProcess.setCreated(LocalDateTime.now());
+        return msgProcessRepo.save(dc5MsgProcess);
     }
 
 }

@@ -12,7 +12,6 @@
             <list>
               <option value="clean" />
               <option value="install" />
-              <option value="-DskipTests=true" />
             </list>
           </option>
           <option name="pomFileName" />

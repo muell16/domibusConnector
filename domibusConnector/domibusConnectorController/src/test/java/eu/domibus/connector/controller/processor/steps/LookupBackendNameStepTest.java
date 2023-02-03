@@ -1,19 +1,19 @@
 package eu.domibus.connector.controller.processor.steps;
 
-import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManager;
 import eu.domibus.connector.controller.routing.DCRoutingRulesManagerImpl;
 import eu.domibus.connector.controller.routing.LinkPartnerRoutingRule;
 import eu.domibus.connector.controller.routing.RoutingRulePattern;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.ecodex.dc5.flow.steps.LookupBackendNameStep;
 import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.DC5Action;
 import eu.ecodex.dc5.message.model.DC5Ebms;
 import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.model.DC5Service;
-import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.ecodex.dc5.process.MessageProcessId;
+import eu.ecodex.dc5.process.model.DC5MsgProcess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -218,6 +218,7 @@ class LookupBackendNameStepTest {
         final LookupBackendNameStep sut = new LookupBackendNameStep(routingMock, dc5MessageService);
 
         final DC5Message message = DC5Message.builder()
+                .process(DC5MsgProcess.builder().processId(MessageProcessId.ofRandom()).build())
                 .ebmsData(DC5Ebms.builder()
                         .action(DC5Action.builder().action("ConTest_Form").build())
                         .service(DC5Service.builder().service("Connector-TEST").serviceType("urn:e-codex:services:").build())
