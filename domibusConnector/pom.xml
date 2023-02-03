@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.8-SNAPSHOT</version>
+    <version>4.4.8-RC1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -365,62 +365,61 @@
                 <version>${org.ow2.asm.asm.version}</version>
             </dependency>
             <!-- Apache CXF dependencies -->
-
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-core</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-frontend-jaxws</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-features</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-features-logging</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-ws-addr</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-ws</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-transports-jms</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-transports-http</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-bindings-soap</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-ws-security</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.cxf</groupId>-->
-<!--                <artifactId>cxf-rt-ws-policy</artifactId>-->
-<!--                <version>${org.apache.cxf.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-core</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-frontend-jaxws</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-features</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-features-logging</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-ws-addr</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-ws</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-transports-jms</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-transports-http</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-bindings-soap</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-ws-security</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.cxf</groupId>-->
+            <!--                <artifactId>cxf-rt-ws-policy</artifactId>-->
+            <!--                <version>${org.apache.cxf.version}</version>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
