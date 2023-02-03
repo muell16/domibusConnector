@@ -12,6 +12,7 @@ import java.util.Map;
 public class DC5LinkPartnerJpaEntity {
 
     public static final String TABLE_NAME = "DC5_LINK_PARTNER";
+    public static final String PROPERTIES_TABLE_NAME = "DC5_LNKPART_PROP";
 
     @Id
     @Column(name="ID")
@@ -39,7 +40,7 @@ public class DC5LinkPartnerJpaEntity {
     private LinkType linkType;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable //(name = "DC_LINK_PROP")
+    @CollectionTable(name = PROPERTIES_TABLE_NAME)
     @MapKeyColumn (name="KEY", nullable = false)
     @Column(name="VALUE", length = 2048)
     private Map<String, String> properties = new HashMap<String, String>();

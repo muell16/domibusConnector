@@ -1,18 +1,16 @@
 package eu.ecodex.dc5.flow.steps;
 
-import com.mchange.v1.util.ArrayUtils;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.ecodex.dc5.message.ConfirmationCreatorService;
-import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dc5.flow.api.Step;
-import eu.ecodex.dc5.message.model.DC5Message;
+import eu.ecodex.dc5.message.ConfirmationCreatorService;
+import eu.ecodex.dc5.message.FindBusinessMessageByMsgId;
 import eu.ecodex.dc5.message.model.DC5Confirmation;
 import eu.ecodex.dc5.message.model.DC5Ebms;
-import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dc5.message.model.DC5Message;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -85,10 +83,10 @@ public class EvidenceTriggerStep {
         evidenceTriggerMsgDetails.setService(businessMsgDetails.getService().toBuilder().build());
 
         //change sender / receiver
-        evidenceTriggerMsgDetails.setGatewayAddress(businessMsgDetails.getGatewayAddress().toBuilder().build());
-        evidenceTriggerMsgDetails.setBackendAddress(businessMsgDetails.getBackendAddress().toBuilder().build());
-        evidenceTriggerMsgDetails.setResponderRole(businessMsgDetails.getResponderRole().toBuilder().build());
-        evidenceTriggerMsgDetails.setInitiatorRole(businessMsgDetails.getInitiatorRole().toBuilder().build());
+        evidenceTriggerMsgDetails.setResponder(businessMsgDetails.getResponder().toBuilder().build());
+        evidenceTriggerMsgDetails.setInitiator(businessMsgDetails.getInitiator().toBuilder().build());
+//        evidenceTriggerMsgDetails.setResponderRole(businessMsgDetails.getResponder().getPartnerRole().toBuilder().build());
+//        evidenceTriggerMsgDetails.setInitiatorRole(businessMsgDetails.getInitiatorRole().toBuilder().build());
 //        //preserve ebms roles
 //        evidenceTriggerMsgDetails.getBackendAddress().setRole(businessMsgDetails.getBackendAddress().getRole().toBuilder().build());
 //        evidenceTriggerMsgDetails.getGatewayAddress().setRole(businessMsgDetails.getGatewayAddress().getRole().toBuilder().build());

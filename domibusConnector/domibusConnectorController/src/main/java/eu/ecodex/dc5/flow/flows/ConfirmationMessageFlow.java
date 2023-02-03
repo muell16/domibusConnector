@@ -88,7 +88,7 @@ public class ConfirmationMessageFlow {
         }
 
         MessageReadyForTransportEvent messageReadyForTransportEvent =
-                MessageReadyForTransportEvent.of(message.getId(), message.getTargetLinkName(), message.getTarget());
+                MessageReadyForTransportEvent.of(message, message.getTargetLinkName(), message.getTarget());
         eventPublisher.publishEvent(messageReadyForTransportEvent);
 
         //if activated send triggered evidence back
@@ -96,7 +96,7 @@ public class ConfirmationMessageFlow {
                 && messageProcessingProperties.isSendGeneratedEvidencesToBackend()
                 && message.getSource() == MessageTargetSource.BACKEND) {
             MessageReadyForTransportEvent messageReadyForTransportEvent2 =
-                    MessageReadyForTransportEvent.of(message.getId(), message.getBackendLinkName(), message.getSource());
+                    MessageReadyForTransportEvent.of(message, message.getBackendLinkName(), message.getSource());
             eventPublisher.publishEvent(messageReadyForTransportEvent2);
         }
 

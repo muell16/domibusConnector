@@ -60,14 +60,17 @@ public class LinkPartnerRoutingRuleEvaluationTest {
                         .service(DC5Service.builder()
                                 .service("EPO_SERVICE")
                                 .serviceType("urn:e-codex:services:")
-                                .build()
-                        )
-                        .backendAddress(DC5EcxAddress.builder()
-                                .party(DC5Party.builder().partyId("gw01").build())
                                 .build())
-                        .build()
-                )
+                        .initiator(DC5Partner.builder()
+                                .partnerAddress(DC5EcxAddress.builder()
+                                        .party(DC5Party.builder()
+                                                .partyId("gw01")
+                                                .build())
+                                        .build())
+                                .build())
+                        .build())
                 .build();
+
     }
 
     private static DC5Message getMessage2() {
@@ -80,11 +83,14 @@ public class LinkPartnerRoutingRuleEvaluationTest {
                                 .serviceType("urn:e-codex:services:")
                                 .build()
                         )
-                        .backendAddress(DC5EcxAddress.builder()
-                                .party(DC5Party.builder().partyId("gw01").build())
+                        .initiator(DC5Partner.builder()
+                                .partnerAddress(DC5EcxAddress.builder()
+                                        .party(DC5Party.builder()
+                                                .partyId("gw01")
+                                                .build())
+                                        .build())
                                 .build())
-                        .build()
-                )
+                        .build())
                 .build();
     }
 

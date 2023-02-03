@@ -42,10 +42,11 @@ public class TransportMessageFlow {
     private final MessageProcessManager messageProcessManager;
     private final SubmitConfirmationMsg submitConfirmationMsg;
 
-    @DC5EventListener //implicit transactional and resumes implicit current message process
+    //@DC5EventListener //implicit transactional and resumes implicit current message process
+    @EventListener
     public void handleMessageReadyForTransport(MessageReadyForTransportEvent messageReadyForTransportEvent) {
 
-        DC5Message msg = messageRepo.getById(messageReadyForTransportEvent.getId());
+        DC5Message msg = messageReadyForTransportEvent.getMessage();
 
         DC5TransportRequest transportRequest = new DC5TransportRequest();
         transportRequest.setMessage(msg);
@@ -65,6 +66,8 @@ public class TransportMessageFlow {
                 .linkName(messageReadyForTransportEvent.getLinkName())
                 .target(messageReadyForTransportEvent.getTarget())
                 .build();
+
+        //TODO: decouple!
         submitToLinkService.submitToLink(build);
 
     }
