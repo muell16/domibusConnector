@@ -350,10 +350,6 @@ public class DomibusConnectorDomainMessageTransformerService {
             if (messageHasBackendMessageId) {
                 toDetailsType.setRefToMessageId(message.getBackendData().getBackendMessageId().toString());
             }
-            boolean messageHasBackendConversationId = message.getBackendData() != null && message.getBackendData().getBackendConversationId() != null;
-            if (messageHasBackendConversationId) {
-                toDetailsType.setConversationId(message.getBackendData().getBackendConversationId());
-            }
         }
 
         //map backend id

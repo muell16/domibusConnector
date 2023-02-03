@@ -479,9 +479,6 @@ public class LoadStoreMessageFromPath {
         if (backendData.getRefToBackendMessageId() != null) {
             messageProperties.put(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME, backendData.getBackendMessageId().getBackendMessageId());
         }
-        if (backendData.getBackendConversationId() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME, backendData.getBackendConversationId());
-        }
     }
 
 
@@ -636,9 +633,6 @@ public class LoadStoreMessageFromPath {
         DC5BackendData.DC5BackendDataBuilder builder = DC5BackendData.builder();
         if (messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME) != null) {
             builder.backendMessageId(BackendMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_MESSAGE_ID_PROP_NAME)));
-        }
-        if (messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME) != null) {
-            builder.backendConversationId(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_CONVERSATION_ID_PROP_NAME));
         }
         if (messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME) != null) {
             builder.refToBackendMessageId(BackendMessageId.ofString(messageProperties.getProperty(LoadStoreTransitionMessage.BACKEND_REF_BACKEND_MESSAGE_ID_PROP_NAME)));
