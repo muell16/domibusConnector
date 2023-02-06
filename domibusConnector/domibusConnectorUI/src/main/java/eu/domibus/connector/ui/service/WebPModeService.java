@@ -188,8 +188,7 @@ public class WebPModeService {
         for (Configuration.BusinessProcesses.Services.Service s : pmodes.getBusinessProcesses().getServices().getService()) {
             final DomainRoutingRule rule = new DomainRoutingRule();
             rule.setConfigurationSource(ConfigurationSource.DB);
-            rule.setMatchClause(new RoutingRulePattern(String.format("equals(ServiceName,'%s')", s.getValue())));
-            // TODO: also match service type?
+            rule.setMatchClause(new RoutingRulePattern(String.format("&(equals(ServiceName, '%s'), equals(ServiceType, '%s'))", s.getValue(), s.getType())));
             currentRules.put(rule.getRoutingRuleId(), rule);
         }
 
