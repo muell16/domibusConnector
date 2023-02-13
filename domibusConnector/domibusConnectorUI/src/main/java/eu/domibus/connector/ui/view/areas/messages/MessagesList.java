@@ -30,6 +30,7 @@ import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import lombok.Getter;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
@@ -54,7 +55,7 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 	
 	public MessagesList(WebMessageService messageService, DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
-		this.filter = new MessageFilter(); // mutating the filter will update the grid
+		this.filter = new MessageFilter();
 
 		grid = new Grid<>();
 		grid.setSizeFull(); // take as much space as is made available by parent.
@@ -165,7 +166,7 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 //		label.getStyle().set("padding-top", "var(--lumo-space-m)")
 //				.set("font-size", "var(--lumo-font-size-xs)");
 		TextField textField = new TextField();
-		textField.setValueChangeMode(ValueChangeMode.EAGER);
+		textField.setValueChangeMode(ValueChangeMode.LAZY);
 		textField.setClearButtonVisible(true);
 		textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		textField.setWidthFull();
@@ -217,58 +218,41 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 		private String conversationId;
 
 		public void setConnectorMsgId(String connectorMsgId) {
-			this.connectorMsgId = connectorMsgId;
+			this.connectorMsgId = connectorMsgId.isEmpty() ? null : connectorMsgId;
 			applyFilters(this);
 		}
 
 		public void setEbmsId(String ebmsId) {
-			this.ebmsId = ebmsId;
+			this.ebmsId = ebmsId.isEmpty() ? null : ebmsId;
 			applyFilters(this);
 		}
 
 		public void setBackendMsgId(String backendMsgId) {
-			this.backendMsgId = backendMsgId;
+			this.backendMsgId = backendMsgId.isEmpty() ? null : backendMsgId;
 			applyFilters(this);
 		}
 
 		public void setConversationId(String conversationId) {
-			this.conversationId = conversationId;
+			this.conversationId = conversationId.isEmpty() ? null : conversationId;
 			applyFilters(this);
 		}
 
-
-		private boolean matches(String value, String searchTerm) {
-			return searchTerm == null || searchTerm.isEmpty() || value
-					.toLowerCase().contains(searchTerm.toLowerCase());
-		}
 	}
 
 	public void applyFilters(MessageFilter filter) {
-		grid.setItems(messagePersistenceService.findAll().stream()
-				.filter(msg -> filter.matches(msg.getConnectorMessageId(), filter.connectorMsgId))
-				.filter(msg -> filter.matches(msg.getEbmsId(), filter.ebmsId))
-				.filter(msg -> filter.matches(msg.getBackendMessageId(), filter.backendMsgId))
-				.filter(msg -> filter.matches(msg.getConversationId(), filter.conversationId)));
 
+		grid.setItems(query ->
+				messagePersistenceService.findByWebFilter(filter.connectorMsgId, filter.ebmsId, filter.backendMsgId, filter.conversationId,
+						PageRequest.of(query.getPage(), query.getPageSize()))
+						.stream());
 	}
-	public void reloadList() {
-		grid.setItems(messagePersistenceService.findAll().stream());
-	}
-
-
-
-	private void refreshGrid(MessageFilter filter) {
-		grid.setItems(messagePersistenceService.findAll().stream()
-				.filter(msg -> filter.matches(msg.getConnectorMessageId(), filter.connectorMsgId))
-				.filter(msg -> filter.matches(msg.getEbmsId(), filter.ebmsId))
-				.filter(msg -> filter.matches(msg.getBackendMessageId(), filter.backendMsgId))
-				.filter(msg -> filter.matches(msg.getConversationId(), filter.conversationId)));
-	}
-
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		grid.setItems(messagePersistenceService.findAll().stream());
+		grid.setItems(query ->
+				messagePersistenceService
+						.findAll(PageRequest.of(query.getPage(), query.getPageSize())).stream()
+		);
 	}
 
 }
