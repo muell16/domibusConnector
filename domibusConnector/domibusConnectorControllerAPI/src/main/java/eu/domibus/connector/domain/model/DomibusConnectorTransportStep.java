@@ -162,6 +162,10 @@ public class DomibusConnectorTransportStep {
         }
     }
 
+    /**
+     * Compares first by created time
+     * and then by priority
+     */
     private static class TransportStepComparator implements Comparator<DomibusConnectorTransportStepStatusUpdate> {
 
         @Override
@@ -174,7 +178,19 @@ public class DomibusConnectorTransportStep {
             if (o2.getCreated() != null) {
                 time2 = o2.getCreated();
             }
-            return time2.compareTo(time1);
+            int comp = time2.compareTo(time1);
+            if (comp != 0) {
+                return comp;    //if timestamp is enough return comparision
+            }
+            TransportState state1 = TransportState.PENDING;
+            TransportState state2 = TransportState.PENDING;
+            if (o1.getTransportState() != null) {
+                state1 = o1.getTransportState();
+            }
+            if (o2.getTransportState() != null) {
+                state2 = o2.getTransportState();
+            }
+            return state1.getPriority() - state2.getPriority();
         }
     }
 
