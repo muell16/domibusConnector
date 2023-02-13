@@ -28,9 +28,17 @@ import java.util.stream.Collectors;
 @NamedEntityGraph(
 		name = "content-entity-graph",
 		attributeNodes = {
-				@NamedAttributeNode("messageStates"),
-//				@NamedAttributeNode("currentState")
-		}
+				@NamedAttributeNode(value = "messageStates", subgraph = "states"),
+				@NamedAttributeNode("currentState")
+		},
+		subgraphs = @NamedSubgraph(name = "states", attributeNodes = {
+				@NamedAttributeNode("id"),
+				@NamedAttributeNode("confirmation"),
+				@NamedAttributeNode("state"),
+				@NamedAttributeNode("event"),
+				@NamedAttributeNode("principal"),
+				@NamedAttributeNode("created"),
+		})
 )
 @Entity
 @Table(name = "DC5_BUSINESS_MSG")
@@ -72,8 +80,10 @@ public class DC5MessageContent {
 	@OneToOne(cascade = CascadeType.ALL)
 	private DC5BackendContent businessContent;
 
+//	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "DC5_BUSIMSG_2_MSGSTATE")
+//	@Fetch(FetchMode.SUBSELECT)
 	private List<DC5BusinessMessageState> messageStates = new ArrayList<>();
 
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
