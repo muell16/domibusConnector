@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.4.8-RC2-SNAPSHOT</version>
+    <version>4.4.8</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -163,7 +163,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-spring-boot-starter</artifactId>
@@ -330,8 +329,8 @@
                         <groupId>org.rnorth.visible-assertions</groupId>
                     </exclusion>
                     <exclusion>
-                        <groupId>net.java.dev.jna</groupId>
                         <artifactId>jna</artifactId>
+                        <groupId>net.java.dev.jna</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
