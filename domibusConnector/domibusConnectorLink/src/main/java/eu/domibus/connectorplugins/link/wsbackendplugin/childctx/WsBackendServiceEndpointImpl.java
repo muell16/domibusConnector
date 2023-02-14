@@ -29,8 +29,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
@@ -70,6 +75,9 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Autowired
     WsActiveLinkPartnerManager wsActiveLinkPartnerManager;
+
+    @Autowired
+    PlatformTransactionManager txManager;
 
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
@@ -257,19 +265,24 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     private class ProcessMessageAfterDownloaded extends AbstractPhaseInterceptor<Message> {
         private final TransportStateService.TransportId transportId;
+        private final TransactionTemplate txTemplate;
 
         ProcessMessageAfterDownloaded(TransportStateService.TransportId transport) {
             super(Phase.POST_INVOKE);
             this.transportId = transport;
+            DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+            txDef.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRES_NEW);
+            this.txTemplate = new TransactionTemplate(txManager, txDef);
         }
 
         @Override
-        @Transactional(propagation = Propagation.REQUIRES_NEW)
         public void handleMessage(Message message) throws Fault {
-            LOGGER.trace("ProcessMessageAfterDownloaded: handleMessage: invoking backendSubmissionService.processMessageAfterDownloaded setting transport set to " + TransportState.PENDING_DOWNLOADED);
-            TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
-            transportState.setStatus(TransportState.PENDING_DOWNLOADED);
-            transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
+            txTemplate.executeWithoutResult((state) -> {
+                LOGGER.trace("ProcessMessageAfterDownloaded: handleMessage: invoking backendSubmissionService.processMessageAfterDownloaded setting transport set to " + TransportState.PENDING_DOWNLOADED);
+                TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+                transportState.setStatus(TransportState.PENDING_DOWNLOADED);
+                transportStateService.updateTransportToBackendClientStatus(transportId, transportState);
+            });
         }
     }
 

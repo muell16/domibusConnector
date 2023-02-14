@@ -96,7 +96,8 @@
         <spring.boot.version>2.5.14</spring.boot.version>
         <org.junit.jupiter.version>5.9.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
-        <vaadin.version>14.7.8</vaadin.version>
+        <vaadin.version>14.9.2</vaadin.version>
+        <spring-data-bom.version>2021.1.9</spring-data-bom.version>
         <dss.tools.version>5.11.1</dss.tools.version>
         <org.bouncycastl.version>1.70</org.bouncycastl.version>
         <com.github.librepdf.openpdf.version>1.3.30</com.github.librepdf.openpdf.version>
@@ -142,6 +143,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>${spring-data-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
@@ -155,6 +163,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-spring-boot-starter</artifactId>
@@ -319,6 +328,10 @@
                     <exclusion>
                         <artifactId>visible-assertions</artifactId>
                         <groupId>org.rnorth.visible-assertions</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

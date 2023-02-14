@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
@@ -99,6 +101,21 @@ public class DomibusConnectorTransportStepDaoTest {
     @Test
     public void testFindStepByLastState_Pending() {
         Pageable pageable = Pageable.ofSize(20);
+        DomibusConnectorLinkPartner.LinkPartnerName[] lp = {new DomibusConnectorLinkPartner.LinkPartnerName("partner2")};
+
+        Assertions.assertAll(
+                () -> assertThat(dao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(
+                                new String[]{TransportState.PENDING.getDbName()},
+                                lp,
+                                pageable)
+                        .getTotalElements()).isEqualTo(1) //there should be 1 entry with last state of pending
+        );
+    }
+
+    @Test
+    public void testFindStepByLastState_Sorting() {
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("created").descending());
+
         DomibusConnectorLinkPartner.LinkPartnerName[] lp = {new DomibusConnectorLinkPartner.LinkPartnerName("partner2")};
 
         Assertions.assertAll(
