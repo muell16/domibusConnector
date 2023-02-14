@@ -139,4 +139,4 @@ This is done by loading our class first.
 
 ==== Notes
 
-* CVE-2022-46363 does not affect the connector because neither of the attribtues are set by cxf-spring-boot-starter-jaxws
+* CVE-2022-46363 does not affect the connector because neither of the attributes are set by cxf-spring-boot-starter-jaxws
