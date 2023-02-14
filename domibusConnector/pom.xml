@@ -130,7 +130,7 @@
         <org.xmlunit.xmlunit-core.version>2.5.1</org.xmlunit.xmlunit-core.version>
         <org.dbunit.dbunit.version>2.7.3</org.dbunit.dbunit.version>
         <com.google.guava.version>30.1.1-jre</com.google.guava.version>
-        <mysql.mysql-connector-java.version>8.0.31</mysql.mysql-connector-java.version>
+        <mysql.mysql-connector-java.version>8.0.32</mysql.mysql-connector-java.version>
         <org.postgresql.postgresql.version>42.3.8</org.postgresql.postgresql.version>
         <org.mariadb.jdbc.mariadb-java-client.version>3.0.9</org.mariadb.jdbc.mariadb-java-client.version>
         <com.oracle.database.jdbc.ojdbc-bom.version>21.5.0.0</com.oracle.database.jdbc.ojdbc-bom.version>
@@ -585,8 +585,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.mysql-connector-java.version}</version>
             </dependency>
             <dependency>

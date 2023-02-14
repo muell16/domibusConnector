@@ -114,10 +114,12 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
         String[] stateStrings = states.stream().map(TransportState::getDbName).toArray(String[]::new);
 
-        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray = new DomibusConnectorLinkPartner.LinkPartnerName[1];
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkPartnerArray;
 
         if (linkPartnerNames.size() == 0) {
-            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().toArray(new DomibusConnectorLinkPartner.LinkPartnerName[1]);
+            linkPartnerArray = transportStepDao.findAllLinkPartnerNames().stream().toArray(DomibusConnectorLinkPartner.LinkPartnerName[]::new);
+        } else {
+            linkPartnerArray = linkPartnerNames.stream().toArray(DomibusConnectorLinkPartner.LinkPartnerName[]::new);
         }
 
         // The query needs non-empty parameters to work. Null or () won't work, but ("") or (null) do.
