@@ -22,7 +22,10 @@ public class WebMessage {
 
 	private String fromParty;
 	private String toParty;
+	private String domain;
 	private String ebmsId;
+	private String initiator;
+	private String responder;
 	private String backendMessageId;
 	private String conversationId;
 
@@ -32,12 +35,14 @@ public class WebMessage {
 	private String messageContentState;
 	private String prvStates;
 
-	// TODO: decide what to do with below
+	// display all those fields in ui
 	private LocalDateTime deliveredToNationalSystem;
 	private LocalDateTime deliveredToGateway;
 	private LocalDateTime created;
 	private LocalDateTime confirmed;
 	private LocalDateTime rejected;
+
+//	----
 	private WebMessageDetail messageInfo = new WebMessageDetail();
 	private LinkedList<WebMessageEvidence> evidences = new LinkedList<>();
 	private LinkedList<WebMessageFile> files = new LinkedList<>();

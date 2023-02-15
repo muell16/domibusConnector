@@ -1,6 +1,7 @@
 package eu.domibus.connector.ui.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.ecodex.dc5.message.model.*;
@@ -97,10 +98,29 @@ public class DomibusConnectorWebMessagePersistenceService {
                             .map(DC5MessageId::getConnectorMessageId)
                             .orElseThrow(() -> new RuntimeException("Connector Message Id was null.")));
 
+            message.setDomain(Optional.ofNullable(pMessage.getBusinessDomainId())
+                    .map(DC5BusinessDomain.BusinessDomainId::getBusinessDomainId)
+                    .orElse(null)
+            );
+
             message.setEbmsId(
                     Optional.ofNullable(pMessage.getEbmsData())
                             .map(DC5Ebms::getEbmsMessageId)
                             .map(EbmsMessageId::getEbmsMesssageId)
+                            .orElse(null)); // this should never happen
+
+            message.setInitiator(
+                    Optional.ofNullable(pMessage.getEbmsData())
+                            .map(DC5Ebms::getInitiator)
+                            .map(DC5Partner::getPartnerAddress)
+                            .map(DomibusConnectorWebMessagePersistenceService::formatEcxAddress)
+                            .orElse(null)); // this should never happen
+
+            message.setResponder(
+                    Optional.ofNullable(pMessage.getEbmsData())
+                            .map(DC5Ebms::getResponder)
+                            .map(DC5Partner::getPartnerAddress)
+                            .map(DomibusConnectorWebMessagePersistenceService::formatEcxAddress)
                             .orElse(null)); // this should never happen
 
             message.setBackendMessageId(
@@ -147,6 +167,7 @@ public class DomibusConnectorWebMessagePersistenceService {
 
             return message;
         }
+
     }
 
     private List<WebMessage> mapDbMessagesToWebMessages(Iterable<DC5Message> messages) {
@@ -164,6 +185,17 @@ public class DomibusConnectorWebMessagePersistenceService {
 
     private Optional<WebMessage> mapDbMessageToWebMessage(Optional<DC5Message> pMessage) {
         return pMessage.map(m -> new DBMessageToWebMessageConverter().convert(m));
+    }
+
+    private static String formatEcxAddress(DC5EcxAddress address) {
+        return String.join(";",
+                address.getEcxAddress(),
+                address.getParty().getPartyId(),
+                (address.getParty().getPartyIdType() != null
+                    ? address.getParty().getPartyIdType()
+                        : ""
+                )
+        );
     }
 
 
