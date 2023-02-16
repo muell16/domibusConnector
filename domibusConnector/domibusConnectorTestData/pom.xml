@@ -85,7 +85,7 @@
                                 <descriptor>src/main/assembly/testKeyStoresAssembly.xml</descriptor>
                                 <descriptor>src/main/assembly/connectorTestKeyStoresAssembly.xml</descriptor>
                                 <descriptor>src/main/assembly/gatewayTestKeyStoresAssembly.xml</descriptor>
-                                <!-- <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor> -->
+                                <descriptor>src/main/assembly/connectorTestConfigs.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
