@@ -11,5 +11,6 @@
     <modules>
         <module>domibusConnectorBuilderStandalone</module>
         <module>domibusConnectorBuilderDeployable</module>
+        <module>domibusConnectorBuilderContainer</module>
     </modules>
 </project>
