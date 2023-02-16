@@ -61,6 +61,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-k8s-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/k8s</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/k8s</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
@@ -242,6 +265,127 @@
             <properties>
                 <vaadin.productionMode>true</vaadin.productionMode>
             </properties>
+        </profile>
+        <profile>
+            <id>jib</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <id>copy-spring-boot-starter</id>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jib-extra-libs</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.springframework.boot</groupId>
+                                            <artifactId>spring-boot-loader</artifactId>
+                                            <version>${spring.boot.version}</version>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <id>copy-labbox-config</id>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jib-extra-config</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testconfig</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testkeystores</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <configuration>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>${project.build.directory}/jib-extra-libs</from>
+                                        <into>/app/libs</into>
+                                    </path>
+                                    <path>
+                                        <from>${project.build.directory}/jib-extra-config</from>
+                                        <into>/app/config</into>
+                                    </path>
+                                </paths>
+                            </extraDirectories>
+                            <container>
+
+                                <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
+                                <jvmFlags>
+                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>
+                                    <jvmFlag>-Dspring.config.name=connector</jvmFlag>
+                                    <jvmFlag>-Dloader.main=eu.domibus.connector.starter.DomibusConnectorStarter</jvmFlag>
+                                </jvmFlags>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <user>185:185</user>
+                            </container>
+                            <from>
+                                <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi8-openjdk11:latest</image>
+                            </from>
+                            <to>
+                                <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
+                                <tags>
+                                    <tag>${git.commit.id.abbrev}</tag>
+                                    <tag>latest</tag>
+                                    <tag>${maven.build.timestamp}</tag>
+                                </tags>
+                            </to>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>buildTar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
