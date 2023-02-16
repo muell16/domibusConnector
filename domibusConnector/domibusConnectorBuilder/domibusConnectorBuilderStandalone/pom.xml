@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.0.1-RC3</version>
     </parent>
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
@@ -68,6 +68,29 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-k8s-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/k8s</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/k8s</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -288,7 +311,6 @@
             <id>jib</id>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
@@ -383,7 +405,6 @@
                             </container>
                             <from>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi8-openjdk11:latest</image>
-<!--                                sha256:82a6485882ffedba7f4f96a0c061a59948ad798697626c769667fdfcbe38fa85-->
                             </from>
                             <to>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
