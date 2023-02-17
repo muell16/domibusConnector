@@ -44,9 +44,9 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: 200m
-              memory: 1Gi
-            request:
+              cpu: 100m
+              memory: 512Mi
+            requests:
               cpu: 50m
               memory: 256Mi
           env:
@@ -82,13 +82,6 @@ spec:
       schedulerName: default-scheduler
   strategy:
     type: Recreate
-    resources:
-      limits:
-        cpu: 200m
-        memory: 1Gi
-      request:
-        cpu: 50m
-        memory: 256Mi
   revisionHistoryLimit: 10
 ---
 kind: Service
