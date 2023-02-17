@@ -353,7 +353,7 @@
 
                                 <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
                                 <jvmFlags>
-                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>
+<!--                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>-->
                                     <jvmFlag>-Dspring.config.name=connector</jvmFlag>
                                     <jvmFlag>-Dloader.main=eu.domibus.connector.starter.DomibusConnectorStarter</jvmFlag>
                                 </jvmFlags>
@@ -368,9 +368,7 @@
                             <to>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
                                 <tags>
-                                    <tag>${git.commit.id.abbrev}</tag>
-                                    <tag>latest</tag>
-                                    <tag>${maven.build.timestamp}</tag>
+                                    <tag>${project.version}</tag>
                                 </tags>
                             </to>
                         </configuration>
