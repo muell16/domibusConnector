@@ -64,6 +64,8 @@ spec:
               value: "INFO"
             - name: SERVER_PORT
               value: "8080"
+            - name: SPRING_ADDITIONAL_CONFIG_LOCATION
+              value: file:/app/config/labenv02/config/
           volumeMounts:
             - name: storage
               mountPath: /app/data
