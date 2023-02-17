@@ -9,7 +9,6 @@
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
         <run.env>dev</run.env>
-        <git.commit.id.abbrev>${project.version}</git.commit.id.abbrev>
     </properties>
     <dependencies>
         <dependency>
