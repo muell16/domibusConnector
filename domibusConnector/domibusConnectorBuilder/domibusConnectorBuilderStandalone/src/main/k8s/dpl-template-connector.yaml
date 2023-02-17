@@ -56,6 +56,12 @@ spec:
               value: connector
             - name: SPRING_DATASOURCE_PASSWORD
               value: connector
+            - name: SPRING_LIQUIBASE_URL
+              value: "jdbc:h2:file:/app/data/connector.db"
+            - name: SPRING_LIQUIBASE_USER
+              value: connector
+            - name: SPRING_LIQUIBASE_PASSWORD
+              value: connector
             - name: CONNECTOR_INIT_USER_INITIAL_USER_PASSWORD
               value: admin
             - name: CONNECTOR_INIT_USER_INITIAL_CHANGE_REQUIRED
