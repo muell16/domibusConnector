@@ -73,7 +73,7 @@ class ProcessOutgoingBusinessMessageFlowTest {
         return txTemplate.execute(state -> {
             DC5Message dc5Message = DomainEntityCreator.createOutgoingEpoFormAMessage();
             dc5Message.setMessageLaneId(DC5BusinessDomain.getDefaultBusinessDomainId());
-            DC5Message m = messageRepo.saveAndFlush(dc5Message);
+            DC5Message m = messageRepo.save(dc5Message);
             return dc5Message.getConnectorMessageId();
         });
     }

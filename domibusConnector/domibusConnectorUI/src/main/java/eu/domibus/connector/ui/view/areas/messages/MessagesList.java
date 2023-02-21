@@ -5,7 +5,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -17,17 +16,19 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
-import com.vaadin.flow.data.event.SortEvent;
-import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.persistence.service.impl.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.ui.service.WebMessageService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.ecodex.dc5.message.model.DC5EcxAddress;
 import lombok.Getter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -54,71 +55,89 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 	
 	public MessagesList(WebMessageService messageService, DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
-		this.filter = new MessageFilter(); // mutating the filter will update the grid
+		this.filter = new MessageFilter();
 
-		grid = new Grid<>();
+		grid = new Grid<>(WebMessage.class, false);
 		grid.setSizeFull(); // take as much space as is made available by parent.
 		grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
 
-		grid.addComponentColumn(this::geMessageDetailsLink).setHeader("Details").setAutoWidth(true);
+		grid.addComponentColumn(this::geMessageDetailsLink)
+				.setHeader("Details").setAutoWidth(true);
 
-		final Grid.Column<WebMessage> fromParty = grid.addColumn(
-				webMessage -> webMessage.getMessageInfo() != null && webMessage.getMessageInfo().getFrom() != null
-						? webMessage.getMessageInfo().getFrom().getPartyString()
-						: "")
-				.setHeader("From Party")
-				.setAutoWidth(true).setKey("messageInfo.from.partyId").setSortable(true)
+		// NOTE: the keys must map to DC5Message otherwise sorting will not work
+		final Grid.Column<WebMessage> initiator = grid.addColumn(msg -> createEcxAddressRenderer(msg.getInitiator()))
+				.setHeader("Initiator")
+				.setAutoWidth(true)
+				.setKey("ebmsData.initiator")
+				.setSortable(true)
 				.setResizable(true);
 
-		final Grid.Column<WebMessage> toParty = grid.addColumn(
-				webMessage -> webMessage.getMessageInfo() != null && webMessage.getMessageInfo().getTo() != null
-						? webMessage.getMessageInfo().getTo().getPartyString()
-						: "")
-				.setHeader("To Party")
-				.setAutoWidth(true).setKey("messageInfo.to.partyId").setSortable(true)
+		final Grid.Column<WebMessage> responder = grid.addColumn(msg -> createEcxAddressRenderer(msg.getResponder()))
+				.setHeader("Responder")
+				.setAutoWidth(true)
+				.setKey("ebmsData.responder")
+				.setSortable(true)
+				.setResizable(true);
+
+		final Grid.Column<WebMessage> domain = grid.addColumn(WebMessage::getDomain)
+				.setHeader("Domain")
+				.setAutoWidth(true)
+				.setKey("businessDomainId")
+				.setSortable(true)
 				.setResizable(true);
 
 		final String connectorMessageIdHeader = "Connector Message ID";
 		final Grid.Column<WebMessage> connectorMsgIdColumn = grid.addColumn(WebMessage::getConnectorMessageId)
 				.setHeader(connectorMessageIdHeader)
 				.setAutoWidth(true)
-				.setKey("connectorMessageId").setSortable(true).setResizable(true);
+				.setKey("connectorMessageId")
+				.setSortable(true)
+				.setResizable(true);
 
 		final String ebMSMessageIdHeader = "ebMS Message ID";
 		final Grid.Column<WebMessage> ebmsIdColumn = grid.addColumn(WebMessage::getEbmsId)
 				.setHeader(ebMSMessageIdHeader)
 				.setAutoWidth(true)
-				.setKey("ebmsMessageId").setSortable(true).setResizable(true);
+				.setKey("ebmsData.ebmsMessageId")
+				.setSortable(true).setResizable(true);
 
 		final String backendMessageIdHeader = "Backend Message ID";
 		final Grid.Column<WebMessage> backendMsgIdColumn = grid.addColumn(WebMessage::getBackendMessageId)
 				.setHeader(backendMessageIdHeader)
 				.setAutoWidth(true)
-				.setKey("backendMessageId").setSortable(true).setResizable(true);
+				.setKey("backendData.backendMessageId")
+				.setSortable(true)
+				.setResizable(true);
 
 		final String conversationIdHeader = "Conversation ID";
 		final Grid.Column<WebMessage> conversationIdColumn = grid.addColumn(WebMessage::getConversationId)
 				.setHeader(conversationIdHeader)
 				.setAutoWidth(true)
-				.setKey("conversationId").setSortable(true).setResizable(true);
+				.setKey("ebmsData.conversationId").setSortable(true).setResizable(true);
 
 		final String msgDirectionHeader = "Message Direction";
 		final Grid.Column<WebMessage> msgDirectionColumn = grid.addColumn(WebMessage::getMessageDirection)
 				.setHeader(msgDirectionHeader)
 				.setAutoWidth(true)
-				.setKey("messageDirection").setSortable(true).setResizable(true);
+				.setKey("messageDirection")
+				.setSortable(false)
+				.setResizable(true);
 
 		final String prvStatesHeader = "Previous States";
 		final Grid.Column<WebMessage> prvStatesColumn = grid.addColumn(WebMessage::getPrvStates)
 				.setHeader(prvStatesHeader)
 				.setAutoWidth(true)
-				.setKey("prvStates").setSortable(true).setResizable(true);
+				.setKey("messageContent.messageStates")
+				.setSortable(false)
+				.setResizable(true);
 
 		final String currentStateHeader = "Current State";
 		final Grid.Column<WebMessage> currentStateColumn = grid.addColumn(WebMessage::getMessageContentState)
 				.setHeader(currentStateHeader)
 				.setAutoWidth(true)
-				.setKey("currentState").setSortable(true).setResizable(true);
+				.setKey("messageContent.currentState")
+				.setSortable(false)
+				.setResizable(true);
 
 		visibleColumnsMenu = new Button("Show/Hide Columns");
 		visibleColumnsMenu.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -133,7 +152,6 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 
 		grid.setMultiSort(false);
 		setWidth("100%");
-		grid.addSortListener(this::handleSortEvent);
 
 		Span title = new Span("Messages");
 		title.getStyle().set("font-weight", "bold");
@@ -165,7 +183,7 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 //		label.getStyle().set("padding-top", "var(--lumo-space-m)")
 //				.set("font-size", "var(--lumo-font-size-xs)");
 		TextField textField = new TextField();
-		textField.setValueChangeMode(ValueChangeMode.EAGER);
+		textField.setValueChangeMode(ValueChangeMode.LAZY);
 		textField.setClearButtonVisible(true);
 		textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		textField.setWidthFull();
@@ -202,13 +220,7 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 		return getDetails;
 	}
 
-	private void handleSortEvent(SortEvent<Grid<WebMessage>, GridSortOrder<WebMessage>> gridGridSortOrderSortEvent) {
-		gridGridSortOrderSortEvent.getSortOrder().stream()
-				.map(webMessageGridSortOrder -> {
-					SortDirection direction = webMessageGridSortOrder.getDirection();
-					return direction;
-				});
-	}
+
 	private class MessageFilter {
 
 		private String connectorMsgId;
@@ -217,58 +229,68 @@ public class MessagesList extends Div implements AfterNavigationObserver {
 		private String conversationId;
 
 		public void setConnectorMsgId(String connectorMsgId) {
-			this.connectorMsgId = connectorMsgId;
+			this.connectorMsgId = connectorMsgId.isEmpty() ? null : connectorMsgId;
 			applyFilters(this);
 		}
 
 		public void setEbmsId(String ebmsId) {
-			this.ebmsId = ebmsId;
+			this.ebmsId = ebmsId.isEmpty() ? null : ebmsId;
 			applyFilters(this);
 		}
 
 		public void setBackendMsgId(String backendMsgId) {
-			this.backendMsgId = backendMsgId;
+			this.backendMsgId = backendMsgId.isEmpty() ? null : backendMsgId;
 			applyFilters(this);
 		}
 
 		public void setConversationId(String conversationId) {
-			this.conversationId = conversationId;
+			this.conversationId = conversationId.isEmpty() ? null : conversationId;
 			applyFilters(this);
 		}
 
-
-		private boolean matches(String value, String searchTerm) {
-			return searchTerm == null || searchTerm.isEmpty() || value
-					.toLowerCase().contains(searchTerm.toLowerCase());
-		}
 	}
 
 	public void applyFilters(MessageFilter filter) {
-		grid.setItems(messagePersistenceService.findAll().stream()
-				.filter(msg -> filter.matches(msg.getConnectorMessageId(), filter.connectorMsgId))
-				.filter(msg -> filter.matches(msg.getEbmsId(), filter.ebmsId))
-				.filter(msg -> filter.matches(msg.getBackendMessageId(), filter.backendMsgId))
-				.filter(msg -> filter.matches(msg.getConversationId(), filter.conversationId)));
 
+		grid.setItems(query ->
+				messagePersistenceService.findByWebFilter(filter.connectorMsgId, filter.ebmsId, filter.backendMsgId, filter.conversationId,
+						VaadinSpringDataHelpers.toSpringPageRequest(query))
+						.stream());
 	}
-	public void reloadList() {
-		grid.setItems(messagePersistenceService.findAll().stream());
-	}
-
-
-
-	private void refreshGrid(MessageFilter filter) {
-		grid.setItems(messagePersistenceService.findAll().stream()
-				.filter(msg -> filter.matches(msg.getConnectorMessageId(), filter.connectorMsgId))
-				.filter(msg -> filter.matches(msg.getEbmsId(), filter.ebmsId))
-				.filter(msg -> filter.matches(msg.getBackendMessageId(), filter.backendMsgId))
-				.filter(msg -> filter.matches(msg.getConversationId(), filter.conversationId)));
-	}
-
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		grid.setItems(messagePersistenceService.findAll().stream());
+		grid.setItems(query ->
+				messagePersistenceService
+						.findAll(VaadinSpringDataHelpers.toSpringPageRequest(query))
+						.stream()
+		);
+	}
+
+	private static Renderer<WebMessage> createEcxAddressRenderer(String ecxAddress) {
+		return LitRenderer.<WebMessage>of(
+						"<vaadin-horizontal-layout style=\"align-items: center;\" theme=\"spacing\">"
+//								+ "  <vaadin-avatar img=\"${item.pictureUrl}\" name=\"${item.fullName}\"></vaadin-avatar>"
+								+ "  <vaadin-vertical-layout style=\"line-height: var(--lumo-line-height-m);\">"
+								+ "    <span> ${item.ecxAddr} </span>"
+								+ "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
+								+ "      ${item.partyDetails}" + "    </span>"
+								+ "  </vaadin-vertical-layout>"
+								+ "</vaadin-horizontal-layout>")
+//				.withProperty("pictureUrl", Person::getPictureUrl)
+				.withProperty("ecxAddr", msg -> ecxAddress.substring(0, ecxAddress.indexOf(";")))
+				.withProperty("partyDetails", msg -> {
+					final String[] split = ecxAddress.split(";");
+					return split[1] + (split.length > 2 ? split[2] : "");
+				});
+	}
+
+	private static String formatEcxAddress(DC5EcxAddress address) {
+		return address.getEcxAddress() + System.lineSeparator()
+				+ address.getParty().getPartyId()
+				+ (address.getParty().getPartyIdType() != null
+				? "(" + address.getParty().getPartyIdType() + ")"
+				: "");
 	}
 
 }

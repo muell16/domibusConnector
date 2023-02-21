@@ -5,14 +5,13 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.ecodex.dc5.message.model.*;
 import eu.ecodex.dc5.message.repo.DC5MessageRepo;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.domain.Example;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,8 +85,9 @@ public class FindBusinessMessageByMsgId {
     }
 
     public @NonNull List<DC5Message> findBusinessMsgByConversationId(String s) {
-        final DC5Message example = DC5Message.builder().ebmsData(DC5Ebms.builder().conversationId(s).build()).build();
-        return dc5MessageRepo.findAll(Example.of(example));
+        final ArrayList<DC5Message> result = new ArrayList<>();
+        dc5MessageRepo.findAllByEbmsData_ConversationId(s).forEach(result::add);
+        return result;
     }
 
     public @NonNull Optional<DC5Message> findBusinessMsgByRefToMsgId(DC5Message msg) {
