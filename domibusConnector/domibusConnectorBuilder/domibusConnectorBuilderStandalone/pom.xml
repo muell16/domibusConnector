@@ -369,7 +369,7 @@
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
                                 <tags>
                                     <tag>${project.version}</tag>
-                                    <tag>${git.commit.id.abbrev}</tag>
+                                    <tag>${project.version}_${git.commit.id.abbrev}</tag>
                                 </tags>
                             </to>
                         </configuration>
