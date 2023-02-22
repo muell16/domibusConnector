@@ -88,7 +88,7 @@
             <outputDirectory>standalone/bin</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>eu.domibus.connector:domibusConnectorBuilderStandalone:jar</include>
+                <include>eu.domibus.connector:domibusConnectorBuilderStandalone:jar:spring</include>
             </includes>
         </dependencySet>
     </dependencySets>

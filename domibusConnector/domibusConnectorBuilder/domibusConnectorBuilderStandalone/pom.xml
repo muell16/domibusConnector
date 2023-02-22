@@ -409,7 +409,7 @@
                             <to>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-ju-images-poc-docker/jueu/dc-connector</image>
                                 <tags>
-                                    <tag>${git.commit.id.abbrev}</tag>
+                                    <tag>${project.version}_${git.commit.id.abbrev}</tag>
                                     <tag>latest</tag>
                                     <tag>${maven.build.timestamp}</tag>
                                 </tags>

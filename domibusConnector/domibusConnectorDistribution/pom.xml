@@ -36,6 +36,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorBuilderStandalone</artifactId>
             <version>${project.version}</version>
+            <classifier>spring</classifier>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector.plugin</groupId>
