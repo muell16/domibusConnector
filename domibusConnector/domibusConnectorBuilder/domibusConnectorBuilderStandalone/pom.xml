@@ -402,6 +402,7 @@
                                     <port>8080</port>
                                 </ports>
                                 <user>185:185</user>
+                                <workingDirectory>/app</workingDirectory>
                             </container>
                             <from>
                                 <image>centralrepo.apps.a3.cp.cna.at/brz-cp-a2-docker/cp-baseimages/brz-cp-ubi8-openjdk11:latest</image>
