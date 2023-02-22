@@ -73,7 +73,7 @@ spec:
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: file:/app/config/labenv02/config/
             - name: CONNECTOR_LINK_GATEWAY_LINK_CONFIG_PROPERTIES_GW_ADDRESS
-              value: http://env${lab.id}-gw-svc:8080/domibus/services/dcplugin
+              value: http://${lab.id}-gw-svc:8080/domibus/services/dcplugin
           volumeMounts:
             - name: storage
               mountPath: /app/data
