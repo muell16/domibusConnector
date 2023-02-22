@@ -45,10 +45,10 @@ spec:
           resources:
             limits:
               cpu: 100m
-              memory: 512Mi
+              memory: 1024Mi
             requests:
               cpu: 50m
-              memory: 256Mi
+              memory: 512Mi
           env:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:h2:file:/app/data/connector.db"
@@ -72,6 +72,8 @@ spec:
               value: "8080"
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: file:/app/config/labenv02/config/
+            - name: CONNECTOR_LINK_GATEWAY_LINK_CONFIG_PROPERTIES_GW_ADDRESS
+              value: http://env${lab.id}-gw-svc:8080/domibus/services/dcplugin
           volumeMounts:
             - name: storage
               mountPath: /app/data
