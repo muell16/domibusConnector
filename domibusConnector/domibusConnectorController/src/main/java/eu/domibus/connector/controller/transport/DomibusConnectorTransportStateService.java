@@ -46,6 +46,10 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     @Transactional
     public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
 
+        //TODO: if message is a business message and state is failed
+        //trigger SUBMISSION_REJECTION
+        //TODO: also send SUBMISSION_CONFIRMATION back here! Instead in ToGatewayBusinessMessageProcessor!
+
         this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
             if (isBusinessMessage(m)) {
                 m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
@@ -69,6 +73,11 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     @Override
     @Transactional
     public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
+
+        //TODO: if message is a business message and state is failed
+        //trigger NON_DELIVERY
+        //TODO: also send SUBMISSION_CONFIRMATION back here! Instead in ToGatewayBusinessMessageProcessor!
+
         this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
             if (isBusinessMessage(m)) {
                 m.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());

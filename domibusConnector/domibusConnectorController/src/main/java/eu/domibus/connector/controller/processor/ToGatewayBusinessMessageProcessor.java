@@ -97,7 +97,7 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
             //submit message to GW
             submitMessageToLinkStep.submitMessage(message);
             //submit evidence message to BACKEND
-            //TODO: do this after submitMessage was successfull! offload into extra queue
+            //TODO: do this after submitMessage was successfull! offload into TransportStateService
             submitAsEvidenceMessageToLink.submitOppositeDirection(null, message, submissionAcceptanceConfirmation);
 
             LOGGER.info(LoggingMarker.BUSINESS_LOG, "Put message with backendId [{}] to Gateway Link [{}] on toLink Queue.",

@@ -46,7 +46,9 @@ public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
         transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
         DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+        //TODO: catch P-Mode exception, or read issue from plugin
         DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
+
 
         transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());

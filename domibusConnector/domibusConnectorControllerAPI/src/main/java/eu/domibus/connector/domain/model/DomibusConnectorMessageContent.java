@@ -25,7 +25,7 @@ import javax.validation.constraints.Null;
  */
 public class DomibusConnectorMessageContent implements Serializable {
 
-	private byte xmlContent[];
+	private byte xmlContent[];	//TODO: this should also be a LargeFileReference so it is also processed by content deletion!
 	@Nullable
 	private DomibusConnectorMessageDocument document;
 
