@@ -28,6 +28,7 @@ import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
+import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.message.model.BackendMessageId;
 import eu.ecodex.dc5.message.model.DC5MessageId;
 import eu.ecodex.dc5.pmode.DC5PmodeService;
@@ -53,6 +54,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     
     public static final String TITLE = "Send Connector Test Message";
 	public static final String HELP_ID = "ui/c2ctests/send_connector_test_message.html";
+    private final DCBusinessDomainManager dcBusinessDomainManager;
 
     private ConnectorTestMessageForm messageForm;
     private VerticalLayout messageFilesArea = new VerticalLayout();
@@ -62,22 +64,24 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     Button uploadFileButton;
     Button submitMessageButton;
 
-    private WebPModeService pModeService;
-    private WebConnectorTestService webTestService;
-    private DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private final WebPModeService pModeService;
+    private final WebConnectorTestService webTestService;
+    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     boolean filesEnabled = false;
 
     //TODO: add dialog to choose business domain which should be used to send c2c test from!
 
-    public SendC2CTestMessage(@Autowired WebPModeService pModeService,
-                              @Autowired WebConnectorTestService webTestService,
-                              @Autowired DomibusConnectorMessageIdGenerator messageIdGenerator) {
+    public SendC2CTestMessage(WebPModeService pModeService,
+                              WebConnectorTestService webTestService,
+                              DCBusinessDomainManager dcBusinessDomainManager,
+                              DomibusConnectorMessageIdGenerator messageIdGenerator) {
     	super(HELP_ID, TITLE);
         this.messageForm = new ConnectorTestMessageForm();
         this.webTestService = webTestService;
         this.pModeService = pModeService;
         this.messageIdGenerator = messageIdGenerator;
+        this.dcBusinessDomainManager = dcBusinessDomainManager;
 //        this.messageForm.setParties(pModeService.getPartyList());
 
         VerticalLayout messageDetailsArea = new VerticalLayout();

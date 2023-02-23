@@ -13,6 +13,7 @@ import eu.domibus.connector.ui.dto.WebMessageDetail.Party;
 import eu.domibus.connector.ui.dto.WebMessageFile;
 import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.europa.esig.dss.model.MimeType;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 
+@RequiredArgsConstructor
 public class WebConnectorTestService {
 
 	private static final Logger LOGGER = LogManager.getLogger(WebConnectorTestService.class);
@@ -31,13 +33,7 @@ public class WebConnectorTestService {
 	private final DCConnector2ConnectorTestService connectorTestService;
 	private final ConnectorTestConfigurationProperties config;
 
-	public WebConnectorTestService(DCConnector2ConnectorTestService connectorTestService,
-								   ConnectorTestConfigurationProperties config
-	) {
-		this.connectorTestService = connectorTestService;
-		this.config = config;
-	}
-	
+
 	public void submitTestMessage(WebMessage testMsg) {
 		DomibusConnectorMessageType connectorMsg = mapWebMessageToTransition(testMsg);
 		LOGGER.debug("Submitting test message [{}]", connectorMsg);

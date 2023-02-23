@@ -125,22 +125,6 @@
             <classifier>testkeystores</classifier>
         </dependency>
     </dependencies>
-    <!--    <build>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.springframework.boot</groupId>-->
-    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--                <executions>-->
-    <!--                    <execution>-->
-    <!--                        <id>create-build-properties</id>-->
-    <!--                        <goals>-->
-    <!--                            <goal>build-info</goal>-->
-    <!--                        </goals>-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--    </build>-->
     <profiles>
         <profile>
             <id>dev</id>
@@ -151,6 +135,78 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>run</id>
+            <properties>
+                <lab.id>01</lab.id>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-labenv-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testkeystores</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>domibusConnectorTestData</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>testconfig</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}/env${lab.id}/</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>eu.domibus.connector.starter.DomibusConnectorStarter</mainClass>
+<!--                            <workingDirectory>${project.build.directory}/env${lab.id}/</workingDirectory>-->
+                            <systemPropertyVariables>
+                                <spring.config.additional-location>file:./target/labenv${lab.id}/config/</spring.config.additional-location>
+                                <spring.config.name>connector</spring.config.name>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
