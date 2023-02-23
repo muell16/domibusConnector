@@ -1,5 +1,6 @@
 package eu.domibus.connector.ui.view.areas.testing;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
@@ -18,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.ui.component.LumoLabel;
 import eu.domibus.connector.ui.dto.WebMessage;
 import eu.domibus.connector.ui.dto.WebMessageDetail;
@@ -68,6 +71,8 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     private final WebConnectorTestService webTestService;
     private final DomibusConnectorMessageIdGenerator messageIdGenerator;
 
+    private final Select<DC5BusinessDomain.BusinessDomainId> domainSelectBox;
+
     boolean filesEnabled = false;
 
     //TODO: add dialog to choose business domain which should be used to send c2c test from!
@@ -75,14 +80,20 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     public SendC2CTestMessage(WebPModeService pModeService,
                               WebConnectorTestService webTestService,
                               DCBusinessDomainManager dcBusinessDomainManager,
-                              DomibusConnectorMessageIdGenerator messageIdGenerator) {
+                              DomibusConnectorMessageIdGenerator messageIdGenerator,
+                              Select<DC5BusinessDomain.BusinessDomainId> domainSelectBox
+                              ) {
     	super(HELP_ID, TITLE);
+        this.domainSelectBox = domainSelectBox;
         this.messageForm = new ConnectorTestMessageForm();
         this.webTestService = webTestService;
         this.pModeService = pModeService;
         this.messageIdGenerator = messageIdGenerator;
         this.dcBusinessDomainManager = dcBusinessDomainManager;
-//        this.messageForm.setParties(pModeService.getPartyList());
+
+        domainSelectBox.addValueChangeListener(this::domainSelectionChanged);
+        domainSelectBox.setEmptySelectionAllowed(true);
+
 
         VerticalLayout messageDetailsArea = new VerticalLayout();
         messageForm.getStyle().set("margin-top", "25px");
@@ -122,7 +133,17 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
 
     }
 
-	private void setDefaultFilesButtonClicked(ClickEvent<Button> e) {
+    private void domainSelectionChanged(AbstractField.ComponentValueChangeEvent<Select<DC5BusinessDomain.BusinessDomainId>, DC5BusinessDomain.BusinessDomainId> event) {
+        DC5BusinessDomain.BusinessDomainId value = event.getValue();
+        if (value == null) {
+            //TODO: disable verfication ....
+        } else {
+
+        }
+
+    }
+
+    private void setDefaultFilesButtonClicked(ClickEvent<Button> e) {
 		setInitialFiles();
 		refreshPage(null);
 	}
