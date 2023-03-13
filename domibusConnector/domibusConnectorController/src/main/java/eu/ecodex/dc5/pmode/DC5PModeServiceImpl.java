@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,7 @@ public class DC5PModeServiceImpl implements DC5PmodeService {
 
     @Override
     public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DC5BusinessDomain.BusinessDomainId lane) {
+        Objects.requireNonNull(lane, "The businessDomainId must not be null!");
         try (CurrentBusinessDomain.CloseAbleBusinessDomain bd = CurrentBusinessDomain.setCloseAbleCurrentBusinessDomain(lane);) {
             try {
                 return Optional.ofNullable(businessScopedPModeService.getCurrentPModeSet());

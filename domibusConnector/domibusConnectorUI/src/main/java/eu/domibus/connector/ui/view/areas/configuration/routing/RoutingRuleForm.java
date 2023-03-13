@@ -8,6 +8,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.service.DCLinkFacade;
+import eu.domibus.connector.ui.service.WebCurrentlySelectedDomainHolder;
 import eu.domibus.connector.ui.service.WebPModeService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class RoutingRuleForm extends FormLayout {
 
     private final DCLinkFacade dcLinkFacade;
     private final WebPModeService webPModeService;
+    private final WebCurrentlySelectedDomainHolder webCurrentlySelectedDomainHolder;
 
     private Label configurationSource;
     private ComboBox<String> linkName;
@@ -31,9 +33,12 @@ public class RoutingRuleForm extends FormLayout {
     private IntegerField priority;
     private TextField routingRuleId;
 
-    public RoutingRuleForm(DCLinkFacade dcLinkFacade, WebPModeService webPModeService) {
+    public RoutingRuleForm(DCLinkFacade dcLinkFacade,
+                           WebPModeService webPModeService,
+                           WebCurrentlySelectedDomainHolder webCurrentlySelectedDomainHolder) {
         this.dcLinkFacade = dcLinkFacade;
         this.webPModeService = webPModeService;
+        this.webCurrentlySelectedDomainHolder = webCurrentlySelectedDomainHolder;
 
         initUi();
     }
@@ -50,7 +55,7 @@ public class RoutingRuleForm extends FormLayout {
         description = new TextField("Description");
         this.add(description);
 
-        matchClause = new RoutingExpressionField(this.webPModeService);
+        matchClause = new RoutingExpressionField(this.webPModeService, webCurrentlySelectedDomainHolder.getBusinessDomainId().orElse(null));
         matchClause.setLabel("Routing Expression");
         this.add(matchClause);
 

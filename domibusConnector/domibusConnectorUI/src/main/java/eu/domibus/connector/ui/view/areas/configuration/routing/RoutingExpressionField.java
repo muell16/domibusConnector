@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import eu.domibus.connector.controller.routing.*;
+import eu.domibus.connector.domain.model.DC5BusinessDomain;
 import eu.domibus.connector.ui.service.WebPModeService;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
                     TokenType.AS4_FROM_PARTY_ID_TYPE,
                     TokenType.AS4_SERVICE_NAME, TokenType.AS4_SERVICE_TYPE, TokenType.AS4_ACTION)
             .collect(Collectors.toList());
+    private final DC5BusinessDomain.BusinessDomainId domainId;
 
     private VerticalLayout layout = new VerticalLayout();
     private TextField tf = new TextField();
@@ -50,8 +52,9 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
 
     private final WebPModeService webPModeService;
 
-    public RoutingExpressionField(WebPModeService webPModeService) {
+    public RoutingExpressionField(WebPModeService webPModeService, DC5BusinessDomain.BusinessDomainId domainId) {
         this.webPModeService = webPModeService;
+        this.domainId = domainId;
 
 //        this.eff = eff;
         this.add(layout);
@@ -218,19 +221,19 @@ public class RoutingExpressionField extends CustomField<RoutingRulePattern> {
 
     private List<String> loadValidItems(TokenType as4Attribute) {
         if (as4Attribute == TokenType.AS4_ACTION) {
-            return webPModeService.getActionList()
+            return webPModeService.getActionList(domainId)
                     .stream().map(a -> a.getAction()).collect(Collectors.toList());
         } else if (as4Attribute == TokenType.AS4_SERVICE_NAME) {
-            return webPModeService.getServiceList()
+            return webPModeService.getServiceList(domainId)
                     .stream().map(s -> s.getService()).collect(Collectors.toList());
         } else if (as4Attribute == TokenType.AS4_SERVICE_TYPE) {
-            return webPModeService.getServiceList()
+            return webPModeService.getServiceList(domainId)
                     .stream().map(s -> s.getServiceType()).collect(Collectors.toList());
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID) {
-            return webPModeService.getPartyList()
+            return webPModeService.getPartyList(domainId)
                     .stream().map(p -> p.getPartyId()).collect(Collectors.toList());
         } else if (as4Attribute == TokenType.AS4_FROM_PARTY_ID_TYPE) {
-            return webPModeService.getPartyList()
+            return webPModeService.getPartyList(domainId)
                     .stream().map(p -> p.getPartyIdType()).collect(Collectors.toList());
         }
 //        else if (as4Attribute == TokenType.AS4_FROM_PARTY_ROLE) {

@@ -29,6 +29,7 @@ import eu.domibus.connector.ui.dto.WebMessageFileType;
 import eu.domibus.connector.ui.forms.ConnectorTestMessageForm;
 import eu.domibus.connector.ui.layout.DCVerticalLayoutWithTitleAndHelpButton;
 import eu.domibus.connector.ui.service.WebConnectorTestService;
+import eu.domibus.connector.ui.service.WebCurrentlySelectedDomainHolder;
 import eu.domibus.connector.ui.service.WebPModeService;
 import eu.domibus.connector.ui.view.areas.configuration.TabMetadata;
 import eu.ecodex.dc5.domain.DCBusinessDomainManager;
@@ -57,7 +58,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     
     public static final String TITLE = "Send Connector Test Message";
 	public static final String HELP_ID = "ui/c2ctests/send_connector_test_message.html";
-    private final DCBusinessDomainManager dcBusinessDomainManager;
+    private final WebCurrentlySelectedDomainHolder webCurrentylSelectedDomainHolder;
 
     private ConnectorTestMessageForm messageForm;
     private VerticalLayout messageFilesArea = new VerticalLayout();
@@ -69,31 +70,28 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
 
     private final WebPModeService pModeService;
     private final WebConnectorTestService webTestService;
-    private final DomibusConnectorMessageIdGenerator messageIdGenerator;
-
     private final Select<DC5BusinessDomain.BusinessDomainId> domainSelectBox;
 
     boolean filesEnabled = false;
+    private WebMessage msg;
 
     //TODO: add dialog to choose business domain which should be used to send c2c test from!
 
     public SendC2CTestMessage(WebPModeService pModeService,
                               WebConnectorTestService webTestService,
-                              DCBusinessDomainManager dcBusinessDomainManager,
-                              DomibusConnectorMessageIdGenerator messageIdGenerator,
-                              Select<DC5BusinessDomain.BusinessDomainId> domainSelectBox
+                              Select<DC5BusinessDomain.BusinessDomainId> domainSelectBox,
+                              WebCurrentlySelectedDomainHolder webCurrentlySelectedDomainHolder
                               ) {
     	super(HELP_ID, TITLE);
+        this.webCurrentylSelectedDomainHolder = webCurrentlySelectedDomainHolder;
         this.domainSelectBox = domainSelectBox;
         this.messageForm = new ConnectorTestMessageForm();
         this.webTestService = webTestService;
         this.pModeService = pModeService;
-        this.messageIdGenerator = messageIdGenerator;
-        this.dcBusinessDomainManager = dcBusinessDomainManager;
 
         domainSelectBox.addValueChangeListener(this::domainSelectionChanged);
         domainSelectBox.setEmptySelectionAllowed(true);
-
+        this.add(domainSelectBox);
 
         VerticalLayout messageDetailsArea = new VerticalLayout();
         messageForm.getStyle().set("margin-top", "25px");
@@ -135,6 +133,7 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
 
     private void domainSelectionChanged(AbstractField.ComponentValueChangeEvent<Select<DC5BusinessDomain.BusinessDomainId>, DC5BusinessDomain.BusinessDomainId> event) {
         DC5BusinessDomain.BusinessDomainId value = event.getValue();
+        this.loadAndValidate();
         if (value == null) {
             //TODO: disable verfication ....
         } else {
@@ -220,51 +219,52 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
             return;
         }
 
-        WebMessage msg = new WebMessage();
+        this.msg = new WebMessage();
         //set defaults
         msg.setConversationId(UUID.randomUUID().toString());
         msg.getMessageInfo().setFinalRecipient("finalRecipient");
         msg.getMessageInfo().setOriginalSender("originalSender");
-
-        resultArea.removeAll();
-
-        DC5MessageId DC5MessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         msg.setBackendMessageId(BackendMessageId.ofRandom().getBackendMessageId());
 
-        boolean actionSet = loadAndValidateTestAction(msg);
 
-        boolean serviceSet = loadAndValidateTestService(msg);
 
-        boolean fromPartySet = loadAndValidateFromParty(msg);
+       this.loadAndValidate();
 
-        if (!actionSet || !serviceSet || !fromPartySet) {
-            resultArea.setVisible(true);
-            uploadFileButton.setEnabled(false);
-            submitMessageButton.setEnabled(false);
+    }
 
-        } else {
+    private void loadAndValidate() {
+        resultArea.removeAll();
+
+        boolean validationResult = loadAndValidateTestAction(msg);
+        validationResult &= loadAndValidateTestService(msg);
+        validationResult &= loadAndValidateFromParty(msg);
+
+        if (validationResult) {
             resultArea.setVisible(false);
             uploadFileButton.setEnabled(true);
             submitMessageButton.setEnabled(true);
             messageForm.setMessage(msg);
-
             refreshPage(null);
+        } else {
+            resultArea.setVisible(true);
+            uploadFileButton.setEnabled(false);
+            submitMessageButton.setEnabled(false);
         }
-
     }
 
     private boolean loadAndValidateFromParty(WebMessage msg) {
-        // TODO: this must now be read from the properties instead!
-        DC5PmodeService.PModeParty pParty = null; //pModeService.getHomeParty();
-        if (pParty != null) {
-            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.getPartyId(), pParty.getPartyIdType(), null);
+        if (getCurrentSelectedDomainId() == null) {
+            //TODO do not validate, user must write everything into the fields!
+        }
+        Optional<DC5PmodeService.PModeParty> pParty = this.pModeService.getHomeParty(getCurrentSelectedDomainId());
+        if (pParty.isPresent()) {
+            WebMessageDetail.Party homeParty = new WebMessageDetail.Party(pParty.get().getPartyId(), pParty.get().getPartyIdType(), null);
             msg.getMessageInfo().setFrom(homeParty);
             return true;
         } else {
             LumoLabel resultLabel = new LumoLabel();
             resultLabel.setText("FromParty could not be set! \n"
-                    + "Please check property 'gateway.name' and if the Party with the given PartyID and RoleType INITIATOR is part of the current active PMode Set. \n"
-                    + "Alternatively re-import the current PMode Set.");
+                    + "Please check configured p-Modes!");
             resultLabel.getStyle().set("color", "red");
 
             resultArea.add(resultLabel);
@@ -275,7 +275,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestAction(WebMessage msg) {
-        List<DC5PmodeService.PModeAction> actionList = pModeService.getActionList();
+        if (getCurrentSelectedDomainId() == null) {
+            //TODO do not validate, user must write everything into the fields!
+        }
+        List<DC5PmodeService.PModeAction> actionList = pModeService.getActionList(getCurrentSelectedDomainId());
         if (actionList != null && !actionList.isEmpty()) {
             WebMessageDetail.Action action = webTestService.getTestAction();
             Optional<DC5PmodeService.PModeAction> testAction = actionList.stream()
@@ -304,7 +307,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
     }
 
     private boolean loadAndValidateTestService(WebMessage msg) {
-        List<DC5PmodeService.PModeService> serviceList = pModeService.getServiceList();
+        if (getCurrentSelectedDomainId() == null) {
+            //TODO do not validate, user must write everything into the fields!
+        }
+        List<DC5PmodeService.PModeService> serviceList = pModeService.getServiceList(getCurrentSelectedDomainId());
         if (serviceList != null && !serviceList.isEmpty()) {
             WebMessageDetail.Service service = webTestService.getTestService();
             Optional<DC5PmodeService.PModeService> testService = serviceList.stream()
@@ -330,6 +336,10 @@ public class SendC2CTestMessage extends DCVerticalLayoutWithTitleAndHelpButton i
             resultArea.setVisible(true);
         }
         return false;
+    }
+
+    private DC5BusinessDomain.BusinessDomainId getCurrentSelectedDomainId() {
+        return this.webCurrentylSelectedDomainHolder.getBusinessDomainId().orElse(null);
     }
 
     private String checkFileValid(String fileName, WebMessageFileType fileType) {

@@ -1,8 +1,7 @@
 package eu.domibus.connector.ui.service;
 
+import com.vaadin.flow.component.UI;
 import eu.domibus.configuration.Configuration;
-import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
-import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.connector.common.ConfigurationPropertyManagerService;
 import eu.domibus.connector.controller.routing.DCMessageRoutingConfigurationProperties;
 import eu.domibus.connector.controller.routing.DomainRoutingRule;
@@ -18,7 +17,6 @@ import eu.domibus.connector.persistence.service.DomibusConnectorKeystorePersiste
 import eu.domibus.connector.persistence.spring.DatabaseResourceLoader;
 import eu.domibus.connector.security.configuration.DCEcodexContainerProperties;
 import eu.domibus.connector.ui.view.areas.configuration.ChangedPropertiesDialogFactory;
-import eu.ecodex.dc5.domain.DCBusinessDomainManager;
 import eu.ecodex.dc5.pmode.DC5PmodeService;
 import lombok.var;
 import org.slf4j.Logger;
@@ -29,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.annotation.CheckForNull;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -40,8 +39,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -50,17 +47,16 @@ public class WebPModeService {
     protected final static Logger LOGGER = LoggerFactory.getLogger(WebPModeService.class);
 
     private final DC5PmodeService pModeService;
-    private final DCBusinessDomainManager domainManager;
     private final DomibusConnectorKeystorePersistenceService keystorePersistenceService;
     private final ConfigurationPropertyManagerService configurationPropertyManagerService;
     private final ChangedPropertiesDialogFactory dialogFactory;
 
+
+
     public WebPModeService(DC5PmodeService pModeService,
-                           DCBusinessDomainManager domainManager,
                            DomibusConnectorKeystorePersistenceService keystorePersistenceService,
                            ConfigurationPropertyManagerService configurationPropertyManagerService, ChangedPropertiesDialogFactory dialogFactory) {
         this.pModeService = pModeService;
-        this.domainManager = domainManager;
         this.keystorePersistenceService = keystorePersistenceService;
         this.configurationPropertyManagerService = configurationPropertyManagerService;
         this.dialogFactory = dialogFactory;
@@ -210,9 +206,7 @@ public class WebPModeService {
 
         return connectorstore;
     }
-
-
-
+    
 
     public List<DC5PmodeService.PModeParty> getPartyList(DC5BusinessDomain.BusinessDomainId laneId) {
         return getCurrentPModeSetOrNewSet(laneId).getParties();
@@ -229,11 +223,17 @@ public class WebPModeService {
 
 
     public Optional<DC5PmodeService.DomibusConnectorPModeSet> getCurrentPModeSet(DC5BusinessDomain.BusinessDomainId laneId) {
+        if (laneId == null) {
+            return Optional.empty();
+        }
         return this.pModeService.getCurrentPModeSet(laneId);
     }
 
 
     private DC5PmodeService.DomibusConnectorPModeSet getCurrentPModeSetOrNewSet(DC5BusinessDomain.BusinessDomainId domainId) {
+        if (domainId == null) {
+            return new DC5PmodeService.DomibusConnectorPModeSet();
+        }
         Optional<DC5PmodeService.DomibusConnectorPModeSet> currentPModeSetOptional = this.pModeService.getCurrentPModeSet(domainId);
         return currentPModeSetOptional.orElseGet(() -> {
             DC5PmodeService.DomibusConnectorPModeSet set = new DC5PmodeService.DomibusConnectorPModeSet();
@@ -242,4 +242,8 @@ public class WebPModeService {
         });
     }
 
+    public Optional<DC5PmodeService.PModeParty> getHomeParty(DC5BusinessDomain.BusinessDomainId domainId) {
+        DC5PmodeService.DomibusConnectorPModeSet currentPModeSet = this.getCurrentPModeSetOrNewSet(domainId);
+        return Optional.ofNullable(currentPModeSet.getHomeParty());
+    }
 }

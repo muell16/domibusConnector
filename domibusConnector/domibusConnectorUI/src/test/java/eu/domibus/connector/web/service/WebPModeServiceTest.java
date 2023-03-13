@@ -68,6 +68,7 @@ public class WebPModeServiceTest {
     @Test
     void importPModes() throws IOException {
 //        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
+        DC5BusinessDomain.BusinessDomainId defaultBusinessDomain = DC5BusinessDomain.getDefaultBusinessDomainId();
         try {
             Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
             byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
@@ -77,7 +78,7 @@ public class WebPModeServiceTest {
             DomibusConnectorKeystore keystore = webPModeService.importConnectorstore(keyStoreBytes, "pw", DomibusConnectorKeystore.KeystoreType.JKS);
             webPModeService.importPModes(pMode, "description", keystore, null); // TODO: test domain
 
-            assertThat(webPModeService.getPartyList())
+            assertThat(webPModeService.getPartyList(defaultBusinessDomain))
                     .as("example pmodes contains 24 parties")
                     .hasSize(24);
 
@@ -117,6 +118,7 @@ public class WebPModeServiceTest {
 
     @Test
     void importPModesSet2() throws IOException {
+        DC5BusinessDomain.BusinessDomainId defaultBusinessDomain = DC5BusinessDomain.getDefaultBusinessDomainId();
         assertThat(webPModeService).isNotNull();
 
         Resource resource = new ClassPathResource("pmodes/example-pmodes-2.xml");
@@ -126,7 +128,7 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, "description", keystore, null); // TODO: test domain
 
 
-        assertThat(webPModeService.getPartyList())
+        assertThat(webPModeService.getPartyList(defaultBusinessDomain))
                 .as("example pmodes contains 88 parties")
                 .hasSize(88);
 
@@ -136,6 +138,7 @@ public class WebPModeServiceTest {
 
     @Test
     void importPModesTwice() throws IOException {
+        DC5BusinessDomain.BusinessDomainId defaultBusinessDomain = DC5BusinessDomain.getDefaultBusinessDomainId();
         assertThat(webPModeService).isNotNull();
 
         Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
@@ -148,7 +151,7 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, "description", keystore,null); // TODO: test domain
 
 
-        assertThat(webPModeService.getPartyList())
+        assertThat(webPModeService.getPartyList(defaultBusinessDomain))
                 .as("example pmodes contains 24 parties")
                 .hasSize(24);
 

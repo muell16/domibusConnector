@@ -56,6 +56,7 @@ public class ConfigurationPanelFactory {
             domainSelect.addValueChangeListener(comboBoxBusinessDomainIdComponentValueChangeEvent -> {
                 if (comboBoxBusinessDomainIdComponentValueChangeEvent.isFromClient()) { // this prevents triggering the listener when doing something from the server side, e.g. refreshing data items.
                     this.refreshUI();
+                    comboBoxBusinessDomainIdComponentValueChangeEvent.getValue().getBusinessDomainId();
                 }
             });
             this.configurationClazz = configurationClazz;

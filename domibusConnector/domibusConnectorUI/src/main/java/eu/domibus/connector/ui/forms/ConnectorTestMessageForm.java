@@ -119,21 +119,6 @@ public class ConnectorTestMessageForm extends FormLayout {
 
     }
 
-    public ConnectorTestMessageForm(Component... components) {
-        super(components);
-        // TODO Auto-generated constructor stub
-    }
-
-//    public void setParties(List<DomibusConnectorParty> parties) {
-//
-//        toParty.setItems(parties.stream()
-//                .filter(p -> p.getRoleType().equals(PartyRoleType.RESPONDER))
-//                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
-//        fromParty.setItems(parties.stream()
-//                .filter(p -> p.getRoleType().equals(PartyRoleType.INITIATOR))
-//                .map(p -> new WebMessageDetail.Party(p.getPartyId(), p.getPartyIdType(), p.getRole())));
-//    }
-
     public void setMessage(WebMessage message) {
         this.removeAll();
         fillForm();

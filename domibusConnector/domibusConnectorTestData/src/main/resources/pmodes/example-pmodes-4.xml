@@ -67,7 +67,7 @@
             <action name="eCODEXEvidenceDeliveryNonDeliveryToRecipient" value="DeliveryNonDeliveryToRecipient"/>
             <action name="eCODEXEvidenceRetrievalNonRetrievalToRecipient" value="RetrievalNonRetrievalToRecipient"/>
             <action name="GWTESTActionTestForm" value="Test_Form"/>
-            <action name="ConTESTActionTestForm" value="Connector-TEST"/>
+            <action name="ConTESTActionTestForm" value="ConTest_Form"/>
             <action name="SystemTestAction" value="System-TEST"/>
             <action name="action1" value="action1" />
             <action name="action2" value="action2" />
