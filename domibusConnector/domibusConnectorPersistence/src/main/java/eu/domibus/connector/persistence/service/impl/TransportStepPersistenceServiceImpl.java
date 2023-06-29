@@ -93,7 +93,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     public List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
 
         String[] states = new String[]{TransportState.PENDING.getDbName()};
-        DomibusConnectorLinkPartner.LinkPartnerName[] linkNames = new DomibusConnectorLinkPartner.LinkPartnerName[] {linkPartnerName};
+        DomibusConnectorLinkPartner.LinkPartnerName[] linkNames = new DomibusConnectorLinkPartner.LinkPartnerName[]{linkPartnerName};
         Pageable p = Pageable.unpaged();
         return transportStepDao.findLastAttemptStepByLastStateAndLinkPartnerIsOneOf(states, linkNames, p).stream()
                 .map(this::mapTransportStepToDomain)
@@ -142,18 +142,23 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         return allLinkPartnerNames; //.stream().map(DomibusConnectorLinkPartner.LinkPartnerName::new).collect(Collectors.toList());
     }
 
-    private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
+    DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
+
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
         /*
             read message from db as json
             the message can be null if the format is not compatible to current connector version (old data)
          */
-        try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())) {
-            DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
-            step.setTransportedMessage(domibusConnectorMessage);
-        } catch (IOException e) {
-            LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
+        if (dbTransportStep.getTransportedMessage() != null) {
+            try (JsonParser parser = objectMapper.createParser(dbTransportStep.getTransportedMessage())) {
+                DomibusConnectorMessage domibusConnectorMessage = parser.readValueAs(DomibusConnectorMessage.class);
+                if (domibusConnectorMessage.getConnectorMessageId() != null) {
+                    step.setTransportedMessage(domibusConnectorMessage);
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
+            }
         }
 
         step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
