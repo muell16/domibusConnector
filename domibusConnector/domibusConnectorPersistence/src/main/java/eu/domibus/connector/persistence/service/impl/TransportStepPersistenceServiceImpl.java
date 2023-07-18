@@ -157,8 +157,10 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
                     step.setTransportedMessage(domibusConnectorMessage);
                 }
             } catch (IOException e) {
-                LOGGER.debug("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
+                LOGGER.warn("Exception occured while reading domibus connector message from transport step table. Maybe the message is a older format.", e);
             }
+        } else {
+            LOGGER.warn("The transported message was null for step ", dbTransportStep);
         }
 
         step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
