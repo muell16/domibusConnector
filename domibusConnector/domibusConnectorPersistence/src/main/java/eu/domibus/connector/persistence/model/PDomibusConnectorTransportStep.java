@@ -3,17 +3,18 @@ package eu.domibus.connector.persistence.model;
 
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep.TABLE_NAME;
 
 @Entity
 @Table(name = TABLE_NAME)
+@ToString
 public class PDomibusConnectorTransportStep {
 
     public static final String TABLE_NAME = "DC_TRANSPORT_STEP";

@@ -1,7 +1,8 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -9,11 +10,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
-import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
-import org.junit.Before;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +30,36 @@ class TransportStepPersistenceServiceImplITCase {
 
     @Autowired
     TransportStepPersistenceService transportStepPersistenceService;
+
+    @DomainModelJsonObjectMapper
+    ObjectMapper objectMapper;
+
+    @Test
+    void testMessageProcessingWhenTransportedMsgIsNull() {
+        final PDomibusConnectorTransportStep domibusConnectorTransportStep = new PDomibusConnectorTransportStep();
+        domibusConnectorTransportStep.setTransportId(new TransportStateService.TransportId("id"));
+        domibusConnectorTransportStep.setConnectorMessageId("bar");
+        domibusConnectorTransportStep.setTransportedMessage(null);
+        Assertions.assertDoesNotThrow(() -> ((TransportStepPersistenceServiceImpl) transportStepPersistenceService).mapTransportStepToDomain(domibusConnectorTransportStep));
+    }
+
+    @Test
+    void testMessageProcessingWhenTransportedMsgIsEmptyJson() {
+        final PDomibusConnectorTransportStep domibusConnectorTransportStep = new PDomibusConnectorTransportStep();
+        domibusConnectorTransportStep.setTransportId(new TransportStateService.TransportId("id"));
+        domibusConnectorTransportStep.setConnectorMessageId("bar");
+        domibusConnectorTransportStep.setTransportedMessage("{}");
+        Assertions.assertDoesNotThrow(() -> ((TransportStepPersistenceServiceImpl) transportStepPersistenceService).mapTransportStepToDomain(domibusConnectorTransportStep));
+    }
+
+    @Test
+    void testMessageProcessingWhenTransportedMsgIsEmptyJsonArray() {
+        final PDomibusConnectorTransportStep domibusConnectorTransportStep = new PDomibusConnectorTransportStep();
+        domibusConnectorTransportStep.setTransportId(new TransportStateService.TransportId("id"));
+        domibusConnectorTransportStep.setConnectorMessageId("bar");
+        domibusConnectorTransportStep.setTransportedMessage("[]");
+        Assertions.assertDoesNotThrow(() -> ((TransportStepPersistenceServiceImpl) transportStepPersistenceService).mapTransportStepToDomain(domibusConnectorTransportStep));
+    }
 
 
     @Test
