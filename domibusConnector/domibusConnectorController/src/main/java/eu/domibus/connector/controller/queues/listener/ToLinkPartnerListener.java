@@ -27,7 +27,7 @@ public class ToLinkPartnerListener {
     }
 
     @JmsListener(destination = TO_LINK_QUEUE_BEAN)
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToLinkPartnerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         String messageId = message.getConnectorMessageId().toString();
@@ -35,10 +35,15 @@ public class ToLinkPartnerListener {
         try {
             CurrentBusinessDomain.setCurrentBusinessDomain(message.getMessageLaneId());
             submitToLink.submitToLink(message);
-        } catch (Exception exc) {
-            LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", exc);
+        } catch (Throwable throwable) {
+            // because
+            // DomibusConnectorSubmitToLinkException extends DomibusConnectorMessageTransportException
+            // DomibusConnectorMessageTransportException extends RuntimeException
+            // if we do not catch this, then there won't be rollback nor retry
+
+            LOGGER.error("Cannot submit to link, throwing exception, transaction is rollback, Check DLQ.", throwable);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            throw exc;
+            throw throwable;
         } finally {
             CurrentBusinessDomain.setCurrentBusinessDomain(null);
             mdcCloseable.close();
