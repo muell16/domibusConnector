@@ -14,7 +14,9 @@
 	<wsdl:types>
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://connector.domibus.eu/ws/gateway/webservice">
 			<xsd:complexType name="ListPendingMessageIdsRequest">
-				<!-- empty type -->
+				<xsd:sequence>
+					<xsd:element name="domain" type="xsd:string" minOccurs="0" maxOccurs="1" />
+				</xsd:sequence>
 			</xsd:complexType>
 			<xsd:complexType name="ListPendingMessageIdsResponse">
 					<xsd:sequence>
@@ -23,6 +25,7 @@
 			</xsd:complexType>
 			<xsd:complexType name="GetMessageByIdRequest">
 				<xsd:sequence>
+					<xsd:element name="domain" type="xsd:string" minOccurs="0" maxOccurs="1" />
 					<xsd:element name="messageId" type="xsd:string" minOccurs="1" maxOccurs="1" />
 				</xsd:sequence>
 			</xsd:complexType>
