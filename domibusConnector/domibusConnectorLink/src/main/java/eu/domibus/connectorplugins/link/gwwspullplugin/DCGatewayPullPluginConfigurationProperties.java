@@ -25,6 +25,14 @@ public class DCGatewayPullPluginConfigurationProperties {
     @ConfigurationDescription("The URL of the domibus connector pull gateway plugin webservice.\nEg.: <domibus url>/services/pull-gw")
     private String gwAddress;
 
+    @ConfigurationLabel("Multidomain switch")
+    @ConfigurationDescription("This switch enables multidomain capabilities for the pull gateway plugin")
+    private boolean multiDomainEnabled = false;
+
+    @ConfigurationLabel("Domain Names")
+    @ConfigurationDescription("The domain names, separated with a semicolon (e.g. domain1;domain2)")
+    private String domainNames;
+
     /**
      * SSL Key Store configuration
      *
@@ -90,5 +98,21 @@ public class DCGatewayPullPluginConfigurationProperties {
 
     public void setCxfLoggingEnabled(boolean cxfLoggingEnabled) {
         this.cxfLoggingEnabled = cxfLoggingEnabled;
+    }
+
+    public boolean isMultiDomainEnabled() {
+        return multiDomainEnabled;
+    }
+
+    public void setMultiDomainEnabled(boolean multiDomainEnabled) {
+        this.multiDomainEnabled = multiDomainEnabled;
+    }
+
+    public String getDomainNames() {
+        return domainNames;
+    }
+
+    public void setDomainNames(String domainNames) {
+        this.domainNames = domainNames;
     }
 }
