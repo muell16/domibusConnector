@@ -63,7 +63,7 @@
         <dependency>
             <groupId>eu.ecodex.connector.utils</groupId>
             <artifactId>spring-quartz-scheduled</artifactId>
-            <version>0.0.6-RELEASE</version>
+            <version>${eu.ecodex.utils.version}</version>
         </dependency>
         <!-- JMS -->
         <!--        <dependency>-->

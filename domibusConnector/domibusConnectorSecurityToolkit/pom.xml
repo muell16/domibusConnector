@@ -239,7 +239,7 @@
                                     <groupId>eu.ecodex.utils</groupId>
                                     <artifactId>logging-tester</artifactId>
                                     <classifier>log4j2-test</classifier>
-                                    <version>0.0.21-RELEASE</version>
+                                    <version>${eu.ecodex.utils.version}</version>
                                     <type>xml</type>
                                     <overWrite>true</overWrite>
                                     <!--<outputAbsoluteArtifactFilename>target/test-classes/log4j2-test.xml</outputAbsoluteArtifactFilename>-->

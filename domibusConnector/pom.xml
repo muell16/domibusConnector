@@ -94,6 +94,7 @@
         <com.fasterxml.woodstox.woodstox-core.version>6.4.0</com.fasterxml.woodstox.woodstox-core.version>
         <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
         <spring.boot.version>2.5.14</spring.boot.version>
+        <eu.ecodex.utils.version>0.0.21-RELEASE</eu.ecodex.utils.version>
         <org.junit.jupiter.version>5.9.1</org.junit.jupiter.version>
         <ecodex.dependencies.version>0.0.21-RELEASE</ecodex.dependencies.version>
         <vaadin.version>14.10.3</vaadin.version>
