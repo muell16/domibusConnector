@@ -133,12 +133,12 @@
     </xs:simpleType>
     <xs:complexType name="DomibusConnectorMessagesType">
         <xs:sequence>
-            <xs:element name="domain" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="messages" type="tns:DomibusConnectorMessageType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="DomibusConnectorMessageType">
         <xs:sequence>
+            <xs:element name="domain" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="messageContent" type="tns:DomibusConnectorMessageContentType" minOccurs="0"
                         maxOccurs="1"/>
             <xs:element name="messageDetails" type="tns:DomibusConnectorMessageDetailsType" minOccurs="1"
