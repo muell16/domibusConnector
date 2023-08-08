@@ -22,7 +22,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorDocumentation</artifactId>
-            <version>${project.version}</version>
+            <version>4.4.8</version>
             <type>zip</type>
             <classifier>documentation</classifier>
         </dependency>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>eu.domibus.connector.plugin</groupId>
             <artifactId>domibus-connector-plugin-distribution</artifactId>
-            <version>4.4.0</version>
+            <version>4.5.0</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -150,7 +150,7 @@
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>domibusConnectorDocumentation</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>4.4.8</version>
                                     <classifier>documentation</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${project.build.directory}/d</outputDirectory>
