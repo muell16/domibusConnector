@@ -26,6 +26,10 @@ public class DCGatewayPullPluginConfigurationPropertiesField extends CustomField
     private final FormLayout formLayout = new FormLayout();
 
     private final TextField gwAddress = new TextField();
+
+    private final Checkbox multiDomainEnabled = new Checkbox();
+
+    private final TextField domainNames = new TextField();
     private final Checkbox cxfLoggingEnabled = new Checkbox();
     private final CxfTrustKeyStoreConfigurationPropertiesField soap;
     private final SpringResourceField wsPolicy;
@@ -51,6 +55,8 @@ public class DCGatewayPullPluginConfigurationPropertiesField extends CustomField
         formLayout.addFormItem(soap, "Soap");
         formLayout.addFormItem(wsPolicy, "WS Policy");
         formLayout.addFormItem(cxfLoggingEnabled, "cxfLoggingEnabled");
+        formLayout.addFormItem(multiDomainEnabled, "multiDomainEnabled");
+        formLayout.addFormItem(domainNames, "domainNames");
 
         binder.setStatusLabel(statusLabel);
         binder.bindInstanceFields(this);
