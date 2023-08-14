@@ -50,6 +50,9 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
     @Autowired
     DomibusConnectorMessageIdGenerator messageIdGenerator;
 
+    @Autowired
+    DCGatewayPullPluginConfigurationProperties configurationProperties;
+
 
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -77,15 +80,30 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
 
     public void pullMessagesFrom(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkName())) {
-            ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
-            ListPendingMessageIdsResponse listPendingMessageIdsResponse = gatewayWebService.listPendingMessageIds(req);
+            List<java.lang.String> messageIds;
 
-            List<java.lang.String> messageIds = listPendingMessageIdsResponse.getMessageIds();
-            messageIds.stream().forEach(id -> this.pullMessage(linkPartner, id));
+            if(configurationProperties.isMultiDomainEnabled()) {
+                String domainNames[] = configurationProperties.getDomainNames().split(";");
+                for (String domainName : domainNames) {
+                    ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
+                    req.setDomain(domainName);
+                    messageIds = listPendingMessages(req);
+                    messageIds.stream().forEach(id -> this.pullMessage(linkPartner,Optional.of(domainName), id));
+                }
+            } else {
+                messageIds = listPendingMessages(new ListPendingMessageIdsRequest());
+                messageIds.stream().forEach(id -> this.pullMessage(linkPartner,Optional.empty(), id));
+            }
         }
     }
 
-    private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, java.lang.String remoteMessageId) {
+    protected List<java.lang.String> listPendingMessages(ListPendingMessageIdsRequest request) {
+        ListPendingMessageIdsResponse listPendingMessageIdsResponse = gatewayWebService.listPendingMessageIds(request);
+
+        return listPendingMessageIdsResponse.getMessageIds();
+    }
+
+    private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, Optional<String> domain, java.lang.String remoteMessageId) {
 
         DomibusConnectorMessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId);
@@ -94,6 +112,9 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
             LOGGER.trace("Pulling message with id [{}] from [{}]", remoteMessageId, linkPartnerName);
             GetMessageByIdRequest getMessageByIdRequest = new GetMessageByIdRequest();
             getMessageByIdRequest.setMessageId(remoteMessageId);
+            if(domain.isPresent()) {
+                getMessageByIdRequest.setDomain(domain.get());
+            }
             DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
 
             DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById, connectorMessageId);
