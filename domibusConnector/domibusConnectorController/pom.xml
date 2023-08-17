@@ -61,7 +61,7 @@
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>spring-quartz-scheduled</artifactId>
             <version>${eu.ecodex.utils.version}</version>
         </dependency>
