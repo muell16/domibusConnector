@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorBuilder</artifactId>
-        <version>4.4.9-SNAPSHOT</version>
+        <version>4.4.9</version>
     </parent>
     <artifactId>domibusConnectorBuilderStandalone</artifactId>
     <properties>
@@ -275,11 +275,11 @@
                         <artifactId>vaadin-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>prepare-frontend</goal>
                                     <goal>build-frontend</goal>
                                 </goals>
-                                <phase>prepare-package</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -288,8 +288,8 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>prepare-package</phase>
                                 <id>copy-spring-boot-starter</id>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy</goal>
                                 </goals>
@@ -305,8 +305,8 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <phase>prepare-package</phase>
                                 <id>copy-labbox-config</id>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>unpack</goal>
                                 </goals>
@@ -336,6 +336,15 @@
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
                         <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>buildTar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <extraDirectories>
                                 <paths>
@@ -350,10 +359,9 @@
                                 </paths>
                             </extraDirectories>
                             <container>
-
                                 <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
                                 <jvmFlags>
-<!--                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>-->
+                                    <!--                                    <jvmFlag>-Dspring.config.additional-location=/app/config/labenv01/config/</jvmFlag>-->
                                     <jvmFlag>-Dspring.config.name=connector</jvmFlag>
                                     <jvmFlag>-Dloader.main=eu.domibus.connector.starter.DomibusConnectorStarter</jvmFlag>
                                 </jvmFlags>
@@ -374,15 +382,6 @@
                                 </tags>
                             </to>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                    <goal>buildTar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
