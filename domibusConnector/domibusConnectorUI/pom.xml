@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.8</version>
+        <version>4.4.8-MT</version>
     </parent>
     <artifactId>domibusConnectorUI</artifactId>
     <packaging>jar</packaging>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorDocumentation</artifactId>
-            <version>${project.version}</version>
+            <version>4.4.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.4.8</version>
+        <version>4.4.8-MT</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
     <packaging>pom</packaging>
