@@ -24,6 +24,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +64,11 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
         transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
         DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+        if(configurationProperties.isMultiDomainEnabled()) {
+            String[] partyIdSplit = message.getMessageDetails().getFromParty().getPartyIdType().split(":");
+            String domain = configurationProperties.getDomainAssignment().get(partyIdSplit[partyIdSplit.length-1]);
+            domibusConnectorMessageType.setDomain(domain);
+        }
         DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
 
         transportState = new TransportStateService.DomibusConnectorTransportState();

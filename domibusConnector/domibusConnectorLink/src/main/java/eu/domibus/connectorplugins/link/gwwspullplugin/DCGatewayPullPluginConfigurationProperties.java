@@ -5,6 +5,7 @@ import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStore
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "")
 @Validated
@@ -32,6 +34,18 @@ public class DCGatewayPullPluginConfigurationProperties {
     @ConfigurationLabel("Domain Names")
     @ConfigurationDescription("The domain names, separated with a semicolon (e.g. domain1;domain2)")
     private String domainNames;
+
+    @ConfigurationLabel("Domain assignment")
+    @ConfigurationDescription("Assigns partyIdType with domains")
+    private Map<String, String> domainAssignment;
+
+    public Map<String, String> getDomainAssignment() {
+        return domainAssignment;
+    }
+
+    public void setDomainAssignment(Map<String, String> domainAssignment) {
+        this.domainAssignment = domainAssignment;
+    }
 
     /**
      * SSL Key Store configuration
