@@ -6,9 +6,8 @@ import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWSService;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
-import org.apache.cxf.feature.Feature;
-
 import org.apache.cxf.ext.logging.LoggingFeature;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

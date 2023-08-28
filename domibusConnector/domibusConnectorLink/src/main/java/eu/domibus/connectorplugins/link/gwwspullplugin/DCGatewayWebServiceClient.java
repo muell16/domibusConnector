@@ -1,7 +1,9 @@
 package eu.domibus.connectorplugins.link.gwwspullplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.*;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.service.SubmitToConnector;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -18,15 +20,17 @@ import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebServ
 import eu.domibus.connector.ws.gateway.webservice.GetMessageByIdRequest;
 import eu.domibus.connector.ws.gateway.webservice.ListPendingMessageIdsRequest;
 import eu.domibus.connector.ws.gateway.webservice.ListPendingMessageIdsResponse;
+import eu.domibus.connectorplugins.link.gwwspullplugin.service.SimpleGatewayDomainService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromLinkPartner {
@@ -54,6 +58,8 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
     @Autowired
     DCGatewayPullPluginConfigurationProperties configurationProperties;
 
+    @Autowired
+    SimpleGatewayDomainService gatewayDomainService;
 
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -65,8 +71,7 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
 
         DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
         if(configurationProperties.isMultiDomainEnabled()) {
-            String[] partyIdSplit = message.getMessageDetails().getFromParty().getPartyIdType().split(":");
-            String domain = configurationProperties.getDomainAssignment().get(partyIdSplit[partyIdSplit.length-1]);
+            String domain = gatewayDomainService.discoverDomain(message);
             domibusConnectorMessageType.setDomain(domain);
         }
         DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
@@ -89,12 +94,15 @@ public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromL
             List<java.lang.String> messageIds;
 
             if(configurationProperties.isMultiDomainEnabled()) {
-                String domainNames[] = configurationProperties.getDomainNames().split(";");
-                for (String domainName : domainNames) {
-                    ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
-                    req.setDomain(domainName);
-                    messageIds = listPendingMessages(req);
-                    messageIds.stream().forEach(id -> this.pullMessage(linkPartner,Optional.of(domainName), id));
+                Set<String> uniqueValues = new HashSet<>();
+                for (String domainName : configurationProperties.getDomainAssignment().values()) {
+                    if (uniqueValues.add(domainName)) {
+                        ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
+                        req.setDomain(domainName);
+
+                        messageIds = listPendingMessages(req);
+                        messageIds.stream().forEach(id -> this.pullMessage(linkPartner, Optional.of(domainName), id));
+                    }
                 }
             } else {
                 messageIds = listPendingMessages(new ListPendingMessageIdsRequest());

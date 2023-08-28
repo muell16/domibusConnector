@@ -4,8 +4,6 @@ import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurati
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -30,10 +28,6 @@ public class DCGatewayPullPluginConfigurationProperties {
     @ConfigurationLabel("Multidomain switch")
     @ConfigurationDescription("This switch enables multidomain capabilities for the pull gateway plugin")
     private boolean multiDomainEnabled = false;
-
-    @ConfigurationLabel("Domain Names")
-    @ConfigurationDescription("The domain names, separated with a semicolon (e.g. domain1;domain2)")
-    private String domainNames;
 
     @ConfigurationLabel("Domain assignment")
     @ConfigurationDescription("Assigns partyIdType with domains")
@@ -120,13 +114,5 @@ public class DCGatewayPullPluginConfigurationProperties {
 
     public void setMultiDomainEnabled(boolean multiDomainEnabled) {
         this.multiDomainEnabled = multiDomainEnabled;
-    }
-
-    public String getDomainNames() {
-        return domainNames;
-    }
-
-    public void setDomainNames(String domainNames) {
-        this.domainNames = domainNames;
     }
 }
