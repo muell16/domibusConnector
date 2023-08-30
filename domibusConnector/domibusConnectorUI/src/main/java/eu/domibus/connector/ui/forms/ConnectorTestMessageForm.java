@@ -113,7 +113,7 @@ public class ConnectorTestMessageForm extends FormLayout {
 						(webMessage, fromParty) -> {
 							webMessage.getMessageInfo().setFrom(fromParty);
 						});
-		fromParty.setReadOnly(true);
+		fromParty.setReadOnly(false);
 
 		addFormItem(fromParty, "From Party");
 		
