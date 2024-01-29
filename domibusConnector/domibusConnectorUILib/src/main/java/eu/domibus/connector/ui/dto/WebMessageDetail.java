@@ -35,7 +35,7 @@ public class WebMessageDetail {
 
 		@Override
 		public String toString() {
-			return partyId+"("+partyIdType+")";
+			return partyId+"("+partyIdType+")[" + role + "]";
 		}
 		public String getPartyId() {
 			return partyId;
